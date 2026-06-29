@@ -1,0 +1,17 @@
+{
+    "angular-components": {
+        "modal": {
+            "actions": {
+                "cancel": "Cancelar",
+                "close": "Cerrar",
+                "confirm": "Confirmar"
+            },
+            "types": {
+                "confirmation": "Confirmación",
+                "error": "Error",
+                "info": "Información",
+                "warning": "Advertencia"
+            }
+        }
+    }
+}

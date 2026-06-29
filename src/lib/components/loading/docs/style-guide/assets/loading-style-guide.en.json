@@ -1,0 +1,27 @@
+{
+    "angular-components-style-guide": {
+        "loading": {
+            "example": "Lightweight, purely visual inline spinner and overlay components that adapt to any context via currentColor inheritance and predefined or custom sizes.",
+            "overlay": {
+                "container": "Container",
+                "container-description": "Covers the nearest positioned parent.",
+                "fullscreen": "Fullscreen",
+                "fullscreen-description": "Covers the entire viewport. Click to dismiss."
+            },
+            "sample-content": "This content is behind the overlay and cannot be interacted with while loading is active.",
+            "sizes": {
+                "custom": "Custom (3.25 rem)",
+                "lg": "Large",
+                "md": "Medium",
+                "sm": "Small",
+                "xs": "Extra small"
+            },
+            "toggle-fullscreen": "Show fullscreen overlay",
+            "toggle-service": "Show via service",
+            "service": {
+                "label": "Service",
+                "description": "Uses LoadingService to show and hide the fullscreen overlay programmatically. Auto-dismisses after 3 seconds."
+            }
+        }
+    }
+}

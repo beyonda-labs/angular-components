@@ -1,0 +1,41 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.breadcrumb.example' | translate }}
+</p>
+
+<h4 class="mt-4 mb-3 fs-6 fw-semibold text-dark">
+    {{ 'angular-components-style-guide.breadcrumb.examples.basic' | translate }}
+</h4>
+
+<bey-breadcrumb [config]="basicConfig"></bey-breadcrumb>
+@if (lastClicked1) {
+    <div class="bey-sg-info text-muted mt-2">
+        {{ 'angular-components-style-guide.breadcrumb.clicked' | translate }}:
+        <strong>{{ lastClicked1 }}</strong>
+    </div>
+}
+
+<h4 class="mt-4 mb-3 fs-6 fw-semibold text-dark">
+    {{ 'angular-components-style-guide.breadcrumb.examples.icons' | translate }}
+</h4>
+
+<bey-breadcrumb [config]="iconsConfig"></bey-breadcrumb>
+@if (lastClicked2) {
+    <div class="bey-sg-info text-muted mt-2">
+        {{ 'angular-components-style-guide.breadcrumb.clicked' | translate }}:
+        <strong>{{ lastClicked2 }}</strong>
+    </div>
+}
+
+<h4 class="mt-4 mb-3 fs-6 fw-semibold text-dark">
+    {{ 'angular-components-style-guide.breadcrumb.examples.overflow' | translate }}
+</h4>
+
+<div style="max-width: 500px">
+    <bey-breadcrumb [config]="overflowConfig"></bey-breadcrumb>
+</div>
+@if (lastClicked3) {
+    <div class="bey-sg-info text-muted mt-2">
+        {{ 'angular-components-style-guide.breadcrumb.clicked' | translate }}:
+        <strong>{{ lastClicked3 }}</strong>
+    </div>
+}

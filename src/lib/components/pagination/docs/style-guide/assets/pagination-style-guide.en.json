@@ -1,0 +1,13 @@
+{
+    "angular-components-style-guide": {
+        "pagination": {
+            "changed": "Pagination changed:",
+            "example": "Minimal paginator with editable page, range tooltip and page-size selector.",
+            "examples": {
+                "compact": "Without first and last buttons",
+                "full": "With first and last buttons"
+            }
+        },
+        "pagination-section": "Pagination"
+    }
+}

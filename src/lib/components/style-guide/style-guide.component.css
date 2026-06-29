@@ -1,0 +1,53 @@
+:host {
+    --bey-card-gradient: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+    --bey-style-guide-bg: #ffffff;
+}
+
+:host-context(body.dark) {
+    --bey-card-gradient: linear-gradient(180deg, #242424 0%, #1e1e1e 100%);
+    --bey-style-guide-bg: #000000;
+}
+
+.bey-style-guide {
+    background-color: var(--bey-style-guide-bg);
+}
+
+.bey-style-guide-card {
+    background: var(--bey-card-gradient);
+}
+
+.bey-style-guide-description {
+    line-height: 1.6;
+}
+
+/* --- Shared utilities (included by individual style-guide components via styleUrls) --- */
+
+.bey-sg-info {
+    font-size: 0.8rem;
+}
+
+.bey-sg-example-label {
+    color: #7b7b7b;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.bey-sg-action-slot {
+    display: inline-flex;
+}
+
+@media (max-width: 575.98px) {
+    .bey-sg-actions {
+        flex-direction: column;
+    }
+
+    .bey-sg-action-slot {
+        width: 100%;
+    }
+}
+
+.bey-sg-frame {
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}

@@ -1,0 +1,19 @@
+<p class="bey-style-guide-description text-muted mask-b-from-30%">
+    {{ 'angular-components-style-guide.appLayout.example' | translate }}
+</p>
+
+<div class="bey-sg-frame mt-4">
+    <bey-app-layout [config]="config">
+        <div class="bey-app-layout-style-guide-content p-4" style="height: 700px">
+            <h5 class="mb-3">{{ 'angular-components-style-guide.appLayout.content.title' | translate }}</h5>
+
+            <div class="bey-app-layout-style-guide-actions">
+                <bey-button [button]="dashboardButton"></bey-button>
+                <bey-button [button]="documentsButton"></bey-button>
+                <bey-button [button]="reportsButton"></bey-button>
+                <bey-button [button]="settingsButton"></bey-button>
+                <bey-button [button]="helpButton"></bey-button>
+            </div>
+        </div>
+    </bey-app-layout>
+</div>

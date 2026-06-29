@@ -1,0 +1,32 @@
+{
+    "angular-components-style-guide": {
+        "table": {
+            "actions": {
+                "open": "Open",
+                "opened": "Row action executed"
+            },
+            "columns": {
+                "action": "Action",
+                "name": "Name",
+                "role": "Role",
+                "status": "Status"
+            },
+            "empty": "No rows available for this example.",
+            "example": "Data table with sorting, row selection, and customizable columns via model configuration.",
+            "examples": {
+                "empty": "Same table without rows",
+                "filled": "Same table with rows"
+            },
+            "selection-changed": "Selected rows changed",
+            "status": {
+                "active": "Active",
+                "paused": "Paused",
+                "review": "In review"
+            },
+            "tooltips": {
+                "name": "Primary identity column",
+                "status": "Status cells can be translated and tooltip-enabled"
+            }
+        }
+    }
+}

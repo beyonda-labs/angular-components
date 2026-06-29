@@ -1,0 +1,20 @@
+@if (field && control) {
+    <div role="radiogroup" [attr.aria-required]="field.isRequired || null" [attr.aria-invalid]="isInvalid() || null">
+        @for (option of field.options; track option.value) {
+            <div class="form-check">
+                <input
+                    class="form-check-input"
+                    type="radio"
+                    [id]="field.key + '_' + option.value"
+                    [name]="field.key"
+                    [formControl]="control"
+                    [value]="option.value"
+                    [disabled]="option.isDisabled ?? false"
+                />
+                <label class="form-check-label" [for]="field.key + '_' + option.value">
+                    {{ option.label | translate }}
+                </label>
+            </div>
+        }
+    </div>
+}

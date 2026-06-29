@@ -1,0 +1,41 @@
+{
+    "angular-components-style-guide": {
+        "appLayout": {
+            "actions": {
+                "dashboard": {
+                    "label": "Panel",
+                    "tooltip": "Ir al panel"
+                },
+                "documents": {
+                    "label": "Documentos",
+                    "tooltip": "Explorar documentos"
+                },
+                "help": {
+                    "label": "Ayuda",
+                    "tooltip": "Obtener ayuda"
+                },
+                "reports": {
+                    "label": "Informes",
+                    "tooltip": "Ver informes"
+                },
+                "reports-annual": {
+                    "label": "Anuales",
+                    "tooltip": "Ver informes anuales"
+                },
+                "reports-monthly": {
+                    "label": "Mensuales",
+                    "tooltip": "Ver informes mensuales"
+                },
+                "settings": {
+                    "label": "Ajustes",
+                    "tooltip": "Abrir ajustes"
+                }
+            },
+            "content": {
+                "title": "Navega para actualizar el breadcrumb"
+            },
+            "example": "Diseño completo de aplicación con menú lateral colapsable, breadcrumb dinámico y área de contenido. Usa los botones o el menú para simular la navegación entre páginas.",
+            "title": "App Demo"
+        }
+    }
+}

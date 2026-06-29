@@ -1,0 +1,12 @@
+{
+    "angular-components": {
+        "left-menu": {
+            "collapse": "Colapsar menú",
+            "expand": "Expandir menú",
+            "sections": {
+                "main": "Principales",
+                "others": "Otros"
+            }
+        }
+    }
+}

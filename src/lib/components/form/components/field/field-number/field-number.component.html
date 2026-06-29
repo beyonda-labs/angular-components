@@ -1,0 +1,37 @@
+@if (field && control) {
+    <div class="bey-number-wrapper">
+        <input
+            class="form-control form-control-sm"
+            type="number"
+            [id]="field.key"
+            [formControl]="control"
+            placeholder="{{ getPlaceholder() | translate }}"
+            [attr.min]="field.min ?? null"
+            [attr.max]="field.max ?? null"
+            [attr.aria-required]="field.isRequired || null"
+            [attr.aria-invalid]="isInvalid() || null"
+        />
+        <div class="bey-number-spinners">
+            <button
+                type="button"
+                class="bey-spin-btn bey-spin-up"
+                tabindex="-1"
+                [disabled]="isIncrementDisabled()"
+                (click)="increment()"
+                aria-label="Increment"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="currentColor" aria-hidden="true"><path d="M5 0 10 6H0z"/></svg>
+            </button>
+            <button
+                type="button"
+                class="bey-spin-btn bey-spin-down"
+                tabindex="-1"
+                [disabled]="isDecrementDisabled()"
+                (click)="decrement()"
+                aria-label="Decrement"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="6" viewBox="0 0 10 6" fill="currentColor" aria-hidden="true"><path d="M5 6 0 0h10z"/></svg>
+            </button>
+        </div>
+    </div>
+}

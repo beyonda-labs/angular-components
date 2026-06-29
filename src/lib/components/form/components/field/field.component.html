@@ -1,0 +1,98 @@
+@if (field && !field.isHidden) {
+    <div class="">
+        <!-- field label -->
+        @if (field.isLabelVisible && field.type !== 'checkbox') {
+            <div class="d-flex">
+                <label
+                    class="bey-form-field-label fw-semibold text-muted mb-1"
+                    [for]="field.key"
+                    [attr.aria-label]="getFieldLabel() | translate"
+                >
+                    {{ getFieldLabel() | translate }}
+                </label>
+                @if (field.isRequired) {
+                    <span
+                        class="bey-form-field-required ms-1 fw-bold"
+                        [ngClass]="{
+                            'text-black-50': isFieldValid(),
+                            'text-danger': !isFieldValid()
+                        }"
+                    >
+                        *
+                    </span>
+                }
+                @if (field.isLabelTooltipVisible) {
+                    <!-- tooltip -->
+                    <fa-icon
+                        class="bey-form-field-tooltip ms-2 text-muted"
+                        size="sm"
+                        [icon]="infoIcon"
+                        [tooltip]="getFieldTooltip() | translate"
+                    ></fa-icon>
+                }
+            </div>
+        }
+
+        <!-- field input -->
+        <div class="">
+            @switch (field.type) {
+                @case ('text') {
+                    <bey-form-text-field
+                        [field]="field"
+                        [section]="section"
+                        [formConfig]="formConfig"
+                    ></bey-form-text-field>
+                }
+                @case ('date') {
+                    <bey-form-date-field
+                        [field]="getDateField()"
+                        [section]="section"
+                        [formConfig]="formConfig"
+                    ></bey-form-date-field>
+                }
+                @case ('number') {
+                    <bey-form-number-field
+                        [field]="field"
+                        [section]="section"
+                        [formConfig]="formConfig"
+                    ></bey-form-number-field>
+                }
+                @case ('password') {
+                    <bey-form-password-field
+                        [field]="$any(field)"
+                        [section]="section"
+                        [formConfig]="formConfig"
+                    ></bey-form-password-field>
+                }
+                @case ('textarea') {
+                    <bey-form-textarea-field
+                        [field]="$any(field)"
+                        [section]="section"
+                        [formConfig]="formConfig"
+                    ></bey-form-textarea-field>
+                }
+                @case ('select') {
+                    <bey-form-select-field
+                        [field]="$any(field)"
+                        [section]="section"
+                        [formConfig]="formConfig"
+                    ></bey-form-select-field>
+                }
+                @case ('radio') {
+                    <bey-form-radio-field
+                        [field]="$any(field)"
+                        [section]="section"
+                        [formConfig]="formConfig"
+                    ></bey-form-radio-field>
+                }
+                @case ('checkbox') {
+                    <bey-form-checkbox-field
+                        [field]="field"
+                        [section]="section"
+                        [formConfig]="formConfig"
+                    ></bey-form-checkbox-field>
+                }
+            }
+        </div>
+    </div>
+}

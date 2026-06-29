@@ -1,0 +1,125 @@
+:host {
+    --bey-modal-fg: var(--text-primary);
+    --bey-modal-fg-muted: var(--text-muted);
+    --bey-modal-fg-message: var(--text-secondary);
+    --bey-close-hover-bg: var(--bey-gray-200);
+
+    display: block;
+    color: var(--bey-modal-fg);
+}
+
+:host-context(body.dark) {
+    --bey-close-hover-bg: var(--bey-gray-700);
+}
+
+.bey-modal {
+    --bey-modal-accent: var(--bey-primary);
+    --bey-modal-accent-soft: rgba(var(--bey-black-rgb), 0.08);
+    --bey-modal-border: var(--bey-gray-200);
+    --bey-modal-surface: var(--bey-bg-surface);
+    width: min(100%, 32rem);
+    padding: 1.2rem 1rem;
+    border: 1px solid var(--bey-modal-border);
+    border-radius: 0.5rem;
+    background: var(--bey-modal-surface);
+    box-shadow: 0 24px 64px rgba(var(--bey-black-rgb), 0.16);
+}
+
+.bey-modal-info {
+    --bey-modal-accent: var(--bey-primary);
+    --bey-modal-accent-soft: rgba(var(--bey-black-rgb), 0.08);
+}
+
+.bey-modal-warning {
+    --bey-modal-accent: var(--bey-warning);
+    --bey-modal-accent-soft: rgba(var(--bey-orange-rgb), 0.12);
+}
+
+.bey-modal-error {
+    --bey-modal-accent: var(--bey-danger);
+    --bey-modal-accent-soft: rgba(var(--bey-red-rgb), 0.1);
+}
+
+.bey-modal-confirmation {
+    --bey-modal-accent: var(--bey-primary);
+    --bey-modal-accent-soft: rgba(var(--bey-black-rgb), 0.1);
+}
+
+.bey-modal-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 1rem;
+    background: var(--bey-modal-accent-soft);
+    color: var(--bey-modal-accent);
+    font-size: 1.05rem;
+    flex: 0 0 auto;
+}
+
+.bey-modal-type {
+    color: var(--bey-modal-accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.bey-modal-title {
+    color: var(--bey-modal-fg);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+.bey-modal-close {
+    width: 2rem;
+    height: 2rem;
+    color: var(--bey-modal-fg-muted);
+    font-size: 1.2rem;
+    line-height: 1;
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.bey-modal-close:hover {
+    color: var(--bey-modal-fg);
+    background-color: var(--bey-close-hover-bg);
+    transform: translateY(-1px);
+}
+
+.bey-modal-message {
+    color: var(--bey-modal-fg-message);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    white-space: pre-line;
+}
+
+.bey-modal-action {
+    min-width: 7rem;
+    font-size: 0.84rem;
+    line-height: 1.2;
+}
+
+.bey-modal-action-slot {
+    display: inline-flex;
+}
+
+@media (max-width: 575.98px) {
+    .bey-modal {
+        padding: 1.15rem;
+        border-radius: 1.25rem;
+    }
+
+    .bey-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .bey-modal-action-slot {
+        width: 100%;
+    }
+}

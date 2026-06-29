@@ -1,0 +1,21 @@
+:host {
+    display: block;
+}
+
+.bey-loading-style-guide-size {
+    min-width: 5rem;
+}
+
+.bey-loading-style-guide-overlay-box {
+    flex: 1 1 14rem;
+    max-width: 20rem;
+}
+
+.bey-loading-style-guide-overlay-container {
+    min-height: 8rem;
+    overflow: hidden;
+}
+
+.bey-loading-style-guide-overlay-description {
+    font-size: 0.75rem;
+}

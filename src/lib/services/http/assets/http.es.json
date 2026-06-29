@@ -1,0 +1,44 @@
+{
+    "angular-components": {
+        "http": {
+            "title": {
+                "bad-gateway": "Error de conexión",
+                "bad-request": "Solicitud inválida",
+                "conflict": "Conflicto",
+                "default": "Error",
+                "forbidden": "Acceso denegado",
+                "internal-server-error": "Error del servidor",
+                "invalid-child": "Campo inválido",
+                "invalid-field-pattern": "Formato incorrecto",
+                "invalid-field-range": "Valor fuera de rango",
+                "invalid-field-type": "Tipo de campo inválido",
+                "invalid-field-value": "Valor no permitido",
+                "not-found": "No encontrado",
+                "required-field": "Campo obligatorio",
+                "service-unavailable": "Servicio no disponible",
+                "too-many-requests": "Demasiadas solicitudes",
+                "unauthorized": "Autenticación requerida",
+                "unknown": "Error inesperado"
+            },
+            "error": {
+                "bad-gateway": "El servidor recibió una respuesta no válida. Por favor, inténtelo de nuevo más tarde.",
+                "bad-request": "La solicitud no pudo ser procesada. Por favor, revise los datos enviados.",
+                "conflict": "Se produjo un conflicto con el estado actual del recurso.",
+                "forbidden": "No tiene permisos para realizar esta acción.",
+                "internal-server-error": "Se produjo un error interno en el servidor. Por favor, inténtelo de nuevo más tarde.",
+                "invalid-child": "El campo {{childField}} no es válido para el padre {{parentField}}.",
+                "invalid-field-pattern": "El campo {{fieldName}} no cumple el formato esperado.",
+                "invalid-field-range": "El campo {{fieldName}} debe estar entre {{min}} y {{max}}.",
+                "invalid-field-type": "El campo {{fieldName}} debe ser de tipo {{expectedType}}.",
+                "invalid-field-value": "El campo {{fieldName}} tiene un valor no válido.",
+                "not-found": "El recurso solicitado no fue encontrado.",
+                "required-field": "El campo {{fieldName}} es obligatorio.",
+                "service-unavailable": "El servicio no está disponible temporalmente. Por favor, inténtelo de nuevo más tarde.",
+                "title": "Error",
+                "too-many-requests": "Demasiadas solicitudes. Por favor, inténtelo de nuevo más tarde.",
+                "unauthorized": "Su sesión ha expirado o no está autenticado. Por favor, inicie sesión de nuevo.",
+                "unknown": "Se produjo un error inesperado. Por favor, inténtelo de nuevo más tarde."
+            }
+        }
+    }
+}

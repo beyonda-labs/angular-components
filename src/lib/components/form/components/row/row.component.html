@@ -1,0 +1,18 @@
+@if (row && section && formConfig) {
+    <div class="row w-100">
+        @for (field of row.fields; track $index) {
+            @if (!field.isHidden) {
+                <bey-form-field
+                    [class]="'d-block col-' + field.columns"
+                    [ngClass]="{
+                        'justify-start': row.alignment === 'start',
+                        'justify-end': row.alignment === 'end'
+                    }"
+                    [field]="field"
+                    [section]="section"
+                    [formConfig]="formConfig"
+                ></bey-form-field>
+            }
+        }
+    </div>
+}

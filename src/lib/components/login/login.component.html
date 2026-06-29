@@ -1,0 +1,54 @@
+<div class="bey-login d-flex flex-column">
+    <div class="bey-login__body grow" [style.backgroundImage]="'url(' + bgImage + ')'">
+        <main class="w-100 h-100 d-flex align-items-center justify-content-center">
+            <div class="bey-login__cards d-flex">
+                <div class="bey-login__card me-3 d-flex flex-column">
+                    <!-- left: presentation card -->
+                    <div class="bey-login__intro-org d-inline-flex align-items-center text-uppercase fw-medium">
+                        <img [src]="config.iconSrc" class="bey-login__intro-icon shrink-0" aria-hidden="true" />
+                        <span>{{ config.orgName }}</span>
+                    </div>
+                    <h1 class="bey-login__intro-product fw-semibold mt-2 mb-2">
+                        {{ config.productName | translate }}
+                    </h1>
+                    <p class="bey-login__intro-pitch mb-0">{{ config.productDescription | translate }}</p>
+
+                    @if (registerFields.length > 0) {
+                        <div class="bey-login__view-tabs">
+                            @if (activeView !== 'login') {
+                                <bey-button [button]="getTabButton('login')" />
+                            }
+                            @if (activeView !== 'register') {
+                                <bey-button [button]="getTabButton('register')" />
+                            }
+                        </div>
+                    }
+                </div>
+                <div class="bey-login__card d-flex flex-column">
+                    <!-- right: auth card -->
+                    <section class="bey-login__intro-card bey-login__auth-card d-flex flex-column grow">
+                        @if (activeView === 'register' && registerFields.length > 0) {
+                            <div class="bey-login__welcome">
+                                <h1 class="fw-semibold mb-4">{{ prefix + '.title.register' | translate }}</h1>
+                            </div>
+                            <bey-login-register-form [config]="config" [registerFields]="registerFields" />
+                        } @else {
+                            <div class="bey-login__welcome">
+                                <h1 class="fw-semibold mb-4">{{ prefix + '.title.login' | translate }}</h1>
+                            </div>
+                            <bey-login-form [config]="config" [providers]="providers" />
+                        }
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="bey-login__footer">
+        <bey-footer [config]="config.footerConfig" class="me-1" />
+    </div>
+
+    <div class="bey-fp-anchor">
+        <bey-floating-preferences />
+    </div>
+</div>

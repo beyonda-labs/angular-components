@@ -1,0 +1,27 @@
+@if (config) {
+    <div class="bey-app-layout d-flex p-2">
+        <bey-left-menu class="bey-app-layout-menu me-2" [config]="leftMenuConfig"></bey-left-menu>
+
+        <main
+            class="bey-app-layout-content grow d-flex flex-column min-w-0 overflow-hidden"
+            [attr.aria-label]="'angular-components.app-layout.main-content' | translate"
+        >
+            @if (breadcrumbConfig) {
+                <div class="bey-app-layout-breadcrumb border-bottom shadow-sm sticky-top z-3 py-3 px-4">
+                    <bey-breadcrumb [config]="breadcrumbConfig"></bey-breadcrumb>
+                </div>
+            }
+
+            <div class="bey-app-layout-body grow d-flex flex-column">
+                <div class="bey-app-layout-body-content flex-fill px-2 py-3">
+                    <ng-content></ng-content>
+                </div>
+                <bey-footer [config]="config.footerConfig" class="shrink-0" />
+            </div>
+
+            <div class="bey-fp-anchor">
+                <bey-floating-preferences />
+            </div>
+        </main>
+    </div>
+}

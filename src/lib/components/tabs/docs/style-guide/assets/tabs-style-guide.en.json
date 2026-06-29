@@ -1,0 +1,42 @@
+{
+    "angular-components-style-guide": {
+        "tabs": {
+            "active-tab": "Active tab",
+            "changed": "Tab changed:",
+            "example": "Model-driven horizontal tab bar with keyboard navigation, optional icons and disabled state. The consumer renders content based on the active tab key.",
+            "examples": {
+                "basic": "Basic",
+                "icons": "With icons & disabled"
+            },
+            "basic": {
+                "tabs": {
+                    "overview": {
+                        "label": "Overview"
+                    },
+                    "details": {
+                        "label": "Details"
+                    },
+                    "history": {
+                        "label": "History"
+                    }
+                }
+            },
+            "icons": {
+                "tabs": {
+                    "analytics": {
+                        "label": "Analytics"
+                    },
+                    "documents": {
+                        "label": "Documents"
+                    },
+                    "settings": {
+                        "label": "Settings"
+                    },
+                    "admin": {
+                        "label": "Admin"
+                    }
+                }
+            }
+        }
+    }
+}

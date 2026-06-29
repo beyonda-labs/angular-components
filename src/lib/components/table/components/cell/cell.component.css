@@ -1,0 +1,56 @@
+:host {
+    display: block;
+    min-width: 0;
+}
+
+.bey-table-cell {
+    display: flex;
+    align-items: center;
+    min-height: 3.45rem;
+    padding: 0.85rem 1rem;
+    min-width: 0;
+    color: var(--bey-table-text);
+}
+
+.bey-table-cell-header {
+    min-height: 0;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+.bey-table-cell-content {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.84rem;
+    line-height: 1.35;
+    font-weight: 500;
+}
+
+.bey-table-cell-header .bey-table-cell-content {
+    font-size: 0.73rem;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--bey-table-text-muted);
+}
+
+.bey-table-cell-link {
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--bey-table-text);
+    font-family: inherit;
+    text-align: left;
+    text-decoration: underline;
+    text-decoration-color: var(--bey-table-link-underline);
+    text-underline-offset: 0.2rem;
+}
+
+.bey-table-cell-link:hover {
+    text-decoration-color: var(--bey-table-link-underline-hover);
+}

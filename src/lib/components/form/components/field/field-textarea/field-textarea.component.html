@@ -1,0 +1,13 @@
+@if (field && control) {
+    <textarea
+        class="form-control form-control-sm"
+        [id]="field.key"
+        [formControl]="control"
+        [rows]="field.rows"
+        [style.max-height]="field.maxHeight ?? null"
+        [style.overflow-y]="field.maxHeight ? 'auto' : null"
+        placeholder="{{ getPlaceholder() | translate }}"
+        [attr.aria-required]="field.isRequired || null"
+        [attr.aria-invalid]="isInvalid() || null"
+    ></textarea>
+}

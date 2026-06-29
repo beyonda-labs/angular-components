@@ -1,0 +1,18 @@
+{
+    "angular-components-style-guide": {
+        "footer": {
+            "example": "Model-driven footer bar with brand identity (icon, organization and product name) and optional legal navigation links (Terms & Conditions, Privacy Policy) via Angular Router.",
+            "examples": {
+                "minimal": "Minimal",
+                "withLinks": "With legal links"
+            },
+            "minimal": {
+                "productName": "My Application"
+            },
+            "withLinks": {
+                "orgName": "Beyonda Labs",
+                "productName": "My Application"
+            }
+        }
+    }
+}

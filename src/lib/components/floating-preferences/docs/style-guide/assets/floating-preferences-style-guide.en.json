@@ -1,0 +1,7 @@
+{
+    "angular-components-style-guide": {
+        "floating-preferences": {
+            "example": "Self-contained pill with language and theme selectors. Reads and writes state directly via TranslateService and BeyThemeService — no inputs or configuration required."
+        }
+    }
+}

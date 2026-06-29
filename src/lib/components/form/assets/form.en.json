@@ -1,0 +1,13 @@
+{
+    "angular-components": {
+        "form": {
+            "cancel": {
+                "without-changes": "No changes have been made to the form."
+            },
+            "required": "This field is required",
+            "submit": {
+                "invalid": "There are errors in the form, please correct or complete the required fields before submitting."
+            }
+        }
+    }
+}

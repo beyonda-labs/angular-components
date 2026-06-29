@@ -1,0 +1,23 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.tabs.example' | translate }}
+</p>
+
+<h4 class="mt-4 mb-3 fs-6 fw-semibold text-dark">
+    {{ 'angular-components-style-guide.tabs.examples.basic' | translate }}
+</h4>
+
+<bey-tabs [config]="basicConfig"></bey-tabs>
+<div class="bey-sg-info text-muted mt-2">
+    {{ 'angular-components-style-guide.tabs.active-tab' | translate }}:
+    <strong>{{ activeKey1 }}</strong>
+</div>
+
+<h4 class="mt-4 mb-3 fs-6 fw-semibold text-dark">
+    {{ 'angular-components-style-guide.tabs.examples.icons' | translate }}
+</h4>
+
+<bey-tabs [config]="iconsConfig"></bey-tabs>
+<div class="bey-sg-info text-muted mt-2">
+    {{ 'angular-components-style-guide.tabs.active-tab' | translate }}:
+    <strong>{{ activeKey2 }}</strong>
+</div>

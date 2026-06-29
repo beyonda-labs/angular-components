@@ -1,0 +1,92 @@
+@if (config) {
+    <aside class="bey-left-menu" [class.bey-left-menu-collapsed]="!expanded">
+        <div class="bey-left-menu-shell">
+            <div class="bey-left-menu-header">
+                <div class="bey-left-menu-brand" [class.bey-left-menu-brand-collapsed]="!expanded">
+                    <div
+                        class="bey-left-menu-brand-icon"
+                        [tooltip]="!expanded ? (getTitleText() | translate) : ''"
+                        container="body"
+                    >
+                        @if (config.title.icon) {
+                            <img [src]="config.title.icon" alt="" aria-hidden="true" />
+                        }
+                    </div>
+
+                    @if (expanded) {
+                        <div class="bey-left-menu-brand-copy">
+                            <div class="bey-left-menu-brand-title" [class]="getTitleClasses()">
+                                {{ getTitleText() | translate }}
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <button
+                    type="button"
+                    class="bey-left-menu-toggle"
+                    [attr.aria-label]="getToggleTooltip() | translate"
+                    [tooltip]="getToggleTooltip() | translate"
+                    container="body"
+                    (click)="toggleExpanded()"
+                >
+                    <fa-icon [icon]="expanded ? collapseIcon : expandIcon"></fa-icon>
+                    <span class="visually-hidden">{{ getToggleTooltip() | translate }}</span>
+                </button>
+            </div>
+
+            <div class="bey-left-menu-body">
+                @if (topActions.length) {
+                    <section class="bey-left-menu-section bey-left-menu-section-primary">
+                        @if (expanded) {
+                            <div class="bey-left-menu-section-title">
+                                {{ 'angular-components.left-menu.sections.main' | translate }}
+                            </div>
+                        }
+
+                        <div class="bey-left-menu-section-scroll">
+                            <bey-left-menu-action-list
+                                [actions]="topActions"
+                                [expanded]="expanded"
+                                [prefix]="config.prefix"
+                                groupKey="top"
+                            ></bey-left-menu-action-list>
+                        </div>
+                    </section>
+                }
+
+                @if (bottomActions.length) {
+                    <section class="bey-left-menu-section bey-left-menu-section-secondary">
+                        @if (expanded) {
+                            <div class="bey-left-menu-section-title">
+                                {{ 'angular-components.left-menu.sections.others' | translate }}
+                            </div>
+                        }
+
+                        <bey-left-menu-action-list
+                            [actions]="bottomActions"
+                            [expanded]="expanded"
+                            [prefix]="config.prefix"
+                            groupKey="bottom"
+                        ></bey-left-menu-action-list>
+                    </section>
+                }
+            </div>
+
+            @if (config.userInfo) {
+                <footer class="bey-left-menu-footer">
+                    <div class="bey-left-menu-user" [tooltip]="!expanded ? getUserTooltip() : ''" container="body">
+                        <div class="bey-left-menu-user-avatar">{{ config.userInfo.initials }}</div>
+
+                        @if (expanded) {
+                            <div class="bey-left-menu-user-copy">
+                                <div class="bey-left-menu-user-name">{{ getUserFullName() }}</div>
+                                <div class="bey-left-menu-user-email">{{ config.userInfo.email }}</div>
+                            </div>
+                        }
+                    </div>
+                </footer>
+            }
+        </div>
+    </aside>
+}

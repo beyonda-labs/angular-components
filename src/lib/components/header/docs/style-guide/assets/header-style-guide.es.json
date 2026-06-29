@@ -1,0 +1,26 @@
+{
+    "angular-components-style-guide": {
+        "header": {
+            "actions": {
+                "duplicate": {
+                    "label": "Duplicar",
+                    "tooltip": "Duplicar objetivo"
+                },
+                "edit": {
+                    "label": "Editar",
+                    "tooltip": "Editar objetivo"
+                },
+                "export": {
+                    "label": "Exportar",
+                    "tooltip": "Exportar objetivos"
+                },
+                "newGoal": {
+                    "label": "Nuevo objetivo",
+                    "tooltip": "Crear un nuevo objetivo"
+                }
+            },
+            "example": "Cabecera con acciones a ambos lados.",
+            "title": "Objetivos"
+        }
+    }
+}

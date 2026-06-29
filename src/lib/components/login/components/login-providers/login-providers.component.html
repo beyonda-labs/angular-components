@@ -1,0 +1,12 @@
+@if (providers.length > 0) {
+    <div class="bey-divider mt-4 mb-3">
+        <span>{{ prefix + '.login.signinWith' | translate }}</span>
+    </div>
+    <div class="bey-providers w-100 justify-content-center">
+        @for (provider of providers; track provider.id) {
+            @if (icons[provider.id]) {
+                <bey-button [button]="getProviderButton(provider)" />
+            }
+        }
+    </div>
+}

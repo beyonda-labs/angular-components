@@ -1,0 +1,17 @@
+:host {
+    display: inline-block;
+
+    --bey-button-inline-gap: 0.375rem;
+}
+
+.bey-button {
+    margin-inline: var(--bey-button-inline-gap);
+    font-size: 0.84rem;
+    line-height: 1.2;
+    border-radius: 0.3rem;
+    padding: 0.5rem 0.85rem;
+}
+
+.bey-button-icon {
+    font-size: 0.76rem;
+}

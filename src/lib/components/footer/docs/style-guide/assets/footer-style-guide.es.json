@@ -1,0 +1,18 @@
+{
+    "angular-components-style-guide": {
+        "footer": {
+            "example": "Barra de pie de página orientada a modelos con identidad de marca (icono, organización y nombre de producto) y enlaces de navegación legal opcionales (Términos y condiciones, Política de privacidad) mediante Angular Router.",
+            "examples": {
+                "minimal": "Mínimo",
+                "withLinks": "Con enlaces legales"
+            },
+            "minimal": {
+                "productName": "Mi Aplicación"
+            },
+            "withLinks": {
+                "orgName": "Beyonda Labs",
+                "productName": "Mi Aplicación"
+            }
+        }
+    }
+}

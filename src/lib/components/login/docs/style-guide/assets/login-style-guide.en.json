@@ -1,0 +1,14 @@
+{
+    "angular-components-style-guide": {
+        "login": {
+            "example": "Full-page authentication component with light/dark theme support, optional OAuth providers (fetched from backend), and optional registration flow.",
+            "examples": {
+                "login": "Login"
+            },
+            "demo": {
+                "productName": "PDF Generator",
+                "productDescription": "Generate, sign and share PDFs in seconds. Templates, branding and e-signature — all from your browser."
+            }
+        }
+    }
+}

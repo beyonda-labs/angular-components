@@ -1,0 +1,5 @@
+@if (formConfig) {
+    @for (cfg of [formConfig]; track cfg.id) {
+        <bey-form [config]="cfg" />
+    }
+}

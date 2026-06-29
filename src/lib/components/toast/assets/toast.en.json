@@ -1,0 +1,12 @@
+{
+    "angular-components": {
+        "toast": {
+            "types": {
+                "error": "Error",
+                "info": "Information",
+                "success": "Success",
+                "warning": "Warning"
+            }
+        }
+    }
+}

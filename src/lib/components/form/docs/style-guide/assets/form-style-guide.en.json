@@ -1,0 +1,165 @@
+{
+    "angular-components-style-guide": {
+        "form": {
+            "button": {
+                "cancel": "Cancel",
+                "submit": "Submit"
+            },
+            "canceled": "The form has been reset",
+            "changed": "Form value changed: ",
+            "example": "Model-driven, configuration-based form with validation, conditional fields and responsive layout.",
+            "sectionText": {
+                "label": "Text Fields",
+                "tooltip": "Different text field configurations",
+                "text1": {
+                    "label": "Required Text",
+                    "placeholder": "Type a value",
+                    "tooltip": "This field is required"
+                },
+                "text2": {
+                    "label": "Text (50%)",
+                    "placeholder": "Half-width text",
+                    "tooltip": "Example with 6 columns"
+                },
+                "text3": {
+                    "label": "Letters Only",
+                    "placeholder": "Only letters (A-Z)"
+                },
+                "text4": {
+                    "label": "Disabled Text",
+                    "placeholder": "Disabled field"
+                },
+                "text5": {
+                    "label": "Text",
+                    "placeholder": "Another text field"
+                }
+            },
+            "sectionPassword": {
+                "label": "Password Fields",
+                "tooltip": "Password fields with toggle, required and disabled states",
+                "password1": {
+                    "label": "Password",
+                    "placeholder": "Enter your password"
+                },
+                "password2": {
+                    "label": "Required Password",
+                    "placeholder": "Required password"
+                },
+                "password3": {
+                    "label": "Disabled Password",
+                    "placeholder": "Disabled field"
+                },
+                "password4": {
+                    "label": "Password Without Toggle",
+                    "placeholder": "No visibility toggle"
+                }
+            },
+            "sectionDate": {
+                "label": "Date Fields",
+                "tooltip": "Date fields with range, required and disabled states",
+                "date1": {
+                    "label": "Date With Range"
+                },
+                "date2": {
+                    "label": "Required Date"
+                },
+                "date3": {
+                    "label": "Disabled Date"
+                }
+            },
+            "sectionNumber": {
+                "label": "Number Fields",
+                "tooltip": "Number fields with range, required and disabled states",
+                "number1": {
+                    "label": "Number With Range",
+                    "placeholder": "Number between 1 and 100"
+                },
+                "number2": {
+                    "label": "Required Number",
+                    "placeholder": "Enter a number"
+                },
+                "number3": {
+                    "label": "Disabled Number",
+                    "placeholder": "Disabled value"
+                }
+            },
+            "sectionSelect": {
+                "label": "Select Fields",
+                "tooltip": "Select variants with basic, required and disabled behavior",
+                "select1": {
+                    "label": "Basic Select",
+                    "placeholder": "Select an option",
+                    "options": {
+                        "option1": "Option 1",
+                        "option2": "Option 2"
+                    }
+                },
+                "select2": {
+                    "label": "Required Select",
+                    "placeholder": "Please choose an option",
+                    "options": {
+                        "option1": "Required Option 1",
+                        "option2": "Required Option 2"
+                    }
+                },
+                "select3": {
+                    "label": "Disabled Select",
+                    "placeholder": "Disabled select",
+                    "options": {
+                        "option1": "Disabled Option 1",
+                        "option2": "Disabled Option 2"
+                    }
+                }
+            },
+            "sectionRadio": {
+                "label": "Radio Fields",
+                "tooltip": "Radio variants with basic and required configurations",
+                "radio1": {
+                    "label": "Basic Radio",
+                    "options": {
+                        "option1": "Option 1",
+                        "option2": "Option 2"
+                    }
+                },
+                "radio2": {
+                    "label": "Required Radio",
+                    "options": {
+                        "option1": "Required Option 1",
+                        "option2": "Required Option 2",
+                        "option3": "Disabled Option"
+                    }
+                }
+            },
+            "sectionTextarea": {
+                "label": "Textarea Fields",
+                "tooltip": "Textarea variants with rows, required and disabled states",
+                "textarea1": {
+                    "label": "Textarea With Max Height",
+                    "placeholder": "Write additional details"
+                },
+                "textarea2": {
+                    "label": "Required Textarea",
+                    "placeholder": "Required long text"
+                },
+                "textarea3": {
+                    "label": "Disabled Textarea",
+                    "placeholder": "Disabled long text"
+                }
+            },
+            "sectionCheckbox": {
+                "label": "Checkbox Fields",
+                "tooltip": "Checkbox variants with basic, required and disabled states",
+                "checkbox1": {
+                    "label": "Accept Terms"
+                },
+                "checkbox2": {
+                    "label": "Required Consent"
+                },
+                "checkbox3": {
+                    "label": "Disabled Checkbox"
+                }
+            },
+            "submitted": "The form has been submitted: "
+        }
+    }
+}

@@ -1,0 +1,107 @@
+:host {
+    --bey-breadcrumb-text: #6b6b6b;
+    --bey-breadcrumb-active: #111111;
+    --bey-breadcrumb-separator-color: #c0c0c0;
+    --bey-breadcrumb-hover: #2f2f2f;
+    --bey-breadcrumb-item-max-width: 12rem;
+
+    display: block;
+}
+
+:host-context(body.dark) {
+    --bey-breadcrumb-text: #8f8f8d;
+    --bey-breadcrumb-active: #f5f5f3;
+    --bey-breadcrumb-separator-color: #2e2e2c;
+    --bey-breadcrumb-hover: #c8c8c6;
+}
+
+.bey-breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow: hidden;
+}
+
+.bey-breadcrumb-item {
+    display: inline-flex;
+    align-items: center;
+    min-width: 0;
+    flex-shrink: 0;
+}
+
+.bey-breadcrumb-separator {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.4rem;
+    color: var(--bey-breadcrumb-separator-color);
+    font-size: 0.78rem;
+    flex-shrink: 0;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.bey-breadcrumb-item-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    max-width: var(--bey-breadcrumb-item-max-width);
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--bey-breadcrumb-text);
+    font-size: 0.84rem;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.bey-breadcrumb-item-button:hover:not(:disabled) {
+    color: var(--bey-breadcrumb-hover);
+    text-decoration: underline;
+}
+
+.bey-breadcrumb-item-button:focus-visible {
+    outline: 2px solid var(--bey-breadcrumb-active);
+    outline-offset: 2px;
+    border-radius: 0.15rem;
+}
+
+.bey-breadcrumb-item-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.bey-breadcrumb-item-current {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    max-width: var(--bey-breadcrumb-item-max-width);
+    color: var(--bey-breadcrumb-active);
+    font-size: 0.84rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.bey-breadcrumb-item-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+
+.bey-breadcrumb-item-icon {
+    font-size: 0.76rem;
+    flex-shrink: 0;
+}
+
+.bey-breadcrumb-ellipsis {
+    color: var(--bey-breadcrumb-separator-color);
+    font-size: 0.84rem;
+    cursor: default;
+    flex-shrink: 0;
+    letter-spacing: 0.1em;
+}

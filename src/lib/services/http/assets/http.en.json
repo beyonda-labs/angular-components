@@ -1,0 +1,44 @@
+{
+    "angular-components": {
+        "http": {
+            "title": {
+                "bad-gateway": "Connection error",
+                "bad-request": "Invalid request",
+                "conflict": "Conflict",
+                "default": "Error",
+                "forbidden": "Access denied",
+                "internal-server-error": "Server error",
+                "invalid-child": "Invalid field",
+                "invalid-field-pattern": "Invalid format",
+                "invalid-field-range": "Value out of range",
+                "invalid-field-type": "Invalid field type",
+                "invalid-field-value": "Invalid value",
+                "not-found": "Not found",
+                "required-field": "Required field",
+                "service-unavailable": "Service unavailable",
+                "too-many-requests": "Too many requests",
+                "unauthorized": "Authentication required",
+                "unknown": "Unexpected error"
+            },
+            "error": {
+                "bad-gateway": "The server received an invalid response. Please try again later.",
+                "bad-request": "The request could not be processed. Please check the submitted data.",
+                "conflict": "A conflict occurred with the current state of the resource.",
+                "forbidden": "You do not have permission to perform this action.",
+                "internal-server-error": "An internal server error occurred. Please try again later.",
+                "invalid-child": "The field {{childField}} is not valid for parent {{parentField}}.",
+                "invalid-field-pattern": "The field {{fieldName}} does not match the expected pattern.",
+                "invalid-field-range": "The field {{fieldName}} must be between {{min}} and {{max}}.",
+                "invalid-field-type": "The field {{fieldName}} must be of type {{expectedType}}.",
+                "invalid-field-value": "The field {{fieldName}} has an invalid value.",
+                "not-found": "The requested resource was not found.",
+                "required-field": "The field {{fieldName}} is required.",
+                "service-unavailable": "The service is temporarily unavailable. Please try again later.",
+                "title": "Error",
+                "too-many-requests": "Too many requests. Please try again later.",
+                "unauthorized": "Your session has expired or you are not authenticated. Please log in again.",
+                "unknown": "An unexpected error occurred. Please try again later."
+            }
+        }
+    }
+}

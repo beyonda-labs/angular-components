@@ -1,0 +1,94 @@
+{
+    "angular-components": {
+        "http": {
+            "title": {
+                "login": {
+                    "existing-user": "Account already exists",
+                    "invalid-credentials": "Authentication failed",
+                    "oauth-invalid-callback": "Authentication error",
+                    "oauth-missing-access-token": "Authentication error",
+                    "oauth-missing-email": "Authentication error",
+                    "oauth-token-exchange": "Authentication error",
+                    "oauth-user-info-not-found": "Authentication error",
+                    "passwords-not-match": "Password error",
+                    "provider-not-found": "Provider unavailable"
+                }
+            },
+            "error": {
+                "login": {
+                    "existing-user": "An account with this email already exists.",
+                    "invalid-credentials": "Invalid email or password.",
+                    "oauth-invalid-callback": "The authentication callback is invalid. Please try again.",
+                    "oauth-missing-access-token": "No access token was received from {{provider}}. Please try again.",
+                    "oauth-missing-email": "No email address was returned by {{provider}}. Please try again.",
+                    "oauth-token-exchange": "Could not connect with {{provider}}. Please try again.",
+                    "oauth-user-info-not-found": "Could not retrieve user information from {{provider}}. Please try again.",
+                    "passwords-not-match": "Passwords do not match.",
+                    "provider-not-found": "The provider {{provider}} is not available."
+                }
+            },
+            "field": {
+                "login": {
+                    "email": "Email",
+                    "name": "Name",
+                    "password": "Password",
+                    "password2": "Confirm password",
+                    "surname": "Surname"
+                }
+            }
+        },
+        "login": {
+            "login": {
+                "button": {
+                    "login": "Sign in"
+                },
+                "email": {
+                    "label": "Email",
+                    "placeholder": "Type your email"
+                },
+                "password": {
+                    "label": "Password",
+                    "placeholder": "Type your password"
+                },
+                "signinWith": "Continue with"
+            },
+            "provider": {
+                "facebook": "Facebook",
+                "google": "Google",
+                "microsoft": "Microsoft"
+            },
+            "register": {
+                "button": {
+                    "back": "Back",
+                    "next": "Next",
+                    "register": "Create account"
+                },
+                "email": {
+                    "label": "Email",
+                    "placeholder": "you@email.com"
+                },
+                "label": "Create your account",
+                "name": {
+                    "label": "Name",
+                    "placeholder": "Your name"
+                },
+                "password": {
+                    "label": "Password",
+                    "placeholder": "Your password"
+                },
+                "password2": {
+                    "label": "Confirm password",
+                    "placeholder": "Repeat your password"
+                },
+                "surname": {
+                    "label": "Surname",
+                    "placeholder": "Your surname"
+                }
+            },
+            "title": {
+                "login": "Welcome back",
+                "register": "Create your account"
+            }
+        }
+    }
+}

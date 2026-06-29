@@ -1,0 +1,40 @@
+:host {
+    --bey-left-menu-style-guide-offset-top: 1rem;
+    --bey-left-menu-style-guide-offset-bottom: 1rem;
+    display: block;
+}
+
+.bey-left-menu-style-guide-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 18rem));
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.bey-left-menu-style-guide-item {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.bey-left-menu-style-guide-frame {
+    height: calc(100vh - var(--bey-left-menu-style-guide-offset-top) - var(--bey-left-menu-style-guide-offset-bottom));
+    height: calc(100dvh - var(--bey-left-menu-style-guide-offset-top) - var(--bey-left-menu-style-guide-offset-bottom));
+    min-height: 34rem;
+    max-height: calc(100vh - var(--bey-left-menu-style-guide-offset-top) - var(--bey-left-menu-style-guide-offset-bottom));
+    max-height: calc(100dvh - var(--bey-left-menu-style-guide-offset-top) - var(--bey-left-menu-style-guide-offset-bottom));
+}
+
+.bey-left-menu-style-guide-frame bey-left-menu {
+    --bey-left-menu-height: 100%;
+}
+
+.bey-left-menu-style-guide-frame-collapsed {
+    display: flex;
+    justify-content: flex-start;
+}
+
+@media (max-width: 991.98px) {
+    .bey-left-menu-style-guide-grid {
+        grid-template-columns: 1fr;
+    }
+}

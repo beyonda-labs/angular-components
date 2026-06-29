@@ -1,0 +1,94 @@
+{
+    "angular-components": {
+        "http": {
+            "title": {
+                "login": {
+                    "existing-user": "Cuenta ya existente",
+                    "invalid-credentials": "Autenticación fallida",
+                    "oauth-invalid-callback": "Error de autenticación",
+                    "oauth-missing-access-token": "Error de autenticación",
+                    "oauth-missing-email": "Error de autenticación",
+                    "oauth-token-exchange": "Error de autenticación",
+                    "oauth-user-info-not-found": "Error de autenticación",
+                    "passwords-not-match": "Error de contraseña",
+                    "provider-not-found": "Proveedor no disponible"
+                }
+            },
+            "error": {
+                "login": {
+                    "existing-user": "Ya existe una cuenta con este correo electrónico.",
+                    "invalid-credentials": "Email o contraseña incorrectos.",
+                    "oauth-invalid-callback": "El callback de autenticación no es válido. Por favor, inténtelo de nuevo.",
+                    "oauth-missing-access-token": "No se recibió token de acceso de {{provider}}. Por favor, inténtelo de nuevo.",
+                    "oauth-missing-email": "{{provider}} no devolvió ninguna dirección de correo. Por favor, inténtelo de nuevo.",
+                    "oauth-token-exchange": "No se pudo conectar con {{provider}}. Por favor, inténtelo de nuevo.",
+                    "oauth-user-info-not-found": "No se pudo obtener información del usuario de {{provider}}. Por favor, inténtelo de nuevo.",
+                    "passwords-not-match": "Las contraseñas no coinciden.",
+                    "provider-not-found": "El proveedor {{provider}} no está disponible."
+                }
+            },
+            "field": {
+                "login": {
+                    "email": "Correo electrónico",
+                    "name": "Nombre",
+                    "password": "Contraseña",
+                    "password2": "Confirmar contraseña",
+                    "surname": "Apellido"
+                }
+            }
+        },
+        "login": {
+            "login": {
+                "button": {
+                    "login": "Iniciar sesión"
+                },
+                "email": {
+                    "label": "Correo electrónico",
+                    "placeholder": "Escribe tu correo"
+                },
+                "password": {
+                    "label": "Contraseña",
+                    "placeholder": "Escribe tu contraseña"
+                },
+                "signinWith": "Continuar con"
+            },
+            "provider": {
+                "facebook": "Facebook",
+                "google": "Google",
+                "microsoft": "Microsoft"
+            },
+            "register": {
+                "button": {
+                    "back": "Atrás",
+                    "next": "Siguiente",
+                    "register": "Crear cuenta"
+                },
+                "email": {
+                    "label": "Correo electrónico",
+                    "placeholder": "tu@correo.com"
+                },
+                "label": "Crea tu cuenta",
+                "name": {
+                    "label": "Nombre",
+                    "placeholder": "Tu nombre"
+                },
+                "password": {
+                    "label": "Contraseña",
+                    "placeholder": "Tu contraseña"
+                },
+                "password2": {
+                    "label": "Confirmar contraseña",
+                    "placeholder": "Repite tu contraseña"
+                },
+                "surname": {
+                    "label": "Apellido",
+                    "placeholder": "Tu apellido"
+                }
+            },
+            "title": {
+                "login": "Bienvenido de vuelta",
+                "register": "Crea tu cuenta"
+            }
+        }
+    }
+}

@@ -1,0 +1,41 @@
+{
+    "angular-components-style-guide": {
+        "appLayout": {
+            "actions": {
+                "dashboard": {
+                    "label": "Dashboard",
+                    "tooltip": "Go to dashboard"
+                },
+                "documents": {
+                    "label": "Documents",
+                    "tooltip": "Browse documents"
+                },
+                "help": {
+                    "label": "Help",
+                    "tooltip": "Get help"
+                },
+                "reports": {
+                    "label": "Reports",
+                    "tooltip": "View reports"
+                },
+                "reports-annual": {
+                    "label": "Annual",
+                    "tooltip": "View annual reports"
+                },
+                "reports-monthly": {
+                    "label": "Monthly",
+                    "tooltip": "View monthly reports"
+                },
+                "settings": {
+                    "label": "Settings",
+                    "tooltip": "Open settings"
+                }
+            },
+            "content": {
+                "title": "Navigate to update the breadcrumb"
+            },
+            "example": "Full application layout with collapsible side menu, dynamic breadcrumb and content area. Use the buttons or the menu to simulate page navigation.",
+            "title": "Demo App"
+        }
+    }
+}

@@ -1,0 +1,72 @@
+.toast-container .bey-toast {
+    --bey-toast-accent: var(--bey-primary);
+    --bey-toast-accent-soft: rgba(var(--bey-black-rgb), 0.08);
+
+    width: min(100%, 24rem);
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--bey-gray-200);
+    border-left: 3px solid var(--bey-toast-accent);
+    border-radius: 0.5rem;
+    background: var(--bey-bg-surface);
+    box-shadow: 0 8px 24px rgba(var(--bey-black-rgb), 0.1);
+    color: var(--text-primary);
+    pointer-events: auto;
+    animation: bey-toast-in 0.3s ease-out;
+}
+
+@keyframes bey-toast-in {
+    from {
+        opacity: 0;
+        transform: translateX(1.5rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.toast-container .bey-toast .toast-title {
+    color: var(--bey-toast-accent);
+    font-size: 0.84rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.toast-container .bey-toast .toast-message {
+    color: var(--text-secondary);
+    font-size: 0.84rem;
+    line-height: 1.5;
+    margin-top: 0.15rem;
+}
+
+.toast-container .bey-toast .toast-close-button {
+    display: none;
+}
+
+.toast-container .bey-toast .toast-progress {
+    background: var(--bey-toast-accent);
+    height: 2px;
+    opacity: 0.4;
+}
+
+/* Type variants */
+
+.toast-container .bey-toast.toast-info {
+    --bey-toast-accent: var(--bey-primary);
+    --bey-toast-accent-soft: rgba(var(--bey-black-rgb), 0.08);
+}
+
+.toast-container .bey-toast.toast-success {
+    --bey-toast-accent: var(--bey-success);
+    --bey-toast-accent-soft: rgba(var(--bey-teal-rgb), 0.08);
+}
+
+.toast-container .bey-toast.toast-warning {
+    --bey-toast-accent: var(--bey-warning);
+    --bey-toast-accent-soft: rgba(var(--bey-orange-rgb), 0.12);
+}
+
+.toast-container .bey-toast.toast-error {
+    --bey-toast-accent: var(--bey-danger);
+    --bey-toast-accent-soft: rgba(var(--bey-red-rgb), 0.1);
+}

@@ -1,0 +1,64 @@
+{
+    "angular-components-style-guide": {
+        "breadcrumb": {
+            "clicked": "Breadcrumb pulsado:",
+            "example": "Navegación breadcrumb model-driven con manejo automático de desbordamiento, iconos opcionales y estado deshabilitado. El consumidor maneja la navegación mediante el callback onItemClick.",
+            "examples": {
+                "basic": "Básico",
+                "icons": "Con iconos",
+                "overflow": "Desbordamiento (ancho limitado)"
+            },
+            "basic": {
+                "home": {
+                    "label": "Inicio"
+                },
+                "products": {
+                    "label": "Productos"
+                },
+                "detail": {
+                    "label": "Detalle del producto"
+                }
+            },
+            "icons": {
+                "home": {
+                    "label": "Inicio"
+                },
+                "catalog": {
+                    "label": "Catálogo"
+                },
+                "category": {
+                    "label": "Categoría"
+                },
+                "product": {
+                    "label": "Producto"
+                }
+            },
+            "overflow": {
+                "home": {
+                    "label": "Inicio"
+                },
+                "region": {
+                    "label": "Europa"
+                },
+                "country": {
+                    "label": "España"
+                },
+                "state": {
+                    "label": "Andalucía"
+                },
+                "city": {
+                    "label": "Sevilla"
+                },
+                "neighborhood": {
+                    "label": "Santa Cruz"
+                },
+                "street": {
+                    "label": "Calle Mateos Gago"
+                },
+                "building": {
+                    "label": "La Giralda"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,32 @@
+{
+    "angular-components-style-guide": {
+        "table": {
+            "actions": {
+                "open": "Abrir",
+                "opened": "Acción de fila ejecutada"
+            },
+            "columns": {
+                "action": "Acción",
+                "name": "Nombre",
+                "role": "Rol",
+                "status": "Estado"
+            },
+            "empty": "No hay filas disponibles para este ejemplo.",
+            "example": "Tabla de datos con ordenamiento, selección de filas y columnas configurables mediante modelo.",
+            "examples": {
+                "empty": "La misma tabla sin filas",
+                "filled": "La misma tabla con filas"
+            },
+            "selection-changed": "Las filas seleccionadas cambiaron",
+            "status": {
+                "active": "Activo",
+                "paused": "Pausado",
+                "review": "En revisión"
+            },
+            "tooltips": {
+                "name": "Columna principal de identidad",
+                "status": "Las celdas de estado pueden traducirse y mostrar tooltip"
+            }
+        }
+    }
+}

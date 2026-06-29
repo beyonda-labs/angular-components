@@ -1,0 +1,7 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'ngx-bootstrap/datepicker/bs-datepicker.css';
+@import 'ngx-toastr/toastr';
+@import './overrides.css';
+@import './toast.css';
+@import './color-palette.css';
+@import './bs-overrides.css';

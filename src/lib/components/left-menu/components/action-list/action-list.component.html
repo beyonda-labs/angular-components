@@ -1,0 +1,86 @@
+<ng-template #renderActions let-actions let-level="level" let-forceExpanded="forceExpanded" let-parentPath="parentPath">
+    @for (action of actions; track $index) {
+        @let actionPath = buildPath(parentPath, action.key);
+
+        <div
+            class="bey-left-menu-item"
+            [class.bey-left-menu-item-level-child]="level > 0"
+            (mouseleave)="onItemMouseLeave(actionPath, forceExpanded)"
+        >
+            <button
+                type="button"
+                class="bey-left-menu-action"
+                [class.bey-left-menu-action-active]="isActionActive(action)"
+                [class.bey-left-menu-action-collapsed]="!isInlineExpanded(forceExpanded)"
+                [class.bey-left-menu-action-descendant-active]="hasSubmenuSelection(action)"
+                [class.bey-left-menu-action-disabled]="action.disabled"
+                [class.bey-left-menu-action-has-children]="hasSubActions(action)"
+                [class.bey-left-menu-action-open]="isSubmenuOpen(actionPath, forceExpanded)"
+                [disabled]="action.disabled"
+                [tooltip]="getButtonTooltip(action, actionPath, forceExpanded) | translate"
+                container="body"
+                placement="right"
+                (focus)="onItemMouseEnter(action, actionPath, forceExpanded)"
+                (mouseover)="onItemMouseEnter(action, actionPath, forceExpanded)"
+                (click)="onActionClick(action, actionPath, forceExpanded)"
+            >
+                <span class="bey-left-menu-action-icon">
+                    @if (action.icon) {
+                        <fa-icon [icon]="action.icon"></fa-icon>
+                    }
+                </span>
+
+                @if (isInlineExpanded(forceExpanded)) {
+                    <span class="bey-left-menu-action-label">{{ getLabel(action) | translate }}</span>
+                }
+
+                @if (hasSubActions(action)) {
+                    @if (isInlineExpanded(forceExpanded)) {
+                        <span class="bey-left-menu-action-chevron">
+                            <fa-icon [icon]="getChevronIcon(actionPath, forceExpanded)"></fa-icon>
+                        </span>
+                    } @else {
+                        <span class="bey-left-menu-action-marker" aria-hidden="true"></span>
+                    }
+                }
+            </button>
+
+            @if (shouldShowSubmenu(action, actionPath, forceExpanded)) {
+                <div class="bey-left-menu-subactions">
+                    <ng-container
+                        [ngTemplateOutlet]="renderActions"
+                        [ngTemplateOutletContext]="{
+                            $implicit: action.subActions,
+                            level: level + 1,
+                            forceExpanded,
+                            parentPath: actionPath
+                        }"
+                    ></ng-container>
+                </div>
+            }
+
+            @if (shouldShowFlyout(action, actionPath, forceExpanded)) {
+                <div class="bey-left-menu-flyout">
+                    <div class="bey-left-menu-flyout-card">
+                        <div class="bey-left-menu-flyout-title">{{ getLabel(action) | translate }}</div>
+
+                        <ng-container
+                            [ngTemplateOutlet]="renderActions"
+                            [ngTemplateOutletContext]="{
+                                $implicit: action.subActions,
+                                level: 0,
+                                forceExpanded: true,
+                                parentPath: actionPath
+                            }"
+                        ></ng-container>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</ng-template>
+
+<ng-container
+    [ngTemplateOutlet]="renderActions"
+    [ngTemplateOutletContext]="{ $implicit: actions, level: 0, forceExpanded: false, parentPath: groupKey }"
+></ng-container>

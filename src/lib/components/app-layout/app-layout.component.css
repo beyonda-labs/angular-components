@@ -1,0 +1,40 @@
+.bey-app-layout-content {
+    flex: 1 1 0%;
+    min-width: 0;
+    width: 0;
+    position: relative;
+}
+
+:host {
+    --bey-app-layout-bg: var(--bey-bg-page);
+    --bey-app-layout-breadcrumb-border: var(--bey-gray-200);
+    --bey-app-layout-breadcrumb-shadow: 0 2px 4px rgba(var(--bey-white-rgb), 0.9);
+}
+
+:host-context(body.dark) {
+    --bey-app-layout-breadcrumb-border: var(--bey-gray-900);
+    --bey-app-layout-breadcrumb-shadow: 0 2px 8px rgba(var(--bey-black-rgb), 0.7);
+}
+
+.bey-app-layout-breadcrumb {
+    border-bottom-color: var(--bey-app-layout-breadcrumb-border) !important;
+    box-shadow: var(--bey-app-layout-breadcrumb-shadow) !important;
+}
+
+.bey-app-layout {
+    background-color: var(--bey-app-layout-bg);
+    height: 100vh;
+    min-height: 0;
+}
+
+.bey-app-layout-menu {
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.bey-app-layout-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    overflow: hidden auto;
+}

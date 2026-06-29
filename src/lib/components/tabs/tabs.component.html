@@ -1,0 +1,24 @@
+@if (config) {
+    <div class="bey-tabs" role="tablist" [attr.aria-label]="'angular-components.tabs.label' | translate">
+        @for (tab of config.tabs; track tab.key) {
+            <button
+                class="bey-tabs-tab"
+                role="tab"
+                type="button"
+                [attr.aria-selected]="isActive(tab)"
+                [attr.tabindex]="isActive(tab) ? 0 : -1"
+                [class.bey-tabs-tab-active]="isActive(tab)"
+                [class.bey-tabs-tab-disabled]="tab.isDisabled"
+                [disabled]="tab.isDisabled"
+                [tooltip]="getTabTooltip(tab) | translate"
+                (click)="onTabClick(tab)"
+                (keydown)="onKeydown($event)"
+            >
+                @if (tab.icon) {
+                    <fa-icon class="bey-tabs-tab-icon" [icon]="tab.icon"></fa-icon>
+                }
+                {{ getTabLabel(tab) | translate }}
+            </button>
+        }
+    </div>
+}

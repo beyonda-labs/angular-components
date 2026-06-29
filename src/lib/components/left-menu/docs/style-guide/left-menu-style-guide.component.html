@@ -1,0 +1,23 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.leftMenu.example' | translate }}
+</p>
+
+<div class="bey-left-menu-style-guide-grid">
+    <div class="bey-left-menu-style-guide-item">
+        <span class="bey-sg-example-label">
+            {{ 'angular-components-style-guide.leftMenu.examples.expanded' | translate }}
+        </span>
+        <div class="bey-left-menu-style-guide-frame">
+            <bey-left-menu [config]="expandedConfig"></bey-left-menu>
+        </div>
+    </div>
+
+    <div class="bey-left-menu-style-guide-item">
+        <span class="bey-sg-example-label">
+            {{ 'angular-components-style-guide.leftMenu.examples.collapsed' | translate }}
+        </span>
+        <div class="bey-left-menu-style-guide-frame bey-left-menu-style-guide-frame-collapsed">
+            <bey-left-menu [config]="collapsedConfig"></bey-left-menu>
+        </div>
+    </div>
+</div>

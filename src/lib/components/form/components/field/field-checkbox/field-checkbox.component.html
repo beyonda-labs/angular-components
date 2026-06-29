@@ -1,0 +1,18 @@
+@if (field && control) {
+    <div class="form-check">
+        <input
+            class="form-check-input"
+            type="checkbox"
+            [id]="field.key"
+            [formControl]="control"
+            [attr.aria-required]="field.isRequired || null"
+            [attr.aria-invalid]="isInvalid() || null"
+            [attr.aria-label]="!field.isLabelVisible ? (getLabel() | translate) : null"
+        />
+        @if (field.isLabelVisible) {
+            <label class="form-check-label" [for]="field.key">
+                {{ getLabel() | translate }}
+            </label>
+        }
+    </div>
+}

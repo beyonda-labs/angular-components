@@ -1,0 +1,115 @@
+:host {
+    --bey-color-accent: var(--bey-primary);
+    --bey-color-text: var(--text-primary);
+    --bey-color-muted: var(--text-muted);
+    --bey-color-surface: var(--bey-bg-surface);
+    --bey-color-surface-alt: var(--bey-bg-hover);
+    --bey-color-border: var(--bey-gray-200);
+    --bey-color-outline-focus: rgba(var(--bey-black-rgb), 0.2);
+
+    display: block;
+    min-width: 0;
+}
+
+.bey-pagination-shell {
+    padding: 0.85rem 1rem;
+    border-radius: 0.9rem;
+    background-color: var(--bey-color-surface);
+    border: 1px solid var(--bey-color-border);
+}
+
+.bey-pagination-label,
+.bey-pagination-total,
+.bey-pagination-select,
+.bey-pagination-input {
+    color: var(--bey-color-text);
+    font-size: 0.84rem;
+    line-height: 1.35;
+}
+
+.bey-pagination-label {
+    white-space: nowrap;
+}
+
+.bey-pagination-select,
+.bey-pagination-input {
+    min-height: 2.1rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 0.3rem;
+}
+
+.bey-pagination-select {
+    width: 50px;
+    flex-shrink: 0;
+    background: transparent;
+    color: var(--bey-color-text);
+    cursor: pointer;
+    padding-right: 0.7rem;
+    transition: color 150ms ease;
+}
+
+.bey-pagination-input {
+    min-width: 3.2rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.bey-pagination-input::-webkit-outer-spin-button,
+.bey-pagination-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.bey-pagination-input[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.bey-pagination-icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0.45rem;
+    background: transparent;
+    color: var(--bey-color-accent);
+    text-decoration: none;
+    transition:
+        background-color 150ms ease,
+        color 150ms ease,
+        opacity 150ms ease;
+}
+
+.bey-pagination-icon-button:hover:not(:disabled) {
+    background-color: var(--bey-color-surface-alt);
+    color: var(--bey-color-accent);
+}
+
+.bey-pagination-icon-button:disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+}
+
+.bey-pagination-icon-button:focus-visible {
+    outline: 2px solid var(--bey-color-outline-focus);
+    outline-offset: 2px;
+}
+
+.bey-pagination-info-button {
+    color: var(--bey-color-muted);
+}
+
+@media (max-width: 767.98px) {
+    .bey-pagination-shell {
+        align-items: stretch;
+    }
+
+    .bey-pagination-content,
+    .bey-pagination-label {
+        justify-content: center;
+        width: 100%;
+    }
+}

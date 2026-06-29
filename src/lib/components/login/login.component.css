@@ -1,0 +1,346 @@
+:host {
+    --bey-login-line: #e7e7e5;
+    --bey-login-line-2: #d8d8d5;
+    --bey-login-accent: var(--bey-primary);
+    --bey-login-accent-fg: var(--bey-bg-page);
+    --bey-login-accent-hover: #1f1f1e;
+    --bey-login-radius: 10px;
+    --bey-login-font: 'Helvetica Neue', 'Helvetica', 'Inter', 'Arial', system-ui, sans-serif;
+}
+
+:host-context(body.dark) {
+    --bey-login-line: #232322;
+    --bey-login-line-2: #2e2e2c;
+    --bey-login-accent-hover: #e2e2df;
+}
+
+/* ─── Layout ─────────────────────────────────────────────────────────────── */
+.bey-login {
+    position: relative;
+    height: 100vh;
+}
+
+.bey-login__body > main {
+    position: relative;
+    z-index: 1;
+}
+
+.bey-login__body {
+    position: relative;
+    flex: 1 1 auto;
+
+    color: var(--text-primary);
+    background-size: cover;
+    background-position: center;
+    transition:
+        background 0.18s ease,
+        color 0.18s ease;
+}
+
+.bey-login__body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.35) 0%,
+        rgba(255, 255, 255, 0.55) 50%,
+        rgba(255, 255, 255, 0.85) 100%
+    );
+}
+
+:host-context(body.dark) .bey-login__body::before {
+    background: linear-gradient(
+        180deg,
+        rgba(10, 10, 10, 0.55) 0%,
+        rgba(10, 10, 10, 0.7) 50%,
+        rgba(10, 10, 10, 0.92) 100%
+    );
+}
+
+/* ─── Cards ──────────────────────────────────────────────────────────────── */
+.bey-login__card {
+    background: var(--bey-bg-page);
+    border: 1px solid var(--bey-login-line);
+    border-radius: 16px;
+    padding: 40px 36px;
+    box-shadow: var(--bey-login-shadow-card);
+    width: 330px;
+}
+
+/* ─── Left card: presentation ────────────────────────────────────────────── */
+.bey-login__intro-org {
+    gap: 10px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+}
+
+.bey-login__intro-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
+:host-context(body.dark) .bey-login__intro-icon {
+    filter: invert(1);
+}
+
+.bey-login__intro-product {
+    font-size: 35px;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    color: var(--text-primary);
+}
+
+.bey-login__intro-pitch {
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text-primary);
+}
+
+/* ─── Left card: view tabs ───────────────────────────────────────────────── */
+.bey-login__view-tabs {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 24px;
+}
+
+/* ─── Right card: auth ───────────────────────────────────────────────────── */
+.bey-login__welcome h1 {
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px;
+    line-height: 1.15;
+    color: var(--text-primary);
+}
+
+.bey-login__welcome p {
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+/* ─── Field ──────────────────────────────────────────────────────────────── */
+:host ::ng-deep .bey-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+:host ::ng-deep .bey-field-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-family: var(--bey-login-font);
+}
+
+:host ::ng-deep .bey-field-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+}
+
+:host ::ng-deep .bey-field-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: var(--bey-bg-page);
+    border: 1px solid var(--bey-login-line);
+    border-radius: var(--bey-login-radius);
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+:host ::ng-deep .bey-field-wrap:focus-within {
+    border-color: var(--text-primary);
+    box-shadow: 0 0 0 3px rgba(var(--bey-black-rgb), 0.08);
+}
+
+:host-context(body.dark) ::ng-deep .bey-field-wrap:focus-within {
+    box-shadow: 0 0 0 3px rgba(var(--bey-white-rgb), 0.08);
+}
+
+:host ::ng-deep .bey-field.is-error .bey-field-wrap {
+    border-color: var(--bey-danger);
+    box-shadow: 0 0 0 3px rgba(var(--bey-red-rgb), 0.1);
+}
+
+:host ::ng-deep .bey-field-wrap input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    outline: none;
+    padding: 12px 14px;
+    font-family: var(--bey-login-font);
+    font-size: 14px;
+    color: var(--text-primary);
+    border-radius: var(--bey-login-radius);
+}
+
+:host ::ng-deep .bey-field-wrap input:-webkit-autofill {
+    border-radius: var(--bey-login-radius);
+}
+
+:host ::ng-deep .bey-field-wrap input::placeholder {
+    color: var(--text-disabled);
+}
+
+:host ::ng-deep .bey-suffix-btn {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--text-muted);
+    padding: 0 12px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+:host ::ng-deep .bey-suffix-btn:hover {
+    color: var(--text-primary);
+}
+
+:host ::ng-deep .bey-field-msg {
+    min-height: 14px;
+    font-size: 11.5px;
+    color: var(--bey-danger);
+    font-family: var(--bey-login-font);
+}
+
+:host ::ng-deep .bey-link-muted {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-family: var(--bey-login-font);
+}
+
+:host ::ng-deep .bey-link-muted:hover {
+    color: var(--text-primary);
+}
+
+/* ─── CTA ────────────────────────────────────────────────────────────────── */
+:host ::ng-deep .bey-cta {
+    position: relative;
+    width: 100%;
+    height: 44px;
+    border: 0;
+    border-radius: var(--bey-login-radius);
+    background: var(--bey-login-accent);
+    color: var(--bey-login-accent-fg);
+    font-family: var(--bey-login-font);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    cursor: pointer;
+    transition:
+        background 0.15s ease,
+        transform 0.05s ease;
+    margin-top: 4px;
+}
+
+:host ::ng-deep .bey-cta:hover {
+    background: var(--bey-login-accent-hover);
+}
+
+:host ::ng-deep .bey-cta:active {
+    transform: translateY(0.5px);
+}
+
+:host ::ng-deep .bey-cta-spinner {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid rgba(var(--bey-white-rgb), 0.35);
+    border-top-color: var(--bey-login-accent-fg);
+    transform: translateY(-50%);
+    opacity: 0;
+    animation: bey-login-spin 0.7s linear infinite;
+}
+
+:host ::ng-deep .bey-cta.is-loading .bey-cta-lbl {
+    opacity: 0.55;
+}
+
+:host ::ng-deep .bey-cta.is-loading .bey-cta-spinner {
+    opacity: 1;
+}
+
+@keyframes bey-login-spin {
+    to {
+        rotate: 1turn;
+    }
+}
+
+/* ─── Divider ────────────────────────────────────────────────────────────── */
+:host ::ng-deep .bey-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 18px 0;
+    color: var(--text-disabled);
+    font-size: 11.5px;
+    letter-spacing: 0.08em;
+    font-family: var(--bey-login-font);
+}
+
+:host ::ng-deep .bey-divider::before,
+:host ::ng-deep .bey-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--bey-login-line);
+}
+
+/* ─── Providers ──────────────────────────────────────────────────────────── */
+:host ::ng-deep .bey-providers {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 880px) {
+    .bey-login__cards {
+        flex-direction: column;
+    }
+
+    .bey-login__card {
+        width: 100%;
+        padding: 32px 28px;
+    }
+
+    .bey-login__card.me-3 {
+        margin-right: 0 !important;
+        margin-bottom: 16px;
+    }
+
+    .bey-login__intro-product {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 540px) {
+    .bey-login__card {
+        padding: 24px 20px;
+    }
+
+    .bey-login__intro-product {
+        font-size: 22px;
+    }
+}

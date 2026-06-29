@@ -1,0 +1,31 @@
+<div
+    class="bey-table-row"
+    [class.bey-table-row-header]="isHeader"
+    [class.bey-table-row-selectable]="config.selectable && !isHeader"
+    [class.bey-table-row-selected]="row.selected"
+    [style.grid-template-columns]="gridTemplateColumns"
+    (click)="onRowClick()"
+>
+    @if (config.selectable) {
+        <label class="bey-table-row-selection" (click)="$event.stopPropagation()">
+            <span class="visually-hidden">{{ getSelectRowLabel() | translate }}</span>
+            <input
+                class="bey-table-row-checkbox"
+                type="checkbox"
+                [checked]="row.selected"
+                [indeterminate]="selectionIndeterminate"
+                [attr.aria-label]="getSelectRowLabel() | translate"
+                (click)="onCheckboxClick($event)"
+                (change)="onCheckboxChange($event)"
+            />
+        </label>
+    }
+
+    @for (cell of row.cells; track $index) {
+        <bey-table-cell
+            [cell]="cell"
+            [isHeader]="isHeader"
+            [showTooltip]="config.showTooltip && !isHeader"
+        ></bey-table-cell>
+    }
+</div>

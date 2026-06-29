@@ -1,0 +1,31 @@
+{
+    "angular-components-style-guide": {
+        "toast": {
+            "buttons": {
+                "success": "Mostrar toast de éxito",
+                "info": "Mostrar toast informativo",
+                "warning": "Mostrar toast de advertencia",
+                "error": "Mostrar toast de error"
+            },
+            "example": "Notificaciones toast controladas por servicio con ngx-toastr y un estilo sobrio alineado con el resto de la librería.",
+            "examples": {
+                "success": {
+                    "message": "El registro se guardó correctamente y ya está disponible para el equipo.",
+                    "title": "Registro guardado"
+                },
+                "info": {
+                    "message": "El proceso de sincronización se inició y terminará en segundo plano.",
+                    "title": "Sincronización iniciada"
+                },
+                "warning": {
+                    "message": "Hay cambios pendientes que aún no se han guardado.",
+                    "title": "Cambios sin guardar"
+                },
+                "error": {
+                    "message": "No fue posible completar la solicitud. Inténtelo de nuevo más tarde.",
+                    "title": "Algo salió mal"
+                }
+            }
+        }
+    }
+}

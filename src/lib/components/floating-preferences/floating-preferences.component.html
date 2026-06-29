@@ -1,0 +1,22 @@
+<span class="bey-fp-select">
+    <span class="bey-fp-select__control">
+        <select [value]="lang$ | async" (change)="onLangChange($any($event.target).value)">
+            <option value="es">Español</option>
+            <option value="en">English</option>
+        </select>
+        <span class="bey-fp-chev" aria-hidden="true">
+            <fa-icon [icon]="faChevronDown"></fa-icon>
+        </span>
+    </span>
+</span>
+<span class="bey-fp-select">
+    <span class="bey-fp-select__control">
+        <select [value]="theme$ | async" (change)="onThemeChange($any($event.target).value)">
+            <option value="light">{{ 'angular-components.floating-preferences.light' | translate }}</option>
+            <option value="dark">{{ 'angular-components.floating-preferences.dark' | translate }}</option>
+        </select>
+        <span class="bey-fp-chev" aria-hidden="true">
+            <fa-icon [icon]="faChevronDown"></fa-icon>
+        </span>
+    </span>
+</span>

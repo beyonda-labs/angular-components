@@ -1,0 +1,26 @@
+@if (isSectionVisible()) {
+    <div class="w-100 mb-2">
+        <!-- title -->
+        @if (section.isTitleVisible) {
+            <p
+                class="bey-form-section-title fw-semibold text-dark mb-3"
+                [tooltip]="getSectionTooltip() | translate"
+                placement="right"
+                container="body"
+            >
+                {{ getSectionLabel() | translate }}
+            </p>
+        }
+        <!-- rows -->
+        @for (row of section.rows; track $index) {
+            <div class="w-100 d-flex gap-2">
+                <bey-form-row
+                    class="w-100 mb-2"
+                    [formConfig]="formConfig"
+                    [section]="section"
+                    [row]="row"
+                ></bey-form-row>
+            </div>
+        }
+    </div>
+}

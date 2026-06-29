@@ -1,0 +1,41 @@
+{
+    "angular-components-style-guide": {
+        "modal": {
+            "buttons": {
+                "confirmation": "Open confirmation modal",
+                "error": "Open error modal",
+                "info": "Open info modal",
+                "warning": "Open warning modal"
+            },
+            "example": "Service-driven modal examples using ngx-bootstrap with a restrained visual style aligned with the rest of the library.",
+            "examples": {
+                "confirmation": {
+                    "message": "This action archives the current record and can be reverted later from history.",
+                    "title": "Archive current record"
+                },
+                "error": {
+                    "message": "The request could not be completed. Review the connection or try again in a few seconds.",
+                    "title": "Something went wrong"
+                },
+                "info": {
+                    "message": "The record was synchronized successfully and the latest version is already available to the team.",
+                    "title": "Synchronization completed"
+                },
+                "warning": {
+                    "message": "There are pending changes in this section. If you continue, they will be replaced by the last saved version.",
+                    "title": "Review pending changes"
+                }
+            },
+            "feedback": {
+                "canceled": {
+                    "message": "The archive action was canceled and no changes were applied.",
+                    "title": "Action canceled"
+                },
+                "confirmed": {
+                    "message": "The record was queued for archive and the process will finish in the background.",
+                    "title": "Action confirmed"
+                }
+            }
+        }
+    }
+}

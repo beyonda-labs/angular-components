@@ -1,0 +1,38 @@
+<div class="bey-modal" [class]="'bey-modal bey-modal-' + config.type">
+    <div class="d-flex align-items-start justify-content-between gap-3">
+        <div class="d-flex align-items-start gap-3 grow min-w-0">
+            <span class="bey-modal-icon" aria-hidden="true">
+                <fa-icon [icon]="getIcon()"></fa-icon>
+            </span>
+
+            <div class="min-w-0 grow">
+                <div class="bey-modal-type">{{ getTypeLabel() | translate }}</div>
+                <h2 class="bey-modal-title">{{ config.title | translate }}</h2>
+            </div>
+        </div>
+
+        <button
+            type="button"
+            class="btn btn-sm rounded-circle d-inline-flex align-items-center justify-content-center shrink-0 bey-modal-close"
+            [attr.aria-label]="'angular-components.modal.actions.close' | translate"
+            (click)="dismiss()"
+        >
+            <span aria-hidden="true">&times;</span>
+            <span class="visually-hidden">{{ 'angular-components.modal.actions.close' | translate }}</span>
+        </button>
+    </div>
+
+    <p class="bey-modal-message mt-3 mb-0">{{ config.message | translate: config.messageParameters }}</p>
+
+    <div class="d-flex justify-content-end gap-2 mt-4 bey-modal-actions">
+        @if (hasSecondaryAction()) {
+            <span class="bey-modal-action-slot">
+                <bey-button [button]="getSecondaryButton()"></bey-button>
+            </span>
+        }
+
+        <span class="bey-modal-action-slot">
+            <bey-button [button]="getPrimaryButton()"></bey-button>
+        </span>
+    </div>
+</div>

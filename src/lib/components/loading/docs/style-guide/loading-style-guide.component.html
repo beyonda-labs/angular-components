@@ -1,0 +1,95 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.loading.example' | translate }}
+</p>
+
+<h4 class="mt-4 mb-3 fs-6 fw-semibold text-dark">Inline</h4>
+
+<div class="d-flex flex-wrap align-items-center gap-4">
+    <div class="bey-loading-style-guide-size text-center">
+        <bey-loading [size]="LoadingSize.Xs"></bey-loading>
+        <div class="bey-sg-info text-muted mt-2">
+            {{ 'angular-components-style-guide.loading.sizes.xs' | translate }}
+        </div>
+    </div>
+
+    <div class="bey-loading-style-guide-size text-center">
+        <bey-loading [size]="LoadingSize.Sm"></bey-loading>
+        <div class="bey-sg-info text-muted mt-2">
+            {{ 'angular-components-style-guide.loading.sizes.sm' | translate }}
+        </div>
+    </div>
+
+    <div class="bey-loading-style-guide-size text-center">
+        <bey-loading [size]="LoadingSize.Md"></bey-loading>
+        <div class="bey-sg-info text-muted mt-2">
+            {{ 'angular-components-style-guide.loading.sizes.md' | translate }}
+        </div>
+    </div>
+
+    <div class="bey-loading-style-guide-size text-center">
+        <bey-loading [size]="LoadingSize.Lg"></bey-loading>
+        <div class="bey-sg-info text-muted mt-2">
+            {{ 'angular-components-style-guide.loading.sizes.lg' | translate }}
+        </div>
+    </div>
+
+    <div class="bey-loading-style-guide-size text-center">
+        <bey-loading size="3.25rem"></bey-loading>
+        <div class="bey-sg-info text-muted mt-2">
+            {{ 'angular-components-style-guide.loading.sizes.custom' | translate }}
+        </div>
+    </div>
+</div>
+
+<h4 class="mt-4 mb-3 fs-6 fw-semibold text-dark">Overlay</h4>
+
+<div class="d-flex flex-wrap gap-4 align-items-start">
+    <div class="bey-loading-style-guide-overlay-box">
+        <div class="bey-sg-example-label text-muted mb-2">
+            {{ 'angular-components-style-guide.loading.overlay.container' | translate }}
+        </div>
+        <div class="bey-loading-style-guide-overlay-container position-relative border rounded-3 p-3">
+            <p class="text-muted mb-0 small">
+                {{ 'angular-components-style-guide.loading.sample-content' | translate }}
+            </p>
+            <bey-loading-overlay [size]="LoadingSize.Md"></bey-loading-overlay>
+        </div>
+        <div class="bey-loading-style-guide-overlay-description text-muted mt-1">
+            {{ 'angular-components-style-guide.loading.overlay.container-description' | translate }}
+        </div>
+    </div>
+
+    <div class="bey-loading-style-guide-overlay-box">
+        <div class="bey-sg-example-label text-muted mb-2">
+            {{ 'angular-components-style-guide.loading.overlay.fullscreen' | translate }}
+        </div>
+        <span class="bey-sg-action-slot">
+            <bey-button [button]="toggleFullscreenButton"></bey-button>
+        </span>
+        <div class="bey-loading-style-guide-overlay-description text-muted mt-1">
+            {{ 'angular-components-style-guide.loading.overlay.fullscreen-description' | translate }}
+        </div>
+    </div>
+</div>
+
+@if (showFullscreenOverlay) {
+    <bey-loading-overlay [fullscreen]="true" (click)="showFullscreenOverlay = false"></bey-loading-overlay>
+}
+
+<h4 class="mt-4 mb-3 fs-6 fw-semibold text-dark">Service</h4>
+
+<div class="d-flex flex-wrap gap-4 align-items-start">
+    <div class="bey-loading-style-guide-overlay-box">
+        <div class="bey-sg-example-label text-muted mb-2">
+            {{ 'angular-components-style-guide.loading.service.label' | translate }}
+        </div>
+        <span class="bey-sg-action-slot">
+            <bey-button [button]="toggleServiceButton"></bey-button>
+        </span>
+        <div class="bey-loading-style-guide-overlay-description text-muted mt-1">
+            {{ 'angular-components-style-guide.loading.service.description' | translate }}
+        </div>
+    </div>
+</div>
+
+<bey-loading-container></bey-loading-container>

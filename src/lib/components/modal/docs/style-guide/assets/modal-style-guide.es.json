@@ -1,0 +1,41 @@
+{
+    "angular-components-style-guide": {
+        "modal": {
+            "buttons": {
+                "confirmation": "Abrir modal de confirmación",
+                "error": "Abrir modal de error",
+                "info": "Abrir modal informativo",
+                "warning": "Abrir modal de advertencia"
+            },
+            "example": "Ejemplos de modales controlados por servicio con ngx-bootstrap y un estilo sobrio alineado con el resto de la librería.",
+            "examples": {
+                "confirmation": {
+                    "message": "Esta acción archivará el registro actual y podrá revertirse más tarde desde el historial.",
+                    "title": "Archivar registro actual"
+                },
+                "error": {
+                    "message": "No fue posible completar la solicitud. Revise la conexión o vuelva a intentarlo en unos segundos.",
+                    "title": "Algo salió mal"
+                },
+                "info": {
+                    "message": "El registro se sincronizó correctamente y la última versión ya está disponible para el equipo.",
+                    "title": "Sincronización completada"
+                },
+                "warning": {
+                    "message": "Hay cambios pendientes en esta sección. Si continúa, se reemplazarán por la última versión guardada.",
+                    "title": "Revise los cambios pendientes"
+                }
+            },
+            "feedback": {
+                "canceled": {
+                    "message": "La acción de archivo fue cancelada y no se aplicaron cambios.",
+                    "title": "Acción cancelada"
+                },
+                "confirmed": {
+                    "message": "El registro fue enviado a archivo y el proceso terminará en segundo plano.",
+                    "title": "Acción confirmada"
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,17 @@
+@if (button && !button.isHidden) {
+    <span
+        class="d-inline-block"
+        [tooltip]="button.tooltip | translate"
+        container="body"
+        [style]="button.customStyles"
+    >
+        <button [class]="getClasses()" [disabled]="button.isDisabled" (click)="onClick()">
+            @if (button.icon) {
+                <fa-icon [class]="'bey-button-icon' + (button.label ? ' me-2' : '')" [icon]="button.icon"></fa-icon>
+            }
+            @if (button.label) {
+                {{ button.label | translate }}
+            }
+        </button>
+    </span>
+}

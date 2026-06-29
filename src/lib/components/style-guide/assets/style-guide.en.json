@@ -1,0 +1,21 @@
+{
+    "angular-components-style-guide": {
+        "appLayouts": "App Layouts",
+        "components": "Components",
+        "headers": "Headers",
+        "modals": "Modals",
+        "toasts": "Toasts",
+        "leftMenus": "Left Menus",
+        "floating-preferences-section": "Floating Preferences",
+        "footers": "Footers",
+        "forms": "Forms",
+        "loadings": "Loading",
+        "tables": "Tables",
+        "tabs-section": "Tabs",
+        "breadcrumbs": "Breadcrumbs",
+        "login-section": "Login",
+        "title": "Beyonda Labs - Angular Components - Style Guide",
+        "simple": "Simple",
+        "compound": "Compound"
+    }
+}

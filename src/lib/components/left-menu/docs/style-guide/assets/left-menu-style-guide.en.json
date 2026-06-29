@@ -1,0 +1,58 @@
+{
+    "angular-components-style-guide": {
+        "leftMenu": {
+            "actions": {
+                "calendar": {
+                    "label": "Calendar",
+                    "tooltip": "Open calendar"
+                },
+                "chat": {
+                    "label": "Chat",
+                    "tooltip": "Open chat"
+                },
+                "dashboard": {
+                    "label": "Dashboard",
+                    "tooltip": "Go to dashboard"
+                },
+                "documents": {
+                    "label": "Documents",
+                    "tooltip": "Browse documents"
+                },
+                "export": {
+                    "label": "Exported",
+                    "tooltip": "View exported files"
+                },
+                "inbox": {
+                    "label": "Inbox",
+                    "tooltip": "Open inbox"
+                },
+                "incoming": {
+                    "label": "Incoming",
+                    "tooltip": "Review incoming files"
+                },
+                "info": {
+                    "label": "Information",
+                    "tooltip": "View information"
+                },
+                "statistics": {
+                    "label": "Statistics",
+                    "tooltip": "Open statistics"
+                },
+                "support": {
+                    "label": "Support",
+                    "tooltip": "Get support"
+                }
+            },
+            "example": "Left menu with grouped actions, nested navigation and collapsed behavior.",
+            "examples": {
+                "collapsed": "Collapsed example",
+                "expanded": "Expanded example"
+            },
+            "sections": {
+                "menu": "Menu",
+                "others": "Others"
+            },
+            "title": "Beyonda Labs"
+        }
+    }
+}

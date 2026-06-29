@@ -1,0 +1,95 @@
+:host {
+    --bey-fp-fg: var(--bey-gray-700);
+    --bey-fp-fg-hover: var(--text-primary);
+    --bey-fp-fg-muted: var(--bey-gray-600);
+    --bey-fp-bg-hover: var(--bey-gray-50);
+    --bey-fp-border-focus: var(--bey-gray-300);
+    --bey-fp-pill-bg: rgba(var(--bey-white-rgb), 0.7);
+    --bey-fp-pill-border: rgba(var(--bey-black-rgb), 0.08);
+    --bey-fp-pill-shadow: 0 4px 20px rgba(var(--bey-black-rgb), 0.12);
+
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    border: 1px solid var(--bey-fp-pill-border);
+    background: var(--bey-fp-pill-bg);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    backdrop-filter: blur(14px) saturate(160%);
+    box-shadow: var(--bey-fp-pill-shadow);
+    animation: bey-fp-float-in 0.25s ease;
+}
+
+:host-context(body.dark) {
+    --bey-fp-fg: var(--bey-gray-300);
+    --bey-fp-fg-muted: var(--bey-gray-500);
+    --bey-fp-bg-hover: var(--bey-gray-900);
+    --bey-fp-border-focus: var(--bey-gray-800);
+    --bey-fp-pill-bg: rgba(var(--bey-black-rgb), 0.7);
+    --bey-fp-pill-border: rgba(var(--bey-white-rgb), 0.1);
+    --bey-fp-pill-shadow: 0 4px 20px rgba(var(--bey-white-rgb), 0.07);
+}
+
+.bey-fp-select {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.bey-fp-select__control {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.bey-fp-select__control select {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--bey-fp-fg);
+    font-family: 'Helvetica Neue', 'Helvetica', 'Inter', 'Arial', system-ui, sans-serif;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 4px 22px 4px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+    outline: none;
+    transition:
+        background 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.bey-fp-select select:hover {
+    background: var(--bey-fp-bg-hover);
+    color: var(--bey-fp-fg-hover);
+}
+
+.bey-fp-select select:focus-visible {
+    border-color: var(--bey-fp-border-focus);
+    background: var(--bey-fp-bg-hover);
+}
+
+.bey-fp-chev {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--bey-fp-fg-muted);
+    display: flex;
+    font-size: 10px;
+}
+
+@keyframes bey-fp-float-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

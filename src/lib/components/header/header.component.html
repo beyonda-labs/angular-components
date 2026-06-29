@@ -1,0 +1,25 @@
+@if (config) {
+    <div class="bey-header">
+        <div class="bey-header-left">
+            @if (config.title) {
+                <h1 class="bey-header-title">{{ getTitle() | translate }}</h1>
+            }
+
+            @if (leftActions.length) {
+                <div class="bey-header-actions bey-header-actions-left">
+                    @for (action of leftActions; track action.key) {
+                        <bey-button [button]="getActionButton(action)"></bey-button>
+                    }
+                </div>
+            }
+        </div>
+
+        @if (rightActions.length) {
+            <div class="bey-header-actions bey-header-actions-right">
+                @for (action of rightActions; track action.key) {
+                    <bey-button [button]="getActionButton(action)"></bey-button>
+                }
+            </div>
+        }
+    </div>
+}

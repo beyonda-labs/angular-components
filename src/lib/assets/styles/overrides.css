@@ -1,0 +1,72 @@
+:root {
+    --bs-red: #b31914;
+    --bs-orange: #ffa624;
+    --bs-teal: #20c997;
+
+    --bs-primary: var(--bs-teal);
+    --bs-secondary: #949b98;
+    --bs-success: var(--bs-primary);
+    --bs-danger: var(--bs-red);
+    --bs-warning: var(--bs-orange);
+    --bs-dark: #000;
+    --bs-body-color: var(--bey-color-dark-100);
+    --bs-heading-color: var(--bey-color-dark-100);
+
+    --bey-color-white: #fff;
+    --bey-color-dark-100: #252525;
+    --bey-color-dark-200: #454749;
+    --bey-color-dark-300: #575757;
+    --bey-color-dark-400: #2c2d2e;
+    --bey-color-neutral-100: #f5f5f5;
+    --bey-color-neutral-200: #f0f0f0;
+    --bey-color-neutral-300: #e9ecef;
+    --bey-color-neutral-400: #adb5bd;
+    --bey-shadow-dark-rgb: 66, 70, 73;
+    --bey-shadow-inset-soft: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+
+    --bey-datepicker-border-color: var(--bs-secondary);
+    --bey-datepicker-surface-color: var(--bey-color-white);
+    --bey-datepicker-divider-color: var(--bey-color-neutral-300);
+    --bey-datepicker-text-color: var(--bs-dark);
+    --bey-datepicker-muted-color: var(--bey-color-neutral-400);
+    --bey-datepicker-hover-color: var(--bey-color-neutral-100);
+    --bey-datepicker-highlight-color: var(--bey-color-neutral-200);
+    --bey-datepicker-accent-color: var(--bs-dark);
+    --bey-datepicker-accent-contrast-color: var(--bey-color-white);
+}
+
+body.dark {
+    --bs-red: #c96b68;
+    --bs-orange: #d49a2e;
+    --bs-teal: #2db896;
+
+    --bs-primary: var(--bs-teal);
+    --bs-secondary: #7a8380;
+    --bs-success: var(--bs-primary);
+    --bs-danger: var(--bs-red);
+    --bs-warning: var(--bs-orange);
+    --bs-dark: #f8f9fa;
+    --bs-body-color: var(--bey-color-dark-100);
+    --bs-heading-color: var(--bey-color-dark-100);
+
+    --bey-color-white: #1a1a1a;
+    --bey-color-dark-100: #e0e0e0;
+    --bey-color-dark-200: #babcbd;
+    --bey-color-dark-300: #a8a8a8;
+    --bey-color-dark-400: #d2d3d4;
+    --bey-color-neutral-100: #1e1e1e;
+    --bey-color-neutral-200: #262626;
+    --bey-color-neutral-300: #2e3134;
+    --bey-color-neutral-400: #6c757d;
+    --bey-shadow-dark-rgb: 0, 0, 0;
+    --bey-shadow-inset-soft: inset 0 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* ─── Floating preferences anchor ─────────────────────────────────────── */
+.bey-fp-anchor {
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    z-index: 10;
+    pointer-events: auto;
+}

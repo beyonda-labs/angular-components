@@ -1,0 +1,31 @@
+{
+    "angular-components-style-guide": {
+        "toast": {
+            "buttons": {
+                "success": "Show success toast",
+                "info": "Show info toast",
+                "warning": "Show warning toast",
+                "error": "Show error toast"
+            },
+            "example": "Service-driven toast notifications using ngx-toastr with a restrained visual style aligned with the rest of the library.",
+            "examples": {
+                "success": {
+                    "message": "The record was saved successfully and is now available to the team.",
+                    "title": "Record saved"
+                },
+                "info": {
+                    "message": "The synchronization process started and will finish in the background.",
+                    "title": "Synchronization started"
+                },
+                "warning": {
+                    "message": "There are pending changes that have not been saved yet.",
+                    "title": "Unsaved changes"
+                },
+                "error": {
+                    "message": "The request could not be completed. Please try again later.",
+                    "title": "Something went wrong"
+                }
+            }
+        }
+    }
+}

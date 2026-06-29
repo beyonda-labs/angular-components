@@ -1,0 +1,26 @@
+{
+    "angular-components-style-guide": {
+        "header": {
+            "actions": {
+                "duplicate": {
+                    "label": "Duplicate",
+                    "tooltip": "Duplicate goal"
+                },
+                "edit": {
+                    "label": "Edit",
+                    "tooltip": "Edit goal"
+                },
+                "export": {
+                    "label": "Export",
+                    "tooltip": "Export goal"
+                },
+                "newGoal": {
+                    "label": "New goal",
+                    "tooltip": "Create a new goal"
+                }
+            },
+            "example": "Header with actions on both sides.",
+            "title": "Goals"
+        }
+    }
+}

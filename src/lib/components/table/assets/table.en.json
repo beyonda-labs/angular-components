@@ -1,0 +1,8 @@
+{
+    "angular-components": {
+        "table": {
+            "select-all": "Select all rows",
+            "select-row": "Select row"
+        }
+    }
+}

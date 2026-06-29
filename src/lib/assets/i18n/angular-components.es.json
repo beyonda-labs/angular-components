@@ -1,0 +1,706 @@
+{
+    "angular-components-style-guide": {
+        "appLayout": {
+            "actions": {
+                "dashboard": {
+                    "label": "Panel",
+                    "tooltip": "Ir al panel"
+                },
+                "documents": {
+                    "label": "Documentos",
+                    "tooltip": "Explorar documentos"
+                },
+                "help": {
+                    "label": "Ayuda",
+                    "tooltip": "Obtener ayuda"
+                },
+                "reports": {
+                    "label": "Informes",
+                    "tooltip": "Ver informes"
+                },
+                "reports-annual": {
+                    "label": "Anuales",
+                    "tooltip": "Ver informes anuales"
+                },
+                "reports-monthly": {
+                    "label": "Mensuales",
+                    "tooltip": "Ver informes mensuales"
+                },
+                "settings": {
+                    "label": "Ajustes",
+                    "tooltip": "Abrir ajustes"
+                }
+            },
+            "content": {
+                "title": "Navega para actualizar el breadcrumb"
+            },
+            "example": "Diseño completo de aplicación con menú lateral colapsable, breadcrumb dinámico y área de contenido. Usa los botones o el menú para simular la navegación entre páginas.",
+            "title": "App Demo"
+        },
+        "breadcrumb": {
+            "clicked": "Breadcrumb pulsado:",
+            "example": "Navegación breadcrumb model-driven con manejo automático de desbordamiento, iconos opcionales y estado deshabilitado. El consumidor maneja la navegación mediante el callback onItemClick.",
+            "examples": {
+                "basic": "Básico",
+                "icons": "Con iconos",
+                "overflow": "Desbordamiento (ancho limitado)"
+            },
+            "basic": {
+                "home": {
+                    "label": "Inicio"
+                },
+                "products": {
+                    "label": "Productos"
+                },
+                "detail": {
+                    "label": "Detalle del producto"
+                }
+            },
+            "icons": {
+                "home": {
+                    "label": "Inicio"
+                },
+                "catalog": {
+                    "label": "Catálogo"
+                },
+                "category": {
+                    "label": "Categoría"
+                },
+                "product": {
+                    "label": "Producto"
+                }
+            },
+            "overflow": {
+                "home": {
+                    "label": "Inicio"
+                },
+                "region": {
+                    "label": "Europa"
+                },
+                "country": {
+                    "label": "España"
+                },
+                "state": {
+                    "label": "Andalucía"
+                },
+                "city": {
+                    "label": "Sevilla"
+                },
+                "neighborhood": {
+                    "label": "Santa Cruz"
+                },
+                "street": {
+                    "label": "Calle Mateos Gago"
+                },
+                "building": {
+                    "label": "La Giralda"
+                }
+            }
+        },
+        "floating-preferences": {
+            "example": "Píldora autogestionada con selectores de idioma y tema. Lee y escribe el estado directamente a través de TranslateService y BeyThemeService — no requiere inputs ni configuración."
+        },
+        "footer": {
+            "example": "Barra de pie de página orientada a modelos con identidad de marca (icono, organización y nombre de producto) y enlaces de navegación legal opcionales (Términos y condiciones, Política de privacidad) mediante Angular Router.",
+            "examples": {
+                "minimal": "Mínimo",
+                "withLinks": "Con enlaces legales"
+            },
+            "minimal": {
+                "productName": "Mi Aplicación"
+            },
+            "withLinks": {
+                "orgName": "Beyonda Labs",
+                "productName": "Mi Aplicación"
+            }
+        },
+        "form": {
+            "button": {
+                "cancel": "Cancelar",
+                "submit": "Enviar"
+            },
+            "canceled": "El formulario se ha reiniciado",
+            "changed": "Valor del formulario cambiado: ",
+            "example": "Formulario model-driven basado en configuración con validación, campos condicionales y layout responsive.",
+            "sectionText": {
+                "label": "Campos de texto",
+                "tooltip": "Diferentes configuraciones de campos de texto",
+                "text1": {
+                    "label": "Texto obligatorio",
+                    "placeholder": "Escriba un valor",
+                    "tooltip": "Este campo es obligatorio"
+                },
+                "text2": {
+                    "label": "Texto (50%)",
+                    "placeholder": "Texto a media anchura",
+                    "tooltip": "Ejemplo con 6 columnas"
+                },
+                "text3": {
+                    "label": "Solo letras",
+                    "placeholder": "Solo letras (A-Z)"
+                },
+                "text4": {
+                    "label": "Texto deshabilitado",
+                    "placeholder": "Campo deshabilitado"
+                },
+                "text5": {
+                    "label": "Texto",
+                    "placeholder": "Otro campo de texto"
+                }
+            },
+            "sectionPassword": {
+                "label": "Campos de contraseña",
+                "tooltip": "Campos de contraseña con toggle, obligatorio y deshabilitado",
+                "password1": {
+                    "label": "Contraseña",
+                    "placeholder": "Ingrese su contraseña"
+                },
+                "password2": {
+                    "label": "Contraseña obligatoria",
+                    "placeholder": "Contraseña obligatoria"
+                },
+                "password3": {
+                    "label": "Contraseña deshabilitada",
+                    "placeholder": "Campo deshabilitado"
+                },
+                "password4": {
+                    "label": "Contraseña sin toggle",
+                    "placeholder": "Sin toggle de visibilidad"
+                }
+            },
+            "sectionDate": {
+                "label": "Campos de fecha",
+                "tooltip": "Campos de fecha con rango, obligatorio y deshabilitado",
+                "date1": {
+                    "label": "Fecha con rango"
+                },
+                "date2": {
+                    "label": "Fecha obligatoria"
+                },
+                "date3": {
+                    "label": "Fecha deshabilitada"
+                }
+            },
+            "sectionNumber": {
+                "label": "Campos numéricos",
+                "tooltip": "Campos numéricos con rango, obligatorio y deshabilitado",
+                "number1": {
+                    "label": "Número con rango",
+                    "placeholder": "Número entre 1 y 100"
+                },
+                "number2": {
+                    "label": "Número obligatorio",
+                    "placeholder": "Ingrese un número"
+                },
+                "number3": {
+                    "label": "Número deshabilitado",
+                    "placeholder": "Valor deshabilitado"
+                }
+            },
+            "sectionSelect": {
+                "label": "Campos de selección",
+                "tooltip": "Variantes de select con comportamiento básico, obligatorio y deshabilitado",
+                "select1": {
+                    "label": "Select básico",
+                    "placeholder": "Seleccione una opción",
+                    "options": {
+                        "option1": "Opción 1",
+                        "option2": "Opción 2"
+                    }
+                },
+                "select2": {
+                    "label": "Select obligatorio",
+                    "placeholder": "Seleccione una opción obligatoria",
+                    "options": {
+                        "option1": "Opción obligatoria 1",
+                        "option2": "Opción obligatoria 2"
+                    }
+                },
+                "select3": {
+                    "label": "Select deshabilitado",
+                    "placeholder": "Select deshabilitado",
+                    "options": {
+                        "option1": "Opción deshabilitada 1",
+                        "option2": "Opción deshabilitada 2"
+                    }
+                }
+            },
+            "sectionRadio": {
+                "label": "Campos de radio",
+                "tooltip": "Variantes de radio con configuración básica y obligatoria",
+                "radio1": {
+                    "label": "Radio básico",
+                    "options": {
+                        "option1": "Opción 1",
+                        "option2": "Opción 2"
+                    }
+                },
+                "radio2": {
+                    "label": "Radio obligatorio",
+                    "options": {
+                        "option1": "Opción obligatoria 1",
+                        "option2": "Opción obligatoria 2",
+                        "option3": "Opción deshabilitada"
+                    }
+                }
+            },
+            "sectionTextarea": {
+                "label": "Campos de texto largo",
+                "tooltip": "Variantes de textarea con filas, obligatorio y deshabilitado",
+                "textarea1": {
+                    "label": "Textarea con altura máxima",
+                    "placeholder": "Escriba detalles adicionales"
+                },
+                "textarea2": {
+                    "label": "Textarea obligatorio",
+                    "placeholder": "Texto largo obligatorio"
+                },
+                "textarea3": {
+                    "label": "Textarea deshabilitado",
+                    "placeholder": "Texto largo deshabilitado"
+                }
+            },
+            "sectionCheckbox": {
+                "label": "Campos de checkbox",
+                "tooltip": "Variantes de checkbox con estado básico, obligatorio y deshabilitado",
+                "checkbox1": {
+                    "label": "Aceptar términos"
+                },
+                "checkbox2": {
+                    "label": "Consentimiento obligatorio"
+                },
+                "checkbox3": {
+                    "label": "Checkbox deshabilitado"
+                }
+            },
+            "submitted": "El formulario ha sido enviado: "
+        },
+        "header": {
+            "actions": {
+                "duplicate": {
+                    "label": "Duplicar",
+                    "tooltip": "Duplicar objetivo"
+                },
+                "edit": {
+                    "label": "Editar",
+                    "tooltip": "Editar objetivo"
+                },
+                "export": {
+                    "label": "Exportar",
+                    "tooltip": "Exportar objetivos"
+                },
+                "newGoal": {
+                    "label": "Nuevo objetivo",
+                    "tooltip": "Crear un nuevo objetivo"
+                }
+            },
+            "example": "Cabecera con acciones a ambos lados.",
+            "title": "Objetivos"
+        },
+        "leftMenu": {
+            "actions": {
+                "calendar": {
+                    "label": "Calendario",
+                    "tooltip": "Abrir calendario"
+                },
+                "chat": {
+                    "label": "Chat",
+                    "tooltip": "Abrir chat"
+                },
+                "dashboard": {
+                    "label": "Panel",
+                    "tooltip": "Ir al panel"
+                },
+                "documents": {
+                    "label": "Documentos",
+                    "tooltip": "Explorar documentos"
+                },
+                "export": {
+                    "label": "Exportados",
+                    "tooltip": "Ver archivos exportados"
+                },
+                "inbox": {
+                    "label": "Bandeja",
+                    "tooltip": "Abrir bandeja"
+                },
+                "incoming": {
+                    "label": "Entrantes",
+                    "tooltip": "Revisar archivos entrantes"
+                },
+                "info": {
+                    "label": "Información",
+                    "tooltip": "Ver información"
+                },
+                "statistics": {
+                    "label": "Estadísticas",
+                    "tooltip": "Abrir estadísticas"
+                },
+                "support": {
+                    "label": "Soporte",
+                    "tooltip": "Obtener soporte"
+                }
+            },
+            "example": "Menú lateral con acciones agrupadas, navegación anidada y comportamiento colapsado.",
+            "examples": {
+                "collapsed": "Ejemplo colapsado",
+                "expanded": "Ejemplo expandido"
+            },
+            "sections": {
+                "menu": "Menú",
+                "others": "Otros"
+            },
+            "title": "Beyonda Labs"
+        },
+        "loading": {
+            "example": "Spinner inline y overlay puramente visuales que se adaptan a cualquier contexto heredando currentColor y admitiendo tamaños predefinidos o personalizados.",
+            "overlay": {
+                "container": "Contenedor",
+                "container-description": "Cubre el padre posicionado más cercano.",
+                "fullscreen": "Pantalla completa",
+                "fullscreen-description": "Cubre toda la ventana. Haga clic para cerrar."
+            },
+            "sample-content": "Este contenido está detrás del overlay y no se puede interactuar con él mientras la carga esté activa.",
+            "sizes": {
+                "custom": "Personalizado (3.25 rem)",
+                "lg": "Grande",
+                "md": "Mediano",
+                "sm": "Pequeño",
+                "xs": "Extra pequeño"
+            },
+            "toggle-fullscreen": "Mostrar overlay a pantalla completa",
+            "toggle-service": "Mostrar vía servicio",
+            "service": {
+                "label": "Servicio",
+                "description": "Usa LoadingService para mostrar y ocultar el overlay a pantalla completa programáticamente. Se oculta automáticamente tras 3 segundos."
+            }
+        },
+        "login": {
+            "example": "Componente de autenticación a pantalla completa con soporte de tema claro/oscuro y proveedores OAuth opcionales obtenidos del backend.",
+            "examples": {
+                "login": "Login"
+            },
+            "demo": {
+                "productName": "PDF Generator",
+                "productDescription": "Genera, firma y comparte PDFs en segundos. Plantillas, marca y firma electrónica — todo desde tu navegador."
+            }
+        },
+        "modal": {
+            "buttons": {
+                "confirmation": "Abrir modal de confirmación",
+                "error": "Abrir modal de error",
+                "info": "Abrir modal informativo",
+                "warning": "Abrir modal de advertencia"
+            },
+            "example": "Ejemplos de modales controlados por servicio con ngx-bootstrap y un estilo sobrio alineado con el resto de la librería.",
+            "examples": {
+                "confirmation": {
+                    "message": "Esta acción archivará el registro actual y podrá revertirse más tarde desde el historial.",
+                    "title": "Archivar registro actual"
+                },
+                "error": {
+                    "message": "No fue posible completar la solicitud. Revise la conexión o vuelva a intentarlo en unos segundos.",
+                    "title": "Algo salió mal"
+                },
+                "info": {
+                    "message": "El registro se sincronizó correctamente y la última versión ya está disponible para el equipo.",
+                    "title": "Sincronización completada"
+                },
+                "warning": {
+                    "message": "Hay cambios pendientes en esta sección. Si continúa, se reemplazarán por la última versión guardada.",
+                    "title": "Revise los cambios pendientes"
+                }
+            },
+            "feedback": {
+                "canceled": {
+                    "message": "La acción de archivo fue cancelada y no se aplicaron cambios.",
+                    "title": "Acción cancelada"
+                },
+                "confirmed": {
+                    "message": "El registro fue enviado a archivo y el proceso terminará en segundo plano.",
+                    "title": "Acción confirmada"
+                }
+            }
+        },
+        "pagination": {
+            "changed": "Paginación cambiada:",
+            "example": "Paginador minimalista con página editable, tooltip de rango y selector de tamaño de página.",
+            "examples": {
+                "compact": "Sin botones de primera y última página",
+                "full": "Con botones de primera y última página"
+            }
+        },
+        "pagination-section": "Paginación",
+        "appLayouts": "Diseños de aplicación",
+        "components": "Componentes",
+        "headers": "Cabeceras",
+        "modals": "Modales",
+        "toasts": "Toasts",
+        "leftMenus": "Menús laterales",
+        "floating-preferences-section": "Preferencias flotantes",
+        "footers": "Pies de página",
+        "forms": "Formularios",
+        "loadings": "Cargando",
+        "tables": "Tablas",
+        "tabs-section": "Pestañas",
+        "breadcrumbs": "Breadcrumbs",
+        "login-section": "Login",
+        "title": "Beyonda Labs - Angular Components - Guía de Estilo",
+        "simple": "Simples",
+        "compound": "Compuestos",
+        "table": {
+            "actions": {
+                "open": "Abrir",
+                "opened": "Acción de fila ejecutada"
+            },
+            "columns": {
+                "action": "Acción",
+                "name": "Nombre",
+                "role": "Rol",
+                "status": "Estado"
+            },
+            "empty": "No hay filas disponibles para este ejemplo.",
+            "example": "Tabla de datos con ordenamiento, selección de filas y columnas configurables mediante modelo.",
+            "examples": {
+                "empty": "La misma tabla sin filas",
+                "filled": "La misma tabla con filas"
+            },
+            "selection-changed": "Las filas seleccionadas cambiaron",
+            "status": {
+                "active": "Activo",
+                "paused": "Pausado",
+                "review": "En revisión"
+            },
+            "tooltips": {
+                "name": "Columna principal de identidad",
+                "status": "Las celdas de estado pueden traducirse y mostrar tooltip"
+            }
+        },
+        "tabs": {
+            "active-tab": "Pestaña activa",
+            "changed": "Pestaña cambiada:",
+            "example": "Barra de pestañas horizontal orientada a modelos con navegación por teclado, iconos opcionales y estado deshabilitado. El consumidor renderiza contenido según la pestaña activa.",
+            "examples": {
+                "basic": "Básico",
+                "icons": "Con iconos y deshabilitado"
+            },
+            "basic": {
+                "tabs": {
+                    "overview": {
+                        "label": "General"
+                    },
+                    "details": {
+                        "label": "Detalles"
+                    },
+                    "history": {
+                        "label": "Historial"
+                    }
+                }
+            },
+            "icons": {
+                "tabs": {
+                    "analytics": {
+                        "label": "Analíticas"
+                    },
+                    "documents": {
+                        "label": "Documentos"
+                    },
+                    "settings": {
+                        "label": "Configuración"
+                    },
+                    "admin": {
+                        "label": "Administración"
+                    }
+                }
+            }
+        },
+        "toast": {
+            "buttons": {
+                "success": "Mostrar toast de éxito",
+                "info": "Mostrar toast informativo",
+                "warning": "Mostrar toast de advertencia",
+                "error": "Mostrar toast de error"
+            },
+            "example": "Notificaciones toast controladas por servicio con ngx-toastr y un estilo sobrio alineado con el resto de la librería.",
+            "examples": {
+                "success": {
+                    "message": "El registro se guardó correctamente y ya está disponible para el equipo.",
+                    "title": "Registro guardado"
+                },
+                "info": {
+                    "message": "El proceso de sincronización se inició y terminará en segundo plano.",
+                    "title": "Sincronización iniciada"
+                },
+                "warning": {
+                    "message": "Hay cambios pendientes que aún no se han guardado.",
+                    "title": "Cambios sin guardar"
+                },
+                "error": {
+                    "message": "No fue posible completar la solicitud. Inténtelo de nuevo más tarde.",
+                    "title": "Algo salió mal"
+                }
+            }
+        }
+    },
+    "angular-components": {
+        "breadcrumb": {
+            "label": "Migas de pan"
+        },
+        "floating-preferences": {
+            "light": "Claro",
+            "dark": "Oscuro"
+        },
+        "footer": {
+            "legal": "Legal",
+            "terms": "Términos y condiciones",
+            "privacy": "Política de privacidad"
+        },
+        "form": {
+            "cancel": {
+                "without-changes": "No se han realizado cambios en el formulario."
+            },
+            "required": "Este campo es requerido",
+            "submit": {
+                "invalid": "Hay errores en el formulario, por favor corrija o complete los campos requeridos antes de enviar."
+            }
+        },
+        "left-menu": {
+            "collapse": "Colapsar menú",
+            "expand": "Expandir menú",
+            "sections": {
+                "main": "Principales",
+                "others": "Otros"
+            }
+        },
+        "loading": {
+            "label": "Cargando"
+        },
+        "http": {
+            "title": {
+                "login": {
+                    "existing-user": "Cuenta ya existente",
+                    "invalid-credentials": "Autenticación fallida",
+                    "oauth-invalid-callback": "Error de autenticación",
+                    "oauth-missing-access-token": "Error de autenticación",
+                    "oauth-missing-email": "Error de autenticación",
+                    "oauth-token-exchange": "Error de autenticación",
+                    "oauth-user-info-not-found": "Error de autenticación",
+                    "passwords-not-match": "Error de contraseña",
+                    "provider-not-found": "Proveedor no disponible"
+                }
+            },
+            "error": {
+                "login": {
+                    "existing-user": "Ya existe una cuenta con este correo electrónico.",
+                    "invalid-credentials": "Email o contraseña incorrectos.",
+                    "oauth-invalid-callback": "El callback de autenticación no es válido. Por favor, inténtelo de nuevo.",
+                    "oauth-missing-access-token": "No se recibió token de acceso de {{provider}}. Por favor, inténtelo de nuevo.",
+                    "oauth-missing-email": "{{provider}} no devolvió ninguna dirección de correo. Por favor, inténtelo de nuevo.",
+                    "oauth-token-exchange": "No se pudo conectar con {{provider}}. Por favor, inténtelo de nuevo.",
+                    "oauth-user-info-not-found": "No se pudo obtener información del usuario de {{provider}}. Por favor, inténtelo de nuevo.",
+                    "passwords-not-match": "Las contraseñas no coinciden.",
+                    "provider-not-found": "El proveedor {{provider}} no está disponible."
+                }
+            },
+            "field": {
+                "login": {
+                    "email": "Correo electrónico",
+                    "name": "Nombre",
+                    "password": "Contraseña",
+                    "password2": "Confirmar contraseña",
+                    "surname": "Apellido"
+                }
+            }
+        },
+        "login": {
+            "login": {
+                "button": {
+                    "login": "Iniciar sesión"
+                },
+                "email": {
+                    "label": "Correo electrónico",
+                    "placeholder": "Escribe tu correo"
+                },
+                "password": {
+                    "label": "Contraseña",
+                    "placeholder": "Escribe tu contraseña"
+                },
+                "signinWith": "Continuar con"
+            },
+            "provider": {
+                "facebook": "Facebook",
+                "google": "Google",
+                "microsoft": "Microsoft"
+            },
+            "register": {
+                "button": {
+                    "back": "Atrás",
+                    "next": "Siguiente",
+                    "register": "Crear cuenta"
+                },
+                "email": {
+                    "label": "Correo electrónico",
+                    "placeholder": "tu@correo.com"
+                },
+                "label": "Crea tu cuenta",
+                "name": {
+                    "label": "Nombre",
+                    "placeholder": "Tu nombre"
+                },
+                "password": {
+                    "label": "Contraseña",
+                    "placeholder": "Tu contraseña"
+                },
+                "password2": {
+                    "label": "Confirmar contraseña",
+                    "placeholder": "Repite tu contraseña"
+                },
+                "surname": {
+                    "label": "Apellido",
+                    "placeholder": "Tu apellido"
+                }
+            },
+            "title": {
+                "login": "Bienvenido de vuelta",
+                "register": "Crea tu cuenta"
+            }
+        },
+        "modal": {
+            "actions": {
+                "cancel": "Cancelar",
+                "close": "Cerrar",
+                "confirm": "Confirmar"
+            },
+            "types": {
+                "confirmation": "Confirmación",
+                "error": "Error",
+                "info": "Información",
+                "warning": "Advertencia"
+            }
+        },
+        "pagination": {
+            "current-page": "Página actual",
+            "first-page": "Ir a la primera página",
+            "last-page": "Ir a la última página",
+            "next-page": "Ir a la siguiente página",
+            "of": "de {{ total }}",
+            "page-size": "Tamaño de página",
+            "previous-page": "Ir a la página anterior",
+            "results-range": "Mostrando {{ start }}-{{ end }} de {{ total }} resultados"
+        },
+        "table": {
+            "select-all": "Seleccionar todas las filas",
+            "select-row": "Seleccionar fila"
+        },
+        "tabs": {
+            "label": "Pestañas de navegación"
+        },
+        "toast": {
+            "types": {
+                "error": "Error",
+                "info": "Información",
+                "success": "Éxito",
+                "warning": "Advertencia"
+            }
+        }
+    }
+}

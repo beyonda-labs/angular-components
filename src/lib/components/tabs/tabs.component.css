@@ -1,0 +1,62 @@
+:host {
+    --bey-tabs-accent: var(--bey-primary);
+    --bey-tabs-text: var(--text-muted);
+    --bey-tabs-border: var(--bey-bg-active);
+    --bey-tabs-hover: var(--text-primary);
+
+    display: block;
+}
+
+.bey-tabs {
+    display: flex;
+    gap: 0.25rem;
+    border-bottom: 1px solid var(--bey-tabs-border);
+}
+
+.bey-tabs-tab {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1rem;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: none;
+    color: var(--bey-tabs-text);
+    font-size: 0.84rem;
+    font-weight: 600;
+    line-height: 1.2;
+    cursor: pointer;
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.bey-tabs-tab:hover:not(:disabled) {
+    color: var(--bey-tabs-hover);
+}
+
+.bey-tabs-tab-active {
+    color: var(--bey-tabs-accent);
+    border-bottom-color: var(--bey-tabs-accent);
+}
+
+.bey-tabs-tab-active:hover:not(:disabled) {
+    color: var(--bey-tabs-accent);
+}
+
+.bey-tabs-tab:focus-visible {
+    outline: 2px solid var(--bey-tabs-accent);
+    outline-offset: -2px;
+    border-radius: 0.2rem 0.2rem 0 0;
+}
+
+.bey-tabs-tab-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.bey-tabs-tab-icon {
+    font-size: 0.76rem;
+}

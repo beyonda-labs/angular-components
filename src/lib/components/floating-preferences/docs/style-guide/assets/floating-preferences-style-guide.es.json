@@ -1,0 +1,7 @@
+{
+    "angular-components-style-guide": {
+        "floating-preferences": {
+            "example": "Píldora autogestionada con selectores de idioma y tema. Lee y escribe el estado directamente a través de TranslateService y BeyThemeService — no requiere inputs ni configuración."
+        }
+    }
+}

@@ -1,0 +1,51 @@
+@if (config) {
+    <nav [attr.aria-label]="'angular-components.breadcrumb.label' | translate">
+        <ol #listElement class="bey-breadcrumb" [style.--bey-breadcrumb-item-max-width]="config.itemMaxWidth">
+            @if (hasCollapsedItems) {
+                <li
+                    class="bey-breadcrumb-item bey-breadcrumb-ellipsis"
+                    [tooltip]="collapsedItemsTooltip"
+                    container="body"
+                >
+                    &hellip;
+                </li>
+                <li aria-hidden="true" class="bey-breadcrumb-separator">{{ config.separator }}</li>
+            }
+            @for (item of visibleItems; track item.id; let last = $last; let first = $first) {
+                <li
+                    class="bey-breadcrumb-item"
+                    [class.bey-breadcrumb-item-current]="isLast(item)"
+                    [attr.aria-current]="isLast(item) ? 'page' : null"
+                >
+                    @if (isLast(item)) {
+                        @if (item.icon) {
+                            <fa-icon class="bey-breadcrumb-item-icon" [icon]="item.icon"></fa-icon>
+                        }
+                        <span class="bey-breadcrumb-item-label" [tooltip]="resolveLabel(item)" container="body">
+                            {{ resolveLabel(item) }}
+                        </span>
+                    } @else {
+                        <button
+                            class="bey-breadcrumb-item-button"
+                            type="button"
+                            [disabled]="item.isDisabled"
+                            [tooltip]="resolveLabel(item)"
+                            container="body"
+                            (click)="onItemClick(item)"
+                        >
+                            @if (item.icon) {
+                                <fa-icon class="bey-breadcrumb-item-icon" [icon]="item.icon"></fa-icon>
+                            }
+                            <span class="bey-breadcrumb-item-label">
+                                {{ resolveLabel(item) }}
+                            </span>
+                        </button>
+                    }
+                </li>
+                @if (!last) {
+                    <li aria-hidden="true" class="bey-breadcrumb-separator">{{ config.separator }}</li>
+                }
+            }
+        </ol>
+    </nav>
+}

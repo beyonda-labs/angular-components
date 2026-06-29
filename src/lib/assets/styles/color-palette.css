@@ -1,0 +1,83 @@
+:root {
+    /* Base */
+    --bey-red: #b31914;
+    --bey-red-rgb: 179, 25, 20;
+    --bey-orange: #ffa624;
+    --bey-orange-rgb: 255, 167, 36;
+    --bey-teal: #20c997;
+    --bey-teal-rgb: 32, 201, 151;
+
+    --bey-white: #ffffff;
+    --bey-white-rgb: 255, 255, 255;
+    --bey-black: #000000;
+    --bey-black-rgb: 0, 0, 0;
+
+    --bey-gray-50: #f5f5f5;
+    --bey-gray-100: #f0f0f0;
+    --bey-gray-200: #e9ecef;
+    --bey-gray-300: #ced4da;
+    --bey-gray-400: #adb5bd;
+    --bey-gray-500: #80868b;
+    --bey-gray-600: #575757;
+    --bey-gray-700: #454749;
+    --bey-gray-800: #2c2d2e;
+    --bey-gray-900: #252525;
+
+    /* Context colors */
+    --bey-primary: var(--bey-black);
+    --bey-secondary: var(--bey-gray-500);
+    --bey-success: var(--bey-teal);
+    --bey-danger: var(--bey-red);
+    --bey-warning: var(--bey-orange);
+
+    /* Background */
+    --bey-bg-page: var(--bey-white); /* fondo general */
+    --bey-bg-surface: var(--bey-gray-50); /* cards, menu, floating */
+    --bey-bg-muted: var(--bey-gray-100); /* zonas secundarias */
+
+    --bey-bg-subtle: var(--bey-gray-50); /* casi invisible */
+    --bey-bg-hover: var(--bey-gray-100); /* hover general */
+    --bey-bg-active: var(--bey-gray-200); /* activo / seleccionado */
+
+    --bey-bg-inverse: var(--bey-gray-900); /* modo invertido */
+
+    /* Text */
+    --text-primary: var(--bey-gray-900); /* texto principal */
+    --text-secondary: var(--bey-gray-700); /* texto de apoyo */
+    --text-muted: var(--bey-gray-500); /* labels, placeholders */
+    --text-disabled: var(--bey-gray-400); /* deshabilitado */
+
+    --text-inverse: var(--bey-gray-0); /* sobre fondo oscuro */
+}
+
+body.dark {
+    /* Semantic colors */
+    --bey-red: #c96b68;
+    --bey-red-rgb: 201, 107, 104;
+    --bey-orange: #d49a2e;
+    --bey-orange-rgb: 212, 154, 46;
+    --bey-teal: #2db896;
+    --bey-teal-rgb: 45, 184, 150;
+
+    /* Context colors */
+    --bey-primary: var(--bey-white);
+
+    /* Background */
+    --bey-bg-page: var(--bey-black); /* fondo general */
+    --bey-bg-surface: var(--bey-gray-900); /* cards, menu, floating */
+    --bey-bg-muted: var(--bey-gray-700); /* zonas secundarias */
+
+    --bey-bg-subtle: var(--bey-gray-800); /* casi invisible */
+    --bey-bg-hover: var(--bey-gray-700); /* hover general */
+    --bey-bg-active: var(--bey-gray-600); /* activo / seleccionado */
+
+    --bey-bg-inverse: var(--bey-white); /* modo invertido */
+
+    /* Text */
+    --text-primary: var(--bey-gray-50); /* texto principal */
+    --text-secondary: var(--bey-gray-400); /* texto de apoyo */
+    --text-muted: var(--bey-gray-500); /* labels, placeholders */
+    --text-disabled: var(--bey-gray-600); /* deshabilitado */
+
+    --text-inverse: var(--bey-gray-900); /* sobre fondo oscuro */
+}

@@ -1,0 +1,154 @@
+:host {
+    --bey-field-fg: var(--text-primary);
+    --bey-field-ph: rgba(var(--bey-black-rgb), 0.36);
+
+    display: block;
+    min-width: 0;
+}
+
+:host-context(body.dark) {
+    --bey-field-ph: rgba(var(--bey-white-rgb), 0.36);
+}
+
+.form-control,
+.form-select,
+.form-check-label {
+    color: var(--bey-field-fg);
+    font-size: 0.84rem;
+    line-height: 1.35;
+}
+
+.form-control,
+.form-select {
+    min-height: 2.1rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 0.3rem;
+}
+
+textarea.form-control {
+    min-height: 5.25rem;
+}
+
+.form-control::placeholder {
+    color: var(--bey-field-ph);
+    font-size: 0.82rem;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 1.1rem;
+    margin-bottom: 0.4rem;
+    padding-left: 0;
+}
+
+.form-check-input {
+    float: none;
+    flex-shrink: 0;
+    margin-left: 0;
+    margin-top: 0;
+    width: 0.9rem;
+    height: 0.9rem;
+}
+
+.form-check-label {
+    font-size: 0.82rem;
+    margin-bottom: 0;
+    line-height: 1.25;
+}
+
+/* ─── Number input custom spinners ──────────────────────────────────────── */
+.bey-number-wrapper {
+    position: relative;
+}
+
+.bey-number-wrapper .form-control {
+    padding-right: 1.75rem;
+}
+
+.bey-number-wrapper .form-control::-webkit-inner-spin-button,
+.bey-number-wrapper .form-control::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.bey-number-spinners {
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    bottom: 1px;
+    width: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0 calc(0.3rem - 1px) calc(0.3rem - 1px) 0;
+    overflow: hidden;
+}
+
+.bey-spin-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--bey-secondary);
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+    line-height: 1;
+}
+
+.bey-spin-btn:hover:not(:disabled) {
+    background-color: var(--bey-bg-active);
+    color: var(--text-primary);
+}
+
+.bey-spin-btn:active:not(:disabled) {
+    background-color: var(--bey-bg-hover);
+}
+
+.bey-spin-btn:disabled {
+    cursor: default;
+    opacity: 0.35;
+}
+
+/* ─── Password toggle ────────────────────────────────────────────────────── */
+.bey-password-wrapper {
+    position: relative;
+}
+
+.bey-password-wrapper .form-control {
+    padding-right: 2.25rem;
+}
+
+.bey-password-toggle {
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    bottom: 1px;
+    width: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 0 calc(0.3rem - 1px) calc(0.3rem - 1px) 0;
+    padding: 0;
+    cursor: pointer;
+    color: var(--bey-secondary);
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.bey-password-toggle:hover {
+    background-color: var(--bey-bg-active);
+    color: var(--text-primary);
+}
+
+.bey-password-toggle:active {
+    background-color: var(--bey-bg-hover);
+}

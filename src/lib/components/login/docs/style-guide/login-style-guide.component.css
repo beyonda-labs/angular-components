@@ -1,0 +1,10 @@
+:host {
+    display: block;
+}
+
+.bey-login-style-guide-frame {
+    height: 600px;
+    border: 1px solid #e7e7e5;
+    border-radius: 12px;
+    overflow: auto;
+}

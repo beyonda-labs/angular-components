@@ -1,0 +1,22 @@
+:host {
+    display: block;
+    min-width: 0;
+}
+
+.bey-form-field-label {
+    margin: 0;
+    font-size: 0.8rem;
+    line-height: 1.35;
+    font-weight: 500;
+}
+
+.bey-form-field-required {
+    font-size: 0.78rem;
+    line-height: 1.35;
+}
+
+.bey-form-field-tooltip {
+    align-self: center;
+    font-size: 0.72rem;
+    line-height: 1;
+}

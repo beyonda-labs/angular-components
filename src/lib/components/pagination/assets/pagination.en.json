@@ -1,0 +1,14 @@
+{
+    "angular-components": {
+        "pagination": {
+            "current-page": "Current page",
+            "first-page": "Go to first page",
+            "last-page": "Go to last page",
+            "next-page": "Go to next page",
+            "of": "of {{ total }}",
+            "page-size": "Page size",
+            "previous-page": "Go to previous page",
+            "results-range": "Showing {{ start }}-{{ end }} of {{ total }} results"
+        }
+    }
+}

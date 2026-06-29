@@ -1,0 +1,32 @@
+@if (config) {
+    <div class="bey-table">
+        <div class="bey-table-scroll" [style.max-height]="config.height">
+            <div class="bey-table-header">
+                <bey-table-row
+                    [config]="config"
+                    [gridTemplateColumns]="gridTemplateColumns"
+                    [isHeader]="true"
+                    [row]="headerRow"
+                    [selectionIndeterminate]="hasSomeRowsSelected()"
+                    [selectionLabel]="getSelectAllLabel()"
+                    (selectionChange)="onAllSelectionChange($event)"
+                ></bey-table-row>
+            </div>
+
+            <div class="bey-table-body">
+                @if (rows.length) {
+                    @for (row of rows; track $index) {
+                        <bey-table-row
+                            [config]="config"
+                            [gridTemplateColumns]="gridTemplateColumns"
+                            [row]="row"
+                            (selectionChange)="onRowSelectionChange($index, $event)"
+                        ></bey-table-row>
+                    }
+                } @else {
+                    <div class="bey-table-empty">{{ getEmptyLabel() | translate }}</div>
+                }
+            </div>
+        </div>
+    </div>
+}

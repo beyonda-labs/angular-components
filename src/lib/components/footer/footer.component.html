@@ -1,0 +1,19 @@
+<div class="bey-footer__container d-flex px-2 w-100 align-middle border-top" style="height: 65px">
+    <div class="bey-footer__brand me-4">
+        <img [src]="config.iconSrc" class="bey-footer__icon" alt="" aria-hidden="true" />
+        <span class="bey-footer__org">&#64;{{ config.orgName | translate }}</span>
+        <span class="bey-footer__sep" aria-hidden="true">—</span>
+        <span class="bey-footer__product">{{ config.productName | translate }}</span>
+    </div>
+
+    @if (config.termsUrl || config.privacyUrl) {
+        <nav class="bey-footer__links" [attr.aria-label]="'angular-components.footer.legal' | translate">
+            @if (config.termsUrl) {
+                <bey-button [button]="termsButton" />
+            }
+            @if (config.privacyUrl) {
+                <bey-button [button]="privacyButton" />
+            }
+        </nav>
+    }
+</div>

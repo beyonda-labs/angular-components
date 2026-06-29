@@ -1,0 +1,64 @@
+{
+    "angular-components-style-guide": {
+        "breadcrumb": {
+            "clicked": "Breadcrumb clicked:",
+            "example": "Model-driven breadcrumb navigation with automatic overflow handling, optional icons, and disabled state. The consumer handles navigation via the onItemClick callback.",
+            "examples": {
+                "basic": "Basic",
+                "icons": "With icons",
+                "overflow": "Overflow (constrained width)"
+            },
+            "basic": {
+                "home": {
+                    "label": "Home"
+                },
+                "products": {
+                    "label": "Products"
+                },
+                "detail": {
+                    "label": "Product detail"
+                }
+            },
+            "icons": {
+                "home": {
+                    "label": "Home"
+                },
+                "catalog": {
+                    "label": "Catalog"
+                },
+                "category": {
+                    "label": "Category"
+                },
+                "product": {
+                    "label": "Product"
+                }
+            },
+            "overflow": {
+                "home": {
+                    "label": "Home"
+                },
+                "region": {
+                    "label": "Europe"
+                },
+                "country": {
+                    "label": "United Kingdom"
+                },
+                "state": {
+                    "label": "England"
+                },
+                "city": {
+                    "label": "London"
+                },
+                "neighborhood": {
+                    "label": "Westminster"
+                },
+                "street": {
+                    "label": "Baker Street"
+                },
+                "building": {
+                    "label": "221B"
+                }
+            }
+        }
+    }
+}

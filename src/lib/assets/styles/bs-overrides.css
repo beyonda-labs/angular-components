@@ -1,0 +1,240 @@
+:root {
+    --bey-focus-bg: var(--bey-black-rgb);
+}
+
+body.dark {
+    --bey-focus-bg: var(--bey-white-rgb);
+}
+
+.btn:focus-visible {
+    --bs-btn-focus-box-shadow: 0 0 0 0.15rem rgba(var(--bey-focus-bg), 0.5);
+}
+
+/* ─── btn-dark (Primary) ─────────────────────────────────────────────────── */
+.btn-dark {
+    --bs-btn-color: var(--bey-bg-page);
+    --bs-btn-bg: var(--bey-primary);
+    --bs-btn-border-color: var(--bey-primary);
+    --bs-btn-hover-color: var(--bey-bg-page);
+    --bs-btn-hover-bg: var(--bey-gray-800);
+    --bs-btn-hover-border-color: var(--bey-gray-700);
+    --bs-btn-active-color: var(--bey-bg-page);
+    --bs-btn-active-bg: var(--bey-gray-700);
+    --bs-btn-active-border-color: var(--bey-gray-600);
+    --bs-btn-disabled-color: var(--bey-bg-page);
+    --bs-btn-disabled-bg: var(--bey-gray-600);
+    --bs-btn-disabled-border-color: var(--bey-gray-500);
+}
+
+body.dark .btn-dark {
+    --bs-btn-hover-bg: var(--bey-gray-200);
+    --bs-btn-hover-border-color: var(--bey-gray-400);
+    --bs-btn-active-bg: var(--bey-gray-400);
+    --bs-btn-active-border-color: var(--bey-gray-500);
+    --bs-btn-disabled-bg: var(--bey-gray-500);
+    --bs-btn-disabled-border-color: var(--bey-gray-600);
+}
+
+/* ─── btn-outline-dark (Secondary) ──────────────────────────────────────── */
+.btn-outline-dark {
+    --bs-btn-color: var(--bey-primary);
+    --bs-btn-border-color: var(--bey-primary);
+    --bs-btn-hover-color: var(--bey-primary);
+    --bs-btn-hover-bg: var(--bey-gray-300);
+    --bs-btn-hover-border-color: var(--bey-primary);
+    --bs-btn-active-color: var(--bey-primary);
+    --bs-btn-active-bg: var(--bey-gray-300);
+    --bs-btn-active-border-color: var(--bey-primary);
+    --bs-btn-disabled-color: var(--bey-gray-400);
+    --bs-btn-disabled-border-color: var(--bey-gray-400);
+}
+
+body.dark .btn-outline-dark {
+    --bs-btn-hover-bg: var(--bey-gray-700);
+    --bs-btn-active-bg: var(--bey-gray-700);
+    --bs-btn-disabled-color: var(--bey-gray-600);
+    --bs-btn-disabled-border-color: var(--bey-gray-600);
+}
+
+/* ─── btn-link (Tertiary) ────────────────────────────────────────────────── */
+.btn-link {
+    --bs-btn-color: var(--bey-primary);
+    --bs-btn-hover-color: var(--bey-gray-700);
+    --bs-btn-active-color: var(--bey-gray-800);
+    --bs-btn-disabled-color: var(--bey-gray-400);
+    --bs-link-color: var(--bey-primary);
+    --bs-link-hover-color: var(--bey-gray-700);
+    padding-inline: 0.25rem;
+    text-decoration: none;
+}
+
+.btn-link:hover,
+.btn-link:focus-visible {
+    text-decoration: none;
+}
+
+body.dark .btn-link {
+    --bs-btn-hover-color: var(--bey-gray-400);
+    --bs-btn-active-color: var(--bey-gray-300);
+    --bs-link-hover-color: var(--bey-gray-400);
+}
+
+/* ─── btn-link.btn-link-secondary (LinkSecondary) ───────────────────────── */
+.btn-link.btn-link-secondary {
+    --bs-btn-color: var(--bey-secondary);
+    --bs-btn-hover-color: var(--bey-gray-600);
+    --bs-btn-active-color: var(--bey-gray-700);
+    --bs-btn-disabled-color: var(--bey-gray-400);
+    --bs-link-color: var(--bey-secondary);
+    --bs-link-hover-color: var(--bey-gray-600);
+}
+
+body.dark .btn-link.btn-link-secondary {
+    --bs-btn-hover-color: var(--bey-gray-400);
+    --bs-btn-active-color: var(--bey-gray-400);
+    --bs-link-hover-color: var(--bey-gray-400);
+}
+
+/* ─── Texts  ─────────────────────────────────────────────────────────────── */
+
+.text-dark {
+    color: var(--text-primary) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* ─── Form controls ──────────────────────────────────────────────────────── */
+.form-control,
+.form-select,
+.form-check-input {
+    border-color: var(--bey-secondary) !important;
+    background-color: var(--bey-bg-page) !important;
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    border-color: var(--bey-primary) !important;
+    box-shadow: none;
+}
+
+.form-control.ng-invalid.ng-touched,
+.form-control.ng-invalid.ng-dirty,
+.form-select.ng-invalid.ng-touched,
+.form-select.ng-invalid.ng-dirty,
+.form-check-input.ng-invalid.ng-touched,
+.form-check-input.ng-invalid.ng-dirty {
+    border-color: var(--bey-danger) !important;
+}
+
+input[type='radio'].form-check-input:checked {
+    background-color: var(--bey-primary) !important;
+    border-color: var(--bey-primary) !important;
+}
+
+input[type='checkbox'].form-check-input:checked {
+    background-color: var(--bey-primary) !important;
+    border-color: var(--bey-primary) !important;
+}
+
+body.dark .form-check-input {
+    background-color: var(--bey-bg-surface) !important;
+}
+
+body.dark input[type='radio'].form-check-input:checked,
+body.dark input[type='checkbox'].form-check-input:checked {
+    background-color: var(--bey-primary) !important;
+    border-color: var(--bey-primary) !important;
+}
+
+body.dark input[type='checkbox'].form-check-input:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
+}
+
+/* ─── Number input spinners (native hidden — custom spinners in field-number component) */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* ─── Datepicker ─────────────────────────────────────────────────────────── */
+.bs-datepicker {
+    border: 1px solid var(--bey-secondary);
+    border-radius: 0.25rem;
+    box-shadow: none;
+    font-family: inherit;
+}
+
+.bs-datepicker .bs-media-container,
+.bs-datepicker .bs-datepicker-container,
+.bs-datepicker .bs-datepicker-body,
+.bs-datepicker .bs-datepicker-buttons {
+    border-radius: inherit;
+}
+
+.bs-datepicker .bs-datepicker-head {
+    background: var(--bey-bg-page);
+    border-bottom: 1px solid var(--bey-bg-active);
+}
+
+.bs-datepicker .bs-datepicker-head button {
+    color: var(--text-primary);
+}
+
+.bs-datepicker .bs-datepicker-body table th {
+    color: var(--bey-secondary);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.bs-datepicker .bs-datepicker-body table td span {
+    border-radius: 0.25rem;
+    color: var(--text-primary);
+}
+
+.bs-datepicker .bs-datepicker-body table td span:hover,
+.bs-datepicker .bs-datepicker-body table td span:focus {
+    background-color: var(--bey-bg-hover);
+}
+
+.bs-datepicker .bs-datepicker-body table td span.selected,
+.bs-datepicker .bs-datepicker-body table td.selected span,
+.bs-datepicker .bs-datepicker-body table td span[class*='select-'],
+.bs-datepicker .bs-datepicker-body table td[class*='select-'] span {
+    background-color: var(--bey-primary) !important;
+    color: var(--bey-bg-page) !important;
+}
+
+.bs-datepicker .bs-datepicker-body table td span.is-highlighted:not(.disabled):not(.selected) {
+    background-color: var(--bey-bg-subtle);
+}
+
+.bs-datepicker .bs-datepicker-body table td.disabled span,
+.bs-datepicker .bs-datepicker-body table td.is-other-month span {
+    color: var(--text-disabled);
+}
+
+.bs-datepicker .bs-datepicker-body table td.today span {
+    border: 1px solid var(--bey-primary);
+}
+
+.bs-datepicker .bs-datepicker-buttons {
+    border-top: 1px solid var(--bey-bg-active);
+}
+
+.bs-datepicker .bs-datepicker-buttons .btn {
+    background-color: var(--bey-bg-page);
+    border: 1px solid var(--bey-secondary);
+    color: var(--text-primary);
+    font-size: 0.75rem;
+}
+
+.bs-datepicker .bs-datepicker-buttons .btn:hover,
+.bs-datepicker .bs-datepicker-buttons .btn:focus {
+    background-color: var(--bey-bg-hover);
+    box-shadow: none;
+}

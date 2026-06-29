@@ -1,0 +1,165 @@
+{
+    "angular-components-style-guide": {
+        "form": {
+            "button": {
+                "cancel": "Cancelar",
+                "submit": "Enviar"
+            },
+            "canceled": "El formulario se ha reiniciado",
+            "changed": "Valor del formulario cambiado: ",
+            "example": "Formulario model-driven basado en configuración con validación, campos condicionales y layout responsive.",
+            "sectionText": {
+                "label": "Campos de texto",
+                "tooltip": "Diferentes configuraciones de campos de texto",
+                "text1": {
+                    "label": "Texto obligatorio",
+                    "placeholder": "Escriba un valor",
+                    "tooltip": "Este campo es obligatorio"
+                },
+                "text2": {
+                    "label": "Texto (50%)",
+                    "placeholder": "Texto a media anchura",
+                    "tooltip": "Ejemplo con 6 columnas"
+                },
+                "text3": {
+                    "label": "Solo letras",
+                    "placeholder": "Solo letras (A-Z)"
+                },
+                "text4": {
+                    "label": "Texto deshabilitado",
+                    "placeholder": "Campo deshabilitado"
+                },
+                "text5": {
+                    "label": "Texto",
+                    "placeholder": "Otro campo de texto"
+                }
+            },
+            "sectionPassword": {
+                "label": "Campos de contraseña",
+                "tooltip": "Campos de contraseña con toggle, obligatorio y deshabilitado",
+                "password1": {
+                    "label": "Contraseña",
+                    "placeholder": "Ingrese su contraseña"
+                },
+                "password2": {
+                    "label": "Contraseña obligatoria",
+                    "placeholder": "Contraseña obligatoria"
+                },
+                "password3": {
+                    "label": "Contraseña deshabilitada",
+                    "placeholder": "Campo deshabilitado"
+                },
+                "password4": {
+                    "label": "Contraseña sin toggle",
+                    "placeholder": "Sin toggle de visibilidad"
+                }
+            },
+            "sectionDate": {
+                "label": "Campos de fecha",
+                "tooltip": "Campos de fecha con rango, obligatorio y deshabilitado",
+                "date1": {
+                    "label": "Fecha con rango"
+                },
+                "date2": {
+                    "label": "Fecha obligatoria"
+                },
+                "date3": {
+                    "label": "Fecha deshabilitada"
+                }
+            },
+            "sectionNumber": {
+                "label": "Campos numéricos",
+                "tooltip": "Campos numéricos con rango, obligatorio y deshabilitado",
+                "number1": {
+                    "label": "Número con rango",
+                    "placeholder": "Número entre 1 y 100"
+                },
+                "number2": {
+                    "label": "Número obligatorio",
+                    "placeholder": "Ingrese un número"
+                },
+                "number3": {
+                    "label": "Número deshabilitado",
+                    "placeholder": "Valor deshabilitado"
+                }
+            },
+            "sectionSelect": {
+                "label": "Campos de selección",
+                "tooltip": "Variantes de select con comportamiento básico, obligatorio y deshabilitado",
+                "select1": {
+                    "label": "Select básico",
+                    "placeholder": "Seleccione una opción",
+                    "options": {
+                        "option1": "Opción 1",
+                        "option2": "Opción 2"
+                    }
+                },
+                "select2": {
+                    "label": "Select obligatorio",
+                    "placeholder": "Seleccione una opción obligatoria",
+                    "options": {
+                        "option1": "Opción obligatoria 1",
+                        "option2": "Opción obligatoria 2"
+                    }
+                },
+                "select3": {
+                    "label": "Select deshabilitado",
+                    "placeholder": "Select deshabilitado",
+                    "options": {
+                        "option1": "Opción deshabilitada 1",
+                        "option2": "Opción deshabilitada 2"
+                    }
+                }
+            },
+            "sectionRadio": {
+                "label": "Campos de radio",
+                "tooltip": "Variantes de radio con configuración básica y obligatoria",
+                "radio1": {
+                    "label": "Radio básico",
+                    "options": {
+                        "option1": "Opción 1",
+                        "option2": "Opción 2"
+                    }
+                },
+                "radio2": {
+                    "label": "Radio obligatorio",
+                    "options": {
+                        "option1": "Opción obligatoria 1",
+                        "option2": "Opción obligatoria 2",
+                        "option3": "Opción deshabilitada"
+                    }
+                }
+            },
+            "sectionTextarea": {
+                "label": "Campos de texto largo",
+                "tooltip": "Variantes de textarea con filas, obligatorio y deshabilitado",
+                "textarea1": {
+                    "label": "Textarea con altura máxima",
+                    "placeholder": "Escriba detalles adicionales"
+                },
+                "textarea2": {
+                    "label": "Textarea obligatorio",
+                    "placeholder": "Texto largo obligatorio"
+                },
+                "textarea3": {
+                    "label": "Textarea deshabilitado",
+                    "placeholder": "Texto largo deshabilitado"
+                }
+            },
+            "sectionCheckbox": {
+                "label": "Campos de checkbox",
+                "tooltip": "Variantes de checkbox con estado básico, obligatorio y deshabilitado",
+                "checkbox1": {
+                    "label": "Aceptar términos"
+                },
+                "checkbox2": {
+                    "label": "Consentimiento obligatorio"
+                },
+                "checkbox3": {
+                    "label": "Checkbox deshabilitado"
+                }
+            },
+            "submitted": "El formulario ha sido enviado: "
+        }
+    }
+}

@@ -1,0 +1,706 @@
+{
+    "angular-components-style-guide": {
+        "appLayout": {
+            "actions": {
+                "dashboard": {
+                    "label": "Dashboard",
+                    "tooltip": "Go to dashboard"
+                },
+                "documents": {
+                    "label": "Documents",
+                    "tooltip": "Browse documents"
+                },
+                "help": {
+                    "label": "Help",
+                    "tooltip": "Get help"
+                },
+                "reports": {
+                    "label": "Reports",
+                    "tooltip": "View reports"
+                },
+                "reports-annual": {
+                    "label": "Annual",
+                    "tooltip": "View annual reports"
+                },
+                "reports-monthly": {
+                    "label": "Monthly",
+                    "tooltip": "View monthly reports"
+                },
+                "settings": {
+                    "label": "Settings",
+                    "tooltip": "Open settings"
+                }
+            },
+            "content": {
+                "title": "Navigate to update the breadcrumb"
+            },
+            "example": "Full application layout with collapsible side menu, dynamic breadcrumb and content area. Use the buttons or the menu to simulate page navigation.",
+            "title": "Demo App"
+        },
+        "breadcrumb": {
+            "clicked": "Breadcrumb clicked:",
+            "example": "Model-driven breadcrumb navigation with automatic overflow handling, optional icons, and disabled state. The consumer handles navigation via the onItemClick callback.",
+            "examples": {
+                "basic": "Basic",
+                "icons": "With icons",
+                "overflow": "Overflow (constrained width)"
+            },
+            "basic": {
+                "home": {
+                    "label": "Home"
+                },
+                "products": {
+                    "label": "Products"
+                },
+                "detail": {
+                    "label": "Product detail"
+                }
+            },
+            "icons": {
+                "home": {
+                    "label": "Home"
+                },
+                "catalog": {
+                    "label": "Catalog"
+                },
+                "category": {
+                    "label": "Category"
+                },
+                "product": {
+                    "label": "Product"
+                }
+            },
+            "overflow": {
+                "home": {
+                    "label": "Home"
+                },
+                "region": {
+                    "label": "Europe"
+                },
+                "country": {
+                    "label": "United Kingdom"
+                },
+                "state": {
+                    "label": "England"
+                },
+                "city": {
+                    "label": "London"
+                },
+                "neighborhood": {
+                    "label": "Westminster"
+                },
+                "street": {
+                    "label": "Baker Street"
+                },
+                "building": {
+                    "label": "221B"
+                }
+            }
+        },
+        "floating-preferences": {
+            "example": "Self-contained pill with language and theme selectors. Reads and writes state directly via TranslateService and BeyThemeService — no inputs or configuration required."
+        },
+        "footer": {
+            "example": "Model-driven footer bar with brand identity (icon, organization and product name) and optional legal navigation links (Terms & Conditions, Privacy Policy) via Angular Router.",
+            "examples": {
+                "minimal": "Minimal",
+                "withLinks": "With legal links"
+            },
+            "minimal": {
+                "productName": "My Application"
+            },
+            "withLinks": {
+                "orgName": "Beyonda Labs",
+                "productName": "My Application"
+            }
+        },
+        "form": {
+            "button": {
+                "cancel": "Cancel",
+                "submit": "Submit"
+            },
+            "canceled": "The form has been reset",
+            "changed": "Form value changed: ",
+            "example": "Model-driven, configuration-based form with validation, conditional fields and responsive layout.",
+            "sectionText": {
+                "label": "Text Fields",
+                "tooltip": "Different text field configurations",
+                "text1": {
+                    "label": "Required Text",
+                    "placeholder": "Type a value",
+                    "tooltip": "This field is required"
+                },
+                "text2": {
+                    "label": "Text (50%)",
+                    "placeholder": "Half-width text",
+                    "tooltip": "Example with 6 columns"
+                },
+                "text3": {
+                    "label": "Letters Only",
+                    "placeholder": "Only letters (A-Z)"
+                },
+                "text4": {
+                    "label": "Disabled Text",
+                    "placeholder": "Disabled field"
+                },
+                "text5": {
+                    "label": "Text",
+                    "placeholder": "Another text field"
+                }
+            },
+            "sectionPassword": {
+                "label": "Password Fields",
+                "tooltip": "Password fields with toggle, required and disabled states",
+                "password1": {
+                    "label": "Password",
+                    "placeholder": "Enter your password"
+                },
+                "password2": {
+                    "label": "Required Password",
+                    "placeholder": "Required password"
+                },
+                "password3": {
+                    "label": "Disabled Password",
+                    "placeholder": "Disabled field"
+                },
+                "password4": {
+                    "label": "Password Without Toggle",
+                    "placeholder": "No visibility toggle"
+                }
+            },
+            "sectionDate": {
+                "label": "Date Fields",
+                "tooltip": "Date fields with range, required and disabled states",
+                "date1": {
+                    "label": "Date With Range"
+                },
+                "date2": {
+                    "label": "Required Date"
+                },
+                "date3": {
+                    "label": "Disabled Date"
+                }
+            },
+            "sectionNumber": {
+                "label": "Number Fields",
+                "tooltip": "Number fields with range, required and disabled states",
+                "number1": {
+                    "label": "Number With Range",
+                    "placeholder": "Number between 1 and 100"
+                },
+                "number2": {
+                    "label": "Required Number",
+                    "placeholder": "Enter a number"
+                },
+                "number3": {
+                    "label": "Disabled Number",
+                    "placeholder": "Disabled value"
+                }
+            },
+            "sectionSelect": {
+                "label": "Select Fields",
+                "tooltip": "Select variants with basic, required and disabled behavior",
+                "select1": {
+                    "label": "Basic Select",
+                    "placeholder": "Select an option",
+                    "options": {
+                        "option1": "Option 1",
+                        "option2": "Option 2"
+                    }
+                },
+                "select2": {
+                    "label": "Required Select",
+                    "placeholder": "Please choose an option",
+                    "options": {
+                        "option1": "Required Option 1",
+                        "option2": "Required Option 2"
+                    }
+                },
+                "select3": {
+                    "label": "Disabled Select",
+                    "placeholder": "Disabled select",
+                    "options": {
+                        "option1": "Disabled Option 1",
+                        "option2": "Disabled Option 2"
+                    }
+                }
+            },
+            "sectionRadio": {
+                "label": "Radio Fields",
+                "tooltip": "Radio variants with basic and required configurations",
+                "radio1": {
+                    "label": "Basic Radio",
+                    "options": {
+                        "option1": "Option 1",
+                        "option2": "Option 2"
+                    }
+                },
+                "radio2": {
+                    "label": "Required Radio",
+                    "options": {
+                        "option1": "Required Option 1",
+                        "option2": "Required Option 2",
+                        "option3": "Disabled Option"
+                    }
+                }
+            },
+            "sectionTextarea": {
+                "label": "Textarea Fields",
+                "tooltip": "Textarea variants with rows, required and disabled states",
+                "textarea1": {
+                    "label": "Textarea With Max Height",
+                    "placeholder": "Write additional details"
+                },
+                "textarea2": {
+                    "label": "Required Textarea",
+                    "placeholder": "Required long text"
+                },
+                "textarea3": {
+                    "label": "Disabled Textarea",
+                    "placeholder": "Disabled long text"
+                }
+            },
+            "sectionCheckbox": {
+                "label": "Checkbox Fields",
+                "tooltip": "Checkbox variants with basic, required and disabled states",
+                "checkbox1": {
+                    "label": "Accept Terms"
+                },
+                "checkbox2": {
+                    "label": "Required Consent"
+                },
+                "checkbox3": {
+                    "label": "Disabled Checkbox"
+                }
+            },
+            "submitted": "The form has been submitted: "
+        },
+        "header": {
+            "actions": {
+                "duplicate": {
+                    "label": "Duplicate",
+                    "tooltip": "Duplicate goal"
+                },
+                "edit": {
+                    "label": "Edit",
+                    "tooltip": "Edit goal"
+                },
+                "export": {
+                    "label": "Export",
+                    "tooltip": "Export goal"
+                },
+                "newGoal": {
+                    "label": "New goal",
+                    "tooltip": "Create a new goal"
+                }
+            },
+            "example": "Header with actions on both sides.",
+            "title": "Goals"
+        },
+        "leftMenu": {
+            "actions": {
+                "calendar": {
+                    "label": "Calendar",
+                    "tooltip": "Open calendar"
+                },
+                "chat": {
+                    "label": "Chat",
+                    "tooltip": "Open chat"
+                },
+                "dashboard": {
+                    "label": "Dashboard",
+                    "tooltip": "Go to dashboard"
+                },
+                "documents": {
+                    "label": "Documents",
+                    "tooltip": "Browse documents"
+                },
+                "export": {
+                    "label": "Exported",
+                    "tooltip": "View exported files"
+                },
+                "inbox": {
+                    "label": "Inbox",
+                    "tooltip": "Open inbox"
+                },
+                "incoming": {
+                    "label": "Incoming",
+                    "tooltip": "Review incoming files"
+                },
+                "info": {
+                    "label": "Information",
+                    "tooltip": "View information"
+                },
+                "statistics": {
+                    "label": "Statistics",
+                    "tooltip": "Open statistics"
+                },
+                "support": {
+                    "label": "Support",
+                    "tooltip": "Get support"
+                }
+            },
+            "example": "Left menu with grouped actions, nested navigation and collapsed behavior.",
+            "examples": {
+                "collapsed": "Collapsed example",
+                "expanded": "Expanded example"
+            },
+            "sections": {
+                "menu": "Menu",
+                "others": "Others"
+            },
+            "title": "Beyonda Labs"
+        },
+        "loading": {
+            "example": "Lightweight, purely visual inline spinner and overlay components that adapt to any context via currentColor inheritance and predefined or custom sizes.",
+            "overlay": {
+                "container": "Container",
+                "container-description": "Covers the nearest positioned parent.",
+                "fullscreen": "Fullscreen",
+                "fullscreen-description": "Covers the entire viewport. Click to dismiss."
+            },
+            "sample-content": "This content is behind the overlay and cannot be interacted with while loading is active.",
+            "sizes": {
+                "custom": "Custom (3.25 rem)",
+                "lg": "Large",
+                "md": "Medium",
+                "sm": "Small",
+                "xs": "Extra small"
+            },
+            "toggle-fullscreen": "Show fullscreen overlay",
+            "toggle-service": "Show via service",
+            "service": {
+                "label": "Service",
+                "description": "Uses LoadingService to show and hide the fullscreen overlay programmatically. Auto-dismisses after 3 seconds."
+            }
+        },
+        "login": {
+            "example": "Full-page authentication component with light/dark theme support, optional OAuth providers (fetched from backend), and optional registration flow.",
+            "examples": {
+                "login": "Login"
+            },
+            "demo": {
+                "productName": "PDF Generator",
+                "productDescription": "Generate, sign and share PDFs in seconds. Templates, branding and e-signature — all from your browser."
+            }
+        },
+        "modal": {
+            "buttons": {
+                "confirmation": "Open confirmation modal",
+                "error": "Open error modal",
+                "info": "Open info modal",
+                "warning": "Open warning modal"
+            },
+            "example": "Service-driven modal examples using ngx-bootstrap with a restrained visual style aligned with the rest of the library.",
+            "examples": {
+                "confirmation": {
+                    "message": "This action archives the current record and can be reverted later from history.",
+                    "title": "Archive current record"
+                },
+                "error": {
+                    "message": "The request could not be completed. Review the connection or try again in a few seconds.",
+                    "title": "Something went wrong"
+                },
+                "info": {
+                    "message": "The record was synchronized successfully and the latest version is already available to the team.",
+                    "title": "Synchronization completed"
+                },
+                "warning": {
+                    "message": "There are pending changes in this section. If you continue, they will be replaced by the last saved version.",
+                    "title": "Review pending changes"
+                }
+            },
+            "feedback": {
+                "canceled": {
+                    "message": "The archive action was canceled and no changes were applied.",
+                    "title": "Action canceled"
+                },
+                "confirmed": {
+                    "message": "The record was queued for archive and the process will finish in the background.",
+                    "title": "Action confirmed"
+                }
+            }
+        },
+        "pagination": {
+            "changed": "Pagination changed:",
+            "example": "Minimal paginator with editable page, range tooltip and page-size selector.",
+            "examples": {
+                "compact": "Without first and last buttons",
+                "full": "With first and last buttons"
+            }
+        },
+        "pagination-section": "Pagination",
+        "appLayouts": "App Layouts",
+        "components": "Components",
+        "headers": "Headers",
+        "modals": "Modals",
+        "toasts": "Toasts",
+        "leftMenus": "Left Menus",
+        "floating-preferences-section": "Floating Preferences",
+        "footers": "Footers",
+        "forms": "Forms",
+        "loadings": "Loading",
+        "tables": "Tables",
+        "tabs-section": "Tabs",
+        "breadcrumbs": "Breadcrumbs",
+        "login-section": "Login",
+        "title": "Beyonda Labs - Angular Components - Style Guide",
+        "simple": "Simple",
+        "compound": "Compound",
+        "table": {
+            "actions": {
+                "open": "Open",
+                "opened": "Row action executed"
+            },
+            "columns": {
+                "action": "Action",
+                "name": "Name",
+                "role": "Role",
+                "status": "Status"
+            },
+            "empty": "No rows available for this example.",
+            "example": "Data table with sorting, row selection, and customizable columns via model configuration.",
+            "examples": {
+                "empty": "Same table without rows",
+                "filled": "Same table with rows"
+            },
+            "selection-changed": "Selected rows changed",
+            "status": {
+                "active": "Active",
+                "paused": "Paused",
+                "review": "In review"
+            },
+            "tooltips": {
+                "name": "Primary identity column",
+                "status": "Status cells can be translated and tooltip-enabled"
+            }
+        },
+        "tabs": {
+            "active-tab": "Active tab",
+            "changed": "Tab changed:",
+            "example": "Model-driven horizontal tab bar with keyboard navigation, optional icons and disabled state. The consumer renders content based on the active tab key.",
+            "examples": {
+                "basic": "Basic",
+                "icons": "With icons & disabled"
+            },
+            "basic": {
+                "tabs": {
+                    "overview": {
+                        "label": "Overview"
+                    },
+                    "details": {
+                        "label": "Details"
+                    },
+                    "history": {
+                        "label": "History"
+                    }
+                }
+            },
+            "icons": {
+                "tabs": {
+                    "analytics": {
+                        "label": "Analytics"
+                    },
+                    "documents": {
+                        "label": "Documents"
+                    },
+                    "settings": {
+                        "label": "Settings"
+                    },
+                    "admin": {
+                        "label": "Admin"
+                    }
+                }
+            }
+        },
+        "toast": {
+            "buttons": {
+                "success": "Show success toast",
+                "info": "Show info toast",
+                "warning": "Show warning toast",
+                "error": "Show error toast"
+            },
+            "example": "Service-driven toast notifications using ngx-toastr with a restrained visual style aligned with the rest of the library.",
+            "examples": {
+                "success": {
+                    "message": "The record was saved successfully and is now available to the team.",
+                    "title": "Record saved"
+                },
+                "info": {
+                    "message": "The synchronization process started and will finish in the background.",
+                    "title": "Synchronization started"
+                },
+                "warning": {
+                    "message": "There are pending changes that have not been saved yet.",
+                    "title": "Unsaved changes"
+                },
+                "error": {
+                    "message": "The request could not be completed. Please try again later.",
+                    "title": "Something went wrong"
+                }
+            }
+        }
+    },
+    "angular-components": {
+        "breadcrumb": {
+            "label": "Breadcrumb"
+        },
+        "floating-preferences": {
+            "light": "Light",
+            "dark": "Dark"
+        },
+        "footer": {
+            "legal": "Legal",
+            "terms": "Terms & Conditions",
+            "privacy": "Privacy Policy"
+        },
+        "form": {
+            "cancel": {
+                "without-changes": "No changes have been made to the form."
+            },
+            "required": "This field is required",
+            "submit": {
+                "invalid": "There are errors in the form, please correct or complete the required fields before submitting."
+            }
+        },
+        "left-menu": {
+            "collapse": "Collapse menu",
+            "expand": "Expand menu",
+            "sections": {
+                "main": "Main",
+                "others": "Others"
+            }
+        },
+        "loading": {
+            "label": "Loading"
+        },
+        "http": {
+            "title": {
+                "login": {
+                    "existing-user": "Account already exists",
+                    "invalid-credentials": "Authentication failed",
+                    "oauth-invalid-callback": "Authentication error",
+                    "oauth-missing-access-token": "Authentication error",
+                    "oauth-missing-email": "Authentication error",
+                    "oauth-token-exchange": "Authentication error",
+                    "oauth-user-info-not-found": "Authentication error",
+                    "passwords-not-match": "Password error",
+                    "provider-not-found": "Provider unavailable"
+                }
+            },
+            "error": {
+                "login": {
+                    "existing-user": "An account with this email already exists.",
+                    "invalid-credentials": "Invalid email or password.",
+                    "oauth-invalid-callback": "The authentication callback is invalid. Please try again.",
+                    "oauth-missing-access-token": "No access token was received from {{provider}}. Please try again.",
+                    "oauth-missing-email": "No email address was returned by {{provider}}. Please try again.",
+                    "oauth-token-exchange": "Could not connect with {{provider}}. Please try again.",
+                    "oauth-user-info-not-found": "Could not retrieve user information from {{provider}}. Please try again.",
+                    "passwords-not-match": "Passwords do not match.",
+                    "provider-not-found": "The provider {{provider}} is not available."
+                }
+            },
+            "field": {
+                "login": {
+                    "email": "Email",
+                    "name": "Name",
+                    "password": "Password",
+                    "password2": "Confirm password",
+                    "surname": "Surname"
+                }
+            }
+        },
+        "login": {
+            "login": {
+                "button": {
+                    "login": "Sign in"
+                },
+                "email": {
+                    "label": "Email",
+                    "placeholder": "Type your email"
+                },
+                "password": {
+                    "label": "Password",
+                    "placeholder": "Type your password"
+                },
+                "signinWith": "Continue with"
+            },
+            "provider": {
+                "facebook": "Facebook",
+                "google": "Google",
+                "microsoft": "Microsoft"
+            },
+            "register": {
+                "button": {
+                    "back": "Back",
+                    "next": "Next",
+                    "register": "Create account"
+                },
+                "email": {
+                    "label": "Email",
+                    "placeholder": "you@email.com"
+                },
+                "label": "Create your account",
+                "name": {
+                    "label": "Name",
+                    "placeholder": "Your name"
+                },
+                "password": {
+                    "label": "Password",
+                    "placeholder": "Your password"
+                },
+                "password2": {
+                    "label": "Confirm password",
+                    "placeholder": "Repeat your password"
+                },
+                "surname": {
+                    "label": "Surname",
+                    "placeholder": "Your surname"
+                }
+            },
+            "title": {
+                "login": "Welcome back",
+                "register": "Create your account"
+            }
+        },
+        "modal": {
+            "actions": {
+                "cancel": "Cancel",
+                "close": "Close",
+                "confirm": "Confirm"
+            },
+            "types": {
+                "confirmation": "Confirmation",
+                "error": "Error",
+                "info": "Information",
+                "warning": "Warning"
+            }
+        },
+        "pagination": {
+            "current-page": "Current page",
+            "first-page": "Go to first page",
+            "last-page": "Go to last page",
+            "next-page": "Go to next page",
+            "of": "of {{ total }}",
+            "page-size": "Page size",
+            "previous-page": "Go to previous page",
+            "results-range": "Showing {{ start }}-{{ end }} of {{ total }} results"
+        },
+        "table": {
+            "select-all": "Select all rows",
+            "select-row": "Select row"
+        },
+        "tabs": {
+            "label": "Navigation tabs"
+        },
+        "toast": {
+            "types": {
+                "error": "Error",
+                "info": "Information",
+                "success": "Success",
+                "warning": "Warning"
+            }
+        }
+    }
+}

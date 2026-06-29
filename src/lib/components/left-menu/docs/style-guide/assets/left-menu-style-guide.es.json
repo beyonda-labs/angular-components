@@ -1,0 +1,58 @@
+{
+    "angular-components-style-guide": {
+        "leftMenu": {
+            "actions": {
+                "calendar": {
+                    "label": "Calendario",
+                    "tooltip": "Abrir calendario"
+                },
+                "chat": {
+                    "label": "Chat",
+                    "tooltip": "Abrir chat"
+                },
+                "dashboard": {
+                    "label": "Panel",
+                    "tooltip": "Ir al panel"
+                },
+                "documents": {
+                    "label": "Documentos",
+                    "tooltip": "Explorar documentos"
+                },
+                "export": {
+                    "label": "Exportados",
+                    "tooltip": "Ver archivos exportados"
+                },
+                "inbox": {
+                    "label": "Bandeja",
+                    "tooltip": "Abrir bandeja"
+                },
+                "incoming": {
+                    "label": "Entrantes",
+                    "tooltip": "Revisar archivos entrantes"
+                },
+                "info": {
+                    "label": "Información",
+                    "tooltip": "Ver información"
+                },
+                "statistics": {
+                    "label": "Estadísticas",
+                    "tooltip": "Abrir estadísticas"
+                },
+                "support": {
+                    "label": "Soporte",
+                    "tooltip": "Obtener soporte"
+                }
+            },
+            "example": "Menú lateral con acciones agrupadas, navegación anidada y comportamiento colapsado.",
+            "examples": {
+                "collapsed": "Ejemplo colapsado",
+                "expanded": "Ejemplo expandido"
+            },
+            "sections": {
+                "menu": "Menú",
+                "others": "Otros"
+            },
+            "title": "Beyonda Labs"
+        }
+    }
+}

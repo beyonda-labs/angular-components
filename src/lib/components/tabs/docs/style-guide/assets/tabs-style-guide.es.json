@@ -1,0 +1,42 @@
+{
+    "angular-components-style-guide": {
+        "tabs": {
+            "active-tab": "Pestaña activa",
+            "changed": "Pestaña cambiada:",
+            "example": "Barra de pestañas horizontal orientada a modelos con navegación por teclado, iconos opcionales y estado deshabilitado. El consumidor renderiza contenido según la pestaña activa.",
+            "examples": {
+                "basic": "Básico",
+                "icons": "Con iconos y deshabilitado"
+            },
+            "basic": {
+                "tabs": {
+                    "overview": {
+                        "label": "General"
+                    },
+                    "details": {
+                        "label": "Detalles"
+                    },
+                    "history": {
+                        "label": "Historial"
+                    }
+                }
+            },
+            "icons": {
+                "tabs": {
+                    "analytics": {
+                        "label": "Analíticas"
+                    },
+                    "documents": {
+                        "label": "Documentos"
+                    },
+                    "settings": {
+                        "label": "Configuración"
+                    },
+                    "admin": {
+                        "label": "Administración"
+                    }
+                }
+            }
+        }
+    }
+}

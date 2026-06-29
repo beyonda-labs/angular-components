@@ -1,0 +1,64 @@
+:host {
+    display: block;
+    width: 100%;
+    min-width: 0;
+
+    --bey-table-surface: var(--bey-bg-page);
+    --bey-table-text: var(--text-primary);
+    --bey-table-text-muted: var(--text-muted);
+    --bey-table-border-subtle: rgba(var(--bey-black-rgb), 0.07);
+    --bey-table-border-strong: rgba(var(--bey-black-rgb), 0.1);
+    --bey-table-row-hover: var(--bey-bg-hover);
+    --bey-table-row-selected: var(--bey-bg-active);
+    --bey-table-checkbox-border: rgba(var(--bey-black-rgb), 0.18);
+    --bey-table-checkbox-accent: var(--bey-primary);
+    --bey-table-link-underline: rgba(var(--bey-black-rgb), 0.18);
+    --bey-table-link-underline-hover: var(--bey-primary);
+}
+
+:host-context(body.dark) {
+    --bey-table-border-subtle: rgba(var(--bey-white-rgb), 0.07);
+    --bey-table-border-strong: rgba(var(--bey-white-rgb), 0.1);
+    --bey-table-checkbox-border: rgba(var(--bey-white-rgb), 0.18);
+    --bey-table-link-underline: rgba(var(--bey-white-rgb), 0.18);
+}
+
+.bey-table {
+    border: 0;
+    border-radius: 6px;
+    background: var(--bey-table-surface);
+    overflow: hidden;
+    box-shadow: none;
+    width: 100%;
+    min-width: 0;
+}
+
+.bey-table-scroll {
+    width: 100%;
+    min-width: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.bey-table-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bey-table-surface);
+    width: 100%;
+    min-width: 0;
+}
+
+.bey-table-body {
+    width: 100%;
+    min-width: 0;
+    background: var(--bey-table-surface);
+}
+
+.bey-table-empty {
+    padding: 2rem 1.25rem;
+    text-align: center;
+    color: var(--bey-table-text);
+    font-size: 0.88rem;
+    font-weight: 500;
+}

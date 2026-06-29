@@ -1,0 +1,25 @@
+<div
+    class="bey-table-cell"
+    [class.bey-table-cell-header]="isHeader"
+    [tooltip]="hasTooltip() ? (cell.tooltip! | translate) : ''"
+    container="body"
+    placement="top"
+>
+    @if (cell.type === cellType.Link) {
+        <button class="bey-table-cell-link bey-table-cell-content" type="button" (click)="onLinkClick($event)">
+            @if (cell.translate) {
+                {{ content | translate }}
+            } @else {
+                {{ content }}
+            }
+        </button>
+    } @else {
+        <span class="bey-table-cell-content">
+            @if (cell.translate) {
+                {{ content | translate }}
+            } @else {
+                {{ content }}
+            }
+        </span>
+    }
+</div>

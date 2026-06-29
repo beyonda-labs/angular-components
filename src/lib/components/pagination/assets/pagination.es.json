@@ -1,0 +1,14 @@
+{
+    "angular-components": {
+        "pagination": {
+            "current-page": "Página actual",
+            "first-page": "Ir a la primera página",
+            "last-page": "Ir a la última página",
+            "next-page": "Ir a la siguiente página",
+            "of": "de {{ total }}",
+            "page-size": "Tamaño de página",
+            "previous-page": "Ir a la página anterior",
+            "results-range": "Mostrando {{ start }}-{{ end }} de {{ total }} resultados"
+        }
+    }
+}
