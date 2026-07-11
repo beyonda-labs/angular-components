@@ -586,7 +586,25 @@
                     "oauth-user-info-not-found": "Authentication error",
                     "passwords-not-match": "Password error",
                     "provider-not-found": "Provider unavailable"
-                }
+                },
+                "bad-gateway": "Connection error",
+                "bad-request": "Invalid request",
+                "conflict": "Conflict",
+                "default": "Error",
+                "forbidden": "Access denied",
+                "internal-server-error": "Server error",
+                "invalid-child": "Invalid field",
+                "invalid-field-pattern": "Invalid format",
+                "invalid-field-length": "Invalid length",
+                "invalid-field-range": "Value out of range",
+                "invalid-field-type": "Invalid field type",
+                "invalid-field-value": "Invalid value",
+                "not-found": "Not found",
+                "required-field": "Required field",
+                "service-unavailable": "Service unavailable",
+                "too-many-requests": "Too many requests",
+                "unauthorized": "Authentication required",
+                "unknown": "Unexpected error"
             },
             "error": {
                 "login": {
@@ -599,7 +617,29 @@
                     "oauth-user-info-not-found": "Could not retrieve user information from {{provider}}. Please try again.",
                     "passwords-not-match": "Passwords do not match.",
                     "provider-not-found": "The provider {{provider}} is not available."
-                }
+                },
+                "bad-gateway": "The server received an invalid response. Please try again later.",
+                "bad-request": "The request could not be processed. Please check the submitted data.",
+                "conflict": "A conflict occurred with the current state of the resource.",
+                "forbidden": "You do not have permission to perform this action.",
+                "internal-server-error": "An internal server error occurred. Please try again later.",
+                "invalid-child": "The field \"{{childField}}\" is not valid for parent \"{{parentField}}\".",
+                "invalid-field-pattern": "The field \"{{fieldName}}\" does not match the expected pattern: \"{{pattern}}\".",
+                "invalid-field-length": "The field \"{{fieldName}}\" must be between {{min}} and {{max}} characters long.",
+                "invalid-field-length-max": "The field \"{{fieldName}}\" must be at most {{max}} characters long.",
+                "invalid-field-length-min": "The field \"{{fieldName}}\" must be at least {{min}} characters long.",
+                "invalid-field-range": "The field \"{{fieldName}}\" must be between {{min}} and {{max}}.",
+                "invalid-field-range-max": "The field \"{{fieldName}}\" must be at most {{max}}.",
+                "invalid-field-range-min": "The field \"{{fieldName}}\" must be at least {{min}}.",
+                "invalid-field-type": "The field \"{{fieldName}}\" must be of type \"{{expectedType}}\".",
+                "invalid-field-value": "The field \"{{fieldName}}\" has an invalid value.",
+                "not-found": "The requested resource was not found.",
+                "required-field": "The field \"{{fieldName}}\" is required.",
+                "service-unavailable": "The service is temporarily unavailable. Please try again later.",
+                "title": "Error",
+                "too-many-requests": "Too many requests. Please try again later.",
+                "unauthorized": "Your session has expired or you are not authenticated. Please log in again.",
+                "unknown": "An unexpected error occurred. Please try again later."
             },
             "field": {
                 "login": {
@@ -608,6 +648,9 @@
                     "password": "Password",
                     "password2": "Confirm password",
                     "surname": "Surname"
+                },
+                "pattern": {
+                    "email": "user@domain.com"
                 }
             }
         },

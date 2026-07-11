@@ -84,17 +84,36 @@ export class HttpService {
         }
 
         const errorCode = body?.errorCode ?? 'unknown';
-        const key = `angular-components.http.error.${errorCode}`;
+        const resolvedCode = this.resolveRangeCode(errorCode, body?.messageParameters);
+        const key = `angular-components.http.error.${resolvedCode}`;
         const translation = this.translateService.instant(key);
 
         return {
             message: translation !== key ? key : ERROR_UNKNOWN_KEY,
-            title: this.resolveErrorTitle(errorCode)
+            title: this.resolveErrorTitle(resolvedCode),
+            messageParameters
         };
     }
 
+    private resolveRangeCode(errorCode: string, parameters?: Record<string, unknown>): string {
+        if (errorCode !== 'invalid-field-range' && errorCode !== 'invalid-field-length') {
+            return errorCode;
+        }
+
+        if (parameters?.['min'] === null) {
+            return `${errorCode}-max`;
+        }
+
+        if (parameters?.['max'] === null) {
+            return `${errorCode}-min`;
+        }
+
+        return errorCode;
+    }
+
     private resolveErrorTitle(errorKey: string): string {
-        const titleKey = `${TITLE_PREFIX}${errorKey}`;
+        const baseKey = errorKey.replace(/-(min|max)$/u, '');
+        const titleKey = `${TITLE_PREFIX}${baseKey}`;
         const translated = this.translateService.instant(titleKey);
 
         return translated !== titleKey ? titleKey : `${TITLE_PREFIX}default`;

@@ -3,6 +3,16 @@ import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
+function makeRangeError(errorCode: string, min: number | null, max: number | null) {
+    return throwError(
+        () =>
+            new HttpErrorResponse({
+                status: 400,
+                error: { errorCode, messageParameters: { fieldName: 'field', min, max } }
+            })
+    );
+}
+
 import { LoadingService } from '../../components/loading/services/loading.service';
 import { ModalService } from '../../components/modal/services/modal.service';
 import { ToastService } from '../../components/toast/services/toast.service';
@@ -214,22 +224,27 @@ describe('HttpService', () => {
             expect(modalService.openError).toHaveBeenCalledWith({
                 message: 'angular-components.http.error.unknown',
                 title: 'angular-components.http.title.default',
-                messageParameters: undefined
+                messageParameters: {}
             });
         });
 
         it('should use unknown error key when errorCode has no translation', () => {
-            httpClient.get.mockReturnValue(throwError(() => new HttpErrorResponse({
-                status: 400,
-                error: { errorCode: 'unrecognized_error' }
-            })));
+            httpClient.get.mockReturnValue(
+                throwError(
+                    () =>
+                        new HttpErrorResponse({
+                            status: 400,
+                            error: { errorCode: 'unrecognized_error' }
+                        })
+                )
+            );
 
             service.get('/api/items').subscribe();
 
             expect(modalService.openError).toHaveBeenCalledWith({
                 message: 'angular-components.http.error.unknown',
                 title: 'angular-components.http.title.default',
-                messageParameters: undefined
+                messageParameters: {}
             });
         });
 
@@ -297,16 +312,138 @@ describe('HttpService', () => {
         });
     });
 
+    describe('range/length error code resolution', () => {
+        beforeEach(() => {
+            translateService.instant.mockImplementation((key: string) => {
+                if (key.startsWith('angular-components.http.error.invalid-field')) {
+                    return `translated:${key}`;
+                }
+
+                return key;
+            });
+        });
+
+        it('should use invalid-field-range when both min and max are present', () => {
+            httpClient.get.mockReturnValue(makeRangeError('invalid-field-range', 0, 100));
+            service.get('/api').subscribe();
+            expect(modalService.openError).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    message: 'angular-components.http.error.invalid-field-range'
+                })
+            );
+        });
+
+        it('should use invalid-field-range-min when max is null', () => {
+            httpClient.get.mockReturnValue(makeRangeError('invalid-field-range', 5, null));
+            service.get('/api').subscribe();
+            expect(modalService.openError).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    message: 'angular-components.http.error.invalid-field-range-min'
+                })
+            );
+        });
+
+        it('should use invalid-field-range-max when min is null', () => {
+            httpClient.get.mockReturnValue(makeRangeError('invalid-field-range', null, 100));
+            service.get('/api').subscribe();
+            expect(modalService.openError).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    message: 'angular-components.http.error.invalid-field-range-max'
+                })
+            );
+        });
+
+        it('should use invalid-field-length when both min and max are present', () => {
+            httpClient.get.mockReturnValue(makeRangeError('invalid-field-length', 3, 50));
+            service.get('/api').subscribe();
+            expect(modalService.openError).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    message: 'angular-components.http.error.invalid-field-length'
+                })
+            );
+        });
+
+        it('should use invalid-field-length-min when max is null', () => {
+            httpClient.get.mockReturnValue(makeRangeError('invalid-field-length', 3, null));
+            service.get('/api').subscribe();
+            expect(modalService.openError).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    message: 'angular-components.http.error.invalid-field-length-min'
+                })
+            );
+        });
+
+        it('should use invalid-field-length-max when min is null', () => {
+            httpClient.get.mockReturnValue(makeRangeError('invalid-field-length', null, 50));
+            service.get('/api').subscribe();
+            expect(modalService.openError).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    message: 'angular-components.http.error.invalid-field-length-max'
+                })
+            );
+        });
+
+        it('should resolve title using base key when errorCode has -min suffix', () => {
+            translateService.instant.mockImplementation((key: string) => {
+                if (key === 'angular-components.http.title.invalid-field-range') {
+                    return 'Value out of range';
+                }
+
+                if (key.startsWith('angular-components.http.error.invalid-field')) {
+                    return `translated:${key}`;
+                }
+
+                return key;
+            });
+
+            httpClient.get.mockReturnValue(makeRangeError('invalid-field-range', 5, null));
+            service.get('/api').subscribe();
+
+            expect(modalService.openError).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    title: 'angular-components.http.title.invalid-field-range'
+                })
+            );
+        });
+
+        it('should resolve title using base key when errorCode has -max suffix', () => {
+            translateService.instant.mockImplementation((key: string) => {
+                if (key === 'angular-components.http.title.invalid-field-length') {
+                    return 'Invalid length';
+                }
+
+                if (key.startsWith('angular-components.http.error.invalid-field')) {
+                    return `translated:${key}`;
+                }
+
+                return key;
+            });
+
+            httpClient.get.mockReturnValue(makeRangeError('invalid-field-length', null, 20));
+            service.get('/api').subscribe();
+
+            expect(modalService.openError).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    title: 'angular-components.http.title.invalid-field-length'
+                })
+            );
+        });
+    });
+
     describe('combined options', () => {
         it('should handle loading + successToast + onSuccess together', () => {
             const onSuccess = jest.fn();
             httpClient.post.mockReturnValue(of({ id: 1 }));
 
-            service.post('/api/items', { name: 'test' }, {
-                loading: true,
-                onSuccess,
-                successToast: 'items.created'
-            });
+            service.post(
+                '/api/items',
+                { name: 'test' },
+                {
+                    loading: true,
+                    onSuccess,
+                    successToast: 'items.created'
+                }
+            );
 
             expect(loadingService.show).toHaveBeenCalledTimes(1);
             expect(onSuccess).toHaveBeenCalledWith({ id: 1 });
