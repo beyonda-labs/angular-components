@@ -119,6 +119,10 @@ export class FormComponent implements OnDestroy {
     }
 
     private getButtonDisabled(button: FormButton): boolean {
+        if (button.action) {
+            return false;
+        }
+
         if (button.type === FormButtonType.Cancel) {
             return !this.config.formGroup?.dirty === true;
         }
@@ -131,6 +135,10 @@ export class FormComponent implements OnDestroy {
     }
 
     private getButtonTooltip(button: FormButton): string {
+        if (button.action) {
+            return button.tooltip;
+        }
+
         if (button.type === FormButtonType.Cancel) {
             return this.config.formGroup?.dirty === true ? '' : 'angular-components.form.cancel.without-changes';
         }

@@ -1,0 +1,40 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.bey-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.bey-page-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.bey-page-header bey-header {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.bey-page-search {
+    display: flex;
+    justify-content: flex-end;
+    /* The filters panel is absolutely positioned and must overlap the table below. */
+    position: relative;
+    z-index: 10;
+}
+
+.bey-page-body {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    overflow: hidden;
+}

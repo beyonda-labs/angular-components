@@ -1,6 +1,17 @@
 {
     "angular-components-style-guide": {
         "breadcrumb": {
+            "basic": {
+                "detail": {
+                    "label": "Product detail"
+                },
+                "home": {
+                    "label": "Home"
+                },
+                "products": {
+                    "label": "Products"
+                }
+            },
             "clicked": "Breadcrumb clicked:",
             "example": "Model-driven breadcrumb navigation with automatic overflow handling, optional icons, and disabled state. The consumer handles navigation via the onItemClick callback.",
             "examples": {
@@ -8,55 +19,44 @@
                 "icons": "With icons",
                 "overflow": "Overflow (constrained width)"
             },
-            "basic": {
-                "home": {
-                    "label": "Home"
-                },
-                "products": {
-                    "label": "Products"
-                },
-                "detail": {
-                    "label": "Product detail"
-                }
-            },
             "icons": {
-                "home": {
-                    "label": "Home"
-                },
                 "catalog": {
                     "label": "Catalog"
                 },
                 "category": {
                     "label": "Category"
                 },
+                "home": {
+                    "label": "Home"
+                },
                 "product": {
                     "label": "Product"
                 }
             },
             "overflow": {
-                "home": {
-                    "label": "Home"
-                },
-                "region": {
-                    "label": "Europe"
-                },
-                "country": {
-                    "label": "United Kingdom"
-                },
-                "state": {
-                    "label": "England"
+                "building": {
+                    "label": "221B"
                 },
                 "city": {
                     "label": "London"
                 },
+                "country": {
+                    "label": "United Kingdom"
+                },
+                "home": {
+                    "label": "Home"
+                },
                 "neighborhood": {
                     "label": "Westminster"
                 },
+                "region": {
+                    "label": "Europe"
+                },
+                "state": {
+                    "label": "England"
+                },
                 "street": {
                     "label": "Baker Street"
-                },
-                "building": {
-                    "label": "221B"
                 }
             }
         }

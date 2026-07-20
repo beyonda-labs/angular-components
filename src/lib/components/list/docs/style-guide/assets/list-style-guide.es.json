@@ -1,0 +1,11 @@
+{
+    "angular-components-style-guide": {
+        "list": {
+            "empty": "No se han encontrado empleados",
+            "empty-example": "Estado vacío (sin elementos):",
+            "example": "Lista vertical de tarjetas con HTML totalmente personalizado por tarjeta, manteniendo una apariencia general consistente (espaciado, borde, hover). Haz clic en una tarjeta para verla en la consola.",
+            "selected": "Empleado seleccionado:"
+        },
+        "lists": "Listas"
+    }
+}

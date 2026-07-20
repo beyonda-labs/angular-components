@@ -1,0 +1,25 @@
+@if (config) {
+    <div class="bey-list" [style.gap]="config.gap">
+        @if (config.items.length) {
+            @for (item of config.items; track trackByItem($index, item)) {
+                <div
+                    class="bey-list-item"
+                    [class.bey-list-item-bare]="config.bare"
+                    [class.bey-list-item-clickable]="!!config.onItemClick"
+                    [attr.role]="config.onItemClick ? 'button' : null"
+                    [attr.tabindex]="config.onItemClick ? 0 : null"
+                    (click)="onItemClick(item, $index)"
+                    (keydown.enter)="onItemKeydown($event, item, $index)"
+                    (keydown.space)="onItemKeydown($event, item, $index)"
+                >
+                    <ng-container
+                        [ngTemplateOutlet]="cardTemplate ?? null"
+                        [ngTemplateOutletContext]="getItemContext(item, $index)"
+                    ></ng-container>
+                </div>
+            }
+        } @else {
+            <div class="bey-list-empty">{{ getEmptyLabel() | translate }}</div>
+        }
+    </div>
+}

@@ -38,3 +38,7 @@
     height: 100%;
     overflow: hidden auto;
 }
+
+.bey-app-layout-body-content {
+    min-height: 0;
+}

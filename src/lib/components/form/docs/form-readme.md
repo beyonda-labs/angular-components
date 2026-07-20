@@ -10,6 +10,7 @@ Supported capabilities:
 -   Action buttons (cancel, submit, next, previous, optional).
 -   i18n via `i18nPrefix`.
 -   Lifecycle callbacks: `onFormGroupAdded`, `onValueChange`, `onSubmit`, `onCancel`.
+-   Modal variant: open a form inside a dialog via `BeyModalFormService` + `BeyModalFormConfig`.
 
 ---
 
@@ -127,7 +128,7 @@ An action button at the bottom of the form.
 | `label`    | `string`            | yes      | —       | Translation key for button text            |
 | `tooltip`  | `string`            | no       | `''`    | Tooltip text                               |
 | `isHidden` | `boolean`           | no       | `false` | Hides the button                           |
-| `action`   | `() => void`        | no       | —       | Custom click handler (for `Optional` type) |
+| `action`   | `() => void`        | no       | —       | Custom click handler. Buttons with a custom action replace the default behavior and are never auto-disabled |
 
 ### `BeyFormButtonType`
 
@@ -148,6 +149,133 @@ Groups sections by key for multi-step navigation.
 | Attribute  | Type       | Description                                          |
 | ---------- | ---------- | ---------------------------------------------------- |
 | `sections` | `string[]` | Array of section `key` values belonging to this step |
+
+---
+
+## Modal form
+
+A form can also be opened inside a modal dialog (same look and feel as the modal module) using
+`BeyModalFormService` and `BeyModalFormConfig`. `BeyModalFormConfig` extends `BeyFormConfig`, so it
+reuses the same sections, rows, fields, validators and callbacks.
+
+Requires `provideBeyModal()` in the application config (it uses `ngx-bootstrap` modals underneath).
+
+```ts
+import { BeyModalFormConfig, BeyModalFormService, BeyModalFormSize } from '@beyonda-labs/angular-components';
+
+private readonly modalFormService = inject(BeyModalFormService);
+
+openContactForm(): void {
+    this.modalFormService.open(
+        new BeyModalFormConfig({
+            i18nPrefix: 'contactForm',
+            initialValue: { contact: { name: '', email: '' } },
+            onSubmit: (value, form) => {
+                // The modal does NOT close automatically: close it only when the backend call succeeds.
+                this.myService.save(value).subscribe({
+                    next: () => form.close(),
+                    error: () => this.modalService.openError({ ... })
+                });
+            },
+            size: BeyModalFormSize.Large,
+            sections: [
+                new BeyFormSection({
+                    key: 'contact',
+                    rows: [
+                        new BeyFormRow({
+                            fields: [
+                                new BeyFormTextField({ key: 'name', columns: 6, isRequired: true }),
+                                new BeyFormTextField({ key: 'email', columns: 6, isRequired: true })
+                            ]
+                        })
+                    ]
+                })
+            ]
+        })
+    );
+}
+```
+
+### `BeyModalFormConfig`
+
+**Constructor parameters:**
+
+| Parameter          | Type                        | Required | Default | Description                                        |
+| ------------------ | --------------------------- | -------- | ------- | -------------------------------------------------- |
+| `i18nPrefix`       | `string`                    | yes      | —       | Prefix for the modal title, buttons and all fields |
+| `sections`         | `BeyFormSection[]`          | yes      | —       | Array of form sections                             |
+| `initialValue`     | `TValue`                    | no       | —       | Applied automatically once the `FormGroup` exists  |
+| `steps`            | `BeyFormStep[]`             | no       | `[]`    | Step groups for multi-step forms                   |
+| `onFormGroupAdded` | `(formGroup, form) => void` | no       | —       | Called once the `FormGroup` is initialized         |
+| `onValueChange`    | `(value, form) => void`     | no       | —       | Called on every value change                       |
+| `onSubmit`         | `(value, form) => void`     | no       | —       | Called on valid submission (does not auto-close)   |
+| `size`             | `BeyModalFormSize`          | no       | `Large` | Width of the modal dialog                          |
+| `title`            | `string`                    | no       | —       | Modal title key; overrides `{prefix}.title`        |
+| `cancelLabel`      | `string`                    | no       | —       | Cancel label key; overrides `{prefix}.buttons.cancel` |
+| `submitLabel`      | `string`                    | no       | —       | Submit label key; overrides `{prefix}.buttons.submit` |
+
+Unlike `BeyFormConfig`, buttons are not configurable: the modal always renders a Cancel and a
+Submit button whose labels are derived from `i18nPrefix` (or the explicit label overrides).
+
+**Methods** (besides the inherited `BeyFormConfig` ones):
+
+| Method           | Description                                                                  |
+| ---------------- | ---------------------------------------------------------------------------- |
+| `close()`        | Closes the modal immediately, without confirmation (e.g. after a saved item) |
+| `requestClose()` | Closes the modal, asking for confirmation first if there are unsaved changes |
+| `isDirty()`      | Returns whether the form has unsaved changes                                 |
+
+### `BeyModalFormSize`
+
+| Value                          | Bootstrap class | Width    |
+| ------------------------------ | --------------- | -------- |
+| `BeyModalFormSize.Small`       | `modal-sm`      | ~300px   |
+| `BeyModalFormSize.Medium`      | (default)       | ~500px   |
+| `BeyModalFormSize.Large`       | `modal-lg`      | ~800px   |
+| `BeyModalFormSize.ExtraLarge`  | `modal-xl`      | ~1140px  |
+
+### i18n convention
+
+With `i18nPrefix = 'contactForm'`:
+
+| Key pattern               | Example                     | Description         |
+| ------------------------- | --------------------------- | ------------------- |
+| `{prefix}.title`          | `contactForm.title`         | Modal title         |
+| `{prefix}.buttons.cancel` | `contactForm.buttons.cancel`| Cancel button label |
+| `{prefix}.buttons.submit` | `contactForm.buttons.submit`| Submit button label |
+
+Sections and fields follow the standard form i18n convention under the same prefix.
+
+### Behavior
+
+-   `open()` returns the `BsModalRef` of the dialog.
+-   Submit runs `onSubmit` (only when the form is valid) but does **not** close the modal: call
+    `form.close()` when the operation succeeds (e.g. after the backend confirms), and leave it open
+    on error.
+-   Cancel and the `×` close button ask for confirmation when there are unsaved changes
+    (`angular-components.form.modal.close-confirmation.*` keys); with no changes they close directly.
+-   A click on the backdrop or the Esc key does not close the modal, so the unsaved-changes guard
+    cannot be bypassed.
+
+### Unsaved changes and navigation (`beyModalFormGuard`)
+
+To also protect against route navigation while a modal form is open, attach the guard to the routes
+that can open one:
+
+```ts
+import { beyModalFormGuard } from '@beyonda-labs/angular-components';
+
+export const routes: Routes = [
+    { path: 'products', component: ProductsPageComponent, canDeactivate: [beyModalFormGuard] }
+];
+```
+
+On navigation:
+
+-   No open modal form → navigation proceeds.
+-   Open but pristine modal forms → they are closed and navigation proceeds.
+-   Open dirty modal form → a confirmation modal is shown; confirming closes the forms and
+    navigates, rejecting keeps the modal open and cancels the navigation.
 
 ---
 

@@ -5,6 +5,8 @@
 const fs = require('fs');
 const path = require('path');
 
+const { sortObjectDeep } = require('./sort-translations');
+
 const sourceDirs = [
     path.resolve(__dirname, '../src/lib/components'),
     path.resolve(__dirname, '../src/lib/internal'),
@@ -66,9 +68,9 @@ function mergeTranslations() {
             }
         }, {});
 
-        // Write output
+        // Write output with alphabetically sorted keys
         const outFile = path.join(targetDir, `angular-components.${lang}.json`);
-        fs.writeFileSync(outFile, JSON.stringify(merged, null, 4), 'utf8');
+        fs.writeFileSync(outFile, JSON.stringify(sortObjectDeep(merged), null, 4), 'utf8');
         console.log(`✔ Merged translations for ${lang} → ${outFile}`);
     });
 }

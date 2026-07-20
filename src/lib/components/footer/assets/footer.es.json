@@ -2,8 +2,8 @@
     "angular-components": {
         "footer": {
             "legal": "Legal",
-            "terms": "Términos y condiciones",
-            "privacy": "Política de privacidad"
+            "privacy": "Política de privacidad",
+            "terms": "Términos y condiciones"
         }
     }
 }

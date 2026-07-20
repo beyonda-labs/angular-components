@@ -1,0 +1,8 @@
+{
+    "angular-components": {
+        "tree": {
+            "collapse": "Contraer",
+            "expand": "Expandir"
+        }
+    }
+}

@@ -1,0 +1,26 @@
+{
+    "angular-components-style-guide": {
+        "tree": {
+            "example": "Recursive tree with expand/collapse, icons, single selection and a disabled node.",
+            "nodes": {
+                "backend": {
+                    "label": "Backend"
+                },
+                "engineering": {
+                    "label": "Engineering"
+                },
+                "frontend": {
+                    "label": "Frontend"
+                },
+                "operations": {
+                    "label": "Operations"
+                },
+                "platform": {
+                    "label": "Platform (disabled)"
+                }
+            },
+            "selected": "Node selected:"
+        },
+        "trees": "Trees"
+    }
+}

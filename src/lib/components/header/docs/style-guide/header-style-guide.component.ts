@@ -23,6 +23,16 @@ export class HeaderStyleGuideComponent {
                 type: HeaderActionType.Text
             })
         ],
+        menuActions: [
+            new HeaderAction({
+                key: 'archive',
+                type: HeaderActionType.Text
+            }),
+            new HeaderAction({
+                key: 'delete',
+                type: HeaderActionType.Text
+            })
+        ],
         prefix: 'angular-components-style-guide.header',
         rightActions: [
             new HeaderAction({

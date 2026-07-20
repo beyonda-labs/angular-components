@@ -60,4 +60,17 @@ describe('FormComponent', () => {
 
         expect(buttonConfig).toBeTruthy();
     });
+
+    it('should never disable buttons with a custom action', () => {
+        component.config = new FormConfig({
+            i18nPrefix: 'test.form',
+            sections: []
+        });
+
+        const buttonConfig = component.getFormButton(
+            new FormButton({ action: () => {}, label: 'cancel', type: FormButtonType.Cancel })
+        );
+
+        expect(buttonConfig.isDisabled).toBe(false);
+    });
 });

@@ -1,0 +1,58 @@
+:host {
+    --bey-list-border: var(--bey-gray-200);
+    --bey-list-fg-muted: var(--text-muted);
+    --bey-list-hover-shadow: rgba(var(--bey-black-rgb), 0.08);
+
+    display: block;
+}
+
+:host-context(body.dark) {
+    --bey-list-border: var(--bey-gray-700);
+    --bey-list-hover-shadow: rgba(var(--bey-white-rgb), 0.06);
+}
+
+.bey-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.bey-list-item {
+    display: block;
+    width: 100%;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--bey-list-border);
+    border-radius: 0.5rem;
+    background: var(--bey-bg-surface);
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.bey-list-item-bare {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}
+
+.bey-list-item-clickable {
+    cursor: pointer;
+}
+
+.bey-list-item-clickable:hover {
+    border-color: var(--bey-secondary);
+    box-shadow: 0 6px 18px var(--bey-list-hover-shadow);
+}
+
+.bey-list-item-clickable:focus-visible {
+    outline: 2px solid var(--bey-primary);
+    outline-offset: 2px;
+}
+
+.bey-list-empty {
+    padding: 2rem 1rem;
+    color: var(--bey-list-fg-muted);
+    font-size: 0.88rem;
+    text-align: center;
+}

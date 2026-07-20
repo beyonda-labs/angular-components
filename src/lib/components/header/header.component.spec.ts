@@ -96,6 +96,32 @@ describe('HeaderComponent', () => {
         expect(() => button.action()).not.toThrow();
     });
 
+    it('should render the menu toggle as the last element of the left actions', () => {
+        component.config = buildConfig({
+            leftActions: [new HeaderAction({ key: 'back', type: HeaderActionType.Text })],
+            menuActions: [new HeaderAction({ key: 'export', type: HeaderActionType.Text })]
+        });
+
+        fixture.detectChanges();
+
+        const leftContainer = fixture.nativeElement.querySelector('.bey-header-actions-left') as HTMLElement;
+        const menu = leftContainer.querySelector('.bey-header-menu');
+
+        expect(menu).toBeTruthy();
+        expect(leftContainer.lastElementChild).toBe(menu);
+        expect(fixture.nativeElement.querySelector('.bey-header-actions-right')).toBeNull();
+    });
+
+    it('should render the left zone when only menu actions are present', () => {
+        component.config = buildConfig({
+            menuActions: [new HeaderAction({ key: 'export', type: HeaderActionType.Text })]
+        });
+
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.querySelector('.bey-header-actions-left .bey-header-menu')).toBeTruthy();
+    });
+
     it('should return empty title when config title is not defined', () => {
         component.config = buildConfig();
         component.config.title = undefined as unknown as string;
@@ -109,6 +135,7 @@ function buildConfig(overrides?: Partial<HeaderConfig>): HeaderConfig {
         prefix: overrides?.prefix ?? 'test.header',
         title: overrides?.title ?? 'test.header.title',
         leftActions: overrides?.leftActions ?? [],
+        menuActions: overrides?.menuActions ?? [],
         rightActions: overrides?.rightActions ?? []
     });
 }

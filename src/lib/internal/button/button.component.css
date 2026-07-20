@@ -9,9 +9,9 @@
     font-size: 0.84rem;
     line-height: 1.2;
     border-radius: 0.3rem;
-    padding: 0.5rem 0.85rem;
+    padding: var(--bey-button-padding-block, 0.5rem) var(--bey-button-padding-inline, 0.85rem);
 }
 
 .bey-button-icon {
-    font-size: 0.76rem;
+    font-size: var(--bey-button-icon-size, 0.76rem);
 }

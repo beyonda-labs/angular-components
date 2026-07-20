@@ -1,19 +1,6 @@
 {
     "angular-components": {
         "http": {
-            "title": {
-                "login": {
-                    "existing-user": "Account already exists",
-                    "invalid-credentials": "Authentication failed",
-                    "oauth-invalid-callback": "Authentication error",
-                    "oauth-missing-access-token": "Authentication error",
-                    "oauth-missing-email": "Authentication error",
-                    "oauth-token-exchange": "Authentication error",
-                    "oauth-user-info-not-found": "Authentication error",
-                    "passwords-not-match": "Password error",
-                    "provider-not-found": "Provider unavailable"
-                }
-            },
             "error": {
                 "login": {
                     "existing-user": "An account with this email already exists.",
@@ -34,6 +21,19 @@
                     "password": "Password",
                     "password2": "Confirm password",
                     "surname": "Surname"
+                }
+            },
+            "title": {
+                "login": {
+                    "existing-user": "Account already exists",
+                    "invalid-credentials": "Authentication failed",
+                    "oauth-invalid-callback": "Authentication error",
+                    "oauth-missing-access-token": "Authentication error",
+                    "oauth-missing-email": "Authentication error",
+                    "oauth-token-exchange": "Authentication error",
+                    "oauth-user-info-not-found": "Authentication error",
+                    "passwords-not-match": "Password error",
+                    "provider-not-found": "Provider unavailable"
                 }
             }
         },

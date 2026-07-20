@@ -9,6 +9,10 @@
                 "fullscreen-description": "Covers the entire viewport. Click to dismiss."
             },
             "sample-content": "This content is behind the overlay and cannot be interacted with while loading is active.",
+            "service": {
+                "description": "Uses LoadingService to show and hide the fullscreen overlay programmatically. Auto-dismisses after 3 seconds.",
+                "label": "Service"
+            },
             "sizes": {
                 "custom": "Custom (3.25 rem)",
                 "lg": "Large",
@@ -17,11 +21,7 @@
                 "xs": "Extra small"
             },
             "toggle-fullscreen": "Show fullscreen overlay",
-            "toggle-service": "Show via service",
-            "service": {
-                "label": "Service",
-                "description": "Uses LoadingService to show and hide the fullscreen overlay programmatically. Auto-dismisses after 3 seconds."
-            }
+            "toggle-service": "Show via service"
         }
     }
 }

@@ -2,6 +2,14 @@
     "angular-components-style-guide": {
         "header": {
             "actions": {
+                "archive": {
+                    "label": "Archive",
+                    "tooltip": "Archive goal"
+                },
+                "delete": {
+                    "label": "Delete",
+                    "tooltip": "Delete goal"
+                },
                 "duplicate": {
                     "label": "Duplicate",
                     "tooltip": "Duplicate goal"
@@ -19,7 +27,7 @@
                     "tooltip": "Create a new goal"
                 }
             },
-            "example": "Header with actions on both sides.",
+            "example": "Header with actions on both sides and a kebab menu (⋮) for secondary actions.",
             "title": "Goals"
         }
     }

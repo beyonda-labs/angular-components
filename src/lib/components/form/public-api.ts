@@ -6,6 +6,13 @@ export {
     FormSection as BeyFormSection,
     FormStep as BeyFormStep
 } from './models/form.model';
+export {
+    ModalFormConfig as BeyModalFormConfig,
+    ModalFormSize as BeyModalFormSize
+} from './components/modal/models/modal-form.model';
+export type { ModalFormConfigParameters as BeyModalFormConfigParameters } from './components/modal/models/modal-form.model';
+export { ModalFormService as BeyModalFormService } from './components/modal/services/modal-form.service';
+export { modalFormGuard as beyModalFormGuard } from './components/modal/guards/modal-form.guard';
 export { FormField as BeyFormField, FormFieldType as BeyFormFieldType } from './models/form-field.model';
 export type { FormFieldColumn as BeyFormFieldColumn, FormFieldOption as BeyFormFieldOption } from './models/form-field.model';
 export {

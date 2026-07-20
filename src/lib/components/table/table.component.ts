@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -15,11 +15,14 @@ import { TextTableCell } from './models/table-cell.model';
     styleUrls: ['./table.component.css']
 })
 export class TableComponent implements OnDestroy {
+    @ViewChild('scrollContainer') private readonly scrollContainer?: ElementRef<HTMLDivElement>;
+
     @Input({ required: true })
     set config(value: TableConfig) {
         this._config = value;
         this.bindRefresh();
         this.buildRows();
+        this.resetScroll();
     }
     get config(): TableConfig {
         return this._config;
@@ -59,6 +62,7 @@ export class TableComponent implements OnDestroy {
                 column =>
                     new TextTableCell({
                         content: this.getColumnLabel(column),
+                        tooltip: column.tooltip,
                         translate: true
                     })
             ),
@@ -112,6 +116,7 @@ export class TableComponent implements OnDestroy {
 
         this.config.$loadTable.pipe(takeUntil(this.configChange$), takeUntil(this.destroy$)).subscribe(() => {
             this.buildRows();
+            this.resetScroll();
         });
     }
 
@@ -120,9 +125,16 @@ export class TableComponent implements OnDestroy {
             item =>
                 new TableRow({
                     cells: this.config.loadRow(item),
-                    content: item
+                    content: item,
+                    selected: this.config.isRowSelected?.(item) ?? false
                 })
         );
+    }
+
+    private resetScroll(): void {
+        if (this.scrollContainer) {
+            this.scrollContainer.nativeElement.scrollTop = 0;
+        }
     }
 
     private emitSelectionChange(): void {

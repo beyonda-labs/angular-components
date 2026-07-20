@@ -2,6 +2,14 @@
     "angular-components-style-guide": {
         "header": {
             "actions": {
+                "archive": {
+                    "label": "Archivar",
+                    "tooltip": "Archivar objetivo"
+                },
+                "delete": {
+                    "label": "Eliminar",
+                    "tooltip": "Eliminar objetivo"
+                },
                 "duplicate": {
                     "label": "Duplicar",
                     "tooltip": "Duplicar objetivo"
@@ -19,7 +27,7 @@
                     "tooltip": "Crear un nuevo objetivo"
                 }
             },
-            "example": "Cabecera con acciones a ambos lados.",
+            "example": "Cabecera con acciones a ambos lados y un menú de tres puntos (⋮) para acciones secundarias.",
             "title": "Objetivos"
         }
     }

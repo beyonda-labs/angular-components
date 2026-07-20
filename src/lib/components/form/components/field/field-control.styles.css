@@ -115,6 +115,66 @@ textarea.form-control {
     opacity: 0.35;
 }
 
+/* ─── Switch (toggle) checkbox ───────────────────────────────────────────── */
+.bey-switch-check {
+    align-items: center;
+}
+
+.bey-switch {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    width: 2.15rem;
+    height: 1.15rem;
+}
+
+.bey-switch-input {
+    -webkit-appearance: none;
+    appearance: none;
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    border: 1px solid var(--bey-secondary);
+    border-radius: 1rem;
+    background-color: var(--bey-bg-muted);
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.bey-switch-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 0.95rem;
+    height: 0.95rem;
+    border-radius: 50%;
+    background-color: var(--bey-bg-page);
+    box-shadow: 0 1px 2px rgba(var(--bey-black-rgb), 0.25);
+    pointer-events: none;
+    transition: transform 0.2s ease;
+}
+
+.bey-switch-input:checked {
+    background-color: var(--bey-primary);
+    border-color: var(--bey-primary);
+}
+
+.bey-switch-input:checked ~ .bey-switch-knob {
+    transform: translateX(1rem);
+}
+
+.bey-switch-input:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.bey-switch-input:focus-visible {
+    outline: 2px solid var(--bey-primary);
+    outline-offset: 2px;
+}
+
 /* ─── Password toggle ────────────────────────────────────────────────────── */
 .bey-password-wrapper {
     position: relative;

@@ -2,12 +2,14 @@ import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
 export class HeaderConfig {
     leftActions: HeaderAction[] = [];
+    menuActions: HeaderAction[] = [];
     rightActions: HeaderAction[] = [];
     prefix: string;
     title: string;
 
-    constructor({ prefix, title = '', leftActions = [], rightActions = [] }: HeaderConfigParameters) {
+    constructor({ prefix, title = '', leftActions = [], menuActions = [], rightActions = [] }: HeaderConfigParameters) {
         this.leftActions = leftActions;
+        this.menuActions = menuActions;
         this.prefix = prefix;
         this.rightActions = rightActions;
         this.title = title;
@@ -18,6 +20,7 @@ export interface HeaderConfigParameters {
     prefix: string;
 
     leftActions?: HeaderAction[];
+    menuActions?: HeaderAction[];
     rightActions?: HeaderAction[];
     title?: string;
 }

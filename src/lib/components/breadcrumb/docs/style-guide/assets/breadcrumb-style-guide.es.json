@@ -1,6 +1,17 @@
 {
     "angular-components-style-guide": {
         "breadcrumb": {
+            "basic": {
+                "detail": {
+                    "label": "Detalle del producto"
+                },
+                "home": {
+                    "label": "Inicio"
+                },
+                "products": {
+                    "label": "Productos"
+                }
+            },
             "clicked": "Breadcrumb pulsado:",
             "example": "Navegación breadcrumb model-driven con manejo automático de desbordamiento, iconos opcionales y estado deshabilitado. El consumidor maneja la navegación mediante el callback onItemClick.",
             "examples": {
@@ -8,55 +19,44 @@
                 "icons": "Con iconos",
                 "overflow": "Desbordamiento (ancho limitado)"
             },
-            "basic": {
-                "home": {
-                    "label": "Inicio"
-                },
-                "products": {
-                    "label": "Productos"
-                },
-                "detail": {
-                    "label": "Detalle del producto"
-                }
-            },
             "icons": {
-                "home": {
-                    "label": "Inicio"
-                },
                 "catalog": {
                     "label": "Catálogo"
                 },
                 "category": {
                     "label": "Categoría"
                 },
+                "home": {
+                    "label": "Inicio"
+                },
                 "product": {
                     "label": "Producto"
                 }
             },
             "overflow": {
-                "home": {
-                    "label": "Inicio"
-                },
-                "region": {
-                    "label": "Europa"
-                },
-                "country": {
-                    "label": "España"
-                },
-                "state": {
-                    "label": "Andalucía"
+                "building": {
+                    "label": "La Giralda"
                 },
                 "city": {
                     "label": "Sevilla"
                 },
+                "country": {
+                    "label": "España"
+                },
+                "home": {
+                    "label": "Inicio"
+                },
                 "neighborhood": {
                     "label": "Santa Cruz"
                 },
+                "region": {
+                    "label": "Europa"
+                },
+                "state": {
+                    "label": "Andalucía"
+                },
                 "street": {
                     "label": "Calle Mateos Gago"
-                },
-                "building": {
-                    "label": "La Giralda"
                 }
             }
         }

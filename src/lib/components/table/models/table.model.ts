@@ -10,8 +10,8 @@ export class TableConfig {
     loadRow: (item: Record<string, unknown>) => TableCell[];
     prefix: string;
     selectable: boolean;
-    showTooltip: boolean;
 
+    isRowSelected?: (item: Record<string, unknown>) => boolean;
     selectedItemsChange?: (items: Record<string, unknown>[], indexes: number[]) => void;
 
     constructor({
@@ -19,19 +19,19 @@ export class TableConfig {
         loadRow,
         prefix,
         height = '60vh',
+        isRowSelected,
         items = [],
         selectable = true,
-        showTooltip = false,
         selectedItemsChange
     }: TableConfigParameters) {
         this.$loadTable = new EventEmitter<void>();
         this.columns = columns;
         this.height = height;
+        this.isRowSelected = isRowSelected;
         this.items = items;
         this.loadRow = loadRow;
         this.prefix = prefix;
         this.selectable = selectable;
-        this.showTooltip = showTooltip;
         this.selectedItemsChange = selectedItemsChange;
     }
 
@@ -46,9 +46,9 @@ export interface TableConfigParameters {
     prefix: string;
 
     height?: string;
+    isRowSelected?: (item: Record<string, unknown>) => boolean;
     items?: Record<string, unknown>[];
     selectable?: boolean;
-    showTooltip?: boolean;
     selectedItemsChange?: (items: Record<string, unknown>[], indexes: number[]) => void;
 }
 
@@ -56,14 +56,19 @@ export class TableColumn {
     key: string;
     width: number;
 
-    constructor({ key, width = 10 }: TableColumnParameters) {
+    tooltip?: string;
+
+    constructor({ key, tooltip, width = 10 }: TableColumnParameters) {
         this.key = key;
+        this.tooltip = tooltip;
         this.width = width;
     }
 }
 
 export interface TableColumnParameters {
     key: string;
+
+    tooltip?: string;
     width?: number;
 }
 

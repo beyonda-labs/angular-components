@@ -1,0 +1,26 @@
+{
+    "angular-components-style-guide": {
+        "tree": {
+            "example": "Árbol recursivo con expandir/contraer, iconos, selección única y un nodo deshabilitado.",
+            "nodes": {
+                "backend": {
+                    "label": "Backend"
+                },
+                "engineering": {
+                    "label": "Ingeniería"
+                },
+                "frontend": {
+                    "label": "Frontend"
+                },
+                "operations": {
+                    "label": "Operaciones"
+                },
+                "platform": {
+                    "label": "Plataforma (deshabilitado)"
+                }
+            },
+            "selected": "Nodo seleccionado:"
+        },
+        "trees": "Árboles"
+    }
+}

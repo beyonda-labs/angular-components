@@ -14,7 +14,6 @@ import { CellType, LinkTableCell, TableCell } from '../../models/table-cell.mode
 export class TableCellComponent {
     @Input({ required: true }) cell!: TableCell;
     @Input() isHeader = false;
-    @Input() showTooltip = false;
 
     protected readonly cellType = CellType;
 
@@ -27,7 +26,7 @@ export class TableCellComponent {
     }
 
     hasTooltip(): boolean {
-        return this.showTooltip && Boolean(this.cell?.tooltip);
+        return Boolean(this.cell?.tooltip);
     }
 
     onLinkClick(event: MouseEvent): void {

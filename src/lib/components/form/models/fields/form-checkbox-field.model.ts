@@ -2,6 +2,8 @@ import { FormField, FormFieldColumn, FormFieldType } from '../form-field.model';
 import { FormFieldAsyncValidator, FormFieldValidator } from '../form-field-validator.model';
 
 export class FormCheckboxField extends FormField {
+    isSwitch: boolean;
+
     constructor({
         key,
         asyncValidators,
@@ -11,6 +13,7 @@ export class FormCheckboxField extends FormField {
         isLabelTooltipVisible,
         isLabelVisible = true,
         isRequired,
+        isSwitch = false,
         validators
     }: FormCheckboxFieldParameters) {
         super({
@@ -25,6 +28,8 @@ export class FormCheckboxField extends FormField {
             type: FormFieldType.Checkbox,
             validators
         });
+
+        this.isSwitch = isSwitch;
     }
 }
 
@@ -38,5 +43,7 @@ interface FormCheckboxFieldParameters {
     isLabelTooltipVisible?: boolean;
     isLabelVisible?: boolean;
     isRequired?: boolean;
+    /** Renders the checkbox as a switch/toggle instead of the default square checkbox. */
+    isSwitch?: boolean;
     validators?: FormFieldValidator[];
 }

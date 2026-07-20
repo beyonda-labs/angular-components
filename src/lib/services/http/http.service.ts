@@ -21,8 +21,8 @@ export class HttpService {
     private readonly toastService = inject(ToastService);
     private readonly translateService = inject(TranslateService);
 
-    delete<T>(url: string, options?: HttpRequestOptions): Observable<T> {
-        return this.request(this.httpClient.delete<T>(url, this.buildHttpOptions(options)), options);
+    delete<T>(url: string, body: unknown, options?: HttpRequestOptions): Observable<T> {
+        return this.request(this.httpClient.delete<T>(url, { ...this.buildHttpOptions(options), body }), options);
     }
 
     get<T>(url: string, options?: HttpRequestOptions): Observable<T> {

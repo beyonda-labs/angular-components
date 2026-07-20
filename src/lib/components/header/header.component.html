@@ -5,10 +5,24 @@
                 <h1 class="bey-header-title">{{ getTitle() | translate }}</h1>
             }
 
-            @if (leftActions.length) {
+            @if (leftActions.length || menuActions.length) {
                 <div class="bey-header-actions bey-header-actions-left">
                     @for (action of leftActions; track action.key) {
                         <bey-button [button]="getActionButton(action)"></bey-button>
+                    }
+
+                    @if (menuActions.length) {
+                        <div class="bey-header-menu">
+                            <bey-button [button]="getMenuToggleButton()"></bey-button>
+
+                            @if (isMenuOpen) {
+                                <div class="bey-header-menu-panel">
+                                    @for (action of menuActions; track action.key) {
+                                        <bey-button [button]="getMenuActionButton(action)"></bey-button>
+                                    }
+                                </div>
+                            }
+                        </div>
                     }
                 </div>
             }

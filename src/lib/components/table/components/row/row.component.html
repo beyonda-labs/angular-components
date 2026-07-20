@@ -22,10 +22,6 @@
     }
 
     @for (cell of row.cells; track $index) {
-        <bey-table-cell
-            [cell]="cell"
-            [isHeader]="isHeader"
-            [showTooltip]="config.showTooltip && !isHeader"
-        ></bey-table-cell>
+        <bey-table-cell [cell]="cell" [isHeader]="isHeader"></bey-table-cell>
     }
 </div>

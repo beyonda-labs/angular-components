@@ -9,6 +9,10 @@
                 "fullscreen-description": "Cubre toda la ventana. Haga clic para cerrar."
             },
             "sample-content": "Este contenido está detrás del overlay y no se puede interactuar con él mientras la carga esté activa.",
+            "service": {
+                "description": "Usa LoadingService para mostrar y ocultar el overlay a pantalla completa programáticamente. Se oculta automáticamente tras 3 segundos.",
+                "label": "Servicio"
+            },
             "sizes": {
                 "custom": "Personalizado (3.25 rem)",
                 "lg": "Grande",
@@ -17,11 +21,7 @@
                 "xs": "Extra pequeño"
             },
             "toggle-fullscreen": "Mostrar overlay a pantalla completa",
-            "toggle-service": "Mostrar vía servicio",
-            "service": {
-                "label": "Servicio",
-                "description": "Usa LoadingService para mostrar y ocultar el overlay a pantalla completa programáticamente. Se oculta automáticamente tras 3 segundos."
-            }
+            "toggle-service": "Mostrar vía servicio"
         }
     }
 }

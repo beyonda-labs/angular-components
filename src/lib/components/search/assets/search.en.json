@@ -1,0 +1,37 @@
+{
+    "angular-components": {
+        "search": {
+            "add": "Add filter",
+            "apply": "Apply filter",
+            "clear": "Clear all",
+            "empty": {
+                "description": "Add filters to narrow down results.",
+                "title": "No filters applied"
+            },
+            "field-placeholder": "Select filter",
+            "filters": "Filters",
+            "from-placeholder": "From",
+            "operators": {
+                "between": "Between",
+                "contains": "Contains",
+                "endsWith": "Ends with",
+                "equals": "Equals",
+                "greaterThan": "Greater than",
+                "greaterThanOrEquals": "Greater or equal",
+                "lessThan": "Less than",
+                "lessThanOrEquals": "Less or equal",
+                "notContains": "Does not contain",
+                "notEquals": "Not equals",
+                "startsWith": "Starts with"
+            },
+            "placeholder": "Search",
+            "remove": "Remove filter",
+            "to-placeholder": "To",
+            "value-placeholder": "Enter a value",
+            "values": {
+                "false": "No",
+                "true": "Yes"
+            }
+        }
+    }
+}

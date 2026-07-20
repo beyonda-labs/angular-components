@@ -1,14 +1,31 @@
 @if (field && control) {
-    <div class="form-check">
-        <input
-            class="form-check-input"
-            type="checkbox"
-            [id]="field.key"
-            [formControl]="control"
-            [attr.aria-required]="field.isRequired || null"
-            [attr.aria-invalid]="isInvalid() || null"
-            [attr.aria-label]="!field.isLabelVisible ? (getLabel() | translate) : null"
-        />
+    <div class="form-check" [class.bey-switch-check]="field.isSwitch">
+        @if (field.isSwitch) {
+            <span class="bey-switch">
+                <input
+                    class="bey-switch-input"
+                    type="checkbox"
+                    role="switch"
+                    [id]="field.key"
+                    [formControl]="control"
+                    [attr.aria-required]="field.isRequired || null"
+                    [attr.aria-invalid]="isInvalid() || null"
+                    [attr.aria-label]="!field.isLabelVisible ? (getLabel() | translate) : null"
+                />
+                <span class="bey-switch-knob" aria-hidden="true"></span>
+            </span>
+        } @else {
+            <input
+                class="form-check-input"
+                type="checkbox"
+                [id]="field.key"
+                [formControl]="control"
+                [attr.aria-required]="field.isRequired || null"
+                [attr.aria-invalid]="isInvalid() || null"
+                [attr.aria-label]="!field.isLabelVisible ? (getLabel() | translate) : null"
+            />
+        }
+
         @if (field.isLabelVisible) {
             <label class="form-check-label" [for]="field.key">
                 {{ getLabel() | translate }}

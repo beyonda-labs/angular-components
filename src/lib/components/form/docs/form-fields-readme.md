@@ -202,11 +202,24 @@ Boolean checkbox control.
 -   `isLabelVisible` defaults to `true`.
 -   `isPlaceholderVisible` is always `false` (no placeholder rendered for checkboxes).
 
+**Extra attributes:**
+
+| Attribute  | Type      | Default | Description                                                      |
+| ---------- | --------- | ------- | ------------------------------------------------------------------ |
+| `isSwitch` | `boolean` | `false` | Renders the control as a switch/toggle instead of a square checkbox |
+
 ```ts
 new BeyFormCheckboxField({
     key: 'acceptTerms',
     columns: 12,
     isRequired: true
+});
+
+// Switch style
+new BeyFormCheckboxField({
+    key: 'notifications',
+    columns: 12,
+    isSwitch: true
 });
 ```
 

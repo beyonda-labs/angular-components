@@ -1,0 +1,14 @@
+{
+    "angular-components": {
+        "page": {
+            "delete": {
+                "message": "This action will delete {{count}} item(s) and cannot be undone. Do you want to continue?",
+                "title": "Delete items"
+            },
+            "form": {
+                "cancel": "Cancel",
+                "submit": "Save"
+            }
+        }
+    }
+}

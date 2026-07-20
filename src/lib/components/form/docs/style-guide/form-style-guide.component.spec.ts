@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { BsModalService } from 'ngx-bootstrap/modal';
 import { of } from 'rxjs';
 
 import { FormStyleGuideComponent } from './form-style-guide.component';
@@ -22,7 +23,7 @@ describe('FormStyleGuideComponent', () => {
                     loader: { provide: TranslateLoader, useClass: FakeTranslateLoader }
                 })
             ],
-            providers: []
+            providers: [{ provide: BsModalService, useValue: { show: jest.fn() } }]
         }).compileComponents();
 
         fixture = TestBed.createComponent(FormStyleGuideComponent);

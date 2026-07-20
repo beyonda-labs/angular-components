@@ -1,0 +1,172 @@
+@if (config) {
+    <div class="bey-search">
+        @if (config.mainField) {
+            <div class="bey-search-box">
+                <fa-icon class="bey-search-box-icon" [icon]="searchIcon" aria-hidden="true"></fa-icon>
+                <input
+                    class="form-control form-control-sm bey-search-box-input"
+                    type="text"
+                    [placeholder]="getPlaceholder() | translate"
+                    [value]="searchTerm"
+                    (input)="onSearchTermChange($event)"
+                />
+            </div>
+        }
+
+        <div class="bey-search-filters">
+            <button
+                type="button"
+                class="btn btn-sm btn-outline-dark rounded fw-semibold d-inline-flex align-items-center bey-search-toggle"
+                (click)="togglePanel()"
+                [attr.aria-expanded]="panelOpen"
+            >
+                <fa-icon [icon]="filterIcon" aria-hidden="true"></fa-icon>
+                <span>{{ 'angular-components.search.filters' | translate }}</span>
+                @if (appliedFilters.length) {
+                    <span class="bey-search-badge">{{ appliedFilters.length }}</span>
+                }
+                <fa-icon
+                    class="bey-search-chevron"
+                    [class.bey-search-chevron-open]="panelOpen"
+                    [icon]="chevronIcon"
+                    aria-hidden="true"
+                ></fa-icon>
+            </button>
+
+            @if (panelOpen) {
+                <div class="bey-search-panel">
+                    @if (!rows.length) {
+                        <div class="bey-search-empty">
+                            <div class="bey-search-empty-title">
+                                {{ 'angular-components.search.empty.title' | translate }}
+                            </div>
+                            <div class="bey-search-empty-description">
+                                {{ 'angular-components.search.empty.description' | translate }}
+                            </div>
+                        </div>
+                    } @else {
+                        <div class="bey-search-rows">
+                            @for (row of rows; track $index) {
+                                <div class="bey-search-row">
+                                    <select
+                                        class="form-select form-select-sm bey-search-field"
+                                        (change)="onFieldChange($index, $event)"
+                                    >
+                                        <option value="" disabled [selected]="!row.fieldKey">
+                                            {{ 'angular-components.search.field-placeholder' | translate }}
+                                        </option>
+                                        @for (field of config.fields; track field.key) {
+                                            <option [value]="field.key" [selected]="field.key === row.fieldKey">
+                                                {{ getFieldLabel(field) | translate }}
+                                            </option>
+                                        }
+                                    </select>
+
+                                    <select
+                                        class="form-select form-select-sm bey-search-operator"
+                                        [disabled]="!row.fieldKey"
+                                        (change)="onOperatorChange($index, $event)"
+                                    >
+                                        @for (operator of getOperators(row); track operator) {
+                                            <option [value]="operator" [selected]="operator === row.operator">
+                                                {{ getOperatorLabel(operator) | translate }}
+                                            </option>
+                                        }
+                                    </select>
+
+                                    @switch (getRowType(row)) {
+                                        @case (fieldTypes.Boolean) {
+                                            <select
+                                                class="form-select form-select-sm bey-search-value"
+                                                (change)="onValueChange($index, $event)"
+                                            >
+                                                <option value="" disabled [selected]="!row.value">
+                                                    {{ 'angular-components.search.value-placeholder' | translate }}
+                                                </option>
+                                                <option value="true" [selected]="row.value === 'true'">
+                                                    {{ 'angular-components.search.values.true' | translate }}
+                                                </option>
+                                                <option value="false" [selected]="row.value === 'false'">
+                                                    {{ 'angular-components.search.values.false' | translate }}
+                                                </option>
+                                            </select>
+                                        }
+                                        @case (fieldTypes.Number) {
+                                            @if (isBetween(row)) {
+                                                <div class="bey-search-range bey-search-value">
+                                                    <input
+                                                        class="form-control form-control-sm bey-search-range-input"
+                                                        type="number"
+                                                        [placeholder]="
+                                                            'angular-components.search.from-placeholder' | translate
+                                                        "
+                                                        [value]="row.value"
+                                                        (input)="onValueChange($index, $event)"
+                                                    />
+                                                    <span class="bey-search-range-separator" aria-hidden="true">
+                                                        &ndash;
+                                                    </span>
+                                                    <input
+                                                        class="form-control form-control-sm bey-search-range-input"
+                                                        type="number"
+                                                        [placeholder]="
+                                                            'angular-components.search.to-placeholder' | translate
+                                                        "
+                                                        [value]="row.valueTo"
+                                                        (input)="onValueToChange($index, $event)"
+                                                    />
+                                                </div>
+                                            } @else {
+                                                <input
+                                                    class="form-control form-control-sm bey-search-value"
+                                                    type="number"
+                                                    [placeholder]="
+                                                        'angular-components.search.value-placeholder' | translate
+                                                    "
+                                                    [value]="row.value"
+                                                    (input)="onValueChange($index, $event)"
+                                                />
+                                            }
+                                        }
+                                        @default {
+                                            <input
+                                                class="form-control form-control-sm bey-search-value"
+                                                type="text"
+                                                [disabled]="!row.fieldKey"
+                                                [placeholder]="
+                                                    'angular-components.search.value-placeholder' | translate
+                                                "
+                                                [value]="row.value"
+                                                (input)="onValueChange($index, $event)"
+                                            />
+                                        }
+                                    }
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm bey-search-remove"
+                                        (click)="removeRow($index)"
+                                        [attr.aria-label]="'angular-components.search.remove' | translate"
+                                    >
+                                        <fa-icon [icon]="removeIcon" aria-hidden="true"></fa-icon>
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <div class="bey-search-panel-footer">
+                        <bey-button [button]="addButton"></bey-button>
+
+                        @if (rows.length) {
+                            <div class="bey-search-panel-actions">
+                                <bey-button [button]="clearButton"></bey-button>
+                                <bey-button [button]="applyButton"></bey-button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}

@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, Input } from '@angular/core';
+import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ButtonComponent } from '../../internal/button/button.component';
@@ -15,12 +16,32 @@ import { HeaderAction, HeaderActionType, HeaderConfig } from './models/header.mo
 export class HeaderComponent {
     @Input({ required: true }) config!: HeaderConfig;
 
+    isMenuOpen = false;
+
+    private readonly elementRef = inject(ElementRef);
+
     get leftActions(): HeaderAction[] {
         return this.config?.leftActions ?? [];
     }
 
+    get menuActions(): HeaderAction[] {
+        return this.config?.menuActions ?? [];
+    }
+
     get rightActions(): HeaderAction[] {
         return this.config?.rightActions ?? [];
+    }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent): void {
+        if (this.isMenuOpen && !this.elementRef.nativeElement.contains(event.target)) {
+            this.isMenuOpen = false;
+        }
+    }
+
+    @HostListener('document:keydown.escape')
+    onEscape(): void {
+        this.isMenuOpen = false;
     }
 
     getTitle(): string {
@@ -35,6 +56,32 @@ export class HeaderComponent {
             tooltip: this.resolveActionText(action, 'tooltip'),
             type: this.getButtonType(action.type)
         });
+    }
+
+    getMenuActionButton(action: HeaderAction): ButtonConfig {
+        const button = this.getActionButton(action);
+        const buttonAction = button.action;
+
+        button.action = () => {
+            this.isMenuOpen = false;
+            buttonAction();
+        };
+
+        return button;
+    }
+
+    getMenuToggleButton(): ButtonConfig {
+        return new ButtonConfig({
+            action: () => this.toggleMenu(),
+            customClass: 'bey-header-menu-toggle',
+            icon: faEllipsis,
+            tooltip: 'angular-components.header.menu',
+            type: ButtonType.Tertiary
+        });
+    }
+
+    toggleMenu(): void {
+        this.isMenuOpen = !this.isMenuOpen;
     }
 
     private getButtonType(type: HeaderActionType): ButtonType {

@@ -4,6 +4,13 @@
             "cancel": {
                 "without-changes": "No se han realizado cambios en el formulario."
             },
+            "modal": {
+                "close-confirmation": {
+                    "message": "Hay cambios sin guardar en el formulario. ¿Seguro que desea cerrarlo?",
+                    "title": "¿Descartar cambios?"
+                },
+                "type": "Formulario"
+            },
             "required": "Este campo es requerido",
             "submit": {
                 "invalid": "Hay errores en el formulario, por favor corrija o complete los campos requeridos antes de enviar."

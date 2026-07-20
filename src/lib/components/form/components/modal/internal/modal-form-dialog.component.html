@@ -1,0 +1,28 @@
+<div class="bey-modal-form">
+    <div class="d-flex align-items-start justify-content-between gap-3">
+        <div class="d-flex align-items-start gap-3 grow min-w-0">
+            <span class="bey-modal-form-icon" aria-hidden="true">
+                <fa-icon [icon]="getIcon()"></fa-icon>
+            </span>
+
+            <div class="min-w-0 grow">
+                <div class="bey-modal-form-type">{{ getTypeLabel() | translate }}</div>
+                <h2 class="bey-modal-form-title">{{ getTitle() | translate }}</h2>
+            </div>
+        </div>
+
+        <button
+            type="button"
+            class="btn btn-sm rounded-circle d-inline-flex align-items-center justify-content-center shrink-0 bey-modal-form-close"
+            [attr.aria-label]="'angular-components.modal.actions.close' | translate"
+            (click)="dismiss()"
+        >
+            <span aria-hidden="true">&times;</span>
+            <span class="visually-hidden">{{ 'angular-components.modal.actions.close' | translate }}</span>
+        </button>
+    </div>
+
+    <div class="bey-modal-form-body mt-3">
+        <bey-form [config]="config"></bey-form>
+    </div>
+</div>

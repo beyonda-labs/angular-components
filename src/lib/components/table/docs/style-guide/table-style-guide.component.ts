@@ -59,9 +59,17 @@ export class TableStyleGuideComponent {
     }): TableConfig {
         return new TableConfig({
             columns: [
-                new TableColumn({ key: 'name', width: 40 }),
+                new TableColumn({
+                    key: 'name',
+                    tooltip: 'angular-components-style-guide.table.tooltips.name',
+                    width: 40
+                }),
                 new TableColumn({ key: 'role', width: 30 }),
-                new TableColumn({ key: 'status', width: 20 }),
+                new TableColumn({
+                    key: 'status',
+                    tooltip: 'angular-components-style-guide.table.tooltips.status',
+                    width: 20
+                }),
                 new TableColumn({ key: 'action', width: 10 })
             ],
             items,
@@ -94,8 +102,7 @@ export class TableStyleGuideComponent {
                 })
             ],
             prefix: 'angular-components-style-guide.table',
-            selectedItemsChange,
-            showTooltip: true
+            selectedItemsChange
         });
     }
 }

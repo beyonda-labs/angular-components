@@ -1,8 +1,8 @@
 {
     "angular-components": {
         "floating-preferences": {
-            "light": "Light",
-            "dark": "Dark"
+            "dark": "Dark",
+            "light": "Light"
         }
     }
 }

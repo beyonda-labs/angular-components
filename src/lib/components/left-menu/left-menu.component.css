@@ -7,7 +7,7 @@
     --bey-left-menu-text: var(--text-primary);
     --bey-left-menu-text-muted: var(--text-muted);
     --bey-left-menu-text-soft: var(--text-muted);
-    --bey-left-menu-shadow: 0 18px 40px rgba(var(--bey-black-rgb), 0.08);
+    --bey-left-menu-shadow: 0 5px 20px rgba(var(--bey-black-rgb), 0.08);
     --bey-left-menu-height: 100%;
     --bey-left-menu-surface-subtle: var(--bey-bg-muted);
     --bey-left-menu-surface-subtle-hover: var(--bey-bg-active);
@@ -23,7 +23,7 @@
     --bey-left-menu-accent: var(--text-primary);
     --bey-left-menu-border: var(--bey-gray-800);
     --bey-left-menu-border-strong: var(--bey-gray-700);
-    --bey-left-menu-shadow: 0 18px 40px rgba(var(--bey-white-rgb), 0.07);
+    --bey-left-menu-shadow: 0 5px 20px rgba(var(--bey-white-rgb), 0.07);
     --bey-left-menu-border-subtle: var(--bey-gray-800);
     --bey-left-menu-border-subtle-hover: var(--bey-gray-700);
 }

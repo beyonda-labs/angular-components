@@ -1,0 +1,97 @@
+:host {
+    --bey-tree-fg: var(--text-primary);
+    --bey-tree-fg-muted: var(--text-muted);
+
+    display: block;
+    color: var(--bey-tree-fg);
+}
+
+.bey-tree {
+    display: flex;
+    flex-direction: column;
+}
+
+.bey-tree-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.bey-tree-node {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding-block: 0.45rem;
+    padding-right: 0.6rem;
+    border-radius: 0.4rem;
+    color: var(--bey-tree-fg);
+    font-size: 0.86rem;
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.bey-tree-node:hover:not(.bey-tree-node-disabled) {
+    background-color: var(--bey-bg-hover);
+}
+
+.bey-tree-node:focus-visible {
+    outline: 2px solid var(--bey-primary);
+    outline-offset: -2px;
+}
+
+.bey-tree-node-selected {
+    background-color: var(--bey-bg-active);
+    font-weight: 600;
+}
+
+.bey-tree-node-disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+.bey-tree-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 1.1rem;
+    height: 1.1rem;
+    border: none;
+    background: transparent;
+    color: var(--bey-tree-fg-muted);
+    padding: 0;
+}
+
+.bey-tree-toggle-hidden {
+    visibility: hidden;
+}
+
+.bey-tree-chevron {
+    font-size: 0.7rem;
+    transition: transform 0.15s ease;
+}
+
+.bey-tree-chevron-open {
+    transform: rotate(90deg);
+}
+
+.bey-tree-node-icon {
+    flex: 0 0 auto;
+    color: currentColor;
+    font-size: 0.86rem;
+}
+
+.bey-tree-node-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bey-tree-children {
+    display: flex;
+    flex-direction: column;
+}

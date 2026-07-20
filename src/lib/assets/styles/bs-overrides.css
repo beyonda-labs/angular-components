@@ -17,7 +17,7 @@ body.dark {
     --bs-btn-border-color: var(--bey-primary);
     --bs-btn-hover-color: var(--bey-bg-page);
     --bs-btn-hover-bg: var(--bey-gray-800);
-    --bs-btn-hover-border-color: var(--bey-gray-700);
+    --bs-btn-hover-border-color: var(--bey-primary);
     --bs-btn-active-color: var(--bey-bg-page);
     --bs-btn-active-bg: var(--bey-gray-700);
     --bs-btn-active-border-color: var(--bey-gray-600);

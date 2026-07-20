@@ -1,0 +1,33 @@
+@if (config) {
+    <div class="bey-page">
+        @if (config.headerConfig) {
+            <div class="bey-page-header">
+                @if (service.headerConfig(); as headerConfig) {
+                    <bey-header [config]="headerConfig"></bey-header>
+                }
+            </div>
+        }
+
+        @if (service.searchConfig(); as searchConfig) {
+            <div class="bey-page-search">
+                <bey-search [config]="searchConfig"></bey-search>
+            </div>
+        }
+
+        @if (config.tableConfig) {
+            <div class="bey-page-body">
+                @if (service.loading()) {
+                    <bey-loading-overlay></bey-loading-overlay>
+                }
+
+                @if (service.tableConfig(); as tableConfig) {
+                    <bey-table [config]="tableConfig"></bey-table>
+                }
+
+                @if (showPagination && service.paginationConfig(); as paginationConfig) {
+                    <bey-pagination [config]="paginationConfig"></bey-pagination>
+                }
+            </div>
+        }
+    </div>
+}

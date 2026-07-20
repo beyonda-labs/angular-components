@@ -41,6 +41,33 @@ describe('TableComponent', () => {
         expect(component.rows).toHaveLength(3);
     });
 
+    it('should reset scroll position to top when the config changes (e.g. a new page)', () => {
+        component.config = buildConfig();
+        fixture.detectChanges();
+
+        const scrollElement = fixture.nativeElement.querySelector('.bey-table-scroll') as HTMLDivElement;
+        scrollElement.scrollTop = 120;
+
+        component.config = buildConfig({ items: [{ id: 3, name: 'Grace', role: 'Ops' }] });
+        fixture.detectChanges();
+
+        expect(scrollElement.scrollTop).toBe(0);
+    });
+
+    it('should reset scroll position to top when config emits a load/refresh event', () => {
+        const config = buildConfig();
+
+        component.config = config;
+        fixture.detectChanges();
+
+        const scrollElement = fixture.nativeElement.querySelector('.bey-table-scroll') as HTMLDivElement;
+        scrollElement.scrollTop = 80;
+
+        config.refresh();
+
+        expect(scrollElement.scrollTop).toBe(0);
+    });
+
     it('should emit selected items on row selection', () => {
         const selectedItemsChange = jest.fn();
 
@@ -64,8 +91,7 @@ function buildConfig(parameters?: Partial<TableConfig>): TableConfig {
         ],
         prefix: 'test.table',
         selectedItemsChange: parameters?.selectedItemsChange,
-        selectable: parameters?.selectable,
-        showTooltip: parameters?.showTooltip
+        selectable: parameters?.selectable
     });
 
     if (parameters?.items) {

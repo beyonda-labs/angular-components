@@ -1,11 +1,12 @@
 # Header Component (`bey-header`)
 
-Model-driven page header component with title and configurable left/right actions.
+Model-driven page header component with title, configurable left/right actions and an optional more-actions menu (⋯) for secondary actions.
 
 Supported capabilities:
 
 -   Title rendering with translation support.
 -   Left and right action groups.
+-   More-actions menu (⋯) rendered as the last left action, for secondary actions.
 -   Button variants: primary, secondary, and text.
 -   Optional icons per action.
 -   Default i18n key generation from `prefix` and action `key`.
@@ -42,6 +43,18 @@ const header = new BeyHeaderConfig({
             icon: faFloppyDisk,
             action: () => console.log('Save')
         })
+    ],
+    menuActions: [
+        new BeyHeaderAction({
+            key: 'archive',
+            type: BeyHeaderActionType.Text,
+            action: () => console.log('Archive')
+        }),
+        new BeyHeaderAction({
+            key: 'delete',
+            type: BeyHeaderActionType.Text,
+            action: () => console.log('Delete')
+        })
     ]
 });
 ```
@@ -64,6 +77,7 @@ The root configuration object passed to `[config]`.
 | `title`        | `string`            | no       | `''`    | Header title translation key                         |
 | `leftActions`  | `BeyHeaderAction[]` | no       | `[]`    | Actions rendered next to the title                   |
 | `rightActions` | `BeyHeaderAction[]` | no       | `[]`    | Actions rendered on the right side                   |
+| `menuActions`  | `BeyHeaderAction[]` | no       | `[]`    | Actions inside the more-actions menu (⋯), shown after the left actions   |
 
 ---
 
@@ -110,5 +124,7 @@ Behavior notes:
 
 -   Keep action `key` values stable so translation keys remain predictable.
 -   Use `Text` for low-emphasis navigation actions and reserve `PrimaryButton` for the main page action.
+-   Move secondary or infrequent actions to `menuActions`; keep at most 2-3 buttons per visible group.
+-   Menu entries render as standard action buttons, so `type` applies as in any other zone; `Text` usually fits best. The dropdown closes on selection, on outside click and on Escape.
 -   Pass fully qualified translation keys when an action label should not follow the component `prefix`.
 -   Prefer keeping business logic inside the `action` callback and leave the header config itself as a pure view model.

@@ -1,0 +1,61 @@
+<ng-template #renderNodes let-nodes let-level="level">
+    @for (node of nodes; track node.key) {
+        <div class="bey-tree-item">
+            <div
+                class="bey-tree-node"
+                role="treeitem"
+                tabindex="0"
+                [class.bey-tree-node-disabled]="node.isDisabled"
+                [class.bey-tree-node-selected]="isSelected(node)"
+                [style.paddingLeft.rem]="getIndent(level)"
+                [attr.aria-disabled]="node.isDisabled || null"
+                [attr.aria-expanded]="hasChildren(node) ? isExpanded(node) : null"
+                [attr.aria-selected]="isSelected(node)"
+                (click)="onNodeClick(node)"
+                (keydown.enter)="onNodeKeydown($event, node)"
+                (keydown.space)="onNodeKeydown($event, node)"
+            >
+                <button
+                    type="button"
+                    class="bey-tree-toggle"
+                    [class.bey-tree-toggle-hidden]="!hasChildren(node)"
+                    [attr.aria-label]="hasChildren(node) ? (getToggleLabel(node) | translate) : null"
+                    [tabindex]="hasChildren(node) ? 0 : -1"
+                    (click)="onToggleClick($event, node)"
+                >
+                    @if (hasChildren(node)) {
+                        <fa-icon
+                            class="bey-tree-chevron"
+                            [class.bey-tree-chevron-open]="isExpanded(node)"
+                            [icon]="toggleIcon"
+                        ></fa-icon>
+                    }
+                </button>
+
+                @if (node.icon) {
+                    <fa-icon class="bey-tree-node-icon" [icon]="node.icon"></fa-icon>
+                }
+
+                <span class="bey-tree-node-label">{{ getLabel(node) | translate }}</span>
+            </div>
+
+            @if (hasChildren(node) && isExpanded(node)) {
+                <div class="bey-tree-children" role="group">
+                    <ng-container
+                        [ngTemplateOutlet]="renderNodes"
+                        [ngTemplateOutletContext]="{ $implicit: node.children, level: level + 1 }"
+                    ></ng-container>
+                </div>
+            }
+        </div>
+    }
+</ng-template>
+
+@if (config) {
+    <div class="bey-tree" role="tree">
+        <ng-container
+            [ngTemplateOutlet]="renderNodes"
+            [ngTemplateOutletContext]="{ $implicit: config.nodes, level: 0 }"
+        ></ng-container>
+    </div>
+}

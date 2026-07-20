@@ -41,4 +41,23 @@ describe('FormCheckboxFieldComponent', () => {
     it('getLabel should return translated key', () => {
         expect(component.getLabel()).toBe('prefix.label');
     });
+
+    it('should render the plain checkbox input by default', () => {
+        const nativeElement = fixture.nativeElement as HTMLElement;
+
+        expect(nativeElement.querySelector('.form-check-input')).toBeTruthy();
+        expect(nativeElement.querySelector('.bey-switch-input')).toBeNull();
+    });
+
+    it('should render the switch input when isSwitch is true', () => {
+        component.field = { isSwitch: true, key: 'check1' } as FormCheckboxField;
+        fixture.detectChanges();
+
+        const nativeElement = fixture.nativeElement as HTMLElement;
+        const switchInput = nativeElement.querySelector('.bey-switch-input');
+
+        expect(switchInput).toBeTruthy();
+        expect(switchInput?.getAttribute('role')).toBe('switch');
+        expect(nativeElement.querySelector('.form-check-input')).toBeNull();
+    });
 });

@@ -178,6 +178,7 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         this.currentActiveKey = key;
         this.appLayoutService.activeMenuAction(key);
         this.buildAndSetBreadcrumb(breadcrumbPath!);
+        this.config.onRouteActivated?.(leaf.key);
     }
 
     private buildAndSetBreadcrumb(path: LeftMenuAction[]): void {

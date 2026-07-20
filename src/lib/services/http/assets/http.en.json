@@ -1,26 +1,6 @@
 {
     "angular-components": {
         "http": {
-            "title": {
-                "bad-gateway": "Connection error",
-                "bad-request": "Invalid request",
-                "conflict": "Conflict",
-                "default": "Error",
-                "forbidden": "Access denied",
-                "internal-server-error": "Server error",
-                "invalid-child": "Invalid field",
-                "invalid-field-pattern": "Invalid format",
-                "invalid-field-length": "Invalid length",
-                "invalid-field-range": "Value out of range",
-                "invalid-field-type": "Invalid field type",
-                "invalid-field-value": "Invalid value",
-                "not-found": "Not found",
-                "required-field": "Required field",
-                "service-unavailable": "Service unavailable",
-                "too-many-requests": "Too many requests",
-                "unauthorized": "Authentication required",
-                "unknown": "Unexpected error"
-            },
             "error": {
                 "bad-gateway": "The server received an invalid response. Please try again later.",
                 "bad-request": "The request could not be processed. Please check the submitted data.",
@@ -28,10 +8,10 @@
                 "forbidden": "You do not have permission to perform this action.",
                 "internal-server-error": "An internal server error occurred. Please try again later.",
                 "invalid-child": "The field \"{{childField}}\" is not valid for parent \"{{parentField}}\".",
-                "invalid-field-pattern": "The field \"{{fieldName}}\" does not match the expected pattern: \"{{pattern}}\".",
                 "invalid-field-length": "The field \"{{fieldName}}\" must be between {{min}} and {{max}} characters long.",
                 "invalid-field-length-max": "The field \"{{fieldName}}\" must be at most {{max}} characters long.",
                 "invalid-field-length-min": "The field \"{{fieldName}}\" must be at least {{min}} characters long.",
+                "invalid-field-pattern": "The field \"{{fieldName}}\" does not match the expected pattern: \"{{pattern}}\".",
                 "invalid-field-range": "The field \"{{fieldName}}\" must be between {{min}} and {{max}}.",
                 "invalid-field-range-max": "The field \"{{fieldName}}\" must be at most {{max}}.",
                 "invalid-field-range-min": "The field \"{{fieldName}}\" must be at least {{min}}.",
@@ -49,6 +29,26 @@
                 "pattern": {
                     "email": "user@domain.com"
                 }
+            },
+            "title": {
+                "bad-gateway": "Connection error",
+                "bad-request": "Invalid request",
+                "conflict": "Conflict",
+                "default": "Error",
+                "forbidden": "Access denied",
+                "internal-server-error": "Server error",
+                "invalid-child": "Invalid field",
+                "invalid-field-length": "Invalid length",
+                "invalid-field-pattern": "Invalid format",
+                "invalid-field-range": "Value out of range",
+                "invalid-field-type": "Invalid field type",
+                "invalid-field-value": "Invalid value",
+                "not-found": "Not found",
+                "required-field": "Required field",
+                "service-unavailable": "Service unavailable",
+                "too-many-requests": "Too many requests",
+                "unauthorized": "Authentication required",
+                "unknown": "Unexpected error"
             }
         }
     }

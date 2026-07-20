@@ -19,7 +19,8 @@
         "test:watch": "jest --watch",
         "test:ci": "jest --ci",
         "test:coverage": "jest --coverage",
-        "update-translations": "npm run merge-translations && node scripts/update-translations.js"
+        "sort-translations": "node scripts/sort-translations.js",
+        "update-translations": "npm run sort-translations && npm run merge-translations && node scripts/update-translations.js"
     },
     "peerDependencies": {
         "@angular/animations": "19.2.17",
