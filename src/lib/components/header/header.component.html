@@ -8,7 +8,21 @@
             @if (leftActions.length || menuActions.length) {
                 <div class="bey-header-actions bey-header-actions-left">
                     @for (action of leftActions; track action.key) {
-                        <bey-button [button]="getActionButton(action)"></bey-button>
+                        @if (hasSubActions(action)) {
+                            <div class="bey-header-action-menu">
+                                <bey-button [button]="getActionToggleButton(action)"></bey-button>
+
+                                @if (isActionMenuOpen(action)) {
+                                    <div class="bey-header-menu-panel">
+                                        @for (subAction of action.subActions; track subAction.key) {
+                                            <bey-button [button]="getSubActionButton(subAction)"></bey-button>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        } @else {
+                            <bey-button [button]="getActionButton(action)"></bey-button>
+                        }
                     }
 
                     @if (menuActions.length) {
@@ -31,7 +45,21 @@
         @if (rightActions.length) {
             <div class="bey-header-actions bey-header-actions-right">
                 @for (action of rightActions; track action.key) {
-                    <bey-button [button]="getActionButton(action)"></bey-button>
+                    @if (hasSubActions(action)) {
+                        <div class="bey-header-action-menu">
+                            <bey-button [button]="getActionToggleButton(action)"></bey-button>
+
+                            @if (isActionMenuOpen(action)) {
+                                <div class="bey-header-menu-panel">
+                                    @for (subAction of action.subActions; track subAction.key) {
+                                        <bey-button [button]="getSubActionButton(subAction)"></bey-button>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    } @else {
+                        <bey-button [button]="getActionButton(action)"></bey-button>
+                    }
                 }
             </div>
         }

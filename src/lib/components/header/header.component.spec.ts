@@ -128,6 +128,112 @@ describe('HeaderComponent', () => {
 
         expect(component.getTitle()).toBe('');
     });
+
+    describe('sub-actions dropdown', () => {
+        it('should render a toggle instead of executing the action directly when subActions are present', () => {
+            const subActionExecuted = jest.fn();
+            const parentAction = jest.fn();
+            const action = new HeaderAction({
+                action: parentAction,
+                key: 'create',
+                type: HeaderActionType.PrimaryButton,
+                subActions: [
+                    new HeaderAction({ action: subActionExecuted, key: 'create-item', type: HeaderActionType.Text })
+                ]
+            });
+
+            component.config = buildConfig({ rightActions: [action] });
+            fixture.detectChanges();
+
+            const rightContainer = fixture.nativeElement.querySelector('.bey-header-actions-right') as HTMLElement;
+
+            expect(rightContainer.querySelector('.bey-header-action-menu')).toBeTruthy();
+
+            const toggleButton = rightContainer.querySelector('button') as HTMLButtonElement;
+            toggleButton.click();
+            fixture.detectChanges();
+
+            expect(parentAction).not.toHaveBeenCalled();
+            expect(rightContainer.querySelector('.bey-header-menu-panel')).toBeTruthy();
+        });
+
+        it('should execute the sub-action and close the panel on click', () => {
+            const subActionExecuted = jest.fn();
+            const action = new HeaderAction({
+                key: 'create',
+                type: HeaderActionType.PrimaryButton,
+                subActions: [
+                    new HeaderAction({ action: subActionExecuted, key: 'create-item', type: HeaderActionType.Text })
+                ]
+            });
+
+            component.config = buildConfig({ rightActions: [action] });
+            fixture.detectChanges();
+
+            component.toggleActionMenu(action);
+            fixture.detectChanges();
+
+            const panel = fixture.nativeElement.querySelector('.bey-header-menu-panel') as HTMLElement;
+            const subButton = panel.querySelector('button') as HTMLButtonElement;
+
+            subButton.click();
+
+            expect(subActionExecuted).toHaveBeenCalled();
+            expect(component.isActionMenuOpen(action)).toBe(false);
+        });
+
+        it('should close the open action menu on outside click', () => {
+            const action = new HeaderAction({
+                key: 'create',
+                type: HeaderActionType.PrimaryButton,
+                subActions: [new HeaderAction({ key: 'create-item', type: HeaderActionType.Text })]
+            });
+
+            component.config = buildConfig({ rightActions: [action] });
+            fixture.detectChanges();
+            component.toggleActionMenu(action);
+
+            component.onDocumentClick({ target: document.body } as unknown as MouseEvent);
+
+            expect(component.isActionMenuOpen(action)).toBe(false);
+        });
+
+        it('should close the open action menu on Escape', () => {
+            const action = new HeaderAction({
+                key: 'create',
+                type: HeaderActionType.PrimaryButton,
+                subActions: [new HeaderAction({ key: 'create-item', type: HeaderActionType.Text })]
+            });
+
+            component.config = buildConfig({ rightActions: [action] });
+            fixture.detectChanges();
+            component.toggleActionMenu(action);
+
+            component.onEscape();
+
+            expect(component.isActionMenuOpen(action)).toBe(false);
+        });
+
+        it('should toggle the menu closed when clicked again', () => {
+            const action = new HeaderAction({
+                key: 'create',
+                type: HeaderActionType.PrimaryButton,
+                subActions: [new HeaderAction({ key: 'create-item', type: HeaderActionType.Text })]
+            });
+
+            component.toggleActionMenu(action);
+            expect(component.isActionMenuOpen(action)).toBe(true);
+
+            component.toggleActionMenu(action);
+            expect(component.isActionMenuOpen(action)).toBe(false);
+        });
+
+        it('hasSubActions should be false for a plain action', () => {
+            const action = new HeaderAction({ key: 'save', type: HeaderActionType.PrimaryButton });
+
+            expect(component.hasSubActions(action)).toBe(false);
+        });
+    });
 });
 
 function buildConfig(overrides?: Partial<HeaderConfig>): HeaderConfig {

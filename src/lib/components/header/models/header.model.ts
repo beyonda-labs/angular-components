@@ -33,12 +33,14 @@ export class HeaderAction {
 
     action?: () => void;
     icon?: IconDefinition;
+    subActions?: HeaderAction[];
 
     constructor({
         action,
         icon,
         key,
         label = `${key}.label`,
+        subActions,
         tooltip = `${key}.tooltip`,
         type
     }: HeaderActionParameters) {
@@ -46,6 +48,7 @@ export class HeaderAction {
         this.icon = icon;
         this.key = key;
         this.label = label;
+        this.subActions = subActions;
         this.tooltip = tooltip;
         this.type = type;
     }
@@ -58,6 +61,7 @@ export interface HeaderActionParameters {
     action?: () => void;
     icon?: IconDefinition;
     label?: string;
+    subActions?: HeaderAction[];
     tooltip?: string;
 }
 

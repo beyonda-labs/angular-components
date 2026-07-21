@@ -22,12 +22,20 @@
                     "label": "Export",
                     "tooltip": "Export goal"
                 },
+                "individualGoal": {
+                    "label": "Individual goal",
+                    "tooltip": "Create a new individual goal"
+                },
                 "newGoal": {
                     "label": "New goal",
                     "tooltip": "Create a new goal"
+                },
+                "teamGoal": {
+                    "label": "Team goal",
+                    "tooltip": "Create a new team goal"
                 }
             },
-            "example": "Header with actions on both sides and a kebab menu (⋮) for secondary actions.",
+            "example": "Header with actions on both sides and a kebab menu (...) for secondary actions.",
             "title": "Goals"
         }
     }

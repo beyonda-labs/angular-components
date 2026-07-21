@@ -53,6 +53,11 @@
     width: 25px;
 }
 
+.bey-header-action-menu {
+    position: relative;
+    display: inline-flex;
+}
+
 bey-button.bey-header-menu-toggle {
     --bey-button-icon-size: 0.8rem;
     --bey-button-padding-inline: 4px 4px 0px 4px;

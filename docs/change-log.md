@@ -2,6 +2,10 @@
 
 ## [1.1.0] - 2026-??-??
 
+### Added
+
+-   Header module: support for sub-actions.
+
 ## [1.0.0] - 2026-07-20
 
 ### Added

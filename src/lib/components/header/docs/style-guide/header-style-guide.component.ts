@@ -43,6 +43,16 @@ export class HeaderStyleGuideComponent {
             new HeaderAction({
                 icon: faPlus,
                 key: 'newGoal',
+                subActions: [
+                    new HeaderAction({
+                        key: 'individualGoal',
+                        type: HeaderActionType.Text
+                    }),
+                    new HeaderAction({
+                        key: 'teamGoal',
+                        type: HeaderActionType.Text
+                    })
+                ],
                 type: HeaderActionType.PrimaryButton
             })
         ],

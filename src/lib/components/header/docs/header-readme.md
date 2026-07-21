@@ -9,6 +9,7 @@ Supported capabilities:
 -   More-actions menu (⋯) rendered as the last left action, for secondary actions.
 -   Button variants: primary, secondary, and text.
 -   Optional icons per action.
+-   Per-action dropdown: any left/right action with `subActions` renders as a toggle button opening its own panel, instead of executing directly.
 -   Default i18n key generation from `prefix` and action `key`.
 
 ---
@@ -65,6 +66,36 @@ const header = new BeyHeaderConfig({
 
 ---
 
+## Sub-actions dropdown
+
+Any left/right action can render as a dropdown toggle instead of a direct click by providing `subActions`.
+The toggle uses the parent action's own `icon`/`label`/`tooltip`; clicking it opens a panel listing one button
+per sub-action.
+
+```ts
+rightActions: [
+    new BeyHeaderAction({
+        key: 'create',
+        type: BeyHeaderActionType.PrimaryButton,
+        icon: faPlus,
+        subActions: [
+            new BeyHeaderAction({
+                key: 'create-item',
+                type: BeyHeaderActionType.Text,
+                action: () => console.log('Create item')
+            }),
+            new BeyHeaderAction({
+                key: 'create-category',
+                type: BeyHeaderActionType.Text,
+                action: () => console.log('Create category')
+            })
+        ]
+    })
+]
+```
+
+---
+
 ## Models
 
 ### `BeyHeaderConfig`
@@ -90,7 +121,12 @@ The root configuration object passed to `[config]`.
 | `action`  | `() => void`          | no       | no-op            | Click handler                                  |
 | `icon`    | `IconDefinition`      | no       | -                | Optional Font Awesome icon                     |
 | `label`   | `string`              | no       | `${key}.label`   | Label translation key                          |
+| `subActions` | `BeyHeaderAction[]` | no    | -                | Renders this action as a dropdown toggle listing these actions instead of calling `action` on click |
 | `tooltip` | `string`              | no       | `${key}.tooltip` | Tooltip translation key                        |
+
+An action with `subActions` uses its own `icon`/`label`/`tooltip` for the toggle button; clicking it
+opens a panel with one button per sub-action (each a full `BeyHeaderAction`, own key/icon/label).
+Only one dropdown (or the ⋯ menu) is open at a time; it closes on selection, outside click and Escape.
 
 ### `BeyHeaderActionType`
 

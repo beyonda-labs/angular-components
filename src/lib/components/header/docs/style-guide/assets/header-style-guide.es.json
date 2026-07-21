@@ -22,12 +22,20 @@
                     "label": "Exportar",
                     "tooltip": "Exportar objetivos"
                 },
+                "individualGoal": {
+                    "label": "Objetivo individual",
+                    "tooltip": "Crear un nuevo objetivo individual"
+                },
                 "newGoal": {
                     "label": "Nuevo objetivo",
                     "tooltip": "Crear un nuevo objetivo"
+                },
+                "teamGoal": {
+                    "label": "Objetivo de equipo",
+                    "tooltip": "Crear un nuevo objetivo de equipo"
                 }
             },
-            "example": "Cabecera con acciones a ambos lados y un menú de tres puntos (⋮) para acciones secundarias.",
+            "example": "Cabecera con acciones a ambos lados y un menú de tres puntos (...) para acciones secundarias.",
             "title": "Objetivos"
         }
     }

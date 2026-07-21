@@ -17,6 +17,7 @@ export class HeaderComponent {
     @Input({ required: true }) config!: HeaderConfig;
 
     isMenuOpen = false;
+    openActionKey: string | null = null;
 
     private readonly elementRef = inject(ElementRef);
 
@@ -34,14 +35,16 @@ export class HeaderComponent {
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent): void {
-        if (this.isMenuOpen && !this.elementRef.nativeElement.contains(event.target)) {
+        if (!this.elementRef.nativeElement.contains(event.target)) {
             this.isMenuOpen = false;
+            this.openActionKey = null;
         }
     }
 
     @HostListener('document:keydown.escape')
     onEscape(): void {
         this.isMenuOpen = false;
+        this.openActionKey = null;
     }
 
     getTitle(): string {
@@ -82,6 +85,38 @@ export class HeaderComponent {
 
     toggleMenu(): void {
         this.isMenuOpen = !this.isMenuOpen;
+    }
+
+    hasSubActions(action: HeaderAction): boolean {
+        return Boolean(action.subActions?.length);
+    }
+
+    isActionMenuOpen(action: HeaderAction): boolean {
+        return this.openActionKey === action.key;
+    }
+
+    toggleActionMenu(action: HeaderAction): void {
+        this.openActionKey = this.isActionMenuOpen(action) ? null : action.key;
+    }
+
+    getActionToggleButton(action: HeaderAction): ButtonConfig {
+        const button = this.getActionButton(action);
+
+        button.action = () => this.toggleActionMenu(action);
+
+        return button;
+    }
+
+    getSubActionButton(subAction: HeaderAction): ButtonConfig {
+        const button = this.getActionButton(subAction);
+        const buttonAction = button.action;
+
+        button.action = () => {
+            this.openActionKey = null;
+            buttonAction();
+        };
+
+        return button;
     }
 
     private getButtonType(type: HeaderActionType): ButtonType {
