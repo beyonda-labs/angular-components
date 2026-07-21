@@ -779,6 +779,7 @@
                 "action": "Action",
                 "name": "Name",
                 "role": "Role",
+                "skills": "Skills",
                 "status": "Status"
             },
             "empty": "No rows available for this example.",
@@ -795,6 +796,7 @@
             },
             "tooltips": {
                 "name": "Primary identity column",
+                "skills": "Badge cells accept a list, rendering more than one badge per row",
                 "status": "Status cells can be translated and tooltip-enabled"
             }
         },

@@ -13,6 +13,18 @@
                 {{ content }}
             }
         </button>
+    } @else if (cell.type === cellType.Badge) {
+        <span class="bey-table-cell-content bey-table-cell-badges">
+            @for (badge of badgeCell.badges; track $index) {
+                <span class="badge bey-table-cell-badge {{ badge.badgeClass }}">
+                    @if (cell.translate) {
+                        {{ badge.content | translate }}
+                    } @else {
+                        {{ badge.content }}
+                    }
+                </span>
+            }
+        </span>
     } @else {
         <span class="bey-table-cell-content">
             @if (cell.translate) {

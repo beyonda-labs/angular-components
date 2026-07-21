@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { CellType, LinkTableCell, TableCell } from '../../models/table-cell.model';
+import { BadgeTableCell, CellType, LinkTableCell, TableCell } from '../../models/table-cell.model';
 
 @Component({
     imports: [TooltipModule, TranslateModule],
@@ -23,6 +23,10 @@ export class TableCellComponent {
 
     get linkCell(): LinkTableCell {
         return this.cell as LinkTableCell;
+    }
+
+    get badgeCell(): BadgeTableCell {
+        return this.cell as BadgeTableCell;
     }
 
     hasTooltip(): boolean {

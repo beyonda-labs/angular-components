@@ -6,6 +6,7 @@
 
 -   Header module: support for sub-actions.
 -   Form module: chips field.
+-   Table module: badge cell.
 
 ## [1.0.0] - 2026-07-20
 

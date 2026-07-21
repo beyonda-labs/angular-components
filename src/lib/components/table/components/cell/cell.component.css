@@ -54,3 +54,18 @@
 .bey-table-cell-link:hover {
     text-decoration-color: var(--bey-table-link-underline-hover);
 }
+
+.bey-table-cell-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    overflow: visible;
+    white-space: normal;
+}
+
+.bey-table-cell-badge {
+    font-size: 0.75rem;
+    font-weight: 500;
+    vertical-align: baseline;
+}
