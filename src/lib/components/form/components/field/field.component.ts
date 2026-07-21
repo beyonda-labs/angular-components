@@ -10,6 +10,7 @@ import { FormConfig, FormSection } from '../../models/form.model';
 import { FormField } from '../../models/form-field.model';
 import { FormService } from '../../services/form.service';
 import { FormCheckboxFieldComponent } from './field-checkbox/field-checkbox.component';
+import { FormChipsFieldComponent } from './field-chips/field-chips.component';
 import { FormDateFieldComponent } from './field-date/field-date.component';
 import { FormNumberFieldComponent } from './field-number/field-number.component';
 import { FormPasswordFieldComponent } from './field-password/field-password.component';
@@ -23,6 +24,7 @@ import { FormTextareaFieldComponent } from './field-textarea/field-textarea.comp
         CommonModule,
         FontAwesomeModule,
         FormCheckboxFieldComponent,
+        FormChipsFieldComponent,
         FormDateFieldComponent,
         FormNumberFieldComponent,
         FormPasswordFieldComponent,

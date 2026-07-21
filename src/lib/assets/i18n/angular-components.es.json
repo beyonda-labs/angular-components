@@ -16,6 +16,9 @@
             "cancel": {
                 "without-changes": "No se han realizado cambios en el formulario."
             },
+            "chips": {
+                "remove": "Eliminar"
+            },
             "modal": {
                 "close-confirmation": {
                     "message": "Hay cambios sin guardar en el formulario. ¿Seguro que desea cerrarlo?",
@@ -429,6 +432,21 @@
                 },
                 "label": "Campos de checkbox",
                 "tooltip": "Variantes de checkbox con estado básico, obligatorio, deshabilitado e interruptor"
+            },
+            "sectionChips": {
+                "chips1": {
+                    "label": "Chips básico",
+                    "placeholder": "Escriba y pulse Enter"
+                },
+                "chips2": {
+                    "label": "Chips obligatorio (máx. 5)",
+                    "placeholder": "Añada hasta 5 etiquetas"
+                },
+                "chips3": {
+                    "label": "Chips deshabilitado"
+                },
+                "label": "Campos de chips",
+                "tooltip": "Variantes de chips con estado básico, obligatorio con maxItems, y deshabilitado"
             },
             "sectionDate": {
                 "date1": {

@@ -4,6 +4,9 @@
             "cancel": {
                 "without-changes": "No se han realizado cambios en el formulario."
             },
+            "chips": {
+                "remove": "Eliminar"
+            },
             "modal": {
                 "close-confirmation": {
                     "message": "Hay cambios sin guardar en el formulario. ¿Seguro que desea cerrarlo?",

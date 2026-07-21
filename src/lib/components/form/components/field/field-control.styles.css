@@ -175,6 +175,85 @@ textarea.form-control {
     outline-offset: 2px;
 }
 
+/* ─── Chips ──────────────────────────────────────────────────────────────── */
+.bey-chips-control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    height: auto;
+    min-height: 2.1rem;
+    padding: 0.3rem 0.5rem;
+    cursor: text;
+}
+
+.bey-chips-control-disabled {
+    background-color: var(--bey-bg-muted);
+    cursor: default;
+}
+
+.bey-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    max-width: 100%;
+    padding: 0.15rem 0.15rem 0.15rem 0.55rem;
+    border-radius: 1rem;
+    background-color: var(--bey-bg-active);
+    font-size: 0.78rem;
+    line-height: 1.4;
+}
+
+.bey-chip-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bey-chip-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.1rem;
+    height: 1.1rem;
+    border: none;
+    border-radius: 50%;
+    padding: 0;
+    background: transparent;
+    color: var(--bey-secondary);
+    font-size: 0.68rem;
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.bey-chip-remove:hover {
+    background-color: var(--bey-bg-hover);
+    color: var(--text-primary);
+}
+
+.bey-chip-readonly {
+    padding-right: 0.55rem;
+}
+
+.bey-chips-input {
+    flex: 1 1 6rem;
+    min-width: 6rem;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0.15rem 0;
+    color: var(--bey-field-fg);
+    font-size: 0.84rem;
+}
+
+.bey-chips-input::placeholder {
+    color: var(--bey-field-ph);
+    font-size: 0.82rem;
+}
+
 /* ─── Password toggle ────────────────────────────────────────────────────── */
 .bey-password-wrapper {
     position: relative;

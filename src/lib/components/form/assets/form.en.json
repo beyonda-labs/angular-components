@@ -4,6 +4,9 @@
             "cancel": {
                 "without-changes": "No changes have been made to the form."
             },
+            "chips": {
+                "remove": "Remove"
+            },
             "modal": {
                 "close-confirmation": {
                     "message": "There are unsaved changes in the form. Are you sure you want to close it?",

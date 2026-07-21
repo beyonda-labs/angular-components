@@ -27,6 +27,7 @@ export {
 } from './models/form-field-validator.model';
 export { FormTextField as BeyFormTextField } from './models/fields/form-text-field.model';
 export { FormCheckboxField as BeyFormCheckboxField } from './models/fields/form-checkbox-field.model';
+export { FormChipsField as BeyFormChipsField } from './models/fields/form-chips-field.model';
 export { FormDateField as BeyFormDateField } from './models/fields/form-date-field.model';
 export { FormNumberField as BeyFormNumberField } from './models/fields/form-number-field.model';
 export { FormPasswordField as BeyFormPasswordField } from './models/fields/form-password-field.model';

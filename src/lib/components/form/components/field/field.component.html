@@ -92,6 +92,13 @@
                         [formConfig]="formConfig"
                     ></bey-form-checkbox-field>
                 }
+                @case ('chips') {
+                    <bey-form-chips-field
+                        [field]="$any(field)"
+                        [section]="section"
+                        [formConfig]="formConfig"
+                    ></bey-form-chips-field>
+                }
             }
         </div>
     </div>

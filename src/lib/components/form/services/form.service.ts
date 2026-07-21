@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 
 import { FormCheckboxField } from '../models/fields/form-checkbox-field.model';
+import { FormChipsField } from '../models/fields/form-chips-field.model';
 import { FormDateField } from '../models/fields/form-date-field.model';
 import { FormNumberField } from '../models/fields/form-number-field.model';
 import { FormTextField } from '../models/fields/form-text-field.model';
@@ -37,6 +38,8 @@ export class FormService {
                 return control as FormControl<number | null>;
             case FormFieldType.Checkbox:
                 return control as FormControl<boolean | null>;
+            case FormFieldType.Chips:
+                return control as FormControl<string[] | null>;
             default:
                 return undefined;
         }
@@ -72,6 +75,8 @@ export class FormService {
                 return this.initNumberFieldControl(field as FormNumberField);
             case FormFieldType.Textarea:
                 return this.initTextareaFieldControl(field as FormTextareaField);
+            case FormFieldType.Chips:
+                return this.initChipsFieldControl(field as FormChipsField);
             default:
                 return undefined;
         }
@@ -144,6 +149,16 @@ export class FormService {
         );
     }
 
+    private initChipsFieldControl(field: FormChipsField): FormControl<string[] | null> {
+        return new FormControl<string[] | null>(
+            { value: [], disabled: field.isDisabled },
+            {
+                validators: [...this.getValidators(field), ...this.getChipsValidators(field)],
+                asyncValidators: this.formValidatorService.getFieldAsyncValidators(field)
+            }
+        );
+    }
+
     private initNumberFieldControl(field: FormNumberField): FormControl<number | null> {
         return new FormControl<number | null>(
             { value: null, disabled: field.isDisabled },
@@ -182,6 +197,26 @@ export class FormService {
                 }
 
                 return currentDate > maxDate ? { maxDate: { maxDate: field.maxDate, actual: value } } : null;
+            });
+        }
+
+        return validators;
+    }
+
+    private getChipsValidators(field: FormChipsField): ValidatorFn[] {
+        const validators: ValidatorFn[] = [];
+
+        if (field.maxItems !== undefined) {
+            validators.push(control => {
+                const value = control.value as string[] | null;
+
+                if (!value) {
+                    return null;
+                }
+
+                return value.length > field.maxItems!
+                    ? { maxItems: { maxItems: field.maxItems, actual: value.length } }
+                    : null;
             });
         }
 

@@ -5,7 +5,7 @@ Model-driven form component built from sections, rows, and fields.
 Supported capabilities:
 
 -   Dynamic sections and row layouts.
--   Multiple field types: text, textarea, number, date, select, radio, checkbox.
+-   Multiple field types: text, textarea, number, date, select, radio, checkbox, chips.
 -   Sync and async validation.
 -   Action buttons (cancel, submit, next, previous, optional).
 -   i18n via `i18nPrefix`.
@@ -290,6 +290,7 @@ Highlights:
 -   **Textarea** — supports `rows` and `maxHeight`.
 -   **Select** and **Radio** — support `options: BeyFormFieldOption[]`.
 -   **Checkbox** — uses inline label behavior and no placeholder.
+-   **Chips** — tag input backed by a `string[]` control; supports `maxItems` and `allowDuplicates`.
 
 ---
 
@@ -348,7 +349,7 @@ Current module includes tests for:
 -   `FormComponent`
 -   `FormService`
 -   `FormValidatorService`
--   Field components: text, textarea, number, date, select, radio, checkbox
+-   Field components: text, textarea, number, date, select, radio, checkbox, chips
 -   Section and row rendering helpers
 
 ---

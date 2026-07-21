@@ -16,6 +16,9 @@
             "cancel": {
                 "without-changes": "No changes have been made to the form."
             },
+            "chips": {
+                "remove": "Remove"
+            },
             "modal": {
                 "close-confirmation": {
                     "message": "There are unsaved changes in the form. Are you sure you want to close it?",
@@ -426,6 +429,21 @@
                 },
                 "label": "Checkbox Fields",
                 "tooltip": "Checkbox variants with basic, required, disabled and switch states"
+            },
+            "sectionChips": {
+                "chips1": {
+                    "label": "Basic Chips",
+                    "placeholder": "Type and press Enter"
+                },
+                "chips2": {
+                    "label": "Required Chips (max. 5)",
+                    "placeholder": "Add up to 5 tags"
+                },
+                "chips3": {
+                    "label": "Disabled Chips"
+                },
+                "label": "Chips Fields",
+                "tooltip": "Chips variants with basic, required with maxItems, and disabled states"
             },
             "sectionDate": {
                 "date1": {

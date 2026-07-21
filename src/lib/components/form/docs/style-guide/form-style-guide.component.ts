@@ -7,6 +7,7 @@ import { ModalFormConfig } from '../../components/modal/models/modal-form.model'
 import { ModalFormService } from '../../components/modal/services/modal-form.service';
 import { FormComponent } from '../../form.component';
 import { FormCheckboxField } from '../../models/fields/form-checkbox-field.model';
+import { FormChipsField } from '../../models/fields/form-chips-field.model';
 import { FormDateField } from '../../models/fields/form-date-field.model';
 import { FormNumberField } from '../../models/fields/form-number-field.model';
 import { FormPasswordField } from '../../models/fields/form-password-field.model';
@@ -382,6 +383,31 @@ export class FormStyleGuideComponent {
                             ]
                         })
                     ]
+                }),
+                new FormSection({
+                    key: 'sectionChips',
+                    isTooltipVisible: true,
+                    rows: [
+                        new FormRow({
+                            fields: [
+                                new FormChipsField({
+                                    key: 'chips1',
+                                    columns: 4
+                                }),
+                                new FormChipsField({
+                                    key: 'chips2',
+                                    columns: 4,
+                                    isRequired: true,
+                                    maxItems: 5
+                                }),
+                                new FormChipsField({
+                                    key: 'chips3',
+                                    columns: 4,
+                                    isDisabled: true
+                                })
+                            ]
+                        })
+                    ]
                 })
             ],
             buttons: [
@@ -444,6 +470,11 @@ export class FormStyleGuideComponent {
                         checkbox2: false,
                         checkbox3: true,
                         checkbox4: false
+                    },
+                    sectionChips: {
+                        chips1: [],
+                        chips2: [],
+                        chips3: ['Angular', 'TypeScript']
                     }
                 });
             },

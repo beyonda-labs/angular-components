@@ -68,6 +68,7 @@ interface FormFieldParameters {
 
 export enum FormFieldType {
     Checkbox = 'checkbox',
+    Chips = 'chips',
     Date = 'date',
     Number = 'number',
     Password = 'password',

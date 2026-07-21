@@ -46,6 +46,7 @@ The `type` discriminator used by `field.component.html` to select the rendered c
 | `BeyFormFieldType.Select`   | Dropdown select        |
 | `BeyFormFieldType.Radio`    | Radio button group     |
 | `BeyFormFieldType.Checkbox` | Boolean checkbox       |
+| `BeyFormFieldType.Chips`    | Tag/chips input        |
 
 ---
 
@@ -225,6 +226,27 @@ new BeyFormCheckboxField({
 
 ---
 
+### `BeyFormChipsField`
+
+Tag/chips input control. The `FormControl` value is a `string[]`. The user types a value and presses `Enter` or `,` to add it as a chip; `Backspace` on an empty input removes the last chip.
+
+**Extra attributes:**
+
+| Attribute         | Type      | Default | Description                                                    |
+| ----------------- | --------- | ------- | ---------------------------------------------------------------- |
+| `maxItems`        | `number`  | `undefined` | Maximum number of chips (adds `maxItems` validator; hides the input once reached) |
+| `allowDuplicates` | `boolean` | `false` | Allows the same value to be added more than once               |
+
+```ts
+new BeyFormChipsField({
+    key: 'tags',
+    columns: 6,
+    maxItems: 5
+});
+```
+
+---
+
 ## Validators
 
 ### Sync validators
@@ -302,6 +324,7 @@ import {
     BeyFormSelectField,
     BeyFormRadioField,
     BeyFormCheckboxField,
+    BeyFormChipsField,
     BeyFormFieldLengthValidator,
     BeyFormFieldValidatorType
 } from '@beyonda-labs/angular-components';
@@ -346,6 +369,9 @@ new BeyFormSection({
                 new BeyFormTextareaField({ key: 'bio', columns: 8, rows: 4, maxHeight: '160px' }),
                 new BeyFormCheckboxField({ key: 'acceptTerms', columns: 4, isRequired: true })
             ]
+        }),
+        new BeyFormRow({
+            fields: [new BeyFormChipsField({ key: 'skills', columns: 12, maxItems: 10 })]
         })
     ]
 });
