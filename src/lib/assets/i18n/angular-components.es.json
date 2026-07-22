@@ -192,10 +192,6 @@
             }
         },
         "page": {
-            "delete": {
-                "message": "Esta acción eliminará {{count}} elemento(s) y no se puede deshacer. ¿Desea continuar?",
-                "title": "Eliminar elementos"
-            },
             "form": {
                 "cancel": "Cancelar",
                 "submit": "Guardar"

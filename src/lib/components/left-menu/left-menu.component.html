@@ -7,6 +7,7 @@
                         class="bey-left-menu-brand-icon"
                         [tooltip]="!expanded ? (getTitleText() | translate) : ''"
                         container="body"
+                        boundariesElement="viewport"
                     >
                         @if (config.title.icon) {
                             <img [src]="config.title.icon" alt="" aria-hidden="true" />
@@ -28,6 +29,7 @@
                     [attr.aria-label]="getToggleTooltip() | translate"
                     [tooltip]="getToggleTooltip() | translate"
                     container="body"
+                    boundariesElement="viewport"
                     (click)="toggleExpanded()"
                 >
                     <fa-icon [icon]="expanded ? collapseIcon : expandIcon"></fa-icon>
@@ -75,7 +77,12 @@
 
             @if (config.userInfo) {
                 <footer class="bey-left-menu-footer">
-                    <div class="bey-left-menu-user" [tooltip]="!expanded ? getUserTooltip() : ''" container="body">
+                    <div
+                        class="bey-left-menu-user"
+                        [tooltip]="!expanded ? getUserTooltip() : ''"
+                        container="body"
+                        boundariesElement="viewport"
+                    >
                         <div class="bey-left-menu-user-avatar">{{ config.userInfo.initials }}</div>
 
                         @if (expanded) {

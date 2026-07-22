@@ -60,3 +60,37 @@
 .bey-tabs-tab-icon {
     font-size: 0.76rem;
 }
+
+.bey-tabs--segmented {
+    display: inline-flex;
+    gap: 0.15rem;
+    padding: 0.2rem;
+    border-bottom: none;
+    border-radius: 0.6rem;
+    background: var(--bey-bg-muted);
+}
+
+.bey-tabs--segmented .bey-tabs-tab {
+    padding: 0.4rem 0.9rem;
+    border-bottom: none;
+    border-radius: 0.4rem;
+}
+
+.bey-tabs--segmented .bey-tabs-tab:hover:not(:disabled):not(.bey-tabs-tab-active) {
+    color: var(--bey-tabs-hover);
+    background: var(--bey-bg-hover);
+}
+
+.bey-tabs--segmented .bey-tabs-tab-active {
+    color: var(--text-inverse);
+    background: var(--bey-tabs-accent);
+    border-bottom-color: transparent;
+}
+
+.bey-tabs--segmented .bey-tabs-tab-active:hover:not(:disabled) {
+    color: var(--text-inverse);
+}
+
+.bey-tabs--segmented .bey-tabs-tab:focus-visible {
+    border-radius: 0.4rem;
+}

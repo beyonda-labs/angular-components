@@ -6,6 +6,7 @@
                     class="bey-breadcrumb-item bey-breadcrumb-ellipsis"
                     [tooltip]="collapsedItemsTooltip"
                     container="body"
+                    boundariesElement="viewport"
                 >
                     &hellip;
                 </li>
@@ -21,7 +22,12 @@
                         @if (item.icon) {
                             <fa-icon class="bey-breadcrumb-item-icon" [icon]="item.icon"></fa-icon>
                         }
-                        <span class="bey-breadcrumb-item-label" [tooltip]="resolveLabel(item)" container="body">
+                        <span
+                            class="bey-breadcrumb-item-label"
+                            [tooltip]="resolveLabel(item)"
+                            container="body"
+                            boundariesElement="viewport"
+                        >
                             {{ resolveLabel(item) }}
                         </span>
                     } @else {
@@ -31,6 +37,7 @@
                             [disabled]="item.isDisabled"
                             [tooltip]="resolveLabel(item)"
                             container="body"
+                            boundariesElement="viewport"
                             (click)="onItemClick(item)"
                         >
                             @if (item.icon) {

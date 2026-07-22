@@ -245,6 +245,106 @@ describe('BreadcrumbComponent', () => {
         const label = component.resolveLabel(component.config.items[0]);
         expect(label).toBe('Home');
     });
+
+    it('should resolve label via translation instant when the item is a translation key, ignoring the prefix', () => {
+        component.config = buildConfig({
+            prefix: 'test',
+            items: [new BreadcrumbItem({ id: 1, isTranslationKey: true, label: 'raw.i18n.key' })]
+        });
+
+        const label = component.resolveLabel(component.config.items[0]);
+        expect(label).toBe('raw.i18n.key');
+    });
+
+    describe('recalculation after DOM updates', () => {
+        let rafCallbacks: FrameRequestCallback[];
+        let offsetWidthDescriptor: PropertyDescriptor | undefined;
+        let scrollWidthDescriptor: PropertyDescriptor | undefined;
+
+        beforeEach(() => {
+            rafCallbacks = [];
+            jest.spyOn(window, 'requestAnimationFrame').mockImplementation(callback => {
+                rafCallbacks.push(callback);
+
+                return rafCallbacks.length;
+            });
+
+            offsetWidthDescriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetWidth');
+            scrollWidthDescriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollWidth');
+            Object.defineProperty(HTMLElement.prototype, 'offsetWidth', { configurable: true, value: 150 });
+            Object.defineProperty(HTMLElement.prototype, 'scrollWidth', { configurable: true, value: 80 });
+        });
+
+        afterEach(() => {
+            jest.restoreAllMocks();
+
+            if (offsetWidthDescriptor) {
+                Object.defineProperty(HTMLElement.prototype, 'offsetWidth', offsetWidthDescriptor);
+            }
+
+            if (scrollWidthDescriptor) {
+                Object.defineProperty(HTMLElement.prototype, 'scrollWidth', scrollWidthDescriptor);
+            }
+        });
+
+        function flushRaf(): void {
+            const callbacks = rafCallbacks;
+            rafCallbacks = [];
+            callbacks.forEach(callback => callback(0));
+        }
+
+        it('should measure against the updated items, not the stale DOM, once the new items have painted', () => {
+            component.config = buildConfig({
+                items: [
+                    new BreadcrumbItem({ id: 1, label: 'Home' }),
+                    new BreadcrumbItem({ id: 2, label: 'Products' }),
+                    new BreadcrumbItem({ id: 3, label: 'Detail' })
+                ]
+            });
+            fixture.detectChanges(false);
+            fixture.detectChanges();
+            flushRaf();
+            fixture.detectChanges();
+
+            component.config = buildConfig({
+                items: [
+                    new BreadcrumbItem({ id: 1, label: 'Home' }),
+                    new BreadcrumbItem({ id: 2, label: 'Products' }),
+                    new BreadcrumbItem({ id: 3, label: 'Category' }),
+                    new BreadcrumbItem({ id: 4, label: 'Subcategory' }),
+                    new BreadcrumbItem({ id: 5, label: 'Detail' })
+                ]
+            });
+
+            fixture.detectChanges();
+            flushRaf();
+            fixture.detectChanges();
+
+            expect(component.hasCollapsedItems).toBe(true);
+        });
+
+        it('should reset to showing all items immediately when config changes, before the deferred recalculation runs', () => {
+            component.config = buildConfig({
+                items: [
+                    new BreadcrumbItem({ id: 1, label: 'Home' }),
+                    new BreadcrumbItem({ id: 2, label: 'Products' }),
+                    new BreadcrumbItem({ id: 3, label: 'Category' }),
+                    new BreadcrumbItem({ id: 4, label: 'Subcategory' }),
+                    new BreadcrumbItem({ id: 5, label: 'Detail' })
+                ]
+            });
+            fixture.detectChanges(false);
+            fixture.detectChanges();
+            flushRaf();
+            fixture.detectChanges();
+            expect(component.hasCollapsedItems).toBe(true);
+
+            component.config = buildConfig();
+
+            expect(component.visibleStartIndex).toBe(0);
+            expect(component.hasCollapsedItems).toBe(false);
+        });
+    });
 });
 
 function buildConfig(

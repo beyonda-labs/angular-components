@@ -7,6 +7,18 @@
 -   Header module: support for sub-actions.
 -   Form module: chips field.
 -   Table module: badge cell.
+-   Page module:
+    -   Actions can render as a dropdown (`subActions`, `PageActionScope.Group`), matching the header module's sub-actions.
+    -   Category support: browsing (drill-down navigation with breadcrumb), trash view (restore/delete) and `move` action for items and categories via a tree-picker modal.
+-   Tree module:
+    -   `ModalTreeService` to pick a node from the full tree inside a dialog.
+    -   Tooltip on node labels when truncated.
+-   Tabs module: segmented (pill) variant, in addition to the existing underline style.
+-   Breadcrumb module: `isTranslationKey` on `BreadcrumbItem` to resolve a label as a raw i18n key, ignoring the prefix.
+
+### Fixed
+
+-   Breadcrumb module: fixed the overflow-collapse not updating after the item list changed.
 
 ## [1.0.0] - 2026-07-20
 

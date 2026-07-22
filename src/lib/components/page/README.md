@@ -98,6 +98,21 @@ Given `baseUrl` (e.g. `/api/users`), the component calls:
 | Edit | `PUT {baseUrl}/{id}` with the form value as body |
 | Delete (bulk) | `DELETE {baseUrl}` with body `{ ids: [...] }` |
 
+With `tableConfig.categoriesConfig` set (see [Categories & trash](#categories--trash)), these additional endpoints are used:
+
+| Operation | Request |
+|---|---|
+| List / search (scoped to a category) | `GET {baseUrl}` with the query parameters above plus `{parentField}` (the current category id, or `'null'` at the root) |
+| Category ancestor path | `GET {baseUrl}/categories/{id}/path` — ordered list of ancestors, used to build the breadcrumb after `openCategory()` |
+| Full category tree | `GET {baseUrl}/categories/tree` — flat list of every category (any depth), used to build the **Move** picker |
+| Create category | `POST {baseUrl}/categories` with the form value as body |
+| Edit category | `PUT {baseUrl}/categories/{id}` with the form value as body |
+| Delete categories (bulk) | `DELETE {baseUrl}/categories` with body `{ ids: [...] }` |
+| Move items/categories (bulk) | `PUT {baseUrl}/move` with body `{ items: [{ id, type }], targetId }` (`targetId` is `null` for the root) |
+| List trash (bulk-scoped) | `GET {baseUrl}/trash` with the same query parameters as the list endpoint |
+| Restore from trash (bulk) | `PUT {baseUrl}/trash` with body `{ items: [{ id, type }] }` |
+| Delete from trash (bulk) | `DELETE {baseUrl}/trash` with body `{ items: [{ id, type }] }` |
+
 All calls go through `BeyHttpService`, so HTTP errors are shown in the standard error modal and create/edit/delete show the standard success toasts.
 
 ### List response (`BeyPageBackendResponse`)
@@ -167,8 +182,19 @@ Predefined behavior — no `handler` needed:
 | `create` | Opens the modal form (`buildForm()` without item) → `POST {baseUrl}` → success toast → close modal → reload |
 | `edit` | Opens the modal form with the selected item → `PUT {baseUrl}/{id}` → toast → close → reload |
 | `delete` | Confirmation modal → `DELETE {baseUrl}` with the selected ids → toast → clear selection → reload |
+| `move` | Loads the full category tree → opens a tree-picker modal → `PUT {baseUrl}/move` with the selected items and the chosen target → toast → clear selection → reload. Requires `categoriesConfig` (see [Categories & trash](#categories--trash)) |
+| `create-category` | Same as `create`, but `POST {baseUrl}/categories` with `categoriesConfig.formConfig`. Requires `categoriesConfig` |
+| `edit-category` | Same as `edit`, but `PUT {baseUrl}/categories/{id}` with `categoriesConfig.formConfig`. Requires `categoriesConfig` |
+| `delete-category` | Same as `delete`, but `DELETE {baseUrl}/categories`. Requires `categoriesConfig` |
+| `restore-trash-item` | No confirmation → `PUT {baseUrl}/trash` with the selected items → toast → clear selection → reload. Only meaningful in the trash view |
+| `delete-trash-item` | Confirmation modal → `DELETE {baseUrl}/trash` with the selected items → toast → clear selection → reload. Only meaningful in the trash view |
 
 Custom actions provide their own `handler`; item-scoped handlers receive the selected items.
+
+An action can also render as a dropdown instead of a direct click by providing `subActions:
+BeyPageAction[]` — see the header module's readme for the rendering details. With `scope:
+BeyPageActionScope.Group`, the action itself is never checked against selection/permissions;
+only its `subActions` are filtered and shown.
 
 ### Permissions
 
@@ -200,6 +226,86 @@ tableConfig: new BeyPageTableConfig({
 - Every filter change resets to page 1 and reloads; the filters travel inside the base64 `search` query parameter.
 
 See the search component readme for the full behavior of the filters panel.
+
+---
+
+## Categories & trash
+
+Setting `tableConfig.categoriesConfig` turns the table into a hierarchical, drill-down category
+browser (folders + items, like a file explorer), and optionally adds a soft-delete trash view.
+
+```typescript
+tableConfig: new BeyPageTableConfig({
+    ...,
+    categoriesConfig: new BeyPageCategoriesConfig({
+        nameField: 'name',       // default
+        parentField: 'parentId', // default
+        typeField: 'type',       // default
+        useTrash: true,
+        formConfig: new BeyPageFormConfig({
+            prefix: 'products.categories', // separate i18n namespace from the page's own form
+            buildSections: item => [ ... ]
+        })
+    })
+})
+```
+
+| Attribute | Required | Default | Purpose |
+|---|---|---|---|
+| `nameField` | no | `'name'` | Field read as a category's display name (breadcrumb, move tree, `openCategory`) |
+| `parentField` | no | `'parentId'` | Field sent as the current category id on list requests, and read to build the move tree's hierarchy |
+| `typeField` | no | `'type'` | Field distinguishing a row as `'category'` vs a regular item (see `BeyPageItemType`) |
+| `useTrash` | no | `false` | Whether to show the table/trash view toggle (`bey-tabs`, segmented variant) above the table |
+| `formConfig` | no | — | `BeyPageFormConfig` for the `create-category`/`edit-category` modal form, independent from the page's own `formConfig` |
+
+### Drill-down navigation
+
+Rows whose `{typeField}` is `'category'` are meant to be opened by the consumer's row renderer
+(e.g. a clickable name cell calling `categoriesConfig.openCategory(item)`); the page itself does not
+decide when a row navigates. `openCategory()`:
+
+1. Fetches the ancestor path (`GET {baseUrl}/categories/{id}/path`) to rebuild the breadcrumb.
+2. Sets the category as the current scope: subsequent list requests send `{parentField}` = its id.
+3. Clears the selection and reloads.
+
+A breadcrumb (`bey-breadcrumb`) renders automatically above the table whenever `categoriesConfig` is
+set, starting at `{prefix}.categories.root` (the root/"all categories" node) followed by the current
+path; clicking an earlier crumb navigates back up (id `0` returns to the root).
+
+### Trash view
+
+With `useTrash: true`, a segmented `bey-tabs` toggle (table/trash) renders above the table (next to
+the search bar, inside a shared toolbar row). Switching to trash:
+
+- Lists soft-deleted rows via `GET {baseUrl}/trash` instead of the normal list endpoint (no category
+  scoping — trash is flat).
+- Replaces the breadcrumb with a single, non-interactive `{prefix}.tabs.trash.label` crumb.
+- Enables the `restore-trash-item` and `delete-trash-item` standard actions (see [Standard actions](#standard-actions-beypagestandardaction)).
+
+### Move
+
+The `move` standard action (item-scoped, any mix of categories and regular items) opens a tree
+picker (`bey-modal-tree-dialog`, see the tree component readme's [Modal tree](../tree/docs/tree-readme.md#modal-tree)
+section) built from the **full** category tree (`GET {baseUrl}/categories/tree`), nested by
+`parentField`, with a synthetic root node (`{prefix}.categories.root`) as the "move to top level"
+target.
+
+To prevent moving a category into itself or one of its own descendants, every selected category and
+all of its descendants (computed client-side from the fetched tree) render as disabled nodes.
+Confirming calls `PUT {baseUrl}/move` with `{ items: [{ id, type }], targetId }` (`targetId: null`
+for the root), then clears the selection and reloads.
+
+### `BeyPageItemType` / `BeyPageTrashItem`
+
+Bulk category-aware endpoints (`move`, trash restore/delete) send each item as `{ id, type }` rather
+than a bare id, so the backend can tell categories and regular items apart in the same payload:
+
+```typescript
+export enum BeyPageItemType {
+    Category = 'category',
+    Item = 'item'
+}
+```
 
 ---
 
@@ -235,14 +341,18 @@ The modal title uses consumer i18n keys: `{prefix}.form.create.title` and `{pref
 ### Library keys (already translated)
 
 ```
-angular-components.page.delete.title / .message
 angular-components.page.form.cancel / .submit
 angular-components.page.search.placeholder
 angular-components.form.modal.close-confirmation.title / .message
 angular-components.header.menu
+angular-components.modal.actions.cancel / .confirm     (move picker buttons)
 ```
 
 ### Consumer keys (define them in your app)
+
+Every confirmation modal and success toast for a standard action is resolved from `{prefix}`, keyed
+by the action itself — there is no shared library-wide message, so wording/pluralization is fully
+up to the consumer.
 
 ```
 {prefix}.title                        page title
@@ -251,6 +361,37 @@ angular-components.header.menu
 {prefix}.table.empty                  empty table message
 {prefix}.form.create.title            create modal title
 {prefix}.form.edit.title              edit modal title
-{prefix}.save.success                 create/edit success toast
-{prefix}.delete.success               bulk delete success toast
+{prefix}.toast.create-success         create success toast
+{prefix}.toast.edit-success           edit success toast
+{prefix}.modal.delete.title/.message  delete confirmation (message receives {{count}})
+{prefix}.toast.delete-success         delete success toast
+```
+
+With `categoriesConfig` set, the same pattern extends to categories, trash and move:
+
+```
+{prefix}.categories.root                          root breadcrumb / move-picker node label
+{prefix}.tabs.table.label / .trash.label           view toggle tab labels
+{prefix}.tabs.trash.label                          breadcrumb label while viewing the trash
+
+{categoriesConfig.formConfig.prefix}.form.create.title / .edit.title
+                                                    create/edit-category modal title — a separate i18n namespace
+                                                    from the page's own form, taken from categoriesConfig.formConfig.prefix
+{prefix}.toast.create-category-success             create-category success toast
+{prefix}.toast.edit-category-success               edit-category success toast
+{prefix}.modal.delete-category.title/.message       delete-category confirmation
+{prefix}.toast.delete-category-success             delete-category success toast
+
+{prefix}.move.title                                move-picker modal title
+{prefix}.toast.move-success                        move success toast
+```
+
+Move-picker nodes carry the category's actual `{nameField}` value as their label (not an i18n key),
+so no per-node i18n keys are needed for them.
+
+```
+
+{prefix}.modal.delete-trash-item.title/.message      delete-from-trash confirmation
+{prefix}.toast.delete-trash-item-success           delete-from-trash success toast
+{prefix}.toast.restore-trash-item-success          restore-from-trash success toast (no confirmation modal)
 ```

@@ -12,6 +12,8 @@ Supported capabilities:
 -   Disabled nodes (not selectable, not toggleable).
 -   i18n via `prefix`, with per-node label overrides.
 -   Keyboard accessible (`Enter` / `Space` to select a focused node; the toggle is a real button).
+-   Tooltip on each node label showing the full text when it's truncated.
+-   Modal variant: pick a node from the full tree inside a dialog via `BeyModalTreeService` + `BeyModalTreeConfig`.
 
 ---
 
@@ -104,3 +106,81 @@ Library keys (already translated): `angular-components.tree.expand`, `angular-co
 (the toggle button's accessible label).
 
 Consumer keys: `{prefix}.nodes.{key}.label` for every node using the default label.
+
+---
+
+## Modal tree
+
+A tree can also be opened inside a modal dialog as a target picker (e.g. "move to...") using
+`BeyModalTreeService` and `BeyModalTreeConfig`. `BeyModalTreeConfig` wraps a `BeyTreeConfig`
+internally, so nodes, `prefix` and `expandedKeys` work exactly as in the plain tree.
+
+Requires `provideBeyModal()` in the application config (it uses `ngx-bootstrap` modals underneath).
+
+```ts
+import { BeyModalTreeConfig, BeyModalTreeService, BeyModalTreeSize, BeyTreeNode } from '@beyonda-labs/angular-components';
+
+private readonly modalTreeService = inject(BeyModalTreeService);
+
+openMoveDialog(): void {
+    this.modalTreeService.open(
+        new BeyModalTreeConfig({
+            prefix: 'products.move',
+            size: BeyModalTreeSize.Small,
+            nodes: [
+                new BeyTreeNode({
+                    key: 'electronics',
+                    children: [new BeyTreeNode({ key: 'phones' }), new BeyTreeNode({ key: 'laptops' })]
+                })
+            ],
+            onConfirm: node => {
+                // node is the selected BeyTreeNode, or undefined if the dialog was dismissed empty.
+                this.myService.moveTo(node?.data);
+            }
+        })
+    );
+}
+```
+
+### `BeyModalTreeConfig`
+
+**Constructor parameters:**
+
+| Parameter      | Type                                  | Required | Default  | Description                                                       |
+| -------------- | -------------------------------------- | -------- | -------- | ------------------------------------------------------------------- |
+| `nodes`        | `BeyTreeNode[]`                        | yes      | —        | Top-level nodes                                                     |
+| `prefix`       | `string`                               | yes      | —        | i18n prefix for the title and node labels (`{prefix}.nodes.{key}.label`) |
+| `expandedKeys` | `string[]`                             | no       | every node with children (fully expanded) | Keys expanded when the tree is first rendered |
+| `selectedKey`  | `string`                               | no       | —        | Key pre-selected when the dialog opens                              |
+| `onConfirm`    | `(node: BeyTreeNode \| undefined) => void` | no  | —        | Called with the selected node when Confirm is clicked                |
+| `size`         | `BeyModalTreeSize`                     | no       | `Medium` | Width of the modal dialog                                            |
+| `title`        | `string`                               | no       | —        | Modal title key; overrides `{prefix}.title`                          |
+
+Unlike the plain tree, `expandedKeys` defaults to **every branch expanded** (not collapsed), since a
+picker's job is to let the consumer see the whole hierarchy at once to find the target node.
+
+**Methods:**
+
+| Method             | Description                                                        |
+| ------------------ | -------------------------------------------------------------------- |
+| `close()`          | Closes the modal                                                     |
+| `confirm()`        | Runs `onConfirm` with the currently selected node                    |
+| `getSelectedNode()`| Returns the currently selected `BeyTreeNode`, if any                 |
+| `hasSelection()`   | Returns whether a node is currently selected                         |
+
+### `BeyModalTreeSize`
+
+| Value                     | Bootstrap class | Width   |
+| -------------------------- | --------------- | ------- |
+| `BeyModalTreeSize.Small`  | `modal-sm`      | ~300px  |
+| `BeyModalTreeSize.Medium` | (default)       | ~500px  |
+| `BeyModalTreeSize.Large`  | `modal-lg`      | ~800px  |
+
+### Behavior
+
+-   `open()` returns the `BsModalRef` of the dialog.
+-   The Confirm button is disabled until a node is selected.
+-   Confirm runs `onConfirm` but does **not** close the modal: call `config.close()` when the
+    operation succeeds, and leave it open on error — same pattern as the modal form.
+-   The dialog body scrolls independently (both axes) when the tree is taller or wider than the
+    modal, so deep hierarchies and long labels stay usable.

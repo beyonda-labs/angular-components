@@ -8,10 +8,22 @@
             </div>
         }
 
-        @if (service.searchConfig(); as searchConfig) {
-            <div class="bey-page-search">
-                <bey-search [config]="searchConfig"></bey-search>
+        @if (service.viewToggleConfig() || service.searchConfig()) {
+            <div class="bey-page-toolbar">
+                @if (service.viewToggleConfig(); as viewToggleConfig) {
+                    <bey-tabs [config]="viewToggleConfig"></bey-tabs>
+                }
+
+                @if (service.searchConfig(); as searchConfig) {
+                    <div class="bey-page-search">
+                        <bey-search [config]="searchConfig"></bey-search>
+                    </div>
+                }
             </div>
+        }
+
+        @if (service.categoryBreadcrumbConfig(); as breadcrumbConfig) {
+            <bey-breadcrumb [config]="breadcrumbConfig"></bey-breadcrumb>
         }
 
         @if (config.tableConfig) {

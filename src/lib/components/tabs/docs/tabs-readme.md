@@ -4,7 +4,7 @@ Model-driven horizontal tab bar with keyboard navigation, optional icons, and di
 
 Supported capabilities:
 
--   Horizontal tab bar with underline active indicator.
+-   Horizontal tab bar with underline or segmented (pill) active indicator.
 -   Keyboard navigation with Arrow keys, Home, and End.
 -   Optional FontAwesome icon per tab.
 -   Disabled state per tab.
@@ -70,7 +70,15 @@ The root configuration object passed to `[config]`.
 | `prefix`      | `string`                | yes      | —                 | i18n prefix for label resolution   |
 | `tabs`        | `BeyTab[]`              | yes      | —                 | Array of tab definitions           |
 | `activeTab`   | `string`                | no       | first tab's `key` | Key of the initially active tab    |
+| `variant`     | `BeyTabsVariant`        | no       | `Underline`        | Visual style of the active tab indicator |
 | `onTabChange` | `(key: string) => void` | no       | —                 | Called when the active tab changes |
+
+### `BeyTabsVariant`
+
+| Value                      | Description                                                                                                     |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `BeyTabsVariant.Underline` | Default. Border under the active tab, text-only inactive tabs.                                                 |
+| `BeyTabsVariant.Segmented` | Pill-shaped active tab inside a bordered, rounded track — suited for a compact view toggle (e.g. table/trash). |
 
 **Properties:**
 

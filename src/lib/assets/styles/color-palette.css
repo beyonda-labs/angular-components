@@ -47,7 +47,7 @@
     --text-muted: var(--bey-gray-500); /* labels, placeholders */
     --text-disabled: var(--bey-gray-400); /* deshabilitado */
 
-    --text-inverse: var(--bey-gray-0); /* sobre fondo oscuro */
+    --text-inverse: var(--bey-white); /* sobre fondo oscuro */
 }
 
 body.dark {

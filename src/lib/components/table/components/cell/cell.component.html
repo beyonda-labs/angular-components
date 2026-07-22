@@ -3,6 +3,7 @@
     [class.bey-table-cell-header]="isHeader"
     [tooltip]="hasTooltip() ? (cell.tooltip! | translate) : ''"
     container="body"
+    boundariesElement="viewport"
     placement="top"
 >
     @if (cell.type === cellType.Link) {

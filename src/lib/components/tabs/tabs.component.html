@@ -1,5 +1,10 @@
 @if (config) {
-    <div class="bey-tabs" role="tablist" [attr.aria-label]="'angular-components.tabs.label' | translate">
+    <div
+        class="bey-tabs"
+        role="tablist"
+        [class.bey-tabs--segmented]="isSegmented"
+        [attr.aria-label]="'angular-components.tabs.label' | translate"
+    >
         @for (tab of config.tabs; track tab.key) {
             <button
                 class="bey-tabs-tab"

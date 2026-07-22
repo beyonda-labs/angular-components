@@ -3,7 +3,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { Tab, TabsConfig } from './models/tabs.model';
+import { Tab, TabsConfig, TabsVariant } from './models/tabs.model';
 
 @Component({
     imports: [FontAwesomeModule, TooltipModule, TranslateModule],
@@ -27,6 +27,10 @@ export class TabsComponent {
     private _config!: TabsConfig;
 
     constructor(private readonly elementReference: ElementRef<HTMLElement>) {}
+
+    get isSegmented(): boolean {
+        return this.config?.variant === TabsVariant.Segmented;
+    }
 
     getTabLabel(tab: Tab): string {
         const defaultValue = `${tab.key}.label`;

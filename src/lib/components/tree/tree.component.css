@@ -9,6 +9,8 @@
 .bey-tree {
     display: flex;
     flex-direction: column;
+    width: fit-content;
+    min-width: 100%;
 }
 
 .bey-tree-item {

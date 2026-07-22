@@ -48,7 +48,6 @@
     text-align: left;
     text-decoration: underline;
     text-decoration-color: var(--bey-table-link-underline);
-    text-underline-offset: 0.2rem;
 }
 
 .bey-table-cell-link:hover {
