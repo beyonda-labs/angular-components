@@ -12,6 +12,7 @@ import { FormService } from './services/form.service';
     imports: [ButtonComponent, FormSectionComponent],
     selector: 'bey-form',
     standalone: true,
+    styleUrls: ['./form.component.css'],
     templateUrl: './form.component.html'
 })
 export class FormComponent implements OnDestroy {
@@ -128,7 +129,7 @@ export class FormComponent implements OnDestroy {
         }
 
         if (button.type === FormButtonType.Submit) {
-            return !this.config.formGroup?.valid === true;
+            return this.config.formGroup?.dirty !== true || this.config.formGroup?.valid !== true;
         }
 
         return false;
@@ -144,6 +145,10 @@ export class FormComponent implements OnDestroy {
         }
 
         if (button.type === FormButtonType.Submit) {
+            if (this.config.formGroup?.dirty !== true) {
+                return 'angular-components.form.submit.without-changes';
+            }
+
             if (this.config.formGroup?.valid) {
                 return button.tooltip;
             }

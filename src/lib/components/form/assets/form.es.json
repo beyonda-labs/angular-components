@@ -16,7 +16,8 @@
             },
             "required": "Este campo es requerido",
             "submit": {
-                "invalid": "Hay errores en el formulario, por favor corrija o complete los campos requeridos antes de enviar."
+                "invalid": "Hay errores en el formulario, por favor corrija o complete los campos requeridos antes de enviar.",
+                "without-changes": "No se han realizado cambios en el formulario."
             }
         }
     }

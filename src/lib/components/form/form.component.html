@@ -1,7 +1,7 @@
 @if (config && config.formGroup) {
-    <div style="width: calc(100% + 1.5rem)">
+    <div class="bey-form-container">
         <!-- sections -->
-        <div class="w-100 overflow-y-auto overflow-x-hidden">
+        <div class="bey-form-sections w-100 overflow-x-hidden">
             @for (section of config.sections; track $index) {
                 <bey-form-section [section]="section" [formConfig]="config"></bey-form-section>
             }

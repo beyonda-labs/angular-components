@@ -15,10 +15,17 @@
     -   Tooltip on node labels when truncated.
 -   Tabs module: segmented (pill) variant, in addition to the existing underline style.
 -   Breadcrumb module: `isTranslationKey` on `BreadcrumbItem` to resolve a label as a raw i18n key, ignoring the prefix.
+-   Search module:
+    -   `Select` field type for bounded/enum-like fields: renders a dropdown of the configured `options` instead of free text, with `equals`/`notEquals` operators.
+    -   `Tags` field type for array-of-strings fields: `contains`/`notContains` match a whole array element, not a substring.
 
 ### Fixed
 
 -   Breadcrumb module: fixed the overflow-collapse not updating after the item list changed.
+-   Form module:
+    -   Modal form buttons no longer scroll with the field content — only the fields area scrolls internally (bounded by the modal), the buttons stay fixed and always visible.
+    -   The scrollbar inside a modal form now follows the dark theme instead of always rendering with light colors.
+    -   The submit button is now disabled while the form has no changes yet, mirroring the cancel button's existing behavior — previously it was only gated on validity, so an untouched but already-valid form could be "saved" with no changes.
 
 ## [1.0.0] - 2026-07-20
 

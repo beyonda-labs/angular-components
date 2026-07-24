@@ -46,10 +46,11 @@ readonly searchConfig = new BeySearchConfig({
 
 ### `BeySearchField`
 
-| Parameter | Type                 | Description                            |
-| --------- | -------------------- | -------------------------------------- |
-| `key`     | `string`             | Backend field name (also i18n segment) |
-| `type`    | `BeySearchFieldType` | `Text`, `Number` or `Boolean`          |
+| Parameter | Type                     | Description                                                                          |
+| --------- | ------------------------ | ------------------------------------------------------------------------------------- |
+| `key`     | `string`                 | Backend field name (also i18n segment)                                                |
+| `type`    | `BeySearchFieldType`     | `Text`, `Number`, `Boolean`, `Select` or `Tags`                                        |
+| `options` | `BeySearchFieldOption[]` | Required for `Select` — the bounded `{ value, label }` choices (`label` is translated) |
 
 ### Operators by type
 
@@ -58,6 +59,19 @@ readonly searchConfig = new BeySearchConfig({
 | `Text`    | contains, notContains, equals, notEquals, startsWith, endsWith                  |
 | `Number`  | equals, notEquals, greaterThan(OrEquals), lessThan(OrEquals), between (min–max) |
 | `Boolean` | equals, notEquals (Yes/No select)                                               |
+| `Select`  | equals, notEquals (dropdown of `options`) — for a field with a known, bounded set of values (e.g. an enum/status), so the user can't type an invalid value |
+| `Tags`    | contains, notContains — matches against a whole array element, not a substring (pair with a backend `FieldStringArraySchema` field, e.g. `express-components`' `base-entity`) |
+
+```ts
+new BeySearchField({
+    key: 'status',
+    type: BeySearchFieldType.Select,
+    options: [
+        { value: 'draft', label: 'products.search.status.draft' },
+        { value: 'published', label: 'products.search.status.published' }
+    ]
+})
+```
 
 ---
 

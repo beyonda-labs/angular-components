@@ -194,6 +194,58 @@ describe('SearchComponent', () => {
         });
     });
 
+    it('should only offer contains/notContains operators for a tags field', () => {
+        component.addRow();
+        component.onFieldChange(0, buildSelectEvent('tags'));
+
+        expect(component.getOperators(component.rows[0])).toEqual([
+            SearchFilterOperator.Contains,
+            SearchFilterOperator.NotContains
+        ]);
+    });
+
+    it('should apply a tags filter as a string filter', () => {
+        component.addRow();
+        setRow(0, 'tags', SearchFilterOperator.Contains, 'invoice');
+
+        component.applyFilters();
+
+        expect(component.appliedFilters).toEqual([
+            new StringFilter({ field: 'tags', operator: SearchFilterOperator.Contains, value: 'invoice' })
+        ]);
+    });
+
+    it('should only offer equals/notEquals operators for a select field', () => {
+        component.addRow();
+        component.onFieldChange(0, buildSelectEvent('status'));
+
+        expect(component.getOperators(component.rows[0])).toEqual([
+            SearchFilterOperator.Equals,
+            SearchFilterOperator.NotEquals
+        ]);
+    });
+
+    it('should expose the configured options for a select field', () => {
+        component.addRow();
+        component.onFieldChange(0, buildSelectEvent('status'));
+
+        expect(component.getFieldOptions(component.rows[0])).toEqual([
+            { label: 'test.search.status.draft', value: 'draft' },
+            { label: 'test.search.status.published', value: 'published' }
+        ]);
+    });
+
+    it('should apply a select filter as a string filter', () => {
+        component.addRow();
+        setRow(0, 'status', SearchFilterOperator.Equals, 'draft');
+
+        component.applyFilters();
+
+        expect(component.appliedFilters).toEqual([
+            new StringFilter({ field: 'status', operator: SearchFilterOperator.Equals, value: 'draft' })
+        ]);
+    });
+
     function setRow(index: number, fieldKey: string, operator: SearchFilterOperator, value: string, valueTo = ''): void {
         component.onFieldChange(index, buildSelectEvent(fieldKey));
         component.onOperatorChange(index, buildSelectEvent(operator));
@@ -210,7 +262,16 @@ function buildConfig(overrides?: { mainField?: string }): SearchConfig {
         fields: [
             new SearchField({ key: 'name', type: SearchFieldType.Text }),
             new SearchField({ key: 'price', type: SearchFieldType.Number }),
-            new SearchField({ key: 'available', type: SearchFieldType.Boolean })
+            new SearchField({ key: 'available', type: SearchFieldType.Boolean }),
+            new SearchField({ key: 'tags', type: SearchFieldType.Tags }),
+            new SearchField({
+                key: 'status',
+                type: SearchFieldType.Select,
+                options: [
+                    { label: 'test.search.status.draft', value: 'draft' },
+                    { label: 'test.search.status.published', value: 'published' }
+                ]
+            })
         ],
         mainField: overrides && 'mainField' in overrides ? overrides.mainField : 'name',
         onFiltersChange,

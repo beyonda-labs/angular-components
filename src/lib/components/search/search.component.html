@@ -91,6 +91,21 @@
                                                 </option>
                                             </select>
                                         }
+                                        @case (fieldTypes.Select) {
+                                            <select
+                                                class="form-select form-select-sm bey-search-value"
+                                                (change)="onValueChange($index, $event)"
+                                            >
+                                                <option value="" disabled [selected]="!row.value">
+                                                    {{ 'angular-components.search.value-placeholder' | translate }}
+                                                </option>
+                                                @for (option of getFieldOptions(row); track option.value) {
+                                                    <option [value]="option.value" [selected]="option.value === row.value">
+                                                        {{ option.label | translate }}
+                                                    </option>
+                                                }
+                                            </select>
+                                        }
                                         @case (fieldTypes.Number) {
                                             @if (isBetween(row)) {
                                                 <div class="bey-search-range bey-search-value">

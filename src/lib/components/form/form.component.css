@@ -1,0 +1,41 @@
+:host {
+    --bey-form-scrollbar-thumb: var(--bey-gray-400);
+    --bey-form-scrollbar-thumb-hover: var(--bey-gray-500);
+
+    color-scheme: light;
+}
+
+:host-context(body.dark) {
+    --bey-form-scrollbar-thumb: var(--bey-gray-600);
+    --bey-form-scrollbar-thumb-hover: var(--bey-gray-500);
+
+    color-scheme: dark;
+}
+
+.bey-form-container {
+    width: calc(100% + 1.5rem);
+}
+
+.bey-form-sections {
+    max-height: var(--bey-form-sections-max-height, none);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--bey-form-scrollbar-thumb) transparent;
+}
+
+.bey-form-sections::-webkit-scrollbar {
+    width: 0.6rem;
+}
+
+.bey-form-sections::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.bey-form-sections::-webkit-scrollbar-thumb {
+    background-color: var(--bey-form-scrollbar-thumb);
+    border-radius: 0.5rem;
+}
+
+.bey-form-sections::-webkit-scrollbar-thumb:hover {
+    background-color: var(--bey-form-scrollbar-thumb-hover);
+}
