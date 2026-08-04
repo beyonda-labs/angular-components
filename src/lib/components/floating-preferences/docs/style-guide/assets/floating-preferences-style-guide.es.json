@@ -1,7 +1,11 @@
 {
     "angular-components-style-guide": {
         "floating-preferences": {
-            "example": "Píldora autogestionada con selectores de idioma y tema. Lee y escribe el estado directamente a través de TranslateService y BeyThemeService — no requiere inputs ni configuración."
+            "example": "Selectores de idioma y tema autogestionados. Lee y escribe el estado directamente a través de TranslateService y BeyThemeService — no requiere callbacks.",
+            "examples": {
+                "noPill": "Sin la píldora (usePill = false), para embeberlo en otro contenedor",
+                "pill": "Por defecto (píldora flotante)"
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -10,13 +10,15 @@ import { ThemeService } from '../../services/theme/theme.service';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [AsyncPipe, FontAwesomeModule, TranslateModule],
+    imports: [AsyncPipe, CommonModule, FontAwesomeModule, TranslateModule],
     selector: 'bey-floating-preferences',
     standalone: true,
     styleUrls: ['./floating-preferences.component.css'],
     templateUrl: './floating-preferences.component.html'
 })
 export class FloatingPreferencesComponent {
+    @Input() usePill = true;
+
     readonly faChevronDown = faChevronDown;
 
     private readonly translateService = inject(TranslateService);
