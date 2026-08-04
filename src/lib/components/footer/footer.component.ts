@@ -4,11 +4,12 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
+import { FloatingPreferencesComponent } from '../floating-preferences/floating-preferences.component';
 import { FooterConfig } from './models/footer.model';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [ButtonComponent, TranslateModule],
+    imports: [ButtonComponent, FloatingPreferencesComponent, TranslateModule],
     selector: 'bey-footer',
     standalone: true,
     styleUrls: ['./footer.component.css'],
