@@ -27,6 +27,8 @@ const BRAND_ICON =
     templateUrl: './left-menu-style-guide.component.html'
 })
 export class LeftMenuStyleGuideComponent {
+    lastDocumentsClick: 'label' | null = null;
+
     collapsedConfig = this.buildConfig(false);
     expandedConfig = this.buildConfig(true);
 
@@ -58,6 +60,7 @@ export class LeftMenuStyleGuideComponent {
                     key: 'calendar'
                 }),
                 new LeftMenuAction({
+                    action: () => (this.lastDocumentsClick = 'label'),
                     icon: faFolderOpen,
                     key: 'documents',
                     subActions: [

@@ -43,6 +43,8 @@
                     "tooltip": "Get support"
                 }
             },
+            "documentsClicked": "\"Documents\" action was triggered by clicking its label.",
+            "documentsHint": "\"Documents\" has both its own action and sub-actions: click its label to run the action, click the chevron to toggle the submenu.",
             "example": "Left menu with grouped actions, nested navigation and collapsed behavior.",
             "examples": {
                 "collapsed": "Collapsed example",

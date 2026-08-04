@@ -43,6 +43,8 @@
                     "tooltip": "Obtener soporte"
                 }
             },
+            "documentsClicked": "La acción \"Documentos\" se ha ejecutado al pulsar su etiqueta.",
+            "documentsHint": "\"Documentos\" tiene acción propia y subacciones: pulsa su etiqueta para ejecutar la acción, pulsa el chevron para desplegar el submenú.",
             "example": "Menú lateral con acciones agrupadas, navegación anidada y comportamiento colapsado.",
             "examples": {
                 "collapsed": "Ejemplo colapsado",

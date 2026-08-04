@@ -126,15 +126,17 @@ export class ActionListComponent {
         this.activeFlyoutPath = path;
     }
 
-    onActionClick(action: LeftMenuAction, path: string, forceExpanded = false): void {
+    onActionClick(action: LeftMenuAction, path: string, forceExpanded = false, event: MouseEvent | undefined = undefined): void {
         if (action.disabled) {
             return;
         }
 
         if (this.hasSubActions(action)) {
-            this.toggleSubmenu(path, forceExpanded);
+            const clickedChevron = this.isInlineExpanded(forceExpanded) && this.isChevronTarget(event);
 
-            if (!action.action) {
+            if (!this.isInlineExpanded(forceExpanded) || clickedChevron || !action.action) {
+                this.toggleSubmenu(path, forceExpanded);
+
                 return;
             }
         }
@@ -191,6 +193,10 @@ export class ActionListComponent {
                 this.openPaths.delete(openPath);
             }
         }
+    }
+
+    private isChevronTarget(event?: MouseEvent): boolean {
+        return Boolean((event?.target as HTMLElement | undefined)?.closest('.bey-left-menu-action-chevron'));
     }
 
     private openAccordionPath(path: string): void {

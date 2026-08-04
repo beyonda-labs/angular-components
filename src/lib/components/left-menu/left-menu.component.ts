@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faAnglesLeft, faAnglesRight } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
@@ -24,6 +24,8 @@ export class LeftMenuComponent {
     get config(): LeftMenuConfig {
         return this._config;
     }
+
+    @Output() expandedChange = new EventEmitter<boolean>();
 
     expanded = true;
 
@@ -72,5 +74,6 @@ export class LeftMenuComponent {
     toggleExpanded(): void {
         this.expanded = !this.expanded;
         this.config.expanded = this.expanded;
+        this.expandedChange.emit(this.expanded);
     }
 }

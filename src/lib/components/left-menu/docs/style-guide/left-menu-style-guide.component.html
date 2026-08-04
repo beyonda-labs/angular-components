@@ -7,9 +7,17 @@
         <span class="bey-sg-example-label">
             {{ 'angular-components-style-guide.leftMenu.examples.expanded' | translate }}
         </span>
+        <div class="bey-sg-info text-muted mb-2">
+            {{ 'angular-components-style-guide.leftMenu.documentsHint' | translate }}
+        </div>
         <div class="bey-left-menu-style-guide-frame">
             <bey-left-menu [config]="expandedConfig"></bey-left-menu>
         </div>
+        @if (lastDocumentsClick) {
+            <div class="bey-sg-info text-muted mt-2">
+                {{ 'angular-components-style-guide.leftMenu.documentsClicked' | translate }}
+            </div>
+        }
     </div>
 
     <div class="bey-left-menu-style-guide-item">

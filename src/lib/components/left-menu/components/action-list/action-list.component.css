@@ -72,7 +72,6 @@
 .bey-left-menu-action-active {
     background: var(--bey-left-menu-accent);
     border-color: var(--bey-left-menu-accent);
-    box-shadow: 0 12px 24px rgba(17, 17, 17, 0.12);
     color: var(--bey-left-menu-surface);
 }
 
@@ -84,9 +83,9 @@
 
 .bey-left-menu-action-collapsed {
     justify-content: center;
-    width: 3rem;
-    min-width: 3rem;
-    padding: 0.7rem;
+    width: 2.75rem;
+    min-width: 2.75rem;
+    padding: 0.6rem;
     margin-inline: auto;
 }
 

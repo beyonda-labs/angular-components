@@ -23,7 +23,7 @@
                 placement="right"
                 (focus)="onItemMouseEnter(action, actionPath, forceExpanded)"
                 (mouseover)="onItemMouseEnter(action, actionPath, forceExpanded)"
-                (click)="onActionClick(action, actionPath, forceExpanded)"
+                (click)="onActionClick(action, actionPath, forceExpanded, $event)"
             >
                 <span class="bey-left-menu-action-icon">
                     @if (action.icon) {

@@ -126,8 +126,11 @@ If `title` is omitted or left as `title`, the component resolves it as `{prefix}
 
 Behavior notes:
 
--   If an action has `subActions`, clicking it toggles the submenu.
--   If that same action also defines `action`, the callback still runs after toggling.
+-   If an action has `subActions` but no `action` of its own, clicking it (anywhere) toggles the submenu.
+-   If an action has both `subActions` and `action`, the click target decides what happens when the menu is
+    expanded (inline submenus): clicking the label runs `action`, clicking the chevron toggles the submenu.
+-   When the menu is collapsed (flyout submenus), clicking a parent action always toggles the flyout, regardless
+    of `action` — there's no label/chevron distinction since only the icon is visible.
 -   Parent actions receive a visual selected state when any descendant is active.
 
 ---
