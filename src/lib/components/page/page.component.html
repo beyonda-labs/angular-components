@@ -9,7 +9,7 @@
         }
 
         @if (service.viewToggleConfig() || service.searchConfig()) {
-            <div class="bey-page-toolbar">
+            <div class="bey-page-toolbar mb-3">
                 @if (service.viewToggleConfig(); as viewToggleConfig) {
                     <bey-tabs [config]="viewToggleConfig"></bey-tabs>
                 }
@@ -23,7 +23,7 @@
         }
 
         @if (service.categoryBreadcrumbConfig(); as breadcrumbConfig) {
-            <bey-breadcrumb [config]="breadcrumbConfig"></bey-breadcrumb>
+            <bey-breadcrumb [config]="breadcrumbConfig" class="mb-2"></bey-breadcrumb>
         }
 
         @if (config.tableConfig) {
