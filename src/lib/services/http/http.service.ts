@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, EMPTY, finalize, Observable, tap } from 'rxjs';
+import { catchError, EMPTY, finalize, Observable, shareReplay, tap } from 'rxjs';
 
 import { LoadingService } from '../../components/loading/services/loading.service';
 import { ModalService } from '../../components/modal/services/modal.service';
@@ -141,6 +141,10 @@ export class HttpService {
             this.loadingService.show();
         }
 
+        // `subscribe()` below drives the loading/toast/error side effects immediately, independent of
+        // whether (or how many times) the caller subscribes to the returned observable. `shareReplay(1)`
+        // makes that subscription and the caller's share the same underlying HTTP call — without it,
+        // HttpClient's cold observable would fire the request a second time when the caller subscribes.
         const request = source$.pipe(
             tap(result => {
                 options?.onSuccess?.(result);
@@ -165,7 +169,8 @@ export class HttpService {
                 if (options?.loading) {
                     this.loadingService.hide();
                 }
-            })
+            }),
+            shareReplay(1)
         );
 
         request.subscribe();

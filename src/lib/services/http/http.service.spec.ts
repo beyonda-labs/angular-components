@@ -1,7 +1,7 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
-import { of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 
 function makeRangeError(errorCode: string, min: number | null, max: number | null) {
     return throwError(
@@ -116,9 +116,9 @@ describe('HttpService', () => {
         it('should delegate DELETE to HttpClient', () => {
             httpClient.delete.mockReturnValue(of(null));
 
-            service.delete('/api/items/1').subscribe();
+            service.delete('/api/items/1', null).subscribe();
 
-            expect(httpClient.delete).toHaveBeenCalledWith('/api/items/1', {});
+            expect(httpClient.delete).toHaveBeenCalledWith('/api/items/1', { body: null });
         });
     });
 
@@ -461,6 +461,25 @@ describe('HttpService', () => {
             expect(modalService.openError).toHaveBeenCalled();
             expect(onError).toHaveBeenCalled();
             expect(loadingService.hide).toHaveBeenCalledTimes(1);
+        });
+    });
+
+    describe('subscription sharing', () => {
+        it('should only trigger a single underlying HTTP call when the caller also subscribes to the returned observable', () => {
+            let executionCount = 0;
+            const cold$ = new Observable(subscriber => {
+                executionCount++;
+                subscriber.next({ id: 1 });
+                subscriber.complete();
+            });
+
+            httpClient.put.mockReturnValue(cold$);
+
+            // request() already subscribes internally to drive loading/toast side effects; the caller
+            // subscribing again (the normal usage pattern) must not re-trigger the underlying HTTP call.
+            service.put('/api/items/1', { name: 'updated' }).subscribe();
+
+            expect(executionCount).toBe(1);
         });
     });
 });
