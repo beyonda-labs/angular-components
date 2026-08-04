@@ -208,6 +208,31 @@
             "previous-page": "Ir a la página anterior",
             "results-range": "Mostrando {{ start }}-{{ end }} de {{ total }} resultados"
         },
+        "properties-menu": {
+            "close": "Cerrar",
+            "list": {
+                "empty": "No hay elementos"
+            },
+            "remove": "Eliminar",
+            "spacing": {
+                "bottom": "Abajo",
+                "left": "Izquierda",
+                "right": "Derecha",
+                "top": "Arriba"
+            },
+            "tabs": {
+                "label": "Pestañas de propiedades"
+            },
+            "textField": {
+                "insertVariable": "Insertar variable"
+            },
+            "variablePicker": {
+                "close": "Cerrar",
+                "empty": "No se encontraron variables",
+                "label": "Variables",
+                "search": "Buscar variables"
+            }
+        },
         "search": {
             "add": "Añadir filtro",
             "apply": "Aplicar filtros",
@@ -246,7 +271,8 @@
             "select-row": "Seleccionar fila"
         },
         "tabs": {
-            "label": "Pestañas de navegación"
+            "label": "Pestañas de navegación",
+            "more": "Más pestañas"
         },
         "toast": {
             "types": {
@@ -364,7 +390,11 @@
         "components": "Componentes",
         "compound": "Compuestos",
         "floating-preferences": {
-            "example": "Píldora autogestionada con selectores de idioma y tema. Lee y escribe el estado directamente a través de TranslateService y BeyThemeService — no requiere inputs ni configuración."
+            "example": "Selectores de idioma y tema autogestionados. Lee y escribe el estado directamente a través de TranslateService y BeyThemeService — no requiere callbacks.",
+            "examples": {
+                "noPill": "Sin la píldora (usePill = false), para embeberlo en otro contenedor",
+                "pill": "Por defecto (píldora flotante)"
+            }
         },
         "floating-preferences-section": "Preferencias flotantes",
         "footer": {
@@ -589,6 +619,10 @@
                     "label": "Archivar",
                     "tooltip": "Archivar objetivo"
                 },
+                "back": {
+                    "label": "Volver",
+                    "tooltip": "Volver a objetivos"
+                },
                 "delete": {
                     "label": "Eliminar",
                     "tooltip": "Eliminar objetivo"
@@ -618,7 +652,13 @@
                     "tooltip": "Crear un nuevo objetivo de equipo"
                 }
             },
+            "badge": "Activo",
             "example": "Cabecera con acciones a ambos lados y un menú de tres puntos (...) para acciones secundarias.",
+            "examples": {
+                "back": "Cabecera con botón de volver y badge de estado",
+                "default": "Cabecera normal, sin botón de volver",
+                "subPage": "Variante de subpágina, título más pequeño"
+            },
             "title": "Objetivos"
         },
         "headers": "Cabeceras",
@@ -665,6 +705,8 @@
                     "tooltip": "Obtener soporte"
                 }
             },
+            "documentsClicked": "La acción \"Documentos\" se ha ejecutado al pulsar su etiqueta.",
+            "documentsHint": "\"Documentos\" tiene acción propia y subacciones: pulsa su etiqueta para ejecutar la acción, pulsa el chevron para desplegar el submenú.",
             "example": "Menú lateral con acciones agrupadas, navegación anidada y comportamiento colapsado.",
             "examples": {
                 "collapsed": "Ejemplo colapsado",
@@ -766,6 +808,15 @@
             }
         },
         "pagination-section": "Paginación",
+        "pdfViewer": {
+            "example": "Previsualizador de PDF construido sobre ngx-extended-pdf-viewer con su toolbar nativa oculta y una toolbar propia controlada mediante la API imperativa y los eventos del visor."
+        },
+        "pdfViewers": "Visor de PDF",
+        "propertiesMenu": {
+            "example": "Inspector de propiedades de un bloque seleccionado, con pestañas, grupos plegables e inserción de variables.",
+            "provideVariables": "Aportar variables"
+        },
+        "propertiesMenus": "Menú de propiedades",
         "simple": "Simples",
         "table": {
             "actions": {
@@ -817,7 +868,8 @@
             "example": "Barra de pestañas horizontal orientada a modelos con navegación por teclado, iconos opcionales y estado deshabilitado. El consumidor renderiza contenido según la pestaña activa.",
             "examples": {
                 "basic": "Básico",
-                "icons": "Con iconos y deshabilitado"
+                "icons": "Con iconos y deshabilitado",
+                "overflow": "Overflow (contenedor estrecho)"
             },
             "icons": {
                 "tabs": {
@@ -829,6 +881,31 @@
                     },
                     "documents": {
                         "label": "Documentos"
+                    },
+                    "settings": {
+                        "label": "Configuración"
+                    }
+                }
+            },
+            "overflow": {
+                "tabs": {
+                    "activity": {
+                        "label": "Actividad"
+                    },
+                    "comments": {
+                        "label": "Comentarios"
+                    },
+                    "details": {
+                        "label": "Detalles"
+                    },
+                    "history": {
+                        "label": "Historial"
+                    },
+                    "overview": {
+                        "label": "General"
+                    },
+                    "permissions": {
+                        "label": "Permisos"
                     },
                     "settings": {
                         "label": "Configuración"
