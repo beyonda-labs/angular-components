@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, inject, Input } from '@angular/core';
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,7 +8,7 @@ import { ButtonConfig, ButtonType } from '../../internal/button/models/button-co
 import { HeaderAction, HeaderActionType, HeaderConfig } from './models/header.model';
 
 @Component({
-    imports: [ButtonComponent, TranslateModule],
+    imports: [ButtonComponent, CommonModule, TranslateModule],
     selector: 'bey-header',
     standalone: true,
     styleUrls: ['./header.component.css'],
@@ -55,6 +56,7 @@ export class HeaderComponent {
         return new ButtonConfig({
             action: action.action ?? (() => {}),
             icon: action.icon,
+            isDisabled: action.disabled,
             label: this.resolveActionText(action, 'label'),
             tooltip: this.resolveActionText(action, 'tooltip'),
             type: this.getButtonType(action.type)

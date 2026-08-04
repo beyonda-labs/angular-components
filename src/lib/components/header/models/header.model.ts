@@ -6,26 +6,46 @@ export class HeaderConfig {
     rightActions: HeaderAction[] = [];
     prefix: string;
     title: string;
+    variant: HeaderVariant;
 
-    constructor({ prefix, title = '', leftActions = [], menuActions = [], rightActions = [] }: HeaderConfigParameters) {
+    backAction?: HeaderAction;
+    badge?: HeaderBadge;
+
+    constructor({
+        backAction,
+        badge,
+        prefix,
+        title = '',
+        leftActions = [],
+        menuActions = [],
+        rightActions = [],
+        variant = HeaderVariant.Page
+    }: HeaderConfigParameters) {
+        this.backAction = backAction;
+        this.badge = badge;
         this.leftActions = leftActions;
         this.menuActions = menuActions;
         this.prefix = prefix;
         this.rightActions = rightActions;
         this.title = title;
+        this.variant = variant;
     }
 }
 
 export interface HeaderConfigParameters {
     prefix: string;
 
+    backAction?: HeaderAction;
+    badge?: HeaderBadge;
     leftActions?: HeaderAction[];
     menuActions?: HeaderAction[];
     rightActions?: HeaderAction[];
     title?: string;
+    variant?: HeaderVariant;
 }
 
 export class HeaderAction {
+    disabled: boolean;
     key: string;
     label: string;
     tooltip: string;
@@ -37,6 +57,7 @@ export class HeaderAction {
 
     constructor({
         action,
+        disabled = false,
         icon,
         key,
         label = `${key}.label`,
@@ -45,6 +66,7 @@ export class HeaderAction {
         type
     }: HeaderActionParameters) {
         this.action = action;
+        this.disabled = disabled;
         this.icon = icon;
         this.key = key;
         this.label = label;
@@ -59,6 +81,7 @@ export interface HeaderActionParameters {
     type: HeaderActionType;
 
     action?: () => void;
+    disabled?: boolean;
     icon?: IconDefinition;
     label?: string;
     subActions?: HeaderAction[];
@@ -69,4 +92,15 @@ export enum HeaderActionType {
     PrimaryButton = 'primary-button',
     SecondaryButton = 'secondary-button',
     Text = 'text'
+}
+
+export enum HeaderVariant {
+    Page = 'page',
+    SubPage = 'subpage'
+}
+
+export interface HeaderBadge {
+    text: string;
+
+    cssClass?: string;
 }

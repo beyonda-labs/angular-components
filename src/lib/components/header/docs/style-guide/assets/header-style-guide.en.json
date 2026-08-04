@@ -6,6 +6,10 @@
                     "label": "Archive",
                     "tooltip": "Archive goal"
                 },
+                "back": {
+                    "label": "Back",
+                    "tooltip": "Back to goals"
+                },
                 "delete": {
                     "label": "Delete",
                     "tooltip": "Delete goal"
@@ -35,7 +39,13 @@
                     "tooltip": "Create a new team goal"
                 }
             },
+            "badge": "Active",
             "example": "Header with actions on both sides and a kebab menu (...) for secondary actions.",
+            "examples": {
+                "back": "Header with back button and status badge",
+                "default": "Default header, no back button",
+                "subPage": "Sub-page variant, smaller title"
+            },
             "title": "Goals"
         }
     }

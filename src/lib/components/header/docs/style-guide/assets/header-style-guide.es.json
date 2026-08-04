@@ -6,6 +6,10 @@
                     "label": "Archivar",
                     "tooltip": "Archivar objetivo"
                 },
+                "back": {
+                    "label": "Volver",
+                    "tooltip": "Volver a objetivos"
+                },
                 "delete": {
                     "label": "Eliminar",
                     "tooltip": "Eliminar objetivo"
@@ -35,7 +39,13 @@
                     "tooltip": "Crear un nuevo objetivo de equipo"
                 }
             },
+            "badge": "Activo",
             "example": "Cabecera con acciones a ambos lados y un menú de tres puntos (...) para acciones secundarias.",
+            "examples": {
+                "back": "Cabecera con botón de volver y badge de estado",
+                "default": "Cabecera normal, sin botón de volver",
+                "subPage": "Variante de subpágina, título más pequeño"
+            },
             "title": "Objetivos"
         }
     }

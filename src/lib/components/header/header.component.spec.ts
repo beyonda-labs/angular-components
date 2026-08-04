@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonType } from '../../internal/button/models/button-config.model';
 import { HeaderComponent } from './header.component';
-import { HeaderAction, HeaderActionType, HeaderConfig } from './models/header.model';
+import { HeaderAction, HeaderActionType, HeaderConfig, HeaderVariant } from './models/header.model';
 
 describe('HeaderComponent', () => {
     let component: HeaderComponent;
@@ -27,7 +27,7 @@ describe('HeaderComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should render title and actions on both sides', () => {
+    it('should render title and both action zones inside a single end-aligned group', () => {
         component.config = buildConfig({
             title: 'test.header.title',
             leftActions: [new HeaderAction({ key: 'back', type: HeaderActionType.Text })],
@@ -38,13 +38,21 @@ describe('HeaderComponent', () => {
 
         const title = fixture.nativeElement.querySelector('.bey-header-title');
         const actionButtons = fixture.debugElement.queryAll(By.directive(ButtonComponent));
-        const leftContainer = fixture.nativeElement.querySelector('.bey-header-actions-left');
-        const rightContainer = fixture.nativeElement.querySelector('.bey-header-actions-right');
+        const endContainer = fixture.nativeElement.querySelector('.bey-header-actions-end');
 
         expect(title?.textContent?.trim()).toBe('test.header.title');
         expect(actionButtons).toHaveLength(2);
-        expect(leftContainer).toBeTruthy();
-        expect(rightContainer).toBeTruthy();
+        expect(endContainer).toBeTruthy();
+    });
+
+    it('should set the title element native tooltip so long titles remain readable when truncated', () => {
+        component.config = buildConfig({ title: 'test.header.title' });
+
+        fixture.detectChanges();
+
+        const title = fixture.nativeElement.querySelector('.bey-header-title');
+
+        expect(title?.getAttribute('title')).toBe('test.header.title');
     });
 
     it('should hide optional sections when title and actions are missing', () => {
@@ -53,8 +61,7 @@ describe('HeaderComponent', () => {
         fixture.detectChanges();
 
         expect(fixture.nativeElement.querySelector('.bey-header-title')).toBeNull();
-        expect(fixture.nativeElement.querySelector('.bey-header-actions-left')).toBeNull();
-        expect(fixture.nativeElement.querySelector('.bey-header-actions-right')).toBeNull();
+        expect(fixture.nativeElement.querySelector('.bey-header-actions-end')).toBeNull();
     });
 
     it('should build a button config with mapped type and explicit texts', () => {
@@ -73,6 +80,24 @@ describe('HeaderComponent', () => {
         expect(button.label).toBe('custom.label');
         expect(button.tooltip).toBe('custom.tooltip');
         expect(button.type).toBe(ButtonType.Secondary);
+    });
+
+    it('should propagate disabled state onto the button config', () => {
+        const action = new HeaderAction({ key: 'save', type: HeaderActionType.PrimaryButton, disabled: true });
+        component.config = buildConfig();
+
+        const button = component.getActionButton(action);
+
+        expect(button.isDisabled).toBe(true);
+    });
+
+    it('should default disabled to false', () => {
+        const action = new HeaderAction({ key: 'save', type: HeaderActionType.PrimaryButton });
+        component.config = buildConfig();
+
+        const button = component.getActionButton(action);
+
+        expect(button.isDisabled).toBe(false);
     });
 
     it('should resolve default translation keys for action texts', () => {
@@ -96,7 +121,23 @@ describe('HeaderComponent', () => {
         expect(() => button.action()).not.toThrow();
     });
 
-    it('should render the menu toggle as the last element of the left actions', () => {
+    it('should render leftActions, then the menu toggle, then rightActions in that order', () => {
+        component.config = buildConfig({
+            leftActions: [new HeaderAction({ key: 'back', type: HeaderActionType.Text })],
+            menuActions: [new HeaderAction({ key: 'export', type: HeaderActionType.Text })],
+            rightActions: [new HeaderAction({ key: 'save', type: HeaderActionType.PrimaryButton })]
+        });
+
+        fixture.detectChanges();
+
+        const endContainer = fixture.nativeElement.querySelector('.bey-header-actions-end') as HTMLElement;
+        const menu = endContainer.querySelector('.bey-header-menu');
+
+        expect(menu).toBeTruthy();
+        expect([...endContainer.children].indexOf(menu as Element)).toBe(1);
+    });
+
+    it('should render the menu toggle as the last element when no right actions are present', () => {
         component.config = buildConfig({
             leftActions: [new HeaderAction({ key: 'back', type: HeaderActionType.Text })],
             menuActions: [new HeaderAction({ key: 'export', type: HeaderActionType.Text })]
@@ -104,22 +145,21 @@ describe('HeaderComponent', () => {
 
         fixture.detectChanges();
 
-        const leftContainer = fixture.nativeElement.querySelector('.bey-header-actions-left') as HTMLElement;
-        const menu = leftContainer.querySelector('.bey-header-menu');
+        const endContainer = fixture.nativeElement.querySelector('.bey-header-actions-end') as HTMLElement;
+        const menu = endContainer.querySelector('.bey-header-menu');
 
         expect(menu).toBeTruthy();
-        expect(leftContainer.lastElementChild).toBe(menu);
-        expect(fixture.nativeElement.querySelector('.bey-header-actions-right')).toBeNull();
+        expect(endContainer.lastElementChild).toBe(menu);
     });
 
-    it('should render the left zone when only menu actions are present', () => {
+    it('should render the end zone when only menu actions are present', () => {
         component.config = buildConfig({
             menuActions: [new HeaderAction({ key: 'export', type: HeaderActionType.Text })]
         });
 
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-header-actions-left .bey-header-menu')).toBeTruthy();
+        expect(fixture.nativeElement.querySelector('.bey-header-actions-end .bey-header-menu')).toBeTruthy();
     });
 
     it('should return empty title when config title is not defined', () => {
@@ -127,6 +167,65 @@ describe('HeaderComponent', () => {
         component.config.title = undefined as unknown as string;
 
         expect(component.getTitle()).toBe('');
+    });
+
+    it('should render the back action before the title', () => {
+        component.config = buildConfig({
+            backAction: new HeaderAction({ key: 'back', type: HeaderActionType.Text })
+        });
+
+        fixture.detectChanges();
+
+        const startContainer = fixture.nativeElement.querySelector('.bey-header-start') as HTMLElement;
+
+        expect(startContainer.querySelector('bey-button')).toBeTruthy();
+        expect([...startContainer.children].indexOf(startContainer.querySelector('bey-button') as Element)).toBe(0);
+    });
+
+    it('should not render a back button when backAction is not set', () => {
+        component.config = buildConfig();
+
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.querySelector('.bey-header-start bey-button')).toBeNull();
+    });
+
+    it('should render the badge next to the title when set', () => {
+        component.config = buildConfig({ badge: { text: 'test.header.badge' } });
+
+        fixture.detectChanges();
+
+        const badge = fixture.nativeElement.querySelector('.bey-header-badge');
+
+        expect(badge?.textContent?.trim()).toBe('test.header.badge');
+    });
+
+    it('should not render a badge when it is not set', () => {
+        component.config = buildConfig();
+
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.querySelector('.bey-header-badge')).toBeNull();
+    });
+
+    it('should default to the page variant title size', () => {
+        component.config = buildConfig();
+
+        fixture.detectChanges();
+
+        const title = fixture.nativeElement.querySelector('.bey-header-title');
+
+        expect(title?.classList.contains('fs-2')).toBe(true);
+    });
+
+    it('should apply the subpage variant title size', () => {
+        component.config = buildConfig({ variant: HeaderVariant.SubPage });
+
+        fixture.detectChanges();
+
+        const title = fixture.nativeElement.querySelector('.bey-header-title');
+
+        expect(title?.classList.contains('fs-4')).toBe(true);
     });
 
     describe('sub-actions dropdown', () => {
@@ -145,16 +244,16 @@ describe('HeaderComponent', () => {
             component.config = buildConfig({ rightActions: [action] });
             fixture.detectChanges();
 
-            const rightContainer = fixture.nativeElement.querySelector('.bey-header-actions-right') as HTMLElement;
+            const endContainer = fixture.nativeElement.querySelector('.bey-header-actions-end') as HTMLElement;
 
-            expect(rightContainer.querySelector('.bey-header-action-menu')).toBeTruthy();
+            expect(endContainer.querySelector('.bey-header-action-menu')).toBeTruthy();
 
-            const toggleButton = rightContainer.querySelector('button') as HTMLButtonElement;
+            const toggleButton = endContainer.querySelector('button') as HTMLButtonElement;
             toggleButton.click();
             fixture.detectChanges();
 
             expect(parentAction).not.toHaveBeenCalled();
-            expect(rightContainer.querySelector('.bey-header-menu-panel')).toBeTruthy();
+            expect(endContainer.querySelector('.bey-header-menu-panel')).toBeTruthy();
         });
 
         it('should execute the sub-action and close the panel on click', () => {
@@ -240,8 +339,11 @@ function buildConfig(overrides?: Partial<HeaderConfig>): HeaderConfig {
     return new HeaderConfig({
         prefix: overrides?.prefix ?? 'test.header',
         title: overrides?.title ?? 'test.header.title',
+        backAction: overrides?.backAction,
+        badge: overrides?.badge,
         leftActions: overrides?.leftActions ?? [],
         menuActions: overrides?.menuActions ?? [],
-        rightActions: overrides?.rightActions ?? []
+        rightActions: overrides?.rightActions ?? [],
+        variant: overrides?.variant
     });
 }

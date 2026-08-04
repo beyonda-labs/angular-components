@@ -2,4 +2,25 @@
     {{ 'angular-components-style-guide.header.example' | translate }}
 </p>
 
-<bey-header [config]="config"></bey-header>
+<div class="bey-header-style-guide-examples">
+    <div class="bey-header-style-guide-item">
+        <span class="bey-sg-example-label">
+            {{ 'angular-components-style-guide.header.examples.default' | translate }}
+        </span>
+        <bey-header [config]="config"></bey-header>
+    </div>
+
+    <div class="bey-header-style-guide-item">
+        <span class="bey-sg-example-label">
+            {{ 'angular-components-style-guide.header.examples.back' | translate }}
+        </span>
+        <bey-header [config]="backConfig"></bey-header>
+    </div>
+
+    <div class="bey-header-style-guide-item">
+        <span class="bey-sg-example-label">
+            {{ 'angular-components-style-guide.header.examples.subPage' | translate }}
+        </span>
+        <bey-header [config]="subPageConfig"></bey-header>
+    </div>
+</div>
