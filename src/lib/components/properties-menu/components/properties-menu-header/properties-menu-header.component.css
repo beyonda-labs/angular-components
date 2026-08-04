@@ -1,0 +1,74 @@
+:host {
+    --bey-properties-menu-header-border: var(--bey-gray-200);
+    --bey-properties-menu-header-icon-bg: var(--bey-bg-muted);
+    --bey-properties-menu-header-text: var(--text-primary);
+    --bey-properties-menu-header-text-muted: var(--text-muted);
+
+    display: block;
+}
+
+:host-context(body.dark) {
+    --bey-properties-menu-header-border: var(--bey-gray-800);
+}
+
+.bey-properties-menu-header {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--bey-properties-menu-header-border);
+}
+
+.bey-properties-menu-header-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 1.9rem;
+    height: 1.9rem;
+    border-radius: 0.4rem;
+    background: var(--bey-properties-menu-header-icon-bg);
+    color: var(--bey-properties-menu-header-text);
+    font-size: 0.85rem;
+}
+
+.bey-properties-menu-header-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.bey-properties-menu-header-title {
+    overflow: hidden;
+    color: var(--bey-properties-menu-header-text);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.bey-properties-menu-header-subtitle {
+    overflow: hidden;
+    color: var(--bey-properties-menu-header-text-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.72rem;
+}
+
+.bey-properties-menu-header-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 1.7rem;
+    height: 1.7rem;
+    border: none;
+    border-radius: 0.35rem;
+    background: none;
+    color: var(--bey-properties-menu-header-text-muted);
+    cursor: pointer;
+}
+
+.bey-properties-menu-header-close:hover {
+    background: var(--bey-bg-hover);
+    color: var(--bey-properties-menu-header-text);
+}

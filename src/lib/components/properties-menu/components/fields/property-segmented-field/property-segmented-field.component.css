@@ -1,0 +1,58 @@
+:host {
+    --bey-property-segmented-accent: var(--bey-primary);
+    --bey-property-segmented-border: var(--bey-gray-300);
+    --bey-property-segmented-text: var(--text-primary);
+    --bey-property-segmented-text-muted: var(--text-muted);
+
+    display: block;
+}
+
+:host-context(body.dark) {
+    --bey-property-segmented-border: var(--bey-gray-700);
+}
+
+.bey-property-segmented-field {
+    display: inline-flex;
+    width: 100%;
+    padding: 0.15rem;
+    border: 1px solid var(--bey-property-segmented-border);
+    border-radius: 0.45rem;
+    background: var(--bey-bg-muted);
+}
+
+.bey-property-segmented-field-option {
+    display: inline-flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem 0.5rem;
+    border: none;
+    border-radius: 0.35rem;
+    background: none;
+    color: var(--bey-property-segmented-text-muted);
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.bey-property-segmented-field-option:hover:not(:disabled):not(.bey-property-segmented-field-option-active) {
+    color: var(--bey-property-segmented-text);
+}
+
+.bey-property-segmented-field-option-active {
+    background: var(--bey-property-segmented-accent);
+    color: var(--text-inverse);
+}
+
+.bey-property-segmented-field-option:focus-visible {
+    outline: 2px solid var(--bey-property-segmented-accent);
+    outline-offset: 1px;
+}
+
+.bey-property-segmented-field-option:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}

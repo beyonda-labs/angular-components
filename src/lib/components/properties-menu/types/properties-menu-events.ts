@@ -1,0 +1,49 @@
+import { PropertyListItem } from '../models/property-list-item.model';
+import { PropertyTreeNode } from '../models/property-tree-node.model';
+import { PropertyVariable } from '../models/property-variable.model';
+
+export interface PropertyFieldValueChange<T = unknown> {
+    fieldId: string;
+    previousValue: T | undefined;
+    value: T | undefined;
+}
+
+export interface PropertyGroupRemove {
+    groupId: string;
+    tabId: string;
+}
+
+export interface PropertyGroupToggle {
+    expanded: boolean;
+    groupId: string;
+    tabId: string;
+}
+
+export interface PropertyListItemSelect {
+    groupId: string;
+    item: PropertyListItem;
+    itemId: string;
+    tabId: string;
+}
+
+export interface PropertyTabAddRequested {
+    tabId: string;
+}
+
+export interface PropertyTreeAddBlock {
+    groupId: string;
+    tabId: string;
+}
+
+export interface PropertyTreeNodeSelect {
+    groupId: string;
+    node: PropertyTreeNode;
+    nodeId: string;
+    tabId: string;
+}
+
+export interface PropertyVariableSelection {
+    expression: string;
+    fieldId: string;
+    variable: PropertyVariable;
+}

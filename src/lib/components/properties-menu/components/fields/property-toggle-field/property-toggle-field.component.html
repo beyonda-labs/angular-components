@@ -1,0 +1,14 @@
+<label class="bey-property-toggle-field">
+    <input
+        type="checkbox"
+        class="bey-property-toggle-field-input"
+        [attr.aria-label]="field.label"
+        [checked]="field.value ?? false"
+        [disabled]="field.disabled"
+        [required]="field.required"
+        (change)="onChange($event)"
+    />
+    <span class="bey-property-toggle-field-track">
+        <span class="bey-property-toggle-field-thumb"></span>
+    </span>
+</label>

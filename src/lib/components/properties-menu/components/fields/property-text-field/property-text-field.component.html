@@ -1,0 +1,54 @@
+<div class="bey-property-field-control">
+    <div class="bey-property-field-picker-anchor">
+        @if (isMultiline) {
+            <textarea
+                class="bey-property-field-input"
+                rows="3"
+                [attr.aria-label]="field.label"
+                [disabled]="field.disabled"
+                [placeholder]="field.placeholder"
+                [readonly]="field.readonly"
+                [required]="field.required"
+                [value]="field.value ?? ''"
+                (blur)="onBlur($event)"
+                (input)="onInput($event)"
+                (keyup)="onKeyup($event)"
+            ></textarea>
+        } @else {
+            <input
+                type="text"
+                class="bey-property-field-input"
+                [attr.aria-label]="field.label"
+                [disabled]="field.disabled"
+                [placeholder]="field.placeholder"
+                [readOnly]="field.readonly"
+                [required]="field.required"
+                [value]="field.value ?? ''"
+                (blur)="onBlur($event)"
+                (input)="onInput($event)"
+                (keyup)="onKeyup($event)"
+            />
+        }
+
+        @if (pickerOpen) {
+            <bey-variable-picker
+                [variables]="propertyVariableService.variables()"
+                (closed)="closePicker()"
+                (selected)="onVariableSelected($event)"
+            ></bey-variable-picker>
+        }
+    </div>
+
+    @if (field.acceptsVariable) {
+        <button
+            type="button"
+            class="bey-property-field-variable-trigger"
+            [class.bey-property-field-variable-trigger-active]="pickerOpen"
+            [attr.aria-label]="'angular-components.properties-menu.textField.insertVariable' | translate"
+            [disabled]="field.disabled"
+            (click)="togglePicker()"
+        >
+            <fa-icon [icon]="variableIcon"></fa-icon>
+        </button>
+    }
+</div>

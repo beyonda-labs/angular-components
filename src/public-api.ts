@@ -10,6 +10,7 @@ export * from './lib/components/modal/public-api';
 export * from './lib/components/page/public-api';
 export * from './lib/components/pagination/public-api';
 export * from './lib/components/pdf-viewer/public-api';
+export * from './lib/components/properties-menu/public-api';
 export * from './lib/components/search/public-api';
 export * from './lib/components/table/public-api';
 export * from './lib/components/tabs/public-api';

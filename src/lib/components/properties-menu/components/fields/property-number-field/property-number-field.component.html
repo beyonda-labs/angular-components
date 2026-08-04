@@ -1,0 +1,20 @@
+<div class="bey-property-field-control">
+    <input
+        type="number"
+        class="bey-property-field-input"
+        [attr.aria-label]="field.label"
+        [disabled]="field.disabled"
+        [max]="field.max"
+        [min]="field.min"
+        [placeholder]="field.placeholder"
+        [readOnly]="field.readonly"
+        [required]="field.required"
+        [step]="field.step ?? 1"
+        [value]="field.value ?? ''"
+        (input)="onInput($event)"
+    />
+
+    @if (field.unit) {
+        <span class="bey-property-field-unit">{{ field.unit }}</span>
+    }
+</div>

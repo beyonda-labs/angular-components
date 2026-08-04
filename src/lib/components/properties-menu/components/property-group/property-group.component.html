@@ -1,0 +1,81 @@
+@if (!group.hidden) {
+    <section
+        class="bey-property-group"
+        [class.bey-property-group-secondary]="group.variant === 'secondary'"
+        [class.bey-property-group-disabled]="group.disabled"
+    >
+        @if (group.showHeader) {
+            <button
+                type="button"
+                class="bey-property-group-header pb-2"
+                [attr.aria-expanded]="group.expanded"
+                [attr.aria-controls]="'property-group-' + group.id"
+                [disabled]="group.disabled"
+                (click)="toggle()"
+            >
+                <span class="bey-property-group-label">{{ labelKey | translate }}</span>
+
+                @if (group.removable) {
+                    <span
+                        class="bey-property-group-remove"
+                        role="button"
+                        [attr.aria-label]="'angular-components.properties-menu.remove' | translate"
+                        (click)="remove($event)"
+                    >
+                        <fa-icon [icon]="removeIcon"></fa-icon>
+                    </span>
+                }
+
+                <fa-icon
+                    class="bey-property-group-chevron"
+                    [class.bey-property-group-chevron-expanded]="group.expanded"
+                    [icon]="chevronIcon"
+                ></fa-icon>
+            </button>
+        }
+
+        @if (group.expanded) {
+            <div class="bey-property-group-body" [id]="'property-group-' + group.id">
+                @if (fieldsContent) {
+                    @for (field of visibleFields; track field.id) {
+                        <bey-property-field [field]="field"></bey-property-field>
+                    }
+                }
+
+                @if (listContent; as content) {
+                    @if (content.list.length > 0) {
+                        <bey-property-list
+                            [items]="content.list"
+                            [tabId]="tabId"
+                            [groupId]="group.id"
+                        ></bey-property-list>
+                    }
+                }
+
+                @if (treeContent; as content) {
+                    @if (content.tree.nodes.length > 0) {
+                        <bey-property-tree
+                            [nodes]="content.tree.nodes"
+                            [tabId]="tabId"
+                            [groupId]="group.id"
+                            [addBlockLabel]="content.tree.addBlockLabel"
+                        ></bey-property-tree>
+                    } @else if (content.tree.showEmptyStateAddBlock) {
+                        @if (content.tree.addBlockLabel; as label) {
+                            <div class="bey-property-tab-empty-state">
+                                <button
+                                    type="button"
+                                    class="bey-property-tab-empty-add-block"
+                                    (click)="onEmptyAddBlockClick()"
+                                >
+                                    <fa-icon [icon]="addIcon"></fa-icon>
+                                    <span>{{ label | translate }}</span>
+                                </button>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        }
+    </section>
+}

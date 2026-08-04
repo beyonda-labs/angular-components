@@ -1,0 +1,55 @@
+<div
+    class="bey-variable-picker"
+    role="listbox"
+    [attr.aria-label]="'angular-components.properties-menu.variablePicker.label' | translate"
+>
+    <div class="bey-variable-picker-header">
+        @if (searchable) {
+            <div class="bey-variable-picker-search">
+                <fa-icon class="bey-variable-picker-search-icon" [icon]="searchIcon"></fa-icon>
+                <input
+                    type="text"
+                    class="bey-variable-picker-search-input"
+                    autocomplete="off"
+                    [attr.aria-label]="'angular-components.properties-menu.variablePicker.search' | translate"
+                    [value]="searchTerm"
+                    (input)="onSearchTermChange($event)"
+                />
+            </div>
+        }
+
+        <button
+            type="button"
+            class="bey-variable-picker-close"
+            [attr.aria-label]="'angular-components.properties-menu.variablePicker.close' | translate"
+            (click)="closed.emit()"
+        >
+            <fa-icon [icon]="closeIcon"></fa-icon>
+        </button>
+    </div>
+
+    <div class="bey-variable-picker-list">
+        @if (visibleRows.length === 0) {
+            <div class="bey-variable-picker-empty">
+                {{ 'angular-components.properties-menu.variablePicker.empty' | translate }}
+            </div>
+        } @else {
+            @for (row of visibleRows; track trackRow($index, row); let index = $index) {
+                <button
+                    type="button"
+                    role="option"
+                    class="bey-variable-picker-row"
+                    [class.bey-variable-picker-row-active]="index === activeIndex"
+                    [style.paddingLeft.rem]="0.7 + row.depth * 0.85"
+                    [attr.aria-selected]="index === activeIndex"
+                    (click)="selectVariable(row.variable)"
+                    (mouseenter)="activeIndex = index"
+                >
+                    <span class="bey-variable-picker-row-label">{{ row.variable.label }}</span>
+                    <span class="bey-variable-picker-row-path">{{ row.variable.path }}</span>
+                    <span class="bey-variable-picker-row-type">{{ row.variable.type }}</span>
+                </button>
+            }
+        }
+    </div>
+</div>

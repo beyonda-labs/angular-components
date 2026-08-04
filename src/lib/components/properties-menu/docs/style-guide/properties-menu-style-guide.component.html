@@ -1,0 +1,42 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.propertiesMenu.example' | translate }}
+</p>
+
+<div class="bey-properties-menu-style-guide-actions">
+    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="provideVariables()">
+        {{ 'angular-components-style-guide.propertiesMenu.provideVariables' | translate }}
+    </button>
+</div>
+
+<div class="bey-properties-menu-style-guide-frame">
+    <bey-properties-menu
+        [config]="headingConfig"
+        (fieldValueChange)="onFieldValueChange($event)"
+        (listItemSelect)="onListItemSelect($event)"
+        (treeAddBlock)="onTreeAddBlock($event)"
+        (treeNodeSelect)="onTreeNodeSelect($event)"
+        (variableSelected)="onVariableSelected($event)"
+    ></bey-properties-menu>
+</div>
+
+@if (lastFieldChange) {
+    <p class="bey-properties-menu-style-guide-log">
+        fieldValueChange: {{ lastFieldChange.fieldId }} = {{ lastFieldChange.value }}
+    </p>
+}
+
+@if (lastVariableSelection) {
+    <p class="bey-properties-menu-style-guide-log">variableSelected: {{ lastVariableSelection.expression }}</p>
+}
+
+@if (lastTreeNodeSelect) {
+    <p class="bey-properties-menu-style-guide-log">treeNodeSelect: {{ lastTreeNodeSelect.node.label }}</p>
+}
+
+@if (lastTreeAddBlock) {
+    <p class="bey-properties-menu-style-guide-log">treeAddBlock: {{ lastTreeAddBlock.tabId }}</p>
+}
+
+@if (lastListItemSelect) {
+    <p class="bey-properties-menu-style-guide-log">listItemSelect: {{ lastListItemSelect.item.label }}</p>
+}

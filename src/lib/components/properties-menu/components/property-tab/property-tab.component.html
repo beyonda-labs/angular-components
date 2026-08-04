@@ -1,0 +1,12 @@
+<div class="bey-property-tab" role="tabpanel">
+    @for (group of visibleGroups; track group.id; let first = $first) {
+        <bey-property-group [class.mt-3]="!first" [group]="group" [tabId]="tab.id"></bey-property-group>
+    }
+
+    @if (tab.addLabel; as label) {
+        <button type="button" class="bey-property-tab-add-group" (click)="onTabAddClick()">
+            <fa-icon [icon]="addIcon"></fa-icon>
+            <span>{{ label | translate }}</span>
+        </button>
+    }
+</div>

@@ -1,0 +1,35 @@
+:host {
+    --bey-properties-menu-border: var(--bey-gray-200);
+
+    display: block;
+    height: 100%;
+}
+
+:host-context(body.dark) {
+    --bey-properties-menu-border: var(--bey-gray-800);
+}
+
+.bey-properties-menu {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 22.5rem;
+    height: 100%;
+    border: 1px solid var(--bey-properties-menu-border);
+    border-radius: 0.6rem;
+    overflow: hidden;
+}
+
+.bey-properties-menu-embedded {
+    max-width: none;
+    border: none;
+    border-radius: 0;
+}
+
+.bey-properties-menu-body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    overflow-y: auto;
+}

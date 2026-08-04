@@ -33,6 +33,12 @@
     --bey-datepicker-highlight-color: var(--bey-color-neutral-200);
     --bey-datepicker-accent-color: var(--bs-dark);
     --bey-datepicker-accent-contrast-color: var(--bey-color-white);
+
+    --bey-thin-scroll-thumb: var(--bey-gray-300);
+    --bey-thin-scroll-thumb-hover: var(--bey-gray-400);
+    --bey-thin-scroll-track: transparent;
+
+    background-color: #fff;
 }
 
 body.dark {
@@ -60,6 +66,11 @@ body.dark {
     --bey-color-neutral-400: #6c757d;
     --bey-shadow-dark-rgb: 0, 0, 0;
     --bey-shadow-inset-soft: inset 0 3px 5px rgba(0, 0, 0, 0.3);
+
+    --bey-thin-scroll-thumb: var(--bey-gray-700);
+    --bey-thin-scroll-thumb-hover: var(--bey-gray-600);
+
+    background-color: #000;
 }
 
 /* ─── Floating preferences anchor ─────────────────────────────────────── */
@@ -69,4 +80,27 @@ body.dark {
     right: 20px;
     z-index: 10;
     pointer-events: auto;
+}
+
+/* ─── Thin scrollbar ───────────────────────────────────────────────────── */
+.bey-thin-scroll {
+    scrollbar-color: var(--bey-thin-scroll-thumb) var(--bey-thin-scroll-track);
+    scrollbar-width: thin;
+}
+
+.bey-thin-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.bey-thin-scroll::-webkit-scrollbar-track {
+    background: var(--bey-thin-scroll-track);
+}
+
+.bey-thin-scroll::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background-color: var(--bey-thin-scroll-thumb);
+}
+
+.bey-thin-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: var(--bey-thin-scroll-thumb-hover);
 }

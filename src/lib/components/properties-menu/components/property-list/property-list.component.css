@@ -1,0 +1,44 @@
+:host {
+    --bey-property-list-text: var(--text-primary);
+    --bey-property-list-text-muted: var(--text-muted);
+
+    display: block;
+}
+
+.bey-property-list-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.bey-property-list-item-disabled {
+    opacity: 0.5;
+}
+
+.bey-property-list-item-icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    color: var(--bey-property-list-text-muted);
+    font-size: 1rem;
+}
+
+.bey-property-list-item-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    overflow: hidden;
+}
+
+.bey-property-list-item-label {
+    color: var(--bey-property-list-text);
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.bey-property-list-item-description {
+    overflow: hidden;
+    color: var(--bey-property-list-text-muted);
+    font-size: 0.74rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

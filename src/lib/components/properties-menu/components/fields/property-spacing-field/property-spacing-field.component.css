@@ -1,0 +1,18 @@
+.bey-property-spacing-field {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+}
+
+.bey-property-spacing-field-side {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.bey-property-spacing-field-side-label {
+    color: var(--bey-property-field-text-muted, var(--text-muted));
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}

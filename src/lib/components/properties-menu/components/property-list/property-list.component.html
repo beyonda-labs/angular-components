@@ -1,0 +1,21 @@
+<bey-list [config]="listConfig">
+    <ng-template let-item>
+        @let listItem = asItem(item);
+
+        <div class="bey-property-list-item" [class.bey-property-list-item-disabled]="listItem.disabled">
+            @if (listItem.icon) {
+                <span class="bey-property-list-item-icon">
+                    <fa-icon [icon]="listItem.icon"></fa-icon>
+                </span>
+            }
+
+            <div class="bey-property-list-item-content">
+                <span class="bey-property-list-item-label">{{ getLabelKey(listItem) | translate }}</span>
+
+                @if (listItem.description) {
+                    <span class="bey-property-list-item-description">{{ listItem.description | translate }}</span>
+                }
+            </div>
+        </div>
+    </ng-template>
+</bey-list>

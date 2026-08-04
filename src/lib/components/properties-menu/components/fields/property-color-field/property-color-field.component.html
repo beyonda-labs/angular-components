@@ -1,0 +1,22 @@
+<div class="bey-property-field-control">
+    <label class="bey-property-color-field-swatch" [style.backgroundColor]="colorValue">
+        <input
+            type="color"
+            class="bey-property-color-field-swatch-input"
+            [attr.aria-label]="field.label"
+            [disabled]="field.disabled"
+            [value]="colorValue"
+            (input)="onSwatchChange($event)"
+        />
+    </label>
+
+    <input
+        type="text"
+        class="bey-property-field-input"
+        [attr.aria-label]="field.label + ' hex value'"
+        [disabled]="field.disabled"
+        [readOnly]="field.readonly"
+        [value]="colorValue"
+        (change)="onTextChange($event)"
+    />
+</div>

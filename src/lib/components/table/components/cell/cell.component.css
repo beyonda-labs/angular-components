@@ -6,8 +6,8 @@
 .bey-table-cell {
     display: flex;
     align-items: center;
-    min-height: 3.45rem;
-    padding: 0.85rem 1rem;
+    min-height: 2.45rem;
+    padding: 0.4rem 0.8rem;
     min-width: 0;
     color: var(--bey-table-text);
 }

@@ -1,0 +1,14 @@
+<div class="bey-property-field-control">
+    <select
+        class="bey-property-field-select"
+        [attr.aria-label]="field.label"
+        [disabled]="field.disabled"
+        [required]="field.required"
+        [value]="field.value"
+        (change)="onChange($event)"
+    >
+        @for (option of field.options; track option.value) {
+            <option [disabled]="option.disabled" [value]="option.value">{{ option.label | translate }}</option>
+        }
+    </select>
+</div>

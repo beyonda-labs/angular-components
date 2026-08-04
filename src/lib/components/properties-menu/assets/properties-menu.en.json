@@ -1,0 +1,29 @@
+{
+    "angular-components": {
+        "properties-menu": {
+            "close": "Close",
+            "list": {
+                "empty": "No items"
+            },
+            "remove": "Remove",
+            "spacing": {
+                "bottom": "Bottom",
+                "left": "Left",
+                "right": "Right",
+                "top": "Top"
+            },
+            "tabs": {
+                "label": "Property tabs"
+            },
+            "textField": {
+                "insertVariable": "Insert variable"
+            },
+            "variablePicker": {
+                "close": "Close",
+                "empty": "No variables found",
+                "label": "Variables",
+                "search": "Search variables"
+            }
+        }
+    }
+}
