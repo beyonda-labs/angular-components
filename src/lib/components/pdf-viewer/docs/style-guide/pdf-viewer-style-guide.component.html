@@ -1,0 +1,58 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.pdfViewer.example' | translate }}
+</p>
+
+<div class="bey-pdf-viewer-style-guide-toolbar">
+    <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="currentPage <= 1" (click)="goToPreviousPage()">
+        <fa-icon [icon]="prevIcon"></fa-icon>
+    </button>
+
+    <span class="bey-pdf-viewer-style-guide-page">{{ currentPage }} / {{ pageCount }}</span>
+
+    <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="currentPage >= pageCount" (click)="goToNextPage()">
+        <fa-icon [icon]="nextIcon"></fa-icon>
+    </button>
+
+    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="zoomOut()">
+        <fa-icon [icon]="zoomOutIcon"></fa-icon>
+    </button>
+
+    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="zoomIn()">
+        <fa-icon [icon]="zoomInIcon"></fa-icon>
+    </button>
+
+    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="rotateLeft()">
+        <fa-icon [icon]="rotateLeftIcon"></fa-icon>
+    </button>
+
+    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="rotateRight()">
+        <fa-icon [icon]="rotateRightIcon"></fa-icon>
+    </button>
+</div>
+
+<div class="bey-pdf-viewer-style-guide-frame">
+    <bey-pdf-viewer
+        [config]="config"
+        (loaded)="onLoaded($event)"
+        (loadingFailed)="onLoadingFailed($event)"
+        (pageRendered)="onPageRendered($event)"
+        (rotationChange)="onRotationChange($event)"
+        (zoomChange)="onZoomChange($event)"
+    ></bey-pdf-viewer>
+</div>
+
+@if (lastLoaded) {
+    <p class="bey-pdf-viewer-style-guide-log">loaded: {{ lastLoaded.pagesCount }} páginas</p>
+}
+
+@if (lastZoomFactor) {
+    <p class="bey-pdf-viewer-style-guide-log">zoomChange: {{ lastZoomFactor | number: '1.2-2' }}</p>
+}
+
+@if (lastRotationChange) {
+    <p class="bey-pdf-viewer-style-guide-log">rotationChange: {{ lastRotationChange.rotation }}°</p>
+}
+
+@if (lastLoadingFailed) {
+    <p class="bey-pdf-viewer-style-guide-log">loadingFailed: {{ lastLoadingFailed.error.message }}</p>
+}

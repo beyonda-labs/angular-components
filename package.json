@@ -35,6 +35,7 @@
         "bootstrap": "5.3.8",
         "monaco-editor": "0.52.2",
         "ngx-bootstrap": "19.0.2",
+        "ngx-extended-pdf-viewer": "28.1.0",
         "ngx-monaco-editor-v2": "19.0.2",
         "rxjs": "7.8.2",
         "zone.js": "0.15.1"
