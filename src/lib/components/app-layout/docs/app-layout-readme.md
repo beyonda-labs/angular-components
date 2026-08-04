@@ -95,6 +95,7 @@ The root configuration object passed to `[config]`.
 | `topActions`         | `BeyAppLayoutTopAction[]`   | no       | `[]`              | Main navigation actions in the side menu                      |
 | `bottomActions`      | `BeyAppLayoutBottomAction[]`| no       | `[]`              | Secondary actions rendered below the separator                |
 | `breadcrumb`         | `BeyAppLayoutBreadcrumbItem[]` | no    | `[]`              | Initial breadcrumb items (can be updated at runtime via service) |
+| `useBodyPadding`     | `boolean`                   | no       | `true`            | Whether the projected content area gets default padding        |
 | `userInfo`           | `BeyLeftMenuUserInfo`       | no       | —                 | Optional user footer in the side menu                         |
 | `onLayoutInitialized`| `() => void`                | no       | —                 | Called once after the component is initialized                |
 | `onMenuActionClick`  | `(key: string) => void`     | no       | —                 | Called when any menu action (including sub-actions) is triggered |
@@ -116,7 +117,9 @@ Defines a top navigation action. Supports nested sub-actions.
 | ------------ | --------------------------- | -------- | -------- | ------------------------------------------------- |
 | `key`        | `string`                    | yes      | —        | Unique key used for i18n lookup and click routing |
 | `icon`       | `IconDefinition`            | yes      | —        | Font Awesome icon displayed in the menu           |
+| `action`     | `() => void`                | no       | —        | Optional click handler, run in addition to `onMenuActionClick` |
 | `active`     | `boolean`                   | no       | `false`  | Marks the action as currently selected            |
+| `disabled`   | `boolean`                   | no       | `false`  | Disables interaction                              |
 | `subActions` | `BeyAppLayoutTopAction[]`   | no       | `[]`     | Nested child actions                              |
 
 Behavior notes:
@@ -135,6 +138,7 @@ Defines a bottom navigation action. Simpler than `BeyAppLayoutTopAction` — no 
 | --------- | ---------------- | -------- | ------- | ------------------------------------------------- |
 | `key`     | `string`         | yes      | —        | Unique key used for i18n lookup and click routing |
 | `icon`    | `IconDefinition` | yes      | —        | Font Awesome icon displayed in the menu           |
+| `action`  | `() => void`     | no       | —        | Optional click handler, run in addition to `onMenuActionClick` |
 
 ---
 
@@ -168,6 +172,9 @@ Behavior notes:
 | `activeMenuAction(key: string)` | Marks the action matching `key` as active (clears all others)    |
 | `emitMenuClick(key: string)`    | Emits a menu click event, triggering `onMenuActionClick`         |
 | `emitBreadcrumbClick(id: number)` | Emits a breadcrumb click event, triggering `onBreadcrumbClick` |
+| `setExpanded(value: boolean)`  | Sets the left menu's collapsed/expanded state and persists it     |
+
+The left menu's expanded/collapsed state (`expanded`) is read from and written to `localStorage` (key `bey-left-menu-expanded`) so it survives page reloads — no wiring needed from the consuming app, it defaults to expanded the first time.
 
 ### Observables
 
