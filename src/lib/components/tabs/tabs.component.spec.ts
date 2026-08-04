@@ -4,11 +4,19 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Tab, TabsConfig, TabsVariant } from './models/tabs.model';
 import { TabsComponent } from './tabs.component';
 
+class ResizeObserverMock {
+    observe(): void {}
+    unobserve(): void {}
+    disconnect(): void {}
+}
+
 describe('TabsComponent', () => {
     let component: TabsComponent;
     let fixture: ComponentFixture<TabsComponent>;
 
     beforeEach(async () => {
+        global.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
+
         await TestBed.configureTestingModule({
             imports: [TabsComponent, TranslateModule.forRoot()]
         }).compileComponents();

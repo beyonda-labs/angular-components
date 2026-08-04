@@ -14,6 +14,7 @@ Supported capabilities:
 -   Callback on tab change.
 -   ARIA roles and attributes for screen readers.
 -   Themeable via CSS custom properties.
+-   Automatic overflow: tabs that don't fit the available width collapse into a "…" menu instead of being clipped, measured via `ResizeObserver` and re-checked on every config/size change. The active tab is always kept visible even if it would otherwise overflow.
 
 ---
 
@@ -118,6 +119,7 @@ Defines a single tab.
 | `--bey-tabs-text`   | `#6b6b6b` | Inactive tab text color    |
 | `--bey-tabs-border` | `#ebebeb` | Tab bar bottom border      |
 | `--bey-tabs-hover`  | `#2f2f2f` | Hover text color           |
+| `--bey-tabs-active-underline` | `--bey-tabs-accent` | Active tab underline color, independent of the text color |
 
 ---
 

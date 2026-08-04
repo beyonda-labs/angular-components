@@ -1,3 +1,7 @@
 :host {
     display: block;
 }
+
+.bey-tabs-style-guide-narrow {
+    max-width: 20rem;
+}

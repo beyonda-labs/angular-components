@@ -19,7 +19,8 @@
             "example": "Barra de pestañas horizontal orientada a modelos con navegación por teclado, iconos opcionales y estado deshabilitado. El consumidor renderiza contenido según la pestaña activa.",
             "examples": {
                 "basic": "Básico",
-                "icons": "Con iconos y deshabilitado"
+                "icons": "Con iconos y deshabilitado",
+                "overflow": "Overflow (contenedor estrecho)"
             },
             "icons": {
                 "tabs": {
@@ -31,6 +32,31 @@
                     },
                     "documents": {
                         "label": "Documentos"
+                    },
+                    "settings": {
+                        "label": "Configuración"
+                    }
+                }
+            },
+            "overflow": {
+                "tabs": {
+                    "activity": {
+                        "label": "Actividad"
+                    },
+                    "comments": {
+                        "label": "Comentarios"
+                    },
+                    "details": {
+                        "label": "Detalles"
+                    },
+                    "history": {
+                        "label": "Historial"
+                    },
+                    "overview": {
+                        "label": "General"
+                    },
+                    "permissions": {
+                        "label": "Permisos"
                     },
                     "settings": {
                         "label": "Configuración"
