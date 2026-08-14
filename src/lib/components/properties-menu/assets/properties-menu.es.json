@@ -2,8 +2,21 @@
     "angular-components": {
         "properties-menu": {
             "close": "Cerrar",
+            "colorField": {
+                "clear": "Vaciar"
+            },
+            "fileField": {
+                "choose": "Elegir archivo",
+                "clear": "Vaciar",
+                "fileSelected": "Archivo seleccionado",
+                "noFileSelected": "Ningún archivo seleccionado",
+                "tooLarge": "Este archivo supera el límite de {{maxSizeMB}} MB."
+            },
             "list": {
                 "empty": "No hay elementos"
+            },
+            "numberArray": {
+                "add": "Añadir"
             },
             "remove": "Eliminar",
             "spacing": {

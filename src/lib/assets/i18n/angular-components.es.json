@@ -30,6 +30,13 @@
             "submit": {
                 "invalid": "Hay errores en el formulario, por favor corrija o complete los campos requeridos antes de enviar.",
                 "without-changes": "No se han realizado cambios en el formulario."
+            },
+            "textVariableField": {
+                "close": "Cerrar",
+                "empty": "No se han encontrado opciones",
+                "insertVariable": "Insertar variable",
+                "label": "Variables",
+                "search": "Buscar"
             }
         },
         "header": {
@@ -40,6 +47,22 @@
                 "bad-gateway": "El servidor recibió una respuesta no válida. Por favor, inténtelo de nuevo más tarde.",
                 "bad-request": "La solicitud no pudo ser procesada. Por favor, revise los datos enviados.",
                 "conflict": "Se produjo un conflicto con el estado actual del recurso.",
+                "document-generation": {
+                    "cyclical-block-reference": "Se ha detectado una referencia cíclica entre bloques reutilizables.",
+                    "insufficient-width-image": "No hay ancho suficiente para colocar una imagen en el documento.",
+                    "insufficient-width-list": "No hay ancho suficiente para colocar una lista en el documento.",
+                    "insufficient-width-list-item": "No hay ancho suficiente para un elemento de la lista.",
+                    "insufficient-width-paragraph": "No hay ancho suficiente para colocar un párrafo en el documento.",
+                    "invalid-image": "No se ha podido generar una imagen del documento. Comprueba que la variable o el archivo de imagen referenciado tenga un valor válido.",
+                    "invalid-image-width": "Una imagen del documento tiene un ancho no válido.",
+                    "invalid-request": "La solicitud no tiene el formato esperado.",
+                    "pagination-stuck": "No se ha podido paginar el documento correctamente. Revisa el contenido: puede haber un elemento demasiado grande o mal configurado.",
+                    "pdf-page-range": "El rango de páginas solicitado para un PDF insertado supera el número de páginas del archivo de origen.",
+                    "unresolved-block": "No se ha podido resolver el contenido de un bloque reutilizable referenciado.",
+                    "unresolved-header-footer": "No se ha podido resolver el contenido de la cabecera o el pie de página.",
+                    "validation-failed": "El documento tiene errores de validación pendientes. Corrígelos antes de generarlo."
+                },
+                "duplicate-field": "Ya existe un elemento con el campo \"{{fieldName}}\" con el valor \"{{value}}\".",
                 "forbidden": "No tiene permisos para realizar esta acción.",
                 "internal-server-error": "Se produjo un error interno en el servidor. Por favor, inténtelo de nuevo más tarde.",
                 "invalid-child": "El campo \"{{childField}}\" no es válido para el padre \"{{parentField}}\".",
@@ -55,6 +78,7 @@
                 "login": {
                     "existing-user": "Ya existe una cuenta con este correo electrónico.",
                     "invalid-credentials": "Email o contraseña incorrectos.",
+                    "invalid-refresh-token": "Tu sesión ha caducado. Inicia sesión de nuevo.",
                     "oauth-invalid-callback": "El callback de autenticación no es válido. Por favor, inténtelo de nuevo.",
                     "oauth-missing-access-token": "No se recibió token de acceso de {{provider}}. Por favor, inténtelo de nuevo.",
                     "oauth-missing-email": "{{provider}} no devolvió ninguna dirección de correo. Por favor, inténtelo de nuevo.",
@@ -63,6 +87,7 @@
                     "passwords-not-match": "Las contraseñas no coinciden.",
                     "provider-not-found": "El proveedor {{provider}} no está disponible."
                 },
+                "move-target-unchanged": "El elemento ya se encuentra en esta categoría.",
                 "not-found": "El recurso solicitado no fue encontrado.",
                 "required-field": "El campo \"{{fieldName}}\" es obligatorio.",
                 "service-unavailable": "El servicio no está disponible temporalmente. Por favor, inténtelo de nuevo más tarde.",
@@ -79,6 +104,7 @@
                     "password2": "Confirmar contraseña",
                     "surname": "Apellido"
                 },
+                "name": "Nombre",
                 "pattern": {
                     "email": "usuario@dominio.com"
                 }
@@ -88,6 +114,22 @@
                 "bad-request": "Solicitud inválida",
                 "conflict": "Conflicto",
                 "default": "Error",
+                "document-generation": {
+                    "cyclical-block-reference": "Referencia cíclica",
+                    "insufficient-width-image": "Espacio insuficiente",
+                    "insufficient-width-list": "Espacio insuficiente",
+                    "insufficient-width-list-item": "Espacio insuficiente",
+                    "insufficient-width-paragraph": "Espacio insuficiente",
+                    "invalid-image": "Error al generar la imagen",
+                    "invalid-image-width": "Error al generar la imagen",
+                    "invalid-request": "Solicitud inválida",
+                    "pagination-stuck": "Error de paginación",
+                    "pdf-page-range": "Rango de páginas inválido",
+                    "unresolved-block": "Bloque no resuelto",
+                    "unresolved-header-footer": "Cabecera o pie no resuelto",
+                    "validation-failed": "Documento no válido"
+                },
+                "duplicate-field": "Valor duplicado",
                 "forbidden": "Acceso denegado",
                 "internal-server-error": "Error del servidor",
                 "invalid-child": "Campo inválido",
@@ -99,6 +141,7 @@
                 "login": {
                     "existing-user": "Cuenta ya existente",
                     "invalid-credentials": "Autenticación fallida",
+                    "invalid-refresh-token": "Sesión caducada",
                     "oauth-invalid-callback": "Error de autenticación",
                     "oauth-missing-access-token": "Error de autenticación",
                     "oauth-missing-email": "Error de autenticación",
@@ -107,6 +150,7 @@
                     "passwords-not-match": "Error de contraseña",
                     "provider-not-found": "Proveedor no disponible"
                 },
+                "move-target-unchanged": "Sin cambios",
                 "not-found": "No encontrado",
                 "required-field": "Campo obligatorio",
                 "service-unavailable": "Servicio no disponible",
@@ -210,8 +254,21 @@
         },
         "properties-menu": {
             "close": "Cerrar",
+            "colorField": {
+                "clear": "Vaciar"
+            },
+            "fileField": {
+                "choose": "Elegir archivo",
+                "clear": "Vaciar",
+                "fileSelected": "Archivo seleccionado",
+                "noFileSelected": "Ningún archivo seleccionado",
+                "tooLarge": "Este archivo supera el límite de {{maxSizeMB}} MB."
+            },
             "list": {
                 "empty": "No hay elementos"
+            },
+            "numberArray": {
+                "add": "Añadir"
             },
             "remove": "Eliminar",
             "spacing": {
@@ -484,6 +541,16 @@
                 },
                 "label": "Campos de fecha",
                 "tooltip": "Campos de fecha con rango, obligatorio y deshabilitado"
+            },
+            "sectionInfo": {
+                "info1": {
+                    "label": "Versión"
+                },
+                "info2": {
+                    "label": "Creada el"
+                },
+                "label": "Campos de información",
+                "tooltip": "Pares de icono/etiqueta de solo lectura — sin estilo de input, sin FormControl"
             },
             "sectionNumber": {
                 "label": "Campos numéricos",

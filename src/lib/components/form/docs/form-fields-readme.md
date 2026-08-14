@@ -47,6 +47,7 @@ The `type` discriminator used by `field.component.html` to select the rendered c
 | `BeyFormFieldType.Radio`    | Radio button group     |
 | `BeyFormFieldType.Checkbox` | Boolean checkbox       |
 | `BeyFormFieldType.Chips`    | Tag/chips input        |
+| `BeyFormFieldType.Info`     | Read-only icon/label list |
 
 ---
 
@@ -242,6 +243,40 @@ new BeyFormChipsField({
     key: 'tags',
     columns: 6,
     maxItems: 5
+});
+```
+
+---
+
+### `BeyFormInfoField`
+
+Read-only display field for system/computed information — no `FormControl`, no input styling (no border/background). Renders as a list of icon + label pairs. Always `isDisabled: true`; `isRequired` is not applicable.
+
+Unlike other fields, its content isn't driven by a bound value — pass the already-resolved `items` (icon optional per item) when building the field.
+
+**Extra attributes:**
+
+| Attribute | Type               | Default | Description                                  |
+| --------- | ------------------ | ------- | --------------------------------------------- |
+| `items`   | `BeyFormInfoItem[]` | `[]`    | Ordered list of `{ label: string; icon?: IconDefinition }` pairs to display |
+
+```ts
+import { faCalendarDays, faUser } from '@fortawesome/free-solid-svg-icons';
+
+new BeyFormInfoField({
+    key: 'createdInfo',
+    columns: 6,
+    items: [
+        { icon: faCalendarDays, label: '24 Jul 2026' },
+        { icon: faUser, label: 'Admin Admin' }
+    ]
+});
+
+// A single, icon-less value (e.g. a version number) is just one item
+new BeyFormInfoField({
+    key: 'versionInfo',
+    columns: 6,
+    items: [{ label: '1.0' }]
 });
 ```
 

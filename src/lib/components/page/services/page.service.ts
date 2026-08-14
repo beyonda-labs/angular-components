@@ -119,7 +119,7 @@ export class PageService implements OnDestroy {
             height: pageTable.height,
             isRowSelected: item => this.selected().some(selected => selected.id === (item as unknown as PageItem).id),
             items: this.items() as unknown as Record<string, unknown>[],
-            loadRow: item => pageTable.loadRow(item as unknown as PageItem),
+            loadRow: item => pageTable.loadRow(item as unknown as PageItem, this.viewMode()),
             prefix: tablePrefix,
             selectable: pageTable.allowSelection,
             selectedItemsChange: items => this.setSelected(items as unknown as PageItem[])

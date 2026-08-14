@@ -1,0 +1,60 @@
+<div
+    class="bey-option-picker"
+    role="listbox"
+    [attr.aria-label]="'angular-components.form.textVariableField.label' | translate"
+>
+    @if (searchable) {
+        <div class="bey-option-picker-header">
+            <div class="bey-option-picker-search">
+                <fa-icon class="bey-option-picker-search-icon" [icon]="searchIcon"></fa-icon>
+                <input
+                    type="text"
+                    class="bey-option-picker-search-input"
+                    autocomplete="off"
+                    [attr.aria-label]="'angular-components.form.textVariableField.search' | translate"
+                    [value]="searchTerm"
+                    (input)="onSearchTermChange($event)"
+                />
+            </div>
+
+            <button
+                type="button"
+                class="bey-option-picker-close"
+                [attr.aria-label]="'angular-components.form.textVariableField.close' | translate"
+                (click)="closed.emit()"
+            >
+                <fa-icon [icon]="closeIcon"></fa-icon>
+            </button>
+        </div>
+    }
+
+    <div class="bey-option-picker-list">
+        @if (visibleOptions.length === 0) {
+            <div class="bey-option-picker-empty">
+                {{ 'angular-components.form.textVariableField.empty' | translate }}
+            </div>
+        } @else {
+            @for (option of visibleOptions; track trackOption($index, option); let index = $index) {
+                <button
+                    type="button"
+                    role="option"
+                    class="bey-option-picker-row"
+                    [class.bey-option-picker-row-active]="index === activeIndex"
+                    [attr.aria-selected]="index === activeIndex"
+                    (click)="selectOption(option)"
+                    (mouseenter)="activeIndex = index"
+                >
+                    <span
+                        class="bey-option-picker-row-label"
+                        [tooltip]="option.label"
+                        container="body"
+                        placement="top"
+                    >{{ option.label }}</span>
+                    @if (option.badge) {
+                        <span class="bey-option-picker-row-badge">{{ option.badge | translate }}</span>
+                    }
+                </button>
+            }
+        }
+    </div>
+</div>

@@ -262,6 +262,22 @@ describe('PropertiesMenuService', () => {
             expect(service.config()).not.toBe(previousConfig);
             expect(service.getTreeNode('structure', 'structure-tree', 'header')?.expanded).toBe(false);
         });
+
+        it('should notify the hook with the resulting expanded state', () => {
+            service.setConfig(buildConfig());
+
+            const onTreeNodeToggle = jest.fn();
+            service.onTreeNodeToggle = onTreeNodeToggle;
+
+            service.toggleTreeNode('structure', 'structure-tree', 'header');
+
+            expect(onTreeNodeToggle).toHaveBeenCalledWith({
+                expanded: false,
+                groupId: 'structure-tree',
+                nodeId: 'header',
+                tabId: 'structure'
+            });
+        });
     });
 
     describe('triggerTreeAddBlock', () => {

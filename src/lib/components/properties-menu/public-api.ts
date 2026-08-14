@@ -22,17 +22,24 @@ export type {
     PropertyTreeContentParameters as BeyPropertyTreeContentParameters
 } from './models/property-group-content.model';
 export { PropertyField as BeyPropertyField } from './models/property-field.model';
-export type { PropertyFieldParameters as BeyPropertyFieldParameters } from './models/property-field.model';
+export type {
+    PropertyFieldActionButton as BeyPropertyFieldActionButton,
+    PropertyFieldParameters as BeyPropertyFieldParameters
+} from './models/property-field.model';
 export { PropertyTextField as BeyPropertyTextField } from './models/fields/property-text-field.model';
 export type { PropertyTextFieldParameters as BeyPropertyTextFieldParameters } from './models/fields/property-text-field.model';
 export { PropertyNumberField as BeyPropertyNumberField } from './models/fields/property-number-field.model';
 export type { PropertyNumberFieldParameters as BeyPropertyNumberFieldParameters } from './models/fields/property-number-field.model';
+export { PropertyNumberArrayField as BeyPropertyNumberArrayField } from './models/fields/property-number-array-field.model';
+export type { PropertyNumberArrayFieldParameters as BeyPropertyNumberArrayFieldParameters } from './models/fields/property-number-array-field.model';
 export { PropertySelectField as BeyPropertySelectField } from './models/fields/property-select-field.model';
 export type { PropertySelectFieldParameters as BeyPropertySelectFieldParameters } from './models/fields/property-select-field.model';
 export { PropertyToggleField as BeyPropertyToggleField } from './models/fields/property-toggle-field.model';
 export type { PropertyToggleFieldParameters as BeyPropertyToggleFieldParameters } from './models/fields/property-toggle-field.model';
 export { PropertyColorField as BeyPropertyColorField } from './models/fields/property-color-field.model';
 export type { PropertyColorFieldParameters as BeyPropertyColorFieldParameters } from './models/fields/property-color-field.model';
+export { PropertyFileField as BeyPropertyFileField } from './models/fields/property-file-field.model';
+export type { PropertyFileFieldParameters as BeyPropertyFileFieldParameters } from './models/fields/property-file-field.model';
 export { PropertySegmentedField as BeyPropertySegmentedField } from './models/fields/property-segmented-field.model';
 export type { PropertySegmentedFieldParameters as BeyPropertySegmentedFieldParameters } from './models/fields/property-segmented-field.model';
 export { PropertySpacingField as BeyPropertySpacingField } from './models/fields/property-spacing-field.model';
@@ -57,6 +64,7 @@ export type {
     PropertyValue as BeyPropertyValue
 } from './types/property-value';
 export type {
+    PropertyFieldAction as BeyPropertyFieldAction,
     PropertyFieldValueChange as BeyPropertyFieldValueChange,
     PropertyGroupRemove as BeyPropertyGroupRemove,
     PropertyGroupToggle as BeyPropertyGroupToggle,
@@ -64,6 +72,7 @@ export type {
     PropertyTabAddRequested as BeyPropertyTabAddRequested,
     PropertyTreeAddBlock as BeyPropertyTreeAddBlock,
     PropertyTreeNodeSelect as BeyPropertyTreeNodeSelect,
+    PropertyTreeNodeToggle as BeyPropertyTreeNodeToggle,
     PropertyVariableSelection as BeyPropertyVariableSelection
 } from './types/properties-menu-events';
 export { PropertiesMenuService as BeyPropertiesMenuService } from './services/properties-menu.service';

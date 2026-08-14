@@ -15,6 +15,7 @@ describe('VariablePickerComponent', () => {
 
         fixture = TestBed.createComponent(VariablePickerComponent);
         component = fixture.componentInstance;
+        component.anchor = document.createElement('div');
         component.variables = [
             new PropertyVariable({
                 id: 'customer',

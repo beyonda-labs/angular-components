@@ -1,10 +1,19 @@
+import { IconDefinition } from '@fortawesome/angular-fontawesome';
+
 import { PropertyFieldType } from '../types/property-field-type';
+
+export interface PropertyFieldActionButton {
+    icon: IconDefinition;
+
+    key?: string;
+}
 
 export interface PropertyFieldParameters<T = unknown> {
     id: string;
     type: PropertyFieldType;
 
     acceptsVariable?: boolean;
+    actionButton?: PropertyFieldActionButton;
     defaultValue?: T;
     description?: string;
     disabled?: boolean;
@@ -17,6 +26,7 @@ export interface PropertyFieldParameters<T = unknown> {
 
 export abstract class PropertyField<T = unknown> {
     acceptsVariable: boolean;
+    actionButton?: PropertyFieldActionButton;
     defaultValue?: T;
     description: string;
     disabled: boolean;
@@ -33,6 +43,7 @@ export abstract class PropertyField<T = unknown> {
         type,
 
         acceptsVariable = false,
+        actionButton,
         defaultValue,
         description = '',
         disabled = false,
@@ -43,6 +54,7 @@ export abstract class PropertyField<T = unknown> {
         value
     }: PropertyFieldParameters<T>) {
         this.acceptsVariable = acceptsVariable;
+        this.actionButton = actionButton ? { icon: actionButton.icon, key: actionButton.key ?? id } : undefined;
         this.defaultValue = defaultValue;
         this.description = description;
         this.disabled = disabled;

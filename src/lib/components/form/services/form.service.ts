@@ -28,6 +28,7 @@ export class FormService {
 
         switch (field.type) {
             case FormFieldType.Text:
+            case FormFieldType.TextVariable:
             case FormFieldType.Password:
             case FormFieldType.Date:
             case FormFieldType.Radio:
@@ -62,6 +63,7 @@ export class FormService {
     initFieldControl(field: FormField): FormControl | undefined {
         switch (field.type) {
             case FormFieldType.Text:
+            case FormFieldType.TextVariable:
             case FormFieldType.Password:
                 return this.initTextFieldControl(field as FormTextField);
             case FormFieldType.Checkbox:

@@ -73,6 +73,16 @@
                 "label": "Date Fields",
                 "tooltip": "Date fields with range, required and disabled states"
             },
+            "sectionInfo": {
+                "info1": {
+                    "label": "Version"
+                },
+                "info2": {
+                    "label": "Created On"
+                },
+                "label": "Info Fields",
+                "tooltip": "Read-only icon/label pairs — no input styling, no FormControl"
+            },
             "sectionNumber": {
                 "label": "Number Fields",
                 "number1": {

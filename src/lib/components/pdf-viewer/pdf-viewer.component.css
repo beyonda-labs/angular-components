@@ -8,3 +8,48 @@
     width: 100%;
     height: 100%;
 }
+
+/* `[showBorders]="false"` (pdf-viewer.component.html) switches pdf.js to its `removePageBorders`
+   layout: a positive margin-bottom between pages instead of the negative one it uses to make room for
+   its own border-image shadow — without that switch, the next page's canvas overlaps and hides
+   whatever border we draw here. That variant also sets `border: none`, at the same selector
+   specificity as the rule below and order-dependent on the vendor's own stylesheet — `!important`
+   makes the outcome deterministic instead of relying on import order. A thin bottom border on every
+   page but the last replaces the shadow as the page-break cue, since pages have no border by default. */
+::ng-deep .bey-pdf-viewer .pdfViewer .page {
+    border: none !important;
+    border-image: none !important;
+    box-shadow: none !important;
+    border-bottom: 1px solid var(--bey-gray-300) !important;
+}
+
+::ng-deep .bey-pdf-viewer .pdfViewer .page:last-child {
+    border-bottom: none !important;
+}
+
+/* Background is handled by `PdfViewerConfig.backgroundColor` (bound to the viewer's own
+   `[style.backgroundColor]`, see pdf-viewer-config.model.ts) — only the scrollbar needs overriding
+   here. Mirrors `.bey-thin-scroll` (overrides.css): `scrollbar-color` alone lets Chromium fall back to
+   its hover-only overlay thumb, so the `::-webkit-scrollbar*` rules are what keep the thumb always
+   visible, same as every other scrollable panel in the app. */
+::ng-deep .bey-pdf-viewer #viewerContainer {
+    scrollbar-color: var(--bey-thin-scroll-thumb) var(--bey-thin-scroll-track);
+    scrollbar-width: thin;
+}
+
+::ng-deep .bey-pdf-viewer #viewerContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+::ng-deep .bey-pdf-viewer #viewerContainer::-webkit-scrollbar-track {
+    background: var(--bey-thin-scroll-track);
+}
+
+::ng-deep .bey-pdf-viewer #viewerContainer::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background-color: var(--bey-thin-scroll-thumb);
+}
+
+::ng-deep .bey-pdf-viewer #viewerContainer::-webkit-scrollbar-thumb:hover {
+    background-color: var(--bey-thin-scroll-thumb-hover);
+}

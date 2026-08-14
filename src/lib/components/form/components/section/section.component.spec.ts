@@ -56,6 +56,30 @@ describe('FormSectionComponent', () => {
         expect(result).toBe(`${prefixMock}.tooltip`);
     });
 
+    describe('hasVisibleField', () => {
+        it('should return false when every field in the row is hidden', () => {
+            // Arrange
+            const row = { fields: [{ isHidden: true }, { isHidden: true }] } as FormRow;
+
+            // Act
+            const result = component.hasVisibleField(row);
+
+            // Assert
+            expect(result).toBe(false);
+        });
+
+        it('should return true when at least one field in the row is visible', () => {
+            // Arrange
+            const row = { fields: [{ isHidden: true }, { isHidden: false }] } as FormRow;
+
+            // Act
+            const result = component.hasVisibleField(row);
+
+            // Assert
+            expect(result).toBe(true);
+        });
+    });
+
     describe('isSectionVisible', () => {
         it('should return false if section is hidden', () => {
             // Arrange

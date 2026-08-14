@@ -4,6 +4,7 @@ import { v4 as uuid } from 'uuid';
 import { FormField } from './form-field.model';
 
 export class FormConfig<TValue = unknown> {
+    allowSubmitWithoutChanges: boolean;
     buttons: FormButton[];
     i18nPrefix: string;
     id: string;
@@ -21,6 +22,7 @@ export class FormConfig<TValue = unknown> {
         i18nPrefix,
         sections,
 
+        allowSubmitWithoutChanges = false,
         buttons = [],
         id = uuid(),
         onCancel,
@@ -29,6 +31,7 @@ export class FormConfig<TValue = unknown> {
         onValueChange,
         steps = []
     }: FormConfigParameters<TValue>) {
+        this.allowSubmitWithoutChanges = allowSubmitWithoutChanges;
         this.buttons = buttons;
         this.id = id;
         this.i18nPrefix = i18nPrefix;
@@ -64,6 +67,7 @@ interface FormConfigParameters<TValue> {
     i18nPrefix: string;
     sections: FormSection[];
 
+    allowSubmitWithoutChanges?: boolean;
     buttons?: FormButton[];
     id?: string;
     onCancel?: () => void;

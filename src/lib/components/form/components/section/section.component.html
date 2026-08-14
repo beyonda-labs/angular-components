@@ -16,7 +16,8 @@
         @for (row of section.rows; track $index) {
             <div class="w-100 d-flex gap-2">
                 <bey-form-row
-                    class="w-100 mb-2"
+                    class="w-100"
+                    [class.mb-2]="hasVisibleField(row)"
                     [formConfig]="formConfig"
                     [section]="section"
                     [row]="row"

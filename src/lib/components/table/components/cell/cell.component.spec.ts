@@ -49,7 +49,7 @@ describe('TableCellComponent', () => {
         });
         fixture.detectChanges();
 
-        const badges = fixture.nativeElement.querySelectorAll('.badge');
+        const badges = fixture.nativeElement.querySelectorAll('.bey-badge');
 
         expect(badges.length).toBe(1);
         expect(badges[0].classList.contains('bg-danger')).toBe(true);
@@ -66,7 +66,7 @@ describe('TableCellComponent', () => {
         });
         fixture.detectChanges();
 
-        const badges = fixture.nativeElement.querySelectorAll('.badge');
+        const badges = fixture.nativeElement.querySelectorAll('.bey-badge');
 
         expect(badges.length).toBe(3);
         expect(badges[0].textContent.trim()).toBe('Frontend');

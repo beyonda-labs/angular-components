@@ -1,8 +1,9 @@
 <div class="bey-property-field-control">
-    <div class="bey-property-field-picker-anchor">
+    <div class="bey-property-field-picker-anchor" #pickerAnchor>
         @if (isMultiline) {
             <textarea
                 class="bey-property-field-input"
+                [class.bey-property-field-input-with-actions]="field.acceptsVariable && field.actionButton"
                 rows="3"
                 [attr.aria-label]="field.label"
                 [disabled]="field.disabled"
@@ -13,6 +14,8 @@
                 (blur)="onBlur($event)"
                 (input)="onInput($event)"
                 (keyup)="onKeyup($event)"
+                (mouseup)="onSelect($event)"
+                (select)="onSelect($event)"
             ></textarea>
         } @else {
             <input
@@ -27,11 +30,14 @@
                 (blur)="onBlur($event)"
                 (input)="onInput($event)"
                 (keyup)="onKeyup($event)"
+                (mouseup)="onSelect($event)"
+                (select)="onSelect($event)"
             />
         }
 
         @if (pickerOpen) {
             <bey-variable-picker
+                [anchor]="pickerAnchor"
                 [variables]="propertyVariableService.variables()"
                 (closed)="closePicker()"
                 (selected)="onVariableSelected($event)"
@@ -39,16 +45,36 @@
         }
     </div>
 
-    @if (field.acceptsVariable) {
-        <button
-            type="button"
-            class="bey-property-field-variable-trigger"
-            [class.bey-property-field-variable-trigger-active]="pickerOpen"
-            [attr.aria-label]="'angular-components.properties-menu.textField.insertVariable' | translate"
-            [disabled]="field.disabled"
-            (click)="togglePicker()"
-        >
-            <fa-icon [icon]="variableIcon"></fa-icon>
-        </button>
+    @if (field.acceptsVariable || field.actionButton) {
+        <div class="bey-property-field-button-stack">
+            @if (field.acceptsVariable) {
+                <button
+                    type="button"
+                    class="bey-property-field-variable-trigger"
+                    [class.bey-property-field-variable-trigger-active]="pickerOpen"
+                    [attr.aria-label]="'angular-components.properties-menu.textField.insertVariable' | translate"
+                    [disabled]="field.disabled"
+                    [tooltip]="'angular-components.properties-menu.textField.insertVariable' | translate"
+                    container="body"
+                    (click)="togglePicker()"
+                >
+                    <fa-icon [icon]="variableIcon"></fa-icon>
+                </button>
+            }
+
+            @if (field.actionButton && hasSelection) {
+                <button
+                    type="button"
+                    class="bey-property-field-variable-trigger"
+                    [attr.aria-label]="(actionButtonTooltipKey ?? '') | translate"
+                    [disabled]="field.disabled"
+                    [tooltip]="(actionButtonTooltipKey ?? '') | translate"
+                    container="body"
+                    (click)="onActionButtonClick()"
+                >
+                    <fa-icon [icon]="field.actionButton.icon"></fa-icon>
+                </button>
+            }
+        </div>
     }
 </div>

@@ -10,6 +10,7 @@ import { PropertyTreeConfig } from '../models/property-tree-config.model';
 import { PropertyTreeNode, PropertyTreeNodeParameters } from '../models/property-tree-node.model';
 import { PropertyVariable } from '../models/property-variable.model';
 import {
+    PropertyFieldAction,
     PropertyFieldValueChange,
     PropertyGroupRemove,
     PropertyGroupToggle,
@@ -17,6 +18,7 @@ import {
     PropertyTabAddRequested,
     PropertyTreeAddBlock,
     PropertyTreeNodeSelect,
+    PropertyTreeNodeToggle,
     PropertyVariableSelection
 } from '../types/properties-menu-events';
 
@@ -27,6 +29,7 @@ export class PropertiesMenuService {
     readonly selectedTreeNodeId = signal<string | null>(null);
 
     onActiveTabChange?: (tabId: string) => void;
+    onFieldAction?: (action: PropertyFieldAction) => void;
     onFieldValueChange?: (change: PropertyFieldValueChange) => void;
     onGroupRemove?: (event: PropertyGroupRemove) => void;
     onGroupToggle?: (toggle: PropertyGroupToggle) => void;
@@ -34,6 +37,7 @@ export class PropertiesMenuService {
     onTabAddRequested?: (event: PropertyTabAddRequested) => void;
     onTreeAddBlock?: (event: PropertyTreeAddBlock) => void;
     onTreeNodeSelect?: (event: PropertyTreeNodeSelect) => void;
+    onTreeNodeToggle?: (event: PropertyTreeNodeToggle) => void;
     onVariableSelected?: (selection: PropertyVariableSelection) => void;
 
     setConfig(config: PropertiesMenuConfigParameters | PropertiesMenuConfig): void {
@@ -83,6 +87,10 @@ export class PropertiesMenuService {
         this.onFieldValueChange?.({ fieldId, previousValue, value });
     }
 
+    triggerFieldAction(fieldId: string, key: string, selectionStart: number, selectionEnd: number): void {
+        this.onFieldAction?.({ fieldId, key, selectionEnd, selectionStart });
+    }
+
     applyVariableSelection(fieldId: string, variable: PropertyVariable, value: unknown): void {
         const previousValue = this.getField(fieldId)?.value;
 
@@ -104,9 +112,17 @@ export class PropertiesMenuService {
     }
 
     toggleTreeNode(tabId: string, groupId: string, nodeId: string): void {
+        let expanded = false;
+
         this.config.update(config =>
-            this.updateTreeNode(config, tabId, groupId, nodeId, node => ({ ...node, expanded: !node.expanded }))
+            this.updateTreeNode(config, tabId, groupId, nodeId, node => {
+                expanded = !node.expanded;
+
+                return { ...node, expanded };
+            })
         );
+
+        this.onTreeNodeToggle?.({ expanded, groupId, nodeId, tabId });
     }
 
     triggerTreeAddBlock(tabId: string, groupId: string): void {

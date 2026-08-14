@@ -5,6 +5,9 @@ export type FormFieldColumn = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 export interface FormFieldOption {
     label: string;
     value: string;
+    // i18n key, not literal text — rendered through the `translate` pipe wherever it's shown (e.g. the
+    // TextVariable field's option picker).
+    badge?: string;
     isDisabled?: boolean;
 }
 
@@ -70,10 +73,12 @@ export enum FormFieldType {
     Checkbox = 'checkbox',
     Chips = 'chips',
     Date = 'date',
+    Info = 'info',
     Number = 'number',
     Password = 'password',
     Radio = 'radio',
     Select = 'select',
     Text = 'text',
-    Textarea = 'textarea'
+    Textarea = 'textarea',
+    TextVariable = 'textVariable'
 }

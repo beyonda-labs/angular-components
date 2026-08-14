@@ -1,4 +1,5 @@
 import { Component, inject } from '@angular/core';
+import { faCalendarDays, faUser } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { ButtonComponent } from '../../../../internal/button/button.component';
@@ -9,6 +10,7 @@ import { FormComponent } from '../../form.component';
 import { FormCheckboxField } from '../../models/fields/form-checkbox-field.model';
 import { FormChipsField } from '../../models/fields/form-chips-field.model';
 import { FormDateField } from '../../models/fields/form-date-field.model';
+import { FormInfoField } from '../../models/fields/form-info-field.model';
 import { FormNumberField } from '../../models/fields/form-number-field.model';
 import { FormPasswordField } from '../../models/fields/form-password-field.model';
 import { FormRadioField } from '../../models/fields/form-radio-field.model';
@@ -186,6 +188,29 @@ export class FormStyleGuideComponent {
                                     key: 'date3',
                                     columns: 6,
                                     isDisabled: true
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                new FormSection({
+                    key: 'sectionInfo',
+                    isTooltipVisible: true,
+                    rows: [
+                        new FormRow({
+                            fields: [
+                                new FormInfoField({
+                                    key: 'info1',
+                                    columns: 6,
+                                    items: [{ label: '1.0' }]
+                                }),
+                                new FormInfoField({
+                                    key: 'info2',
+                                    columns: 6,
+                                    items: [
+                                        { icon: faCalendarDays, label: '24 Jul 2026' },
+                                        { icon: faUser, label: 'Admin Admin' }
+                                    ]
                                 })
                             ]
                         })

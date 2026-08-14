@@ -1,7 +1,7 @@
 import { SearchField } from '../../search/models/search.model';
 import { TableColumn } from '../../table/models/table.model';
 import { TableCell } from '../../table/models/table-cell.model';
-import { PageCategoriesConfig } from './page-categories.model';
+import { PageCategoriesConfig, PageViewMode } from './page-categories.model';
 import { PageItem } from './page-item.model';
 import { SearchSort } from './page-search.model';
 
@@ -9,7 +9,7 @@ export class PageTableConfig {
     allowSelection: boolean;
     columns: TableColumn[];
     height: string;
-    loadRow: (item: PageItem) => TableCell[];
+    loadRow: (item: PageItem, viewMode: PageViewMode) => TableCell[];
     showPagination: boolean;
 
     categoriesConfig?: PageCategoriesConfig;
@@ -42,7 +42,7 @@ export class PageTableConfig {
 
 export interface PageTableConfigParameters {
     columns: TableColumn[];
-    loadRow: (item: PageItem) => TableCell[];
+    loadRow: (item: PageItem, viewMode: PageViewMode) => TableCell[];
 
     allowSelection?: boolean;
     categoriesConfig?: PageCategoriesConfig;

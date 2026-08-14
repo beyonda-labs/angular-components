@@ -129,7 +129,9 @@ export class FormComponent implements OnDestroy {
         }
 
         if (button.type === FormButtonType.Submit) {
-            return this.config.formGroup?.dirty !== true || this.config.formGroup?.valid !== true;
+            const requiresChanges = this.config.formGroup?.dirty !== true && !this.config.allowSubmitWithoutChanges;
+
+            return requiresChanges || this.config.formGroup?.valid !== true;
         }
 
         return false;
@@ -145,7 +147,7 @@ export class FormComponent implements OnDestroy {
         }
 
         if (button.type === FormButtonType.Submit) {
-            if (this.config.formGroup?.dirty !== true) {
+            if (this.config.formGroup?.dirty !== true && !this.config.allowSubmitWithoutChanges) {
                 return 'angular-components.form.submit.without-changes';
             }
 

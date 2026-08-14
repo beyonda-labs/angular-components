@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { AppLayoutStyleGuideComponent } from '../app-layout/docs/style-guide/app-layout-style-guide.component';
+import { BadgeStyleGuideComponent } from '../badge/docs/style-guide/badge-style-guide.component';
 import { BreadcrumbStyleGuideComponent } from '../breadcrumb/docs/style-guide/breadcrumb-style-guide.component';
 import { FloatingPreferencesStyleGuideComponent } from '../floating-preferences/docs/style-guide/floating-preferences-style-guide.component';
 import { FooterStyleGuideComponent } from '../footer/docs/style-guide/footer-style-guide.component';
@@ -24,6 +25,7 @@ import { TreeStyleGuideComponent } from '../tree/docs/style-guide/tree-style-gui
     imports: [
         TranslateModule,
         AppLayoutStyleGuideComponent,
+        BadgeStyleGuideComponent,
         BreadcrumbStyleGuideComponent,
         FloatingPreferencesStyleGuideComponent,
         FooterStyleGuideComponent,

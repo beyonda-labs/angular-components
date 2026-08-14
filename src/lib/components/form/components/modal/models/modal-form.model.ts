@@ -23,6 +23,7 @@ export class ModalFormConfig<TValue = unknown> extends FormConfig<TValue> {
 
     constructor(parameters: ModalFormConfigParameters<TValue>) {
         super({
+            allowSubmitWithoutChanges: parameters.allowSubmitWithoutChanges,
             i18nPrefix: parameters.i18nPrefix,
             sections: parameters.sections,
             steps: parameters.steps
@@ -86,6 +87,7 @@ export interface ModalFormConfigParameters<TValue> {
     i18nPrefix: string;
     sections: FormSection[];
 
+    allowSubmitWithoutChanges?: boolean;
     /** Cancel button label key; defaults to `{i18nPrefix}.buttons.cancel`. */
     cancelLabel?: string;
     initialValue?: TValue;

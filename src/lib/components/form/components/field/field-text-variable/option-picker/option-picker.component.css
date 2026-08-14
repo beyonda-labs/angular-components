@@ -1,0 +1,135 @@
+:host {
+    --bey-option-picker-accent: var(--bey-primary);
+    --bey-option-picker-border: var(--bey-gray-200);
+    --bey-option-picker-surface: var(--bey-bg-surface);
+    --bey-option-picker-text: var(--text-primary);
+    --bey-option-picker-text-muted: var(--text-muted);
+    --bey-option-picker-hover: var(--bey-bg-hover);
+    --bey-option-picker-max-height: 16rem;
+
+    position: fixed;
+    z-index: 1080;
+    display: block;
+    min-width: 15rem;
+}
+
+:host-context(body.dark) {
+    --bey-option-picker-border: var(--bey-gray-800);
+}
+
+.bey-option-picker {
+    display: flex;
+    flex-direction: column;
+    max-height: var(--bey-option-picker-max-height);
+    border: 1px solid var(--bey-option-picker-border);
+    border-radius: 0.5rem;
+    background: var(--bey-option-picker-surface);
+    box-shadow: 0 16px 48px rgba(var(--bey-black-rgb), 0.14);
+    overflow: hidden;
+}
+
+.bey-option-picker-header {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem;
+    border-bottom: 1px solid var(--bey-option-picker-border);
+}
+
+.bey-option-picker-search {
+    position: relative;
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+}
+
+.bey-option-picker-search-icon {
+    position: absolute;
+    left: 0.55rem;
+    color: var(--bey-option-picker-text-muted);
+    font-size: 0.72rem;
+}
+
+.bey-option-picker-search-input {
+    width: 100%;
+    padding: 0.35rem 0.5rem 0.35rem 1.65rem;
+    border: 1px solid var(--bey-option-picker-border);
+    border-radius: 0.4rem;
+    background: var(--bey-bg-page);
+    color: var(--bey-option-picker-text);
+    font-size: 0.78rem;
+}
+
+.bey-option-picker-search-input:focus {
+    outline: none;
+    border-color: var(--bey-option-picker-accent);
+}
+
+.bey-option-picker-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 1.7rem;
+    height: 1.7rem;
+    border: none;
+    border-radius: 0.35rem;
+    background: none;
+    color: var(--bey-option-picker-text-muted);
+    cursor: pointer;
+}
+
+.bey-option-picker-close:hover {
+    background: var(--bey-option-picker-hover);
+    color: var(--bey-option-picker-text);
+}
+
+.bey-option-picker-list {
+    overflow-y: auto;
+    padding: 0.3rem;
+}
+
+.bey-option-picker-empty {
+    padding: 0.75rem;
+    color: var(--bey-option-picker-text-muted);
+    font-size: 0.78rem;
+    text-align: center;
+}
+
+.bey-option-picker-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+    padding: 0.4rem 0.7rem;
+    border: none;
+    border-radius: 0.35rem;
+    background: none;
+    color: var(--bey-option-picker-text);
+    font-size: 0.8rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.bey-option-picker-row:hover,
+.bey-option-picker-row-active {
+    background: var(--bey-option-picker-hover);
+}
+
+.bey-option-picker-row-label {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.bey-option-picker-row-badge {
+    flex: 0 0 auto;
+    padding: 0.05rem 0.4rem;
+    border-radius: 999px;
+    background: var(--bey-bg-muted);
+    color: var(--bey-option-picker-text-muted);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+}

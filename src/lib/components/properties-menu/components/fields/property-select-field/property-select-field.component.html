@@ -4,11 +4,18 @@
         [attr.aria-label]="field.label"
         [disabled]="field.disabled"
         [required]="field.required"
-        [value]="field.value"
         (change)="onChange($event)"
     >
         @for (option of field.options; track option.value) {
-            <option [disabled]="option.disabled" [value]="option.value">{{ option.label | translate }}</option>
+            <!--
+                `[selected]` per option instead of `[value]` on the select: the select's own `[value]`
+                binding runs before the `@for`-rendered `<option>`s exist in the DOM on first render, so
+                the browser can't find a match and silently falls back to the first option. `[selected]`
+                is evaluated on each option as it's created, so it isn't order-dependent.
+            -->
+            <option [disabled]="option.disabled" [selected]="option.value === field.value" [value]="option.value">
+                {{ option.label | translate }}
+            </option>
         }
     </select>
 </div>

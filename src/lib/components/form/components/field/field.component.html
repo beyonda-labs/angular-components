@@ -43,6 +43,13 @@
                         [formConfig]="formConfig"
                     ></bey-form-text-field>
                 }
+                @case ('textVariable') {
+                    <bey-form-text-variable-field
+                        [field]="$any(field)"
+                        [section]="section"
+                        [formConfig]="formConfig"
+                    ></bey-form-text-variable-field>
+                }
                 @case ('date') {
                     <bey-form-date-field
                         [field]="getDateField()"
@@ -98,6 +105,9 @@
                         [section]="section"
                         [formConfig]="formConfig"
                     ></bey-form-chips-field>
+                }
+                @case ('info') {
+                    <bey-form-info-field [field]="$any(field)"></bey-form-info-field>
                 }
             }
         </div>

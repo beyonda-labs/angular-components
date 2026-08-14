@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, effect, ElementRef, EventEmitter, inject, Input, Output, ViewChild } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertiesMenuHeaderComponent } from './components/properties-menu-header/properties-menu-header.component';
@@ -10,6 +10,7 @@ import { PropertyVariable, PropertyVariableParameters } from './models/property-
 import { PropertiesMenuService } from './services/properties-menu.service';
 import { PropertyVariableService } from './services/property-variable.service';
 import {
+    PropertyFieldAction,
     PropertyFieldValueChange,
     PropertyGroupRemove,
     PropertyGroupToggle,
@@ -17,6 +18,7 @@ import {
     PropertyTabAddRequested,
     PropertyTreeAddBlock,
     PropertyTreeNodeSelect,
+    PropertyTreeNodeToggle,
     PropertyVariableSelection
 } from './types/properties-menu-events';
 
@@ -53,6 +55,7 @@ export class PropertiesMenuComponent {
     @Output() activeTabChange = new EventEmitter<string>();
     @Output() closed = new EventEmitter<void>();
     @Output() configChange = new EventEmitter<PropertiesMenuConfig>();
+    @Output() fieldAction = new EventEmitter<PropertyFieldAction>();
     @Output() fieldValueChange = new EventEmitter<PropertyFieldValueChange>();
     @Output() groupRemove = new EventEmitter<PropertyGroupRemove>();
     @Output() groupToggle = new EventEmitter<PropertyGroupToggle>();
@@ -60,13 +63,28 @@ export class PropertiesMenuComponent {
     @Output() tabAddRequested = new EventEmitter<PropertyTabAddRequested>();
     @Output() treeAddBlock = new EventEmitter<PropertyTreeAddBlock>();
     @Output() treeNodeSelect = new EventEmitter<PropertyTreeNodeSelect>();
+    @Output() treeNodeToggle = new EventEmitter<PropertyTreeNodeToggle>();
     @Output() variableSelected = new EventEmitter<PropertyVariableSelection>();
+
+    @ViewChild('menuBody') private readonly menuBody?: ElementRef<HTMLElement>;
 
     private readonly propertiesMenuService = inject(PropertiesMenuService);
     private readonly propertyVariableService = inject(PropertyVariableService);
 
     constructor() {
         this.propertiesMenuService.onActiveTabChange = tabId => this.activeTabChange.emit(tabId);
+
+        // Reset scroll to the top whenever the active tab changes — the body div is a single element
+        // reused across tabs (only its projected content swaps), so the browser preserves its previous
+        // scrollTop otherwise.
+        effect(() => {
+            this.propertiesMenuService.activeTabId();
+
+            if (this.menuBody) {
+                this.menuBody.nativeElement.scrollTop = 0;
+            }
+        });
+        this.propertiesMenuService.onFieldAction = action => this.fieldAction.emit(action);
         this.propertiesMenuService.onFieldValueChange = change => this.fieldValueChange.emit(change);
         this.propertiesMenuService.onGroupRemove = event => this.groupRemove.emit(event);
         this.propertiesMenuService.onGroupToggle = toggle => this.groupToggle.emit(toggle);
@@ -74,6 +92,7 @@ export class PropertiesMenuComponent {
         this.propertiesMenuService.onTabAddRequested = event => this.tabAddRequested.emit(event);
         this.propertiesMenuService.onTreeAddBlock = event => this.treeAddBlock.emit(event);
         this.propertiesMenuService.onTreeNodeSelect = event => this.treeNodeSelect.emit(event);
+        this.propertiesMenuService.onTreeNodeToggle = event => this.treeNodeToggle.emit(event);
         this.propertiesMenuService.onVariableSelected = selection => this.variableSelected.emit(selection);
     }
 

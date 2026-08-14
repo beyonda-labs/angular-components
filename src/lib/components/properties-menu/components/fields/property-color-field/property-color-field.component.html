@@ -1,11 +1,15 @@
 <div class="bey-property-field-control">
-    <label class="bey-property-color-field-swatch" [style.backgroundColor]="colorValue">
+    <label
+        class="bey-property-color-field-swatch"
+        [class.bey-property-color-field-swatch-empty]="!hasValue"
+        [style.backgroundColor]="hasValue ? pickerValue : null"
+    >
         <input
             type="color"
             class="bey-property-color-field-swatch-input"
             [attr.aria-label]="field.label"
             [disabled]="field.disabled"
-            [value]="colorValue"
+            [value]="pickerValue"
             (input)="onSwatchChange($event)"
         />
     </label>
@@ -16,7 +20,22 @@
         [attr.aria-label]="field.label + ' hex value'"
         [disabled]="field.disabled"
         [readOnly]="field.readonly"
-        [value]="colorValue"
+        [value]="field.value ?? ''"
         (change)="onTextChange($event)"
     />
+
+    @if (hasValue && !field.disabled && !field.readonly) {
+        <div class="bey-property-field-button-stack">
+            <button
+                type="button"
+                class="bey-property-field-variable-trigger"
+                [attr.aria-label]="'angular-components.properties-menu.colorField.clear' | translate"
+                [tooltip]="'angular-components.properties-menu.colorField.clear' | translate"
+                container="body"
+                (click)="onClear()"
+            >
+                <fa-icon [icon]="clearIcon"></fa-icon>
+            </button>
+        </div>
+    }
 </div>

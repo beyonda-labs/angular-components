@@ -5,6 +5,22 @@
                 "bad-gateway": "The server received an invalid response. Please try again later.",
                 "bad-request": "The request could not be processed. Please check the submitted data.",
                 "conflict": "A conflict occurred with the current state of the resource.",
+                "document-generation": {
+                    "cyclical-block-reference": "A cyclical reference between reusable blocks was detected.",
+                    "invalid-image": "Could not generate an image in the document. Check that the referenced variable or image file has a valid value.",
+                    "invalid-image-width": "An image in the document has an invalid width.",
+                    "invalid-request": "The request is not in the expected format.",
+                    "insufficient-width-image": "Not enough width available to place an image in the document.",
+                    "insufficient-width-list": "Not enough width available to place a list in the document.",
+                    "insufficient-width-list-item": "Not enough width available for a list item.",
+                    "insufficient-width-paragraph": "Not enough width available to place a paragraph in the document.",
+                    "pagination-stuck": "The document could not be paginated correctly. Check the content: an item may be too large or misconfigured.",
+                    "pdf-page-range": "The requested page range for an inserted PDF exceeds the number of pages in the source file.",
+                    "unresolved-block": "Could not resolve the content of a referenced reusable block.",
+                    "unresolved-header-footer": "Could not resolve the header or footer content.",
+                    "validation-failed": "The document has pending validation errors. Fix them before generating it."
+                },
+                "duplicate-field": "An item with field \"{{fieldName}}\" and value \"{{value}}\" already exists.",
                 "forbidden": "You do not have permission to perform this action.",
                 "internal-server-error": "An internal server error occurred. Please try again later.",
                 "invalid-child": "The field \"{{childField}}\" is not valid for parent \"{{parentField}}\".",
@@ -17,6 +33,7 @@
                 "invalid-field-range-min": "The field \"{{fieldName}}\" must be at least {{min}}.",
                 "invalid-field-type": "The field \"{{fieldName}}\" must be of type \"{{expectedType}}\".",
                 "invalid-field-value": "The field \"{{fieldName}}\" has an invalid value.",
+                "move-target-unchanged": "The item is already located in this category.",
                 "not-found": "The requested resource was not found.",
                 "required-field": "The field \"{{fieldName}}\" is required.",
                 "service-unavailable": "The service is temporarily unavailable. Please try again later.",
@@ -26,6 +43,7 @@
                 "unknown": "An unexpected error occurred. Please try again later."
             },
             "field": {
+                "name": "Name",
                 "pattern": {
                     "email": "user@domain.com"
                 }
@@ -35,6 +53,22 @@
                 "bad-request": "Invalid request",
                 "conflict": "Conflict",
                 "default": "Error",
+                "document-generation": {
+                    "cyclical-block-reference": "Cyclical reference",
+                    "invalid-image": "Image generation failed",
+                    "invalid-image-width": "Image generation failed",
+                    "invalid-request": "Invalid request",
+                    "insufficient-width-image": "Insufficient space",
+                    "insufficient-width-list": "Insufficient space",
+                    "insufficient-width-list-item": "Insufficient space",
+                    "insufficient-width-paragraph": "Insufficient space",
+                    "pagination-stuck": "Pagination error",
+                    "pdf-page-range": "Invalid page range",
+                    "unresolved-block": "Unresolved block",
+                    "unresolved-header-footer": "Unresolved header/footer",
+                    "validation-failed": "Invalid document"
+                },
+                "duplicate-field": "Duplicate value",
                 "forbidden": "Access denied",
                 "internal-server-error": "Server error",
                 "invalid-child": "Invalid field",
@@ -43,6 +77,7 @@
                 "invalid-field-range": "Value out of range",
                 "invalid-field-type": "Invalid field type",
                 "invalid-field-value": "Invalid value",
+                "move-target-unchanged": "No change",
                 "not-found": "Not found",
                 "required-field": "Required field",
                 "service-unavailable": "Service unavailable",

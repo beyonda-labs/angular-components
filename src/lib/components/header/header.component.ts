@@ -71,6 +71,7 @@ export class HeaderComponent {
             this.isMenuOpen = false;
             buttonAction();
         };
+        button.tooltipPlacement = 'left';
 
         return button;
     }
@@ -81,6 +82,7 @@ export class HeaderComponent {
             customClass: 'bey-header-menu-toggle',
             icon: faEllipsis,
             tooltip: 'angular-components.header.menu',
+            tooltipPlacement: 'left',
             type: ButtonType.Tertiary
         });
     }
@@ -117,6 +119,7 @@ export class HeaderComponent {
             this.openActionKey = null;
             buttonAction();
         };
+        button.tooltipPlacement = 'left';
 
         return button;
     }

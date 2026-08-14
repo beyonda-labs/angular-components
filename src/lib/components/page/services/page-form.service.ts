@@ -31,6 +31,7 @@ export class PageFormService {
 
         return this.modalFormService.open(
             new ModalFormConfig<TValue>({
+                allowSubmitWithoutChanges: pageForm.allowSubmitWithoutChanges,
                 cancelLabel: CANCEL_LABEL_KEY,
                 i18nPrefix: pageForm.prefix,
                 initialValue: pageForm.toFormValue(item),

@@ -19,7 +19,7 @@
             ></bey-properties-menu-header>
         }
 
-        <div class="bey-properties-menu-body bey-thin-scroll p-2">
+        <div #menuBody class="bey-properties-menu-body bey-thin-scroll p-2">
             @if (activeTab) {
                 <bey-property-tab [tab]="activeTab"></bey-property-tab>
             }

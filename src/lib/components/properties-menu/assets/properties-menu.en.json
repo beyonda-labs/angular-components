@@ -2,8 +2,21 @@
     "angular-components": {
         "properties-menu": {
             "close": "Close",
+            "colorField": {
+                "clear": "Clear"
+            },
+            "fileField": {
+                "choose": "Choose file",
+                "clear": "Clear",
+                "fileSelected": "File selected",
+                "noFileSelected": "No file selected",
+                "tooLarge": "This file exceeds the {{maxSizeMB}} MB limit."
+            },
             "list": {
                 "empty": "No items"
+            },
+            "numberArray": {
+                "add": "Add"
             },
             "remove": "Remove",
             "spacing": {

@@ -2,6 +2,13 @@ import { PropertyListItem } from '../models/property-list-item.model';
 import { PropertyTreeNode } from '../models/property-tree-node.model';
 import { PropertyVariable } from '../models/property-variable.model';
 
+export interface PropertyFieldAction {
+    fieldId: string;
+    key: string;
+    selectionEnd: number;
+    selectionStart: number;
+}
+
 export interface PropertyFieldValueChange<T = unknown> {
     fieldId: string;
     previousValue: T | undefined;
@@ -38,6 +45,13 @@ export interface PropertyTreeAddBlock {
 export interface PropertyTreeNodeSelect {
     groupId: string;
     node: PropertyTreeNode;
+    nodeId: string;
+    tabId: string;
+}
+
+export interface PropertyTreeNodeToggle {
+    expanded: boolean;
+    groupId: string;
     nodeId: string;
     tabId: string;
 }

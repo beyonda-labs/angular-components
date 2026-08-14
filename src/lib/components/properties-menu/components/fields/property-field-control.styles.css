@@ -65,6 +65,17 @@
     white-space: nowrap;
 }
 
+.bey-property-field-input-with-actions {
+    min-height: calc(2 * 1.9rem + 0.35rem);
+}
+
+.bey-property-field-button-stack {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    gap: 0.35rem;
+}
+
 .bey-property-field-variable-trigger {
     display: inline-flex;
     align-items: center;

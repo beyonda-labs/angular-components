@@ -18,6 +18,13 @@
             "submit": {
                 "invalid": "Hay errores en el formulario, por favor corrija o complete los campos requeridos antes de enviar.",
                 "without-changes": "No se han realizado cambios en el formulario."
+            },
+            "textVariableField": {
+                "close": "Cerrar",
+                "empty": "No se han encontrado opciones",
+                "insertVariable": "Insertar variable",
+                "label": "Variables",
+                "search": "Buscar"
             }
         }
     }

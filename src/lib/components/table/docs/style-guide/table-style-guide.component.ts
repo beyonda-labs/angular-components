@@ -127,18 +127,18 @@ export class TableStyleGuideComponent {
 
     private getStatusBadgeClass(status: string): string {
         if (status.endsWith('active')) {
-            return 'bg-success';
+            return 'bey-badge-color-success';
         }
 
         if (status.endsWith('review')) {
-            return 'bg-warning text-dark';
+            return 'bey-badge-color-warning';
         }
 
-        return 'bg-secondary';
+        return 'bey-badge-color-neutral';
     }
 
     private getSkillBadgeClass(index: number): string {
-        const skillBadgeClasses = ['bg-primary', 'bg-info text-dark', 'bg-dark'];
+        const skillBadgeClasses = ['bey-badge-color-primary', 'bey-badge-color-info', 'bey-badge-color-purple'];
 
         return skillBadgeClasses[index % skillBadgeClasses.length];
     }

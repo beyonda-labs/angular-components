@@ -73,6 +73,16 @@
                 "label": "Campos de fecha",
                 "tooltip": "Campos de fecha con rango, obligatorio y deshabilitado"
             },
+            "sectionInfo": {
+                "info1": {
+                    "label": "Versión"
+                },
+                "info2": {
+                    "label": "Creada el"
+                },
+                "label": "Campos de información",
+                "tooltip": "Pares de icono/etiqueta de solo lectura — sin estilo de input, sin FormControl"
+            },
             "sectionNumber": {
                 "label": "Campos numéricos",
                 "number1": {
