@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertyListItem } from '../../models/property-list-item.model';
@@ -53,6 +54,27 @@ describe('PropertyListComponent', () => {
         cards[1].click();
 
         expect(selectSpy).not.toHaveBeenCalled();
+    });
+
+    it('should apply the icon classes an item brings instead of the default colour', () => {
+        component.items = [
+            new PropertyListItem({ icon: faCircleExclamation, id: 'block-heading', iconClasses: 'bey-text-danger' })
+        ];
+        fixture.detectChanges();
+
+        const icon: HTMLElement = fixture.nativeElement.querySelector('.bey-property-list-item-icon');
+
+        expect(icon.classList.contains('bey-text-danger')).toBe(true);
+        expect(icon.classList.contains('bey-property-list-item-icon-default')).toBe(false);
+    });
+
+    it('should fall back to the default icon colour when an item brings none', () => {
+        component.items = [new PropertyListItem({ icon: faCircleExclamation, id: 'block-heading' })];
+        fixture.detectChanges();
+
+        const icon: HTMLElement = fixture.nativeElement.querySelector('.bey-property-list-item-icon');
+
+        expect(icon.classList.contains('bey-property-list-item-icon-default')).toBe(true);
     });
 
     it('should resolve a default item label into a prefixed translation key', () => {

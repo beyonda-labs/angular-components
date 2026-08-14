@@ -2,6 +2,11 @@ import { PropertyListItem } from '../models/property-list-item.model';
 import { PropertyTreeNode } from '../models/property-tree-node.model';
 import { PropertyVariable } from '../models/property-variable.model';
 
+export interface PropertyAttachmentUpload {
+    fieldId: string;
+    file: File;
+}
+
 export interface PropertyFieldAction {
     fieldId: string;
     key: string;

@@ -104,3 +104,16 @@ body.dark {
 .bey-thin-scroll::-webkit-scrollbar-thumb:hover {
     background-color: var(--bey-thin-scroll-thumb-hover);
 }
+
+/* ─── Severity text colors ─────────────────────────────────────────────── */
+.bey-text-danger {
+    color: var(--bey-danger);
+}
+
+.bey-text-warning {
+    color: var(--bey-warning);
+}
+
+.bey-text-success {
+    color: var(--bey-success);
+}

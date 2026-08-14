@@ -28,4 +28,9 @@ describe('PropertySelectField', () => {
 
         expect(field.type).toBe(PropertyFieldType.Select);
     });
+
+    it('should not be searchable unless asked', () => {
+        expect(new PropertySelectField({ id: 'font' }).searchable).toBe(false);
+        expect(new PropertySelectField({ id: 'font', searchable: true }).searchable).toBe(true);
+    });
 });

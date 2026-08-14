@@ -7,6 +7,7 @@ export interface PropertyListItemParameters {
     disabled?: boolean;
     hidden?: boolean;
     icon?: IconDefinition;
+    iconClasses?: string;
     label?: string;
     metadata?: Record<string, unknown>;
 }
@@ -20,12 +21,14 @@ export class PropertyListItem {
 
     description?: string;
     icon?: IconDefinition;
+    iconClasses?: string;
 
     constructor({
         description,
         disabled = false,
         hidden = false,
         icon,
+        iconClasses,
         id,
         label = `${id}.label`,
         metadata = {}
@@ -34,6 +37,7 @@ export class PropertyListItem {
         this.disabled = disabled;
         this.hidden = hidden;
         this.icon = icon;
+        this.iconClasses = iconClasses;
         this.id = id;
         this.label = label;
         this.metadata = metadata;

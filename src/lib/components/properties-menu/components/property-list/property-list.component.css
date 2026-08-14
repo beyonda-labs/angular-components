@@ -18,8 +18,11 @@
 .bey-property-list-item-icon {
     display: inline-flex;
     flex: 0 0 auto;
-    color: var(--bey-property-list-text-muted);
     font-size: 1rem;
+}
+
+.bey-property-list-item-icon-default {
+    color: var(--bey-property-list-text-muted);
 }
 
 .bey-property-list-item-content {

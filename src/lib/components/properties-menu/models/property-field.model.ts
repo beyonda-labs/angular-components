@@ -8,6 +8,8 @@ export interface PropertyFieldActionButton {
     key?: string;
 }
 
+export type PropertyFieldSpan = 'full' | 'half';
+
 export interface PropertyFieldParameters<T = unknown> {
     id: string;
     type: PropertyFieldType;
@@ -21,6 +23,7 @@ export interface PropertyFieldParameters<T = unknown> {
     label?: string;
     metadata?: Record<string, unknown>;
     required?: boolean;
+    span?: PropertyFieldSpan;
     value?: T;
 }
 
@@ -35,6 +38,7 @@ export abstract class PropertyField<T = unknown> {
     label: string;
     metadata: Record<string, unknown>;
     required: boolean;
+    span: PropertyFieldSpan;
     type: PropertyFieldType;
     value: T | undefined;
 
@@ -51,6 +55,7 @@ export abstract class PropertyField<T = unknown> {
         label = `${id}.label`,
         metadata = {},
         required = false,
+        span = 'full',
         value
     }: PropertyFieldParameters<T>) {
         this.acceptsVariable = acceptsVariable;
@@ -63,6 +68,7 @@ export abstract class PropertyField<T = unknown> {
         this.label = label;
         this.metadata = metadata;
         this.required = required;
+        this.span = span;
         this.type = type;
         this.value = value ?? defaultValue;
     }

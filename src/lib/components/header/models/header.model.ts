@@ -89,6 +89,7 @@ export interface HeaderActionParameters {
 }
 
 export enum HeaderActionType {
+    Icon = 'icon',
     PrimaryButton = 'primary-button',
     SecondaryButton = 'secondary-button',
     Text = 'text'

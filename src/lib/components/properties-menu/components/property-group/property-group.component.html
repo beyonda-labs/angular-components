@@ -38,8 +38,41 @@
             <div class="bey-property-group-body" [id]="'property-group-' + group.id">
                 @if (fieldsContent) {
                     @for (field of visibleFields; track field.id) {
-                        <bey-property-field [field]="field"></bey-property-field>
+                        <bey-property-field
+                            [class.bey-property-field-half]="field.span === 'half'"
+                            [field]="field"
+                        ></bey-property-field>
                     }
+                }
+
+                @if (tabsContent; as content) {
+                    <div class="bey-property-group-tabs" role="tablist">
+                        @for (tab of content.tabs; track tab.id) {
+                            <button
+                                type="button"
+                                class="bey-property-group-tab"
+                                role="tab"
+                                [attr.aria-selected]="tab.id === content.activeTabId"
+                                [class.bey-property-group-tab-active]="tab.id === content.activeTabId"
+                                [disabled]="group.disabled"
+                                (click)="selectContentTab(tab.id)"
+                            >
+                                @if (tab.icon) {
+                                    <fa-icon [icon]="tab.icon"></fa-icon>
+                                }
+                                <span>{{ getContentTabLabelKey(tab) | translate }}</span>
+                            </button>
+                        }
+                    </div>
+
+                    <div class="bey-property-group-tab-panel" role="tabpanel">
+                        @for (field of activeTabFields; track field.id) {
+                            <bey-property-field
+                                [class.bey-property-field-half]="field.span === 'half'"
+                                [field]="field"
+                            ></bey-property-field>
+                        }
+                    </div>
                 }
 
                 @if (listContent; as content) {

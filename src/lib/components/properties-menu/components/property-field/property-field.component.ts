@@ -1,8 +1,10 @@
 import { Component, inject, Input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { PropertyAttachmentField } from '../../models/fields/property-attachment-field.model';
 import { PropertyColorField } from '../../models/fields/property-color-field.model';
 import { PropertyFileField } from '../../models/fields/property-file-field.model';
+import { PropertyInfoField } from '../../models/fields/property-info-field.model';
 import { PropertyNumberArrayField } from '../../models/fields/property-number-array-field.model';
 import { PropertyNumberField } from '../../models/fields/property-number-field.model';
 import { PropertySegmentedField } from '../../models/fields/property-segmented-field.model';
@@ -14,8 +16,10 @@ import { PropertyField } from '../../models/property-field.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { PropertyFieldType } from '../../types/property-field-type';
 import { resolvePropertyLabelKey } from '../../utils/property-i18n.util';
+import { PropertyAttachmentFieldComponent } from '../fields/property-attachment-field/property-attachment-field.component';
 import { PropertyColorFieldComponent } from '../fields/property-color-field/property-color-field.component';
 import { PropertyFileFieldComponent } from '../fields/property-file-field/property-file-field.component';
+import { PropertyInfoFieldComponent } from '../fields/property-info-field/property-info-field.component';
 import { PropertyNumberArrayFieldComponent } from '../fields/property-number-array-field/property-number-array-field.component';
 import { PropertyNumberFieldComponent } from '../fields/property-number-field/property-number-field.component';
 import { PropertySegmentedFieldComponent } from '../fields/property-segmented-field/property-segmented-field.component';
@@ -30,8 +34,10 @@ import { PropertyToggleFieldComponent } from '../fields/property-toggle-field/pr
 
 @Component({
     imports: [
+        PropertyAttachmentFieldComponent,
         PropertyColorFieldComponent,
         PropertyFileFieldComponent,
+        PropertyInfoFieldComponent,
         PropertyNumberArrayFieldComponent,
         PropertyNumberFieldComponent,
         PropertySegmentedFieldComponent,
@@ -61,12 +67,20 @@ export class PropertyFieldComponent {
         return resolvePropertyLabelKey(this.propertiesMenuService.config().prefix, 'fields', this.field.id, this.field.label);
     }
 
+    asAttachmentField(): PropertyAttachmentField {
+        return this.field as PropertyAttachmentField;
+    }
+
     asColorField(): PropertyColorField {
         return this.field as PropertyColorField;
     }
 
     asFileField(): PropertyFileField {
         return this.field as PropertyFileField;
+    }
+
+    asInfoField(): PropertyInfoField {
+        return this.field as PropertyInfoField;
     }
 
     asNumberArrayField(): PropertyNumberArrayField {
@@ -99,6 +113,10 @@ export class PropertyFieldComponent {
 
     onValueChange(value: unknown): void {
         this.propertiesMenuService.updateFieldValue(this.field.id, value);
+    }
+
+    onUploadRequested(file: File): void {
+        this.propertiesMenuService.requestAttachmentUpload(this.field.id, file);
     }
 
     onActionTriggered(event: PropertyTextFieldActionTrigger): void {

@@ -40,6 +40,28 @@ export { PropertyColorField as BeyPropertyColorField } from './models/fields/pro
 export type { PropertyColorFieldParameters as BeyPropertyColorFieldParameters } from './models/fields/property-color-field.model';
 export { PropertyFileField as BeyPropertyFileField } from './models/fields/property-file-field.model';
 export type { PropertyFileFieldParameters as BeyPropertyFileFieldParameters } from './models/fields/property-file-field.model';
+export {
+    PropertyGroupTab as BeyPropertyGroupTab,
+    PropertyTabsContent as BeyPropertyTabsContent
+} from './models/property-group-content.model';
+export type {
+    PropertyGroupTabParameters as BeyPropertyGroupTabParameters,
+    PropertyTabsContentParameters as BeyPropertyTabsContentParameters
+} from './models/property-group-content.model';
+export type { PropertyFieldSpan as BeyPropertyFieldSpan } from './models/property-field.model';
+export {
+    PropertyAttachmentField as BeyPropertyAttachmentField,
+    PropertyAttachmentOption as BeyPropertyAttachmentOption
+} from './models/fields/property-attachment-field.model';
+export type {
+    PropertyAttachmentFieldParameters as BeyPropertyAttachmentFieldParameters,
+    PropertyAttachmentOptionParameters as BeyPropertyAttachmentOptionParameters
+} from './models/fields/property-attachment-field.model';
+export { PropertyInfoField as BeyPropertyInfoField } from './models/fields/property-info-field.model';
+export type {
+    PropertyInfoFieldParameters as BeyPropertyInfoFieldParameters,
+    PropertyInfoItem as BeyPropertyInfoItem
+} from './models/fields/property-info-field.model';
 export { PropertySegmentedField as BeyPropertySegmentedField } from './models/fields/property-segmented-field.model';
 export type { PropertySegmentedFieldParameters as BeyPropertySegmentedFieldParameters } from './models/fields/property-segmented-field.model';
 export { PropertySpacingField as BeyPropertySpacingField } from './models/fields/property-spacing-field.model';
@@ -64,6 +86,7 @@ export type {
     PropertyValue as BeyPropertyValue
 } from './types/property-value';
 export type {
+    PropertyAttachmentUpload as BeyPropertyAttachmentUpload,
     PropertyFieldAction as BeyPropertyFieldAction,
     PropertyFieldValueChange as BeyPropertyFieldValueChange,
     PropertyGroupRemove as BeyPropertyGroupRemove,

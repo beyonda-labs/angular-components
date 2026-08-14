@@ -1,21 +1,65 @@
-<div class="bey-property-field-control">
-    <select
-        class="bey-property-field-select"
-        [attr.aria-label]="field.label"
-        [disabled]="field.disabled"
-        [required]="field.required"
-        (change)="onChange($event)"
-    >
-        @for (option of field.options; track option.value) {
-            <!--
-                `[selected]` per option instead of `[value]` on the select: the select's own `[value]`
-                binding runs before the `@for`-rendered `<option>`s exist in the DOM on first render, so
-                the browser can't find a match and silently falls back to the first option. `[selected]`
-                is evaluated on each option as it's created, so it isn't order-dependent.
-            -->
-            <option [disabled]="option.disabled" [selected]="option.value === field.value" [value]="option.value">
-                {{ option.label | translate }}
-            </option>
+@if (field.searchable) {
+    <div class="bey-property-field-control bey-property-select-search">
+        <input
+            class="bey-property-field-input"
+            type="text"
+            role="combobox"
+            autocomplete="off"
+            [attr.aria-controls]="field.id + '-options'"
+            [attr.aria-expanded]="isOpen"
+            [attr.aria-label]="field.label"
+            [disabled]="field.disabled"
+            [placeholder]="'angular-components.properties-menu.select.searchPlaceholder' | translate"
+            [required]="field.required"
+            [value]="inputValue"
+            (blur)="close()"
+            (focus)="onFocus()"
+            (input)="onQueryInput($event)"
+            (keydown)="onKeydown($event)"
+        />
+
+        @if (isOpen) {
+            <div class="bey-property-select-search-panel" role="listbox" [id]="field.id + '-options'">
+                @for (option of filteredOptions; track option.value) {
+                    <button
+                        class="bey-property-select-search-option"
+                        type="button"
+                        role="option"
+                        [attr.aria-selected]="option.value === field.value"
+                        [class.bey-property-select-search-option-selected]="option.value === field.value"
+                        [disabled]="option.disabled"
+                        (mousedown)="onOptionPicked(option, $event)"
+                    >
+                        {{ option.label | translate }}
+                    </button>
+                } @empty {
+                    <p class="bey-property-select-search-empty">
+                        {{ 'angular-components.properties-menu.select.noMatches' | translate }}
+                    </p>
+                }
+            </div>
         }
-    </select>
-</div>
+    </div>
+} @else {
+    <div class="bey-property-field-control">
+        <select
+            class="bey-property-field-select"
+            [attr.aria-label]="field.label"
+            [disabled]="field.disabled"
+            [required]="field.required"
+            (change)="onChange($event)"
+        >
+            @for (option of field.options; track option.value) {
+                <!--
+                    `[selected]` per option instead of `[value]` on the select: the select's own `[value]`
+                    binding runs before the `@for`-rendered `<option>`s exist in the DOM on first render, so
+                    the browser can't find a match and silently falls back to the first option. `[selected]`
+                    is evaluated on each option as it's created, so it isn't order-dependent.
+                -->
+                <option [disabled]="option.disabled" [selected]="option.value === field.value" [value]="option.value">
+                    {{ option.label | translate }}
+                </option>
+            }
+        </select>
+    </div>
+}

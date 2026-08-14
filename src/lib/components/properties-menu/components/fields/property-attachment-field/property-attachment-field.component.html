@@ -1,0 +1,95 @@
+<div class="bey-property-field-control bey-property-attachment">
+    <div class="bey-property-attachment-row">
+        @if (previewUrl) {
+            <img class="bey-property-attachment-preview" alt="" [src]="previewUrl" />
+        }
+
+        <div class="bey-property-attachment-picker">
+            <input
+                class="bey-property-field-input"
+                type="text"
+                role="combobox"
+                autocomplete="off"
+                [attr.aria-controls]="field.id + '-attachments'"
+                [attr.aria-expanded]="isOpen"
+                [attr.aria-label]="field.label"
+                [disabled]="field.disabled"
+                [placeholder]="'angular-components.properties-menu.attachmentField.search' | translate"
+                [value]="isOpen ? query : selectedLabel"
+                (blur)="close()"
+                (focus)="onFocus()"
+                (input)="onQueryInput($event)"
+                (keydown)="onKeydown($event)"
+            />
+
+            @if (isOpen) {
+                <div class="bey-property-attachment-panel" role="listbox" [id]="field.id + '-attachments'">
+                    @for (option of filteredOptions; track option.id) {
+                        <button
+                            class="bey-property-attachment-option"
+                            type="button"
+                            role="option"
+                            [attr.aria-selected]="option.id === field.value"
+                            [disabled]="option.disabled"
+                            (mousedown)="onOptionPicked(option, $event)"
+                        >
+                            @if (option.previewUrl) {
+                                <img class="bey-property-attachment-option-thumb" alt="" [src]="option.previewUrl" />
+                            }
+
+                            <span class="bey-property-attachment-option-text">
+                                <span class="bey-property-attachment-option-label">{{ option.label }}</span>
+
+                                @if (option.description) {
+                                    <span class="bey-property-attachment-option-description">{{ option.description }}</span>
+                                }
+                            </span>
+                        </button>
+                    } @empty {
+                        <p class="bey-property-attachment-empty">
+                            {{ 'angular-components.properties-menu.attachmentField.empty' | translate }}
+                        </p>
+                    }
+                </div>
+            }
+        </div>
+
+        <label
+            class="bey-property-attachment-upload"
+            [class.bey-property-attachment-upload-disabled]="field.disabled"
+            [tooltip]="'angular-components.properties-menu.attachmentField.upload' | translate"
+        >
+            <fa-icon [icon]="uploadIcon"></fa-icon>
+            <input
+                type="file"
+                hidden
+                [accept]="field.accept ?? '*/*'"
+                [attr.aria-label]="'angular-components.properties-menu.attachmentField.upload' | translate"
+                [disabled]="field.disabled"
+                (change)="onFileSelected($event)"
+            />
+        </label>
+
+        @if (field.value) {
+            <button
+                class="bey-property-attachment-clear"
+                type="button"
+                [attr.aria-label]="'angular-components.properties-menu.attachmentField.clear' | translate"
+                [disabled]="field.disabled"
+                [tooltip]="'angular-components.properties-menu.attachmentField.clear' | translate"
+                (click)="onClear()"
+            >
+                <fa-icon [icon]="clearIcon"></fa-icon>
+            </button>
+        }
+    </div>
+
+    @if (sizeErrorMaxSizeMB !== undefined) {
+        <p class="bey-property-attachment-error">
+            {{
+                'angular-components.properties-menu.attachmentField.tooLarge'
+                    | translate: { maxSizeMB: sizeErrorMaxSizeMB }
+            }}
+        </p>
+    }
+</div>

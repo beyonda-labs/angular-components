@@ -1,0 +1,122 @@
+.bey-property-attachment-row {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.bey-property-attachment-preview {
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.2rem;
+    object-fit: cover;
+}
+
+.bey-property-attachment-picker {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.bey-property-attachment-panel {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 2px);
+    right: 0;
+    left: 0;
+    max-height: 13rem;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 0.25rem;
+    background-color: var(--bg-elevated, var(--bg-primary));
+    box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+}
+
+.bey-property-attachment-option {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+    padding: 0.3rem 0.5rem;
+    border: 0;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.bey-property-attachment-option:hover,
+.bey-property-attachment-option:focus-visible {
+    background-color: var(--bg-hover, rgb(0 0 0 / 6%));
+}
+
+.bey-property-attachment-option:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.bey-property-attachment-option-thumb {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 0.15rem;
+    object-fit: cover;
+}
+
+.bey-property-attachment-option-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.bey-property-attachment-option-label {
+    overflow: hidden;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bey-property-attachment-option-description {
+    color: var(--text-muted);
+    font-size: 0.72rem;
+}
+
+.bey-property-attachment-upload,
+.bey-property-attachment-clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 1.6rem;
+    height: 1.6rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.2rem;
+    background: none;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    cursor: pointer;
+}
+
+.bey-property-attachment-upload:hover,
+.bey-property-attachment-clear:hover {
+    color: var(--text-primary);
+}
+
+.bey-property-attachment-upload-disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.bey-property-attachment-empty {
+    margin: 0;
+    padding: 0.4rem 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+}
+
+.bey-property-attachment-error {
+    margin: 0.25rem 0 0;
+    color: var(--bey-danger, #a33326);
+    font-size: 0.72rem;
+}

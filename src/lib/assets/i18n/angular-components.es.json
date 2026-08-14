@@ -253,6 +253,13 @@
             "results-range": "Mostrando {{ start }}-{{ end }} de {{ total }} resultados"
         },
         "properties-menu": {
+            "attachmentField": {
+                "clear": "Vaciar",
+                "empty": "No se han encontrado adjuntos",
+                "search": "Buscar adjuntos",
+                "tooLarge": "Este archivo supera el límite de {{maxSizeMB}} MB.",
+                "upload": "Subir un archivo nuevo"
+            },
             "close": "Cerrar",
             "colorField": {
                 "clear": "Vaciar"
@@ -271,6 +278,10 @@
                 "add": "Añadir"
             },
             "remove": "Eliminar",
+            "select": {
+                "noMatches": "Sin coincidencias",
+                "searchPlaceholder": "Buscar…"
+            },
             "spacing": {
                 "bottom": "Abajo",
                 "left": "Izquierda",

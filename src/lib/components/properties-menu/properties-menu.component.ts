@@ -10,6 +10,7 @@ import { PropertyVariable, PropertyVariableParameters } from './models/property-
 import { PropertiesMenuService } from './services/properties-menu.service';
 import { PropertyVariableService } from './services/property-variable.service';
 import {
+    PropertyAttachmentUpload,
     PropertyFieldAction,
     PropertyFieldValueChange,
     PropertyGroupRemove,
@@ -53,6 +54,7 @@ export class PropertiesMenuComponent {
     }
 
     @Output() activeTabChange = new EventEmitter<string>();
+    @Output() attachmentUpload = new EventEmitter<PropertyAttachmentUpload>();
     @Output() closed = new EventEmitter<void>();
     @Output() configChange = new EventEmitter<PropertiesMenuConfig>();
     @Output() fieldAction = new EventEmitter<PropertyFieldAction>();
@@ -84,6 +86,7 @@ export class PropertiesMenuComponent {
                 this.menuBody.nativeElement.scrollTop = 0;
             }
         });
+        this.propertiesMenuService.onAttachmentUpload = upload => this.attachmentUpload.emit(upload);
         this.propertiesMenuService.onFieldAction = action => this.fieldAction.emit(action);
         this.propertiesMenuService.onFieldValueChange = change => this.fieldValueChange.emit(change);
         this.propertiesMenuService.onGroupRemove = event => this.groupRemove.emit(event);

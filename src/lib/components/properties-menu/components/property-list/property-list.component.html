@@ -4,7 +4,10 @@
 
         <div class="bey-property-list-item" [class.bey-property-list-item-disabled]="listItem.disabled">
             @if (listItem.icon) {
-                <span class="bey-property-list-item-icon">
+                <span
+                    class="bey-property-list-item-icon"
+                    [ngClass]="listItem.iconClasses || 'bey-property-list-item-icon-default'"
+                >
                     <fa-icon [icon]="listItem.icon"></fa-icon>
                 </span>
             }

@@ -18,6 +18,12 @@
 -   Search module:
     -   `Select` field type for bounded/enum-like fields: renders a dropdown of the configured `options` instead of free text, with `equals`/`notEquals` operators.
     -   `Tags` field type for array-of-strings fields: `contains`/`notContains` match a whole array element, not a substring.
+-   Properties menu module:
+    -   Info field for read-only values, and attachment field to pick an attachment by id or upload a file (reported through the new `attachmentUpload` output).
+    -   Groups can split their fields into tabs, and any field can take half a row so two of them share it.
+    -   `searchable` on select fields, and `iconClasses` on list items to color an icon per item.
+-   Header module: icon-only action type, with the label shown as a tooltip.
+-   Styles: `bey-text-danger`, `bey-text-warning` and `bey-text-success` utility classes.
 
 ### Changed
 

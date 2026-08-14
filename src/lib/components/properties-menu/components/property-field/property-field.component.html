@@ -66,6 +66,16 @@
                         (valueChange)="onValueChange($event)"
                     ></bey-property-file-field>
                 }
+                @case (fieldType.Info) {
+                    <bey-property-info-field [field]="asInfoField()"></bey-property-info-field>
+                }
+                @case (fieldType.Attachment) {
+                    <bey-property-attachment-field
+                        [field]="asAttachmentField()"
+                        (uploadRequested)="onUploadRequested($event)"
+                        (valueChange)="onValueChange($event)"
+                    ></bey-property-attachment-field>
+                }
                 @case (fieldType.Segmented) {
                     <bey-property-segmented-field
                         [field]="asSegmentedField()"

@@ -1,6 +1,8 @@
 export enum PropertyFieldType {
+    Attachment = 'attachment',
     Color = 'color',
     File = 'file',
+    Info = 'info',
     Number = 'number',
     NumberArray = 'numberArray',
     Segmented = 'segmented',

@@ -6,6 +6,7 @@ import {
     faAlignRight,
     faBuilding,
     faCalculator,
+    faCircleInfo,
     faFile,
     faFileInvoice,
     faFileLines,
@@ -17,7 +18,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { PropertyAttachmentField } from '../../models/fields/property-attachment-field.model';
 import { PropertyColorField } from '../../models/fields/property-color-field.model';
+import { PropertyInfoField } from '../../models/fields/property-info-field.model';
 import { PropertyNumberField } from '../../models/fields/property-number-field.model';
 import { PropertySegmentedField } from '../../models/fields/property-segmented-field.model';
 import { PropertySelectField } from '../../models/fields/property-select-field.model';
@@ -25,7 +28,13 @@ import { PropertyTextField } from '../../models/fields/property-text-field.model
 import { PropertyToggleField } from '../../models/fields/property-toggle-field.model';
 import { PropertiesMenuConfig } from '../../models/properties-menu-config.model';
 import { PropertyGroup, PropertyGroupVariant } from '../../models/property-group.model';
-import { PropertyFieldsContent, PropertyListContent, PropertyTreeContent } from '../../models/property-group-content.model';
+import {
+    PropertyFieldsContent,
+    PropertyGroupTab,
+    PropertyListContent,
+    PropertyTabsContent,
+    PropertyTreeContent
+} from '../../models/property-group-content.model';
 import { PropertyListItem } from '../../models/property-list-item.model';
 import { PropertyTab } from '../../models/property-tab.model';
 import { PropertyTreeConfig } from '../../models/property-tree-config.model';
@@ -235,6 +244,84 @@ export class PropertiesMenuStyleGuideComponent {
                             variant: PropertyGroupVariant.SECONDARY
                         }),
                         new PropertyGroup({
+                            content: new PropertyTabsContent({
+                                tabs: [
+                                    new PropertyGroupTab({
+                                        id: 'borderTop',
+                                        label: 'Arriba',
+                                        fields: [
+                                            new PropertyColorField({ id: 'topColor', label: 'Color', value: '#000000' }),
+                                            new PropertyNumberField({ id: 'topWidth', label: 'Grosor', value: 1 })
+                                        ]
+                                    }),
+                                    new PropertyGroupTab({
+                                        id: 'borderRight',
+                                        label: 'Derecha',
+                                        fields: [
+                                            new PropertyColorField({ id: 'rightColor', label: 'Color', value: '#000000' }),
+                                            new PropertyNumberField({ id: 'rightWidth', label: 'Grosor', value: 1 })
+                                        ]
+                                    }),
+                                    new PropertyGroupTab({
+                                        id: 'borderBottom',
+                                        label: 'Abajo',
+                                        fields: [
+                                            new PropertyColorField({ id: 'bottomColor', label: 'Color', value: '#000000' }),
+                                            new PropertyNumberField({ id: 'bottomWidth', label: 'Grosor', value: 1 })
+                                        ]
+                                    }),
+                                    new PropertyGroupTab({
+                                        id: 'borderLeft',
+                                        label: 'Izquierda',
+                                        fields: [
+                                            new PropertyColorField({ id: 'leftColor', label: 'Color', value: '#000000' }),
+                                            new PropertyNumberField({ id: 'leftWidth', label: 'Grosor', value: 1 })
+                                        ]
+                                    })
+                                ]
+                            }),
+                            expanded: true,
+                            id: 'borders',
+                            label: 'Bordes',
+                            variant: PropertyGroupVariant.SECONDARY
+                        }),
+                        new PropertyGroup({
+                            content: new PropertyFieldsContent({
+                                fields: [
+                                    new PropertyToggleField({ id: 'bold', label: 'Negrita', span: 'half', value: true }),
+                                    new PropertyToggleField({ id: 'underline', label: 'Subrayado', span: 'half' }),
+                                    new PropertyToggleField({ id: 'italic', label: 'Cursiva', span: 'half' }),
+                                    new PropertyToggleField({ id: 'strikethrough', label: 'Tachado', span: 'half' }),
+                                    new PropertyInfoField({
+                                        id: 'scope',
+                                        label: 'Ámbito',
+                                        items: [{ label: 'Global', icon: faCircleInfo }, { label: 'texto' }]
+                                    }),
+                                    new PropertySelectField({
+                                        id: 'templateId',
+                                        label: 'Plantilla',
+                                        searchable: true,
+                                        value: 'invoice',
+                                        options: [
+                                            { label: 'Factura', value: 'invoice' },
+                                            { label: 'Membrete', value: 'letterhead' },
+                                            { label: 'Informe', value: 'report' }
+                                        ]
+                                    }),
+                                    new PropertyAttachmentField({
+                                        id: 'logo',
+                                        label: 'Logotipo',
+                                        accept: 'image/*',
+                                        maxSizeBytes: 10 * 1024 * 1024,
+                                        value: 'attachment-1',
+                                        options: [
+                                            { id: 'attachment-1', label: 'logo.png', description: '800 × 600' },
+                                            { id: 'attachment-2', label: 'firma.png', description: '320 × 120' }
+                                        ]
+                                    })
+                                ]
+                            }),
+                            expanded: true,
                             id: 'advanced',
                             label: 'Avanzado',
                             variant: PropertyGroupVariant.SECONDARY

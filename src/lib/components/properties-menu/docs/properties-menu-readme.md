@@ -141,6 +141,31 @@ Each concrete field type extends `PropertyField` and only adds the properties it
 | `BeyPropertyColorField`        | `readonly`                                                    |
 | `BeyPropertySegmentedField<T>` | `options: PropertyOption<T>[]`                                |
 | `BeyPropertySpacingField`      | `readonly` (`value`/`defaultValue` typed as `PropertySpacingValue`) |
+| `BeyPropertyInfoField`         | `items: PropertyInfoItem[]` (read-only text, always `disabled`) |
+| `BeyPropertyAttachmentField`   | `options: PropertyAttachmentOption[]`, `accept`, `maxSizeBytes`, `previewUrl` |
+
+`BeyPropertySelectField` also accepts `searchable: true` to render a filter box above its options.
+
+Every field accepts `span`: `'full'` (default) takes the whole row, `'half'` takes one column — two consecutive
+half fields share a row.
+
+#### Info fields
+
+`BeyPropertyInfoField` renders plain text instead of a control, for values the user cannot change. Each entry of
+`items` is `{ label, icon? }` and `label` goes through the `translate` pipe, so it may be a literal or an i18n key.
+
+#### Attachment fields
+
+`BeyPropertyAttachmentField` picks an existing attachment by id or uploads a new file. Its `value` is the
+attachment id, never the file contents.
+
+The component performs no I/O of its own:
+
+-   `options` is the catalog to choose from, already filtered by the consumer to the accepted file type. Each
+    option is `{ id, label, description?, previewUrl?, disabled? }`.
+-   `accept` is passed to the file input and `maxSizeBytes` rejects an oversized file before any upload starts.
+-   Choosing a file emits the menu's `attachmentUpload` output (`{ fieldId, file }`); storing it and adding it to
+    `options` is the consumer's job.
 
 ---
 
@@ -221,6 +246,30 @@ Clicking a card calls `selectListItem`/emits `listItemSelect` with the tab id, t
 `BeyPropertyListItem`; disabled items (`disabled: true`) are dimmed and ignore clicks. As with tree-content groups,
 building/inserting the actual block from the selected item is left entirely to the consumer.
 
+An item may carry `iconClasses` to color its icon per item — a problems list marking errors and warnings, for
+instance. The library ships `bey-text-danger`, `bey-text-warning` and `bey-text-success` for that; without it the
+icon uses the list's muted color.
+
+### Tabbed groups
+
+Give a group a `BeyPropertyTabsContent` to split its fields across tabs, for properties that repeat the same shape
+several times over — the four sides of a border, say:
+
+```ts
+new BeyPropertyGroup({
+    id: 'borders',
+    content: new BeyPropertyTabsContent({
+        tabs: [
+            new BeyPropertyGroupTab({ id: 'top', fields: [...] }),
+            new BeyPropertyGroupTab({ id: 'right', fields: [...] })
+        ]
+    })
+});
+```
+
+A tab holds fields, not groups. `activeTabId` selects the open tab and defaults to the first one; each tab's label
+resolves like any other, from `<prefix>.tabs.<id>.label` unless `label` is set explicitly.
+
 ---
 
 ## Outputs
@@ -237,6 +286,7 @@ building/inserting the actual block from the selected item is left entirely to t
 | `listItemSelect`     | `{ tabId, groupId, itemId, item }`       | A list card is selected                                |
 | `tabAddRequested`    | `{ tabId }`                              | A tab's `addLabel` button is clicked                   |
 | `groupRemove`        | `{ tabId, groupId }`                     | A removable group's remove action is triggered         |
+| `attachmentUpload`   | `{ fieldId, file }`                      | A file is chosen in an attachment field               |
 | `closed`             | `void`                                   | The header's close action is triggered                |
 
 ---

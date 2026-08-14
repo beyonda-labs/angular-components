@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import { Component, inject, Input } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
@@ -9,7 +10,7 @@ import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { resolvePropertyLabelKey } from '../../utils/property-i18n.util';
 
 @Component({
-    imports: [FontAwesomeModule, ListComponent, TranslateModule],
+    imports: [FontAwesomeModule, ListComponent, NgClass, TranslateModule],
     selector: 'bey-property-list',
     standalone: true,
     styleUrls: ['./property-list.component.css'],

@@ -4,7 +4,14 @@ import { faChevronDown, faPlus, faTrash } from '@fortawesome/free-solid-svg-icon
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertyGroup } from '../../models/property-group.model';
-import { PropertyFieldsContent, PropertyGroupContentType, PropertyListContent, PropertyTreeContent } from '../../models/property-group-content.model';
+import {
+    PropertyFieldsContent,
+    PropertyGroupContentType,
+    PropertyGroupTab,
+    PropertyListContent,
+    PropertyTabsContent,
+    PropertyTreeContent
+} from '../../models/property-group-content.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { resolvePropertyLabelKey } from '../../utils/property-i18n.util';
 import { PropertyFieldComponent } from '../property-field/property-field.component';
@@ -45,12 +52,35 @@ export class PropertyGroupComponent {
         return this.group.content.type === PropertyGroupContentType.LIST ? this.group.content : undefined;
     }
 
+    get tabsContent(): PropertyTabsContent | undefined {
+        return this.group.content.type === PropertyGroupContentType.TABS ? this.group.content : undefined;
+    }
+
     get treeContent(): PropertyTreeContent | undefined {
         return this.group.content.type === PropertyGroupContentType.TREE ? this.group.content : undefined;
     }
 
     get visibleFields(): PropertyFieldsContent['fields'] {
         return this.fieldsContent?.fields.filter(field => !field.hidden) ?? [];
+    }
+
+    get activeTabFields(): PropertyFieldsContent['fields'] {
+        const content = this.tabsContent;
+        const active = content?.tabs.find(tab => tab.id === content.activeTabId);
+
+        return active?.fields.filter(field => !field.hidden) ?? [];
+    }
+
+    getContentTabLabelKey(tab: PropertyGroupTab): string {
+        return resolvePropertyLabelKey(this.propertiesMenuService.config().prefix, 'groups', tab.id, tab.label);
+    }
+
+    selectContentTab(contentTabId: string): void {
+        if (this.group.disabled) {
+            return;
+        }
+
+        this.propertiesMenuService.selectGroupTab(this.tabId, this.group.id, contentTabId);
     }
 
     toggle(): void {

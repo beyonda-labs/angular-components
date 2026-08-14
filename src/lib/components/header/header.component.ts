@@ -53,11 +53,14 @@ export class HeaderComponent {
     }
 
     getActionButton(action: HeaderAction): ButtonConfig {
+        const isIconOnly = action.type === HeaderActionType.Icon;
+
         return new ButtonConfig({
             action: action.action ?? (() => {}),
+            customClass: isIconOnly ? 'bey-header-action-icon' : undefined,
             icon: action.icon,
             isDisabled: action.disabled,
-            label: this.resolveActionText(action, 'label'),
+            label: isIconOnly ? '' : this.resolveActionText(action, 'label'),
             tooltip: this.resolveActionText(action, 'tooltip'),
             type: this.getButtonType(action.type)
         });
@@ -71,6 +74,7 @@ export class HeaderComponent {
             this.isMenuOpen = false;
             buttonAction();
         };
+
         button.tooltipPlacement = 'left';
 
         return button;
@@ -119,6 +123,7 @@ export class HeaderComponent {
             this.openActionKey = null;
             buttonAction();
         };
+
         button.tooltipPlacement = 'left';
 
         return button;
@@ -130,6 +135,7 @@ export class HeaderComponent {
                 return ButtonType.Primary;
             case HeaderActionType.SecondaryButton:
                 return ButtonType.Secondary;
+            case HeaderActionType.Icon:
             case HeaderActionType.Text:
             default:
                 return ButtonType.Tertiary;

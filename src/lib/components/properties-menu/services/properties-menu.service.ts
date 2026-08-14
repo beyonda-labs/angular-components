@@ -3,13 +3,19 @@ import { Injectable, signal } from '@angular/core';
 import { PropertiesMenuConfig, PropertiesMenuConfigParameters } from '../models/properties-menu-config.model';
 import { PropertyField } from '../models/property-field.model';
 import { PropertyGroup, PropertyGroupParameters } from '../models/property-group.model';
-import { PropertyFieldsContent, PropertyGroupContentType, PropertyTreeContent } from '../models/property-group-content.model';
+import {
+    PropertyFieldsContent,
+    PropertyGroupContentType,
+    PropertyTabsContent,
+    PropertyTreeContent
+} from '../models/property-group-content.model';
 import { PropertyListItem } from '../models/property-list-item.model';
 import { PropertyTab } from '../models/property-tab.model';
 import { PropertyTreeConfig } from '../models/property-tree-config.model';
 import { PropertyTreeNode, PropertyTreeNodeParameters } from '../models/property-tree-node.model';
 import { PropertyVariable } from '../models/property-variable.model';
 import {
+    PropertyAttachmentUpload,
     PropertyFieldAction,
     PropertyFieldValueChange,
     PropertyGroupRemove,
@@ -29,6 +35,7 @@ export class PropertiesMenuService {
     readonly selectedTreeNodeId = signal<string | null>(null);
 
     onActiveTabChange?: (tabId: string) => void;
+    onAttachmentUpload?: (upload: PropertyAttachmentUpload) => void;
     onFieldAction?: (action: PropertyFieldAction) => void;
     onFieldValueChange?: (change: PropertyFieldValueChange) => void;
     onGroupRemove?: (event: PropertyGroupRemove) => void;
@@ -57,6 +64,21 @@ export class PropertiesMenuService {
 
         this.activeTabId.set(tabId);
         this.onActiveTabChange?.(tabId);
+    }
+
+    selectGroupTab(tabId: string, groupId: string, contentTabId: string): void {
+        this.config.update(config =>
+            this.updateGroup(config, tabId, groupId, current => {
+                if (current.content.type !== PropertyGroupContentType.TABS) {
+                    return current;
+                }
+
+                return {
+                    ...current,
+                    content: new PropertyTabsContent({ ...current.content, activeTabId: contentTabId })
+                };
+            })
+        );
     }
 
     toggleGroup(tabId: string, groupId: string): void {
@@ -89,6 +111,10 @@ export class PropertiesMenuService {
 
     triggerFieldAction(fieldId: string, key: string, selectionStart: number, selectionEnd: number): void {
         this.onFieldAction?.({ fieldId, key, selectionEnd, selectionStart });
+    }
+
+    requestAttachmentUpload(fieldId: string, file: File): void {
+        this.onAttachmentUpload?.({ fieldId, file });
     }
 
     applyVariableSelection(fieldId: string, variable: PropertyVariable, value: unknown): void {

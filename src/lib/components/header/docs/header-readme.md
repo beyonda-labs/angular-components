@@ -184,6 +184,7 @@ that's not a meaningful use case; keep it a simple click action.
 | `BeyHeaderActionType.PrimaryButton`   | Renders a primary filled button      |
 | `BeyHeaderActionType.SecondaryButton` | Renders a secondary outlined button  |
 | `BeyHeaderActionType.Text`            | Renders a tertiary text-style button |
+| `BeyHeaderActionType.Icon`            | Renders the icon alone, with the label available as a tooltip |
 
 ---
 
