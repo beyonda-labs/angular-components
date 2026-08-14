@@ -19,6 +19,10 @@
     -   `Select` field type for bounded/enum-like fields: renders a dropdown of the configured `options` instead of free text, with `equals`/`notEquals` operators.
     -   `Tags` field type for array-of-strings fields: `contains`/`notContains` match a whole array element, not a substring.
 
+### Changed
+
+-   Tooling: the package manager is now pnpm, pinned through `packageManager`.
+
 ### Fixed
 
 -   Breadcrumb module: fixed the overflow-collapse not updating after the item list changed.
