@@ -200,6 +200,27 @@ describe('HeaderComponent', () => {
         expect(badge?.textContent?.trim()).toBe('test.header.badge');
     });
 
+    it('should apply the palette class it is given instead of its own colours', () => {
+        component.config = buildConfig({ badge: { text: 'test.header.badge', cssClass: 'bey-badge-color-success' } });
+
+        fixture.detectChanges();
+
+        const badge = fixture.nativeElement.querySelector('.bey-header-badge');
+
+        expect(badge?.classList.contains('bey-badge-color-success')).toBe(true);
+        expect(badge?.classList.contains('bey-header-badge-default')).toBe(false);
+    });
+
+    it('should fall back to its own colours when no palette class is given', () => {
+        component.config = buildConfig({ badge: { text: 'test.header.badge' } });
+
+        fixture.detectChanges();
+
+        const badge = fixture.nativeElement.querySelector('.bey-header-badge');
+
+        expect(badge?.classList.contains('bey-header-badge-default')).toBe(true);
+    });
+
     it('should not render a badge when it is not set', () => {
         component.config = buildConfig();
 

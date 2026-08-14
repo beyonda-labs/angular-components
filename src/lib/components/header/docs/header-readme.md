@@ -146,7 +146,7 @@ The root configuration object passed to `[config]`.
 | Parameter  | Type     | Required | Default | Description                                    |
 | ---------- | -------- | -------- | ------- | ----------------------------------------------- |
 | `text`     | `string` | yes      | -       | Badge translation key, passed through `translate` |
-| `cssClass` | `string` | no       | -       | Extra CSS class(es) applied to the badge element |
+| `cssClass` | `string` | no       | -       | CSS class(es) applied to the badge element, replacing its default colors — any palette class (`bey-badge-color-*`) works |
 
 ### `BeyHeaderVariant`
 

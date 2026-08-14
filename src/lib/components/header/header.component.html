@@ -19,7 +19,10 @@
             }
 
             @if (config.badge) {
-                <span class="bey-header-badge" [ngClass]="config.badge.cssClass">
+                <span
+                    class="bey-header-badge"
+                    [ngClass]="config.badge.cssClass || 'bey-header-badge-default'"
+                >
                     {{ config.badge.text | translate }}
                 </span>
             }

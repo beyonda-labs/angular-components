@@ -39,10 +39,13 @@
 .bey-header-badge {
     padding: 0.15rem 0.6rem;
     border-radius: 999px;
-    background: var(--bey-header-badge-bg);
-    color: var(--bey-header-badge-fg);
     font-size: 0.75rem;
     font-weight: 600;
+}
+
+.bey-header-badge-default {
+    background: var(--bey-header-badge-bg);
+    color: var(--bey-header-badge-fg);
 }
 
 .bey-header-actions {
