@@ -10,6 +10,10 @@ export interface HttpRequestOptions {
     successToast?: string;
 }
 
+export interface UploadRequestOptions extends HttpRequestOptions {
+    onProgress?: (progress: number) => void;
+}
+
 export interface CustomErrorResponse {
     readonly errorCode: string;
     readonly timestamp: string;

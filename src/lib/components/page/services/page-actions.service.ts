@@ -44,6 +44,7 @@ interface BulkActionOptions<T> {
 }
 
 interface SaveEntityOptions {
+    afterCreate?: (created: PageItem) => Observable<unknown> | undefined;
     create: (baseUrl: string, value: unknown, successToast: string) => Observable<unknown>;
     edit: (baseUrl: string, id: string | number, value: unknown, successToast: string) => Observable<unknown>;
     entitySuffix: string;
@@ -392,6 +393,7 @@ export class PageActionsService {
 
     private save(context: PageActionsContext, value: unknown, form: ModalFormConfig, original?: PageItem): void {
         this.saveEntity(context, this.mergeParentField(context, value, original), form, original, {
+            afterCreate: created => context.config.formConfig?.afterCreate?.(created),
             create: (baseUrl, entityValue, successToast) =>
                 this.pageHttpService.create(baseUrl, entityValue, successToast),
             edit: (baseUrl, id, entityValue, successToast) =>
@@ -437,10 +439,22 @@ export class PageActionsService {
             ? options.edit(baseUrl, original.id, value, successToast)
             : options.create(baseUrl, value, successToast);
 
-        request.subscribe(() => {
-            form.close();
-            options.onSaved();
+        request.subscribe(created => {
+            const followUp = original ? undefined : options.afterCreate?.(created as PageItem);
+
+            if (!followUp) {
+                this.completeSave(form, options);
+
+                return;
+            }
+
+            followUp.subscribe(() => this.completeSave(form, options));
         });
+    }
+
+    private completeSave(form: ModalFormConfig, options: SaveEntityOptions): void {
+        form.close();
+        options.onSaved();
     }
 }
 

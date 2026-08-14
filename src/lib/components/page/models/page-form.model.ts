@@ -1,4 +1,5 @@
 import { FormGroup } from '@angular/forms';
+import { Observable } from 'rxjs';
 
 import { FormConfig, FormSection, FormStep } from '../../form/models/form.model';
 import { PageItem } from './page-item.model';
@@ -13,11 +14,13 @@ export class PageFormConfig<TValue = unknown> {
     toFormValue: (item?: PageItem) => TValue | undefined;
     toItem: (value: TValue) => unknown;
 
+    afterCreate?: (created: PageItem) => Observable<unknown> | undefined;
     onCreate?: (value: TValue, form: FormConfig<TValue>) => void;
     onEdit?: (value: TValue, form: FormConfig<TValue>) => void;
     onFormGroupAdded?: (formGroup: FormGroup, form: FormConfig<TValue>) => void;
 
     constructor({
+        afterCreate,
         buildSections,
         allowSubmitWithoutChanges = false,
         onCreate,
@@ -28,6 +31,7 @@ export class PageFormConfig<TValue = unknown> {
         toFormValue = (item?: PageItem) => item as TValue | undefined,
         toItem = (value: TValue) => value
     }: PageFormConfigParameters<TValue>) {
+        this.afterCreate = afterCreate;
         this.allowSubmitWithoutChanges = allowSubmitWithoutChanges;
         this.buildSections = buildSections;
         this.onCreate = onCreate;
@@ -44,6 +48,7 @@ export interface PageFormConfigParameters<TValue = unknown> {
     buildSections: (item?: PageItem) => FormSection[];
     prefix: string;
 
+    afterCreate?: (created: PageItem) => Observable<unknown> | undefined;
     allowSubmitWithoutChanges?: boolean;
     onCreate?: (value: TValue, form: FormConfig<TValue>) => void;
     onEdit?: (value: TValue, form: FormConfig<TValue>) => void;

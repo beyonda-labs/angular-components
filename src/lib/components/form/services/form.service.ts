@@ -4,6 +4,7 @@ import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from
 import { FormCheckboxField } from '../models/fields/form-checkbox-field.model';
 import { FormChipsField } from '../models/fields/form-chips-field.model';
 import { FormDateField } from '../models/fields/form-date-field.model';
+import { FormFileField, matchesAcceptPattern } from '../models/fields/form-file-field.model';
 import { FormNumberField } from '../models/fields/form-number-field.model';
 import { FormTextField } from '../models/fields/form-text-field.model';
 import { FormTextareaField } from '../models/fields/form-textarea-field.model';
@@ -41,6 +42,8 @@ export class FormService {
                 return control as FormControl<boolean | null>;
             case FormFieldType.Chips:
                 return control as FormControl<string[] | null>;
+            case FormFieldType.File:
+                return control as FormControl<File | null>;
             default:
                 return undefined;
         }
@@ -79,6 +82,8 @@ export class FormService {
                 return this.initTextareaFieldControl(field as FormTextareaField);
             case FormFieldType.Chips:
                 return this.initChipsFieldControl(field as FormChipsField);
+            case FormFieldType.File:
+                return this.initFileFieldControl(field as FormFileField);
             default:
                 return undefined;
         }
@@ -159,6 +164,46 @@ export class FormService {
                 asyncValidators: this.formValidatorService.getFieldAsyncValidators(field)
             }
         );
+    }
+
+    private initFileFieldControl(field: FormFileField): FormControl<File | null> {
+        return new FormControl<File | null>(
+            { value: null, disabled: field.isDisabled },
+            {
+                validators: [...this.getValidators(field), ...this.getFileValidators(field)],
+                asyncValidators: this.formValidatorService.getFieldAsyncValidators(field)
+            }
+        );
+    }
+
+    private getFileValidators(field: FormFileField): ValidatorFn[] {
+        const validators: ValidatorFn[] = [];
+
+        if (field.maxSizeBytes !== undefined) {
+            validators.push(control => {
+                const file = control.value as File | null;
+
+                if (!file || file.size <= field.maxSizeBytes!) {
+                    return null;
+                }
+
+                return { maxSizeBytes: { maxSizeBytes: field.maxSizeBytes, actual: file.size } };
+            });
+        }
+
+        if (field.accept.length > 0) {
+            validators.push(control => {
+                const file = control.value as File | null;
+
+                if (!file || field.accept.some(pattern => matchesAcceptPattern(pattern, file.type))) {
+                    return null;
+                }
+
+                return { accept: { accept: field.accept, actual: file.type } };
+            });
+        }
+
+        return validators;
     }
 
     private initNumberFieldControl(field: FormNumberField): FormControl<number | null> {

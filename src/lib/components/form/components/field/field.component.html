@@ -106,6 +106,13 @@
                         [formConfig]="formConfig"
                     ></bey-form-chips-field>
                 }
+                @case ('file') {
+                    <bey-form-file-field
+                        [field]="$any(field)"
+                        [section]="section"
+                        [formConfig]="formConfig"
+                    ></bey-form-file-field>
+                }
                 @case ('info') {
                     <bey-form-info-field [field]="$any(field)"></bey-form-info-field>
                 }

@@ -24,6 +24,9 @@
     -   `searchable` on select fields, and `iconClasses` on list items to color an icon per item.
 -   Header module: icon-only action type, with the label shown as a tooltip.
 -   Styles: `bey-text-danger`, `bey-text-warning` and `bey-text-success` utility classes.
+-   Form module: file field, validating the accepted mime types and the maximum size before any upload.
+-   Http service: `upload()` sends raw bytes reporting progress, and `getBlob()` fetches a response as bytes instead of JSON.
+-   Page module: `afterCreate` on the form config runs a follow-up request before the create modal closes, for entities that take more than one call to create.
 
 ### Changed
 

@@ -48,6 +48,7 @@ The `type` discriminator used by `field.component.html` to select the rendered c
 | `BeyFormFieldType.Checkbox` | Boolean checkbox       |
 | `BeyFormFieldType.Chips`    | Tag/chips input        |
 | `BeyFormFieldType.Info`     | Read-only icon/label list |
+| `BeyFormFieldType.File`     | File picker            |
 
 ---
 
@@ -277,6 +278,32 @@ new BeyFormInfoField({
     key: 'versionInfo',
     columns: 6,
     items: [{ label: '1.0' }]
+});
+```
+
+---
+
+### `BeyFormFileField`
+
+File picker. The `FormControl` value is the selected `File`, or `null` — never its contents: reading the bytes is
+left to whoever submits the form, so nothing pays for a copy it may not need.
+
+**Extra attributes:**
+
+| Attribute      | Type       | Default | Description                                                     |
+| -------------- | ---------- | ------- | ---------------------------------------------------------------- |
+| `accept`       | `string[]` | `[]`    | Mime patterns (`image/*`, `application/pdf`) offered by the picker and validated on selection |
+| `maxSizeBytes` | `number`   | `undefined` | Rejects a larger file, before any upload starts             |
+
+Both produce a validation error on the control (`accept`, `maxSizeBytes`) and a message under the field.
+
+```ts
+new BeyFormFileField({
+    key: 'file',
+    columns: 12,
+    isRequired: true,
+    accept: ['image/*', 'application/pdf'],
+    maxSizeBytes: 10 * 1024 * 1024
 });
 ```
 

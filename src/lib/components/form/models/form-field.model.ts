@@ -73,6 +73,7 @@ export enum FormFieldType {
     Checkbox = 'checkbox',
     Chips = 'chips',
     Date = 'date',
+    File = 'file',
     Info = 'info',
     Number = 'number',
     Password = 'password',

@@ -78,7 +78,7 @@ readonly config = new BeyPageConfig({
 | `onDataLoaded` | no | Callback invoked after every successful data load, with the full backend response. |
 | `headerConfig` | no | Title (`{prefix}.title` by default) and the action catalog. |
 | `tableConfig` | no | Columns, row renderer (`loadRow`), selection and pagination flags. |
-| `formConfig` | no | `BeyPageFormConfig`: how the create/edit modal forms are initialized (`buildSections(item?)`, `steps`, `toFormValue`/`toItem`, `onFormGroupAdded`, `onCreate`/`onEdit`). |
+| `formConfig` | no | `BeyPageFormConfig`: how the create/edit modal forms are initialized (`buildSections(item?)`, `steps`, `toFormValue`/`toItem`, `onFormGroupAdded`, `onCreate`/`onEdit`, `afterCreate`). |
 | `$refresh` / `refresh()` | — | External control channel: the consumer calls `config.refresh()` to force a reload (the service cannot be injected from outside the component). |
 
 \* Provide `baseUrl` **or** `source`, never both.
@@ -331,6 +331,12 @@ The wiring is split across the page services:
 - `PageHttpService` performs every HTTP request (`POST`, `PUT`, `DELETE`).
 
 Flow: submit → value mapped through `toItem` → backend request → on success the modal closes and the table reloads; on error the modal stays open with the user's input intact.
+
+An entity whose creation takes more than one request — uploading a file after its row exists, say — declares
+`afterCreate(created)` on the `formConfig`. It receives the created entity as the backend returned it, and while
+the observable it returns has not completed the modal stays open and the table is not reloaded. Anything from the
+submitted form it also needs (the picked `File`) should be captured in `onCreate`, which runs with the raw form
+value just before the create request.
 
 The modal title uses consumer i18n keys: `{prefix}.form.create.title` and `{prefix}.form.edit.title`. The buttons use the library keys `angular-components.page.form.cancel` / `.submit`.
 

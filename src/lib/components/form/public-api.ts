@@ -30,6 +30,7 @@ export { FormTextVariableField as BeyFormTextVariableField } from './models/fiel
 export { FormCheckboxField as BeyFormCheckboxField } from './models/fields/form-checkbox-field.model';
 export { FormChipsField as BeyFormChipsField } from './models/fields/form-chips-field.model';
 export { FormDateField as BeyFormDateField } from './models/fields/form-date-field.model';
+export { FormFileField as BeyFormFileField } from './models/fields/form-file-field.model';
 export { FormInfoField as BeyFormInfoField } from './models/fields/form-info-field.model';
 export type { FormInfoItem as BeyFormInfoItem } from './models/fields/form-info-field.model';
 export { FormNumberField as BeyFormNumberField } from './models/fields/form-number-field.model';
