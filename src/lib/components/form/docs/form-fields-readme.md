@@ -44,6 +44,7 @@ The `type` discriminator used by `field.component.html` to select the rendered c
 | `BeyFormFieldType.Number`   | Numeric input          |
 | `BeyFormFieldType.Date`     | Date picker input      |
 | `BeyFormFieldType.Select`   | Dropdown select        |
+| `BeyFormFieldType.Autocomplete` | Searchable dropdown (typeahead) |
 | `BeyFormFieldType.Radio`    | Radio button group     |
 | `BeyFormFieldType.Checkbox` | Boolean checkbox       |
 | `BeyFormFieldType.Chips`    | Tag/chips input        |
@@ -54,7 +55,7 @@ The `type` discriminator used by `field.component.html` to select the rendered c
 
 ### `BeyFormFieldOption`
 
-Used by `BeyFormSelectField` and `BeyFormRadioField` to define individual options:
+Used by `BeyFormSelectField`, `BeyFormAutocompleteField` and `BeyFormRadioField` to define individual options:
 
 | Attribute    | Type      | Required | Description                       |
 | ------------ | --------- | -------- | --------------------------------- |
@@ -168,6 +169,34 @@ new BeyFormSelectField({
         { label: 'countries.us', value: 'us' },
         { label: 'countries.mx', value: 'mx', isDisabled: true }
     ]
+});
+```
+
+---
+
+### `BeyFormAutocompleteField`
+
+Searchable dropdown. Behaves like `BeyFormSelectField` — the control stores the option `value` as a string — but the closed field shows the selected option's label and typing filters the list instead of scrolling it. Use it when the option list is long enough that a native select becomes unusable.
+
+Options are filtered against their **translated** labels, so a `label` holding a translation key filters by what the user actually reads.
+
+**Extra attributes:**
+
+| Attribute  | Type                   | Default                                       | Description                                            |
+| ---------- | ---------------------- | --------------------------------------------- | ------------------------------------------------------ |
+| `options`  | `BeyFormFieldOption[]` | `[]`                                          | Array of selectable options                            |
+| `emptyKey` | `string`               | `angular-components.form.autocompleteField.empty` | Translation key shown when no option matches the query |
+
+The placeholder follows the same convention as the rest of the fields: `placeholder` when set, otherwise `<sectionPrefix>.<key>.placeholder`.
+
+Keyboard: arrow keys move through the filtered list (wrapping at both ends), `Enter` picks the active option, `Escape` closes the panel without changing the value.
+
+```ts
+new BeyFormAutocompleteField({
+    key: 'attachment',
+    columns: 6,
+    isRequired: true,
+    options: attachments.map(attachment => ({ label: attachment.name, value: attachment.id }))
 });
 ```
 

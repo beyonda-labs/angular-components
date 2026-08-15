@@ -9,6 +9,7 @@ import { FormDateField } from '../../models/fields/form-date-field.model';
 import { FormConfig, FormSection } from '../../models/form.model';
 import { FormField } from '../../models/form-field.model';
 import { FormService } from '../../services/form.service';
+import { FormAutocompleteFieldComponent } from './field-autocomplete/field-autocomplete.component';
 import { FormCheckboxFieldComponent } from './field-checkbox/field-checkbox.component';
 import { FormChipsFieldComponent } from './field-chips/field-chips.component';
 import { FormDateFieldComponent } from './field-date/field-date.component';
@@ -26,6 +27,7 @@ import { FormTextareaFieldComponent } from './field-textarea/field-textarea.comp
     imports: [
         CommonModule,
         FontAwesomeModule,
+        FormAutocompleteFieldComponent,
         FormCheckboxFieldComponent,
         FormChipsFieldComponent,
         FormDateFieldComponent,

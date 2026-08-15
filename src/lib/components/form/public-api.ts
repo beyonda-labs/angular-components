@@ -25,6 +25,7 @@ export {
     FormFieldCustomValidator as BeyFormFieldCustomValidator,
     FormFieldAsyncValidator as BeyFormFieldAsyncValidator
 } from './models/form-field-validator.model';
+export { FormAutocompleteField as BeyFormAutocompleteField } from './models/fields/form-autocomplete-field.model';
 export { FormTextField as BeyFormTextField } from './models/fields/form-text-field.model';
 export { FormTextVariableField as BeyFormTextVariableField } from './models/fields/form-text-variable-field.model';
 export { FormCheckboxField as BeyFormCheckboxField } from './models/fields/form-checkbox-field.model';

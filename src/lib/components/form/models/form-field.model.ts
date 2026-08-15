@@ -70,6 +70,7 @@ interface FormFieldParameters {
 }
 
 export enum FormFieldType {
+    Autocomplete = 'autocomplete',
     Checkbox = 'checkbox',
     Chips = 'chips',
     Date = 'date',

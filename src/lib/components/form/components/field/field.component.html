@@ -78,6 +78,13 @@
                         [formConfig]="formConfig"
                     ></bey-form-textarea-field>
                 }
+                @case ('autocomplete') {
+                    <bey-form-autocomplete-field
+                        [field]="$any(field)"
+                        [section]="section"
+                        [formConfig]="formConfig"
+                    ></bey-form-autocomplete-field>
+                }
                 @case ('select') {
                     <bey-form-select-field
                         [field]="$any(field)"

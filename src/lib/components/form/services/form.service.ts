@@ -28,6 +28,7 @@ export class FormService {
         }
 
         switch (field.type) {
+            case FormFieldType.Autocomplete:
             case FormFieldType.Text:
             case FormFieldType.TextVariable:
             case FormFieldType.Password:
@@ -73,6 +74,7 @@ export class FormService {
                 return this.initCheckboxFieldControl(field as FormCheckboxField);
             case FormFieldType.Date:
                 return this.initDateFieldControl(field as FormDateField);
+            case FormFieldType.Autocomplete:
             case FormFieldType.Radio:
             case FormFieldType.Select:
                 return this.initStringFieldControl(field);

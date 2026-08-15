@@ -1,6 +1,11 @@
 {
     "angular-components": {
         "form": {
+            "autocompleteField": {
+                "clear": "Clear",
+                "empty": "No options found",
+                "toggle": "Show options"
+            },
             "cancel": {
                 "without-changes": "No changes have been made to the form."
             },

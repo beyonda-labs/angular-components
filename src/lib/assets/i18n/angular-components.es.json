@@ -13,6 +13,11 @@
             "terms": "Términos y condiciones"
         },
         "form": {
+            "autocompleteField": {
+                "clear": "Vaciar",
+                "empty": "No se han encontrado opciones",
+                "toggle": "Mostrar opciones"
+            },
             "cancel": {
                 "without-changes": "No se han realizado cambios en el formulario."
             },
@@ -516,6 +521,40 @@
                 "open": "Abrir formulario modal",
                 "submitted": "El formulario modal ha sido enviado: ",
                 "title": "Nuevo contacto"
+            },
+            "sectionAutocomplete": {
+                "autocomplete1": {
+                    "label": "Typeahead básico",
+                    "options": {
+                        "option1": "Opción 1",
+                        "option2": "Opción 2",
+                        "option3": "Opción 3",
+                        "option4": "Opción 4"
+                    },
+                    "placeholder": "Busque una opción"
+                },
+                "autocomplete2": {
+                    "label": "Typeahead obligatorio",
+                    "options": {
+                        "option1": "Opción obligatoria 1",
+                        "option2": "Opción obligatoria 2",
+                        "option3": "Opción obligatoria 3",
+                        "option4": "Opción obligatoria 4"
+                    },
+                    "placeholder": "Busque una opción obligatoria"
+                },
+                "autocomplete3": {
+                    "label": "Typeahead deshabilitado",
+                    "options": {
+                        "option1": "Opción deshabilitada 1",
+                        "option2": "Opción deshabilitada 2",
+                        "option3": "Opción deshabilitada 3",
+                        "option4": "Opción deshabilitada 4"
+                    },
+                    "placeholder": "Typeahead deshabilitado"
+                },
+                "label": "Campos con búsqueda",
+                "tooltip": "Variantes de typeahead con comportamiento básico, obligatorio y deshabilitado"
             },
             "sectionCheckbox": {
                 "checkbox1": {

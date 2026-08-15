@@ -292,6 +292,122 @@ textarea.form-control {
     background-color: var(--bey-bg-hover);
 }
 
+/* ─── Autocomplete ───────────────────────────────────────────────────────── */
+.bey-autocomplete {
+    position: relative;
+}
+
+.bey-autocomplete-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.bey-autocomplete-input {
+    padding-right: 3.25rem;
+    text-overflow: ellipsis;
+}
+
+.bey-autocomplete-input-invalid {
+    border-color: var(--bey-danger);
+}
+
+.bey-autocomplete-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 1px;
+    bottom: 1px;
+    width: 1.6rem;
+    border: none;
+    padding: 0;
+    background: transparent;
+    color: var(--bey-secondary);
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.bey-autocomplete-action:hover:not(:disabled) {
+    color: var(--text-primary);
+}
+
+.bey-autocomplete-action:disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+.bey-autocomplete-action:not(.bey-autocomplete-toggle) {
+    right: 1.6rem;
+}
+
+.bey-autocomplete-toggle {
+    right: 1px;
+    border-radius: 0 calc(0.3rem - 1px) calc(0.3rem - 1px) 0;
+}
+
+.bey-autocomplete-toggle-open {
+    transform: rotate(180deg);
+}
+
+.bey-autocomplete-panel {
+    position: absolute;
+    z-index: 1080;
+    top: calc(100% + 2px);
+    right: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    max-height: 13rem;
+    overflow-y: auto;
+    border: 1px solid var(--bey-gray-200);
+    border-radius: 0.3rem;
+    padding: 0.2rem;
+    background: var(--bey-bg-surface);
+    box-shadow: 0 12px 32px rgba(var(--bey-black-rgb), 0.14);
+}
+
+:host-context(body.dark) .bey-autocomplete-panel {
+    border-color: var(--bey-gray-800);
+}
+
+.bey-autocomplete-option {
+    overflow: hidden;
+    width: 100%;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.35rem 0.5rem;
+    background: transparent;
+    color: var(--bey-field-fg);
+    font-size: 0.82rem;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.bey-autocomplete-option:hover:not(:disabled),
+.bey-autocomplete-option-active {
+    background-color: var(--bey-bg-hover);
+}
+
+.bey-autocomplete-option-selected {
+    font-weight: 600;
+}
+
+.bey-autocomplete-option:disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+.bey-autocomplete-empty {
+    margin: 0;
+    padding: 0.45rem 0.5rem;
+    color: var(--bey-secondary);
+    font-size: 0.8rem;
+}
+
 .bey-file-input {
     position: absolute;
     width: 1px;
