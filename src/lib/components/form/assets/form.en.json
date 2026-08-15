@@ -7,6 +7,14 @@
             "chips": {
                 "remove": "Remove"
             },
+            "fileField": {
+                "choose": "Choose file",
+                "clear": "Remove file",
+                "empty": "No file selected",
+                "maxSize": "Maximum size: {{maxSize}}",
+                "tooLarge": "The file exceeds the maximum size of {{maxSize}}",
+                "unsupportedType": "Unsupported file type. Allowed: {{accept}}"
+            },
             "modal": {
                 "close-confirmation": {
                     "message": "There are unsaved changes in the form. Are you sure you want to close it?",

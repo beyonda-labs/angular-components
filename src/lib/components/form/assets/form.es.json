@@ -7,6 +7,14 @@
             "chips": {
                 "remove": "Eliminar"
             },
+            "fileField": {
+                "choose": "Elegir archivo",
+                "clear": "Quitar archivo",
+                "empty": "Ningún archivo seleccionado",
+                "maxSize": "Tamaño máximo: {{maxSize}}",
+                "tooLarge": "El archivo supera el tamaño máximo de {{maxSize}}",
+                "unsupportedType": "Tipo de archivo no admitido. Permitidos: {{accept}}"
+            },
             "modal": {
                 "close-confirmation": {
                     "message": "Hay cambios sin guardar en el formulario. ¿Seguro que desea cerrarlo?",
