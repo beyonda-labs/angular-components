@@ -41,6 +41,7 @@
     -   The attachment field's upload and clear buttons now match the size and shape of the other property fields' buttons.
     -   Long variable names no longer overflow the panel: group headers and list items truncate with an ellipsis —
         the full name stays available as a tooltip — and field labels wrap.
+-   Form module: the autocomplete panel is no longer clipped by a scrollable ancestor such as a modal body.
 -   Breadcrumb module: fixed the overflow-collapse not updating after the item list changed.
 -   Form module:
     -   Modal form buttons no longer scroll with the field content — only the fields area scrolls internally (bounded by the modal), the buttons stay fixed and always visible.

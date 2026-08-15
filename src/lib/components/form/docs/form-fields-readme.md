@@ -191,6 +191,8 @@ The placeholder follows the same convention as the rest of the fields: `placehol
 
 Keyboard: arrow keys move through the filtered list (wrapping at both ends), `Enter` picks the active option, `Escape` closes the panel without changing the value.
 
+The open panel is moved to `<body>` and positioned with fixed coordinates taken from the input's own rect — the same trick `bey-variable-picker` uses — so a scrollable ancestor such as a modal body cannot clip it. It flips above the input when there is not enough room below, and closes when an ancestor scrolls.
+
 ```ts
 new BeyFormAutocompleteField({
     key: 'attachment',

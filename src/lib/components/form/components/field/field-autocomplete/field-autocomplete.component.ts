@@ -1,4 +1,14 @@
-import { Component, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewChecked,
+    Component,
+    ElementRef,
+    inject,
+    Input,
+    OnDestroy,
+    OnInit,
+    Renderer2,
+    ViewChild
+} from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faXmark } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +20,8 @@ import { FormFieldOption } from '../../../models/form-field.model';
 import { FormService } from '../../../services/form.service';
 
 const EMPTY_KEY = 'angular-components.form.autocompleteField.empty';
+const PANEL_GAP_PX = 2;
+const PANEL_MAX_HEIGHT_PX = 208;
 
 @Component({
     imports: [FontAwesomeModule, TranslateModule],
@@ -18,12 +30,13 @@ const EMPTY_KEY = 'angular-components.form.autocompleteField.empty';
     styleUrls: ['../field-control.styles.css'],
     templateUrl: './field-autocomplete.component.html'
 })
-export class FormAutocompleteFieldComponent implements OnInit {
+export class FormAutocompleteFieldComponent implements AfterViewChecked, OnDestroy, OnInit {
     @Input() field: FormAutocompleteField;
     @Input() formConfig: FormConfig;
     @Input() section: FormSection;
 
     @ViewChild('queryInput') queryInput?: ElementRef<HTMLInputElement>;
+    @ViewChild('panel') panel?: ElementRef<HTMLElement>;
 
     clearIcon = faXmark;
     toggleIcon = faChevronDown;
@@ -36,7 +49,39 @@ export class FormAutocompleteFieldComponent implements OnInit {
     sectionGroup?: FormGroup;
 
     private readonly formService = inject(FormService);
+    private readonly renderer = inject(Renderer2);
     private readonly translateService = inject(TranslateService);
+
+    private movedPanel?: HTMLElement;
+    private readonly onWindowResize = (): void => this.positionPanel();
+    private readonly onAncestorScroll = (event: Event): void => {
+        if (!this.movedPanel?.contains(event.target as Node)) {
+            this.close();
+        }
+    };
+
+    ngAfterViewChecked(): void {
+        const panel = this.panel?.nativeElement;
+
+        if (panel && panel !== this.movedPanel) {
+            this.movedPanel = panel;
+            this.renderer.appendChild(document.body, panel);
+            window.addEventListener('resize', this.onWindowResize);
+            document.addEventListener('scroll', this.onAncestorScroll, { capture: true });
+        }
+
+        if (!panel && this.movedPanel) {
+            this.releasePanel();
+        }
+
+        if (panel) {
+            this.positionPanel();
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.releasePanel();
+    }
 
     ngOnInit(): void {
         this.sectionGroup = this.formService.getSectionGroup(this.formConfig, this.section.key);
@@ -197,5 +242,46 @@ export class FormAutocompleteFieldComponent implements OnInit {
         this.control?.setValue(value);
         this.control?.markAsDirty();
         this.control?.markAsTouched();
+    }
+
+    private releasePanel(): void {
+        if (!this.movedPanel) {
+            return;
+        }
+
+        this.movedPanel.remove();
+        this.movedPanel = undefined;
+        window.removeEventListener('resize', this.onWindowResize);
+        document.removeEventListener('scroll', this.onAncestorScroll, { capture: true });
+    }
+
+    private positionPanel(): void {
+        const panel = this.movedPanel;
+        const anchor = this.queryInput?.nativeElement;
+
+        if (!panel || !anchor) {
+            return;
+        }
+
+        const rect = anchor.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+        const spaceAbove = rect.top;
+        const opensAbove = spaceBelow < PANEL_MAX_HEIGHT_PX && spaceAbove > spaceBelow;
+
+        this.renderer.setStyle(panel, 'left', `${rect.left}px`);
+        this.renderer.setStyle(panel, 'width', `${rect.width}px`);
+        this.renderer.setStyle(
+            panel,
+            'max-height',
+            `${Math.min(PANEL_MAX_HEIGHT_PX, (opensAbove ? spaceAbove : spaceBelow) - PANEL_GAP_PX)}px`
+        );
+
+        if (opensAbove) {
+            this.renderer.setStyle(panel, 'top', 'auto');
+            this.renderer.setStyle(panel, 'bottom', `${window.innerHeight - rect.top + PANEL_GAP_PX}px`);
+        } else {
+            this.renderer.setStyle(panel, 'bottom', 'auto');
+            this.renderer.setStyle(panel, 'top', `${rect.bottom + PANEL_GAP_PX}px`);
+        }
     }
 }

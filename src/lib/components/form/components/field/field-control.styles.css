@@ -351,12 +351,11 @@ textarea.form-control {
     transform: rotate(180deg);
 }
 
+/* Moved to <body> and positioned with fixed coordinates by the component, so a scrollable ancestor
+   (a modal body, say) cannot clip it — the same trick bey-variable-picker uses. */
 .bey-autocomplete-panel {
-    position: absolute;
+    position: fixed;
     z-index: 1080;
-    top: calc(100% + 2px);
-    right: 0;
-    left: 0;
     display: flex;
     flex-direction: column;
     max-height: 13rem;
@@ -368,7 +367,7 @@ textarea.form-control {
     box-shadow: 0 12px 32px rgba(var(--bey-black-rgb), 0.14);
 }
 
-:host-context(body.dark) .bey-autocomplete-panel {
+body.dark .bey-autocomplete-panel {
     border-color: var(--bey-gray-800);
 }
 

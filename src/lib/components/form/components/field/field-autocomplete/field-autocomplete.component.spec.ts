@@ -123,3 +123,59 @@ describe('FormAutocompleteFieldComponent', () => {
         expect(component.control?.touched).toBe(true);
     });
 });
+
+describe('FormAutocompleteFieldComponent · panel fuera del contenedor', () => {
+    let component: FormAutocompleteFieldComponent;
+    let fixture: ComponentFixture<FormAutocompleteFieldComponent>;
+
+    beforeEach(async () => {
+        const formServiceMock = mock<FormService>();
+        formServiceMock.getSectionGroup.mockReturnValue(new FormGroup({}));
+        formServiceMock.getFieldControl.mockReturnValue(new FormControl<string>(''));
+        formServiceMock.getFieldPrefix.mockReturnValue('prefix');
+
+        await TestBed.configureTestingModule({
+            imports: [FormAutocompleteFieldComponent, TranslateModule.forRoot()],
+            providers: [{ provide: FormService, useValue: formServiceMock }]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(FormAutocompleteFieldComponent);
+        component = fixture.componentInstance;
+        component.formConfig = {} as FormConfig;
+        component.section = { key: 'section1' } as FormSection;
+        component.field = new FormAutocompleteField({
+            key: 'attachment',
+            options: [{ label: 'Logo A4', value: 'a1' }]
+        });
+        fixture.detectChanges();
+    });
+
+    it('moves the open panel to the body, so a scrollable ancestor cannot clip it', () => {
+        component.onFocus();
+        fixture.detectChanges();
+
+        const panel = document.querySelector('.bey-autocomplete-panel');
+
+        expect(panel).toBeTruthy();
+        expect(panel?.parentElement).toBe(document.body);
+    });
+
+    it('removes the panel from the body once it closes', () => {
+        component.onFocus();
+        fixture.detectChanges();
+
+        component.onBlur();
+        fixture.detectChanges();
+
+        expect(document.querySelector('.bey-autocomplete-panel')).toBeFalsy();
+    });
+
+    it('leaves no panel behind when the component is destroyed while open', () => {
+        component.onFocus();
+        fixture.detectChanges();
+
+        fixture.destroy();
+
+        expect(document.querySelector('.bey-autocomplete-panel')).toBeFalsy();
+    });
+});
