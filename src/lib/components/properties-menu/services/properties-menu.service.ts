@@ -6,10 +6,11 @@ import { PropertyGroup, PropertyGroupParameters } from '../models/property-group
 import {
     PropertyFieldsContent,
     PropertyGroupContentType,
+    PropertyListContent,
     PropertyTabsContent,
     PropertyTreeContent
 } from '../models/property-group-content.model';
-import { PropertyListItem } from '../models/property-list-item.model';
+import { PropertyListItem, PropertyListItemParameters } from '../models/property-list-item.model';
 import { PropertyTab } from '../models/property-tab.model';
 import { PropertyTreeConfig } from '../models/property-tree-config.model';
 import { PropertyTreeNode, PropertyTreeNodeParameters } from '../models/property-tree-node.model';
@@ -20,7 +21,9 @@ import {
     PropertyFieldValueChange,
     PropertyGroupRemove,
     PropertyGroupToggle,
+    PropertyListItemRemove,
     PropertyListItemSelect,
+    PropertyListItemToggle,
     PropertyTabAddRequested,
     PropertyTreeAddBlock,
     PropertyTreeNodeSelect,
@@ -40,7 +43,9 @@ export class PropertiesMenuService {
     onFieldValueChange?: (change: PropertyFieldValueChange) => void;
     onGroupRemove?: (event: PropertyGroupRemove) => void;
     onGroupToggle?: (toggle: PropertyGroupToggle) => void;
+    onListItemRemove?: (event: PropertyListItemRemove) => void;
     onListItemSelect?: (event: PropertyListItemSelect) => void;
+    onListItemToggle?: (toggle: PropertyListItemToggle) => void;
     onTabAddRequested?: (event: PropertyTabAddRequested) => void;
     onTreeAddBlock?: (event: PropertyTreeAddBlock) => void;
     onTreeNodeSelect?: (event: PropertyTreeNodeSelect) => void;
@@ -171,6 +176,32 @@ export class PropertiesMenuService {
         }
 
         this.onListItemSelect?.({ groupId, item, itemId, tabId });
+    }
+
+    toggleListItem(tabId: string, groupId: string, itemId: string): void {
+        const item = this.getListItem(tabId, groupId, itemId);
+
+        if (!item || item.disabled || !item.isExpandable) {
+            return;
+        }
+
+        const expanded = !item.expanded;
+
+        this.config.update(config =>
+            this.updateListItem(config, tabId, groupId, itemId, current => ({ ...current, expanded }))
+        );
+
+        this.onListItemToggle?.({ expanded, groupId, itemId, tabId });
+    }
+
+    removeListItem(tabId: string, groupId: string, itemId: string): void {
+        const item = this.getListItem(tabId, groupId, itemId);
+
+        if (!item || item.disabled || !item.removable) {
+            return;
+        }
+
+        this.onListItemRemove?.({ groupId, itemId, tabId });
     }
 
     getGroup(tabId: string, groupId: string): PropertyGroup | undefined {
@@ -314,6 +345,29 @@ export class PropertiesMenuService {
             }
 
             return new PropertyTreeNode({ ...node, children: this.mapTreeNodes(node.children, nodeId, updater) });
+        });
+    }
+
+    private updateListItem(
+        config: PropertiesMenuConfig,
+        tabId: string,
+        groupId: string,
+        itemId: string,
+        updater: (item: PropertyListItem) => PropertyListItemParameters
+    ): PropertiesMenuConfig {
+        return this.updateGroup(config, tabId, groupId, group => {
+            if (group.content.type !== PropertyGroupContentType.LIST) {
+                return group;
+            }
+
+            return {
+                ...group,
+                content: new PropertyListContent({
+                    list: (group.content as PropertyListContent).list.map(item =>
+                        item.id === itemId ? new PropertyListItem(updater(item)) : item
+                    )
+                })
+            };
         });
     }
 

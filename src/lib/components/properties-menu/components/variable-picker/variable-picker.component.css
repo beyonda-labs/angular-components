@@ -117,7 +117,12 @@
 }
 
 .bey-variable-picker-row-label {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
     font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .bey-variable-picker-row-path {

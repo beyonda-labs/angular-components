@@ -1,6 +1,6 @@
 @if (field && !field.hidden) {
     <div class="bey-property-field" [class.bey-property-field-disabled]="field.disabled">
-        @if (field.label && field.type !== fieldType.Toggle) {
+        @if (field.label && !hideLabel && field.type !== fieldType.Toggle) {
             <label class="bey-property-field-label" [attr.for]="field.id">{{ labelKey | translate }}</label>
         }
 

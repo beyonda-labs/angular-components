@@ -38,6 +38,19 @@ export interface PropertyListItemSelect {
     tabId: string;
 }
 
+export interface PropertyListItemRemove {
+    groupId: string;
+    itemId: string;
+    tabId: string;
+}
+
+export interface PropertyListItemToggle {
+    expanded: boolean;
+    groupId: string;
+    itemId: string;
+    tabId: string;
+}
+
 export interface PropertyTabAddRequested {
     tabId: string;
 }

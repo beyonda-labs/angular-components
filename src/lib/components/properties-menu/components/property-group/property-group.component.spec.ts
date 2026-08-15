@@ -77,6 +77,16 @@ describe('PropertyGroupComponent', () => {
         expect(component.labelKey).toBe('Contenido');
     });
 
+    it('should expose the full label as a tooltip, since a long one is truncated', () => {
+        const name = 'unaVariableConUnNombreExageradamenteLargoQueNoCabe';
+        component.group = new PropertyGroup({ id: 'variable', label: name });
+        fixture.detectChanges();
+
+        const label = fixture.nativeElement.querySelector('.bey-property-group-label');
+
+        expect(label.getAttribute('title')).toBe(name);
+    });
+
     it('should not render a header when showHeader is false', () => {
         component.group = new PropertyGroup({ id: 'content', showHeader: false });
         fixture.detectChanges();

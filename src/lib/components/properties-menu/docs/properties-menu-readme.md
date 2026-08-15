@@ -167,6 +167,10 @@ The component performs no I/O of its own:
 -   Choosing a file emits the menu's `attachmentUpload` output (`{ fieldId, file }`); storing it and adding it to
     `options` is the consumer's job.
 
+Its upload and clear buttons reuse `.bey-property-field-variable-trigger` from `property-field-control.styles.css`,
+the same class the text field's variable button uses, so every property field with side buttons keeps one size and
+one shape. A field that needs its own button must extend that class rather than redefine the size and radius.
+
 ---
 
 ### Groups without a header
@@ -250,6 +254,35 @@ An item may carry `iconClasses` to color its icon per item — a problems list m
 instance. The library ships `bey-text-danger`, `bey-text-warning` and `bey-text-success` for that; without it the
 icon uses the list's muted color.
 
+#### Cards with a body
+
+An item that carries a `body` becomes an expandable card: it renders a chevron, and clicking it expands the body
+instead of selecting the item. An item without a body keeps selecting, so a plain catalog or a problems list is
+unaffected. `badges` render next to the label, and `removable` adds a remove action that emits `listItemRemove`
+without toggling the card.
+
+```ts
+new BeyPropertyListItem({
+    id: variable.id,
+    label: variable.name,
+    icon: faHashtag,
+    removable: true,
+    badges: [{ label: 'Número', cssClass: 'bey-badge-color-purple' }],
+    body: [
+        new BeyPropertySummaryRow({ label: 'Ámbito', badge: { label: 'Global' } }),
+        new BeyPropertySummaryRow({ label: 'Valor', field: new BeyPropertyTextField({ id: 'variable.v1.value' }) })
+    ]
+});
+```
+
+A `BeyPropertySummaryRow` shows one of three things, in this order of precedence: a `field`, a `badge`, or a plain
+`value` (an em dash when empty). **A row's `field` is a normal property field**, so its `id` still drives
+`updateFieldValue`/`fieldValueChange` exactly as inside a fields-content group — the card changes how a field is
+presented, never how its value travels.
+
+This is what makes an entity worth modelling as a list item rather than as a group: the group header is then free
+to mean grouping (a section, a category) and can hold several of these cards.
+
 ### Tabbed groups
 
 Give a group a `BeyPropertyTabsContent` to split its fields across tabs, for properties that repeat the same shape
@@ -283,7 +316,9 @@ resolves like any other, from `<prefix>.tabs.<id>.label` unless `label` is set e
 | `variableSelected`   | `{ fieldId, variable, expression }`      | A variable is inserted into a field               |
 | `treeNodeSelect`     | `{ tabId, groupId, nodeId, node }`       | A tree node is selected                                |
 | `treeAddBlock`       | `{ tabId, groupId }`                     | A tree group's "add block" action is triggered         |
-| `listItemSelect`     | `{ tabId, groupId, itemId, item }`       | A list card is selected                                |
+| `listItemSelect`     | `{ tabId, groupId, itemId, item }`       | A list card without a body is selected                 |
+| `listItemToggle`     | `{ tabId, groupId, itemId, expanded }`   | A list card with a body is expanded/collapsed          |
+| `listItemRemove`     | `{ tabId, groupId, itemId }`             | A removable list card's remove action is triggered     |
 | `tabAddRequested`    | `{ tabId }`                              | A tab's `addLabel` button is clicked                   |
 | `groupRemove`        | `{ tabId, groupId }`                     | A removable group's remove action is triggered         |
 | `attachmentUpload`   | `{ fieldId, file }`                      | A file is chosen in an attachment field               |

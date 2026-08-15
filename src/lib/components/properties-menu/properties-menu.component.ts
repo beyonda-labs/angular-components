@@ -15,7 +15,9 @@ import {
     PropertyFieldValueChange,
     PropertyGroupRemove,
     PropertyGroupToggle,
+    PropertyListItemRemove,
     PropertyListItemSelect,
+    PropertyListItemToggle,
     PropertyTabAddRequested,
     PropertyTreeAddBlock,
     PropertyTreeNodeSelect,
@@ -61,7 +63,9 @@ export class PropertiesMenuComponent {
     @Output() fieldValueChange = new EventEmitter<PropertyFieldValueChange>();
     @Output() groupRemove = new EventEmitter<PropertyGroupRemove>();
     @Output() groupToggle = new EventEmitter<PropertyGroupToggle>();
+    @Output() listItemRemove = new EventEmitter<PropertyListItemRemove>();
     @Output() listItemSelect = new EventEmitter<PropertyListItemSelect>();
+    @Output() listItemToggle = new EventEmitter<PropertyListItemToggle>();
     @Output() tabAddRequested = new EventEmitter<PropertyTabAddRequested>();
     @Output() treeAddBlock = new EventEmitter<PropertyTreeAddBlock>();
     @Output() treeNodeSelect = new EventEmitter<PropertyTreeNodeSelect>();
@@ -91,7 +95,9 @@ export class PropertiesMenuComponent {
         this.propertiesMenuService.onFieldValueChange = change => this.fieldValueChange.emit(change);
         this.propertiesMenuService.onGroupRemove = event => this.groupRemove.emit(event);
         this.propertiesMenuService.onGroupToggle = toggle => this.groupToggle.emit(toggle);
+        this.propertiesMenuService.onListItemRemove = event => this.listItemRemove.emit(event);
         this.propertiesMenuService.onListItemSelect = event => this.listItemSelect.emit(event);
+        this.propertiesMenuService.onListItemToggle = event => this.listItemToggle.emit(event);
         this.propertiesMenuService.onTabAddRequested = event => this.tabAddRequested.emit(event);
         this.propertiesMenuService.onTreeAddBlock = event => this.treeAddBlock.emit(event);
         this.propertiesMenuService.onTreeNodeSelect = event => this.treeNodeSelect.emit(event);

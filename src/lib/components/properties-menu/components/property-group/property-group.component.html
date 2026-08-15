@@ -13,7 +13,7 @@
                 [disabled]="group.disabled"
                 (click)="toggle()"
             >
-                <span class="bey-property-group-label">{{ labelKey | translate }}</span>
+                <span class="bey-property-group-label" [title]="labelKey | translate">{{ labelKey | translate }}</span>
 
                 @if (group.removable) {
                     <span

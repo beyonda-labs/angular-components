@@ -54,6 +54,7 @@ import { PropertyToggleFieldComponent } from '../fields/property-toggle-field/pr
 })
 export class PropertyFieldComponent {
     @Input({ required: true }) field!: PropertyField;
+    @Input() hideLabel = false;
 
     readonly fieldType = PropertyFieldType;
 

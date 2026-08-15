@@ -11,9 +11,11 @@
 }
 
 .bey-property-field-label {
+    min-width: 0;
     color: var(--bey-property-field-label-color);
     font-size: 0.72rem;
     font-weight: 600;
+    overflow-wrap: anywhere;
 }
 
 .bey-property-field-disabled {

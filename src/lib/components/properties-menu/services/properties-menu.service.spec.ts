@@ -3,6 +3,7 @@ import { PropertiesMenuConfig } from '../models/properties-menu-config.model';
 import { PropertyGroup } from '../models/property-group.model';
 import { PropertyFieldsContent, PropertyListContent, PropertyTreeContent } from '../models/property-group-content.model';
 import { PropertyListItem } from '../models/property-list-item.model';
+import { PropertySummaryRow } from '../models/property-summary-row.model';
 import { PropertyTab } from '../models/property-tab.model';
 import { PropertyTreeConfig } from '../models/property-tree-config.model';
 import { PropertyTreeNode } from '../models/property-tree-node.model';
@@ -359,5 +360,106 @@ describe('PropertiesMenuService', () => {
 
             expect(service.getListItem('add', 'simple-blocks', 'missing')).toBeUndefined();
         });
+    });
+});
+
+describe('PropertiesMenuService · items de lista desplegables', () => {
+    let service: PropertiesMenuService;
+
+    const EXPANDABLE_ITEM = { body: [new PropertySummaryRow({ label: 'Valor' })], id: 'total_pages' };
+
+    function setUpList(items: PropertyListItem[]): void {
+        service.setConfig(
+            new PropertiesMenuConfig({
+                prefix: 'app.properties-menu',
+                tabs: [
+                    new PropertyTab({
+                        id: 'variables',
+                        groups: [
+                            new PropertyGroup({
+                                id: 'variables-list',
+                                showHeader: false,
+                                content: new PropertyListContent({ list: items })
+                            })
+                        ]
+                    })
+                ]
+            })
+        );
+    }
+
+    beforeEach(() => {
+        service = new PropertiesMenuService();
+    });
+
+    it('flips the expanded flag and reports it', () => {
+        setUpList([new PropertyListItem(EXPANDABLE_ITEM)]);
+
+        const toggles: boolean[] = [];
+        service.onListItemToggle = event => toggles.push(event.expanded);
+
+        service.toggleListItem('variables', 'variables-list', 'total_pages');
+        expect(service.getListItem('variables', 'variables-list', 'total_pages')?.expanded).toBe(true);
+
+        service.toggleListItem('variables', 'variables-list', 'total_pages');
+        expect(service.getListItem('variables', 'variables-list', 'total_pages')?.expanded).toBe(false);
+
+        expect(toggles).toEqual([true, false]);
+    });
+
+    it('ignores a toggle on an item without a body', () => {
+        setUpList([new PropertyListItem({ id: 'plain' })]);
+
+        const toggleSpy = jest.fn();
+        service.onListItemToggle = toggleSpy;
+
+        service.toggleListItem('variables', 'variables-list', 'plain');
+
+        expect(toggleSpy).not.toHaveBeenCalled();
+    });
+
+    it('ignores a toggle on a disabled item', () => {
+        setUpList([new PropertyListItem({ ...EXPANDABLE_ITEM, disabled: true })]);
+
+        const toggleSpy = jest.fn();
+        service.onListItemToggle = toggleSpy;
+
+        service.toggleListItem('variables', 'variables-list', 'total_pages');
+
+        expect(toggleSpy).not.toHaveBeenCalled();
+    });
+
+    it('reports a removal only for a removable item', () => {
+        setUpList([new PropertyListItem({ ...EXPANDABLE_ITEM, removable: true })]);
+
+        const removeSpy = jest.fn();
+        service.onListItemRemove = removeSpy;
+
+        service.removeListItem('variables', 'variables-list', 'total_pages');
+
+        expect(removeSpy).toHaveBeenCalledWith({
+            groupId: 'variables-list',
+            itemId: 'total_pages',
+            tabId: 'variables'
+        });
+    });
+
+    it('ignores a removal on a non-removable item', () => {
+        setUpList([new PropertyListItem(EXPANDABLE_ITEM)]);
+
+        const removeSpy = jest.fn();
+        service.onListItemRemove = removeSpy;
+
+        service.removeListItem('variables', 'variables-list', 'total_pages');
+
+        expect(removeSpy).not.toHaveBeenCalled();
+    });
+
+    it('leaves the other items untouched when one is expanded', () => {
+        setUpList([new PropertyListItem(EXPANDABLE_ITEM), new PropertyListItem({ ...EXPANDABLE_ITEM, id: 'other' })]);
+
+        service.toggleListItem('variables', 'variables-list', 'total_pages');
+
+        expect(service.getListItem('variables', 'variables-list', 'other')?.expanded).toBe(false);
     });
 });

@@ -28,6 +28,8 @@
 -   Http service: `upload()` sends raw bytes reporting progress, and `getBlob()` fetches a response as bytes instead of JSON.
 -   Page module: `afterCreate` on the form config runs a follow-up request before the create modal closes, for entities that take more than one call to create.
 -   Form module: autocomplete field, a select whose options are filtered by typing, for lists too long for a native dropdown.
+-   Properties menu module: list cards can carry badges, a remove action and an expandable body of summary rows
+    (read-only value, badge or a real field), so an entity can be a card and the group header can mean grouping.
 
 ### Changed
 
@@ -35,6 +37,10 @@
 
 ### Fixed
 
+-   Properties menu module:
+    -   The attachment field's upload and clear buttons now match the size and shape of the other property fields' buttons.
+    -   Long variable names no longer overflow the panel: group headers and list items truncate with an ellipsis —
+        the full name stays available as a tooltip — and field labels wrap.
 -   Breadcrumb module: fixed the overflow-collapse not updating after the item list changed.
 -   Form module:
     -   Modal form buttons no longer scroll with the field content — only the fields area scrolls internally (bounded by the modal), the buttons stay fixed and always visible.

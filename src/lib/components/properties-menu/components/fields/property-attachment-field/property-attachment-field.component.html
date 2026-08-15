@@ -55,9 +55,10 @@
         </div>
 
         <label
-            class="bey-property-attachment-upload"
+            class="bey-property-field-variable-trigger bey-property-attachment-upload"
             [class.bey-property-attachment-upload-disabled]="field.disabled"
             [tooltip]="'angular-components.properties-menu.attachmentField.upload' | translate"
+            container="body"
         >
             <fa-icon [icon]="uploadIcon"></fa-icon>
             <input
@@ -72,11 +73,12 @@
 
         @if (field.value) {
             <button
-                class="bey-property-attachment-clear"
+                class="bey-property-field-variable-trigger"
                 type="button"
                 [attr.aria-label]="'angular-components.properties-menu.attachmentField.clear' | translate"
                 [disabled]="field.disabled"
                 [tooltip]="'angular-components.properties-menu.attachmentField.clear' | translate"
+                container="body"
                 (click)="onClear()"
             >
                 <fa-icon [icon]="clearIcon"></fa-icon>

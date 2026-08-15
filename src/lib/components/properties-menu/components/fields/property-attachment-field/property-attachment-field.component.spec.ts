@@ -1,0 +1,74 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateModule } from '@ngx-translate/core';
+
+import { PropertyAttachmentField } from '../../../models/fields/property-attachment-field.model';
+import { PropertyAttachmentFieldComponent } from './property-attachment-field.component';
+
+const buildField = (value = ''): PropertyAttachmentField =>
+    new PropertyAttachmentField({
+        id: 'source',
+        value,
+        options: [
+            { id: 'a1', label: 'Logo A4' },
+            { id: 'a2', label: 'Imagen migrado 1' }
+        ]
+    });
+
+describe('PropertyAttachmentFieldComponent', () => {
+    let component: PropertyAttachmentFieldComponent;
+    let fixture: ComponentFixture<PropertyAttachmentFieldComponent>;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [PropertyAttachmentFieldComponent, TranslateModule.forRoot()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(PropertyAttachmentFieldComponent);
+        component = fixture.componentInstance;
+    });
+
+    it('styles the upload trigger with the shared property button class', () => {
+        component.field = buildField();
+        fixture.detectChanges();
+
+        const upload = fixture.nativeElement.querySelector('.bey-property-attachment-upload');
+
+        expect(upload.classList.contains('bey-property-field-variable-trigger')).toBe(true);
+    });
+
+    it('styles the clear trigger with the shared property button class once a value is set', () => {
+        component.field = buildField('a1');
+        fixture.detectChanges();
+
+        const triggers = fixture.nativeElement.querySelectorAll('.bey-property-field-variable-trigger');
+
+        expect(triggers.length).toBe(2);
+    });
+
+    it('does not render a clear trigger while no attachment is selected', () => {
+        component.field = buildField();
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.querySelectorAll('.bey-property-field-variable-trigger').length).toBe(1);
+    });
+
+    it('filters the options by the typed query', () => {
+        component.field = buildField();
+        component.query = 'migrado';
+
+        expect(component.filteredOptions.map(option => option.id)).toEqual(['a2']);
+    });
+
+    it('emits the picked option and closes the panel', () => {
+        component.field = buildField();
+        fixture.detectChanges();
+
+        const emitSpy = jest.spyOn(component.valueChange, 'emit');
+        component.onFocus();
+
+        component.onOptionPicked(component.field.options[1], new MouseEvent('mousedown'));
+
+        expect(emitSpy).toHaveBeenCalledWith('a2');
+        expect(component.isOpen).toBe(false);
+    });
+});
