@@ -142,7 +142,7 @@ Each concrete field type extends `PropertyField` and only adds the properties it
 | `BeyPropertySegmentedField<T>` | `options: PropertyOption<T>[]`                                |
 | `BeyPropertySpacingField`      | `readonly` (`value`/`defaultValue` typed as `PropertySpacingValue`) |
 | `BeyPropertyInfoField`         | `items: PropertyInfoItem[]` (read-only text, always `disabled`) |
-| `BeyPropertyAttachmentField`   | `options: PropertyAttachmentOption[]`, `accept`, `maxSizeBytes`, `previewUrl` |
+| `BeyPropertyAttachmentField`   | `options: PropertyAttachmentOption[]`, `variables`, `accept`, `maxSizeBytes` |
 
 `BeyPropertySelectField` also accepts `searchable: true` to render a filter box above its options.
 
@@ -162,10 +162,17 @@ attachment id, never the file contents.
 The component performs no I/O of its own:
 
 -   `options` is the catalog to choose from, already filtered by the consumer to the accepted file type. Each
-    option is `{ id, label, description?, previewUrl?, disabled? }`.
+    option is `{ id, label, description?, disabled? }`.
 -   `accept` is passed to the file input and `maxSizeBytes` rejects an oversized file before any upload starts.
 -   Choosing a file emits the menu's `attachmentUpload` output (`{ fieldId, file }`); storing it and adding it to
     `options` is the consumer's job.
+-   `variables` turns on a second button that opens the shared `bey-variable-picker` and writes the chosen
+    variable as a `{{ name }}` expression into the field, so an item can reference a variable instead of naming an
+    attachment. The consumer passes only the variables that item accepts — the field does no filtering of its own,
+    since which variable fits an image or a PDF is domain knowledge the library does not have.
+
+The field shows no image preview: resolving an attachment id into a URL is the consumer's job and no consumer did
+it, so the slot was only ever empty.
 
 Its upload and clear buttons reuse `.bey-property-field-variable-trigger` from `property-field-control.styles.css`,
 the same class the text field's variable button uses, so every property field with side buttons keeps one size and

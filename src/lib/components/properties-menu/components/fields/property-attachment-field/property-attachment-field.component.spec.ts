@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertyAttachmentField } from '../../../models/fields/property-attachment-field.model';
+import { PropertyVariableService } from '../../../services/property-variable.service';
 import { PropertyAttachmentFieldComponent } from './property-attachment-field.component';
 
 const buildField = (value = ''): PropertyAttachmentField =>
@@ -70,5 +71,80 @@ describe('PropertyAttachmentFieldComponent', () => {
 
         expect(emitSpy).toHaveBeenCalledWith('a2');
         expect(component.isOpen).toBe(false);
+    });
+});
+
+const VARIABLES = [{ id: 'v1', path: 'logo_cliente', label: 'logo_cliente' }];
+
+describe('PropertyAttachmentFieldComponent · variables', () => {
+    let component: PropertyAttachmentFieldComponent;
+    let fixture: ComponentFixture<PropertyAttachmentFieldComponent>;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [PropertyAttachmentFieldComponent, TranslateModule.forRoot()],
+            providers: [PropertyVariableService]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(PropertyAttachmentFieldComponent);
+        component = fixture.componentInstance;
+    });
+
+    it('offers no variable button when the field carries no variables', () => {
+        component.field = new PropertyAttachmentField({ id: 'source', value: '', options: [{ id: 'a1', label: 'Logo' }] });
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.querySelectorAll('.bey-property-field-variable-trigger').length).toBe(1);
+    });
+
+    it('offers a variable button when the field carries variables', () => {
+        component.field = new PropertyAttachmentField({ id: 'source', value: '', variables: VARIABLES });
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.querySelectorAll('.bey-property-field-variable-trigger').length).toBe(2);
+    });
+
+    it('emits the reference expression when a variable is picked', () => {
+        component.field = new PropertyAttachmentField({ id: 'source', value: '', variables: VARIABLES });
+        fixture.detectChanges();
+
+        const emitSpy = jest.spyOn(component.valueChange, 'emit');
+
+        component.onVariableSelected(component.field.variables[0]);
+
+        expect(emitSpy).toHaveBeenCalledWith('{{ logo_cliente }}');
+        expect(component.pickerOpen).toBe(false);
+    });
+
+    it('closes the attachment list when the variable picker opens', () => {
+        component.field = new PropertyAttachmentField({ id: 'source', value: '', variables: VARIABLES });
+        fixture.detectChanges();
+
+        component.onFocus();
+        component.toggleVariablePicker();
+
+        expect(component.pickerOpen).toBe(true);
+        expect(component.isOpen).toBe(false);
+    });
+
+    it('tells apart a value holding a variable from a plain attachment id', () => {
+        const withVariable = new PropertyAttachmentField({ id: 'source', value: '{{ logo_cliente }}' });
+        const withId = new PropertyAttachmentField({ id: 'source', value: 'a1' });
+
+        expect(withVariable.holdsVariable).toBe(true);
+        expect(withId.holdsVariable).toBe(false);
+    });
+
+    it('no longer renders any preview image', () => {
+        component.field = new PropertyAttachmentField({
+            id: 'source',
+            value: 'a1',
+            options: [{ id: 'a1', label: 'Logo' }]
+        });
+        fixture.detectChanges();
+        component.onFocus();
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.querySelectorAll('img').length).toBe(0);
     });
 });

@@ -1,16 +1,10 @@
-.bey-property-attachment-row {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
+.bey-property-attachment {
+    flex-wrap: wrap;
 }
 
-.bey-property-attachment-preview {
-    flex: none;
-    width: 1.9rem;
-    height: 1.9rem;
-    border: 1px solid var(--bey-property-field-border);
-    border-radius: 0.4rem;
-    object-fit: cover;
+.bey-property-attachment-actions {
+    flex-direction: row;
+    align-self: flex-start;
 }
 
 .bey-property-attachment-picker {
@@ -55,14 +49,6 @@
     opacity: 0.55;
 }
 
-.bey-property-attachment-option-thumb {
-    flex: none;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 0.15rem;
-    object-fit: cover;
-}
-
 .bey-property-attachment-option-text {
     display: flex;
     flex-direction: column;
@@ -99,6 +85,7 @@
 }
 
 .bey-property-attachment-error {
+    width: 100%;
     margin: 0.25rem 0 0;
     color: var(--bey-danger);
     font-size: 0.72rem;

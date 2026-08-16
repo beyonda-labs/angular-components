@@ -1,5 +1,6 @@
 import { PropertyFieldType } from '../../types/property-field-type';
 import { PropertyField, PropertyFieldParameters } from '../property-field.model';
+import { PropertyVariable, PropertyVariableParameters } from '../property-variable.model';
 
 export interface PropertyAttachmentOptionParameters {
     id: string;
@@ -7,7 +8,6 @@ export interface PropertyAttachmentOptionParameters {
 
     description?: string;
     disabled?: boolean;
-    previewUrl?: string;
 }
 
 export class PropertyAttachmentOption {
@@ -16,14 +16,12 @@ export class PropertyAttachmentOption {
     label: string;
 
     description?: string;
-    previewUrl?: string;
 
-    constructor({ description, disabled = false, id, label, previewUrl }: PropertyAttachmentOptionParameters) {
+    constructor({ description, disabled = false, id, label }: PropertyAttachmentOptionParameters) {
         this.description = description;
         this.disabled = disabled;
         this.id = id;
         this.label = label;
-        this.previewUrl = previewUrl;
     }
 }
 
@@ -31,17 +29,17 @@ export interface PropertyAttachmentFieldParameters extends Omit<PropertyFieldPar
     accept?: string;
     maxSizeBytes?: number;
     options?: PropertyAttachmentOptionParameters[];
-    previewUrl?: string;
+    variables?: PropertyVariableParameters[];
 }
 
 export class PropertyAttachmentField extends PropertyField<string> {
     options: PropertyAttachmentOption[];
+    variables: PropertyVariable[];
 
     accept?: string;
     maxSizeBytes?: number;
-    previewUrl?: string;
 
-    constructor({ accept, maxSizeBytes, options = [], previewUrl, ...base }: PropertyAttachmentFieldParameters) {
+    constructor({ accept, maxSizeBytes, options = [], variables = [], ...base }: PropertyAttachmentFieldParameters) {
         super({ ...base, type: PropertyFieldType.Attachment });
 
         this.accept = accept;
@@ -49,10 +47,16 @@ export class PropertyAttachmentField extends PropertyField<string> {
         this.options = options.map(option =>
             option instanceof PropertyAttachmentOption ? option : new PropertyAttachmentOption(option)
         );
-        this.previewUrl = previewUrl;
+        this.variables = variables.map(variable =>
+            variable instanceof PropertyVariable ? variable : new PropertyVariable(variable)
+        );
     }
 
     get selectedOption(): PropertyAttachmentOption | undefined {
         return this.options.find(option => option.id === this.value);
+    }
+
+    get holdsVariable(): boolean {
+        return (this.value ?? '').trim().startsWith('{{');
     }
 }

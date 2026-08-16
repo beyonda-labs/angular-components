@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faFileArrowUp, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faDollarSign, faFileArrowUp, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
@@ -8,9 +8,11 @@ import {
     PropertyAttachmentField,
     PropertyAttachmentOption
 } from '../../../models/fields/property-attachment-field.model';
+import { PropertyVariable } from '../../../models/property-variable.model';
+import { VariablePickerComponent } from '../../variable-picker/variable-picker.component';
 
 @Component({
-    imports: [FontAwesomeModule, TooltipModule, TranslateModule],
+    imports: [FontAwesomeModule, TooltipModule, TranslateModule, VariablePickerComponent],
     selector: 'bey-property-attachment-field',
     standalone: true,
     styleUrls: ['../property-field-control.styles.css', './property-attachment-field.component.css'],
@@ -24,8 +26,10 @@ export class PropertyAttachmentFieldComponent {
 
     readonly clearIcon = faXmark;
     readonly uploadIcon = faFileArrowUp;
+    readonly variableIcon = faDollarSign;
 
     isOpen = false;
+    pickerOpen = false;
     query = '';
     sizeErrorMaxSizeMB?: number;
 
@@ -37,8 +41,21 @@ export class PropertyAttachmentFieldComponent {
         return this.selected?.label ?? this.field.value ?? '';
     }
 
-    get previewUrl(): string | undefined {
-        return this.selected?.previewUrl ?? this.field.previewUrl;
+    toggleVariablePicker(): void {
+        this.pickerOpen = !this.pickerOpen;
+
+        if (this.pickerOpen) {
+            this.close();
+        }
+    }
+
+    closeVariablePicker(): void {
+        this.pickerOpen = false;
+    }
+
+    onVariableSelected(variable: PropertyVariable): void {
+        this.closeVariablePicker();
+        this.valueChange.emit(`{{ ${variable.path} }}`);
     }
 
     get filteredOptions(): PropertyAttachmentOption[] {

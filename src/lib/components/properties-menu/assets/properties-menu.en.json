@@ -6,7 +6,8 @@
                 "empty": "No attachments found",
                 "search": "Search attachments",
                 "tooLarge": "This file exceeds the {{maxSizeMB}} MB limit.",
-                "upload": "Upload a new file"
+                "upload": "Upload a new file",
+                "useVariable": "Use a variable"
             },
             "close": "Close",
             "colorField": {
