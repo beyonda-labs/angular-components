@@ -256,10 +256,15 @@ icon uses the list's muted color.
 
 #### Cards with a body
 
-An item that carries a `body` becomes an expandable card, with a chevron that opens it. **Only the chevron
-toggles** — clicking the row still emits `listItemSelect`, exactly as for an item without a body, so selecting and
-expanding stay separate actions and a plain catalog or a problems list is unaffected. `badges` render next to the
-label, and `removable` adds a remove action; neither the remove nor the chevron lets the click reach the row.
+An item that carries a `body` becomes an expandable card. **Its header toggles the body, its body does not** —
+the body holds real fields, and clicking one of them must not collapse the card under the pointer. The click is
+therefore bound to the header, not to the whole card as `bey-list` does by default; an expandable card emits no
+`listItemSelect` at all, while an item without a body keeps selecting exactly as before, so a plain catalog or a
+problems list is unaffected.
+
+`badges` render next to the label, and `removable` adds a remove action. The chevron is a real disclosure button
+(`aria-expanded`, focusable, its own label); both it and the remove action stop the click from reaching the
+header, so neither of them toggles the card twice.
 
 ```ts
 new BeyPropertyListItem({
@@ -316,8 +321,8 @@ resolves like any other, from `<prefix>.tabs.<id>.label` unless `label` is set e
 | `variableSelected`   | `{ fieldId, variable, expression }`      | A variable is inserted into a field               |
 | `treeNodeSelect`     | `{ tabId, groupId, nodeId, node }`       | A tree node is selected                                |
 | `treeAddBlock`       | `{ tabId, groupId }`                     | A tree group's "add block" action is triggered         |
-| `listItemSelect`     | `{ tabId, groupId, itemId, item }`       | A list card's row is clicked                            |
-| `listItemToggle`     | `{ tabId, groupId, itemId, expanded }`   | A list card's chevron expands/collapses its body       |
+| `listItemSelect`     | `{ tabId, groupId, itemId, item }`       | A list card without a body is clicked                  |
+| `listItemToggle`     | `{ tabId, groupId, itemId, expanded }`   | A list card's header or chevron opens/closes its body  |
 | `listItemRemove`     | `{ tabId, groupId, itemId }`             | A removable list card's remove action is triggered     |
 | `tabAddRequested`    | `{ tabId }`                              | A tab's `addLabel` button is clicked                   |
 | `groupRemove`        | `{ tabId, groupId }`                     | A removable group's remove action is triggered         |

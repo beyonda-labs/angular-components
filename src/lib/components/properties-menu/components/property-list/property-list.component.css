@@ -15,6 +15,10 @@
     opacity: 0.5;
 }
 
+.bey-property-list-item-expandable {
+    cursor: pointer;
+}
+
 .bey-property-list-item-icon {
     display: inline-flex;
     flex: 0 0 auto;

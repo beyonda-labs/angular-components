@@ -2,7 +2,12 @@
     <ng-template let-item>
         @let listItem = asItem(item);
 
-        <div class="bey-property-list-item" [class.bey-property-list-item-disabled]="listItem.disabled">
+        <div
+            class="bey-property-list-item"
+            [class.bey-property-list-item-disabled]="listItem.disabled"
+            [class.bey-property-list-item-expandable]="listItem.isExpandable && !listItem.disabled"
+            (click)="onHeaderClick(listItem)"
+        >
             @if (listItem.icon) {
                 <span
                     class="bey-property-list-item-icon"

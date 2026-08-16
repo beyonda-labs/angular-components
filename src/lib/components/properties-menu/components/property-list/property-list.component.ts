@@ -15,14 +15,7 @@ import { PropertyFieldComponent } from '../property-field/property-field.compone
 const EMPTY_VALUE = '—';
 
 @Component({
-    imports: [
-        FontAwesomeModule,
-        ListComponent,
-        NgClass,
-        PropertyFieldComponent,
-        TooltipModule,
-        TranslateModule
-    ],
+    imports: [FontAwesomeModule, ListComponent, NgClass, PropertyFieldComponent, TooltipModule, TranslateModule],
     selector: 'bey-property-list',
     standalone: true,
     styleUrls: ['./property-list.component.css'],
@@ -72,8 +65,14 @@ export class PropertyListComponent {
         this.propertiesMenuService.toggleListItem(this.tabId, this.groupId, item.id);
     }
 
+    onHeaderClick(item: PropertyListItem): void {
+        if (item.isExpandable) {
+            this.propertiesMenuService.toggleListItem(this.tabId, this.groupId, item.id);
+        }
+    }
+
     private onItemClick(item: PropertyListItem): void {
-        if (item.disabled) {
+        if (item.disabled || item.isExpandable) {
             return;
         }
 
