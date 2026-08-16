@@ -287,6 +287,8 @@
             },
             "list": {
                 "collapse": "Collapse",
+                "copied": "Copied",
+                "copy": "Copy the reference",
                 "empty": "No items",
                 "expand": "Expand"
             },

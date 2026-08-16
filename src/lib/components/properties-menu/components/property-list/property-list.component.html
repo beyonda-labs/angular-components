@@ -38,6 +38,34 @@
                 }
             </div>
 
+            @if (listItem.copyValue) {
+                <button
+                    type="button"
+                    class="bey-property-list-item-action"
+                    [attr.aria-label]="copyLabelKey(listItem) | translate"
+                    [disabled]="listItem.disabled"
+                    [tooltip]="copyLabelKey(listItem) | translate"
+                    container="body"
+                    (click)="onCopy($event, listItem)"
+                >
+                    <fa-icon [icon]="copiedItemId === listItem.id ? copiedIcon : copyIcon"></fa-icon>
+                </button>
+            }
+
+            @for (action of listItem.actions; track action.key) {
+                <button
+                    type="button"
+                    class="bey-property-list-item-action"
+                    [attr.aria-label]="(action.label ?? '') | translate"
+                    [disabled]="listItem.disabled"
+                    [tooltip]="(action.label ?? '') | translate"
+                    container="body"
+                    (click)="onAction($event, listItem, action.key)"
+                >
+                    <fa-icon [icon]="action.icon"></fa-icon>
+                </button>
+            }
+
             @if (listItem.removable) {
                 <span
                     class="bey-property-list-item-remove"

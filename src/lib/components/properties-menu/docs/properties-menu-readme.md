@@ -269,7 +269,10 @@ therefore bound to the header, not to the whole card as `bey-list` does by defau
 `listItemSelect` at all, while an item without a body keeps selecting exactly as before, so a plain catalog or a
 problems list is unaffected.
 
-`badges` render next to the label, and `removable` adds a remove action. The chevron is a real disclosure button
+`badges` render next to the label, `removable` adds a remove action, `actions` adds one button per entry that
+reports its `key` through `listItemAction`, and `copyValue` adds a button that writes that exact text to the
+clipboard — the card decides what is worth copying, which is rarely the label it shows. The button confirms with a
+tick for a moment and stays silent if the browser refuses clipboard access. The chevron is a real disclosure button
 (`aria-expanded`, focusable, its own label); both it and the remove action stop the click from reaching the
 header, so neither of them toggles the card twice.
 

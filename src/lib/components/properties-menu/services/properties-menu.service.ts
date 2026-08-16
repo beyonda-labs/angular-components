@@ -21,6 +21,7 @@ import {
     PropertyFieldValueChange,
     PropertyGroupRemove,
     PropertyGroupToggle,
+    PropertyListItemAction as PropertyListItemActionEvent,
     PropertyListItemRemove,
     PropertyListItemSelect,
     PropertyListItemToggle,
@@ -43,6 +44,7 @@ export class PropertiesMenuService {
     onFieldValueChange?: (change: PropertyFieldValueChange) => void;
     onGroupRemove?: (event: PropertyGroupRemove) => void;
     onGroupToggle?: (toggle: PropertyGroupToggle) => void;
+    onListItemAction?: (event: PropertyListItemActionEvent) => void;
     onListItemRemove?: (event: PropertyListItemRemove) => void;
     onListItemSelect?: (event: PropertyListItemSelect) => void;
     onListItemToggle?: (toggle: PropertyListItemToggle) => void;
@@ -192,6 +194,16 @@ export class PropertiesMenuService {
         );
 
         this.onListItemToggle?.({ expanded, groupId, itemId, tabId });
+    }
+
+    triggerListItemAction(tabId: string, groupId: string, itemId: string, key: string): void {
+        const item = this.getListItem(tabId, groupId, itemId);
+
+        if (!item || item.disabled) {
+            return;
+        }
+
+        this.onListItemAction?.({ groupId, itemId, key, tabId });
     }
 
     removeListItem(tabId: string, groupId: string, itemId: string): void {

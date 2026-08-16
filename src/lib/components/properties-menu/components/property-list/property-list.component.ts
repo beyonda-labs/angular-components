@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, Input, OnDestroy } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faChevronDown, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faChevronDown, faCopy, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
@@ -13,6 +13,7 @@ import { resolvePropertyLabelKey } from '../../utils/property-i18n.util';
 import { PropertyFieldComponent } from '../property-field/property-field.component';
 
 const EMPTY_VALUE = '—';
+const COPIED_FEEDBACK_MS = 1500;
 
 @Component({
     imports: [FontAwesomeModule, ListComponent, NgClass, PropertyFieldComponent, TooltipModule, TranslateModule],
@@ -21,16 +22,23 @@ const EMPTY_VALUE = '—';
     styleUrls: ['./property-list.component.css'],
     templateUrl: './property-list.component.html'
 })
-export class PropertyListComponent {
+export class PropertyListComponent implements OnDestroy {
     @Input({ required: true }) groupId!: string;
     @Input({ required: true }) items: PropertyListItem[] = [];
     @Input({ required: true }) tabId!: string;
 
     readonly chevronIcon = faChevronDown;
+    readonly copiedIcon = faCheck;
+    readonly copyIcon = faCopy;
+
+    copiedItemId?: string;
     readonly emptyValue = EMPTY_VALUE;
     readonly removeIcon = faTrash;
 
+    private readonly changeDetectorRef = inject(ChangeDetectorRef);
     private readonly propertiesMenuService = inject(PropertiesMenuService);
+
+    private copiedTimeoutId?: ReturnType<typeof setTimeout>;
 
     get listConfig(): ListConfig {
         return new ListConfig<unknown>({
@@ -39,6 +47,10 @@ export class PropertyListComponent {
             onItemClick: item => this.onItemClick(this.asItem(item)),
             prefix: 'angular-components.properties-menu.list'
         });
+    }
+
+    ngOnDestroy(): void {
+        clearTimeout(this.copiedTimeoutId);
     }
 
     asItem(item: unknown): PropertyListItem {
@@ -53,6 +65,38 @@ export class PropertyListComponent {
         return item.expanded
             ? 'angular-components.properties-menu.list.collapse'
             : 'angular-components.properties-menu.list.expand';
+    }
+
+    copyLabelKey(item: PropertyListItem): string {
+        return this.copiedItemId === item.id
+            ? 'angular-components.properties-menu.list.copied'
+            : 'angular-components.properties-menu.list.copy';
+    }
+
+    async onCopy(event: Event, item: PropertyListItem): Promise<void> {
+        event.stopPropagation();
+
+        if (!item.copyValue) {
+            return;
+        }
+
+        try {
+            await navigator.clipboard.writeText(item.copyValue);
+        } catch {
+            return;
+        }
+
+        this.copiedItemId = item.id;
+        clearTimeout(this.copiedTimeoutId);
+        this.copiedTimeoutId = setTimeout(() => {
+            this.copiedItemId = undefined;
+            this.changeDetectorRef.markForCheck();
+        }, COPIED_FEEDBACK_MS);
+    }
+
+    onAction(event: Event, item: PropertyListItem, key: string): void {
+        event.stopPropagation();
+        this.propertiesMenuService.triggerListItemAction(this.tabId, this.groupId, item.id, key);
     }
 
     onRemove(event: Event, item: PropertyListItem): void {

@@ -23,7 +23,9 @@
             "list": {
                 "collapse": "Plegar",
                 "empty": "No hay elementos",
-                "expand": "Desplegar"
+                "expand": "Desplegar",
+                "copy": "Copiar la referencia",
+                "copied": "Copiado"
             },
             "numberArray": {
                 "add": "Añadir"

@@ -15,6 +15,7 @@ import {
     PropertyFieldValueChange,
     PropertyGroupRemove,
     PropertyGroupToggle,
+    PropertyListItemAction as PropertyListItemActionEvent,
     PropertyListItemRemove,
     PropertyListItemSelect,
     PropertyListItemToggle,
@@ -63,6 +64,7 @@ export class PropertiesMenuComponent {
     @Output() fieldValueChange = new EventEmitter<PropertyFieldValueChange>();
     @Output() groupRemove = new EventEmitter<PropertyGroupRemove>();
     @Output() groupToggle = new EventEmitter<PropertyGroupToggle>();
+    @Output() listItemAction = new EventEmitter<PropertyListItemActionEvent>();
     @Output() listItemRemove = new EventEmitter<PropertyListItemRemove>();
     @Output() listItemSelect = new EventEmitter<PropertyListItemSelect>();
     @Output() listItemToggle = new EventEmitter<PropertyListItemToggle>();
@@ -95,6 +97,7 @@ export class PropertiesMenuComponent {
         this.propertiesMenuService.onFieldValueChange = change => this.fieldValueChange.emit(change);
         this.propertiesMenuService.onGroupRemove = event => this.groupRemove.emit(event);
         this.propertiesMenuService.onGroupToggle = toggle => this.groupToggle.emit(toggle);
+        this.propertiesMenuService.onListItemAction = event => this.listItemAction.emit(event);
         this.propertiesMenuService.onListItemRemove = event => this.listItemRemove.emit(event);
         this.propertiesMenuService.onListItemSelect = event => this.listItemSelect.emit(event);
         this.propertiesMenuService.onListItemToggle = event => this.listItemToggle.emit(event);

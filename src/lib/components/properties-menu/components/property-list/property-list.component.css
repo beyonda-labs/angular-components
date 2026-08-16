@@ -61,6 +61,7 @@
     gap: 0.3rem;
 }
 
+.bey-property-list-item-action,
 .bey-property-list-item-remove,
 .bey-property-list-item-chevron {
     display: inline-flex;
@@ -75,10 +76,16 @@
     cursor: pointer;
 }
 
+.bey-property-list-item-action,
 .bey-property-list-item-chevron {
     width: 1.5rem;
     height: 1.5rem;
     border-radius: 0.3rem;
+}
+
+.bey-property-list-item-action:hover:not(:disabled) {
+    background: var(--bey-bg-hover);
+    color: var(--bey-property-list-text);
 }
 
 .bey-property-list-item-chevron:hover:not(:disabled) {

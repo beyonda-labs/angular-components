@@ -287,6 +287,8 @@
             },
             "list": {
                 "collapse": "Plegar",
+                "copied": "Copiado",
+                "copy": "Copiar la referencia",
                 "empty": "No hay elementos",
                 "expand": "Desplegar"
             },

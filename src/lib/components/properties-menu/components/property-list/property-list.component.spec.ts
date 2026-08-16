@@ -332,3 +332,110 @@ describe('PropertyListComponent · parámetros del mensaje', () => {
         expect(label.textContent.trim()).toBe('Sin parámetros');
     });
 });
+
+describe('PropertyListComponent · copiar y acciones', () => {
+    let component: PropertyListComponent;
+    let fixture: ComponentFixture<PropertyListComponent>;
+    let propertiesMenuService: PropertiesMenuService;
+    let written: string[];
+
+    beforeEach(async () => {
+        written = [];
+        Object.defineProperty(navigator, 'clipboard', {
+            configurable: true,
+            value: { writeText: (text: string) => { written.push(text);
+
+ return Promise.resolve(); } }
+        });
+
+        await TestBed.configureTestingModule({
+            imports: [PropertyListComponent, TranslateModule.forRoot()],
+            providers: [PropertiesMenuService, PropertyVariableService]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(PropertyListComponent);
+        component = fixture.componentInstance;
+        propertiesMenuService = TestBed.inject(PropertiesMenuService);
+        propertiesMenuService.setConfig({
+            prefix: 'app.properties-menu',
+            tabs: [
+                new PropertyTab({
+                    id: 'variables',
+                    groups: [
+                        new PropertyGroup({
+                            id: 'variables-list',
+                            content: new PropertyListContent({
+                                list: [
+                                    new PropertyListItem({
+                                        id: 'v1',
+                                        label: 'total',
+                                        copyValue: '{{ total }}',
+                                        actions: [{ key: 'duplicate', icon: faCircleExclamation, label: 'Duplicar' }]
+                                    })
+                                ]
+                            })
+                        })
+                    ]
+                })
+            ]
+        });
+
+        component.tabId = 'variables';
+        component.groupId = 'variables-list';
+        component.items = [
+            new PropertyListItem({
+                id: 'v1',
+                label: 'total',
+                copyValue: '{{ total }}',
+                actions: [{ key: 'duplicate', icon: faCircleExclamation, label: 'Duplicar' }]
+            })
+        ];
+        fixture.detectChanges();
+    });
+
+    it('shows one button per action plus the copy one', () => {
+        expect(fixture.nativeElement.querySelectorAll('.bey-property-list-item-action').length).toBe(2);
+    });
+
+    it('copies the expression the item carries, not its label', async () => {
+        await component.onCopy(new MouseEvent('click'), component.items[0]);
+
+        expect(written).toEqual(['{{ total }}']);
+    });
+
+    it('marks the item as copied so the button can confirm it', async () => {
+        await component.onCopy(new MouseEvent('click'), component.items[0]);
+
+        expect(component.copiedItemId).toBe('v1');
+        expect(component.copyLabelKey(component.items[0])).toBe('angular-components.properties-menu.list.copied');
+    });
+
+    it('does not leave the copied state on when the clipboard refuses', async () => {
+        Object.defineProperty(navigator, 'clipboard', {
+            configurable: true,
+            value: { writeText: () => Promise.reject(new Error('denied')) }
+        });
+
+        await component.onCopy(new MouseEvent('click'), component.items[0]);
+
+        expect(component.copiedItemId).toBeUndefined();
+    });
+
+    it('reports the action key without selecting or toggling the card', () => {
+        const actionSpy = jest.spyOn(propertiesMenuService, 'triggerListItemAction');
+        const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
+        const buttons = fixture.nativeElement.querySelectorAll('.bey-property-list-item-action');
+
+        (buttons[1] as HTMLElement).click();
+
+        expect(actionSpy).toHaveBeenCalledWith('variables', 'variables-list', 'v1', 'duplicate');
+        expect(toggleSpy).not.toHaveBeenCalled();
+    });
+
+    it('renders no copy button when the item carries nothing to copy', () => {
+        component.items = [new PropertyListItem({ id: 'v2', label: 'otra' })];
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.querySelectorAll('.bey-property-list-item-action').length).toBe(0);
+    });
+});

@@ -79,6 +79,8 @@ export { PropertyTreeConfig as BeyPropertyTreeConfig } from './models/property-t
 export type { PropertyTreeConfigParameters as BeyPropertyTreeConfigParameters } from './models/property-tree-config.model';
 export { PropertyListItem as BeyPropertyListItem } from './models/property-list-item.model';
 export type { PropertyListItemParameters as BeyPropertyListItemParameters } from './models/property-list-item.model';
+export { PropertyListItemAction as BeyPropertyListItemActionModel } from './models/property-list-item.model';
+export type { PropertyListItemActionParameters as BeyPropertyListItemActionParameters } from './models/property-list-item.model';
 export { PropertyBadge as BeyPropertyBadge, PropertySummaryRow as BeyPropertySummaryRow } from './models/property-summary-row.model';
 export type {
     PropertyBadgeParameters as BeyPropertyBadgeParameters,
@@ -96,6 +98,7 @@ export type {
     PropertyFieldValueChange as BeyPropertyFieldValueChange,
     PropertyGroupRemove as BeyPropertyGroupRemove,
     PropertyGroupToggle as BeyPropertyGroupToggle,
+    PropertyListItemAction as BeyPropertyListItemAction,
     PropertyListItemRemove as BeyPropertyListItemRemove,
     PropertyListItemSelect as BeyPropertyListItemSelect,
     PropertyListItemToggle as BeyPropertyListItemToggle,

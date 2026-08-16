@@ -23,7 +23,9 @@
             "list": {
                 "collapse": "Collapse",
                 "empty": "No items",
-                "expand": "Expand"
+                "expand": "Expand",
+                "copy": "Copy the reference",
+                "copied": "Copied"
             },
             "numberArray": {
                 "add": "Add"
