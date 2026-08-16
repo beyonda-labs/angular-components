@@ -28,6 +28,8 @@
 -   Http service: `upload()` sends raw bytes reporting progress, and `getBlob()` fetches a response as bytes instead of JSON.
 -   Page module: `afterCreate` on the form config runs a follow-up request before the create modal closes, for entities that take more than one call to create.
 -   Form module: autocomplete field, a select whose options are filtered by typing, for lists too long for a native dropdown.
+-   Properties menu module: a searchable select field can offer a variable picker too, for a field whose value may
+    be named by a variable.
 -   Properties menu module: the attachment field can offer a variable picker, writing the chosen variable as a
     {{ name }} expression; its unused image preview is gone.
 -   Properties menu module: list cards can carry badges, a remove action and an expandable body of summary rows

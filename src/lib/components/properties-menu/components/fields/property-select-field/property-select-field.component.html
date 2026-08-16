@@ -1,5 +1,5 @@
 @if (field.searchable) {
-    <div class="bey-property-field-control bey-property-select-search">
+    <div class="bey-property-field-control bey-property-select-search" #pickerAnchor>
         <input
             class="bey-property-field-input"
             type="text"
@@ -38,6 +38,30 @@
                     </p>
                 }
             </div>
+        }
+
+        @if (pickerOpen) {
+            <bey-variable-picker
+                [anchor]="pickerAnchor"
+                [variables]="field.variables"
+                (closed)="closeVariablePicker()"
+                (selected)="onVariableSelected($event)"
+            ></bey-variable-picker>
+        }
+
+        @if (field.variables.length > 0) {
+            <button
+                class="bey-property-field-variable-trigger"
+                type="button"
+                [attr.aria-label]="'angular-components.properties-menu.select.useVariable' | translate"
+                [class.bey-property-field-variable-trigger-active]="pickerOpen"
+                [disabled]="field.disabled"
+                [tooltip]="'angular-components.properties-menu.select.useVariable' | translate"
+                container="body"
+                (click)="toggleVariablePicker()"
+            >
+                <fa-icon [icon]="variableIcon"></fa-icon>
+            </button>
         }
     </div>
 } @else {

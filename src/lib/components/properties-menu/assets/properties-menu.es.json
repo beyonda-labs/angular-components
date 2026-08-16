@@ -31,7 +31,8 @@
             "remove": "Eliminar",
             "select": {
                 "noMatches": "Sin coincidencias",
-                "searchPlaceholder": "Buscar…"
+                "searchPlaceholder": "Buscar…",
+                "useVariable": "Usar una variable"
             },
             "spacing": {
                 "bottom": "Abajo",

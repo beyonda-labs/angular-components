@@ -296,7 +296,8 @@
             "remove": "Remove",
             "select": {
                 "noMatches": "No matches",
-                "searchPlaceholder": "Search…"
+                "searchPlaceholder": "Search…",
+                "useVariable": "Use a variable"
             },
             "spacing": {
                 "bottom": "Bottom",

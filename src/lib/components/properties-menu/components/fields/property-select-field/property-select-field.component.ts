@@ -1,11 +1,16 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { PropertySelectField } from '../../../models/fields/property-select-field.model';
 import { PropertyOption } from '../../../models/property-option.model';
+import { PropertyVariable } from '../../../models/property-variable.model';
+import { VariablePickerComponent } from '../../variable-picker/variable-picker.component';
 
 @Component({
-    imports: [TranslateModule],
+    imports: [FontAwesomeModule, TooltipModule, TranslateModule, VariablePickerComponent],
     selector: 'bey-property-select-field',
     standalone: true,
     styleUrls: ['../property-field-control.styles.css', './property-select-field.component.css'],
@@ -17,7 +22,27 @@ export class PropertySelectFieldComponent {
     @Output() valueChange = new EventEmitter<unknown>();
 
     isOpen = false;
+    pickerOpen = false;
     query = '';
+
+    readonly variableIcon = faDollarSign;
+
+    toggleVariablePicker(): void {
+        this.pickerOpen = !this.pickerOpen;
+
+        if (this.pickerOpen) {
+            this.close();
+        }
+    }
+
+    closeVariablePicker(): void {
+        this.pickerOpen = false;
+    }
+
+    onVariableSelected(variable: PropertyVariable): void {
+        this.closeVariablePicker();
+        this.valueChange.emit(`{{ ${variable.path} }}`);
+    }
 
     private readonly translateService = inject(TranslateService);
 
