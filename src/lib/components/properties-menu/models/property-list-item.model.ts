@@ -14,6 +14,7 @@ export interface PropertyListItemParameters {
     icon?: IconDefinition;
     iconClasses?: string;
     label?: string;
+    labelParameters?: Record<string, unknown>;
     metadata?: Record<string, unknown>;
     removable?: boolean;
 }
@@ -32,6 +33,7 @@ export class PropertyListItem {
     description?: string;
     icon?: IconDefinition;
     iconClasses?: string;
+    labelParameters?: Record<string, unknown>;
 
     constructor({
         badges = [],
@@ -44,6 +46,7 @@ export class PropertyListItem {
         iconClasses,
         id,
         label = `${id}.label`,
+        labelParameters,
         metadata = {},
         removable = false
     }: PropertyListItemParameters) {
@@ -57,6 +60,7 @@ export class PropertyListItem {
         this.iconClasses = iconClasses;
         this.id = id;
         this.label = label;
+        this.labelParameters = labelParameters;
         this.metadata = metadata;
         this.removable = removable;
     }

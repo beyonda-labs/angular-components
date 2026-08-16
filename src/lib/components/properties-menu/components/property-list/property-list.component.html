@@ -18,8 +18,11 @@
             }
 
             <div class="bey-property-list-item-content">
-                <span class="bey-property-list-item-label" [title]="getLabelKey(listItem) | translate">
-                    {{ getLabelKey(listItem) | translate }}
+                <span
+                    class="bey-property-list-item-label"
+                    [title]="getLabelKey(listItem) | translate: listItem.labelParameters"
+                >
+                    {{ getLabelKey(listItem) | translate: listItem.labelParameters }}
                 </span>
 
                 @if (listItem.badges.length > 0) {

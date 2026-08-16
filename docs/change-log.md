@@ -44,6 +44,8 @@
     -   The attachment field's upload and clear buttons now match the size and shape of the other property fields' buttons.
     -   Long variable names no longer overflow the panel: group headers and list items truncate with an ellipsis —
         the full name stays available as a tooltip — and field labels wrap.
+-   Properties menu module: a list item label now interpolates the parameters it carries, so a parameterised
+    message no longer shows its placeholders raw.
 -   Form module: the autocomplete panel is no longer clipped by a scrollable ancestor such as a modal body.
 -   Breadcrumb module: fixed the overflow-collapse not updating after the item list changed.
 -   Form module:

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { PropertyTextField } from '../../models/fields/property-text-field.model';
 import { PropertyGroup } from '../../models/property-group.model';
@@ -283,5 +283,52 @@ describe('PropertyListComponent · etiquetas dentro del cuerpo', () => {
 
         expect(fixture.nativeElement.querySelector('.bey-property-field-label')).toBeFalsy();
         expect(fixture.nativeElement.querySelector('.bey-property-summary-row-label').textContent.trim()).toBe('Valor');
+    });
+});
+
+describe('PropertyListComponent · parámetros del mensaje', () => {
+    let component: PropertyListComponent;
+    let fixture: ComponentFixture<PropertyListComponent>;
+    let translate: TranslateService;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [PropertyListComponent, TranslateModule.forRoot()],
+            providers: [PropertiesMenuService, PropertyVariableService]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(PropertyListComponent);
+        component = fixture.componentInstance;
+        translate = TestBed.inject(TranslateService);
+        translate.setTranslation('es', { problems: { wrongType: 'Es {{actual}} y se espera {{expected}}' } });
+        translate.use('es');
+
+        component.tabId = 'problems';
+        component.groupId = 'problems-list';
+    });
+
+    it('interpolates the parameters a list item carries', () => {
+        component.items = [
+            new PropertyListItem({
+                id: 'p1',
+                label: 'problems.wrongType',
+                labelParameters: { actual: 'pdf', expected: 'image' }
+            })
+        ];
+        fixture.detectChanges();
+
+        const label = fixture.nativeElement.querySelector('.bey-property-list-item-label');
+
+        expect(label.textContent.trim()).toBe('Es pdf y se espera image');
+    });
+
+    it('still renders a label that takes no parameters', () => {
+        translate.setTranslation('es', { problems: { plain: 'Sin parámetros' } }, true);
+        component.items = [new PropertyListItem({ id: 'p2', label: 'problems.plain' })];
+        fixture.detectChanges();
+
+        const label = fixture.nativeElement.querySelector('.bey-property-list-item-label');
+
+        expect(label.textContent.trim()).toBe('Sin parámetros');
     });
 });
