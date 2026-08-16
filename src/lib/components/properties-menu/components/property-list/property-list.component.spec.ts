@@ -162,13 +162,25 @@ describe('PropertyListComponent con items desplegables', () => {
         expect(fixture.nativeElement.querySelectorAll('.bey-property-summary-row').length).toBe(2);
     });
 
-    it('toggles instead of selecting when the item has a body', () => {
+    it('only toggles from the chevron, never from the row itself', () => {
         setUp([buildItem()]);
 
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
 
         (fixture.nativeElement.querySelector('.bey-list-item') as HTMLElement).click();
+
+        expect(toggleSpy).not.toHaveBeenCalled();
+        expect(selectSpy).toHaveBeenCalledWith('variables', 'variables-list', 'total_pages');
+    });
+
+    it('toggles when the chevron is clicked, without also selecting the row', () => {
+        setUp([buildItem()]);
+
+        const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
+        const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
+
+        (fixture.nativeElement.querySelector('.bey-property-list-item-chevron') as HTMLElement).click();
 
         expect(toggleSpy).toHaveBeenCalledWith('variables', 'variables-list', 'total_pages');
         expect(selectSpy).not.toHaveBeenCalled();

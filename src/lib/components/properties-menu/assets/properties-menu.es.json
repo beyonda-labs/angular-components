@@ -20,7 +20,9 @@
                 "tooLarge": "Este archivo supera el límite de {{maxSizeMB}} MB."
             },
             "list": {
-                "empty": "No hay elementos"
+                "collapse": "Plegar",
+                "empty": "No hay elementos",
+                "expand": "Desplegar"
             },
             "numberArray": {
                 "add": "Añadir"

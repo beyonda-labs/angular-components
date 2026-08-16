@@ -285,7 +285,9 @@
                 "tooLarge": "This file exceeds the {{maxSizeMB}} MB limit."
             },
             "list": {
-                "empty": "No items"
+                "collapse": "Collapse",
+                "empty": "No items",
+                "expand": "Expand"
             },
             "numberArray": {
                 "add": "Add"

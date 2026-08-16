@@ -256,10 +256,10 @@ icon uses the list's muted color.
 
 #### Cards with a body
 
-An item that carries a `body` becomes an expandable card: it renders a chevron, and clicking it expands the body
-instead of selecting the item. An item without a body keeps selecting, so a plain catalog or a problems list is
-unaffected. `badges` render next to the label, and `removable` adds a remove action that emits `listItemRemove`
-without toggling the card.
+An item that carries a `body` becomes an expandable card, with a chevron that opens it. **Only the chevron
+toggles** — clicking the row still emits `listItemSelect`, exactly as for an item without a body, so selecting and
+expanding stay separate actions and a plain catalog or a problems list is unaffected. `badges` render next to the
+label, and `removable` adds a remove action; neither the remove nor the chevron lets the click reach the row.
 
 ```ts
 new BeyPropertyListItem({
@@ -316,8 +316,8 @@ resolves like any other, from `<prefix>.tabs.<id>.label` unless `label` is set e
 | `variableSelected`   | `{ fieldId, variable, expression }`      | A variable is inserted into a field               |
 | `treeNodeSelect`     | `{ tabId, groupId, nodeId, node }`       | A tree node is selected                                |
 | `treeAddBlock`       | `{ tabId, groupId }`                     | A tree group's "add block" action is triggered         |
-| `listItemSelect`     | `{ tabId, groupId, itemId, item }`       | A list card without a body is selected                 |
-| `listItemToggle`     | `{ tabId, groupId, itemId, expanded }`   | A list card with a body is expanded/collapsed          |
+| `listItemSelect`     | `{ tabId, groupId, itemId, item }`       | A list card's row is clicked                            |
+| `listItemToggle`     | `{ tabId, groupId, itemId, expanded }`   | A list card's chevron expands/collapses its body       |
 | `listItemRemove`     | `{ tabId, groupId, itemId }`             | A removable list card's remove action is triggered     |
 | `tabAddRequested`    | `{ tabId }`                              | A tab's `addLabel` button is clicked                   |
 | `groupRemove`        | `{ tabId, groupId }`                     | A removable group's remove action is triggered         |

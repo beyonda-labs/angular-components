@@ -56,19 +56,24 @@ export class PropertyListComponent {
         return resolvePropertyLabelKey(this.propertiesMenuService.config().prefix, 'list', item.id, item.label);
     }
 
+    getToggleLabelKey(item: PropertyListItem): string {
+        return item.expanded
+            ? 'angular-components.properties-menu.list.collapse'
+            : 'angular-components.properties-menu.list.expand';
+    }
+
     onRemove(event: Event, item: PropertyListItem): void {
         event.stopPropagation();
         this.propertiesMenuService.removeListItem(this.tabId, this.groupId, item.id);
     }
 
+    onToggle(event: Event, item: PropertyListItem): void {
+        event.stopPropagation();
+        this.propertiesMenuService.toggleListItem(this.tabId, this.groupId, item.id);
+    }
+
     private onItemClick(item: PropertyListItem): void {
         if (item.disabled) {
-            return;
-        }
-
-        if (item.isExpandable) {
-            this.propertiesMenuService.toggleListItem(this.tabId, this.groupId, item.id);
-
             return;
         }
 

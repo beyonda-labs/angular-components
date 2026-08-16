@@ -59,14 +59,32 @@
 
 .bey-property-list-item-remove,
 .bey-property-list-item-chevron {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     flex: 0 0 auto;
+    border: none;
+    padding: 0;
+    background: none;
     color: var(--bey-property-list-text-muted);
     font-size: 0.75rem;
+    cursor: pointer;
 }
 
-.bey-property-list-item-remove {
-    display: inline-flex;
-    cursor: pointer;
+.bey-property-list-item-chevron {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 0.3rem;
+}
+
+.bey-property-list-item-chevron:hover:not(:disabled) {
+    background: var(--bey-bg-hover);
+    color: var(--bey-property-list-text);
+}
+
+.bey-property-list-item-chevron:disabled {
+    cursor: default;
+    opacity: 0.5;
 }
 
 .bey-property-list-item-remove:hover {

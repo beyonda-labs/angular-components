@@ -44,11 +44,17 @@
             }
 
             @if (listItem.isExpandable) {
-                <fa-icon
+                <button
+                    type="button"
                     class="bey-property-list-item-chevron"
                     [class.bey-property-list-item-chevron-expanded]="listItem.expanded"
-                    [icon]="chevronIcon"
-                ></fa-icon>
+                    [attr.aria-expanded]="listItem.expanded"
+                    [attr.aria-label]="getToggleLabelKey(listItem) | translate"
+                    [disabled]="listItem.disabled"
+                    (click)="onToggle($event, listItem)"
+                >
+                    <fa-icon [icon]="chevronIcon"></fa-icon>
+                </button>
             }
         </div>
 

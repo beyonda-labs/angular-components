@@ -29,7 +29,8 @@
 -   Page module: `afterCreate` on the form config runs a follow-up request before the create modal closes, for entities that take more than one call to create.
 -   Form module: autocomplete field, a select whose options are filtered by typing, for lists too long for a native dropdown.
 -   Properties menu module: list cards can carry badges, a remove action and an expandable body of summary rows
-    (read-only value, badge or a real field), so an entity can be a card and the group header can mean grouping.
+    (read-only value, badge or a real field), opened from their chevron, so an entity can be a card and the group
+    header can mean grouping.
 
 ### Changed
 
