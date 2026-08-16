@@ -38,6 +38,10 @@
     (read-only value, badge or a real field) opened from their header, so an entity can be a card and the group
     header can mean grouping.
 
+-   Properties menu module: tree nodes can be dragged to reorder or reparent them, reporting the move through
+    `treeDrop`; what each node accepts is declared per drag with `acceptsDrop`, `draggable`, `dropDisabled` and
+    the tree's `acceptsRootDrop`, so the library holds no nesting rules of its own.
+
 ### Changed
 
 -   Tooling: the package manager is now pnpm, pinned through `packageManager`.

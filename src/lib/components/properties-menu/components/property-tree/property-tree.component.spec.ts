@@ -3,6 +3,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertyTreeNode } from '../../models/property-tree-node.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
+import { PropertyTreeDragService } from '../../services/property-tree-drag.service';
 import { PropertyTreeComponent } from './property-tree.component';
 
 describe('PropertyTreeComponent', () => {
@@ -13,7 +14,7 @@ describe('PropertyTreeComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyTreeComponent, TranslateModule.forRoot()],
-            providers: [PropertiesMenuService]
+            providers: [PropertiesMenuService, PropertyTreeDragService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyTreeComponent);

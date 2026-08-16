@@ -1,6 +1,7 @@
 import { PropertyListItem } from '../models/property-list-item.model';
 import { PropertyTreeNode } from '../models/property-tree-node.model';
 import { PropertyVariable } from '../models/property-variable.model';
+import { PropertyTreeDropPosition } from '../utils/property-tree-drop.util';
 
 export interface PropertyAttachmentUpload {
     fieldId: string;
@@ -65,6 +66,26 @@ export interface PropertyTabAddRequested {
 export interface PropertyTreeAddBlock {
     groupId: string;
     tabId: string;
+}
+
+export interface PropertyTreeDragStart {
+    groupId: string;
+    node: PropertyTreeNode;
+    nodeId: string;
+    tabId: string;
+}
+
+export interface PropertyTreeDragEnd {
+    groupId: string;
+    tabId: string;
+}
+
+export interface PropertyTreeDrop {
+    groupId: string;
+    nodeId: string;
+    position: PropertyTreeDropPosition;
+    tabId: string;
+    targetNodeId: string;
 }
 
 export interface PropertyTreeNodeSelect {

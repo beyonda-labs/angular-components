@@ -104,9 +104,13 @@ export type {
     PropertyListItemToggle as BeyPropertyListItemToggle,
     PropertyTabAddRequested as BeyPropertyTabAddRequested,
     PropertyTreeAddBlock as BeyPropertyTreeAddBlock,
+    PropertyTreeDragEnd as BeyPropertyTreeDragEnd,
+    PropertyTreeDragStart as BeyPropertyTreeDragStart,
+    PropertyTreeDrop as BeyPropertyTreeDrop,
     PropertyTreeNodeSelect as BeyPropertyTreeNodeSelect,
     PropertyTreeNodeToggle as BeyPropertyTreeNodeToggle,
     PropertyVariableSelection as BeyPropertyVariableSelection
 } from './types/properties-menu-events';
+export type { PropertyTreeDropPosition as BeyPropertyTreeDropPosition } from './utils/property-tree-drop.util';
 export { PropertiesMenuService as BeyPropertiesMenuService } from './services/properties-menu.service';
 export { PropertyVariableService as BeyPropertyVariableService } from './services/property-variable.service';

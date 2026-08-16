@@ -4,11 +4,19 @@
             <button
                 type="button"
                 class="bey-property-tree-row"
+                [attr.data-node-id]="node.id"
                 [class.bey-property-tree-row-selected]="isSelected(node)"
                 [class.bey-property-tree-row-disabled]="node.disabled"
+                [class.bey-property-tree-row-draggable]="node.draggable"
+                [class.bey-property-tree-row-dragged]="isDragged(node)"
+                [class.bey-property-tree-row-drop-invalid]="isInvalidTarget(node)"
+                [class.bey-property-tree-row-drop-before]="dropPositionFor(node) === 'before'"
+                [class.bey-property-tree-row-drop-inside]="dropPositionFor(node) === 'inside'"
+                [class.bey-property-tree-row-drop-after]="dropPositionFor(node) === 'after'"
                 [style.padding-left.rem]="0.6 + level * 1"
                 [disabled]="node.disabled"
                 (click)="onNodeClick(node)"
+                (pointerdown)="onRowPointerDown($event, node)"
             >
                 <span
                     class="bey-property-tree-toggle"

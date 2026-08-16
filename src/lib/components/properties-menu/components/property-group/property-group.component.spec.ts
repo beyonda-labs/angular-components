@@ -7,6 +7,7 @@ import { PropertyListItem } from '../../models/property-list-item.model';
 import { PropertyTreeConfig } from '../../models/property-tree-config.model';
 import { PropertyTreeNode } from '../../models/property-tree-node.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
+import { PropertyTreeDragService } from '../../services/property-tree-drag.service';
 import { PropertyGroupComponent } from './property-group.component';
 
 describe('PropertyGroupComponent', () => {
@@ -17,7 +18,7 @@ describe('PropertyGroupComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyGroupComponent, TranslateModule.forRoot()],
-            providers: [PropertiesMenuService]
+            providers: [PropertiesMenuService, PropertyTreeDragService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyGroupComponent);

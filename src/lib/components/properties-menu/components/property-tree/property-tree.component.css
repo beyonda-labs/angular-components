@@ -1,6 +1,8 @@
 :host {
     --bey-property-tree-active: var(--bey-bg-active);
     --bey-property-tree-border: var(--bey-gray-200);
+    --bey-property-tree-drop: var(--bey-primary);
+    --bey-property-tree-drop-invalid: var(--bey-danger);
     --bey-property-tree-hover: var(--bey-bg-hover);
     --bey-property-tree-text: var(--text-primary);
     --bey-property-tree-text-muted: var(--text-muted);
@@ -45,6 +47,31 @@
 .bey-property-tree-row-disabled {
     cursor: not-allowed;
     opacity: 0.5;
+}
+
+.bey-property-tree-row-draggable {
+    touch-action: none;
+}
+
+.bey-property-tree-row-dragged {
+    opacity: 0.45;
+}
+
+.bey-property-tree-row-drop-inside {
+    box-shadow: inset 0 0 0 2px var(--bey-property-tree-drop);
+}
+
+.bey-property-tree-row-drop-before {
+    box-shadow: inset 0 2px 0 0 var(--bey-property-tree-drop);
+}
+
+.bey-property-tree-row-drop-after {
+    box-shadow: inset 0 -2px 0 0 var(--bey-property-tree-drop);
+}
+
+.bey-property-tree-row-drop-invalid {
+    box-shadow: inset 0 0 0 2px var(--bey-property-tree-drop-invalid);
+    cursor: no-drop;
 }
 
 .bey-property-tree-toggle {

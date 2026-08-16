@@ -8,6 +8,7 @@ import { PropertiesMenuConfig, PropertiesMenuConfigParameters } from './models/p
 import { PropertyTab } from './models/property-tab.model';
 import { PropertyVariable, PropertyVariableParameters } from './models/property-variable.model';
 import { PropertiesMenuService } from './services/properties-menu.service';
+import { PropertyTreeDragService } from './services/property-tree-drag.service';
 import { PropertyVariableService } from './services/property-variable.service';
 import {
     PropertyAttachmentUpload,
@@ -21,6 +22,9 @@ import {
     PropertyListItemToggle,
     PropertyTabAddRequested,
     PropertyTreeAddBlock,
+    PropertyTreeDragEnd,
+    PropertyTreeDragStart,
+    PropertyTreeDrop,
     PropertyTreeNodeSelect,
     PropertyTreeNodeToggle,
     PropertyVariableSelection
@@ -28,7 +32,7 @@ import {
 
 @Component({
     imports: [PropertiesMenuHeaderComponent, PropertyTabComponent, PropertyTabsComponent, TranslateModule],
-    providers: [PropertiesMenuService, PropertyVariableService],
+    providers: [PropertiesMenuService, PropertyTreeDragService, PropertyVariableService],
     selector: 'bey-properties-menu',
     standalone: true,
     styleUrls: ['./properties-menu.component.css'],
@@ -70,6 +74,9 @@ export class PropertiesMenuComponent {
     @Output() listItemToggle = new EventEmitter<PropertyListItemToggle>();
     @Output() tabAddRequested = new EventEmitter<PropertyTabAddRequested>();
     @Output() treeAddBlock = new EventEmitter<PropertyTreeAddBlock>();
+    @Output() treeDragEnd = new EventEmitter<PropertyTreeDragEnd>();
+    @Output() treeDragStart = new EventEmitter<PropertyTreeDragStart>();
+    @Output() treeDrop = new EventEmitter<PropertyTreeDrop>();
     @Output() treeNodeSelect = new EventEmitter<PropertyTreeNodeSelect>();
     @Output() treeNodeToggle = new EventEmitter<PropertyTreeNodeToggle>();
     @Output() variableSelected = new EventEmitter<PropertyVariableSelection>();
@@ -77,6 +84,7 @@ export class PropertiesMenuComponent {
     @ViewChild('menuBody') private readonly menuBody?: ElementRef<HTMLElement>;
 
     private readonly propertiesMenuService = inject(PropertiesMenuService);
+    private readonly propertyTreeDragService = inject(PropertyTreeDragService);
     private readonly propertyVariableService = inject(PropertyVariableService);
 
     constructor() {
@@ -103,6 +111,9 @@ export class PropertiesMenuComponent {
         this.propertiesMenuService.onListItemToggle = event => this.listItemToggle.emit(event);
         this.propertiesMenuService.onTabAddRequested = event => this.tabAddRequested.emit(event);
         this.propertiesMenuService.onTreeAddBlock = event => this.treeAddBlock.emit(event);
+        this.propertyTreeDragService.onTreeDragEnd = event => this.treeDragEnd.emit(event);
+        this.propertyTreeDragService.onTreeDragStart = event => this.treeDragStart.emit(event);
+        this.propertyTreeDragService.onTreeDrop = event => this.treeDrop.emit(event);
         this.propertiesMenuService.onTreeNodeSelect = event => this.treeNodeSelect.emit(event);
         this.propertiesMenuService.onTreeNodeToggle = event => this.treeNodeToggle.emit(event);
         this.propertiesMenuService.onVariableSelected = selection => this.variableSelected.emit(selection);

@@ -3,9 +3,12 @@ import { IconDefinition } from '@fortawesome/angular-fontawesome';
 export interface PropertyTreeNodeParameters {
     id: string;
 
+    acceptsDrop?: boolean;
     active?: boolean;
     children?: PropertyTreeNode[];
     disabled?: boolean;
+    draggable?: boolean;
+    dropDisabled?: boolean;
     expanded?: boolean;
     hidden?: boolean;
     icon?: IconDefinition;
@@ -14,9 +17,12 @@ export interface PropertyTreeNodeParameters {
 }
 
 export class PropertyTreeNode {
+    acceptsDrop: boolean;
     active: boolean;
     children: PropertyTreeNode[];
     disabled: boolean;
+    draggable: boolean;
+    dropDisabled: boolean;
     expanded: boolean;
     hidden: boolean;
     id: string;
@@ -26,9 +32,12 @@ export class PropertyTreeNode {
     icon?: IconDefinition;
 
     constructor({
+        acceptsDrop = false,
         active = false,
         children = [],
         disabled = false,
+        draggable = false,
+        dropDisabled = false,
         expanded = true,
         hidden = false,
         icon,
@@ -36,9 +45,12 @@ export class PropertyTreeNode {
         label = `${id}.label`,
         metadata = {}
     }: PropertyTreeNodeParameters) {
+        this.acceptsDrop = acceptsDrop;
         this.active = active;
         this.children = children;
         this.disabled = disabled;
+        this.draggable = draggable;
+        this.dropDisabled = dropDisabled;
         this.expanded = expanded;
         this.hidden = hidden;
         this.icon = icon;
