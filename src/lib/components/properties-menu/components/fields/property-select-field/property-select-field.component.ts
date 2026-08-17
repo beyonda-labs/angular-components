@@ -1,12 +1,12 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { PropertySelectField } from '../../../models/fields/property-select-field.model';
 import { PropertyOption } from '../../../models/property-option.model';
 import { PropertyVariable } from '../../../models/property-variable.model';
+import { PROPERTY_VARIABLE_ICON } from '../../../utils/property-variable-icon.util';
 import { VariablePickerComponent } from '../../variable-picker/variable-picker.component';
 
 @Component({
@@ -25,7 +25,7 @@ export class PropertySelectFieldComponent {
     pickerOpen = false;
     query = '';
 
-    readonly variableIcon = faDollarSign;
+    readonly variableIcon = PROPERTY_VARIABLE_ICON;
 
     toggleVariablePicker(): void {
         this.pickerOpen = !this.pickerOpen;

@@ -1,12 +1,12 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faDatabase } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { PropertyTextField } from '../../../models/fields/property-text-field.model';
 import { PropertyVariable } from '../../../models/property-variable.model';
 import { PropertyVariableService } from '../../../services/property-variable.service';
+import { PROPERTY_VARIABLE_ICON } from '../../../utils/property-variable-icon.util';
 import { VariablePickerComponent } from '../../variable-picker/variable-picker.component';
 
 export interface PropertyTextFieldActionTrigger {
@@ -38,7 +38,7 @@ export class PropertyTextFieldComponent {
 
     pickerOpen = false;
 
-    readonly variableIcon = faDatabase;
+    readonly variableIcon = PROPERTY_VARIABLE_ICON;
 
     readonly propertyVariableService = inject(PropertyVariableService);
 

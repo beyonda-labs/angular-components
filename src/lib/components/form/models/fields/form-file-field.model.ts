@@ -52,10 +52,4 @@ interface FormFileFieldParameters {
     validators?: FormFieldValidator[];
 }
 
-export function matchesAcceptPattern(pattern: string, mimeType: string): boolean {
-    if (pattern.endsWith('/*')) {
-        return mimeType.startsWith(pattern.slice(0, -1));
-    }
-
-    return pattern === mimeType;
-}
+export { matchesAcceptPattern } from '../../../../internal/file/accept-pattern.util';

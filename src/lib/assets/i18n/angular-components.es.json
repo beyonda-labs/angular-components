@@ -272,7 +272,8 @@
                 "search": "Buscar adjuntos",
                 "tooLarge": "Este archivo supera el límite de {{maxSizeMB}} MB.",
                 "upload": "Subir un archivo nuevo",
-                "useVariable": "Usar una variable"
+                "useVariable": "Usar una variable",
+                "wrongType": "Este tipo de archivo no se acepta ({{accept}})."
             },
             "close": "Cerrar",
             "colorField": {

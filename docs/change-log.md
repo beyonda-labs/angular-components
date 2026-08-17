@@ -42,12 +42,19 @@
     `treeDrop`; what each node accepts is declared per drag with `acceptsDrop`, `draggable`, `dropDisabled` and
     the tree's `acceptsRootDrop`, so the library holds no nesting rules of its own.
 
+-   Properties menu module: the attachment field checks the file type before uploading, as the form file field
+    already did, instead of leaving it to the server to refuse it.
+
 ### Changed
 
+-   Properties menu module: every field that offers a variable now uses the same icon, taken from one shared
+    constant instead of each field declaring its own.
 -   Tooling: the package manager is now pnpm, pinned through `packageManager`.
 
 ### Fixed
 
+-   Properties menu module: the searchable select panel is readable again — it painted its background and border
+    from tokens that do not exist in the palette, so it rendered transparent over whatever sat behind it.
 -   Properties menu module:
     -   The attachment field's upload and clear buttons now match the size and shape of the other property fields' buttons.
     -   Long variable names no longer overflow the panel: group headers and list items truncate with an ellipsis —

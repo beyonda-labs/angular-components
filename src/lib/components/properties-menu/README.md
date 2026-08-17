@@ -3,6 +3,16 @@
 Config-driven panel of tabs, groups and fields. A group renders one of four kinds of content: fields, a list of
 cards, nested tabs or a tree.
 
+## Fields that take a variable
+
+The text, select and attachment fields can all offer a variable picker, and they all show the same icon: it
+comes from `PROPERTY_VARIABLE_ICON`, one constant, rather than each field naming its own — they had drifted to
+two different icons for the same action.
+
+The attachment field also uploads a file, and it checks that file the way the form module's file field does:
+type first, then size. The `accept` attribute alone only filters the system dialog, so a file dropped on the
+field used to reach the server for it to refuse.
+
 ## Tree drag and drop
 
 A tree node can be dragged to reorder it among its siblings or to reparent it. The library reports the move

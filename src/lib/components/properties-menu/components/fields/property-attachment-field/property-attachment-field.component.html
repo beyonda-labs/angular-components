@@ -111,4 +111,13 @@
             }}
         </p>
     }
+
+    @if (hasTypeError) {
+        <p class="bey-property-attachment-error">
+            {{
+                'angular-components.properties-menu.attachmentField.wrongType'
+                    | translate: { accept: field.accept ?? '' }
+            }}
+        </p>
+    }
 </div>

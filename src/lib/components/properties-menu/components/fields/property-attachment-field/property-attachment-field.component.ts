@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faDollarSign, faFileArrowUp, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faFileArrowUp, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
@@ -9,6 +9,8 @@ import {
     PropertyAttachmentOption
 } from '../../../models/fields/property-attachment-field.model';
 import { PropertyVariable } from '../../../models/property-variable.model';
+import { isAcceptedMimeType } from '../../../../../internal/file/accept-pattern.util';
+import { PROPERTY_VARIABLE_ICON } from '../../../utils/property-variable-icon.util';
 import { VariablePickerComponent } from '../../variable-picker/variable-picker.component';
 
 @Component({
@@ -26,8 +28,9 @@ export class PropertyAttachmentFieldComponent {
 
     readonly clearIcon = faXmark;
     readonly uploadIcon = faFileArrowUp;
-    readonly variableIcon = faDollarSign;
+    readonly variableIcon = PROPERTY_VARIABLE_ICON;
 
+    hasTypeError = false;
     isOpen = false;
     pickerOpen = false;
     query = '';
@@ -96,7 +99,7 @@ export class PropertyAttachmentFieldComponent {
     }
 
     onClear(): void {
-        this.sizeErrorMaxSizeMB = undefined;
+        this.clearFileErrors();
         this.valueChange.emit('');
     }
 
@@ -110,14 +113,33 @@ export class PropertyAttachmentFieldComponent {
             return;
         }
 
+        this.clearFileErrors();
+
+        if (!isAcceptedMimeType(this.acceptedMimeTypes, file.type)) {
+            this.hasTypeError = true;
+
+            return;
+        }
+
         if (this.field.maxSizeBytes !== undefined && file.size > this.field.maxSizeBytes) {
             this.sizeErrorMaxSizeMB = Math.round(this.field.maxSizeBytes / (1024 * 1024));
 
             return;
         }
 
-        this.sizeErrorMaxSizeMB = undefined;
         this.uploadRequested.emit(file);
+    }
+
+    private get acceptedMimeTypes(): string[] {
+        return (this.field.accept ?? '')
+            .split(',')
+            .map(pattern => pattern.trim())
+            .filter(Boolean);
+    }
+
+    private clearFileErrors(): void {
+        this.hasTypeError = false;
+        this.sizeErrorMaxSizeMB = undefined;
     }
 
     close(): void {

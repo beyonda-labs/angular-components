@@ -1,3 +1,13 @@
+:host {
+    --bey-property-select-border: var(--bey-gray-200);
+    --bey-property-select-hover: var(--bey-bg-hover);
+    --bey-property-select-surface: var(--bey-bg-surface);
+}
+
+:host-context(body.dark) {
+    --bey-property-select-border: var(--bey-gray-800);
+}
+
 .bey-property-select-search {
     position: relative;
 }
@@ -10,9 +20,9 @@
     left: 0;
     max-height: 12rem;
     overflow-y: auto;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--bey-property-select-border);
     border-radius: 0.25rem;
-    background-color: var(--bg-elevated, var(--bg-primary));
+    background-color: var(--bey-property-select-surface);
     box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
 }
 
@@ -30,7 +40,7 @@
 
 .bey-property-select-search-option:hover,
 .bey-property-select-search-option:focus-visible {
-    background-color: var(--bg-hover, rgb(0 0 0 / 6%));
+    background-color: var(--bey-property-select-hover);
 }
 
 .bey-property-select-search-option-selected {

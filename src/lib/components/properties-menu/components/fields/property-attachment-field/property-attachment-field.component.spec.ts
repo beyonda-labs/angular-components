@@ -135,6 +135,61 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
         expect(withId.holdsVariable).toBe(false);
     });
 
+    describe('picking a file to upload', () => {
+        const selectFile = (file: File): void => {
+            const input = { files: [file], value: 'C:/fake/path' };
+
+            component.onFileSelected({ target: input } as unknown as Event);
+        };
+
+        beforeEach(() => {
+            component.field = new PropertyAttachmentField({
+                id: 'source',
+                accept: 'image/*,application/pdf',
+                maxSizeBytes: 1000
+            });
+            fixture.detectChanges();
+        });
+
+        it('uploads a file of an accepted type', () => {
+            const uploads: File[] = [];
+
+            component.uploadRequested.subscribe(file => uploads.push(file));
+            selectFile(new File(['x'], 'logo.png', { type: 'image/png' }));
+
+            expect(uploads.length).toBe(1);
+            expect(component.hasTypeError).toBe(false);
+        });
+
+        it('rejects a file whose type is not accepted, without uploading it', () => {
+            const onUpload = jest.fn();
+
+            component.uploadRequested.subscribe(onUpload);
+            selectFile(new File(['x'], 'notes.txt', { type: 'text/plain' }));
+
+            expect(onUpload).not.toHaveBeenCalled();
+            expect(component.hasTypeError).toBe(true);
+        });
+
+        it('clears the type error once an accepted file is picked', () => {
+            selectFile(new File(['x'], 'notes.txt', { type: 'text/plain' }));
+            selectFile(new File(['x'], 'logo.png', { type: 'image/png' }));
+
+            expect(component.hasTypeError).toBe(false);
+        });
+
+        it('still rejects a file over the size limit', () => {
+            const onUpload = jest.fn();
+            const big = new File([new Uint8Array(2000)], 'big.png', { type: 'image/png' });
+
+            component.uploadRequested.subscribe(onUpload);
+            selectFile(big);
+
+            expect(onUpload).not.toHaveBeenCalled();
+            expect(component.sizeErrorMaxSizeMB).toBeDefined();
+        });
+    });
+
     it('no longer renders any preview image', () => {
         component.field = new PropertyAttachmentField({
             id: 'source',
