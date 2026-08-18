@@ -15,6 +15,10 @@ const buildField = (value = ''): PropertyAttachmentField =>
         ]
     });
 
+function selectFileOn(component: PropertyAttachmentFieldComponent, file: File): void {
+    component.onFileSelected({ target: { files: [file], value: 'C:/fake/path' } } as unknown as Event);
+}
+
 describe('PropertyAttachmentFieldComponent', () => {
     let component: PropertyAttachmentFieldComponent;
     let fixture: ComponentFixture<PropertyAttachmentFieldComponent>;
@@ -136,11 +140,6 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
     });
 
     describe('picking a file to upload', () => {
-        const selectFile = (file: File): void => {
-            const input = { files: [file], value: 'C:/fake/path' };
-
-            component.onFileSelected({ target: input } as unknown as Event);
-        };
 
         beforeEach(() => {
             component.field = new PropertyAttachmentField({
@@ -155,7 +154,7 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
             const uploads: File[] = [];
 
             component.uploadRequested.subscribe(file => uploads.push(file));
-            selectFile(new File(['x'], 'logo.png', { type: 'image/png' }));
+            selectFileOn(component, new File(['x'], 'logo.png', { type: 'image/png' }));
 
             expect(uploads.length).toBe(1);
             expect(component.hasTypeError).toBe(false);
@@ -165,15 +164,15 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
             const onUpload = jest.fn();
 
             component.uploadRequested.subscribe(onUpload);
-            selectFile(new File(['x'], 'notes.txt', { type: 'text/plain' }));
+            selectFileOn(component, new File(['x'], 'notes.txt', { type: 'text/plain' }));
 
             expect(onUpload).not.toHaveBeenCalled();
             expect(component.hasTypeError).toBe(true);
         });
 
         it('clears the type error once an accepted file is picked', () => {
-            selectFile(new File(['x'], 'notes.txt', { type: 'text/plain' }));
-            selectFile(new File(['x'], 'logo.png', { type: 'image/png' }));
+            selectFileOn(component, new File(['x'], 'notes.txt', { type: 'text/plain' }));
+            selectFileOn(component, new File(['x'], 'logo.png', { type: 'image/png' }));
 
             expect(component.hasTypeError).toBe(false);
         });
@@ -183,7 +182,7 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
             const big = new File([new Uint8Array(2000)], 'big.png', { type: 'image/png' });
 
             component.uploadRequested.subscribe(onUpload);
-            selectFile(big);
+            selectFileOn(component, big);
 
             expect(onUpload).not.toHaveBeenCalled();
             expect(component.sizeErrorMaxSizeMB).toBeDefined();

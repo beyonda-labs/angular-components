@@ -29,6 +29,10 @@ export class ListComponent {
     }
 
     onItemKeydown(event: Event, item: unknown, index: number): void {
+        if (event.target !== event.currentTarget) {
+            return;
+        }
+
         event.preventDefault();
         this.onItemClick(item, index);
     }

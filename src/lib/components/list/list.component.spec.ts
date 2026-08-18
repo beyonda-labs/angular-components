@@ -130,6 +130,37 @@ describe('ListComponent', () => {
 
         expect(host.listComponent.getEmptyLabel()).toBe('custom.empty');
     });
+    it('activates an item when the space key is pressed on the card itself', () => {
+        const clicked: number[] = [];
+
+        host.config = buildConfig({ onItemClick: (_item, index) => clicked.push(index) });
+        hostFixture.detectChanges();
+
+        const card: HTMLElement = hostFixture.nativeElement.querySelector('.bey-list-item');
+
+        card.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+
+        expect(clicked).toEqual([0]);
+    });
+
+    it('leaves the space key alone when it is typed inside a control of the card', () => {
+        const clicked: number[] = [];
+
+        host.config = buildConfig({ onItemClick: (_item, index) => clicked.push(index) });
+        hostFixture.detectChanges();
+
+        const card: HTMLElement = hostFixture.nativeElement.querySelector('.bey-list-item');
+        const input = document.createElement('input');
+
+        card.append(input);
+
+        const event = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
+
+        input.dispatchEvent(event);
+
+        expect(clicked).toEqual([]);
+        expect(event.defaultPrevented).toBe(false);
+    });
 });
 
 function buildConfig(overrides?: Partial<ListConfig<TestItem>>): ListConfig<TestItem> {

@@ -53,6 +53,8 @@
 
 ### Fixed
 
+-   List module: the space key typed inside a control of a card is no longer swallowed — the card only reacts to it
+    when the key lands on the card itself, so an input inside one accepts spaces and the card stops toggling.
 -   Properties menu module: the searchable select panel is readable again — it painted its background and border
     from tokens that do not exist in the palette, so it rendered transparent over whatever sat behind it.
 -   Properties menu module:

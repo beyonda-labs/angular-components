@@ -4,12 +4,12 @@ import { faFileArrowUp, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { isAcceptedMimeType } from '../../../../../internal/file/accept-pattern.util';
 import {
     PropertyAttachmentField,
     PropertyAttachmentOption
 } from '../../../models/fields/property-attachment-field.model';
 import { PropertyVariable } from '../../../models/property-variable.model';
-import { isAcceptedMimeType } from '../../../../../internal/file/accept-pattern.util';
 import { PROPERTY_VARIABLE_ICON } from '../../../utils/property-variable-icon.util';
 import { VariablePickerComponent } from '../../variable-picker/variable-picker.component';
 
