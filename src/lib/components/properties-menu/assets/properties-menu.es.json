@@ -1,0 +1,60 @@
+{
+    "angular-components": {
+        "properties-menu": {
+            "attachmentField": {
+                "clear": "Vaciar",
+                "empty": "No se han encontrado adjuntos",
+                "search": "Buscar adjuntos",
+                "tooLarge": "Este archivo supera el límite de {{maxSizeMB}} MB.",
+                "upload": "Subir un archivo nuevo",
+                "useVariable": "Usar una variable",
+                "wrongType": "Este tipo de archivo no se acepta ({{accept}})."
+            },
+            "close": "Cerrar",
+            "colorField": {
+                "clear": "Vaciar"
+            },
+            "fileField": {
+                "choose": "Elegir archivo",
+                "clear": "Vaciar",
+                "fileSelected": "Archivo seleccionado",
+                "noFileSelected": "Ningún archivo seleccionado",
+                "tooLarge": "Este archivo supera el límite de {{maxSizeMB}} MB."
+            },
+            "list": {
+                "collapse": "Plegar",
+                "empty": "No hay elementos",
+                "expand": "Desplegar",
+                "copy": "Copiar la referencia",
+                "copied": "Copiado"
+            },
+            "numberArray": {
+                "add": "Añadir"
+            },
+            "remove": "Eliminar",
+            "select": {
+                "noMatches": "Sin coincidencias",
+                "searchPlaceholder": "Buscar…",
+                "useVariable": "Usar una variable"
+            },
+            "spacing": {
+                "bottom": "Abajo",
+                "left": "Izquierda",
+                "right": "Derecha",
+                "top": "Arriba"
+            },
+            "tabs": {
+                "label": "Pestañas de propiedades"
+            },
+            "textField": {
+                "insertVariable": "Insertar variable"
+            },
+            "variablePicker": {
+                "close": "Cerrar",
+                "empty": "No se encontraron variables",
+                "label": "Variables",
+                "search": "Buscar variables"
+            }
+        }
+    }
+}

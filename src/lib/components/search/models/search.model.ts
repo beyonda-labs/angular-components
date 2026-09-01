@@ -3,6 +3,8 @@ import { SearchFilter, SearchFilterOperator } from './search-filter.model';
 export enum SearchFieldType {
     Boolean = 'boolean',
     Number = 'number',
+    Select = 'select',
+    Tags = 'tags',
     Text = 'text'
 }
 
@@ -17,6 +19,8 @@ const OPERATORS_BY_TYPE: Record<SearchFieldType, SearchFilterOperator[]> = {
         SearchFilterOperator.LessThanOrEquals,
         SearchFilterOperator.Between
     ],
+    [SearchFieldType.Select]: [SearchFilterOperator.Equals, SearchFilterOperator.NotEquals],
+    [SearchFieldType.Tags]: [SearchFilterOperator.Contains, SearchFilterOperator.NotContains],
     [SearchFieldType.Text]: [
         SearchFilterOperator.Contains,
         SearchFilterOperator.NotContains,
@@ -27,12 +31,20 @@ const OPERATORS_BY_TYPE: Record<SearchFieldType, SearchFilterOperator[]> = {
     ]
 };
 
+export interface SearchFieldOption {
+    label: string;
+    value: string;
+}
+
 export class SearchField {
     key: string;
     type: SearchFieldType;
 
-    constructor({ key, type }: SearchFieldParameters) {
+    options?: SearchFieldOption[];
+
+    constructor({ key, type, options }: SearchFieldParameters) {
         this.key = key;
+        this.options = options;
         this.type = type;
     }
 
@@ -44,6 +56,9 @@ export class SearchField {
 export interface SearchFieldParameters {
     key: string;
     type: SearchFieldType;
+
+    /** Only meaningful (and required in practice) for `SearchFieldType.Select` — the bounded set of choices. */
+    options?: SearchFieldOption[];
 }
 
 export class SearchConfig {

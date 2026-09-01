@@ -11,6 +11,7 @@ export class FormValidatorService {
     getFieldValidators(field: FormField): ValidatorFn[] {
         switch (field.type) {
             case FormFieldType.Text:
+            case FormFieldType.TextVariable:
             case FormFieldType.Checkbox:
             case FormFieldType.Date:
             case FormFieldType.Number:

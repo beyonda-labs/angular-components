@@ -1,0 +1,111 @@
+:host {
+    --bey-property-field-accent: var(--bey-primary);
+    --bey-property-field-border: var(--bey-gray-300);
+    --bey-property-field-border-hover: var(--bey-gray-400);
+    --bey-property-field-surface: var(--bey-bg-page);
+    --bey-property-field-text: var(--text-primary);
+    --bey-property-field-text-muted: var(--text-muted);
+
+    display: block;
+}
+
+:host-context(body.dark) {
+    --bey-property-field-border: var(--bey-gray-700);
+    --bey-property-field-border-hover: var(--bey-gray-600);
+}
+
+.bey-property-field-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.bey-property-field-input,
+.bey-property-field-select {
+    width: 100%;
+    padding: 0.4rem 0.55rem;
+    border: 1px solid var(--bey-property-field-border);
+    border-radius: 0.4rem;
+    background: var(--bey-property-field-surface);
+    color: var(--bey-property-field-text);
+    font-size: 0.8rem;
+    line-height: 1.3;
+    transition:
+        border-color 0.15s ease,
+        box-shadow 0.15s ease;
+}
+
+.bey-property-field-input:hover,
+.bey-property-field-select:hover {
+    border-color: var(--bey-property-field-border-hover);
+}
+
+.bey-property-field-input:focus,
+.bey-property-field-select:focus {
+    outline: none;
+    border-color: var(--bey-property-field-accent);
+    box-shadow: 0 0 0 2px rgba(var(--bey-black-rgb), 0.06);
+}
+
+.bey-property-field-input:disabled,
+.bey-property-field-select:disabled {
+    color: var(--bey-property-field-text-muted);
+    background: var(--bey-bg-muted);
+    cursor: not-allowed;
+}
+
+.bey-property-field-input-invalid {
+    border-color: var(--bey-danger);
+}
+
+.bey-property-field-unit {
+    color: var(--bey-property-field-text-muted);
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+.bey-property-field-input-with-actions {
+    min-height: calc(2 * 1.9rem + 0.35rem);
+}
+
+.bey-property-field-button-stack {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    gap: 0.35rem;
+}
+
+.bey-property-field-variable-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 1.9rem;
+    height: 1.9rem;
+    border: 1px solid var(--bey-property-field-border);
+    border-radius: 0.4rem;
+    background: var(--bey-property-field-surface);
+    color: var(--bey-property-field-text-muted);
+    cursor: pointer;
+    transition:
+        color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.bey-property-field-variable-trigger:hover {
+    color: var(--bey-property-field-text);
+    border-color: var(--bey-property-field-border-hover);
+}
+
+.bey-property-field-variable-trigger-active {
+    color: var(--text-inverse);
+    background: var(--bey-property-field-accent);
+    border-color: var(--bey-property-field-accent);
+}
+
+.bey-property-field-picker-anchor {
+    position: relative;
+    flex: 1 1 auto;
+    min-width: 0;
+}

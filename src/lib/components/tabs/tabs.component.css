@@ -5,6 +5,7 @@
     --bey-tabs-hover: var(--text-primary);
 
     display: block;
+    min-width: 0;
 }
 
 .bey-tabs {
@@ -39,7 +40,7 @@
 
 .bey-tabs-tab-active {
     color: var(--bey-tabs-accent);
-    border-bottom-color: var(--bey-tabs-accent);
+    border-bottom-color: var(--bey-tabs-active-underline, var(--bey-tabs-accent));
 }
 
 .bey-tabs-tab-active:hover:not(:disabled) {
@@ -59,4 +60,92 @@
 
 .bey-tabs-tab-icon {
     font-size: 0.76rem;
+}
+
+.bey-tabs--segmented {
+    display: inline-flex;
+    gap: 0.15rem;
+    padding: 0.2rem;
+    border-bottom: none;
+    border-radius: 0.6rem;
+    background: var(--bey-bg-muted);
+}
+
+.bey-tabs--segmented .bey-tabs-tab {
+    padding: 0.4rem 0.9rem;
+    border-bottom: none;
+    border-radius: 0.4rem;
+}
+
+.bey-tabs--segmented .bey-tabs-tab:hover:not(:disabled):not(.bey-tabs-tab-active) {
+    color: var(--bey-tabs-hover);
+    background: var(--bey-bg-hover);
+}
+
+.bey-tabs--segmented .bey-tabs-tab-active {
+    color: var(--text-inverse);
+    background: var(--bey-tabs-accent);
+    border-bottom-color: transparent;
+}
+
+.bey-tabs--segmented .bey-tabs-tab-active:hover:not(:disabled) {
+    color: var(--text-inverse);
+}
+
+.bey-tabs--segmented .bey-tabs-tab:focus-visible {
+    border-radius: 0.4rem;
+}
+
+.bey-tabs-overflow {
+    position: relative;
+    flex: 0 0 auto;
+}
+
+.bey-tabs-overflow-trigger {
+    padding-inline: 0.7rem;
+}
+
+.bey-tabs-overflow-menu {
+    position: absolute;
+    top: calc(100% + 0.25rem);
+    right: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    min-width: 10rem;
+    padding: 0.35rem;
+    border: 1px solid var(--bey-tabs-border);
+    border-radius: 0.5rem;
+    background: var(--bey-bg-page);
+    box-shadow: 0 0.5rem 1.5rem rgba(var(--bey-black-rgb), 0.12);
+}
+
+.bey-tabs-overflow-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.6rem;
+    border: none;
+    border-radius: 0.35rem;
+    background: none;
+    color: var(--bey-tabs-text);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.bey-tabs-overflow-menu-item:hover:not(:disabled) {
+    background: var(--bey-bg-hover);
+    color: var(--bey-tabs-hover);
+}
+
+.bey-tabs-overflow-menu-item-active {
+    color: var(--bey-tabs-accent);
+}
+
+.bey-tabs-overflow-menu-item:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }

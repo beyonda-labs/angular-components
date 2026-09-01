@@ -5,12 +5,19 @@ import { PageItem } from './page-item.model';
 
 export enum PageStandardAction {
     Create = 'create',
+    CreateCategory = 'create-category',
     Delete = 'delete',
-    Edit = 'edit'
+    DeleteCategory = 'delete-category',
+    DeleteTrashItem = 'delete-trash-item',
+    Edit = 'edit',
+    EditCategory = 'edit-category',
+    Move = 'move',
+    RestoreTrashItem = 'restore-trash-item'
 }
 
 export enum PageActionScope {
     Global = 'global',
+    Group = 'group',
     Item = 'item'
 }
 
@@ -29,14 +36,16 @@ export class PageAction {
     handler?: (items?: PageItem[]) => void;
     icon?: IconDefinition;
     label?: string;
+    subActions?: PageAction[];
     tooltip?: string;
 
-    constructor({ key, scope, type, zone, handler, icon, label, tooltip }: PageActionParameters) {
+    constructor({ key, scope, type, zone, handler, icon, label, tooltip, subActions }: PageActionParameters) {
         this.handler = handler;
         this.icon = icon;
         this.key = key;
         this.label = label;
         this.scope = scope;
+        this.subActions = subActions;
         this.tooltip = tooltip;
         this.type = type ?? getTypeByZone(zone);
         this.zone = zone;
@@ -51,6 +60,7 @@ export interface PageActionParameters {
     handler?: (items?: PageItem[]) => void;
     icon?: IconDefinition;
     label?: string;
+    subActions?: PageAction[];
     tooltip?: string;
     type?: HeaderActionType;
 }

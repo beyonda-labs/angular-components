@@ -1,0 +1,50 @@
+<div class="bey-property-field-control">
+    <button
+        type="button"
+        class="bey-property-file-field-choose"
+        [disabled]="field.disabled"
+        (click)="fileInput.click()"
+    >
+        <fa-icon [icon]="chooseIcon"></fa-icon>
+        {{ 'angular-components.properties-menu.fileField.choose' | translate }}
+    </button>
+
+    <input
+        #fileInput
+        type="file"
+        hidden
+        [accept]="field.accept ?? ''"
+        [disabled]="field.disabled"
+        (change)="onFileSelected($event)"
+    />
+
+    <span class="bey-property-file-field-name" [class.bey-property-file-field-name-empty]="!hasValue">
+        {{
+            selectedFileName ||
+                (hasValue
+                    ? ('angular-components.properties-menu.fileField.fileSelected' | translate)
+                    : ('angular-components.properties-menu.fileField.noFileSelected' | translate))
+        }}
+    </span>
+
+    @if (hasValue && !field.disabled) {
+        <div class="bey-property-field-button-stack">
+            <button
+                type="button"
+                class="bey-property-field-variable-trigger"
+                [attr.aria-label]="'angular-components.properties-menu.fileField.clear' | translate"
+                [tooltip]="'angular-components.properties-menu.fileField.clear' | translate"
+                container="body"
+                (click)="onClear()"
+            >
+                <fa-icon [icon]="clearIcon"></fa-icon>
+            </button>
+        </div>
+    }
+</div>
+
+@if (sizeErrorMaxSizeMB !== undefined) {
+    <p class="bey-property-file-field-size-error">
+        {{ 'angular-components.properties-menu.fileField.tooLarge' | translate: { maxSizeMB: sizeErrorMaxSizeMB } }}
+    </p>
+}

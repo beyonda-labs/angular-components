@@ -1,0 +1,46 @@
+.bey-property-file-field-choose {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex: 0 0 auto;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--bey-property-field-border);
+    border-radius: 0.4rem;
+    background: var(--bey-property-field-surface);
+    color: var(--bey-property-field-text);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition:
+        color 0.15s ease,
+        border-color 0.15s ease;
+}
+
+.bey-property-file-field-choose:hover {
+    border-color: var(--bey-property-field-border-hover);
+}
+
+.bey-property-file-field-choose:disabled {
+    color: var(--bey-property-field-text-muted);
+    background: var(--bey-bg-muted);
+    cursor: not-allowed;
+}
+
+.bey-property-file-field-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.8rem;
+    color: var(--bey-property-field-text);
+}
+
+.bey-property-file-field-name-empty {
+    color: var(--bey-property-field-text-muted);
+}
+
+.bey-property-file-field-size-error {
+    margin: 0.3rem 0 0;
+    color: var(--bey-danger);
+    font-size: 0.7rem;
+}

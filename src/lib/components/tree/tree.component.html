@@ -36,7 +36,14 @@
                     <fa-icon class="bey-tree-node-icon" [icon]="node.icon"></fa-icon>
                 }
 
-                <span class="bey-tree-node-label">{{ getLabel(node) | translate }}</span>
+                <span
+                    class="bey-tree-node-label"
+                    [tooltip]="getLabel(node) | translate"
+                    container="body"
+                    boundariesElement="viewport"
+                >
+                    {{ getLabel(node) | translate }}
+                </span>
             </div>
 
             @if (hasChildren(node) && isExpanded(node)) {

@@ -1,0 +1,124 @@
+<bey-list [config]="listConfig">
+    <ng-template let-item>
+        @let listItem = asItem(item);
+
+        <div
+            class="bey-property-list-item"
+            [class.bey-property-list-item-disabled]="listItem.disabled"
+            [class.bey-property-list-item-expandable]="listItem.isExpandable && !listItem.disabled"
+            (click)="onHeaderClick(listItem)"
+        >
+            @if (listItem.icon) {
+                <span
+                    class="bey-property-list-item-icon"
+                    [ngClass]="listItem.iconClasses || 'bey-property-list-item-icon-default'"
+                >
+                    <fa-icon [icon]="listItem.icon"></fa-icon>
+                </span>
+            }
+
+            <div class="bey-property-list-item-content">
+                <span
+                    class="bey-property-list-item-label"
+                    [title]="getLabelKey(listItem) | translate: listItem.labelParameters"
+                >
+                    {{ getLabelKey(listItem) | translate: listItem.labelParameters }}
+                </span>
+
+                @if (listItem.badges.length > 0) {
+                    <span class="bey-property-list-item-badges">
+                        @for (badge of listItem.badges; track badge.label) {
+                            <span class="bey-badge" [ngClass]="badge.cssClass">{{ badge.label | translate }}</span>
+                        }
+                    </span>
+                }
+
+                @if (listItem.description) {
+                    <span class="bey-property-list-item-description">{{ listItem.description | translate }}</span>
+                }
+            </div>
+
+            @if (listItem.copyValue) {
+                <button
+                    type="button"
+                    class="bey-property-list-item-action"
+                    [attr.aria-label]="copyLabelKey(listItem) | translate"
+                    [disabled]="listItem.disabled"
+                    [tooltip]="copyLabelKey(listItem) | translate"
+                    container="body"
+                    (click)="onCopy($event, listItem)"
+                >
+                    <fa-icon [icon]="copiedItemId === listItem.id ? copiedIcon : copyIcon"></fa-icon>
+                </button>
+            }
+
+            @for (action of listItem.actions; track action.key) {
+                <button
+                    type="button"
+                    class="bey-property-list-item-action"
+                    [attr.aria-label]="(action.label ?? '') | translate"
+                    [disabled]="listItem.disabled"
+                    [tooltip]="(action.label ?? '') | translate"
+                    container="body"
+                    (click)="onAction($event, listItem, action.key)"
+                >
+                    <fa-icon [icon]="action.icon"></fa-icon>
+                </button>
+            }
+
+            @if (listItem.removable) {
+                <span
+                    class="bey-property-list-item-remove"
+                    role="button"
+                    [attr.aria-label]="'angular-components.properties-menu.remove' | translate"
+                    [tooltip]="'angular-components.properties-menu.remove' | translate"
+                    container="body"
+                    (click)="onRemove($event, listItem)"
+                >
+                    <fa-icon [icon]="removeIcon"></fa-icon>
+                </span>
+            }
+
+            @if (listItem.isExpandable) {
+                <button
+                    type="button"
+                    class="bey-property-list-item-chevron"
+                    [class.bey-property-list-item-chevron-expanded]="listItem.expanded"
+                    [attr.aria-expanded]="listItem.expanded"
+                    [attr.aria-label]="getToggleLabelKey(listItem) | translate"
+                    [disabled]="listItem.disabled"
+                    (click)="onToggle($event, listItem)"
+                >
+                    <fa-icon [icon]="chevronIcon"></fa-icon>
+                </button>
+            }
+        </div>
+
+        @if (listItem.isExpandable && listItem.expanded) {
+            <div class="bey-property-list-item-body">
+                @for (row of listItem.body; track row.label) {
+                    <div class="bey-property-summary-row" [class.bey-property-summary-row-editable]="row.isEditable">
+                        <span class="bey-property-summary-row-label">
+                            @if (row.icon) {
+                                <fa-icon class="bey-property-summary-row-icon" [icon]="row.icon"></fa-icon>
+                            }
+                            {{ row.label | translate }}
+                        </span>
+
+                        @if (row.field) {
+                            <div class="bey-property-summary-row-field">
+                                <bey-property-field [field]="row.field" [hideLabel]="true"></bey-property-field>
+                            </div>
+                        } @else if (row.badge) {
+                            <span class="bey-badge" [ngClass]="row.badge.cssClass">{{ row.badge.label | translate }}</span>
+                        } @else {
+                            <span class="bey-property-summary-row-value">
+                                {{ row.value ? (row.value | translate) : emptyValue }}
+                            </span>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </ng-template>
+</bey-list>

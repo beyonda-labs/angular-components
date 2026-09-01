@@ -22,6 +22,7 @@ export interface TableCellParameters {
 }
 
 export enum CellType {
+    Badge = 'badge',
     Text = 'text',
     Link = 'link'
 }
@@ -34,6 +35,27 @@ export class TextTableCell extends TableCell {
 
 export interface TextTableCellParameters {
     content: string;
+
+    tooltip?: string;
+    translate?: boolean;
+}
+
+export interface TableBadge {
+    badgeClass: string;
+    content: string;
+}
+
+export class BadgeTableCell extends TableCell {
+    badges: TableBadge[];
+
+    constructor({ badges, translate, tooltip }: BadgeTableCellParameters) {
+        super({ content: badges, type: CellType.Badge, translate, tooltip });
+        this.badges = badges;
+    }
+}
+
+export interface BadgeTableCellParameters {
+    badges: TableBadge[];
 
     tooltip?: string;
     translate?: boolean;

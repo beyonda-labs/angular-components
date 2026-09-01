@@ -21,16 +21,17 @@ export class PageFormService {
      * (sections, steps, initial value and extra controls); `onSave` receives the submitted value
      * already mapped through `toItem` and is responsible for closing the modal on success.
      */
-    open(
-        pageForm: PageFormConfig,
+    open<TValue>(
+        pageForm: PageFormConfig<TValue>,
         item: PageItem | undefined,
         pagePrefix: string,
-        onSave: (value: unknown, form: ModalFormConfig) => void
+        onSave: (value: unknown, form: ModalFormConfig<TValue>) => void
     ): BsModalRef<ModalFormDialogComponent> {
         const mode: PageSaveMode = item ? 'edit' : 'create';
 
         return this.modalFormService.open(
-            new ModalFormConfig({
+            new ModalFormConfig<TValue>({
+                allowSubmitWithoutChanges: pageForm.allowSubmitWithoutChanges,
                 cancelLabel: CANCEL_LABEL_KEY,
                 i18nPrefix: pageForm.prefix,
                 initialValue: pageForm.toFormValue(item),

@@ -11,6 +11,7 @@ export class ButtonConfig {
     customClass?: string;
     customStyles?: string;
     icon?: IconDefinition;
+    tooltipPlacement?: TooltipPlacement;
 
     constructor({
         action,
@@ -22,6 +23,7 @@ export class ButtonConfig {
         isDisabled = false,
         isHidden = false,
         tooltip = '',
+        tooltipPlacement,
         type = ButtonType.Primary
     }: ButtonParameters) {
         this.action = action;
@@ -32,6 +34,7 @@ export class ButtonConfig {
         this.isHidden = isHidden;
         this.label = label ?? '';
         this.tooltip = tooltip;
+        this.tooltipPlacement = tooltipPlacement;
         this.type = type;
     }
 }
@@ -46,8 +49,11 @@ export interface ButtonParameters {
     isDisabled?: boolean;
     isHidden?: boolean;
     tooltip?: string;
+    tooltipPlacement?: TooltipPlacement;
     type?: ButtonType;
 }
+
+export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
 
 export enum ButtonType {
     Primary = 'primary',

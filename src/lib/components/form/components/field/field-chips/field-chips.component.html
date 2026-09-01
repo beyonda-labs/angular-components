@@ -1,0 +1,34 @@
+@if (field && control) {
+    <div
+        class="form-control form-control-sm bey-chips-control"
+        [class.bey-chips-control-disabled]="field.isDisabled"
+        [attr.aria-required]="field.isRequired || null"
+        [attr.aria-invalid]="isInvalid() || null"
+    >
+        @for (chip of control.value; track chip; let chipIndex = $index) {
+            <span class="bey-chip" [class.bey-chip-readonly]="field.isDisabled">
+                <span class="bey-chip-label">{{ chip }}</span>
+                @if (!field.isDisabled) {
+                    <button
+                        type="button"
+                        class="bey-chip-remove"
+                        [attr.aria-label]="'angular-components.form.chips.remove' | translate"
+                        (click)="removeChip(chipIndex)"
+                    >
+                        <fa-icon [icon]="removeIcon" aria-hidden="true"></fa-icon>
+                    </button>
+                }
+            </span>
+        }
+        <input
+            class="bey-chips-input"
+            type="text"
+            [id]="field.key"
+            [disabled]="field.isDisabled || isMaxItemsReached()"
+            [(ngModel)]="inputValue"
+            placeholder="{{ (control.value?.length ? '' : getPlaceholder()) | translate }}"
+            (keydown)="onKeyDown($event)"
+            (blur)="addChip()"
+        />
+    </div>
+}

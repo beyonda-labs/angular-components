@@ -1,8 +1,24 @@
 {
     "angular-components": {
         "form": {
+            "autocompleteField": {
+                "clear": "Clear",
+                "empty": "No options found",
+                "toggle": "Show options"
+            },
             "cancel": {
                 "without-changes": "No changes have been made to the form."
+            },
+            "chips": {
+                "remove": "Remove"
+            },
+            "fileField": {
+                "choose": "Choose file",
+                "clear": "Remove file",
+                "empty": "No file selected",
+                "maxSize": "Maximum size: {{maxSize}}",
+                "tooLarge": "The file exceeds the maximum size of {{maxSize}}",
+                "unsupportedType": "Unsupported file type. Allowed: {{accept}}"
             },
             "modal": {
                 "close-confirmation": {
@@ -13,7 +29,15 @@
             },
             "required": "This field is required",
             "submit": {
-                "invalid": "There are errors in the form, please correct or complete the required fields before submitting."
+                "invalid": "There are errors in the form, please correct or complete the required fields before submitting.",
+                "without-changes": "No changes have been made to the form."
+            },
+            "textVariableField": {
+                "close": "Close",
+                "empty": "No options found",
+                "insertVariable": "Insert variable",
+                "label": "Variables",
+                "search": "Search"
             }
         }
     }

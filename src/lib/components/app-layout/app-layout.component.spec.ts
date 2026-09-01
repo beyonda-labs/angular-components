@@ -35,6 +35,7 @@ function buildConfig(
         onBreadcrumbClick?: (id: number) => void;
         onMenuActionClick?: (key: string) => void;
         onLayoutInitialized?: () => void;
+        useBodyPadding?: boolean;
     } = {}
 ): AppLayoutConfig {
     return new AppLayoutConfig({
@@ -45,7 +46,8 @@ function buildConfig(
         bottomActions: overrides.bottomActions ?? [],
         onBreadcrumbClick: overrides.onBreadcrumbClick,
         onMenuActionClick: overrides.onMenuActionClick,
-        onLayoutInitialized: overrides.onLayoutInitialized
+        onLayoutInitialized: overrides.onLayoutInitialized,
+        useBodyPadding: overrides.useBodyPadding
     });
 }
 
@@ -77,6 +79,24 @@ describe('AppLayoutComponent', () => {
         fixture.detectChanges();
 
         expect(fixture.nativeElement.querySelector('.bey-left-menu')).toBeTruthy();
+    });
+
+    it('should apply body padding by default', () => {
+        host.config = buildConfig();
+        fixture.detectChanges();
+
+        const body = fixture.nativeElement.querySelector('.bey-app-layout-body-content');
+
+        expect(body.classList.contains('p-3')).toBe(true);
+    });
+
+    it('should not apply body padding when useBodyPadding is false', () => {
+        host.config = buildConfig({ useBodyPadding: false });
+        fixture.detectChanges();
+
+        const body = fixture.nativeElement.querySelector('.bey-app-layout-body-content');
+
+        expect(body.classList.contains('p-3')).toBe(false);
     });
 
     it('should project ng-content into body area', () => {
@@ -159,6 +179,38 @@ describe('AppLayoutComponent', () => {
         const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
         component.leftMenuConfig.topActions[0].action?.();
 
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('should call the top action\'s own action callback in addition to emitting onMenuClick$', () => {
+        const onClick = jest.fn();
+        const action = new AppLayoutTopAction({ action: onClick, key: 'dashboard', icon: faHome });
+        host.config = buildConfig({ topActions: [action] });
+        fixture.detectChanges();
+
+        const spy = jest.fn();
+        service.onMenuClick$.subscribe(spy);
+
+        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
+        component.leftMenuConfig.topActions[0].action?.();
+
+        expect(onClick).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
+    });
+
+    it('should call the bottom action\'s own action callback in addition to emitting onMenuClick$', () => {
+        const onClick = jest.fn();
+        const action = new AppLayoutBottomAction({ action: onClick, key: 'settings', icon: faGear });
+        host.config = buildConfig({ bottomActions: [action] });
+        fixture.detectChanges();
+
+        const spy = jest.fn();
+        service.onMenuClick$.subscribe(spy);
+
+        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
+        component.leftMenuConfig.bottomActions[0].action?.();
+
+        expect(onClick).toHaveBeenCalled();
         expect(spy).toHaveBeenCalled();
     });
 
@@ -303,6 +355,25 @@ describe('AppLayoutComponent', () => {
 
         const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
         expect(component.leftMenuConfig.userInfo).toBe(userInfo);
+    });
+
+    it('should build the left-menu with the expanded state from AppLayoutService', () => {
+        service.setExpanded(false);
+        host.config = buildConfig();
+        fixture.detectChanges();
+
+        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
+        expect(component.leftMenuConfig.expanded).toBe(false);
+    });
+
+    it('should persist expanded state into AppLayoutService when the left-menu toggles', () => {
+        host.config = buildConfig();
+        fixture.detectChanges();
+
+        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
+        component.onExpandedChange(false);
+
+        expect(service.expanded).toBe(false);
     });
 
     it('should clean up subscriptions on destroy without errors', () => {

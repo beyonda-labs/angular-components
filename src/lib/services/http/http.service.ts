@@ -1,12 +1,12 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpEventType, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, EMPTY, finalize, Observable, tap } from 'rxjs';
+import { catchError, EMPTY, filter, finalize, map, Observable, shareReplay, tap } from 'rxjs';
 
 import { LoadingService } from '../../components/loading/services/loading.service';
 import { ModalService } from '../../components/modal/services/modal.service';
 import { ToastService } from '../../components/toast/services/toast.service';
-import { CustomErrorResponse, HttpRequestOptions } from './models/http.model';
+import { CustomErrorResponse, HttpRequestOptions, UploadRequestOptions } from './models/http.model';
 
 const TITLE_PREFIX = 'angular-components.http.title.';
 const ERROR_UNKNOWN_KEY = 'angular-components.http.error.unknown';
@@ -29,6 +29,12 @@ export class HttpService {
         return this.request(this.httpClient.get<T>(url, this.buildHttpOptions(options)), options);
     }
 
+    getBlob(url: string, options?: HttpRequestOptions): Observable<Blob> {
+        const { headers, params } = this.buildHttpOptions(options);
+
+        return this.request(this.httpClient.get(url, { headers, params, responseType: 'blob' }), options);
+    }
+
     patch<T>(url: string, body: unknown, options?: HttpRequestOptions): Observable<T> {
         return this.request(this.httpClient.patch<T>(url, body, this.buildHttpOptions(options)), options);
     }
@@ -39,6 +45,29 @@ export class HttpService {
 
     put<T>(url: string, body: unknown, options?: HttpRequestOptions): Observable<T> {
         return this.request(this.httpClient.put<T>(url, body, this.buildHttpOptions(options)), options);
+    }
+
+    upload<T>(url: string, body: ArrayBuffer | Blob, options?: UploadRequestOptions): Observable<T> {
+        const { headers, params } = this.buildHttpOptions(options);
+        const events$ = this.httpClient.put<T>(url, body, {
+            headers,
+            observe: 'events',
+            params,
+            reportProgress: true
+        });
+
+        return this.request(
+            events$.pipe(
+                tap(event => {
+                    if (event.type === HttpEventType.UploadProgress) {
+                        options?.onProgress?.(event.total ? event.loaded / event.total : 0);
+                    }
+                }),
+                filter((event): event is HttpResponse<T> => event.type === HttpEventType.Response),
+                map(event => event.body as T)
+            ),
+            options
+        );
     }
 
     private buildHttpOptions(options?: HttpRequestOptions): { headers?: HttpHeaders; params?: HttpParams } {
@@ -141,6 +170,10 @@ export class HttpService {
             this.loadingService.show();
         }
 
+        // `subscribe()` below drives the loading/toast/error side effects immediately, independent of
+        // whether (or how many times) the caller subscribes to the returned observable. `shareReplay(1)`
+        // makes that subscription and the caller's share the same underlying HTTP call — without it,
+        // HttpClient's cold observable would fire the request a second time when the caller subscribes.
         const request = source$.pipe(
             tap(result => {
                 options?.onSuccess?.(result);
@@ -165,7 +198,8 @@ export class HttpService {
                 if (options?.loading) {
                     this.loadingService.hide();
                 }
-            })
+            }),
+            shareReplay(1)
         );
 
         request.subscribe();

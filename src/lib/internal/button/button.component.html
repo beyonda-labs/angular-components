@@ -2,7 +2,9 @@
     <span
         class="d-inline-block"
         [tooltip]="button.tooltip | translate"
+        [placement]="button.tooltipPlacement ?? 'top'"
         container="body"
+        boundariesElement="viewport"
         [style]="button.customStyles"
     >
         <button [class]="getClasses()" [disabled]="button.isDisabled" (click)="onClick()">

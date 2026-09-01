@@ -1,0 +1,23 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.badge.example' | translate }}
+</p>
+
+<h4 class="mt-4 mb-3 fs-6 fw-semibold text-dark">
+    {{ 'angular-components-style-guide.badge.examples.emphasis' | translate }}
+</h4>
+
+<div class="d-flex flex-wrap gap-2">
+    @for (badgeClass of emphasisClasses; track badgeClass) {
+        <span class="bey-badge" [class]="badgeClass">{{ badgeClass }}</span>
+    }
+</div>
+
+<h4 class="mt-4 mb-3 fs-6 fw-semibold text-dark">
+    {{ 'angular-components-style-guide.badge.examples.color' | translate }}
+</h4>
+
+<div class="d-flex flex-wrap gap-2">
+    @for (badgeClass of colorClasses; track badgeClass) {
+        <span class="bey-badge" [class]="badgeClass">{{ badgeClass }}</span>
+    }
+</div>

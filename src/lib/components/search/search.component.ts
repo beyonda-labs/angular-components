@@ -6,7 +6,7 @@ import { debounceTime, Subject, Subscription } from 'rxjs';
 
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
-import { SearchConfig, SearchField, SearchFieldType } from './models/search.model';
+import { SearchConfig, SearchField, SearchFieldOption, SearchFieldType } from './models/search.model';
 import {
     BooleanFilter,
     BooleanFilterOperator,
@@ -117,6 +117,10 @@ export class SearchComponent implements OnDestroy {
         return `${this.config.prefix}.fields.${field.key}`;
     }
 
+    getFieldOptions(row: SearchDraftRow): SearchFieldOption[] {
+        return this.getField(row)?.options ?? [];
+    }
+
     getOperatorLabel(operator: SearchFilterOperator): string {
         return `angular-components.search.operators.${operator}`;
     }
@@ -198,7 +202,6 @@ export class SearchComponent implements OnDestroy {
         return this.config.mainField ? this.rows.find(row => row.fieldKey === this.config.mainField) : undefined;
     }
 
-    /** Mirrors the search term into the panel: the main field is a regular row with an editable operator. */
     private syncMainRow(): void {
         const { mainField } = this.config;
 
@@ -238,8 +241,10 @@ export class SearchComponent implements OnDestroy {
         }
 
         const mainRow = this.getMainRow();
+        const rowType = mainRow ? this.getRowType(mainRow) : null;
+        const isDropdownType = rowType === SearchFieldType.Boolean || rowType === SearchFieldType.Select;
 
-        this.searchTerm = mainRow && this.getRowType(mainRow) !== SearchFieldType.Boolean ? mainRow.value : '';
+        this.searchTerm = mainRow && !isDropdownType ? mainRow.value : '';
     }
 
     private getField(row: SearchDraftRow): SearchField | undefined {

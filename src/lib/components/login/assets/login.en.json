@@ -5,6 +5,7 @@
                 "login": {
                     "existing-user": "An account with this email already exists.",
                     "invalid-credentials": "Invalid email or password.",
+                    "invalid-refresh-token": "Your session has expired. Please log in again.",
                     "oauth-invalid-callback": "The authentication callback is invalid. Please try again.",
                     "oauth-missing-access-token": "No access token was received from {{provider}}. Please try again.",
                     "oauth-missing-email": "No email address was returned by {{provider}}. Please try again.",
@@ -27,6 +28,7 @@
                 "login": {
                     "existing-user": "Account already exists",
                     "invalid-credentials": "Authentication failed",
+                    "invalid-refresh-token": "Session expired",
                     "oauth-invalid-callback": "Authentication error",
                     "oauth-missing-access-token": "Authentication error",
                     "oauth-missing-email": "Authentication error",

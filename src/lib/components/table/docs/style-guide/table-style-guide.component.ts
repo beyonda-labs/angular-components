@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { TableColumn, TableConfig } from '../../models/table.model';
-import { LinkTableCell, TextTableCell } from '../../models/table-cell.model';
+import { BadgeTableCell, LinkTableCell, TextTableCell } from '../../models/table-cell.model';
 import { TableComponent } from '../../table.component';
 
 @Component({
@@ -24,18 +24,21 @@ export class TableStyleGuideComponent {
                     id: 1,
                     name: 'Ada Lovelace',
                     role: 'Principal Engineer',
+                    skills: ['Angular', 'TypeScript', 'RxJS'],
                     status: 'angular-components-style-guide.table.status.active'
                 },
                 {
                     id: 2,
                     name: 'Grace Hopper',
                     role: 'Platform Architect',
+                    skills: ['Node.js', 'Docker'],
                     status: 'angular-components-style-guide.table.status.review'
                 },
                 {
                     id: 3,
                     name: 'Katherine Johnson',
                     role: 'Operations Analyst',
+                    skills: ['SQL'],
                     status: 'angular-components-style-guide.table.status.paused'
                 }
             ],
@@ -62,13 +65,18 @@ export class TableStyleGuideComponent {
                 new TableColumn({
                     key: 'name',
                     tooltip: 'angular-components-style-guide.table.tooltips.name',
-                    width: 40
+                    width: 30
                 }),
-                new TableColumn({ key: 'role', width: 30 }),
+                new TableColumn({ key: 'role', width: 20 }),
                 new TableColumn({
                     key: 'status',
                     tooltip: 'angular-components-style-guide.table.tooltips.status',
-                    width: 20
+                    width: 15
+                }),
+                new TableColumn({
+                    key: 'skills',
+                    tooltip: 'angular-components-style-guide.table.tooltips.skills',
+                    width: 25
                 }),
                 new TableColumn({ key: 'action', width: 10 })
             ],
@@ -82,10 +90,21 @@ export class TableStyleGuideComponent {
                     content: String(item['role'] ?? ''),
                     tooltip: String(item['role'] ?? '')
                 }),
-                new TextTableCell({
-                    content: String(item['status'] ?? ''),
+                new BadgeTableCell({
+                    badges: [
+                        {
+                            badgeClass: this.getStatusBadgeClass(String(item['status'] ?? '')),
+                            content: String(item['status'] ?? '')
+                        }
+                    ],
                     tooltip: String(item['status'] ?? ''),
                     translate: true
+                }),
+                new BadgeTableCell({
+                    badges: ((item['skills'] as string[]) ?? []).map((skill, index) => ({
+                        badgeClass: this.getSkillBadgeClass(index),
+                        content: skill
+                    }))
                 }),
                 new LinkTableCell({
                     action: () => {
@@ -104,5 +123,23 @@ export class TableStyleGuideComponent {
             prefix: 'angular-components-style-guide.table',
             selectedItemsChange
         });
+    }
+
+    private getStatusBadgeClass(status: string): string {
+        if (status.endsWith('active')) {
+            return 'bey-badge-color-success';
+        }
+
+        if (status.endsWith('review')) {
+            return 'bey-badge-color-warning';
+        }
+
+        return 'bey-badge-color-neutral';
+    }
+
+    private getSkillBadgeClass(index: number): string {
+        const skillBadgeClasses = ['bey-badge-color-primary', 'bey-badge-color-info', 'bey-badge-color-purple'];
+
+        return skillBadgeClasses[index % skillBadgeClasses.length];
     }
 }

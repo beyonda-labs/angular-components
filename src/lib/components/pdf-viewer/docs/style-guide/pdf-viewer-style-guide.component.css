@@ -1,0 +1,24 @@
+.bey-pdf-viewer-style-guide-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.bey-pdf-viewer-style-guide-page {
+    min-width: 4rem;
+    text-align: center;
+}
+
+.bey-pdf-viewer-style-guide-frame {
+    height: 32rem;
+    border: 1px solid var(--bey-gray-200);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.bey-pdf-viewer-style-guide-log {
+    margin-top: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}

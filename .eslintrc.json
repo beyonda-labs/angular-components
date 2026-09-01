@@ -189,7 +189,6 @@
                 "arrow-body-style": "error",
                 "arrow-spacing": "error",
                 "generator-star-spacing": "error",
-                "no-confusing-arrow": "error",
                 "no-duplicate-imports": "error",
                 "no-restricted-exports": "error",
                 "no-useless-computed-key": "error",

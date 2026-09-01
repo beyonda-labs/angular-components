@@ -20,4 +20,12 @@ describe('LeftMenuStyleGuideComponent', () => {
     it('should create', () => {
         expect(component).toBeTruthy();
     });
+
+    it('should run the documents action when its own action callback is invoked', () => {
+        const documentsAction = component.expandedConfig.topActions.find(action => action.key === 'documents');
+
+        documentsAction?.action?.();
+
+        expect(component.lastDocumentsClick).toBe('label');
+    });
 });

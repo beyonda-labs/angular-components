@@ -1,0 +1,127 @@
+/* ─── Base ────────────────────────────────────────────────────────────────
+   Replaces bootstrap's `.badge` look. Structural (emphasis) variants below
+   are grayscale; color variants carry a semantic hue. Both share this base.
+*/
+.bey-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3em 0.7em;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background-color: var(--bey-bg-surface);
+    color: var(--text-primary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+/* ─── Emphasis variants (grayscale) ──────────────────────────────────────── */
+.bey-badge-default {
+    background-color: var(--bey-bg-page);
+    border-color: var(--bey-gray-300);
+    color: var(--text-primary);
+}
+
+.bey-badge-outline {
+    background-color: transparent;
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+}
+
+.bey-badge-subtle {
+    background-color: var(--bey-bg-subtle);
+    color: var(--text-secondary);
+}
+
+.bey-badge-soft {
+    background-color: var(--bey-bg-muted);
+    color: var(--text-secondary);
+}
+
+.bey-badge-neutral {
+    background-color: var(--bey-bg-active);
+    color: var(--text-primary);
+}
+
+.bey-badge-secondary {
+    background-color: var(--bey-bg-muted);
+    color: var(--bey-secondary);
+}
+
+.bey-badge-tertiary {
+    background-color: var(--bey-bg-subtle);
+    color: var(--text-muted);
+}
+
+.bey-badge-muted {
+    background-color: var(--bey-bg-active);
+    color: var(--text-muted);
+}
+
+.bey-badge-strong {
+    background-color: var(--bey-gray-600);
+    color: var(--text-inverse);
+}
+
+.bey-badge-inverse {
+    background-color: var(--bey-bg-inverse);
+    color: var(--text-inverse);
+}
+
+/* ─── Color variants (semantic) ──────────────────────────────────────────
+   Muted style: a light tint of the hue as background, and the hue blended
+   with the theme's primary text color so it stays legible in both themes.
+   `primary` is the exception — solid fill, for the main/active state.
+*/
+.bey-badge-color-primary {
+    background-color: var(--bey-blue);
+    border-color: var(--bey-blue);
+    color: var(--text-inverse);
+}
+
+.bey-badge-color-secondary {
+    background-color: color-mix(in srgb, var(--bey-secondary) 15%, var(--bey-bg-page) 85%);
+    color: color-mix(in srgb, var(--bey-secondary) 55%, var(--text-primary) 45%);
+}
+
+.bey-badge-color-success {
+    background-color: color-mix(in srgb, var(--bey-success) 15%, var(--bey-bg-page) 85%);
+    color: color-mix(in srgb, var(--bey-success) 55%, var(--text-primary) 45%);
+}
+
+.bey-badge-color-warning {
+    background-color: color-mix(in srgb, var(--bey-warning) 18%, var(--bey-bg-page) 82%);
+    color: color-mix(in srgb, var(--bey-warning) 60%, var(--text-primary) 40%);
+}
+
+.bey-badge-color-error {
+    background-color: color-mix(in srgb, var(--bey-danger) 15%, var(--bey-bg-page) 85%);
+    color: color-mix(in srgb, var(--bey-danger) 55%, var(--text-primary) 45%);
+}
+
+.bey-badge-color-info {
+    background-color: color-mix(in srgb, var(--bey-blue) 15%, var(--bey-bg-page) 85%);
+    color: color-mix(in srgb, var(--bey-blue) 55%, var(--text-primary) 45%);
+}
+
+.bey-badge-color-neutral {
+    background-color: color-mix(in srgb, var(--bey-secondary) 10%, var(--bey-bg-page) 90%);
+    border-color: var(--bey-gray-300);
+    color: var(--text-secondary);
+}
+
+.bey-badge-color-purple {
+    background-color: color-mix(in srgb, var(--bey-purple) 15%, var(--bey-bg-page) 85%);
+    color: color-mix(in srgb, var(--bey-purple) 55%, var(--text-primary) 45%);
+}
+
+.bey-badge-color-teal {
+    background-color: color-mix(in srgb, var(--bey-teal) 15%, var(--bey-bg-page) 85%);
+    color: color-mix(in srgb, var(--bey-teal) 55%, var(--text-primary) 45%);
+}
+
+.bey-badge-color-pink {
+    background-color: color-mix(in srgb, var(--bey-pink) 15%, var(--bey-bg-page) 85%);
+    color: color-mix(in srgb, var(--bey-pink) 55%, var(--text-primary) 45%);
+}

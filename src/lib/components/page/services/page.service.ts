@@ -2,14 +2,17 @@ import { computed, effect, inject, Injectable, OnDestroy, signal, untracked } fr
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Subscription } from 'rxjs';
 
+import { BreadcrumbConfig, BreadcrumbItem } from '../../breadcrumb/models/breadcrumb.model';
 import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
 import { HeaderConfig } from '../../header/models/header.model';
 import { PAGINATION_SIZE_DEFAULT, PaginationConfig } from '../../pagination/models/pagination.model';
 import { SearchConfig } from '../../search/models/search.model';
 import { SearchFilter } from '../../search/models/search-filter.model';
 import { TableColumn, TableConfig } from '../../table/models/table.model';
+import { Tab, TabsConfig, TabsVariant } from '../../tabs/models/tabs.model';
 import { PageConfig } from '../models/page.model';
 import { PageAction, PageActionZone } from '../models/page-action.model';
+import { PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
 import { PageSearch } from '../models/page-search.model';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
@@ -17,13 +20,21 @@ import { PageHttpService } from './page-http.service';
 import { PageSearchService } from './page-search.service';
 import { PageStateRegistry } from './page-state-registry.service';
 
+interface CategoryPathEntry {
+    id: string | number;
+    label: string;
+}
+
 @Injectable()
 export class PageService implements OnDestroy {
+    readonly categoryPath = signal<CategoryPathEntry[]>([]);
+    readonly currentCategoryId = signal<string | number | null>(null);
     readonly items = signal<PageItem[]>([]);
     readonly loading = signal(false);
     readonly pageSearch = signal<PageSearch>({ filters: [], page: 1, size: PAGINATION_SIZE_DEFAULT });
     readonly selected = signal<PageItem[]>([]);
     readonly totalItems = signal(0);
+    readonly viewMode = signal<PageViewMode>(PageViewMode.Table);
 
     private readonly globalActions = signal<string[] | null>(null);
     private readonly initialized = signal(false);
@@ -35,6 +46,7 @@ export class PageService implements OnDestroy {
 
     private config?: PageConfig;
     private formModalReference?: BsModalRef<ModalFormDialogComponent>;
+    private openCategorySubscription?: Subscription;
     private pendingSelectedIds: (string | number)[] | null = null;
     private refreshSubscription?: Subscription;
 
@@ -107,7 +119,7 @@ export class PageService implements OnDestroy {
             height: pageTable.height,
             isRowSelected: item => this.selected().some(selected => selected.id === (item as unknown as PageItem).id),
             items: this.items() as unknown as Record<string, unknown>[],
-            loadRow: item => pageTable.loadRow(item as unknown as PageItem),
+            loadRow: item => pageTable.loadRow(item as unknown as PageItem, this.viewMode()),
             prefix: tablePrefix,
             selectable: pageTable.allowSelection,
             selectedItemsChange: items => this.setSelected(items as unknown as PageItem[])
@@ -130,6 +142,45 @@ export class PageService implements OnDestroy {
         });
     });
 
+    readonly categoryBreadcrumbConfig = computed<BreadcrumbConfig | null>(() => {
+        if (!this.initialized() || !this.config?.tableConfig?.categoriesConfig) {
+            return null;
+        }
+
+        if (this.viewMode() === PageViewMode.Trash) {
+            return new BreadcrumbConfig({
+                items: [new BreadcrumbItem({ id: 0, label: `${this.config.prefix}.tabs.trash.label`, isTranslationKey: true })],
+                translate: false
+            });
+        }
+
+        const path = this.categoryPath();
+        const items = [
+            new BreadcrumbItem({ id: 0, label: `${this.config.prefix}.categories.root`, isTranslationKey: true }),
+            ...path.map((entry, index) => new BreadcrumbItem({ id: index + 1, label: entry.label }))
+        ];
+
+        return new BreadcrumbConfig({
+            items,
+            translate: false,
+            onItemClick: id => this.navigateBreadcrumb(id)
+        });
+    });
+
+    readonly viewToggleConfig = computed<TabsConfig | null>(() => {
+        if (!this.initialized() || !this.config?.tableConfig?.categoriesConfig?.useTrash) {
+            return null;
+        }
+
+        return new TabsConfig({
+            activeTab: this.viewMode(),
+            prefix: this.config.prefix,
+            variant: TabsVariant.Segmented,
+            tabs: [new Tab({ key: PageViewMode.Table }), new Tab({ key: PageViewMode.Trash })],
+            onTabChange: key => this.setViewMode(key as PageViewMode)
+        });
+    });
+
     constructor() {
         effect(() => {
             if (!this.initialized()) {
@@ -143,6 +194,7 @@ export class PageService implements OnDestroy {
     }
 
     ngOnDestroy(): void {
+        this.openCategorySubscription?.unsubscribe();
         this.refreshSubscription?.unsubscribe();
         this.formModalReference?.hide();
 
@@ -167,6 +219,7 @@ export class PageService implements OnDestroy {
             this.pageSearch.update(search => ({ ...search, sort: config.tableConfig!.order }));
         }
 
+        this.openCategorySubscription = config.tableConfig?.categoriesConfig?.$openCategory.subscribe(item => this.openCategory(item));
         this.refreshSubscription = config.$refresh.subscribe(() => this.refresh());
         this.initialized.set(true);
     }
@@ -194,18 +247,79 @@ export class PageService implements OnDestroy {
         this.config?.tableConfig?.onSelectionChange?.(items);
     }
 
+    navigateBreadcrumb(id: number): void {
+        if (id <= 0) {
+            this.categoryPath.set([]);
+            this.currentCategoryId.set(null);
+        } else {
+            const index = id - 1;
+            const path = this.categoryPath().slice(0, index + 1);
+
+            this.categoryPath.set(path);
+            this.currentCategoryId.set(path[index]?.id ?? null);
+        }
+
+        this.selected.set([]);
+        this.refresh();
+    }
+
+    openCategory(item: PageItem): void {
+        const categoriesConfig = this.config?.tableConfig?.categoriesConfig;
+
+        if (!categoriesConfig || !this.config?.baseUrl) {
+            return;
+        }
+
+        this.pageHttpService.loadCategoryPath(this.config.baseUrl, item.id).subscribe(path => {
+            this.categoryPath.set(
+                path.map(ancestor => ({
+                    id: ancestor.id,
+                    label: (ancestor as unknown as Record<string, unknown>)[categoriesConfig.nameField] as string
+                }))
+            );
+            this.currentCategoryId.set(item.id);
+            this.selected.set([]);
+            this.refresh();
+        });
+    }
+
+    setViewMode(mode: PageViewMode): void {
+        this.viewMode.set(mode);
+        this.selected.set([]);
+        this.refresh();
+    }
+
     private buildActionsContext(): PageActionsContext {
         return {
             config: this.config!,
+            getCurrentCategoryId: () => this.currentCategoryId(),
+            onCategoryDeleted: () => {
+                this.selected.set([]);
+                this.refresh();
+            },
+            onCategoryFormModalOpened: reference => (this.formModalReference = reference),
+            onCategorySaved: () => {
+                if (this.config?.tableConfig) {
+                    this.refresh();
+                }
+            },
             onDeleted: () => {
                 this.selected.set([]);
                 this.refresh();
             },
             onFormModalOpened: reference => (this.formModalReference = reference),
+            onMoved: () => {
+                this.selected.set([]);
+                this.refresh();
+            },
             onSaved: () => {
                 if (this.config?.tableConfig) {
                     this.refresh();
                 }
+            },
+            onTrashItemDeleted: () => {
+                this.selected.set([]);
+                this.refresh();
             },
             selectedItems: () => this.selected()
         };
@@ -214,12 +328,23 @@ export class PageService implements OnDestroy {
     private loadFromBackend(): void {
         this.loading.set(true);
 
+        const categoriesConfig = this.config?.tableConfig?.categoriesConfig;
+        const viewingTrash = this.viewMode() === PageViewMode.Trash;
+
         const queryParameters = this.pageSearchService.buildQueryParameters(
             this.pageSearch(),
             Boolean(this.config?.tableConfig?.search)
         );
 
-        this.pageHttpService.load(this.config!.baseUrl!, queryParameters).subscribe({
+        if (categoriesConfig && !viewingTrash) {
+            queryParameters[categoriesConfig.parentField] = this.currentCategoryId() ?? 'null';
+        }
+
+        const request = viewingTrash
+            ? this.pageHttpService.loadTrash(this.config!.baseUrl!, queryParameters)
+            : this.pageHttpService.load(this.config!.baseUrl!, queryParameters);
+
+        request.subscribe({
             complete: () => this.loading.set(false),
             error: () => this.loading.set(false),
             next: response => {

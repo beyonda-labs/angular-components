@@ -13,8 +13,24 @@
             "terms": "Terms & Conditions"
         },
         "form": {
+            "autocompleteField": {
+                "clear": "Clear",
+                "empty": "No options found",
+                "toggle": "Show options"
+            },
             "cancel": {
                 "without-changes": "No changes have been made to the form."
+            },
+            "chips": {
+                "remove": "Remove"
+            },
+            "fileField": {
+                "choose": "Choose file",
+                "clear": "Remove file",
+                "empty": "No file selected",
+                "maxSize": "Maximum size: {{maxSize}}",
+                "tooLarge": "The file exceeds the maximum size of {{maxSize}}",
+                "unsupportedType": "Unsupported file type. Allowed: {{accept}}"
             },
             "modal": {
                 "close-confirmation": {
@@ -25,7 +41,15 @@
             },
             "required": "This field is required",
             "submit": {
-                "invalid": "There are errors in the form, please correct or complete the required fields before submitting."
+                "invalid": "There are errors in the form, please correct or complete the required fields before submitting.",
+                "without-changes": "No changes have been made to the form."
+            },
+            "textVariableField": {
+                "close": "Close",
+                "empty": "No options found",
+                "insertVariable": "Insert variable",
+                "label": "Variables",
+                "search": "Search"
             }
         },
         "header": {
@@ -36,6 +60,22 @@
                 "bad-gateway": "The server received an invalid response. Please try again later.",
                 "bad-request": "The request could not be processed. Please check the submitted data.",
                 "conflict": "A conflict occurred with the current state of the resource.",
+                "document-generation": {
+                    "cyclical-block-reference": "A cyclical reference between reusable blocks was detected.",
+                    "insufficient-width-image": "Not enough width available to place an image in the document.",
+                    "insufficient-width-list": "Not enough width available to place a list in the document.",
+                    "insufficient-width-list-item": "Not enough width available for a list item.",
+                    "insufficient-width-paragraph": "Not enough width available to place a paragraph in the document.",
+                    "invalid-image": "Could not generate an image in the document. Check that the referenced variable or image file has a valid value.",
+                    "invalid-image-width": "An image in the document has an invalid width.",
+                    "invalid-request": "The request is not in the expected format.",
+                    "pagination-stuck": "The document could not be paginated correctly. Check the content: an item may be too large or misconfigured.",
+                    "pdf-page-range": "The requested page range for an inserted PDF exceeds the number of pages in the source file.",
+                    "unresolved-block": "Could not resolve the content of a referenced reusable block.",
+                    "unresolved-header-footer": "Could not resolve the header or footer content.",
+                    "validation-failed": "The document has pending validation errors. Fix them before generating it."
+                },
+                "duplicate-field": "An item with field \"{{fieldName}}\" and value \"{{value}}\" already exists.",
                 "forbidden": "You do not have permission to perform this action.",
                 "internal-server-error": "An internal server error occurred. Please try again later.",
                 "invalid-child": "The field \"{{childField}}\" is not valid for parent \"{{parentField}}\".",
@@ -51,6 +91,7 @@
                 "login": {
                     "existing-user": "An account with this email already exists.",
                     "invalid-credentials": "Invalid email or password.",
+                    "invalid-refresh-token": "Your session has expired. Please log in again.",
                     "oauth-invalid-callback": "The authentication callback is invalid. Please try again.",
                     "oauth-missing-access-token": "No access token was received from {{provider}}. Please try again.",
                     "oauth-missing-email": "No email address was returned by {{provider}}. Please try again.",
@@ -59,6 +100,7 @@
                     "passwords-not-match": "Passwords do not match.",
                     "provider-not-found": "The provider {{provider}} is not available."
                 },
+                "move-target-unchanged": "The item is already located in this category.",
                 "not-found": "The requested resource was not found.",
                 "required-field": "The field \"{{fieldName}}\" is required.",
                 "service-unavailable": "The service is temporarily unavailable. Please try again later.",
@@ -75,6 +117,7 @@
                     "password2": "Confirm password",
                     "surname": "Surname"
                 },
+                "name": "Name",
                 "pattern": {
                     "email": "user@domain.com"
                 }
@@ -84,6 +127,22 @@
                 "bad-request": "Invalid request",
                 "conflict": "Conflict",
                 "default": "Error",
+                "document-generation": {
+                    "cyclical-block-reference": "Cyclical reference",
+                    "insufficient-width-image": "Insufficient space",
+                    "insufficient-width-list": "Insufficient space",
+                    "insufficient-width-list-item": "Insufficient space",
+                    "insufficient-width-paragraph": "Insufficient space",
+                    "invalid-image": "Image generation failed",
+                    "invalid-image-width": "Image generation failed",
+                    "invalid-request": "Invalid request",
+                    "pagination-stuck": "Pagination error",
+                    "pdf-page-range": "Invalid page range",
+                    "unresolved-block": "Unresolved block",
+                    "unresolved-header-footer": "Unresolved header/footer",
+                    "validation-failed": "Invalid document"
+                },
+                "duplicate-field": "Duplicate value",
                 "forbidden": "Access denied",
                 "internal-server-error": "Server error",
                 "invalid-child": "Invalid field",
@@ -95,6 +154,7 @@
                 "login": {
                     "existing-user": "Account already exists",
                     "invalid-credentials": "Authentication failed",
+                    "invalid-refresh-token": "Session expired",
                     "oauth-invalid-callback": "Authentication error",
                     "oauth-missing-access-token": "Authentication error",
                     "oauth-missing-email": "Authentication error",
@@ -103,6 +163,7 @@
                     "passwords-not-match": "Password error",
                     "provider-not-found": "Provider unavailable"
                 },
+                "move-target-unchanged": "No change",
                 "not-found": "Not found",
                 "required-field": "Required field",
                 "service-unavailable": "Service unavailable",
@@ -189,10 +250,6 @@
             }
         },
         "page": {
-            "delete": {
-                "message": "This action will delete {{count}} item(s) and cannot be undone. Do you want to continue?",
-                "title": "Delete items"
-            },
             "form": {
                 "cancel": "Cancel",
                 "submit": "Save"
@@ -207,6 +264,62 @@
             "page-size": "Page size",
             "previous-page": "Go to previous page",
             "results-range": "Showing {{ start }}-{{ end }} of {{ total }} results"
+        },
+        "properties-menu": {
+            "attachmentField": {
+                "clear": "Clear",
+                "empty": "No attachments found",
+                "search": "Search attachments",
+                "tooLarge": "This file exceeds the {{maxSizeMB}} MB limit.",
+                "upload": "Upload a new file",
+                "useVariable": "Use a variable",
+                "wrongType": "This file type is not accepted ({{accept}})."
+            },
+            "close": "Close",
+            "colorField": {
+                "clear": "Clear"
+            },
+            "fileField": {
+                "choose": "Choose file",
+                "clear": "Clear",
+                "fileSelected": "File selected",
+                "noFileSelected": "No file selected",
+                "tooLarge": "This file exceeds the {{maxSizeMB}} MB limit."
+            },
+            "list": {
+                "collapse": "Collapse",
+                "copied": "Copied",
+                "copy": "Copy the reference",
+                "empty": "No items",
+                "expand": "Expand"
+            },
+            "numberArray": {
+                "add": "Add"
+            },
+            "remove": "Remove",
+            "select": {
+                "noMatches": "No matches",
+                "searchPlaceholder": "Search…",
+                "useVariable": "Use a variable"
+            },
+            "spacing": {
+                "bottom": "Bottom",
+                "left": "Left",
+                "right": "Right",
+                "top": "Top"
+            },
+            "tabs": {
+                "label": "Property tabs"
+            },
+            "textField": {
+                "insertVariable": "Insert variable"
+            },
+            "variablePicker": {
+                "close": "Close",
+                "empty": "No variables found",
+                "label": "Variables",
+                "search": "Search variables"
+            }
         },
         "search": {
             "add": "Add filter",
@@ -246,7 +359,8 @@
             "select-row": "Select row"
         },
         "tabs": {
-            "label": "Navigation tabs"
+            "label": "Navigation tabs",
+            "more": "More tabs"
         },
         "toast": {
             "types": {
@@ -364,7 +478,11 @@
         "components": "Components",
         "compound": "Compound",
         "floating-preferences": {
-            "example": "Self-contained pill with language and theme selectors. Reads and writes state directly via TranslateService and BeyThemeService — no inputs or configuration required."
+            "example": "Self-contained language and theme selectors. Reads and writes state directly via TranslateService and BeyThemeService — no callbacks required.",
+            "examples": {
+                "noPill": "Without the pill (usePill = false), for embedding in another container",
+                "pill": "Default (floating pill)"
+            }
         },
         "floating-preferences-section": "Floating Preferences",
         "footer": {
@@ -411,6 +529,40 @@
                 "submitted": "The modal form has been submitted: ",
                 "title": "New Contact"
             },
+            "sectionAutocomplete": {
+                "autocomplete1": {
+                    "label": "Basic typeahead",
+                    "options": {
+                        "option1": "Option 1",
+                        "option2": "Option 2",
+                        "option3": "Option 3",
+                        "option4": "Option 4"
+                    },
+                    "placeholder": "Search an option"
+                },
+                "autocomplete2": {
+                    "label": "Required typeahead",
+                    "options": {
+                        "option1": "Required option 1",
+                        "option2": "Required option 2",
+                        "option3": "Required option 3",
+                        "option4": "Required option 4"
+                    },
+                    "placeholder": "Search a required option"
+                },
+                "autocomplete3": {
+                    "label": "Disabled typeahead",
+                    "options": {
+                        "option1": "Disabled option 1",
+                        "option2": "Disabled option 2",
+                        "option3": "Disabled option 3",
+                        "option4": "Disabled option 4"
+                    },
+                    "placeholder": "Disabled typeahead"
+                },
+                "label": "Searchable fields",
+                "tooltip": "Typeahead variants with basic, required and disabled behaviour"
+            },
             "sectionCheckbox": {
                 "checkbox1": {
                     "label": "Accept Terms"
@@ -427,6 +579,21 @@
                 "label": "Checkbox Fields",
                 "tooltip": "Checkbox variants with basic, required, disabled and switch states"
             },
+            "sectionChips": {
+                "chips1": {
+                    "label": "Basic Chips",
+                    "placeholder": "Type and press Enter"
+                },
+                "chips2": {
+                    "label": "Required Chips (max. 5)",
+                    "placeholder": "Add up to 5 tags"
+                },
+                "chips3": {
+                    "label": "Disabled Chips"
+                },
+                "label": "Chips Fields",
+                "tooltip": "Chips variants with basic, required with maxItems, and disabled states"
+            },
             "sectionDate": {
                 "date1": {
                     "label": "Date With Range"
@@ -439,6 +606,16 @@
                 },
                 "label": "Date Fields",
                 "tooltip": "Date fields with range, required and disabled states"
+            },
+            "sectionInfo": {
+                "info1": {
+                    "label": "Version"
+                },
+                "info2": {
+                    "label": "Created On"
+                },
+                "label": "Info Fields",
+                "tooltip": "Read-only icon/label pairs — no input styling, no FormControl"
             },
             "sectionNumber": {
                 "label": "Number Fields",
@@ -574,6 +751,10 @@
                     "label": "Archive",
                     "tooltip": "Archive goal"
                 },
+                "back": {
+                    "label": "Back",
+                    "tooltip": "Back to goals"
+                },
                 "delete": {
                     "label": "Delete",
                     "tooltip": "Delete goal"
@@ -590,12 +771,26 @@
                     "label": "Export",
                     "tooltip": "Export goal"
                 },
+                "individualGoal": {
+                    "label": "Individual goal",
+                    "tooltip": "Create a new individual goal"
+                },
                 "newGoal": {
                     "label": "New goal",
                     "tooltip": "Create a new goal"
+                },
+                "teamGoal": {
+                    "label": "Team goal",
+                    "tooltip": "Create a new team goal"
                 }
             },
-            "example": "Header with actions on both sides and a kebab menu (⋮) for secondary actions.",
+            "badge": "Active",
+            "example": "Header with actions on both sides and a kebab menu (...) for secondary actions.",
+            "examples": {
+                "back": "Header with back button and status badge",
+                "default": "Default header, no back button",
+                "subPage": "Sub-page variant, smaller title"
+            },
             "title": "Goals"
         },
         "headers": "Headers",
@@ -642,6 +837,8 @@
                     "tooltip": "Get support"
                 }
             },
+            "documentsClicked": "\"Documents\" action was triggered by clicking its label.",
+            "documentsHint": "\"Documents\" has both its own action and sub-actions: click its label to run the action, click the chevron to toggle the submenu.",
             "example": "Left menu with grouped actions, nested navigation and collapsed behavior.",
             "examples": {
                 "collapsed": "Collapsed example",
@@ -743,6 +940,15 @@
             }
         },
         "pagination-section": "Pagination",
+        "pdfViewer": {
+            "example": "PDF preview built on ngx-extended-pdf-viewer with its native toolbar hidden and a fully custom toolbar driven through the viewer's imperative API and events."
+        },
+        "pdfViewers": "PDF Viewer",
+        "propertiesMenu": {
+            "example": "Property inspector for a selected editor block, with tabs, collapsible groups and variable insertion.",
+            "provideVariables": "Provide variables"
+        },
+        "propertiesMenus": "Properties Menu",
         "simple": "Simple",
         "table": {
             "actions": {
@@ -753,6 +959,7 @@
                 "action": "Action",
                 "name": "Name",
                 "role": "Role",
+                "skills": "Skills",
                 "status": "Status"
             },
             "empty": "No rows available for this example.",
@@ -769,6 +976,7 @@
             },
             "tooltips": {
                 "name": "Primary identity column",
+                "skills": "Badge cells accept a list, rendering more than one badge per row",
                 "status": "Status cells can be translated and tooltip-enabled"
             }
         },
@@ -792,7 +1000,8 @@
             "example": "Model-driven horizontal tab bar with keyboard navigation, optional icons and disabled state. The consumer renders content based on the active tab key.",
             "examples": {
                 "basic": "Basic",
-                "icons": "With icons & disabled"
+                "icons": "With icons & disabled",
+                "overflow": "Overflow (narrow container)"
             },
             "icons": {
                 "tabs": {
@@ -804,6 +1013,31 @@
                     },
                     "documents": {
                         "label": "Documents"
+                    },
+                    "settings": {
+                        "label": "Settings"
+                    }
+                }
+            },
+            "overflow": {
+                "tabs": {
+                    "activity": {
+                        "label": "Activity"
+                    },
+                    "comments": {
+                        "label": "Comments"
+                    },
+                    "details": {
+                        "label": "Details"
+                    },
+                    "history": {
+                        "label": "History"
+                    },
+                    "overview": {
+                        "label": "Overview"
+                    },
+                    "permissions": {
+                        "label": "Permissions"
                     },
                     "settings": {
                         "label": "Settings"

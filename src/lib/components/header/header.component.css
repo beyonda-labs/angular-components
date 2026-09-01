@@ -1,5 +1,7 @@
 :host {
     --bey-header-fg: var(--text-primary);
+    --bey-header-badge-bg: var(--bey-primary);
+    --bey-header-badge-fg: var(--text-inverse);
 
     display: block;
     width: 100%;
@@ -14,22 +16,36 @@
     padding: 0.25rem 0;
 }
 
-.bey-header-left {
+.bey-header-start {
     display: flex;
     align-items: center;
-    gap: 0.75rem 1.5rem;
-    flex: 1 1 auto;
+    gap: 0.75rem;
     min-width: 0;
-    flex-wrap: wrap;
 }
 
 .bey-header-title {
+    overflow: hidden;
+    max-width: 500px;
+    min-width: 0;
     margin: 0;
     color: var(--bey-header-fg);
-    font-size: 2rem;
     font-weight: 700;
-    line-height: 1.1;
+    line-height: 1.25;
     letter-spacing: -0.03em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bey-header-badge {
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.bey-header-badge-default {
+    background: var(--bey-header-badge-bg);
+    color: var(--bey-header-badge-fg);
 }
 
 .bey-header-actions {
@@ -43,7 +59,7 @@
     --bey-button-inline-gap: 0;
 }
 
-.bey-header-actions-right {
+.bey-header-actions-end {
     justify-content: flex-end;
 }
 
@@ -51,6 +67,11 @@
     position: relative;
     display: inline-flex;
     width: 25px;
+}
+
+.bey-header-action-menu {
+    position: relative;
+    display: inline-flex;
 }
 
 bey-button.bey-header-menu-toggle {
@@ -76,13 +97,18 @@ bey-button.bey-header-menu-toggle {
     box-shadow: 0 0.5rem 1.25rem rgba(var(--bey-black-rgb), 0.12);
 }
 
+.bey-header-actions-end .bey-header-menu-panel {
+    left: auto;
+    right: 0;
+}
+
 @media (max-width: 767.98px) {
     .bey-header {
         align-items: flex-start;
         flex-direction: column;
     }
 
-    .bey-header-actions-right {
+    .bey-header-actions-end {
         justify-content: flex-start;
     }
 }

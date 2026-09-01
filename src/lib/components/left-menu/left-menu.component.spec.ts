@@ -103,6 +103,20 @@ describe('LeftMenuComponent', () => {
         expect(component.expanded).toBe(false);
         expect(component.config.expanded).toBe(false);
     });
+
+    it('should emit expandedChange with the new state on toggle', () => {
+        component.config = buildConfig({ expanded: true });
+        const spy = jest.fn();
+        component.expandedChange.subscribe(spy);
+
+        component.toggleExpanded();
+
+        expect(spy).toHaveBeenCalledWith(false);
+
+        component.toggleExpanded();
+
+        expect(spy).toHaveBeenCalledWith(true);
+    });
 });
 
 function buildConfig(overrides?: Partial<LeftMenuConfig>): LeftMenuConfig {

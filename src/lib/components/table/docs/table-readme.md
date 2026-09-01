@@ -8,7 +8,7 @@ Supported capabilities:
 -   Row rendering driven by `loadRow`.
 -   Selectable rows with bulk selection support.
 -   Pre-selected rows via `isRowSelected` (e.g. to restore a previous selection).
--   Text and action-link cells.
+-   Text, action-link and badge cells.
 -   Optional tooltips per cell and per column header, shown whenever defined.
 -   Refresh support via `config.refresh()`.
 
@@ -18,6 +18,7 @@ Supported capabilities:
 
 ```ts
 import {
+    BeyBadgeTableCell,
     BeyLinkTableCell,
     BeyTableColumn,
     BeyTableComponent,
@@ -30,15 +31,24 @@ const table = new BeyTableConfig({
     columns: [
         new BeyTableColumn({ key: 'name', width: 3 }),
         new BeyTableColumn({ key: 'role', width: 2 }),
+        new BeyTableColumn({ key: 'status', width: 2 }),
         new BeyTableColumn({ key: 'action', width: 1 })
     ],
     items: [
-        { id: 1, name: 'Ada Lovelace', role: 'Lead Engineer' },
-        { id: 2, name: 'Alan Turing', role: 'Researcher' }
+        { id: 1, name: 'Ada Lovelace', role: 'Lead Engineer', status: 'Active' },
+        { id: 2, name: 'Alan Turing', role: 'Researcher', status: 'Paused' }
     ],
     loadRow: item => [
         new BeyTextTableCell({ content: String(item['name'] ?? '') }),
         new BeyTextTableCell({ content: String(item['role'] ?? '') }),
+        new BeyBadgeTableCell({
+            badges: [
+                {
+                    badgeClass: item['status'] === 'Active' ? 'bg-success' : 'bg-secondary',
+                    content: String(item['status'] ?? '')
+                }
+            ]
+        }),
         new BeyLinkTableCell({
             action: () => console.log('Open row', item['id']),
             content: 'teamTable.actions.open',
@@ -81,11 +91,11 @@ The root configuration object passed to `[config]`.
 
 ### `BeyTableColumn`
 
-| Parameter | Type     | Required | Default | Description                                                         |
-| --------- | -------- | -------- | ------- | ------------------------------------------------------------------- |
-| `key`     | `string` | yes      | —       | Column key, also used for translation lookup                        |
-| `width`   | `number` | no       | `10`    | Relative width weight for the CSS grid layout                       |
-| `tooltip` | `string` | no       | —       | Header tooltip translation key                                      |
+| Parameter | Type     | Required | Default | Description                                   |
+| --------- | -------- | -------- | ------- | --------------------------------------------- |
+| `key`     | `string` | yes      | —       | Column key, also used for translation lookup  |
+| `width`   | `number` | no       | `10`    | Relative width weight for the CSS grid layout |
+| `tooltip` | `string` | no       | —       | Header tooltip translation key                |
 
 ---
 
@@ -104,6 +114,41 @@ Supported specializations:
 
 -   `BeyTextTableCell` renders plain text.
 -   `BeyLinkTableCell` renders an inline action button through `action()`.
+-   `BeyBadgeTableCell` renders one or more Bootstrap `.badge` elements, each with its own classes.
+
+### `BeyBadgeTableCell`
+
+| Parameter | Type              | Required | Default | Description                     |
+| --------- | ----------------- | -------- | ------- | ------------------------------- |
+| `badges`  | `BeyTableBadge[]` | yes      | —       | Badges rendered inside the cell |
+
+`BeyTableBadge`:
+
+| Attribute    | Type     | Required | Description                                                              |
+| ------------ | -------- | -------- | ------------------------------------------------------------------------ |
+| `content`    | `string` | yes      | Badge label                                                              |
+| `badgeClass` | `string` | yes      | Bootstrap classes applied to that badge (e.g. `'bg-success text-white'`) |
+
+`translate` (from the base cell) applies to every badge's `content` in the cell.
+
+```ts
+// Single badge
+new BeyBadgeTableCell({
+    badges: [{ content: 'Active', badgeClass: 'bg-success' }]
+});
+
+// Multiple badges in the same cell, each with its own color
+new BeyBadgeTableCell({
+    badges: [
+        { content: 'Angular', badgeClass: 'bg-primary' },
+        { content: 'TypeScript', badgeClass: 'bg-info text-dark' },
+        { content: 'RxJS', badgeClass: 'bg-dark' }
+    ]
+});
+```
+
+The color of each badge is entirely up to its `badgeClass`; pick any combination of Bootstrap
+background/text utility classes (`bg-success`, `bg-danger`, `bg-warning text-dark`, `bg-secondary`, ...).
 
 ---
 

@@ -1,8 +1,10 @@
 import { ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { provideRouter,Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { FloatingPreferencesComponent } from '../floating-preferences/floating-preferences.component';
 import { FooterComponent } from './footer.component';
 import { FooterConfig } from './models/footer.model';
 
@@ -67,5 +69,12 @@ describe('FooterComponent', () => {
         const navigateSpy = jest.spyOn(router, 'navigate');
         component.termsButton.action();
         expect(navigateSpy).toHaveBeenCalledWith(['/terms']);
+    });
+
+    it('should render floating preferences without the pill style', () => {
+        const floatingPreferences = fixture.debugElement.query(By.directive(FloatingPreferencesComponent));
+
+        expect(floatingPreferences).toBeTruthy();
+        expect((floatingPreferences.componentInstance as FloatingPreferencesComponent).usePill).toBe(false);
     });
 });

@@ -105,12 +105,17 @@ The root configuration object passed to `[config]`.
 
 Defines a single breadcrumb node.
 
-| Parameter    | Type             | Required | Default        | Description                                          |
-| ------------ | ---------------- | -------- | -------------- | ---------------------------------------------------- |
-| `key`        | `string`         | yes      | —              | Unique identifier for the item                       |
-| `icon`       | `IconDefinition` | no       | —              | FontAwesome icon displayed before the label          |
-| `isDisabled` | `boolean`        | no       | `false`        | Whether the item is disabled (non-clickable)         |
-| `label`      | `string`         | no       | `${key}.label` | Custom label or i18n key (auto-resolved with prefix) |
+| Parameter          | Type             | Required | Default        | Description                                                          |
+| ------------------ | ---------------- | -------- | -------------- | --------------------------------------------------------------------- |
+| `key`              | `string`         | yes      | —              | Unique identifier for the item                                       |
+| `icon`             | `IconDefinition` | no       | —              | FontAwesome icon displayed before the label                          |
+| `isDisabled`       | `boolean`        | no       | `false`        | Whether the item is disabled (non-clickable)                         |
+| `isTranslationKey` | `boolean`        | no       | `false`        | Resolve `label` as a raw i18n key via `ngx-translate`, ignoring both `prefix` and the config's `translate` flag |
+| `label`            | `string`         | no       | `${key}.label` | Custom label or i18n key (auto-resolved with prefix)                 |
+
+`isTranslationKey` is meant for items whose label is itself an already-fully-qualified i18n key
+(e.g. a library key or one shared across pages), as opposed to `label`'s normal `{prefix}.{label}`
+resolution.
 
 ---
 

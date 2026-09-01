@@ -1,0 +1,61 @@
+<ng-template #renderNodes let-nodes let-level="level">
+    @for (node of nodes; track node.id) {
+        <div class="bey-property-tree-node">
+            <button
+                type="button"
+                class="bey-property-tree-row"
+                [attr.data-node-id]="node.id"
+                [class.bey-property-tree-row-selected]="isSelected(node)"
+                [class.bey-property-tree-row-disabled]="node.disabled"
+                [class.bey-property-tree-row-draggable]="node.draggable"
+                [class.bey-property-tree-row-dragged]="isDragged(node)"
+                [class.bey-property-tree-row-drop-invalid]="isInvalidTarget(node)"
+                [class.bey-property-tree-row-drop-before]="dropPositionFor(node) === 'before'"
+                [class.bey-property-tree-row-drop-inside]="dropPositionFor(node) === 'inside'"
+                [class.bey-property-tree-row-drop-after]="dropPositionFor(node) === 'after'"
+                [style.padding-left.rem]="0.6 + level * 1"
+                [disabled]="node.disabled"
+                (click)="onNodeClick(node)"
+                (pointerdown)="onRowPointerDown($event, node)"
+            >
+                <span
+                    class="bey-property-tree-toggle"
+                    [class.bey-property-tree-toggle-hidden]="!hasVisibleChildren(node)"
+                    (click)="onToggleClick($event, node)"
+                >
+                    <fa-icon
+                        class="bey-property-tree-chevron"
+                        [class.bey-property-tree-chevron-expanded]="node.expanded"
+                        [icon]="chevronIcon"
+                    ></fa-icon>
+                </span>
+
+                @if (node.icon) {
+                    <span class="bey-property-tree-icon">
+                        <fa-icon [icon]="node.icon"></fa-icon>
+                    </span>
+                }
+
+                <span class="bey-property-tree-label">{{ getLabelKey(node) | translate }}</span>
+            </button>
+
+            @if (node.expanded && hasVisibleChildren(node)) {
+                <ng-container
+                    [ngTemplateOutlet]="renderNodes"
+                    [ngTemplateOutletContext]="{ $implicit: visibleChildren(node), level: level + 1 }"
+                ></ng-container>
+            }
+        </div>
+    }
+</ng-template>
+
+<div class="bey-property-tree">
+    <ng-container [ngTemplateOutlet]="renderNodes" [ngTemplateOutletContext]="{ $implicit: visibleNodes, level: 0 }"></ng-container>
+
+    @if (addBlockLabel) {
+        <button type="button" class="bey-property-tree-add-block" (click)="onAddBlockClick()">
+            <fa-icon [icon]="addIcon"></fa-icon>
+            <span>{{ addBlockLabel | translate }}</span>
+        </button>
+    }
+</div>

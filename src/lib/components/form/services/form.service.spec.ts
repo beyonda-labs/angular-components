@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@angular/forms';
 
+import { FormChipsField } from '../models/fields/form-chips-field.model';
 import { FormDateField } from '../models/fields/form-date-field.model';
 import { FormNumberField } from '../models/fields/form-number-field.model';
 import { FormTextField } from '../models/fields/form-text-field.model';
@@ -88,6 +89,21 @@ describe('FormService', () => {
         expect(control.errors?.['max']).toBeTruthy();
 
         control.setValue(15);
+        expect(control.valid).toBe(true);
+    });
+
+    it('should validate maxItems for chips controls', () => {
+        const control = service.initFieldControl(
+            new FormChipsField({
+                key: 'chips1',
+                maxItems: 2
+            })
+        ) as FormControl<string[] | null>;
+
+        control.setValue(['a', 'b', 'c']);
+        expect(control.errors?.['maxItems']).toBeTruthy();
+
+        control.setValue(['a', 'b']);
         expect(control.valid).toBe(true);
     });
 

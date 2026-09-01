@@ -27,18 +27,28 @@
 }
 
 .bey-footer__container {
+    height: 32px;
+    align-items: center;
     border-top-color: var(--bey-footer-border) !important;
+    font-size: 11px;
+}
+
+.bey-footer__preferences {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
 }
 
 .bey-footer__brand {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
+    margin-right: 0.75rem;
 }
 
 .bey-footer__icon {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     display: block;
     flex-shrink: 0;
 }

@@ -1,6 +1,7 @@
 import { SearchField } from '../../search/models/search.model';
 import { TableColumn } from '../../table/models/table.model';
 import { TableCell } from '../../table/models/table-cell.model';
+import { PageCategoriesConfig, PageViewMode } from './page-categories.model';
 import { PageItem } from './page-item.model';
 import { SearchSort } from './page-search.model';
 
@@ -8,15 +9,17 @@ export class PageTableConfig {
     allowSelection: boolean;
     columns: TableColumn[];
     height: string;
-    loadRow: (item: PageItem) => TableCell[];
+    loadRow: (item: PageItem, viewMode: PageViewMode) => TableCell[];
     showPagination: boolean;
 
+    categoriesConfig?: PageCategoriesConfig;
     onSelectionChange?: (items: PageItem[]) => void;
     order?: SearchSort;
     search?: PageTableSearchConfig;
 
     constructor({
         allowSelection = true,
+        categoriesConfig,
         columns,
         height = '60vh',
         loadRow,
@@ -26,6 +29,7 @@ export class PageTableConfig {
         showPagination = true
     }: PageTableConfigParameters) {
         this.allowSelection = allowSelection;
+        this.categoriesConfig = categoriesConfig;
         this.columns = columns;
         this.height = height;
         this.loadRow = loadRow;
@@ -38,9 +42,10 @@ export class PageTableConfig {
 
 export interface PageTableConfigParameters {
     columns: TableColumn[];
-    loadRow: (item: PageItem) => TableCell[];
+    loadRow: (item: PageItem, viewMode: PageViewMode) => TableCell[];
 
     allowSelection?: boolean;
+    categoriesConfig?: PageCategoriesConfig;
     height?: string;
     onSelectionChange?: (items: PageItem[]) => void;
     order?: SearchSort;

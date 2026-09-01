@@ -1,0 +1,37 @@
+.bey-text-variable-wrapper {
+    position: relative;
+}
+
+.bey-text-variable-wrapper .form-control {
+    padding-right: 2.25rem;
+}
+
+.bey-text-variable-toggle {
+    position: absolute;
+    right: 1px;
+    top: 1px;
+    bottom: 1px;
+    width: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: 0 calc(0.3rem - 1px) calc(0.3rem - 1px) 0;
+    padding: 0;
+    cursor: pointer;
+    color: var(--bey-secondary);
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.bey-text-variable-toggle:hover {
+    background-color: var(--bey-bg-active);
+    color: var(--text-primary);
+}
+
+.bey-text-variable-toggle:active,
+.bey-text-variable-toggle-active {
+    background-color: var(--bey-bg-hover);
+}

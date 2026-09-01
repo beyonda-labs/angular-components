@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, inject, Input } from '@angular/core';
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,7 +8,7 @@ import { ButtonConfig, ButtonType } from '../../internal/button/models/button-co
 import { HeaderAction, HeaderActionType, HeaderConfig } from './models/header.model';
 
 @Component({
-    imports: [ButtonComponent, TranslateModule],
+    imports: [ButtonComponent, CommonModule, TranslateModule],
     selector: 'bey-header',
     standalone: true,
     styleUrls: ['./header.component.css'],
@@ -17,6 +18,7 @@ export class HeaderComponent {
     @Input({ required: true }) config!: HeaderConfig;
 
     isMenuOpen = false;
+    openActionKey: string | null = null;
 
     private readonly elementRef = inject(ElementRef);
 
@@ -34,14 +36,16 @@ export class HeaderComponent {
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent): void {
-        if (this.isMenuOpen && !this.elementRef.nativeElement.contains(event.target)) {
+        if (!this.elementRef.nativeElement.contains(event.target)) {
             this.isMenuOpen = false;
+            this.openActionKey = null;
         }
     }
 
     @HostListener('document:keydown.escape')
     onEscape(): void {
         this.isMenuOpen = false;
+        this.openActionKey = null;
     }
 
     getTitle(): string {
@@ -49,10 +53,14 @@ export class HeaderComponent {
     }
 
     getActionButton(action: HeaderAction): ButtonConfig {
+        const isIconOnly = action.type === HeaderActionType.Icon;
+
         return new ButtonConfig({
             action: action.action ?? (() => {}),
+            customClass: isIconOnly ? 'bey-header-action-icon' : undefined,
             icon: action.icon,
-            label: this.resolveActionText(action, 'label'),
+            isDisabled: action.disabled,
+            label: isIconOnly ? '' : this.resolveActionText(action, 'label'),
             tooltip: this.resolveActionText(action, 'tooltip'),
             type: this.getButtonType(action.type)
         });
@@ -67,6 +75,8 @@ export class HeaderComponent {
             buttonAction();
         };
 
+        button.tooltipPlacement = 'left';
+
         return button;
     }
 
@@ -76,6 +86,7 @@ export class HeaderComponent {
             customClass: 'bey-header-menu-toggle',
             icon: faEllipsis,
             tooltip: 'angular-components.header.menu',
+            tooltipPlacement: 'left',
             type: ButtonType.Tertiary
         });
     }
@@ -84,12 +95,47 @@ export class HeaderComponent {
         this.isMenuOpen = !this.isMenuOpen;
     }
 
+    hasSubActions(action: HeaderAction): boolean {
+        return Boolean(action.subActions?.length);
+    }
+
+    isActionMenuOpen(action: HeaderAction): boolean {
+        return this.openActionKey === action.key;
+    }
+
+    toggleActionMenu(action: HeaderAction): void {
+        this.openActionKey = this.isActionMenuOpen(action) ? null : action.key;
+    }
+
+    getActionToggleButton(action: HeaderAction): ButtonConfig {
+        const button = this.getActionButton(action);
+
+        button.action = () => this.toggleActionMenu(action);
+
+        return button;
+    }
+
+    getSubActionButton(subAction: HeaderAction): ButtonConfig {
+        const button = this.getActionButton(subAction);
+        const buttonAction = button.action;
+
+        button.action = () => {
+            this.openActionKey = null;
+            buttonAction();
+        };
+
+        button.tooltipPlacement = 'left';
+
+        return button;
+    }
+
     private getButtonType(type: HeaderActionType): ButtonType {
         switch (type) {
             case HeaderActionType.PrimaryButton:
                 return ButtonType.Primary;
             case HeaderActionType.SecondaryButton:
                 return ButtonType.Secondary;
+            case HeaderActionType.Icon:
             case HeaderActionType.Text:
             default:
                 return ButtonType.Tertiary;

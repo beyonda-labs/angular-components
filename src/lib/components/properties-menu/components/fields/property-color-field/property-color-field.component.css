@@ -1,0 +1,34 @@
+.bey-property-color-field-swatch {
+    position: relative;
+    flex: 0 0 auto;
+    width: 1.9rem;
+    height: 1.9rem;
+    border: 1px solid var(--bey-property-field-border);
+    border-radius: 0.4rem;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/* A checkerboard pattern (the usual "no color" convention in design tools) instead of defaulting to a
+   solid color when the field's actual value is empty — a solid fill there would look like a real color
+   is applied when nothing is. */
+.bey-property-color-field-swatch-empty {
+    background-image:
+        linear-gradient(45deg, var(--bey-property-field-border) 25%, transparent 25%),
+        linear-gradient(-45deg, var(--bey-property-field-border) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, var(--bey-property-field-border) 75%),
+        linear-gradient(-45deg, transparent 75%, var(--bey-property-field-border) 75%);
+    background-size: 0.5rem 0.5rem;
+    background-position: 0 0, 0 0.25rem, 0.25rem -0.25rem, -0.25rem 0;
+}
+
+.bey-property-color-field-swatch-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: none;
+    opacity: 0;
+    cursor: pointer;
+}

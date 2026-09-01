@@ -1,0 +1,38 @@
+@if (config) {
+    <div class="bey-pdf-viewer" (click)="onContainerClick($event)">
+        <ngx-extended-pdf-viewer
+            [backgroundColor]="config.backgroundColor"
+            [filenameForDownload]="config.filenameForDownload"
+            [height]="config.height"
+            [maxZoom]="config.maxZoom"
+            [minZoom]="config.minZoom"
+            [page]="currentPage"
+            [password]="config.password"
+            [rotation]="currentRotation"
+            [showDownloadButton]="config.toolbarButtons.downloadButton"
+            [showFindButton]="config.toolbarButtons.findButton"
+            [showHandToolButton]="config.toolbarButtons.handToolButton"
+            [showOpenFileButton]="config.toolbarButtons.openFileButton"
+            [showPagingButtons]="config.toolbarButtons.pagingButtons"
+            [showPresentationModeButton]="config.toolbarButtons.presentationModeButton"
+            [showPrintButton]="config.toolbarButtons.printButton"
+            [showBorders]="false"
+            [showPropertiesButton]="config.toolbarButtons.propertiesButton"
+            [showRotateButton]="config.toolbarButtons.rotateButton"
+            [showSecondaryToolbarButton]="config.toolbarButtons.secondaryToolbarButton"
+            [showSidebarButton]="config.toolbarButtons.sidebarButton"
+            [showToolbar]="config.showToolbar"
+            [showZoomButtons]="config.toolbarButtons.zoomButtons"
+            [showZoomDropdown]="config.toolbarButtons.zoomDropdown"
+            [src]="config.src"
+            [zoom]="zoomInput"
+            (currentZoomFactor)="onZoomFactorChange($event)"
+            (pageChange)="onPageChange($event)"
+            (pageRendered)="onPageRendered($event)"
+            (pdfLoaded)="onPdfLoaded($event)"
+            (pdfLoadingFailed)="onPdfLoadingFailed($event)"
+            (rotationChange)="onRotationChange($event)"
+            (zoomChange)="onZoomModelChange($event)"
+        ></ngx-extended-pdf-viewer>
+    </div>
+}

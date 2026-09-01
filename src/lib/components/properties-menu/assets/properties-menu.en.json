@@ -1,0 +1,60 @@
+{
+    "angular-components": {
+        "properties-menu": {
+            "attachmentField": {
+                "clear": "Clear",
+                "empty": "No attachments found",
+                "search": "Search attachments",
+                "tooLarge": "This file exceeds the {{maxSizeMB}} MB limit.",
+                "upload": "Upload a new file",
+                "useVariable": "Use a variable",
+                "wrongType": "This file type is not accepted ({{accept}})."
+            },
+            "close": "Close",
+            "colorField": {
+                "clear": "Clear"
+            },
+            "fileField": {
+                "choose": "Choose file",
+                "clear": "Clear",
+                "fileSelected": "File selected",
+                "noFileSelected": "No file selected",
+                "tooLarge": "This file exceeds the {{maxSizeMB}} MB limit."
+            },
+            "list": {
+                "collapse": "Collapse",
+                "empty": "No items",
+                "expand": "Expand",
+                "copy": "Copy the reference",
+                "copied": "Copied"
+            },
+            "numberArray": {
+                "add": "Add"
+            },
+            "remove": "Remove",
+            "select": {
+                "noMatches": "No matches",
+                "searchPlaceholder": "Search…",
+                "useVariable": "Use a variable"
+            },
+            "spacing": {
+                "bottom": "Bottom",
+                "left": "Left",
+                "right": "Right",
+                "top": "Top"
+            },
+            "tabs": {
+                "label": "Property tabs"
+            },
+            "textField": {
+                "insertVariable": "Insert variable"
+            },
+            "variablePicker": {
+                "close": "Close",
+                "empty": "No variables found",
+                "label": "Variables",
+                "search": "Search variables"
+            }
+        }
+    }
+}

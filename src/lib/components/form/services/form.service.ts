@@ -2,7 +2,9 @@ import { inject, Injectable } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 
 import { FormCheckboxField } from '../models/fields/form-checkbox-field.model';
+import { FormChipsField } from '../models/fields/form-chips-field.model';
 import { FormDateField } from '../models/fields/form-date-field.model';
+import { FormFileField, matchesAcceptPattern } from '../models/fields/form-file-field.model';
 import { FormNumberField } from '../models/fields/form-number-field.model';
 import { FormTextField } from '../models/fields/form-text-field.model';
 import { FormTextareaField } from '../models/fields/form-textarea-field.model';
@@ -26,7 +28,9 @@ export class FormService {
         }
 
         switch (field.type) {
+            case FormFieldType.Autocomplete:
             case FormFieldType.Text:
+            case FormFieldType.TextVariable:
             case FormFieldType.Password:
             case FormFieldType.Date:
             case FormFieldType.Radio:
@@ -37,6 +41,10 @@ export class FormService {
                 return control as FormControl<number | null>;
             case FormFieldType.Checkbox:
                 return control as FormControl<boolean | null>;
+            case FormFieldType.Chips:
+                return control as FormControl<string[] | null>;
+            case FormFieldType.File:
+                return control as FormControl<File | null>;
             default:
                 return undefined;
         }
@@ -59,12 +67,14 @@ export class FormService {
     initFieldControl(field: FormField): FormControl | undefined {
         switch (field.type) {
             case FormFieldType.Text:
+            case FormFieldType.TextVariable:
             case FormFieldType.Password:
                 return this.initTextFieldControl(field as FormTextField);
             case FormFieldType.Checkbox:
                 return this.initCheckboxFieldControl(field as FormCheckboxField);
             case FormFieldType.Date:
                 return this.initDateFieldControl(field as FormDateField);
+            case FormFieldType.Autocomplete:
             case FormFieldType.Radio:
             case FormFieldType.Select:
                 return this.initStringFieldControl(field);
@@ -72,6 +82,10 @@ export class FormService {
                 return this.initNumberFieldControl(field as FormNumberField);
             case FormFieldType.Textarea:
                 return this.initTextareaFieldControl(field as FormTextareaField);
+            case FormFieldType.Chips:
+                return this.initChipsFieldControl(field as FormChipsField);
+            case FormFieldType.File:
+                return this.initFileFieldControl(field as FormFileField);
             default:
                 return undefined;
         }
@@ -144,6 +158,56 @@ export class FormService {
         );
     }
 
+    private initChipsFieldControl(field: FormChipsField): FormControl<string[] | null> {
+        return new FormControl<string[] | null>(
+            { value: [], disabled: field.isDisabled },
+            {
+                validators: [...this.getValidators(field), ...this.getChipsValidators(field)],
+                asyncValidators: this.formValidatorService.getFieldAsyncValidators(field)
+            }
+        );
+    }
+
+    private initFileFieldControl(field: FormFileField): FormControl<File | null> {
+        return new FormControl<File | null>(
+            { value: null, disabled: field.isDisabled },
+            {
+                validators: [...this.getValidators(field), ...this.getFileValidators(field)],
+                asyncValidators: this.formValidatorService.getFieldAsyncValidators(field)
+            }
+        );
+    }
+
+    private getFileValidators(field: FormFileField): ValidatorFn[] {
+        const validators: ValidatorFn[] = [];
+
+        if (field.maxSizeBytes !== undefined) {
+            validators.push(control => {
+                const file = control.value as File | null;
+
+                if (!file || file.size <= field.maxSizeBytes!) {
+                    return null;
+                }
+
+                return { maxSizeBytes: { maxSizeBytes: field.maxSizeBytes, actual: file.size } };
+            });
+        }
+
+        if (field.accept.length > 0) {
+            validators.push(control => {
+                const file = control.value as File | null;
+
+                if (!file || field.accept.some(pattern => matchesAcceptPattern(pattern, file.type))) {
+                    return null;
+                }
+
+                return { accept: { accept: field.accept, actual: file.type } };
+            });
+        }
+
+        return validators;
+    }
+
     private initNumberFieldControl(field: FormNumberField): FormControl<number | null> {
         return new FormControl<number | null>(
             { value: null, disabled: field.isDisabled },
@@ -182,6 +246,26 @@ export class FormService {
                 }
 
                 return currentDate > maxDate ? { maxDate: { maxDate: field.maxDate, actual: value } } : null;
+            });
+        }
+
+        return validators;
+    }
+
+    private getChipsValidators(field: FormChipsField): ValidatorFn[] {
+        const validators: ValidatorFn[] = [];
+
+        if (field.maxItems !== undefined) {
+            validators.push(control => {
+                const value = control.value as string[] | null;
+
+                if (!value) {
+                    return null;
+                }
+
+                return value.length > field.maxItems!
+                    ? { maxItems: { maxItems: field.maxItems, actual: value.length } }
+                    : null;
             });
         }
 

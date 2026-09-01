@@ -27,7 +27,7 @@ describe('authGuard', () => {
         email: 'john@example.com',
         name: 'John',
         redirectPath: '/dashboard',
-        role: 'admin',
+        roles: ['admin'],
         surname: 'Doe'
     };
 

@@ -3,6 +3,7 @@ import { Component, Input } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { TreeConfig, TreeNode } from './models/tree.model';
 
@@ -10,7 +11,7 @@ const BASE_INDENT_REM = 0.6;
 const LEVEL_INDENT_REM = 1.25;
 
 @Component({
-    imports: [FontAwesomeModule, NgTemplateOutlet, TranslateModule],
+    imports: [FontAwesomeModule, NgTemplateOutlet, TooltipModule, TranslateModule],
     selector: 'bey-tree',
     standalone: true,
     styleUrls: ['./tree.component.css'],

@@ -1,0 +1,8 @@
+{
+    "angular-components-style-guide": {
+        "propertiesMenu": {
+            "example": "Inspector de propiedades de un bloque seleccionado, con pestañas, grupos plegables e inserción de variables.",
+            "provideVariables": "Aportar variables"
+        }
+    }
+}

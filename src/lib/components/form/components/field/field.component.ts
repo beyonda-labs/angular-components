@@ -9,26 +9,36 @@ import { FormDateField } from '../../models/fields/form-date-field.model';
 import { FormConfig, FormSection } from '../../models/form.model';
 import { FormField } from '../../models/form-field.model';
 import { FormService } from '../../services/form.service';
+import { FormAutocompleteFieldComponent } from './field-autocomplete/field-autocomplete.component';
 import { FormCheckboxFieldComponent } from './field-checkbox/field-checkbox.component';
+import { FormChipsFieldComponent } from './field-chips/field-chips.component';
 import { FormDateFieldComponent } from './field-date/field-date.component';
+import { FormFileFieldComponent } from './field-file/field-file.component';
+import { FormInfoFieldComponent } from './field-info/field-info.component';
 import { FormNumberFieldComponent } from './field-number/field-number.component';
 import { FormPasswordFieldComponent } from './field-password/field-password.component';
 import { FormRadioFieldComponent } from './field-radio/field-radio.component';
 import { FormSelectFieldComponent } from './field-select/field-select.component';
 import { FormTextFieldComponent } from './field-text/field-text.component';
+import { FormTextVariableFieldComponent } from './field-text-variable/field-text-variable.component';
 import { FormTextareaFieldComponent } from './field-textarea/field-textarea.component';
 
 @Component({
     imports: [
         CommonModule,
         FontAwesomeModule,
+        FormAutocompleteFieldComponent,
         FormCheckboxFieldComponent,
+        FormChipsFieldComponent,
         FormDateFieldComponent,
+        FormFileFieldComponent,
+        FormInfoFieldComponent,
         FormNumberFieldComponent,
         FormPasswordFieldComponent,
         FormRadioFieldComponent,
         FormSelectFieldComponent,
         FormTextFieldComponent,
+        FormTextVariableFieldComponent,
         FormTextareaFieldComponent,
         TooltipModule,
         TranslateModule

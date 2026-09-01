@@ -1,0 +1,98 @@
+@if (field && !field.hidden) {
+    <div class="bey-property-field" [class.bey-property-field-disabled]="field.disabled">
+        @if (field.label && !hideLabel && field.type !== fieldType.Toggle) {
+            <label class="bey-property-field-label" [attr.for]="field.id">{{ labelKey | translate }}</label>
+        }
+
+        <div class="bey-property-field-control-wrapper">
+            @switch (field.type) {
+                @case (fieldType.Text) {
+                    <bey-property-text-field
+                        [actionButtonTooltipKey]="actionButtonTooltipKey"
+                        [field]="asTextField()"
+                        (actionTriggered)="onActionTriggered($event)"
+                        (valueChange)="onValueChange($event)"
+                        (variableInserted)="onVariableInserted($event)"
+                    ></bey-property-text-field>
+                }
+                @case (fieldType.Textarea) {
+                    <bey-property-text-field
+                        [actionButtonTooltipKey]="actionButtonTooltipKey"
+                        [field]="asTextField()"
+                        (actionTriggered)="onActionTriggered($event)"
+                        (valueChange)="onValueChange($event)"
+                        (variableInserted)="onVariableInserted($event)"
+                    ></bey-property-text-field>
+                }
+                @case (fieldType.Number) {
+                    <bey-property-number-field
+                        [field]="asNumberField()"
+                        (valueChange)="onValueChange($event)"
+                    ></bey-property-number-field>
+                }
+                @case (fieldType.NumberArray) {
+                    <bey-property-number-array-field
+                        [field]="asNumberArrayField()"
+                        (valueChange)="onValueChange($event)"
+                    ></bey-property-number-array-field>
+                }
+                @case (fieldType.Select) {
+                    <bey-property-select-field
+                        [field]="asSelectField()"
+                        (valueChange)="onValueChange($event)"
+                    ></bey-property-select-field>
+                }
+                @case (fieldType.Toggle) {
+                    <div class="bey-property-field-toggle-row">
+                        <bey-property-toggle-field
+                            [field]="asToggleField()"
+                            (valueChange)="onValueChange($event)"
+                        ></bey-property-toggle-field>
+
+                        @if (field.label) {
+                            <span class="bey-property-field-toggle-label">{{ labelKey | translate }}</span>
+                        }
+                    </div>
+                }
+                @case (fieldType.Color) {
+                    <bey-property-color-field
+                        [field]="asColorField()"
+                        (valueChange)="onValueChange($event)"
+                    ></bey-property-color-field>
+                }
+                @case (fieldType.File) {
+                    <bey-property-file-field
+                        [field]="asFileField()"
+                        (valueChange)="onValueChange($event)"
+                    ></bey-property-file-field>
+                }
+                @case (fieldType.Info) {
+                    <bey-property-info-field [field]="asInfoField()"></bey-property-info-field>
+                }
+                @case (fieldType.Attachment) {
+                    <bey-property-attachment-field
+                        [field]="asAttachmentField()"
+                        (uploadRequested)="onUploadRequested($event)"
+                        (valueChange)="onValueChange($event)"
+                    ></bey-property-attachment-field>
+                }
+                @case (fieldType.Segmented) {
+                    <bey-property-segmented-field
+                        [field]="asSegmentedField()"
+                        (valueChange)="onValueChange($event)"
+                    ></bey-property-segmented-field>
+                }
+                @case (fieldType.Spacing) {
+                    <bey-property-spacing-field
+                        [field]="asSpacingField()"
+                        (valueChange)="onValueChange($event)"
+                    ></bey-property-spacing-field>
+                }
+            }
+        </div>
+
+        @if (field.description) {
+            <p class="bey-property-field-description">{{ field.description | translate }}</p>
+        }
+    </div>
+}

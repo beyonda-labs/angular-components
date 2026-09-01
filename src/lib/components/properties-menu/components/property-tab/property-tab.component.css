@@ -1,0 +1,38 @@
+:host {
+    --bey-property-tab-border: var(--bey-gray-200);
+    --bey-property-tab-hover: var(--bey-bg-hover);
+    --bey-property-tab-text: var(--text-primary);
+
+    display: block;
+}
+
+:host-context(body.dark) {
+    --bey-property-tab-border: var(--bey-gray-800);
+}
+
+.bey-property-tab {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    padding-block: 0.25rem;
+}
+
+.bey-property-tab-add-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+    padding: 0.5rem;
+    border: 1px dashed var(--bey-property-tab-border);
+    border-radius: 0.4rem;
+    background: none;
+    color: var(--bey-property-tab-text);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.bey-property-tab-add-group:hover {
+    background: var(--bey-property-tab-hover);
+}

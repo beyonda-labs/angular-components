@@ -1,7 +1,8 @@
 {
     "angular-components": {
         "tabs": {
-            "label": "Navigation tabs"
+            "label": "Navigation tabs",
+            "more": "More tabs"
         }
     }
 }

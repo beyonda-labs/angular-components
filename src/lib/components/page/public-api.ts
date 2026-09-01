@@ -6,6 +6,15 @@ export {
     PageStandardAction as BeyPageStandardAction
 } from './models/page-action.model';
 export type { PageActionParameters as BeyPageActionParameters } from './models/page-action.model';
+export {
+    PageCategoriesConfig as BeyPageCategoriesConfig,
+    PageItemType as BeyPageItemType,
+    PageViewMode as BeyPageViewMode
+} from './models/page-categories.model';
+export type {
+    PageCategoriesConfigParameters as BeyPageCategoriesConfigParameters,
+    PageTrashItem as BeyPageTrashItem
+} from './models/page-categories.model';
 export { PageFormConfig as BeyPageFormConfig } from './models/page-form.model';
 export type { PageFormConfigParameters as BeyPageFormConfigParameters } from './models/page-form.model';
 export { PageHeaderConfig as BeyPageHeaderConfig } from './models/page-header.model';

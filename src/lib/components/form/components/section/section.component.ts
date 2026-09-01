@@ -2,7 +2,7 @@ import { Component, inject, Input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { FormConfig, FormSection } from '../../models/form.model';
+import { FormConfig, FormRow, FormSection } from '../../models/form.model';
 import { FormService } from '../../services/form.service';
 import { FormRowComponent } from '../row/row.component';
 
@@ -29,6 +29,10 @@ export class FormSectionComponent {
         }
 
         return '';
+    }
+
+    hasVisibleField(row: FormRow): boolean {
+        return row.fields.some(field => !field.isHidden);
     }
 
     isSectionVisible(): boolean {
@@ -60,6 +64,6 @@ export class FormSectionComponent {
     }
 
     private hasAnyVisibleField(): boolean {
-        return this.section.rows.flatMap(row => row.fields).some(field => !field.isHidden);
+        return this.section.rows.some(row => this.hasVisibleField(row));
     }
 }

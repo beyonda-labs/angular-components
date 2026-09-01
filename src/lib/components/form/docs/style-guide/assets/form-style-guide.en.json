@@ -29,6 +29,40 @@
                 "submitted": "The modal form has been submitted: ",
                 "title": "New Contact"
             },
+            "sectionAutocomplete": {
+                "autocomplete1": {
+                    "label": "Basic typeahead",
+                    "options": {
+                        "option1": "Option 1",
+                        "option2": "Option 2",
+                        "option3": "Option 3",
+                        "option4": "Option 4"
+                    },
+                    "placeholder": "Search an option"
+                },
+                "autocomplete2": {
+                    "label": "Required typeahead",
+                    "options": {
+                        "option1": "Required option 1",
+                        "option2": "Required option 2",
+                        "option3": "Required option 3",
+                        "option4": "Required option 4"
+                    },
+                    "placeholder": "Search a required option"
+                },
+                "autocomplete3": {
+                    "label": "Disabled typeahead",
+                    "options": {
+                        "option1": "Disabled option 1",
+                        "option2": "Disabled option 2",
+                        "option3": "Disabled option 3",
+                        "option4": "Disabled option 4"
+                    },
+                    "placeholder": "Disabled typeahead"
+                },
+                "label": "Searchable fields",
+                "tooltip": "Typeahead variants with basic, required and disabled behaviour"
+            },
             "sectionCheckbox": {
                 "checkbox1": {
                     "label": "Accept Terms"
@@ -45,6 +79,21 @@
                 "label": "Checkbox Fields",
                 "tooltip": "Checkbox variants with basic, required, disabled and switch states"
             },
+            "sectionChips": {
+                "chips1": {
+                    "label": "Basic Chips",
+                    "placeholder": "Type and press Enter"
+                },
+                "chips2": {
+                    "label": "Required Chips (max. 5)",
+                    "placeholder": "Add up to 5 tags"
+                },
+                "chips3": {
+                    "label": "Disabled Chips"
+                },
+                "label": "Chips Fields",
+                "tooltip": "Chips variants with basic, required with maxItems, and disabled states"
+            },
             "sectionDate": {
                 "date1": {
                     "label": "Date With Range"
@@ -57,6 +106,16 @@
                 },
                 "label": "Date Fields",
                 "tooltip": "Date fields with range, required and disabled states"
+            },
+            "sectionInfo": {
+                "info1": {
+                    "label": "Version"
+                },
+                "info2": {
+                    "label": "Created On"
+                },
+                "label": "Info Fields",
+                "tooltip": "Read-only icon/label pairs — no input styling, no FormControl"
             },
             "sectionNumber": {
                 "label": "Number Fields",

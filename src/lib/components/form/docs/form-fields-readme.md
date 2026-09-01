@@ -44,14 +44,18 @@ The `type` discriminator used by `field.component.html` to select the rendered c
 | `BeyFormFieldType.Number`   | Numeric input          |
 | `BeyFormFieldType.Date`     | Date picker input      |
 | `BeyFormFieldType.Select`   | Dropdown select        |
+| `BeyFormFieldType.Autocomplete` | Searchable dropdown (typeahead) |
 | `BeyFormFieldType.Radio`    | Radio button group     |
 | `BeyFormFieldType.Checkbox` | Boolean checkbox       |
+| `BeyFormFieldType.Chips`    | Tag/chips input        |
+| `BeyFormFieldType.Info`     | Read-only icon/label list |
+| `BeyFormFieldType.File`     | File picker            |
 
 ---
 
 ### `BeyFormFieldOption`
 
-Used by `BeyFormSelectField` and `BeyFormRadioField` to define individual options:
+Used by `BeyFormSelectField`, `BeyFormAutocompleteField` and `BeyFormRadioField` to define individual options:
 
 | Attribute    | Type      | Required | Description                       |
 | ------------ | --------- | -------- | --------------------------------- |
@@ -170,6 +174,36 @@ new BeyFormSelectField({
 
 ---
 
+### `BeyFormAutocompleteField`
+
+Searchable dropdown. Behaves like `BeyFormSelectField` — the control stores the option `value` as a string — but the closed field shows the selected option's label and typing filters the list instead of scrolling it. Use it when the option list is long enough that a native select becomes unusable.
+
+Options are filtered against their **translated** labels, so a `label` holding a translation key filters by what the user actually reads.
+
+**Extra attributes:**
+
+| Attribute  | Type                   | Default                                       | Description                                            |
+| ---------- | ---------------------- | --------------------------------------------- | ------------------------------------------------------ |
+| `options`  | `BeyFormFieldOption[]` | `[]`                                          | Array of selectable options                            |
+| `emptyKey` | `string`               | `angular-components.form.autocompleteField.empty` | Translation key shown when no option matches the query |
+
+The placeholder follows the same convention as the rest of the fields: `placeholder` when set, otherwise `<sectionPrefix>.<key>.placeholder`.
+
+Keyboard: arrow keys move through the filtered list (wrapping at both ends), `Enter` picks the active option, `Escape` closes the panel without changing the value.
+
+The open panel is moved to `<body>` and positioned with fixed coordinates taken from the input's own rect — the same trick `bey-variable-picker` uses — so a scrollable ancestor such as a modal body cannot clip it. It flips above the input when there is not enough room below, and closes when an ancestor scrolls.
+
+```ts
+new BeyFormAutocompleteField({
+    key: 'attachment',
+    columns: 6,
+    isRequired: true,
+    options: attachments.map(attachment => ({ label: attachment.name, value: attachment.id }))
+});
+```
+
+---
+
 ### `BeyFormRadioField`
 
 Radio button group control.
@@ -220,6 +254,87 @@ new BeyFormCheckboxField({
     key: 'notifications',
     columns: 12,
     isSwitch: true
+});
+```
+
+---
+
+### `BeyFormChipsField`
+
+Tag/chips input control. The `FormControl` value is a `string[]`. The user types a value and presses `Enter` or `,` to add it as a chip; `Backspace` on an empty input removes the last chip.
+
+**Extra attributes:**
+
+| Attribute         | Type      | Default | Description                                                    |
+| ----------------- | --------- | ------- | ---------------------------------------------------------------- |
+| `maxItems`        | `number`  | `undefined` | Maximum number of chips (adds `maxItems` validator; hides the input once reached) |
+| `allowDuplicates` | `boolean` | `false` | Allows the same value to be added more than once               |
+
+```ts
+new BeyFormChipsField({
+    key: 'tags',
+    columns: 6,
+    maxItems: 5
+});
+```
+
+---
+
+### `BeyFormInfoField`
+
+Read-only display field for system/computed information — no `FormControl`, no input styling (no border/background). Renders as a list of icon + label pairs. Always `isDisabled: true`; `isRequired` is not applicable.
+
+Unlike other fields, its content isn't driven by a bound value — pass the already-resolved `items` (icon optional per item) when building the field.
+
+**Extra attributes:**
+
+| Attribute | Type               | Default | Description                                  |
+| --------- | ------------------ | ------- | --------------------------------------------- |
+| `items`   | `BeyFormInfoItem[]` | `[]`    | Ordered list of `{ label: string; icon?: IconDefinition }` pairs to display |
+
+```ts
+import { faCalendarDays, faUser } from '@fortawesome/free-solid-svg-icons';
+
+new BeyFormInfoField({
+    key: 'createdInfo',
+    columns: 6,
+    items: [
+        { icon: faCalendarDays, label: '24 Jul 2026' },
+        { icon: faUser, label: 'Admin Admin' }
+    ]
+});
+
+// A single, icon-less value (e.g. a version number) is just one item
+new BeyFormInfoField({
+    key: 'versionInfo',
+    columns: 6,
+    items: [{ label: '1.0' }]
+});
+```
+
+---
+
+### `BeyFormFileField`
+
+File picker. The `FormControl` value is the selected `File`, or `null` — never its contents: reading the bytes is
+left to whoever submits the form, so nothing pays for a copy it may not need.
+
+**Extra attributes:**
+
+| Attribute      | Type       | Default | Description                                                     |
+| -------------- | ---------- | ------- | ---------------------------------------------------------------- |
+| `accept`       | `string[]` | `[]`    | Mime patterns (`image/*`, `application/pdf`) offered by the picker and validated on selection |
+| `maxSizeBytes` | `number`   | `undefined` | Rejects a larger file, before any upload starts             |
+
+Both produce a validation error on the control (`accept`, `maxSizeBytes`) and a message under the field.
+
+```ts
+new BeyFormFileField({
+    key: 'file',
+    columns: 12,
+    isRequired: true,
+    accept: ['image/*', 'application/pdf'],
+    maxSizeBytes: 10 * 1024 * 1024
 });
 ```
 
@@ -302,6 +417,7 @@ import {
     BeyFormSelectField,
     BeyFormRadioField,
     BeyFormCheckboxField,
+    BeyFormChipsField,
     BeyFormFieldLengthValidator,
     BeyFormFieldValidatorType
 } from '@beyonda-labs/angular-components';
@@ -346,6 +462,9 @@ new BeyFormSection({
                 new BeyFormTextareaField({ key: 'bio', columns: 8, rows: 4, maxHeight: '160px' }),
                 new BeyFormCheckboxField({ key: 'acceptTerms', columns: 4, isRequired: true })
             ]
+        }),
+        new BeyFormRow({
+            fields: [new BeyFormChipsField({ key: 'skills', columns: 12, maxItems: 10 })]
         })
     ]
 });

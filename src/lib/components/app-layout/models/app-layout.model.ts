@@ -11,6 +11,7 @@ export class AppLayoutConfig {
     prefix: string;
     title: LeftMenuTitle;
     topActions: AppLayoutTopAction[];
+    useBodyPadding: boolean;
 
     onBreadcrumbClick?: (id: number) => void;
     onLayoutInitialized?: () => void;
@@ -33,6 +34,7 @@ export class AppLayoutConfig {
         termsUrl,
         title,
         topActions = [],
+        useBodyPadding = true,
         userInfo
     }: AppLayoutConfigParameters) {
         this.bottomActions = bottomActions;
@@ -44,6 +46,7 @@ export class AppLayoutConfig {
         this.prefix = prefix;
         this.title = title;
         this.topActions = topActions;
+        this.useBodyPadding = useBodyPadding;
         this.userInfo = userInfo;
         this.footerConfig = new FooterConfig({
             iconSrc,
@@ -71,12 +74,21 @@ interface AppLayoutConfigParameters {
     privacyUrl?: string;
     termsUrl?: string;
     topActions?: AppLayoutTopAction[];
+    useBodyPadding?: boolean;
     userInfo?: LeftMenuUserInfo;
 }
 
 export class AppLayoutTopAction extends LeftMenuAction {
-    constructor({ active = false, icon, key, route, subActions = [] }: AppLayoutTopActionParameters) {
-        super({ active, icon, key, route, subActions });
+    constructor({
+        action,
+        active = false,
+        disabled = false,
+        icon,
+        key,
+        route,
+        subActions = []
+    }: AppLayoutTopActionParameters) {
+        super({ action, active, disabled, icon, key, route, subActions });
     }
 }
 
@@ -84,20 +96,24 @@ interface AppLayoutTopActionParameters {
     key: string;
     icon: IconDefinition;
 
+    action?: () => void;
     active?: boolean;
+    disabled?: boolean;
     route?: string;
     subActions?: AppLayoutTopAction[];
 }
 
 export class AppLayoutBottomAction extends LeftMenuAction {
-    constructor({ icon, key }: AppLayoutBottomActionParameters) {
-        super({ key, icon });
+    constructor({ action, icon, key }: AppLayoutBottomActionParameters) {
+        super({ action, key, icon });
     }
 }
 
 interface AppLayoutBottomActionParameters {
     icon: IconDefinition;
     key: string;
+
+    action?: () => void;
 }
 
 export class AppLayoutBreadcrumbItem extends BreadcrumbItem {

@@ -15,9 +15,11 @@ import { TabsComponent } from '../../tabs.component';
 export class TabsStyleGuideComponent {
     activeKey1 = 'overview';
     activeKey2 = 'analytics';
+    activeKey3 = 'overview';
 
     basicConfig: TabsConfig;
     iconsConfig: TabsConfig;
+    overflowConfig: TabsConfig;
 
     private readonly translateService = inject(TranslateService);
 
@@ -43,6 +45,22 @@ export class TabsStyleGuideComponent {
                 new Tab({ key: 'documents', icon: faFileAlt }),
                 new Tab({ key: 'settings', icon: faCog }),
                 new Tab({ key: 'admin', icon: faLock, isDisabled: true })
+            ]
+        });
+
+        this.overflowConfig = new TabsConfig({
+            onTabChange: key => {
+                this.activeKey3 = key;
+            },
+            prefix: 'angular-components-style-guide.tabs.overflow',
+            tabs: [
+                new Tab({ key: 'overview' }),
+                new Tab({ key: 'details' }),
+                new Tab({ key: 'history' }),
+                new Tab({ key: 'comments' }),
+                new Tab({ key: 'activity' }),
+                new Tab({ key: 'settings' }),
+                new Tab({ key: 'permissions' })
             ]
         });
     }

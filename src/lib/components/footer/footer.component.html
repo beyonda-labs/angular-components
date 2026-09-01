@@ -1,5 +1,5 @@
-<div class="bey-footer__container d-flex px-2 w-100 align-middle border-top" style="height: 65px">
-    <div class="bey-footer__brand me-4">
+<div class="bey-footer__container d-flex px-3 w-100 align-middle border-top">
+    <div class="bey-footer__brand">
         <img [src]="config.iconSrc" class="bey-footer__icon" alt="" aria-hidden="true" />
         <span class="bey-footer__org">&#64;{{ config.orgName | translate }}</span>
         <span class="bey-footer__sep" aria-hidden="true">—</span>
@@ -16,4 +16,8 @@
             }
         </nav>
     }
+
+    <div class="bey-footer__preferences">
+        <bey-floating-preferences [usePill]="false" />
+    </div>
 </div>

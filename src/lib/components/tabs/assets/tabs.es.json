@@ -1,7 +1,8 @@
 {
     "angular-components": {
         "tabs": {
-            "label": "Pestañas de navegación"
+            "label": "Pestañas de navegación",
+            "more": "Más pestañas"
         }
     }
 }

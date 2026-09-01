@@ -1,3 +1,4 @@
+import { ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -6,6 +7,7 @@ import { FloatingPreferencesComponent } from './floating-preferences.component';
 describe('FloatingPreferencesComponent', () => {
     let component: FloatingPreferencesComponent;
     let fixture: ComponentFixture<FloatingPreferencesComponent>;
+    let cd: ChangeDetectorRef;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -14,6 +16,7 @@ describe('FloatingPreferencesComponent', () => {
 
         fixture = TestBed.createComponent(FloatingPreferencesComponent);
         component = fixture.componentInstance;
+        cd = fixture.debugElement.injector.get(ChangeDetectorRef);
         fixture.detectChanges();
     });
 
@@ -42,5 +45,17 @@ describe('FloatingPreferencesComponent', () => {
         select.dispatchEvent(new Event('change'));
 
         expect(document.body).toBeTruthy();
+    });
+
+    it('should render the pill wrapper by default', () => {
+        expect(fixture.nativeElement.querySelector('.bey-fp-pill')).toBeTruthy();
+    });
+
+    it('should not render the pill wrapper when usePill is false', () => {
+        component.usePill = false;
+        cd.markForCheck();
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.querySelector('.bey-fp-pill')).toBeNull();
     });
 });

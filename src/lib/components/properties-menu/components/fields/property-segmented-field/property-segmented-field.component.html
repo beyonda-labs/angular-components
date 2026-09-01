@@ -1,0 +1,25 @@
+<div class="bey-property-segmented-field" role="radiogroup" [attr.aria-label]="field.label">
+    @for (option of field.options; track option.value) {
+        <button
+            type="button"
+            role="radio"
+            class="bey-property-segmented-field-option"
+            [attr.aria-checked]="isActive(option)"
+            [attr.aria-label]="option.label | translate"
+            [attr.title]="option.icon ? (option.label | translate) : null"
+            [class.bey-property-segmented-field-option-active]="isActive(option)"
+            [disabled]="option.disabled || field.disabled"
+            [tabindex]="isActive(option) ? 0 : -1"
+            (click)="selectOption(option)"
+            (keydown)="onKeydown($event)"
+        >
+            @if (option.icon) {
+                <fa-icon [icon]="option.icon"></fa-icon>
+            }
+
+            @if (option.label && !option.icon) {
+                {{ option.label | translate }}
+            }
+        </button>
+    }
+</div>

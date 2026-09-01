@@ -1,14 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { Tab, TabsConfig } from './models/tabs.model';
+import { Tab, TabsConfig, TabsVariant } from './models/tabs.model';
 import { TabsComponent } from './tabs.component';
+
+class ResizeObserverMock {
+    observe(): void {}
+    unobserve(): void {}
+    disconnect(): void {}
+}
 
 describe('TabsComponent', () => {
     let component: TabsComponent;
     let fixture: ComponentFixture<TabsComponent>;
 
     beforeEach(async () => {
+        global.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
+
         await TestBed.configureTestingModule({
             imports: [TabsComponent, TranslateModule.forRoot()]
         }).compileComponents();
@@ -230,9 +238,27 @@ describe('TabsComponent', () => {
         fixture.detectChanges();
         expect(component.activeTabKey).toBe('history');
     });
+
+    it('should not apply the segmented class by default', () => {
+        component.config = buildConfig();
+        fixture.detectChanges();
+
+        const tablist = fixture.nativeElement.querySelector('[role="tablist"]');
+        expect(tablist.classList.contains('bey-tabs--segmented')).toBe(false);
+    });
+
+    it('should apply the segmented class when the variant is segmented', () => {
+        component.config = buildConfig({ variant: TabsVariant.Segmented });
+        fixture.detectChanges();
+
+        const tablist = fixture.nativeElement.querySelector('[role="tablist"]');
+        expect(tablist.classList.contains('bey-tabs--segmented')).toBe(true);
+    });
 });
 
-function buildConfig(overrides?: Partial<TabsConfig> & { tabs?: Tab[]; onTabChange?: (key: string) => void; activeTab?: string }): TabsConfig {
+function buildConfig(
+    overrides?: Partial<TabsConfig> & { tabs?: Tab[]; onTabChange?: (key: string) => void; activeTab?: string }
+): TabsConfig {
     return new TabsConfig({
         activeTab: overrides?.activeTab,
         onTabChange: overrides?.onTabChange,
@@ -241,6 +267,7 @@ function buildConfig(overrides?: Partial<TabsConfig> & { tabs?: Tab[]; onTabChan
             new Tab({ key: 'general' }),
             new Tab({ key: 'details' }),
             new Tab({ key: 'history' })
-        ]
+        ],
+        variant: overrides?.variant
     });
 }

@@ -18,7 +18,6 @@ export class PageConfig {
     page: string;
     prefix: string;
 
-    /** Page-relative path (e.g. '/products'); resolved against ENVIRONMENT_CONFIG's baseUrl + webApiPath. */
     baseUrl?: string;
     formConfig?: PageFormConfig;
     headerConfig?: PageHeaderConfig;

@@ -1,0 +1,58 @@
+@if (field && control) {
+    <div class="bey-file-field">
+        <input
+            #fileInput
+            class="bey-file-input"
+            type="file"
+            tabindex="-1"
+            [id]="field.key"
+            [attr.accept]="accept"
+            [disabled]="field.isDisabled"
+            (change)="onFileSelected($event)"
+        />
+
+        <div
+            class="form-control form-control-sm bey-file-control"
+            [class.bey-file-control-invalid]="isInvalid()"
+            [attr.aria-required]="field.isRequired || null"
+            [attr.aria-invalid]="isInvalid() || null"
+        >
+            <button
+                type="button"
+                class="bey-file-button"
+                [disabled]="field.isDisabled"
+                (click)="openPicker()"
+            >
+                <fa-icon [icon]="fileIcon" aria-hidden="true"></fa-icon>
+                <span>{{ 'angular-components.form.fileField.choose' | translate }}</span>
+            </button>
+
+            @if (control.value) {
+                <span class="bey-file-name" [title]="control.value.name">{{ control.value.name }}</span>
+                <span class="bey-file-size">{{ getFileSize() }}</span>
+                @if (!field.isDisabled) {
+                    <button
+                        type="button"
+                        class="bey-file-clear"
+                        [attr.aria-label]="'angular-components.form.fileField.clear' | translate"
+                        (click)="clear()"
+                    >
+                        <fa-icon [icon]="clearIcon" aria-hidden="true"></fa-icon>
+                    </button>
+                }
+            } @else {
+                <span class="bey-file-empty">{{ 'angular-components.form.fileField.empty' | translate }}</span>
+            }
+        </div>
+
+        @if (getErrorKey(); as errorKey) {
+            <div class="bey-file-error">
+                {{ errorKey | translate: { maxSize: getMaxSize(), accept: field.accept.join(', ') } }}
+            </div>
+        } @else if (field.maxSizeBytes !== undefined) {
+            <div class="bey-file-hint">
+                {{ 'angular-components.form.fileField.maxSize' | translate: { maxSize: getMaxSize() } }}
+            </div>
+        }
+    </div>
+}

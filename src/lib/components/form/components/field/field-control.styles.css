@@ -175,6 +175,85 @@ textarea.form-control {
     outline-offset: 2px;
 }
 
+/* ─── Chips ──────────────────────────────────────────────────────────────── */
+.bey-chips-control {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    height: auto;
+    min-height: 2.1rem;
+    padding: 0.3rem 0.5rem;
+    cursor: text;
+}
+
+.bey-chips-control-disabled {
+    background-color: var(--bey-bg-muted);
+    cursor: default;
+}
+
+.bey-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    max-width: 100%;
+    padding: 0.15rem 0.15rem 0.15rem 0.55rem;
+    border-radius: 1rem;
+    background-color: var(--bey-bg-active);
+    font-size: 0.78rem;
+    line-height: 1.4;
+}
+
+.bey-chip-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bey-chip-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.1rem;
+    height: 1.1rem;
+    border: none;
+    border-radius: 50%;
+    padding: 0;
+    background: transparent;
+    color: var(--bey-secondary);
+    font-size: 0.68rem;
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.bey-chip-remove:hover {
+    background-color: var(--bey-bg-hover);
+    color: var(--text-primary);
+}
+
+.bey-chip-readonly {
+    padding-right: 0.55rem;
+}
+
+.bey-chips-input {
+    flex: 1 1 6rem;
+    min-width: 6rem;
+    border: none;
+    outline: none;
+    background: transparent;
+    padding: 0.15rem 0;
+    color: var(--bey-field-fg);
+    font-size: 0.84rem;
+}
+
+.bey-chips-input::placeholder {
+    color: var(--bey-field-ph);
+    font-size: 0.82rem;
+}
+
 /* ─── Password toggle ────────────────────────────────────────────────────── */
 .bey-password-wrapper {
     position: relative;
@@ -211,4 +290,226 @@ textarea.form-control {
 
 .bey-password-toggle:active {
     background-color: var(--bey-bg-hover);
+}
+
+/* ─── Autocomplete ───────────────────────────────────────────────────────── */
+.bey-autocomplete {
+    position: relative;
+}
+
+.bey-autocomplete-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.bey-autocomplete-input {
+    padding-right: 3.25rem;
+    text-overflow: ellipsis;
+}
+
+.bey-autocomplete-input-invalid {
+    border-color: var(--bey-danger);
+}
+
+.bey-autocomplete-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 1px;
+    bottom: 1px;
+    width: 1.6rem;
+    border: none;
+    padding: 0;
+    background: transparent;
+    color: var(--bey-secondary);
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.bey-autocomplete-action:hover:not(:disabled) {
+    color: var(--text-primary);
+}
+
+.bey-autocomplete-action:disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+.bey-autocomplete-action:not(.bey-autocomplete-toggle) {
+    right: 1.6rem;
+}
+
+.bey-autocomplete-toggle {
+    right: 1px;
+    border-radius: 0 calc(0.3rem - 1px) calc(0.3rem - 1px) 0;
+}
+
+.bey-autocomplete-toggle-open {
+    transform: rotate(180deg);
+}
+
+/* Moved to <body> and positioned with fixed coordinates by the component, so a scrollable ancestor
+   (a modal body, say) cannot clip it — the same trick bey-variable-picker uses. */
+.bey-autocomplete-panel {
+    position: fixed;
+    z-index: 1080;
+    display: flex;
+    flex-direction: column;
+    max-height: 13rem;
+    overflow-y: auto;
+    border: 1px solid var(--bey-gray-200);
+    border-radius: 0.3rem;
+    padding: 0.2rem;
+    background: var(--bey-bg-surface);
+    box-shadow: 0 12px 32px rgba(var(--bey-black-rgb), 0.14);
+}
+
+body.dark .bey-autocomplete-panel {
+    border-color: var(--bey-gray-800);
+}
+
+.bey-autocomplete-option {
+    overflow: hidden;
+    width: 100%;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.35rem 0.5rem;
+    background: transparent;
+    color: var(--bey-field-fg);
+    font-size: 0.82rem;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.bey-autocomplete-option:hover:not(:disabled),
+.bey-autocomplete-option-active {
+    background-color: var(--bey-bg-hover);
+}
+
+.bey-autocomplete-option-selected {
+    font-weight: 600;
+}
+
+.bey-autocomplete-option:disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+.bey-autocomplete-empty {
+    margin: 0;
+    padding: 0.45rem 0.5rem;
+    color: var(--bey-secondary);
+    font-size: 0.8rem;
+}
+
+.bey-file-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.bey-file-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: auto;
+    min-height: 2.1rem;
+    padding: 0.25rem 0.35rem 0.25rem 0.25rem;
+}
+
+.bey-file-control-invalid {
+    border-color: var(--bey-danger);
+}
+
+.bey-file-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.6rem;
+    background-color: var(--bey-bg-active);
+    color: var(--text-primary);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.bey-file-button:hover:not(:disabled) {
+    background-color: var(--bey-bg-hover);
+}
+
+.bey-file-button:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.bey-file-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.82rem;
+}
+
+.bey-file-size,
+.bey-file-empty {
+    flex-shrink: 0;
+    color: var(--bey-secondary);
+    font-size: 0.78rem;
+}
+
+.bey-file-empty {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bey-file-clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: none;
+    border-radius: 50%;
+    padding: 0;
+    background: transparent;
+    color: var(--bey-secondary);
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.bey-file-clear:hover {
+    background-color: var(--bey-bg-hover);
+    color: var(--text-primary);
+}
+
+.bey-file-hint,
+.bey-file-error {
+    margin-top: 0.25rem;
+    font-size: 0.74rem;
+}
+
+.bey-file-hint {
+    color: var(--bey-secondary);
+}
+
+.bey-file-error {
+    color: var(--bey-danger);
 }

@@ -1,0 +1,28 @@
+@if (config) {
+    <section
+        class="bey-properties-menu"
+        [class.bey-properties-menu-embedded]="config.embedded"
+        [attr.aria-label]="titleKey | translate"
+    >
+        @if (visibleTabs.length > 1) {
+            <bey-property-tabs></bey-property-tabs>
+        }
+
+        <ng-content></ng-content>
+
+        @if (!config.embedded) {
+            <bey-properties-menu-header
+                [icon]="config.icon"
+                [subtitle]="config.subtitle | translate"
+                [title]="titleKey | translate"
+                (closed)="onClose()"
+            ></bey-properties-menu-header>
+        }
+
+        <div #menuBody class="bey-properties-menu-body bey-thin-scroll p-2">
+            @if (activeTab) {
+                <bey-property-tab [tab]="activeTab"></bey-property-tab>
+            }
+        </div>
+    </section>
+}

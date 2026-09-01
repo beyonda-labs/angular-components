@@ -113,6 +113,13 @@ body.dark .btn-link.btn-link-secondary {
     background-color: var(--bey-bg-page) !important;
 }
 
+.form-control:disabled,
+.form-select:disabled {
+    background-color: var(--bey-bg-muted) !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed;
+}
+
 .form-control:focus,
 .form-select:focus,
 .form-check-input:focus {

@@ -21,7 +21,8 @@ export class BreadcrumbComponent implements AfterViewInit, OnDestroy {
         this._config = value;
         this.cachedItemWidths = [];
         this.previousContainerWidth = 0;
-        this.recalculate();
+        this.visibleStartIndex = 0;
+        this.scheduleRecalculate();
     }
     get config(): BreadcrumbConfig {
         return this._config;
@@ -45,6 +46,7 @@ export class BreadcrumbComponent implements AfterViewInit, OnDestroy {
     ngAfterViewInit(): void {
         this.observeResize();
         this.recalculate();
+        this.scheduleRecalculate();
     }
 
     ngOnDestroy(): void {
@@ -80,6 +82,10 @@ export class BreadcrumbComponent implements AfterViewInit, OnDestroy {
     }
 
     resolveLabel(item: BreadcrumbItem): string {
+        if (item.isTranslationKey) {
+            return this.translateService.instant(item.label);
+        }
+
         const label = this.getItemLabel(item);
 
         return this.config.translate ? this.translateService.instant(label) : label;
@@ -101,6 +107,10 @@ export class BreadcrumbComponent implements AfterViewInit, OnDestroy {
         const listItems = this.listElement.nativeElement.querySelectorAll<HTMLLIElement>('.bey-breadcrumb-item');
 
         return [...listItems].map(li => li.scrollWidth);
+    }
+
+    private scheduleRecalculate(): void {
+        requestAnimationFrame(() => this.ngZone.run(() => this.recalculate()));
     }
 
     private observeResize(): void {

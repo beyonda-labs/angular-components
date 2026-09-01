@@ -1,16 +1,23 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
+export enum TabsVariant {
+    Segmented = 'segmented',
+    Underline = 'underline'
+}
+
 export class TabsConfig {
     activeTab: string;
     prefix: string;
     tabs: Tab[];
+    variant: TabsVariant;
 
     onTabChange?: (key: string) => void;
 
-    constructor({ activeTab, prefix, tabs, onTabChange }: TabsConfigParameters) {
+    constructor({ activeTab, prefix, tabs, onTabChange, variant = TabsVariant.Underline }: TabsConfigParameters) {
         this.prefix = prefix;
         this.tabs = tabs;
         this.onTabChange = onTabChange;
+        this.variant = variant;
         this.activeTab = activeTab ?? this.tabs[0]?.key ?? '';
     }
 
@@ -35,6 +42,7 @@ export interface TabsConfigParameters {
 
     activeTab?: string;
     onTabChange?: (key: string) => void;
+    variant?: TabsVariant;
 }
 
 export class Tab {

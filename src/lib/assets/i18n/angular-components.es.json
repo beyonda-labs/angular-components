@@ -13,8 +13,24 @@
             "terms": "Términos y condiciones"
         },
         "form": {
+            "autocompleteField": {
+                "clear": "Vaciar",
+                "empty": "No se han encontrado opciones",
+                "toggle": "Mostrar opciones"
+            },
             "cancel": {
                 "without-changes": "No se han realizado cambios en el formulario."
+            },
+            "chips": {
+                "remove": "Eliminar"
+            },
+            "fileField": {
+                "choose": "Elegir archivo",
+                "clear": "Quitar archivo",
+                "empty": "Ningún archivo seleccionado",
+                "maxSize": "Tamaño máximo: {{maxSize}}",
+                "tooLarge": "El archivo supera el tamaño máximo de {{maxSize}}",
+                "unsupportedType": "Tipo de archivo no admitido. Permitidos: {{accept}}"
             },
             "modal": {
                 "close-confirmation": {
@@ -25,7 +41,15 @@
             },
             "required": "Este campo es requerido",
             "submit": {
-                "invalid": "Hay errores en el formulario, por favor corrija o complete los campos requeridos antes de enviar."
+                "invalid": "Hay errores en el formulario, por favor corrija o complete los campos requeridos antes de enviar.",
+                "without-changes": "No se han realizado cambios en el formulario."
+            },
+            "textVariableField": {
+                "close": "Cerrar",
+                "empty": "No se han encontrado opciones",
+                "insertVariable": "Insertar variable",
+                "label": "Variables",
+                "search": "Buscar"
             }
         },
         "header": {
@@ -36,6 +60,22 @@
                 "bad-gateway": "El servidor recibió una respuesta no válida. Por favor, inténtelo de nuevo más tarde.",
                 "bad-request": "La solicitud no pudo ser procesada. Por favor, revise los datos enviados.",
                 "conflict": "Se produjo un conflicto con el estado actual del recurso.",
+                "document-generation": {
+                    "cyclical-block-reference": "Se ha detectado una referencia cíclica entre bloques reutilizables.",
+                    "insufficient-width-image": "No hay ancho suficiente para colocar una imagen en el documento.",
+                    "insufficient-width-list": "No hay ancho suficiente para colocar una lista en el documento.",
+                    "insufficient-width-list-item": "No hay ancho suficiente para un elemento de la lista.",
+                    "insufficient-width-paragraph": "No hay ancho suficiente para colocar un párrafo en el documento.",
+                    "invalid-image": "No se ha podido generar una imagen del documento. Comprueba que la variable o el archivo de imagen referenciado tenga un valor válido.",
+                    "invalid-image-width": "Una imagen del documento tiene un ancho no válido.",
+                    "invalid-request": "La solicitud no tiene el formato esperado.",
+                    "pagination-stuck": "No se ha podido paginar el documento correctamente. Revisa el contenido: puede haber un elemento demasiado grande o mal configurado.",
+                    "pdf-page-range": "El rango de páginas solicitado para un PDF insertado supera el número de páginas del archivo de origen.",
+                    "unresolved-block": "No se ha podido resolver el contenido de un bloque reutilizable referenciado.",
+                    "unresolved-header-footer": "No se ha podido resolver el contenido de la cabecera o el pie de página.",
+                    "validation-failed": "El documento tiene errores de validación pendientes. Corrígelos antes de generarlo."
+                },
+                "duplicate-field": "Ya existe un elemento con el campo \"{{fieldName}}\" con el valor \"{{value}}\".",
                 "forbidden": "No tiene permisos para realizar esta acción.",
                 "internal-server-error": "Se produjo un error interno en el servidor. Por favor, inténtelo de nuevo más tarde.",
                 "invalid-child": "El campo \"{{childField}}\" no es válido para el padre \"{{parentField}}\".",
@@ -51,6 +91,7 @@
                 "login": {
                     "existing-user": "Ya existe una cuenta con este correo electrónico.",
                     "invalid-credentials": "Email o contraseña incorrectos.",
+                    "invalid-refresh-token": "Tu sesión ha caducado. Inicia sesión de nuevo.",
                     "oauth-invalid-callback": "El callback de autenticación no es válido. Por favor, inténtelo de nuevo.",
                     "oauth-missing-access-token": "No se recibió token de acceso de {{provider}}. Por favor, inténtelo de nuevo.",
                     "oauth-missing-email": "{{provider}} no devolvió ninguna dirección de correo. Por favor, inténtelo de nuevo.",
@@ -59,6 +100,7 @@
                     "passwords-not-match": "Las contraseñas no coinciden.",
                     "provider-not-found": "El proveedor {{provider}} no está disponible."
                 },
+                "move-target-unchanged": "El elemento ya se encuentra en esta categoría.",
                 "not-found": "El recurso solicitado no fue encontrado.",
                 "required-field": "El campo \"{{fieldName}}\" es obligatorio.",
                 "service-unavailable": "El servicio no está disponible temporalmente. Por favor, inténtelo de nuevo más tarde.",
@@ -75,6 +117,7 @@
                     "password2": "Confirmar contraseña",
                     "surname": "Apellido"
                 },
+                "name": "Nombre",
                 "pattern": {
                     "email": "usuario@dominio.com"
                 }
@@ -84,6 +127,22 @@
                 "bad-request": "Solicitud inválida",
                 "conflict": "Conflicto",
                 "default": "Error",
+                "document-generation": {
+                    "cyclical-block-reference": "Referencia cíclica",
+                    "insufficient-width-image": "Espacio insuficiente",
+                    "insufficient-width-list": "Espacio insuficiente",
+                    "insufficient-width-list-item": "Espacio insuficiente",
+                    "insufficient-width-paragraph": "Espacio insuficiente",
+                    "invalid-image": "Error al generar la imagen",
+                    "invalid-image-width": "Error al generar la imagen",
+                    "invalid-request": "Solicitud inválida",
+                    "pagination-stuck": "Error de paginación",
+                    "pdf-page-range": "Rango de páginas inválido",
+                    "unresolved-block": "Bloque no resuelto",
+                    "unresolved-header-footer": "Cabecera o pie no resuelto",
+                    "validation-failed": "Documento no válido"
+                },
+                "duplicate-field": "Valor duplicado",
                 "forbidden": "Acceso denegado",
                 "internal-server-error": "Error del servidor",
                 "invalid-child": "Campo inválido",
@@ -95,6 +154,7 @@
                 "login": {
                     "existing-user": "Cuenta ya existente",
                     "invalid-credentials": "Autenticación fallida",
+                    "invalid-refresh-token": "Sesión caducada",
                     "oauth-invalid-callback": "Error de autenticación",
                     "oauth-missing-access-token": "Error de autenticación",
                     "oauth-missing-email": "Error de autenticación",
@@ -103,6 +163,7 @@
                     "passwords-not-match": "Error de contraseña",
                     "provider-not-found": "Proveedor no disponible"
                 },
+                "move-target-unchanged": "Sin cambios",
                 "not-found": "No encontrado",
                 "required-field": "Campo obligatorio",
                 "service-unavailable": "Servicio no disponible",
@@ -189,16 +250,9 @@
             }
         },
         "page": {
-            "delete": {
-                "message": "Esta acción eliminará {{count}} elemento(s) y no se puede deshacer. ¿Desea continuar?",
-                "title": "Eliminar elementos"
-            },
             "form": {
                 "cancel": "Cancelar",
                 "submit": "Guardar"
-            },
-            "search": {
-                "placeholder": "Buscar..."
             }
         },
         "pagination": {
@@ -210,6 +264,62 @@
             "page-size": "Tamaño de página",
             "previous-page": "Ir a la página anterior",
             "results-range": "Mostrando {{ start }}-{{ end }} de {{ total }} resultados"
+        },
+        "properties-menu": {
+            "attachmentField": {
+                "clear": "Vaciar",
+                "empty": "No se han encontrado adjuntos",
+                "search": "Buscar adjuntos",
+                "tooLarge": "Este archivo supera el límite de {{maxSizeMB}} MB.",
+                "upload": "Subir un archivo nuevo",
+                "useVariable": "Usar una variable",
+                "wrongType": "Este tipo de archivo no se acepta ({{accept}})."
+            },
+            "close": "Cerrar",
+            "colorField": {
+                "clear": "Vaciar"
+            },
+            "fileField": {
+                "choose": "Elegir archivo",
+                "clear": "Vaciar",
+                "fileSelected": "Archivo seleccionado",
+                "noFileSelected": "Ningún archivo seleccionado",
+                "tooLarge": "Este archivo supera el límite de {{maxSizeMB}} MB."
+            },
+            "list": {
+                "collapse": "Plegar",
+                "copied": "Copiado",
+                "copy": "Copiar la referencia",
+                "empty": "No hay elementos",
+                "expand": "Desplegar"
+            },
+            "numberArray": {
+                "add": "Añadir"
+            },
+            "remove": "Eliminar",
+            "select": {
+                "noMatches": "Sin coincidencias",
+                "searchPlaceholder": "Buscar…",
+                "useVariable": "Usar una variable"
+            },
+            "spacing": {
+                "bottom": "Abajo",
+                "left": "Izquierda",
+                "right": "Derecha",
+                "top": "Arriba"
+            },
+            "tabs": {
+                "label": "Pestañas de propiedades"
+            },
+            "textField": {
+                "insertVariable": "Insertar variable"
+            },
+            "variablePicker": {
+                "close": "Cerrar",
+                "empty": "No se encontraron variables",
+                "label": "Variables",
+                "search": "Buscar variables"
+            }
         },
         "search": {
             "add": "Añadir filtro",
@@ -249,7 +359,8 @@
             "select-row": "Seleccionar fila"
         },
         "tabs": {
-            "label": "Pestañas de navegación"
+            "label": "Pestañas de navegación",
+            "more": "Más pestañas"
         },
         "toast": {
             "types": {
@@ -367,7 +478,11 @@
         "components": "Componentes",
         "compound": "Compuestos",
         "floating-preferences": {
-            "example": "Píldora autogestionada con selectores de idioma y tema. Lee y escribe el estado directamente a través de TranslateService y BeyThemeService — no requiere inputs ni configuración."
+            "example": "Selectores de idioma y tema autogestionados. Lee y escribe el estado directamente a través de TranslateService y BeyThemeService — no requiere callbacks.",
+            "examples": {
+                "noPill": "Sin la píldora (usePill = false), para embeberlo en otro contenedor",
+                "pill": "Por defecto (píldora flotante)"
+            }
         },
         "floating-preferences-section": "Preferencias flotantes",
         "footer": {
@@ -414,6 +529,40 @@
                 "submitted": "El formulario modal ha sido enviado: ",
                 "title": "Nuevo contacto"
             },
+            "sectionAutocomplete": {
+                "autocomplete1": {
+                    "label": "Typeahead básico",
+                    "options": {
+                        "option1": "Opción 1",
+                        "option2": "Opción 2",
+                        "option3": "Opción 3",
+                        "option4": "Opción 4"
+                    },
+                    "placeholder": "Busque una opción"
+                },
+                "autocomplete2": {
+                    "label": "Typeahead obligatorio",
+                    "options": {
+                        "option1": "Opción obligatoria 1",
+                        "option2": "Opción obligatoria 2",
+                        "option3": "Opción obligatoria 3",
+                        "option4": "Opción obligatoria 4"
+                    },
+                    "placeholder": "Busque una opción obligatoria"
+                },
+                "autocomplete3": {
+                    "label": "Typeahead deshabilitado",
+                    "options": {
+                        "option1": "Opción deshabilitada 1",
+                        "option2": "Opción deshabilitada 2",
+                        "option3": "Opción deshabilitada 3",
+                        "option4": "Opción deshabilitada 4"
+                    },
+                    "placeholder": "Typeahead deshabilitado"
+                },
+                "label": "Campos con búsqueda",
+                "tooltip": "Variantes de typeahead con comportamiento básico, obligatorio y deshabilitado"
+            },
             "sectionCheckbox": {
                 "checkbox1": {
                     "label": "Aceptar términos"
@@ -430,6 +579,21 @@
                 "label": "Campos de checkbox",
                 "tooltip": "Variantes de checkbox con estado básico, obligatorio, deshabilitado e interruptor"
             },
+            "sectionChips": {
+                "chips1": {
+                    "label": "Chips básico",
+                    "placeholder": "Escriba y pulse Enter"
+                },
+                "chips2": {
+                    "label": "Chips obligatorio (máx. 5)",
+                    "placeholder": "Añada hasta 5 etiquetas"
+                },
+                "chips3": {
+                    "label": "Chips deshabilitado"
+                },
+                "label": "Campos de chips",
+                "tooltip": "Variantes de chips con estado básico, obligatorio con maxItems, y deshabilitado"
+            },
             "sectionDate": {
                 "date1": {
                     "label": "Fecha con rango"
@@ -442,6 +606,16 @@
                 },
                 "label": "Campos de fecha",
                 "tooltip": "Campos de fecha con rango, obligatorio y deshabilitado"
+            },
+            "sectionInfo": {
+                "info1": {
+                    "label": "Versión"
+                },
+                "info2": {
+                    "label": "Creada el"
+                },
+                "label": "Campos de información",
+                "tooltip": "Pares de icono/etiqueta de solo lectura — sin estilo de input, sin FormControl"
             },
             "sectionNumber": {
                 "label": "Campos numéricos",
@@ -577,6 +751,10 @@
                     "label": "Archivar",
                     "tooltip": "Archivar objetivo"
                 },
+                "back": {
+                    "label": "Volver",
+                    "tooltip": "Volver a objetivos"
+                },
                 "delete": {
                     "label": "Eliminar",
                     "tooltip": "Eliminar objetivo"
@@ -593,12 +771,26 @@
                     "label": "Exportar",
                     "tooltip": "Exportar objetivos"
                 },
+                "individualGoal": {
+                    "label": "Objetivo individual",
+                    "tooltip": "Crear un nuevo objetivo individual"
+                },
                 "newGoal": {
                     "label": "Nuevo objetivo",
                     "tooltip": "Crear un nuevo objetivo"
+                },
+                "teamGoal": {
+                    "label": "Objetivo de equipo",
+                    "tooltip": "Crear un nuevo objetivo de equipo"
                 }
             },
-            "example": "Cabecera con acciones a ambos lados y un menú de tres puntos (⋮) para acciones secundarias.",
+            "badge": "Activo",
+            "example": "Cabecera con acciones a ambos lados y un menú de tres puntos (...) para acciones secundarias.",
+            "examples": {
+                "back": "Cabecera con botón de volver y badge de estado",
+                "default": "Cabecera normal, sin botón de volver",
+                "subPage": "Variante de subpágina, título más pequeño"
+            },
             "title": "Objetivos"
         },
         "headers": "Cabeceras",
@@ -645,6 +837,8 @@
                     "tooltip": "Obtener soporte"
                 }
             },
+            "documentsClicked": "La acción \"Documentos\" se ha ejecutado al pulsar su etiqueta.",
+            "documentsHint": "\"Documentos\" tiene acción propia y subacciones: pulsa su etiqueta para ejecutar la acción, pulsa el chevron para desplegar el submenú.",
             "example": "Menú lateral con acciones agrupadas, navegación anidada y comportamiento colapsado.",
             "examples": {
                 "collapsed": "Ejemplo colapsado",
@@ -746,6 +940,15 @@
             }
         },
         "pagination-section": "Paginación",
+        "pdfViewer": {
+            "example": "Previsualizador de PDF construido sobre ngx-extended-pdf-viewer con su toolbar nativa oculta y una toolbar propia controlada mediante la API imperativa y los eventos del visor."
+        },
+        "pdfViewers": "Visor de PDF",
+        "propertiesMenu": {
+            "example": "Inspector de propiedades de un bloque seleccionado, con pestañas, grupos plegables e inserción de variables.",
+            "provideVariables": "Aportar variables"
+        },
+        "propertiesMenus": "Menú de propiedades",
         "simple": "Simples",
         "table": {
             "actions": {
@@ -756,6 +959,7 @@
                 "action": "Acción",
                 "name": "Nombre",
                 "role": "Rol",
+                "skills": "Habilidades",
                 "status": "Estado"
             },
             "empty": "No hay filas disponibles para este ejemplo.",
@@ -772,6 +976,7 @@
             },
             "tooltips": {
                 "name": "Columna principal de identidad",
+                "skills": "Las celdas de badge aceptan una lista, mostrando más de un badge por fila",
                 "status": "Las celdas de estado pueden traducirse y mostrar tooltip"
             }
         },
@@ -795,7 +1000,8 @@
             "example": "Barra de pestañas horizontal orientada a modelos con navegación por teclado, iconos opcionales y estado deshabilitado. El consumidor renderiza contenido según la pestaña activa.",
             "examples": {
                 "basic": "Básico",
-                "icons": "Con iconos y deshabilitado"
+                "icons": "Con iconos y deshabilitado",
+                "overflow": "Overflow (contenedor estrecho)"
             },
             "icons": {
                 "tabs": {
@@ -807,6 +1013,31 @@
                     },
                     "documents": {
                         "label": "Documentos"
+                    },
+                    "settings": {
+                        "label": "Configuración"
+                    }
+                }
+            },
+            "overflow": {
+                "tabs": {
+                    "activity": {
+                        "label": "Actividad"
+                    },
+                    "comments": {
+                        "label": "Comentarios"
+                    },
+                    "details": {
+                        "label": "Detalles"
+                    },
+                    "history": {
+                        "label": "Historial"
+                    },
+                    "overview": {
+                        "label": "General"
+                    },
+                    "permissions": {
+                        "label": "Permisos"
                     },
                     "settings": {
                         "label": "Configuración"

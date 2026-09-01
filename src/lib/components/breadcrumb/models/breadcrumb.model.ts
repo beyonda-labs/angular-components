@@ -39,14 +39,16 @@ export interface BreadcrumbConfigParameters {
 export class BreadcrumbItem {
     id: number;
     isDisabled: boolean;
+    isTranslationKey: boolean;
     label: string;
 
     icon?: IconDefinition;
 
-    constructor({ id, icon, isDisabled = false, label }: BreadcrumbItemParameters) {
+    constructor({ id, icon, isDisabled = false, isTranslationKey = false, label }: BreadcrumbItemParameters) {
         this.id = id;
         this.icon = icon;
         this.isDisabled = isDisabled;
+        this.isTranslationKey = isTranslationKey;
         this.label = label;
     }
 }
@@ -57,4 +59,5 @@ export interface BreadcrumbItemParameters {
 
     icon?: IconDefinition;
     isDisabled?: boolean;
+    isTranslationKey?: boolean;
 }

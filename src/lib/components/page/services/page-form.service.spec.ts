@@ -3,7 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { ModalFormService } from '../../form/components/modal/services/modal-form.service';
 import { FormTextField } from '../../form/models/fields/form-text-field.model';
-import { FormRow, FormSection } from '../../form/models/form.model';
+import { FormConfig, FormRow, FormSection } from '../../form/models/form.model';
 import { PageFormConfig } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
 import { PageFormService } from './page-form.service';
@@ -110,10 +110,10 @@ describe('PageFormService', () => {
 });
 
 function buildPageForm(callbacks?: {
-    onCreate?: (value: unknown, form: ModalFormConfig) => void;
-    onEdit?: (value: unknown, form: ModalFormConfig) => void;
-}): PageFormConfig {
-    return new PageFormConfig({
+    onCreate?: (value: TestFormValue, form: FormConfig<TestFormValue>) => void;
+    onEdit?: (value: TestFormValue, form: FormConfig<TestFormValue>) => void;
+}): PageFormConfig<TestFormValue> {
+    return new PageFormConfig<TestFormValue>({
         buildSections: () => [
             new FormSection({
                 key: 'section1',

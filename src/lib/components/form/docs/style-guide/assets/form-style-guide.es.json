@@ -29,6 +29,40 @@
                 "submitted": "El formulario modal ha sido enviado: ",
                 "title": "Nuevo contacto"
             },
+            "sectionAutocomplete": {
+                "autocomplete1": {
+                    "label": "Typeahead básico",
+                    "options": {
+                        "option1": "Opción 1",
+                        "option2": "Opción 2",
+                        "option3": "Opción 3",
+                        "option4": "Opción 4"
+                    },
+                    "placeholder": "Busque una opción"
+                },
+                "autocomplete2": {
+                    "label": "Typeahead obligatorio",
+                    "options": {
+                        "option1": "Opción obligatoria 1",
+                        "option2": "Opción obligatoria 2",
+                        "option3": "Opción obligatoria 3",
+                        "option4": "Opción obligatoria 4"
+                    },
+                    "placeholder": "Busque una opción obligatoria"
+                },
+                "autocomplete3": {
+                    "label": "Typeahead deshabilitado",
+                    "options": {
+                        "option1": "Opción deshabilitada 1",
+                        "option2": "Opción deshabilitada 2",
+                        "option3": "Opción deshabilitada 3",
+                        "option4": "Opción deshabilitada 4"
+                    },
+                    "placeholder": "Typeahead deshabilitado"
+                },
+                "label": "Campos con búsqueda",
+                "tooltip": "Variantes de typeahead con comportamiento básico, obligatorio y deshabilitado"
+            },
             "sectionCheckbox": {
                 "checkbox1": {
                     "label": "Aceptar términos"
@@ -45,6 +79,21 @@
                 "label": "Campos de checkbox",
                 "tooltip": "Variantes de checkbox con estado básico, obligatorio, deshabilitado e interruptor"
             },
+            "sectionChips": {
+                "chips1": {
+                    "label": "Chips básico",
+                    "placeholder": "Escriba y pulse Enter"
+                },
+                "chips2": {
+                    "label": "Chips obligatorio (máx. 5)",
+                    "placeholder": "Añada hasta 5 etiquetas"
+                },
+                "chips3": {
+                    "label": "Chips deshabilitado"
+                },
+                "label": "Campos de chips",
+                "tooltip": "Variantes de chips con estado básico, obligatorio con maxItems, y deshabilitado"
+            },
             "sectionDate": {
                 "date1": {
                     "label": "Fecha con rango"
@@ -57,6 +106,16 @@
                 },
                 "label": "Campos de fecha",
                 "tooltip": "Campos de fecha con rango, obligatorio y deshabilitado"
+            },
+            "sectionInfo": {
+                "info1": {
+                    "label": "Versión"
+                },
+                "info2": {
+                    "label": "Creada el"
+                },
+                "label": "Campos de información",
+                "tooltip": "Pares de icono/etiqueta de solo lectura — sin estilo de input, sin FormControl"
             },
             "sectionNumber": {
                 "label": "Campos numéricos",

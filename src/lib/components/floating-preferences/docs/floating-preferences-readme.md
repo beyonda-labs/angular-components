@@ -7,9 +7,9 @@ Capacidades:
 -   Selector de idioma vinculado a `TranslateService`. Al cambiar, llama a `translateService.use(lang)` de forma inmediata.
 -   Selector de tema vinculado a `BeyThemeService`. Al cambiar, aplica la clase `dark` al `<body>` y persiste la preferencia en `localStorage`.
 -   Al montar en una nueva ruta, recupera automáticamente el tema guardado — no necesita que el padre recuerde el estado.
--   Diseño de píldora con `backdrop-filter` y animación de entrada.
+-   Diseño de píldora con `backdrop-filter` y animación de entrada (opcional, ver `usePill`).
 -   Dark mode nativo vía `:host-context(body.dark)`.
--   Totalmente independiente: sin `@Input`, sin callbacks.
+-   Totalmente independiente: sin callbacks.
 
 ---
 
@@ -23,7 +23,11 @@ import { BeyFloatingPreferencesComponent } from '@beyonda-labs/angular-component
 <bey-floating-preferences />
 ```
 
-El componente no acepta inputs. Para reaccionar al cambio de tema desde fuera, inyecta `BeyThemeService`.
+| Input     | Tipo      | Requerido | Por defecto | Descripción                                                     |
+| --------- | --------- | --------- | ----------- | ---------------------------------------------------------------- |
+| `usePill` | `boolean` | no        | `true`      | Envuelve los selectores en la píldora flotante con `backdrop-filter`. Pon `false` para embeberlo en otro contenedor (p. ej. el footer) sin el fondo propio. |
+
+Para reaccionar al cambio de tema desde fuera, inyecta `BeyThemeService`.
 
 ---
 

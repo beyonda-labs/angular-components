@@ -1,5 +1,75 @@
 # Change Log
 
+## [1.1.0] - 2026-??-??
+
+### Added
+
+-   Header module: support for sub-actions.
+-   Form module: chips field.
+-   Table module: badge cell.
+-   Page module:
+    -   Actions can render as a dropdown (`subActions`, `PageActionScope.Group`), matching the header module's sub-actions.
+    -   Category support: browsing (drill-down navigation with breadcrumb), trash view (restore/delete) and `move` action for items and categories via a tree-picker modal.
+-   Tree module:
+    -   `ModalTreeService` to pick a node from the full tree inside a dialog.
+    -   Tooltip on node labels when truncated.
+-   Tabs module: segmented (pill) variant, in addition to the existing underline style.
+-   Breadcrumb module: `isTranslationKey` on `BreadcrumbItem` to resolve a label as a raw i18n key, ignoring the prefix.
+-   Search module:
+    -   `Select` field type for bounded/enum-like fields: renders a dropdown of the configured `options` instead of free text, with `equals`/`notEquals` operators.
+    -   `Tags` field type for array-of-strings fields: `contains`/`notContains` match a whole array element, not a substring.
+-   Properties menu module:
+    -   Info field for read-only values, and attachment field to pick an attachment by id or upload a file (reported through the new `attachmentUpload` output).
+    -   Groups can split their fields into tabs, and any field can take half a row so two of them share it.
+    -   `searchable` on select fields, and `iconClasses` on list items to color an icon per item.
+-   Header module: icon-only action type, with the label shown as a tooltip.
+-   Styles: `bey-text-danger`, `bey-text-warning` and `bey-text-success` utility classes.
+-   Form module: file field, validating the accepted mime types and the maximum size before any upload.
+-   Http service: `upload()` sends raw bytes reporting progress, and `getBlob()` fetches a response as bytes instead of JSON.
+-   Page module: `afterCreate` on the form config runs a follow-up request before the create modal closes, for entities that take more than one call to create.
+-   Form module: autocomplete field, a select whose options are filtered by typing, for lists too long for a native dropdown.
+-   Properties menu module: a list card can copy a value to the clipboard and expose extra actions through
+    `listItemAction`.
+-   Properties menu module: a searchable select field can offer a variable picker too, for a field whose value may
+    be named by a variable.
+-   Properties menu module: the attachment field can offer a variable picker, writing the chosen variable as a
+    {{ name }} expression; its unused image preview is gone.
+-   Properties menu module: list cards can carry badges, a remove action and an expandable body of summary rows
+    (read-only value, badge or a real field) opened from their header, so an entity can be a card and the group
+    header can mean grouping.
+
+-   Properties menu module: tree nodes can be dragged to reorder or reparent them, reporting the move through
+    `treeDrop`; what each node accepts is declared per drag with `acceptsDrop`, `draggable`, `dropDisabled` and
+    the tree's `acceptsRootDrop`, so the library holds no nesting rules of its own.
+
+-   Properties menu module: the attachment field checks the file type before uploading, as the form file field
+    already did, instead of leaving it to the server to refuse it.
+
+### Changed
+
+-   Properties menu module: every field that offers a variable now uses the same icon, taken from one shared
+    constant instead of each field declaring its own.
+-   Tooling: the package manager is now pnpm, pinned through `packageManager`.
+
+### Fixed
+
+-   List module: the space key typed inside a control of a card is no longer swallowed — the card only reacts to it
+    when the key lands on the card itself, so an input inside one accepts spaces and the card stops toggling.
+-   Properties menu module: the searchable select panel is readable again — it painted its background and border
+    from tokens that do not exist in the palette, so it rendered transparent over whatever sat behind it.
+-   Properties menu module:
+    -   The attachment field's upload and clear buttons now match the size and shape of the other property fields' buttons.
+    -   Long variable names no longer overflow the panel: group headers and list items truncate with an ellipsis —
+        the full name stays available as a tooltip — and field labels wrap.
+-   Properties menu module: a list item label now interpolates the parameters it carries, so a parameterised
+    message no longer shows its placeholders raw.
+-   Form module: the autocomplete panel is no longer clipped by a scrollable ancestor such as a modal body.
+-   Breadcrumb module: fixed the overflow-collapse not updating after the item list changed.
+-   Form module:
+    -   Modal form buttons no longer scroll with the field content — only the fields area scrolls internally (bounded by the modal), the buttons stay fixed and always visible.
+    -   The scrollbar inside a modal form now follows the dark theme instead of always rendering with light colors.
+    -   The submit button is now disabled while the form has no changes yet, mirroring the cancel button's existing behavior — previously it was only gated on validity, so an untouched but already-valid form could be "saved" with no changes.
+
 ## [1.0.0] - 2026-07-20
 
 ### Added

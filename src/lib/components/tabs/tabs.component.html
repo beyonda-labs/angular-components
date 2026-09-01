@@ -1,6 +1,12 @@
 @if (config) {
-    <div class="bey-tabs" role="tablist" [attr.aria-label]="'angular-components.tabs.label' | translate">
-        @for (tab of config.tabs; track tab.key) {
+    <div
+        #tabsRow
+        class="bey-tabs"
+        role="tablist"
+        [class.bey-tabs--segmented]="isSegmented"
+        [attr.aria-label]="'angular-components.tabs.label' | translate"
+    >
+        @for (tab of visibleTabs; track tab.key) {
             <button
                 class="bey-tabs-tab"
                 role="tab"
@@ -19,6 +25,42 @@
                 }
                 {{ getTabLabel(tab) | translate }}
             </button>
+        }
+
+        @if (overflowTabs.length > 0) {
+            <div class="bey-tabs-overflow">
+                <button
+                    type="button"
+                    class="bey-tabs-tab bey-tabs-overflow-trigger"
+                    [attr.aria-expanded]="overflowMenuOpen"
+                    [attr.aria-label]="'angular-components.tabs.more' | translate"
+                    [class.bey-tabs-tab-active]="isActiveInOverflow()"
+                    (click)="toggleOverflowMenu()"
+                >
+                    <fa-icon [icon]="overflowIcon"></fa-icon>
+                </button>
+
+                @if (overflowMenuOpen) {
+                    <div class="bey-tabs-overflow-menu" role="menu">
+                        @for (tab of overflowTabs; track tab.key) {
+                            <button
+                                type="button"
+                                class="bey-tabs-overflow-menu-item"
+                                role="menuitemradio"
+                                [attr.aria-checked]="isActive(tab)"
+                                [class.bey-tabs-overflow-menu-item-active]="isActive(tab)"
+                                [disabled]="tab.isDisabled"
+                                (click)="onOverflowTabClick(tab)"
+                            >
+                                @if (tab.icon) {
+                                    <fa-icon [icon]="tab.icon"></fa-icon>
+                                }
+                                {{ getTabLabel(tab) | translate }}
+                            </button>
+                        }
+                    </div>
+                }
+            </div>
         }
     </div>
 }

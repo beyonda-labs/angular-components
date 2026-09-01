@@ -1,26 +1,27 @@
 {
     "name": "@beyonda-labs/angular-components",
-    "version": "1.0.0",
+    "version": "1.1.0",
+    "packageManager": "pnpm@10.34.5",
     "publishConfig": {
-        "registry": "https://npm.pkg.github.com/"
+        "registry": "https://verdaccio.home.arpa/"
     },
     "scripts": {
-        "build": "npm run test:ci && ng build",
-        "build:quick": "npm run prebuild && ng build --configuration=development",
+        "build": "pnpm run test:ci && ng build",
+        "build:quick": "pnpm run prebuild && ng build --configuration=development",
         "build:watch": "node scripts/build-watch.js",
         "check-translations": "node scripts/check-translations.js",
         "lint": "ng lint",
         "lint:fix": "ng lint --fix",
         "format": "prettier --write \"src/**/*.{ts,html,scss,json}\"",
         "test:report": "jest --coverage --coverageReporters=lcov --coverageReporters=html",
-        "merge-translations": "npm run check-translations && node scripts/merge-translations.js",
-        "prebuild": "npm run merge-translations",
+        "merge-translations": "pnpm run check-translations && node scripts/merge-translations.js",
+        "prebuild": "pnpm run merge-translations",
         "test": "jest",
         "test:watch": "jest --watch",
         "test:ci": "jest --ci",
         "test:coverage": "jest --coverage",
         "sort-translations": "node scripts/sort-translations.js",
-        "update-translations": "npm run sort-translations && npm run merge-translations && node scripts/update-translations.js"
+        "update-translations": "pnpm run sort-translations && pnpm run merge-translations && node scripts/update-translations.js"
     },
     "peerDependencies": {
         "@angular/animations": "19.2.17",
@@ -35,6 +36,7 @@
         "bootstrap": "5.3.8",
         "monaco-editor": "0.52.2",
         "ngx-bootstrap": "19.0.2",
+        "ngx-extended-pdf-viewer": "28.1.0",
         "ngx-monaco-editor-v2": "19.0.2",
         "rxjs": "7.8.2",
         "zone.js": "0.15.1"

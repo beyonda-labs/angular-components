@@ -7,6 +7,7 @@ describe('AppLayoutService', () => {
     let service: AppLayoutService;
 
     beforeEach(() => {
+        localStorage.clear();
         TestBed.configureTestingModule({});
         service = TestBed.inject(AppLayoutService);
     });
@@ -94,6 +95,34 @@ describe('AppLayoutService', () => {
             service.onMenuClick$.subscribe(spy);
 
             expect(spy).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('expanded', () => {
+        it('should default to true when nothing is stored', () => {
+            expect(service.expanded).toBe(true);
+        });
+
+        it('should update after setExpanded', () => {
+            service.setExpanded(false);
+
+            expect(service.expanded).toBe(false);
+        });
+
+        it('should persist the value to localStorage after setExpanded', () => {
+            service.setExpanded(false);
+
+            expect(localStorage.getItem('bey-left-menu-expanded')).toBe('false');
+        });
+
+        it('should restore a previously persisted value for a new instance', () => {
+            service.setExpanded(false);
+
+            TestBed.resetTestingModule();
+            TestBed.configureTestingModule({});
+            const restored = TestBed.inject(AppLayoutService);
+
+            expect(restored.expanded).toBe(false);
         });
     });
 

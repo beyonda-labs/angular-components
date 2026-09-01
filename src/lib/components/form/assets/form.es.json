@@ -1,8 +1,24 @@
 {
     "angular-components": {
         "form": {
+            "autocompleteField": {
+                "clear": "Vaciar",
+                "empty": "No se han encontrado opciones",
+                "toggle": "Mostrar opciones"
+            },
             "cancel": {
                 "without-changes": "No se han realizado cambios en el formulario."
+            },
+            "chips": {
+                "remove": "Eliminar"
+            },
+            "fileField": {
+                "choose": "Elegir archivo",
+                "clear": "Quitar archivo",
+                "empty": "Ningún archivo seleccionado",
+                "maxSize": "Tamaño máximo: {{maxSize}}",
+                "tooLarge": "El archivo supera el tamaño máximo de {{maxSize}}",
+                "unsupportedType": "Tipo de archivo no admitido. Permitidos: {{accept}}"
             },
             "modal": {
                 "close-confirmation": {
@@ -13,7 +29,15 @@
             },
             "required": "Este campo es requerido",
             "submit": {
-                "invalid": "Hay errores en el formulario, por favor corrija o complete los campos requeridos antes de enviar."
+                "invalid": "Hay errores en el formulario, por favor corrija o complete los campos requeridos antes de enviar.",
+                "without-changes": "No se han realizado cambios en el formulario."
+            },
+            "textVariableField": {
+                "close": "Cerrar",
+                "empty": "No se han encontrado opciones",
+                "insertVariable": "Insertar variable",
+                "label": "Variables",
+                "search": "Buscar"
             }
         }
     }

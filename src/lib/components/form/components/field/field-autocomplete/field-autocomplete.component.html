@@ -1,0 +1,70 @@
+@if (field && control) {
+    <div class="bey-autocomplete">
+        <div class="bey-autocomplete-control">
+            <input
+                #queryInput
+                class="form-control form-control-sm bey-autocomplete-input"
+                type="text"
+                role="combobox"
+                autocomplete="off"
+                [id]="field.key"
+                [class.bey-autocomplete-input-invalid]="isInvalid()"
+                [attr.aria-controls]="field.key + '-options'"
+                [attr.aria-expanded]="isOpen"
+                [attr.aria-invalid]="isInvalid() || null"
+                [attr.aria-required]="field.isRequired || null"
+                [disabled]="field.isDisabled"
+                [placeholder]="getPlaceholder() | translate"
+                [value]="displayValue"
+                (blur)="onBlur()"
+                (focus)="onFocus()"
+                (input)="onQueryInput($event)"
+                (keydown)="onKeydown($event)"
+            />
+
+            @if (control.value && !field.isDisabled) {
+                <button
+                    type="button"
+                    class="bey-autocomplete-action"
+                    [attr.aria-label]="'angular-components.form.autocompleteField.clear' | translate"
+                    (mousedown)="onClear($event)"
+                >
+                    <fa-icon [icon]="clearIcon" aria-hidden="true"></fa-icon>
+                </button>
+            }
+
+            <button
+                type="button"
+                class="bey-autocomplete-action bey-autocomplete-toggle"
+                tabindex="-1"
+                [attr.aria-label]="'angular-components.form.autocompleteField.toggle' | translate"
+                [class.bey-autocomplete-toggle-open]="isOpen"
+                [disabled]="field.isDisabled"
+                (mousedown)="onToggle()"
+            >
+                <fa-icon [icon]="toggleIcon" aria-hidden="true"></fa-icon>
+            </button>
+        </div>
+
+        @if (isOpen) {
+            <div #panel class="bey-autocomplete-panel" role="listbox" [id]="field.key + '-options'">
+                @for (option of filteredOptions; track option.value) {
+                    <button
+                        type="button"
+                        role="option"
+                        class="bey-autocomplete-option"
+                        [attr.aria-selected]="isSelected(option)"
+                        [class.bey-autocomplete-option-active]="$index === activeIndex"
+                        [class.bey-autocomplete-option-selected]="isSelected(option)"
+                        [disabled]="option.isDisabled ?? false"
+                        (mousedown)="onOptionPicked(option, $event)"
+                    >
+                        {{ getOptionLabel(option) }}
+                    </button>
+                } @empty {
+                    <p class="bey-autocomplete-empty">{{ emptyKey | translate }}</p>
+                }
+            </div>
+        }
+    </div>
+}

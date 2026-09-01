@@ -1,6 +1,6 @@
 # Footer (`bey-footer`)
 
-Barra de pie de página que muestra la identidad de marca del producto (icono, organización y nombre de producto) y, opcionalmente, enlaces legales (Términos y condiciones, Política de privacidad) que navegan mediante Angular Router.
+Barra de pie de página que muestra la identidad de marca del producto (icono, organización y nombre de producto), opcionalmente enlaces legales (Términos y condiciones, Política de privacidad) que navegan mediante Angular Router, y el selector de idioma/tema (`bey-floating-preferences`) integrado a la derecha.
 
 ---
 

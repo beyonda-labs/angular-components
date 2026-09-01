@@ -6,6 +6,9 @@
     --bey-orange-rgb: 255, 167, 36;
     --bey-teal: #20c997;
     --bey-teal-rgb: 32, 201, 151;
+    --bey-blue: #3b5b8c;
+    --bey-purple: #7c5cbf;
+    --bey-pink: #c9536f;
 
     --bey-white: #ffffff;
     --bey-white-rgb: 255, 255, 255;
@@ -47,7 +50,7 @@
     --text-muted: var(--bey-gray-500); /* labels, placeholders */
     --text-disabled: var(--bey-gray-400); /* deshabilitado */
 
-    --text-inverse: var(--bey-gray-0); /* sobre fondo oscuro */
+    --text-inverse: var(--bey-white); /* sobre fondo oscuro */
 }
 
 body.dark {
@@ -58,6 +61,9 @@ body.dark {
     --bey-orange-rgb: 212, 154, 46;
     --bey-teal: #2db896;
     --bey-teal-rgb: 45, 184, 150;
+    --bey-blue: #6f93c9;
+    --bey-purple: #a58ddb;
+    --bey-pink: #d98aa0;
 
     /* Context colors */
     --bey-primary: var(--bey-white);

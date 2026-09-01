@@ -1,0 +1,59 @@
+:host {
+    --bey-property-select-border: var(--bey-gray-200);
+    --bey-property-select-hover: var(--bey-bg-hover);
+    --bey-property-select-surface: var(--bey-bg-surface);
+}
+
+:host-context(body.dark) {
+    --bey-property-select-border: var(--bey-gray-800);
+}
+
+.bey-property-select-search {
+    position: relative;
+}
+
+.bey-property-select-search-panel {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 2px);
+    right: 0;
+    left: 0;
+    max-height: 12rem;
+    overflow-y: auto;
+    border: 1px solid var(--bey-property-select-border);
+    border-radius: 0.25rem;
+    background-color: var(--bey-property-select-surface);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 15%);
+}
+
+.bey-property-select-search-option {
+    display: block;
+    width: 100%;
+    padding: 0.3rem 0.5rem;
+    border: 0;
+    background: none;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.bey-property-select-search-option:hover,
+.bey-property-select-search-option:focus-visible {
+    background-color: var(--bey-property-select-hover);
+}
+
+.bey-property-select-search-option-selected {
+    font-weight: 600;
+}
+
+.bey-property-select-search-option:disabled {
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+.bey-property-select-search-empty {
+    padding: 0.4rem 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+}

@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -14,7 +15,7 @@ import { AppLayoutService } from './services/app-layout.service';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [BreadcrumbComponent, FloatingPreferencesComponent, FooterComponent, LeftMenuComponent, TranslateModule],
+    imports: [BreadcrumbComponent, CommonModule, FloatingPreferencesComponent, FooterComponent, LeftMenuComponent, TranslateModule],
     selector: 'bey-app-layout',
     standalone: true,
     styleUrls: ['./app-layout.component.css'],
@@ -95,6 +96,10 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         this.routerSubscription?.unsubscribe();
     }
 
+    onExpandedChange(value: boolean): void {
+        this.appLayoutService.setExpanded(value);
+    }
+
     private get usesRouteBased(): boolean {
         const all = [...this.leftMenuConfig.topActions, ...this.leftMenuConfig.bottomActions];
 
@@ -113,6 +118,7 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
 
         return new LeftMenuConfig({
             bottomActions,
+            expanded: this.appLayoutService.expanded,
             prefix,
             title,
             topActions,
@@ -134,7 +140,13 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
 
     private initActions(actions: LeftMenuAction[]): void {
         actions.forEach(action => {
-            action.action = () => this.appLayoutService.emitMenuClick(action.key);
+            const consumerAction = action.action;
+
+            action.action = () => {
+                consumerAction?.();
+                this.appLayoutService.emitMenuClick(action.key);
+            };
+
             if (action.subActions?.length) {
                 this.initActions(action.subActions);
             }
