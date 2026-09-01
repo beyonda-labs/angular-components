@@ -1,9 +1,9 @@
 {
     "name": "@beyonda-labs/angular-components",
-    "version": "1.1.0-develop-SNAPSHOT",
+    "version": "1.1.0",
     "packageManager": "pnpm@10.34.5",
     "publishConfig": {
-        "registry": "https://npm.pkg.github.com/"
+        "registry": "https://verdaccio.home.arpa/"
     },
     "scripts": {
         "build": "pnpm run test:ci && ng build",
