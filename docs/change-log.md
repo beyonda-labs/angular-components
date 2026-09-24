@@ -7,10 +7,15 @@
 -   Tabs module: the component owns the active tab and reports it through `onTabChange`; `BeyTabsConfig`
     carries the initial value only and is never written to.
 
+-   Pagination module: `onPageChange` and `onPageSizeChange` now receive the new page and page size instead of
+    the whole config, and `BeyPaginationConfig` is read as initial state rather than written to.
+
 ### Removed
 
 -   Tabs module: `BeyTabsConfig.setActiveTab()`. To move the selection from outside, bind a new config with
     the `activeTab` you want.
+-   Pagination module: `setPage()`, `setPageSize()`, `setTotalItems()`, `refresh()` and `$loadPagination` on
+    `BeyPaginationConfig`. Bind a new config to change page, size or total.
 
 ## [1.1.0] - 2026-??-??
 

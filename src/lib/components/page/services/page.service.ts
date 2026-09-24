@@ -134,8 +134,8 @@ export class PageService implements OnDestroy {
         const search = this.pageSearch();
 
         return new PaginationConfig({
-            onPageChange: config => this.setPage(config.page),
-            onPageSizeChange: config => this.setPageSize(config.pageSize),
+            onPageChange: page => this.setPage(page),
+            onPageSizeChange: pageSize => this.setPageSize(pageSize),
             page: search.page,
             pageSize: search.size,
             totalItems: this.totalItems()

@@ -3,7 +3,19 @@
 </p>
 
 <p class="mb-2">{{ 'angular-components-style-guide.pagination.examples.full' | translate }}</p>
-<bey-pagination class="mb-4" [config]="defaultConfig"></bey-pagination>
+<bey-pagination class="mb-2" [config]="defaultConfig"></bey-pagination>
+@if (defaultLastChange()) {
+    <div class="bey-style-guide-info text-muted mb-4">
+        {{ 'angular-components-style-guide.pagination.changed' | translate }}:
+        <strong>{{ defaultLastChange() }}</strong>
+    </div>
+}
 
 <p class="mb-2">{{ 'angular-components-style-guide.pagination.examples.compact' | translate }}</p>
 <bey-pagination [config]="compactConfig"></bey-pagination>
+@if (compactLastChange()) {
+    <div class="bey-style-guide-info text-muted mt-2">
+        {{ 'angular-components-style-guide.pagination.changed' | translate }}:
+        <strong>{{ compactLastChange() }}</strong>
+    </div>
+}

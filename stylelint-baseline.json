@@ -23,7 +23,6 @@
         "src/lib/components/login/login.component.css",
         "src/lib/components/modal/internal/modal-dialog.component.css",
         "src/lib/components/page/page.component.css",
-        "src/lib/components/pagination/pagination.component.css",
         "src/lib/components/pdf-viewer/pdf-viewer.component.css",
         "src/lib/components/properties-menu/components/fields/property-attachment-field/property-attachment-field.component.css",
         "src/lib/components/properties-menu/components/fields/property-color-field/property-color-field.component.css",
