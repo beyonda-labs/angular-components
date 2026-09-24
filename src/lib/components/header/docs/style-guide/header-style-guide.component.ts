@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { faArrowLeft, faArrowUpFromBracket, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -6,6 +6,7 @@ import { HeaderComponent } from '../../header.component';
 import { HeaderAction, HeaderActionType, HeaderConfig, HeaderVariant } from '../../models/header.model';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [HeaderComponent, TranslateModule],
     selector: 'bey-header-style-guide',
     standalone: true,
@@ -13,7 +14,7 @@ import { HeaderAction, HeaderActionType, HeaderConfig, HeaderVariant } from '../
     templateUrl: './header-style-guide.component.html'
 })
 export class HeaderStyleGuideComponent {
-    config = this.buildConfig();
+    readonly config = this.buildConfig();
     backConfig = this.buildConfig({
         backAction: new HeaderAction({
             icon: faArrowLeft,

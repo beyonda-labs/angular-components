@@ -1,0 +1,18 @@
+{
+    "angular-components-style-guide": {
+        "search": {
+            "example": "Caja de búsqueda rápida más un panel de filtros tipados. Cada cambio se informa por onFiltersChange; la consulta la ejecuta el consumidor.",
+            "applied": "Filtros aplicados",
+            "roles": {
+                "admin": "Administrador",
+                "editor": "Editor"
+            },
+            "fields": {
+                "name": "Nombre",
+                "age": "Edad",
+                "active": "Activo",
+                "role": "Rol"
+            }
+        }
+    }
+}

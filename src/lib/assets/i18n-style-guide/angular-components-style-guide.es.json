@@ -573,6 +573,21 @@
             "provideVariables": "Aportar variables"
         },
         "propertiesMenus": "Menú de propiedades",
+        "search": {
+            "applied": "Filtros aplicados",
+            "example": "Caja de búsqueda rápida más un panel de filtros tipados. Cada cambio se informa por onFiltersChange; la consulta la ejecuta el consumidor.",
+            "fields": {
+                "active": "Activo",
+                "age": "Edad",
+                "name": "Nombre",
+                "role": "Rol"
+            },
+            "roles": {
+                "admin": "Administrador",
+                "editor": "Editor"
+            }
+        },
+        "search-section": "Búsqueda",
         "simple": "Simples",
         "table": {
             "actions": {

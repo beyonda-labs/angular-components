@@ -135,7 +135,8 @@ a callback field and dialog callbacks.
 
 
 - [ ] The remaining 21 modules, one at a time
-- [ ] `badge` becomes a real component instead of global CSS classes
+- [ ] `badge` becomes a real component instead of global CSS classes — after `table` and `properties-menu`,
+      since both pass a badge css class around as part of their own config, as `header` does
 - [ ] Style-guides for `search` and `page`; READMEs for `badge`, `loading`, `login`, `page`
 - [ ] Translation keys to kebab-case (45 in the library, 171 in the style-guides)
 - [ ] Trim module READMEs to the agreed shape

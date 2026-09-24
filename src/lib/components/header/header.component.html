@@ -1,82 +1,73 @@
-@if (config) {
-    <div class="bey-header">
-        <div class="bey-header-start">
-            @if (config.backAction) {
-                <bey-button [button]="getActionButton(config.backAction)"></bey-button>
-            }
+<div class="bey-header">
+    <div class="bey-header-start">
+        @if (backButton(); as button) {
+            <bey-button [button]="button"></bey-button>
+        }
 
-            @if (config.title) {
-                <h1
-                    class="bey-header-title mb-2"
-                    [ngClass]="{
-                        'mb-2 fs-2': config.variant === 'page',
-                        'mb-1 fs-4': config.variant === 'subpage'
-                    }"
-                    [title]="getTitle() | translate"
-                >
-                    {{ getTitle() | translate }}
-                </h1>
-            }
+        @if (title()) {
+            <h1 class="bey-header-title" [class.is-subpage]="isSubpage()" [title]="title() | translate">
+                {{ title() | translate }}
+            </h1>
+        }
 
-            @if (config.badge) {
-                <span class="bey-header-badge" [ngClass]="config.badge.cssClass || 'bey-header-badge-default'">
-                    {{ config.badge.text | translate }}
-                </span>
-            }
-        </div>
+        @if (config().badge; as badge) {
+            <span class="bey-header-badge" [class]="badge.cssClass || 'bey-header-badge-default'">
+                {{ badge.text | translate }}
+            </span>
+        }
+    </div>
 
-        @if (leftActions.length || menuActions.length || rightActions.length) {
-            <div class="bey-header-actions bey-header-actions-end">
-                @for (action of leftActions; track action.key) {
-                    @if (hasSubActions(action)) {
-                        <div class="bey-header-action-menu">
-                            <bey-button [button]="getActionToggleButton(action)"></bey-button>
+    @if (hasActions()) {
+        <div class="bey-header-actions bey-header-actions-end">
+            @for (entry of leftActions(); track entry.action.key) {
+                @if (entry.subButtons.length) {
+                    <div class="bey-header-action-menu">
+                        <bey-button [button]="entry.button"></bey-button>
 
-                            @if (isActionMenuOpen(action)) {
-                                <div class="bey-header-menu-panel">
-                                    @for (subAction of action.subActions; track subAction.key) {
-                                        <bey-button [button]="getSubActionButton(subAction)"></bey-button>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    } @else {
-                        <bey-button [button]="getActionButton(action)"></bey-button>
-                    }
-                }
-
-                @if (menuActions.length) {
-                    <div class="bey-header-menu">
-                        <bey-button [button]="getMenuToggleButton()"></bey-button>
-
-                        @if (isMenuOpen) {
+                        @if (isActionMenuOpen(entry.action)) {
                             <div class="bey-header-menu-panel">
-                                @for (action of menuActions; track action.key) {
-                                    <bey-button [button]="getMenuActionButton(action)"></bey-button>
+                                @for (subButton of entry.subButtons; track $index) {
+                                    <bey-button [button]="subButton"></bey-button>
                                 }
                             </div>
                         }
                     </div>
+                } @else {
+                    <bey-button [button]="entry.button"></bey-button>
                 }
+            }
 
-                @for (action of rightActions; track action.key) {
-                    @if (hasSubActions(action)) {
-                        <div class="bey-header-action-menu">
-                            <bey-button [button]="getActionToggleButton(action)"></bey-button>
+            @if (menuButtons().length) {
+                <div class="bey-header-menu">
+                    <bey-button [button]="menuToggleButton"></bey-button>
 
-                            @if (isActionMenuOpen(action)) {
-                                <div class="bey-header-menu-panel">
-                                    @for (subAction of action.subActions; track subAction.key) {
-                                        <bey-button [button]="getSubActionButton(subAction)"></bey-button>
-                                    }
-                                </div>
+                    @if (isMenuOpen()) {
+                        <div class="bey-header-menu-panel">
+                            @for (button of menuButtons(); track $index) {
+                                <bey-button [button]="button"></bey-button>
                             }
                         </div>
-                    } @else {
-                        <bey-button [button]="getActionButton(action)"></bey-button>
                     }
+                </div>
+            }
+
+            @for (entry of rightActions(); track entry.action.key) {
+                @if (entry.subButtons.length) {
+                    <div class="bey-header-action-menu">
+                        <bey-button [button]="entry.button"></bey-button>
+
+                        @if (isActionMenuOpen(entry.action)) {
+                            <div class="bey-header-menu-panel">
+                                @for (subButton of entry.subButtons; track $index) {
+                                    <bey-button [button]="subButton"></bey-button>
+                                }
+                            </div>
+                        }
+                    </div>
+                } @else {
+                    <bey-button [button]="entry.button"></bey-button>
                 }
-            </div>
-        }
-    </div>
-}
+            }
+        </div>
+    }
+</div>

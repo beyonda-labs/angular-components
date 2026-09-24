@@ -1,290 +1,237 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { SearchConfig, SearchField, SearchFieldType } from './models/search.model';
+import { SearchConfig, SearchConfigParameters, SearchField, SearchFieldType } from './models/search.model';
 import { BooleanFilter, NumberFilter, SearchFilterOperator, StringFilter } from './models/search-filter.model';
 import { SearchComponent } from './search.component';
 
-const onFiltersChange = jest.fn();
-
 describe('SearchComponent', () => {
-    let component: SearchComponent;
     let fixture: ComponentFixture<SearchComponent>;
+    let onFiltersChange: jest.Mock;
+
+    function buildConfig(overrides: Partial<SearchConfigParameters> = {}): SearchConfig {
+        return new SearchConfig({
+            prefix: 'demo',
+            mainField: 'name',
+            onFiltersChange,
+            fields: [
+                new SearchField({ key: 'name', type: SearchFieldType.Text }),
+                new SearchField({ key: 'age', type: SearchFieldType.Number }),
+                new SearchField({ key: 'active', type: SearchFieldType.Boolean })
+            ],
+            ...overrides
+        });
+    }
+
+    function render(config: SearchConfig = buildConfig()): void {
+        fixture = TestBed.createComponent(SearchComponent);
+        fixture.componentRef.setInput('config', config);
+        fixture.detectChanges();
+    }
+
+    function mainInput(): HTMLInputElement {
+        return fixture.nativeElement.querySelector('.bey-search-box input');
+    }
+
+    function type(element: HTMLInputElement | HTMLSelectElement, value: string): void {
+        element.value = value;
+        element.dispatchEvent(new Event(element.tagName === 'SELECT' ? 'change' : 'input'));
+        fixture.detectChanges();
+    }
+
+    function openPanel(): void {
+        fixture.nativeElement.querySelector('[aria-expanded]').click();
+        fixture.detectChanges();
+    }
+
+    function clickByLabel(label: string): void {
+        [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')]
+            .find(button => button.textContent?.includes(label))
+            ?.click();
+        fixture.detectChanges();
+    }
+
+    function rows(): HTMLElement[] {
+        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-search-row')];
+    }
+
+    function selectsOf(row: HTMLElement): HTMLSelectElement[] {
+        return [...row.querySelectorAll<HTMLSelectElement>('select')];
+    }
+
+    function lastFilters(): unknown[] {
+        return onFiltersChange.mock.calls.at(-1)?.[0] ?? [];
+    }
 
     beforeEach(async () => {
-        onFiltersChange.mockReset();
+        onFiltersChange = jest.fn();
 
         await TestBed.configureTestingModule({
             imports: [SearchComponent, TranslateModule.forRoot()]
         }).compileComponents();
-
-        fixture = TestBed.createComponent(SearchComponent);
-        component = fixture.componentInstance;
-        component.config = buildConfig();
-
-        fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('offers a quick search box only when the config names a main field', () => {
+        render();
+        expect(mainInput()).toBeTruthy();
+
+        render(buildConfig({ mainField: undefined }));
+        expect(mainInput()).toBeNull();
     });
 
-    it('should render the main search input when a main field is configured', () => {
-        expect(fixture.nativeElement.querySelector('.bey-search-box-input')).toBeTruthy();
-    });
+    it('reports a contains filter on the main field once typing settles', fakeAsync(() => {
+        render();
 
-    it('should hide the main search input without a main field', () => {
-        component.config = buildConfig({ mainField: undefined });
-        fixture.detectChanges();
+        type(mainInput(), 'ada');
+        tick(300);
 
-        expect(fixture.nativeElement.querySelector('.bey-search-box-input')).toBeNull();
-        expect(fixture.nativeElement.querySelector('.bey-search-toggle')).toBeTruthy();
-    });
+        expect(lastFilters()).toEqual([
+            new StringFilter({ field: 'name', operator: SearchFilterOperator.Contains, value: 'ada' })
+        ]);
+    }));
 
-    it('should emit a contains filter on the main field after the debounce', fakeAsync(() => {
-        component.onSearchTermChange(buildSelectEvent('oat'));
+    it('reports nothing until typing settles', fakeAsync(() => {
+        render();
+
+        type(mainInput(), 'ada');
+        tick(100);
 
         expect(onFiltersChange).not.toHaveBeenCalled();
 
+        tick(200);
+    }));
+
+    it('shows the quick search as an editable row in the panel', fakeAsync(() => {
+        render();
+
+        type(mainInput(), 'ada');
+        tick(300);
+        openPanel();
+
+        expect(rows()).toHaveLength(1);
+        expect(selectsOf(rows()[0])[0].value).toBe('name');
+    }));
+
+    it('keeps an operator chosen by hand while the term keeps changing', fakeAsync(() => {
+        render();
+
+        type(mainInput(), 'ada');
+        tick(300);
+        openPanel();
+        type(selectsOf(rows()[0])[1], SearchFilterOperator.EndsWith);
+
+        type(mainInput(), 'adam');
         tick(300);
 
-        expect(onFiltersChange).toHaveBeenCalledWith([
-            new StringFilter({ field: 'name', operator: SearchFilterOperator.Contains, value: 'oat' })
+        expect(lastFilters()).toEqual([
+            new StringFilter({ field: 'name', operator: SearchFilterOperator.EndsWith, value: 'adam' })
         ]);
     }));
 
-    it('should show the main search as a panel row with an editable operator', fakeAsync(() => {
-        component.onSearchTermChange(buildSelectEvent('oat'));
+    it('drops the quick search filter when the box is emptied', fakeAsync(() => {
+        render();
+
+        type(mainInput(), 'ada');
+        tick(300);
+        type(mainInput(), '');
         tick(300);
 
-        expect(component.rows).toEqual([
-            { fieldKey: 'name', operator: SearchFilterOperator.Contains, value: 'oat', valueTo: '' }
-        ]);
-
-        component.onOperatorChange(0, buildSelectEvent(SearchFilterOperator.StartsWith));
-        component.applyFilters();
-
-        expect(onFiltersChange).toHaveBeenLastCalledWith([
-            new StringFilter({ field: 'name', operator: SearchFilterOperator.StartsWith, value: 'oat' })
-        ]);
-        expect(component.searchTerm).toBe('oat');
+        expect(lastFilters()).toEqual([]);
     }));
 
-    it('should keep the customized operator of the main row while typing', fakeAsync(() => {
-        component.onSearchTermChange(buildSelectEvent('oat'));
-        tick(300);
+    it('reports a filter built row by row in the panel', fakeAsync(() => {
+        render();
+        openPanel();
+        clickByLabel('add');
 
-        component.onOperatorChange(0, buildSelectEvent(SearchFilterOperator.StartsWith));
-        component.applyFilters();
+        const [field, operator] = selectsOf(rows()[0]);
+        type(field, 'age');
+        type(operator, SearchFilterOperator.GreaterThan);
+        type(rows()[0].querySelector('input') as HTMLInputElement, '30');
+        clickByLabel('apply');
 
-        component.onSearchTermChange(buildSelectEvent('oats'));
-        tick(300);
-
-        expect(onFiltersChange).toHaveBeenLastCalledWith([
-            new StringFilter({ field: 'name', operator: SearchFilterOperator.StartsWith, value: 'oats' })
+        expect(lastFilters()).toEqual([
+            new NumberFilter({ field: 'age', operator: SearchFilterOperator.GreaterThan, value: 30 })
         ]);
     }));
 
-    it('should clear the search input when the main row is removed and applied', fakeAsync(() => {
-        component.onSearchTermChange(buildSelectEvent('oat'));
-        tick(300);
+    it('reports a between filter only once both bounds are there', fakeAsync(() => {
+        render();
+        openPanel();
+        clickByLabel('add');
 
-        component.removeRow(0);
-        component.applyFilters();
+        const [field, operator] = selectsOf(rows()[0]);
+        type(field, 'age');
+        type(operator, SearchFilterOperator.Between);
 
-        expect(component.searchTerm).toBe('');
-        expect(onFiltersChange).toHaveBeenLastCalledWith([]);
-    }));
+        const [from, to] = [...rows()[0].querySelectorAll<HTMLInputElement>('input')];
+        type(from, '20');
+        clickByLabel('apply');
+        expect(lastFilters()).toEqual([]);
 
-    it('should remove the main row when the search input is emptied', fakeAsync(() => {
-        component.onSearchTermChange(buildSelectEvent('oat'));
-        tick(300);
+        openPanel();
+        type([...rows()[0].querySelectorAll<HTMLInputElement>('input')][1] ?? to, '40');
+        clickByLabel('apply');
 
-        component.onSearchTermChange(buildSelectEvent(''));
-        tick(300);
-
-        expect(component.rows).toHaveLength(0);
-        expect(onFiltersChange).toHaveBeenLastCalledWith([]);
-    }));
-
-    it('should apply a valid text filter row', () => {
-        component.addRow();
-        setRow(0, 'name', SearchFilterOperator.StartsWith, 'Coffee');
-
-        component.applyFilters();
-
-        expect(component.appliedFilters).toEqual([
-            new StringFilter({ field: 'name', operator: SearchFilterOperator.StartsWith, value: 'Coffee' })
-        ]);
-        expect(onFiltersChange).toHaveBeenCalledWith(component.appliedFilters);
-        expect(component.panelOpen).toBe(false);
-    });
-
-    it('should apply a between filter with both bounds', () => {
-        component.addRow();
-        setRow(0, 'price', SearchFilterOperator.Between, '10', '20');
-
-        component.applyFilters();
-
-        expect(component.appliedFilters).toEqual([
-            new NumberFilter({ field: 'price', operator: SearchFilterOperator.Between, value: [10, 20] })
-        ]);
-    });
-
-    it('should apply a boolean filter from the true/false select', () => {
-        component.addRow();
-        setRow(0, 'available', SearchFilterOperator.Equals, 'true');
-
-        component.applyFilters();
-
-        expect(component.appliedFilters).toEqual([
-            new BooleanFilter({ field: 'available', operator: SearchFilterOperator.Equals, value: true })
-        ]);
-    });
-
-    it('should skip incomplete rows when applying', () => {
-        component.addRow();
-        component.addRow();
-        setRow(0, 'name', SearchFilterOperator.Contains, 'tea');
-
-        component.applyFilters();
-
-        expect(component.appliedFilters).toHaveLength(1);
-    });
-
-    it('should combine the main search filter with the applied filters', fakeAsync(() => {
-        component.addRow();
-        setRow(0, 'available', SearchFilterOperator.Equals, 'true');
-        component.applyFilters();
-        onFiltersChange.mockClear();
-
-        component.onSearchTermChange(buildSelectEvent('oat'));
-        tick(300);
-
-        expect(onFiltersChange).toHaveBeenCalledWith([
-            new BooleanFilter({ field: 'available', operator: SearchFilterOperator.Equals, value: true }),
-            new StringFilter({ field: 'name', operator: SearchFilterOperator.Contains, value: 'oat' })
+        expect(lastFilters()).toEqual([
+            new NumberFilter({ field: 'age', operator: SearchFilterOperator.Between, value: [20, 40] })
         ]);
     }));
 
-    it('should clear rows and applied filters', () => {
-        component.addRow();
-        setRow(0, 'name', SearchFilterOperator.Contains, 'tea');
-        component.applyFilters();
+    it('reports a boolean filter chosen from its dropdown', fakeAsync(() => {
+        render();
+        openPanel();
+        clickByLabel('add');
 
-        component.clearFilters();
+        const [field] = selectsOf(rows()[0]);
+        type(field, 'active');
+        type(selectsOf(rows()[0])[2], 'true');
+        clickByLabel('apply');
 
-        expect(component.rows).toHaveLength(0);
-        expect(component.appliedFilters).toHaveLength(0);
-        expect(component.searchTerm).toBe('');
-        expect(onFiltersChange).toHaveBeenLastCalledWith([]);
-    });
-
-    it('should reset the operator and value when the row field changes', () => {
-        component.addRow();
-        setRow(0, 'name', SearchFilterOperator.StartsWith, 'Coffee');
-
-        component.onFieldChange(0, buildSelectEvent('price'));
-
-        expect(component.rows[0]).toEqual({
-            fieldKey: 'price',
-            operator: SearchFilterOperator.Equals,
-            value: '',
-            valueTo: ''
-        });
-    });
-
-    it('should only offer contains/notContains operators for a tags field', () => {
-        component.addRow();
-        component.onFieldChange(0, buildSelectEvent('tags'));
-
-        expect(component.getOperators(component.rows[0])).toEqual([
-            SearchFilterOperator.Contains,
-            SearchFilterOperator.NotContains
+        expect(lastFilters()).toEqual([
+            new BooleanFilter({ field: 'active', operator: SearchFilterOperator.Equals, value: true })
         ]);
-    });
+    }));
 
-    it('should apply a tags filter as a string filter', () => {
-        component.addRow();
-        setRow(0, 'tags', SearchFilterOperator.Contains, 'invoice');
+    it('leaves an unfinished row out of the report', fakeAsync(() => {
+        render();
+        openPanel();
+        clickByLabel('add');
+        clickByLabel('apply');
 
-        component.applyFilters();
+        expect(lastFilters()).toEqual([]);
+    }));
 
-        expect(component.appliedFilters).toEqual([
-            new StringFilter({ field: 'tags', operator: SearchFilterOperator.Contains, value: 'invoice' })
-        ]);
-    });
+    it('clears the box and every filter at once', fakeAsync(() => {
+        render();
 
-    it('should only offer equals/notEquals operators for a select field', () => {
-        component.addRow();
-        component.onFieldChange(0, buildSelectEvent('status'));
+        type(mainInput(), 'ada');
+        tick(300);
+        openPanel();
+        clickByLabel('clear');
 
-        expect(component.getOperators(component.rows[0])).toEqual([
-            SearchFilterOperator.Equals,
-            SearchFilterOperator.NotEquals
-        ]);
-    });
+        expect(lastFilters()).toEqual([]);
+        expect(mainInput().value).toBe('');
+    }));
 
-    it('should expose the configured options for a select field', () => {
-        component.addRow();
-        component.onFieldChange(0, buildSelectEvent('status'));
+    it('counts the filters in force next to the panel toggle', fakeAsync(() => {
+        render();
 
-        expect(component.getFieldOptions(component.rows[0])).toEqual([
-            { label: 'test.search.status.draft', value: 'draft' },
-            { label: 'test.search.status.published', value: 'published' }
-        ]);
-    });
+        type(mainInput(), 'ada');
+        tick(300);
+        fixture.detectChanges();
 
-    it('should apply a select filter as a string filter', () => {
-        component.addRow();
-        setRow(0, 'status', SearchFilterOperator.Equals, 'draft');
+        expect(fixture.nativeElement.querySelector('.bey-search-badge').textContent.trim()).toBe('1');
+    }));
 
-        component.applyFilters();
+    it('closes the panel on a click outside', fakeAsync(() => {
+        render();
+        openPanel();
+        expect(fixture.nativeElement.querySelector('.bey-search-panel')).toBeTruthy();
 
-        expect(component.appliedFilters).toEqual([
-            new StringFilter({ field: 'status', operator: SearchFilterOperator.Equals, value: 'draft' })
-        ]);
-    });
+        document.body.click();
+        fixture.detectChanges();
 
-    function setRow(
-        index: number,
-        fieldKey: string,
-        operator: SearchFilterOperator,
-        value: string,
-        valueTo = ''
-    ): void {
-        component.onFieldChange(index, buildSelectEvent(fieldKey));
-        component.onOperatorChange(index, buildSelectEvent(operator));
-        component.onValueChange(index, buildSelectEvent(value));
-
-        if (valueTo) {
-            component.onValueToChange(index, buildSelectEvent(valueTo));
-        }
-    }
+        expect(fixture.nativeElement.querySelector('.bey-search-panel')).toBeNull();
+    }));
 });
-
-function buildConfig(overrides?: { mainField?: string }): SearchConfig {
-    return new SearchConfig({
-        fields: [
-            new SearchField({ key: 'name', type: SearchFieldType.Text }),
-            new SearchField({ key: 'price', type: SearchFieldType.Number }),
-            new SearchField({ key: 'available', type: SearchFieldType.Boolean }),
-            new SearchField({ key: 'tags', type: SearchFieldType.Tags }),
-            new SearchField({
-                key: 'status',
-                type: SearchFieldType.Select,
-                options: [
-                    { label: 'test.search.status.draft', value: 'draft' },
-                    { label: 'test.search.status.published', value: 'published' }
-                ]
-            })
-        ],
-        mainField: overrides && 'mainField' in overrides ? overrides.mainField : 'name',
-        onFiltersChange,
-        prefix: 'test.search'
-    });
-}
-
-function buildSelectEvent(value: string): Event {
-    return { target: { value } } as unknown as Event;
-}

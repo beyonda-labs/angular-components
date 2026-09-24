@@ -1,23 +1,19 @@
 :host {
     --bey-search-fg: var(--bey-text-primary);
     --bey-search-fg-muted: var(--bey-text-muted);
-    --bey-search-border: var(--bey-gray-200);
+    --bey-search-border: var(--bey-border-subtle);
     --bey-search-surface: var(--bey-bg-surface);
-    --bey-search-ph: rgba(var(--bey-black-rgb), 0.36);
+    --bey-search-placeholder: var(--bey-text-disabled);
 
     display: block;
     color: var(--bey-search-fg);
-}
-
-:host-context(body.dark) {
-    --bey-search-ph: rgba(var(--bey-white-rgb), 0.36);
 }
 
 .bey-search {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 0.5rem;
+    gap: var(--bey-space-sm);
     flex-wrap: wrap;
 }
 
@@ -29,25 +25,25 @@
 
 .bey-search-box-icon {
     position: absolute;
-    left: 0.65rem;
+    left: var(--bey-space-md);
     top: 50%;
     transform: translateY(-50%);
     color: var(--bey-search-fg-muted);
-    font-size: 0.8rem;
+    font-size: var(--bey-font-size-sm);
     pointer-events: none;
 }
 
 .bey-search-box-input {
-    padding-left: 2rem;
+    padding-left: var(--bey-space-2xl);
     min-height: 2.1rem;
-    border-radius: 0.3rem;
-    font-size: 0.84rem;
+    border-radius: var(--bey-radius-sm);
+    font-size: var(--bey-font-size-sm);
     color: var(--bey-search-fg);
 }
 
 .bey-search-box-input::placeholder {
-    color: var(--bey-search-ph);
-    font-size: 0.82rem;
+    color: var(--bey-search-placeholder);
+    font-size: var(--bey-font-size-sm);
 }
 
 /* ─── Filters toggle ────────────────────────────────────────────────────── */
@@ -56,10 +52,10 @@
 }
 
 .bey-search-toggle {
-    gap: 0.45rem;
+    gap: var(--bey-space-xs);
     min-height: 2.1rem;
-    padding: 0.4rem 0.7rem;
-    font-size: 0.84rem;
+    padding: var(--bey-space-xs) var(--bey-space-md);
+    font-size: var(--bey-font-size-sm);
 }
 
 .bey-search-badge {
@@ -68,81 +64,83 @@
     justify-content: center;
     min-width: 1.2rem;
     height: 1.2rem;
-    padding: 0 0.3rem;
-    border-radius: 0.6rem;
+    padding: 0 var(--bey-space-2xs);
+    border-radius: var(--bey-radius-md);
     background: var(--bey-primary);
-    color: var(--bey-white, #fff);
-    font-size: 0.7rem;
-    font-weight: 700;
-    line-height: 1;
+    color: var(--bey-primary-fg);
+    font-size: var(--bey-font-size-2xs);
+    font-weight: var(--bey-font-weight-bold);
+    line-height: var(--bey-line-height-none);
 }
 
 .bey-search-chevron {
-    font-size: 0.7rem;
+    font-size: var(--bey-font-size-2xs);
     color: var(--bey-search-fg-muted);
-    transition: transform 0.2s ease;
+    transition: transform var(--bey-duration-base) var(--bey-easing-standard);
 }
 
-.bey-search-chevron-open {
+.bey-search-chevron.is-open {
     transform: rotate(180deg);
 }
 
 /* ─── Filters panel ─────────────────────────────────────────────────────── */
 .bey-search-panel {
     position: absolute;
-    top: calc(100% + 0.4rem);
+    top: calc(100% + var(--bey-space-xs));
     right: 0;
-    z-index: 1050;
+    z-index: var(--bey-z-dropdown);
     min-width: min(38rem, 92vw);
-    padding: 1rem;
-    border: 1px solid var(--bey-search-border);
-    border-radius: 0.5rem;
+    padding: var(--bey-space-lg);
+    border: var(--bey-border-width) solid var(--bey-search-border);
+    border-radius: var(--bey-radius-md);
     background: var(--bey-search-surface);
-    box-shadow: 0 16px 48px rgba(var(--bey-black-rgb), 0.14);
+    box-shadow: var(--bey-shadow-md);
 }
 
 .bey-search-empty {
-    padding-bottom: 0.75rem;
+    padding-bottom: var(--bey-space-md);
 }
 
 .bey-search-empty-title {
-    font-size: 0.9rem;
-    font-weight: 700;
+    font-size: var(--bey-font-size-md);
+    font-weight: var(--bey-font-weight-bold);
 }
 
 .bey-search-empty-description {
-    margin-top: 0.15rem;
+    margin-top: var(--bey-space-3xs);
     color: var(--bey-search-fg-muted);
-    font-size: 0.82rem;
+    font-size: var(--bey-font-size-sm);
 }
 
 .bey-search-rows {
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
-    padding-bottom: 0.85rem;
+    gap: var(--bey-space-md);
+    padding-bottom: var(--bey-space-md);
 }
 
 .bey-search-row {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--bey-space-sm);
 }
 
+/* stylelint-disable selector-class-pattern -- .form-select and .form-control are Bootstrap's, sized for the panel. */
 .bey-search-row .form-select,
 .bey-search-row .form-control {
     min-height: 2.1rem;
-    padding-top: 0.4rem;
-    padding-bottom: 0.4rem;
-    border-radius: 0.3rem;
-    font-size: 0.84rem;
+    padding-top: var(--bey-space-xs);
+    padding-bottom: var(--bey-space-xs);
+    border-radius: var(--bey-radius-sm);
+    font-size: var(--bey-font-size-sm);
     color: var(--bey-search-fg);
 }
 
 .bey-search-row .form-control::placeholder {
-    color: var(--bey-search-ph);
-    font-size: 0.82rem;
+    color: var(--bey-search-placeholder);
+    font-size: var(--bey-font-size-sm);
 }
+/* stylelint-enable selector-class-pattern */
 
 .bey-search-field {
     flex: 1 1 9rem;
@@ -161,7 +159,7 @@
     display: flex;
     align-items: center;
     border: var(--bey-border-width) solid var(--bey-search-border);
-    border-radius: 0.3rem;
+    border-radius: var(--bey-radius-sm);
     background: var(--bey-search-surface);
 }
 
@@ -184,8 +182,8 @@
 
 .bey-search-range-separator {
     color: var(--bey-search-fg-muted);
-    font-size: 0.8rem;
-    padding: 0 0.1rem;
+    font-size: var(--bey-font-size-sm);
+    padding: 0 var(--bey-space-3xs);
     user-select: none;
 }
 
@@ -197,11 +195,11 @@
     height: 1.9rem;
     flex: 0 0 auto;
     padding: 0;
-    border-radius: 50%;
+    border-radius: var(--bey-radius-circle);
     color: var(--bey-search-fg-muted);
     transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
+        background-color var(--bey-duration-base) var(--bey-easing-standard),
+        color var(--bey-duration-base) var(--bey-easing-standard);
 }
 
 .bey-search-remove:hover {
@@ -214,15 +212,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.5rem;
-    border-top: 1px solid var(--bey-search-border);
-    padding-top: 0.75rem;
+    gap: var(--bey-space-sm);
+    border-top: var(--bey-border-width) solid var(--bey-search-border);
+    padding-top: var(--bey-space-md);
 }
 
 .bey-search-panel-actions {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--bey-space-sm);
 }
 
 @media (max-width: 575.98px) {

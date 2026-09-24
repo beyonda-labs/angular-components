@@ -16,6 +16,7 @@ import { ModalStyleGuideComponent } from '../modal/docs/style-guide/modal-style-
 import { PaginationStyleGuideComponent } from '../pagination/docs/style-guide/pagination-style-guide.component';
 import { PdfViewerStyleGuideComponent } from '../pdf-viewer/docs/style-guide/pdf-viewer-style-guide.component';
 import { PropertiesMenuStyleGuideComponent } from '../properties-menu/docs/style-guide/properties-menu-style-guide.component';
+import { SearchStyleGuideComponent } from '../search/docs/style-guide/search-style-guide.component';
 import { TableStyleGuideComponent } from '../table/docs/style-guide/table-style-guide.component';
 import { TabsStyleGuideComponent } from '../tabs/docs/style-guide/tabs-style-guide.component';
 import { ToastStyleGuideComponent } from '../toast/docs/style-guide/toast-style-guide.component';
@@ -39,6 +40,7 @@ import { StyleGuideSectionComponent } from './components/section/style-guide-sec
         PaginationStyleGuideComponent,
         PdfViewerStyleGuideComponent,
         PropertiesMenuStyleGuideComponent,
+        SearchStyleGuideComponent,
         TableStyleGuideComponent,
         ToastStyleGuideComponent,
         LoadingStyleGuideComponent,

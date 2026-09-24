@@ -573,6 +573,21 @@
             "provideVariables": "Provide variables"
         },
         "propertiesMenus": "Properties Menu",
+        "search": {
+            "applied": "Applied filters",
+            "example": "Quick search box plus a panel of typed filter rows. Every change is reported through onFiltersChange; the consumer runs the query.",
+            "fields": {
+                "active": "Active",
+                "age": "Age",
+                "name": "Name",
+                "role": "Role"
+            },
+            "roles": {
+                "admin": "Administrator",
+                "editor": "Editor"
+            }
+        },
+        "search-section": "Search",
         "simple": "Simple",
         "table": {
             "actions": {

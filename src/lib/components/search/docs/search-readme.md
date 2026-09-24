@@ -1,97 +1,63 @@
-# Search Component (`bey-search`)
+# Search
 
-Search bar with a main text input and a filters dropdown panel, designed to filter a table. Supports
-text, numeric and boolean filters with per-type operators. Used internally by `bey-page`, but it can
-be used standalone.
+A quick search box plus a panel of typed filter rows. The component owns the draft rows and reports the
+filters that are complete; running the query is the consumer's job.
 
----
-
-## Quick start
+## Usage
 
 ```ts
-import {
-    BeySearchConfig,
-    BeySearchField,
-    BeySearchFieldType,
-    BeySearchFilter
-} from '@beyonda-labs/angular-components';
-
-readonly searchConfig = new BeySearchConfig({
-    prefix: 'products.search',
+const search = new BeySearchConfig({
+    prefix: 'myPage.search',
     mainField: 'name',
     fields: [
         new BeySearchField({ key: 'name', type: BeySearchFieldType.Text }),
-        new BeySearchField({ key: 'price', type: BeySearchFieldType.Number }),
-        new BeySearchField({ key: 'available', type: BeySearchFieldType.Boolean })
+        new BeySearchField({ key: 'age', type: BeySearchFieldType.Number })
     ],
-    onFiltersChange: (filters: BeySearchFilter[]) => this.reload(filters)
+    onFiltersChange: filters => this.load(filters)
 });
 ```
 
 ```html
-<bey-search [config]="searchConfig"></bey-search>
+<bey-search [config]="search"></bey-search>
 ```
 
----
+## BeySearchConfig
 
-## `BeySearchConfig`
+| Field             | Required | Default                | Meaning                                                    |
+| ----------------- | -------- | ---------------------- | ---------------------------------------------------------- |
+| `prefix`          | yes      |                        | i18n prefix the field labels are built from                 |
+| `fields`          | yes      |                        | What can be filtered, and how                               |
+| `mainField`       | no       | none                   | Key of the field the quick search box writes to             |
+| `placeholder`     | no       | the library's default  | Placeholder of the quick search box                         |
+| `onFiltersChange` | no       |                        | Called with the complete filters whenever they change       |
 
-| Parameter         | Type                                | Required | Description                                                                 |
-| ----------------- | ----------------------------------- | -------- | --------------------------------------------------------------------------- |
-| `fields`          | `BeySearchField[]`                  | yes      | Catalog of filterable fields shown in the panel                             |
-| `prefix`          | `string`                            | yes      | i18n prefix: field labels resolve to `{prefix}.fields.{key}`                |
-| `mainField`       | `string`                            | no       | Field key bound to the main search input; without it only the button shows  |
-| `onFiltersChange` | `(filters: BeySearchFilter[]) => void` | no    | Called with the combined filters every time they change                     |
-| `placeholder`     | `string`                            | no       | Main input placeholder key; defaults to `angular-components.search.placeholder` |
+## BeySearchField
 
-### `BeySearchField`
+| Field     | Required | Meaning                                                                   |
+| --------- | -------- | ------------------------------------------------------------------------- |
+| `key`     | yes      | Field name, reported as the filter's `field`                               |
+| `type`    | yes      | `Text`, `Number`, `Boolean`, `Select` or `Tags`; decides the operators      |
+| `options` | no       | Required by `Select`: the values offered                                    |
 
-| Parameter | Type                     | Description                                                                          |
-| --------- | ------------------------ | ------------------------------------------------------------------------------------- |
-| `key`     | `string`                 | Backend field name (also i18n segment)                                                |
-| `type`    | `BeySearchFieldType`     | `Text`, `Number`, `Boolean`, `Select` or `Tags`                                        |
-| `options` | `BeySearchFieldOption[]` | Required for `Select` — the bounded `{ value, label }` choices (`label` is translated) |
+Each type brings its own operators: text compares and matches, number adds ranges and `Between`, boolean and
+select only equality, and tags match a whole element of an array rather than a substring.
 
-### Operators by type
+## Behaviour
 
-| Type      | Operators                                                                       |
-| --------- | ------------------------------------------------------------------------------- |
-| `Text`    | contains, notContains, equals, notEquals, startsWith, endsWith                  |
-| `Number`  | equals, notEquals, greaterThan(OrEquals), lessThan(OrEquals), between (min–max) |
-| `Boolean` | equals, notEquals (Yes/No select)                                               |
-| `Select`  | equals, notEquals (dropdown of `options`) — for a field with a known, bounded set of values (e.g. an enum/status), so the user can't type an invalid value |
-| `Tags`    | contains, notContains — matches against a whole array element, not a substring (pair with a backend `FieldStringArraySchema` field, e.g. `express-components`' `base-entity`) |
+Typing in the quick search box is reported after 300 ms, as a row on `mainField`. That row stays editable in
+the panel: change its operator by hand and further typing keeps it. Emptying the box removes the row.
 
-```ts
-new BeySearchField({
-    key: 'status',
-    type: BeySearchFieldType.Select,
-    options: [
-        { value: 'draft', label: 'products.search.status.draft' },
-        { value: 'published', label: 'products.search.status.published' }
-    ]
-})
-```
+Rows built in the panel are reported when Apply is used, and only those that are complete: a field, an
+operator and a value that fits the type. Clear empties the box, the rows and the reported filters at once.
 
----
+The panel closes on Apply, on Escape and on a click outside.
 
-## Behavior
+## Theming
 
--   Typing in the main input creates a filter on `mainField` (contains for text fields, equals for
-    numeric ones) with a 300 ms debounce — it is a regular filter, not a separate text search.
--   The Filters button opens the panel: rows of field + operator + value, plus "Add filter",
-    "Clear all" and "Apply filter". The applied filter count shows as a badge on the button.
--   `between` renders two grouped inputs (from–to) that read as a single field.
--   Incomplete rows are ignored on apply. Applying closes the panel; clicking outside also closes it.
--   `onFiltersChange` always receives the main filter (if any) plus the applied panel filters, as
-    `BeyStringFilter` / `BeyNumberFilter` / `BeyBooleanFilter` instances.
-
----
-
-## i18n
-
-Library keys (already translated) under `angular-components.search.*`: `filters`, `placeholder`,
-`empty.title`, `empty.description`, `field-placeholder`, `value-placeholder`, `from-placeholder`,
-`to-placeholder`, `add`, `apply`, `clear`, `remove`, `operators.*`, `values.true|false`.
-
-Consumer keys: `{prefix}.fields.{key}` for each filterable field label.
+| Variable                      | Default                |
+| ----------------------------- | ---------------------- |
+| `--bey-search-fg`             | `--bey-text-primary`   |
+| `--bey-search-fg-muted`       | `--bey-text-muted`     |
+| `--bey-search-border`         | `--bey-border-subtle`  |
+| `--bey-search-surface`        | `--bey-bg-surface`     |
+| `--bey-search-placeholder`    | `--bey-text-disabled`  |

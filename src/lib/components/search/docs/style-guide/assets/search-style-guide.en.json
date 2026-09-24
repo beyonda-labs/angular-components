@@ -1,0 +1,18 @@
+{
+    "angular-components-style-guide": {
+        "search": {
+            "example": "Quick search box plus a panel of typed filter rows. Every change is reported through onFiltersChange; the consumer runs the query.",
+            "applied": "Applied filters",
+            "roles": {
+                "admin": "Administrator",
+                "editor": "Editor"
+            },
+            "fields": {
+                "name": "Name",
+                "age": "Age",
+                "active": "Active",
+                "role": "Role"
+            }
+        }
+    }
+}
