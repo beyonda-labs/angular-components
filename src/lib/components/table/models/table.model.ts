@@ -1,8 +1,6 @@
 import { TableCell } from './table-cell.model';
 
-export type TableItem = Record<string, unknown>;
-
-export class TableConfig<T = TableItem> {
+export class TableConfig<T> {
     columns: TableColumn[];
     height: string;
     items: T[];
@@ -34,7 +32,7 @@ export class TableConfig<T = TableItem> {
     }
 }
 
-export interface TableConfigParameters<T = TableItem> {
+export interface TableConfigParameters<T> {
     columns: TableColumn[];
     loadRow: (item: T) => TableCell[];
     prefix: string;
@@ -66,7 +64,7 @@ export interface TableColumnParameters {
     width?: number;
 }
 
-export class TableRow<T = TableItem> {
+export class TableRow<T> {
     cells: TableCell[];
     content: T;
     selected: boolean;
@@ -78,7 +76,7 @@ export class TableRow<T = TableItem> {
     }
 }
 
-export interface TableRowParameters<T = TableItem> {
+export interface TableRowParameters<T> {
     cells: TableCell[];
     content: T;
 

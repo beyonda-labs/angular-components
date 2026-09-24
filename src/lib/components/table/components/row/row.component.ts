@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { TableItem, TableRow } from '../../models/table.model';
+import { TableRow } from '../../models/table.model';
 import { TableCellComponent } from '../cell/cell.component';
 
 @Component({
@@ -12,7 +12,7 @@ import { TableCellComponent } from '../cell/cell.component';
     styleUrls: ['./row.component.css'],
     templateUrl: './row.component.html'
 })
-export class TableRowComponent<T = TableItem> {
+export class TableRowComponent<T> {
     readonly gridTemplateColumns = input.required<string>();
     readonly isHeader = input(false);
     readonly row = input.required<TableRow<T | null>>();

@@ -11,7 +11,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 
 import { TableRowComponent } from './components/row/row.component';
-import { TableColumn, TableConfig, TableItem, TableRow } from './models/table.model';
+import { TableColumn, TableConfig, TableRow } from './models/table.model';
 import { TextTableCell } from './models/table-cell.model';
 
 const SELECTION_COLUMN_WIDTH = '3.25rem';
@@ -39,7 +39,7 @@ function withSelection<T>(row: TableRow<T>, selected: boolean): TableRow<T> {
     styleUrls: ['./table.component.css'],
     templateUrl: './table.component.html'
 })
-export class TableComponent<T = TableItem> {
+export class TableComponent<T> {
     readonly config = input.required<TableConfig<T>>();
 
     readonly rows = linkedSignal(() => buildRows(this.config()));

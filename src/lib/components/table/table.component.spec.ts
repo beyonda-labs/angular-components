@@ -1,24 +1,27 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { TableColumn, TableConfig, TableConfigParameters, TableItem } from './models/table.model';
+import { TableColumn, TableConfig, TableConfigParameters } from './models/table.model';
 import { BadgeTableCell, LinkTableCell, TextTableCell } from './models/table-cell.model';
 import { TableComponent } from './table.component';
 
-const ADA: TableItem = { id: 1, name: 'Ada', role: 'Lead' };
-const LINUS: TableItem = { id: 2, name: 'Linus', role: 'Research' };
+interface Person {
+    id: number;
+    name: string;
+    role: string;
+}
+
+const ADA: Person = { id: 1, name: 'Ada', role: 'Lead' };
+const LINUS: Person = { id: 2, name: 'Linus', role: 'Research' };
 
 describe('TableComponent', () => {
     let fixture: ComponentFixture<TableComponent>;
 
-    function buildConfig(overrides: Partial<TableConfigParameters> = {}): TableConfig {
-        return new TableConfig({
+    function buildConfig(overrides: Partial<TableConfigParameters<Person>> = {}): TableConfig<Person> {
+        return new TableConfig<Person>({
             columns: [new TableColumn({ key: 'name', width: 2 }), new TableColumn({ key: 'role', width: 1 })],
             items: [ADA, LINUS],
-            loadRow: item => [
-                new TextTableCell({ content: String(item['name']) }),
-                new TextTableCell({ content: String(item['role']) })
-            ],
+            loadRow: item => [new TextTableCell({ content: item.name }), new TextTableCell({ content: item.role })],
             prefix: 'demo.table',
             ...overrides
         });
@@ -124,7 +127,7 @@ describe('TableComponent', () => {
     });
 
     it('starts with the rows the config marks as selected', async () => {
-        await render(buildConfig({ isRowSelected: item => item['id'] === 2 }));
+        await render(buildConfig({ isRowSelected: item => item.id === 2 }));
 
         expect(rowOf('Ada').querySelector('input')?.checked).toBe(false);
         expect(rowOf('Linus').querySelector('input')?.checked).toBe(true);
@@ -135,7 +138,7 @@ describe('TableComponent', () => {
         const selectedItemsChange = jest.fn();
         await render(
             buildConfig({
-                loadRow: item => [new LinkTableCell({ action, content: String(item['name']) })],
+                loadRow: item => [new LinkTableCell({ action, content: item.name })],
                 selectedItemsChange
             })
         );

@@ -17,7 +17,7 @@ describe('TableRowComponent', () => {
         fixture.componentRef.setInput('isHeader', overrides.isHeader ?? false);
         fixture.componentRef.setInput(
             'row',
-            new TableRow({
+            new TableRow<{ name: string }>({
                 cells: [new TextTableCell({ content: 'Ada' })],
                 content: { name: 'Ada' },
                 selected: overrides.selected ?? false

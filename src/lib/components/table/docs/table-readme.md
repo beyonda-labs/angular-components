@@ -6,7 +6,7 @@ Rows can be selected one by one or all at once, and the table reports the select
 ## Usage
 
 ```ts
-readonly table = new BeyTableConfig({
+readonly table = new BeyTableConfig<Person>({
     prefix: 'myApp.team',
     columns: [
         new BeyTableColumn({ key: 'name', width: 3 }),
@@ -15,9 +15,9 @@ readonly table = new BeyTableConfig({
     ],
     items: this.people,
     loadRow: item => [
-        new BeyTextTableCell({ content: String(item['name']) }),
+        new BeyTextTableCell({ content: item.name }),
         new BeyBadgeTableCell({
-            badges: [{ badgeClass: 'bey-badge-color-success', content: `myApp.team.status.${item['status']}` }],
+            badges: [{ badgeClass: 'bey-badge-color-success', content: `myApp.team.status.${item.status}` }],
             translate: true
         }),
         new BeyLinkTableCell({ action: () => this.open(item), content: 'myApp.team.open', translate: true })
@@ -31,7 +31,7 @@ readonly table = new BeyTableConfig({
 ```
 
 `BeyTableConfig<T>` is generic over the item: `loadRow`, `isRowSelected` and `selectedItemsChange` see `T`,
-which defaults to `BeyTableItem`, a plain `Record<string, unknown>`.
+so a table is always built from a typed model, never from a loose record.
 
 ## BeyTableConfig
 
