@@ -2,16 +2,16 @@ import { TableCell } from './table-cell.model';
 
 export type TableItem = Record<string, unknown>;
 
-export class TableConfig {
+export class TableConfig<T = TableItem> {
     columns: TableColumn[];
     height: string;
-    items: TableItem[];
-    loadRow: (item: TableItem) => TableCell[];
+    items: T[];
+    loadRow: (item: T) => TableCell[];
     prefix: string;
     selectable: boolean;
 
-    isRowSelected?: (item: TableItem) => boolean;
-    selectedItemsChange?: (items: TableItem[], indexes: number[]) => void;
+    isRowSelected?: (item: T) => boolean;
+    selectedItemsChange?: (items: T[], indexes: number[]) => void;
 
     constructor({
         columns,
@@ -22,7 +22,7 @@ export class TableConfig {
         items = [],
         selectable = true,
         selectedItemsChange
-    }: TableConfigParameters) {
+    }: TableConfigParameters<T>) {
         this.columns = columns;
         this.height = height;
         this.isRowSelected = isRowSelected;
@@ -34,16 +34,16 @@ export class TableConfig {
     }
 }
 
-export interface TableConfigParameters {
+export interface TableConfigParameters<T = TableItem> {
     columns: TableColumn[];
-    loadRow: (item: TableItem) => TableCell[];
+    loadRow: (item: T) => TableCell[];
     prefix: string;
 
     height?: string;
-    isRowSelected?: (item: TableItem) => boolean;
-    items?: TableItem[];
+    isRowSelected?: (item: T) => boolean;
+    items?: T[];
     selectable?: boolean;
-    selectedItemsChange?: (items: TableItem[], indexes: number[]) => void;
+    selectedItemsChange?: (items: T[], indexes: number[]) => void;
 }
 
 export class TableColumn {
@@ -66,21 +66,21 @@ export interface TableColumnParameters {
     width?: number;
 }
 
-export class TableRow {
+export class TableRow<T = TableItem> {
     cells: TableCell[];
-    content: TableItem;
+    content: T;
     selected: boolean;
 
-    constructor({ cells, content, selected = false }: TableRowParameters) {
+    constructor({ cells, content, selected = false }: TableRowParameters<T>) {
         this.cells = cells;
         this.content = content;
         this.selected = selected;
     }
 }
 
-export interface TableRowParameters {
+export interface TableRowParameters<T = TableItem> {
     cells: TableCell[];
-    content: TableItem;
+    content: T;
 
     selected?: boolean;
 }

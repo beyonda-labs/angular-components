@@ -73,7 +73,7 @@ export class LoginRegisterFormComponent {
     private readonly loginSessionService = inject(LoginSessionService);
 
     private buildStepForm(fields: RegisterField[], isFirst: boolean, isLast: boolean): FormConfig {
-        const prefix = this.config().translatePrefix;
+        const { prefix } = this.config();
         const buttons = [
             new FormButton({
                 label: `${prefix}.register.button.${isLast ? 'register' : 'next'}`,

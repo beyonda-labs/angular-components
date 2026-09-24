@@ -27,7 +27,7 @@ export class LoginFormComponent {
     readonly providers = input.required<LoginProviderConfig[]>();
 
     readonly formConfig = computed(() => this.buildForm(this.prefix()));
-    readonly prefix = computed(() => this.config().translatePrefix);
+    readonly prefix = computed(() => this.config().prefix);
 
     private readonly loginHttpService = inject(LoginHttpService);
     private readonly loginSessionService = inject(LoginSessionService);

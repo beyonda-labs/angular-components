@@ -33,7 +33,7 @@ the query string and opens the session:
 | `productName`        | yes      |                            | i18n key of the product name                          |
 | `productDescription` | yes      |                            | i18n key of the pitch under the product name          |
 | `orgName`            | no       | `'Beyonda Labs'`           | Organisation name, shown as it is                     |
-| `translatePrefix`    | no       | `'angular-components.login'` | Prefix the titles, labels and buttons resolve from  |
+| `prefix`             | no       | `'angular-components.login'` | Prefix the titles, labels and buttons resolve from |
 | `privacyUrl`         | no       | none                       | Route of the privacy link in the footer               |
 | `termsUrl`           | no       | none                       | Route of the terms link in the footer                 |
 

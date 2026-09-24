@@ -71,7 +71,7 @@ describe('LoginComponent', () => {
     });
 
     it('resolves its texts from the prefix of the config', async () => {
-        await render(buildConfig({ translatePrefix: 'myApp.login' }));
+        await render(buildConfig({ prefix: 'myApp.login' }));
 
         expect(text()).toContain('myApp.login.title.login');
         expect(buttonWith('myApp.login.login.button.login')).toBeDefined();

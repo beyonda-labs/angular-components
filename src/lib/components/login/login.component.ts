@@ -38,7 +38,7 @@ export class LoginComponent {
     readonly backgroundImage = computed(() => `url(${this.theme() === 'dark' ? BG_IMAGE_DARK : BG_IMAGE_LIGHT})`);
     readonly canRegister = computed(() => this.registerFields().length > 0);
     readonly isRegistering = computed(() => this.canRegister() && this.activeView() === 'register');
-    readonly prefix = computed(() => this.config().translatePrefix);
+    readonly prefix = computed(() => this.config().prefix);
     readonly title = computed(() => `${this.prefix()}.title.${this.isRegistering() ? 'register' : 'login'}`);
     readonly viewButton = computed(() => {
         const view: LoginView = this.isRegistering() ? 'login' : 'register';

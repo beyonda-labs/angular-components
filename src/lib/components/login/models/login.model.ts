@@ -34,7 +34,7 @@ export class LoginConfig {
     orgName: string;
     productDescription: string;
     productName: string;
-    translatePrefix: string;
+    prefix: string;
 
     privacyUrl?: string;
     termsUrl?: string;
@@ -46,7 +46,7 @@ export class LoginConfig {
         productDescription,
         productName,
         termsUrl,
-        translatePrefix = 'angular-components.login'
+        prefix = 'angular-components.login'
     }: LoginConfigParameters) {
         this.iconSrc = iconSrc;
         this.orgName = orgName;
@@ -54,7 +54,7 @@ export class LoginConfig {
         this.productDescription = productDescription;
         this.productName = productName;
         this.termsUrl = termsUrl;
-        this.translatePrefix = translatePrefix;
+        this.prefix = prefix;
         this.footerConfig = new FooterConfig({
             iconSrc,
             orgName,
@@ -73,5 +73,5 @@ export interface LoginConfigParameters {
     orgName?: string;
     privacyUrl?: string;
     termsUrl?: string;
-    translatePrefix?: string;
+    prefix?: string;
 }

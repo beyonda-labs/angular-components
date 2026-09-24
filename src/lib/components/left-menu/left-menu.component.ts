@@ -25,7 +25,6 @@ export class LeftMenuComponent {
     readonly bottomActions = computed(() => this.config().bottomActions ?? []);
     readonly topActions = computed(() => this.config().topActions ?? []);
 
-    readonly titleClasses = computed(() => this.config().title.styles || '');
     readonly titleText = computed(() => {
         const title = this.config().title?.title ?? 'title';
 

@@ -30,6 +30,9 @@ readonly table = new BeyTableConfig({
 <bey-table [config]="table" />
 ```
 
+`BeyTableConfig<T>` is generic over the item: `loadRow`, `isRowSelected` and `selectedItemsChange` see `T`,
+which defaults to `BeyTableItem`, a plain `Record<string, unknown>`.
+
 ## BeyTableConfig
 
 | Field                 | Required | Default | Meaning                                                             |

@@ -37,20 +37,16 @@ export interface LeftMenuConfigParameters {
 
 export class LeftMenuTitle {
     icon: string;
-    styles: string;
     title: string;
 
-    constructor({ icon = '', styles = '', title = 'title' }: LeftMenuTitleParameters) {
+    constructor({ icon = '', title = 'title' }: LeftMenuTitleParameters) {
         this.icon = icon;
-        this.styles = styles;
         this.title = title;
     }
 }
 
 export interface LeftMenuTitleParameters {
     icon?: string;
-
-    styles?: string;
     title?: string;
 }
 

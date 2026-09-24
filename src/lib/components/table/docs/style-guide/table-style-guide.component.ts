@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { TableColumn, TableConfig, TableItem } from '../../models/table.model';
+import { TableColumn, TableConfig } from '../../models/table.model';
 import { BadgeTableCell, LinkTableCell, TextTableCell } from '../../models/table-cell.model';
 import { TableComponent } from '../../table.component';
 
@@ -12,7 +12,15 @@ const STATUS_BADGE_CLASSES: Record<string, string> = {
     review: 'bey-badge-color-warning'
 };
 
-const PEOPLE: TableItem[] = [
+interface Person {
+    id: number;
+    name: string;
+    role: string;
+    skills: string[];
+    status: string;
+}
+
+const PEOPLE: Person[] = [
     {
         id: 1,
         name: 'Ada Lovelace',
@@ -39,8 +47,8 @@ export class TableStyleGuideComponent {
     readonly config = this.buildConfig(PEOPLE);
     readonly emptyConfig = this.buildConfig([]);
 
-    private buildConfig(items: TableItem[]): TableConfig {
-        return new TableConfig({
+    private buildConfig(items: Person[]): TableConfig<Person> {
+        return new TableConfig<Person>({
             columns: [
                 new TableColumn({ key: 'name', tooltip: `${PREFIX}.tooltips.name`, width: 30 }),
                 new TableColumn({ key: 'role', width: 20 }),
@@ -51,16 +59,11 @@ export class TableStyleGuideComponent {
             items,
             loadRow: item => this.loadRow(item),
             prefix: PREFIX,
-            selectedItemsChange: selected => this.selected.set(selected.map(item => String(item['name'])))
+            selectedItemsChange: selected => this.selected.set(selected.map(item => item.name))
         });
     }
 
-    private loadRow(item: TableItem): (TextTableCell | BadgeTableCell | LinkTableCell)[] {
-        const name = String(item['name']);
-        const role = String(item['role']);
-        const status = String(item['status']);
-        const skills = item['skills'] as string[];
-
+    private loadRow({ name, role, skills, status }: Person): (TextTableCell | BadgeTableCell | LinkTableCell)[] {
         return [
             new TextTableCell({ content: name, tooltip: name }),
             new TextTableCell({ content: role, tooltip: role }),

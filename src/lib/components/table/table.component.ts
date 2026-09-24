@@ -11,12 +11,12 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 
 import { TableRowComponent } from './components/row/row.component';
-import { TableColumn, TableConfig, TableRow } from './models/table.model';
+import { TableColumn, TableConfig, TableItem, TableRow } from './models/table.model';
 import { TextTableCell } from './models/table-cell.model';
 
 const SELECTION_COLUMN_WIDTH = '3.25rem';
 
-function buildRows(config: TableConfig): TableRow[] {
+function buildRows<T>(config: TableConfig<T>): TableRow<T>[] {
     return config.items.map(
         item =>
             new TableRow({
@@ -27,7 +27,7 @@ function buildRows(config: TableConfig): TableRow[] {
     );
 }
 
-function withSelection(row: TableRow, selected: boolean): TableRow {
+function withSelection<T>(row: TableRow<T>, selected: boolean): TableRow<T> {
     return new TableRow({ cells: row.cells, content: row.content, selected });
 }
 
@@ -39,8 +39,8 @@ function withSelection(row: TableRow, selected: boolean): TableRow {
     styleUrls: ['./table.component.css'],
     templateUrl: './table.component.html'
 })
-export class TableComponent {
-    readonly config = input.required<TableConfig>();
+export class TableComponent<T = TableItem> {
+    readonly config = input.required<TableConfig<T>>();
 
     readonly rows = linkedSignal(() => buildRows(this.config()));
 
@@ -54,9 +54,9 @@ export class TableComponent {
     });
     readonly headerRow = computed(
         () =>
-            new TableRow({
+            new TableRow<T | null>({
                 cells: this.config().columns.map(column => this.buildHeaderCell(column)),
-                content: {},
+                content: null,
                 selected: this.allSelected()
             })
     );

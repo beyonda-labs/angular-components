@@ -98,7 +98,7 @@ export class PageService implements OnDestroy {
         });
     });
 
-    readonly tableConfig = computed<TableConfig | null>(() => {
+    readonly tableConfig = computed<TableConfig<PageItem> | null>(() => {
         const pageTable = this.config?.tableConfig;
 
         if (!this.initialized() || !pageTable) {
@@ -107,7 +107,7 @@ export class PageService implements OnDestroy {
 
         const tablePrefix = `${this.config!.prefix}.table`;
 
-        return new TableConfig({
+        return new TableConfig<PageItem>({
             columns: pageTable.columns.map(
                 column =>
                     new TableColumn({
@@ -117,12 +117,12 @@ export class PageService implements OnDestroy {
                     })
             ),
             height: pageTable.height,
-            isRowSelected: item => this.selected().some(selected => selected.id === (item as unknown as PageItem).id),
-            items: this.items() as unknown as Record<string, unknown>[],
-            loadRow: item => pageTable.loadRow(item as unknown as PageItem, this.viewMode()),
+            isRowSelected: item => this.selected().some(selected => selected.id === item.id),
+            items: this.items(),
+            loadRow: item => pageTable.loadRow(item, this.viewMode()),
             prefix: tablePrefix,
             selectable: pageTable.allowSelection,
-            selectedItemsChange: items => this.setSelected(items as unknown as PageItem[])
+            selectedItemsChange: items => this.setSelected(items)
         });
     });
 
