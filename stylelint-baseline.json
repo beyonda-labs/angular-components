@@ -4,7 +4,6 @@
         "src/lib/assets/styles/bs-overrides.css",
         "src/lib/assets/styles/tokens.css",
         "src/lib/components/app-layout/app-layout.component.css",
-        "src/lib/components/breadcrumb/breadcrumb.component.css",
         "src/lib/components/floating-preferences/floating-preferences.component.css",
         "src/lib/components/footer/footer.component.css",
         "src/lib/components/form/components/field/field-control.styles.css",

@@ -1,11 +1,12 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { faBox, faHome, faList, faTag } from '@fortawesome/free-solid-svg-icons';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { BreadcrumbComponent } from '../../breadcrumb.component';
 import { BreadcrumbConfig, BreadcrumbItem } from '../../models/breadcrumb.model';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [BreadcrumbComponent, TranslateModule],
     selector: 'bey-breadcrumb-style-guide',
     standalone: true,
@@ -13,24 +14,17 @@ import { BreadcrumbConfig, BreadcrumbItem } from '../../models/breadcrumb.model'
     templateUrl: './breadcrumb-style-guide.component.html'
 })
 export class BreadcrumbStyleGuideComponent {
-    lastClicked1 = '';
-    lastClicked2 = '';
-    lastClicked3 = '';
+    readonly basicLastClicked = signal('');
+    readonly iconsLastClicked = signal('');
+    readonly overflowLastClicked = signal('');
 
     basicConfig: BreadcrumbConfig;
     iconsConfig: BreadcrumbConfig;
     overflowConfig: BreadcrumbConfig;
 
-    private readonly translateService = inject(TranslateService);
-
     constructor() {
         this.basicConfig = new BreadcrumbConfig({
-            onItemClick: id => {
-                this.lastClicked1 = String(id);
-                const message = this.translateService.instant('angular-components-style-guide.breadcrumb.clicked');
-                //eslint-disable-next-line no-console
-                console.log(message, id);
-            },
+            onItemClick: id => this.basicLastClicked.set(String(id)),
             prefix: 'angular-components-style-guide.breadcrumb.basic',
             items: [
                 new BreadcrumbItem({ id: 1, label: 'home.label' }),
@@ -40,9 +34,7 @@ export class BreadcrumbStyleGuideComponent {
         });
 
         this.iconsConfig = new BreadcrumbConfig({
-            onItemClick: id => {
-                this.lastClicked2 = String(id);
-            },
+            onItemClick: id => this.iconsLastClicked.set(String(id)),
             prefix: 'angular-components-style-guide.breadcrumb.icons',
             items: [
                 new BreadcrumbItem({ id: 1, label: 'home.label', icon: faHome }),
@@ -53,9 +45,7 @@ export class BreadcrumbStyleGuideComponent {
         });
 
         this.overflowConfig = new BreadcrumbConfig({
-            onItemClick: id => {
-                this.lastClicked3 = String(id);
-            },
+            onItemClick: id => this.overflowLastClicked.set(String(id)),
             prefix: 'angular-components-style-guide.breadcrumb.overflow',
             items: [
                 new BreadcrumbItem({ id: 1, label: 'home.label' }),

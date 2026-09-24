@@ -128,6 +128,12 @@ mutable-config question.
 
 ### S6 - Migration
 
+A scan for the pattern the pilot uncovered says the API breaks are contained: only `pagination`
+(`setPage`, `setPageSize`, `setTotalItems`) and `form` (`setInitialValue`) have a model that writes into
+itself. What looked like the same thing in `properties-menu`, `table` and `tree` is a service's own signal,
+a callback field and dialog callbacks.
+
+
 - [ ] The remaining 21 modules, one at a time
 - [ ] `badge` becomes a real component instead of global CSS classes
 - [ ] Style-guides for `search` and `page`; READMEs for `badge`, `loading`, `login`, `page`
