@@ -15,7 +15,6 @@
                     }
                 }
             },
-            "changed": "Pestaña cambiada:",
             "example": "Barra de pestañas horizontal orientada a modelos con navegación por teclado, iconos opcionales y estado deshabilitado. El consumidor renderiza contenido según la pestaña activa.",
             "examples": {
                 "basic": "Básico",

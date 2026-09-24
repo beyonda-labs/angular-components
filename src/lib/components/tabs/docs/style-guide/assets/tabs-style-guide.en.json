@@ -15,7 +15,6 @@
                     }
                 }
             },
-            "changed": "Tab changed:",
             "example": "Model-driven horizontal tab bar with keyboard navigation, optional icons and disabled state. The consumer renders content based on the active tab key.",
             "examples": {
                 "basic": "Basic",

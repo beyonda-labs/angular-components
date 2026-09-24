@@ -20,20 +20,6 @@ export class TabsConfig {
         this.variant = variant;
         this.activeTab = activeTab ?? this.tabs[0]?.key ?? '';
     }
-
-    setActiveTab(key: string, emitChange = true): void {
-        const tab = this.tabs.find(t => t.key === key);
-
-        if (!tab || tab.isDisabled || this.activeTab === key) {
-            return;
-        }
-
-        this.activeTab = key;
-
-        if (emitChange) {
-            this.onTabChange?.(key);
-        }
-    }
 }
 
 export interface TabsConfigParameters {

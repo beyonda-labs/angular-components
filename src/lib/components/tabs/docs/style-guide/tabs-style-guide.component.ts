@@ -1,67 +1,53 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { faChartLine, faCog, faFileAlt, faLock } from '@fortawesome/free-solid-svg-icons';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { Tab, TabsConfig } from '../../models/tabs.model';
 import { TabsComponent } from '../../tabs.component';
 
+const PREFIX = 'angular-components-style-guide.tabs';
+
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [TabsComponent, TranslateModule],
     selector: 'bey-tabs-style-guide',
     standalone: true,
-    styleUrls: ['../../../style-guide/style-guide.component.css', './tabs-style-guide.component.css'],
+    styleUrls: ['../../../style-guide/style-guide-shared.css', './tabs-style-guide.component.css'],
     templateUrl: './tabs-style-guide.component.html'
 })
 export class TabsStyleGuideComponent {
-    activeKey1 = 'overview';
-    activeKey2 = 'analytics';
-    activeKey3 = 'overview';
+    readonly basicActiveKey = signal('overview');
+    readonly iconsActiveKey = signal('analytics');
+    readonly overflowActiveKey = signal('overview');
 
-    basicConfig: TabsConfig;
-    iconsConfig: TabsConfig;
-    overflowConfig: TabsConfig;
+    readonly basicConfig = new TabsConfig({
+        onTabChange: key => this.basicActiveKey.set(key),
+        prefix: `${PREFIX}.basic`,
+        tabs: [new Tab({ key: 'overview' }), new Tab({ key: 'details' }), new Tab({ key: 'history' })]
+    });
 
-    private readonly translateService = inject(TranslateService);
+    readonly iconsConfig = new TabsConfig({
+        onTabChange: key => this.iconsActiveKey.set(key),
+        prefix: `${PREFIX}.icons`,
+        tabs: [
+            new Tab({ key: 'analytics', icon: faChartLine }),
+            new Tab({ key: 'documents', icon: faFileAlt }),
+            new Tab({ key: 'settings', icon: faCog }),
+            new Tab({ key: 'admin', icon: faLock, isDisabled: true })
+        ]
+    });
 
-    constructor() {
-        this.basicConfig = new TabsConfig({
-            onTabChange: key => {
-                this.activeKey1 = key;
-                const message = this.translateService.instant('angular-components-style-guide.tabs.changed');
-                //eslint-disable-next-line no-console
-                console.log(message, key);
-            },
-            prefix: 'angular-components-style-guide.tabs.basic',
-            tabs: [new Tab({ key: 'overview' }), new Tab({ key: 'details' }), new Tab({ key: 'history' })]
-        });
-
-        this.iconsConfig = new TabsConfig({
-            onTabChange: key => {
-                this.activeKey2 = key;
-            },
-            prefix: 'angular-components-style-guide.tabs.icons',
-            tabs: [
-                new Tab({ key: 'analytics', icon: faChartLine }),
-                new Tab({ key: 'documents', icon: faFileAlt }),
-                new Tab({ key: 'settings', icon: faCog }),
-                new Tab({ key: 'admin', icon: faLock, isDisabled: true })
-            ]
-        });
-
-        this.overflowConfig = new TabsConfig({
-            onTabChange: key => {
-                this.activeKey3 = key;
-            },
-            prefix: 'angular-components-style-guide.tabs.overflow',
-            tabs: [
-                new Tab({ key: 'overview' }),
-                new Tab({ key: 'details' }),
-                new Tab({ key: 'history' }),
-                new Tab({ key: 'comments' }),
-                new Tab({ key: 'activity' }),
-                new Tab({ key: 'settings' }),
-                new Tab({ key: 'permissions' })
-            ]
-        });
-    }
+    readonly overflowConfig = new TabsConfig({
+        onTabChange: key => this.overflowActiveKey.set(key),
+        prefix: `${PREFIX}.overflow`,
+        tabs: [
+            new Tab({ key: 'overview' }),
+            new Tab({ key: 'details' }),
+            new Tab({ key: 'history' }),
+            new Tab({ key: 'comments' }),
+            new Tab({ key: 'activity' }),
+            new Tab({ key: 'settings' }),
+            new Tab({ key: 'permissions' })
+        ]
+    });
 }

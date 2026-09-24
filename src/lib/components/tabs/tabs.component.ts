@@ -1,4 +1,19 @@
-import { AfterViewInit, Component, ElementRef, HostListener, Input, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    DestroyRef,
+    effect,
+    ElementRef,
+    HostListener,
+    inject,
+    input,
+    linkedSignal,
+    NgZone,
+    signal,
+    viewChild
+} from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
@@ -10,53 +25,44 @@ const OVERFLOW_TRIGGER_ESTIMATED_WIDTH = 40;
 const TAB_GAP_ESTIMATED_WIDTH = 4;
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, TooltipModule, TranslateModule],
     selector: 'bey-tabs',
     standalone: true,
     styleUrls: ['./tabs.component.css'],
     templateUrl: './tabs.component.html'
 })
-export class TabsComponent implements AfterViewInit, OnDestroy {
-    @Input({ required: true })
-    set config(value: TabsConfig) {
-        this._config = value;
-        this.activeTabKey = value?.activeTab ?? '';
-        this.cachedTabWidths = [];
-        this.visibleCount = value?.tabs.length ?? 0;
-        this.scheduleRecalculate();
-    }
-    get config(): TabsConfig {
-        return this._config;
-    }
+export class TabsComponent implements AfterViewInit {
+    readonly config = input.required<TabsConfig>();
 
-    @ViewChild('tabsRow', { static: false }) tabsRowRef?: ElementRef<HTMLElement>;
+    readonly activeTabKey = linkedSignal(() => this.config().activeTab);
+    readonly isOverflowMenuOpen = signal(false);
+    readonly visibleCount = linkedSignal(() => this.config().tabs.length);
 
-    activeTabKey = '';
-    overflowMenuOpen = false;
-    visibleCount = 0;
+    readonly isSegmented = computed(() => this.config().variant === TabsVariant.Segmented);
+    readonly overflowTabs = computed(() => this.config().tabs.slice(this.visibleCount()));
+    readonly visibleTabs = computed(() => this.config().tabs.slice(0, this.visibleCount()));
 
     readonly overflowIcon = faEllipsis;
 
-    private _config!: TabsConfig;
     private cachedTabWidths: number[] = [];
     private previousContainerWidth = 0;
     private resizeObserver?: ResizeObserver;
 
-    constructor(
-        private readonly elementReference: ElementRef<HTMLElement>,
-        private readonly ngZone: NgZone
-    ) {}
+    private readonly tabsRow = viewChild<ElementRef<HTMLElement>>('tabsRow');
 
-    get isSegmented(): boolean {
-        return this.config?.variant === TabsVariant.Segmented;
-    }
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly elementReference = inject<ElementRef<HTMLElement>>(ElementRef);
+    private readonly ngZone = inject(NgZone);
 
-    get overflowTabs(): Tab[] {
-        return this.config?.tabs.slice(this.visibleCount) ?? [];
-    }
+    constructor() {
+        effect(() => {
+            this.config();
+            this.cachedTabWidths = [];
+            this.scheduleRecalculate();
+        });
 
-    get visibleTabs(): Tab[] {
-        return this.config?.tabs.slice(0, this.visibleCount) ?? [];
+        this.destroyRef.onDestroy(() => this.resizeObserver?.disconnect());
     }
 
     ngAfterViewInit(): void {
@@ -65,27 +71,23 @@ export class TabsComponent implements AfterViewInit, OnDestroy {
         this.scheduleRecalculate();
     }
 
-    ngOnDestroy(): void {
-        this.resizeObserver?.disconnect();
-    }
-
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent): void {
         if (!this.elementReference.nativeElement.contains(event.target as Node)) {
-            this.overflowMenuOpen = false;
+            this.isOverflowMenuOpen.set(false);
         }
     }
 
     @HostListener('document:keydown.escape')
     onEscape(): void {
-        this.overflowMenuOpen = false;
+        this.isOverflowMenuOpen.set(false);
     }
 
     getTabLabel(tab: Tab): string {
         const defaultValue = `${tab.key}.label`;
 
         if (tab.label === defaultValue) {
-            return `${this.config.prefix}.tabs.${defaultValue}`;
+            return `${this.config().prefix}.tabs.${defaultValue}`;
         }
 
         return tab.label;
@@ -99,28 +101,28 @@ export class TabsComponent implements AfterViewInit, OnDestroy {
         const defaultValue = `${tab.key}.tooltip`;
 
         if (tab.tooltip === defaultValue) {
-            return `${this.config.prefix}.tabs.${defaultValue}`;
+            return `${this.config().prefix}.tabs.${defaultValue}`;
         }
 
         return tab.tooltip;
     }
 
     isActive(tab: Tab): boolean {
-        return this.activeTabKey === tab.key;
+        return this.activeTabKey() === tab.key;
     }
 
     isActiveInOverflow(): boolean {
-        return this.overflowTabs.some(tab => this.isActive(tab));
+        return this.overflowTabs().some(tab => this.isActive(tab));
     }
 
     onKeydown(event: KeyboardEvent): void {
-        const enabledTabs = this.config.tabs.filter(t => !t.isDisabled);
+        const enabledTabs = this.config().tabs.filter(tab => !tab.isDisabled);
 
         if (enabledTabs.length === 0) {
             return;
         }
 
-        const currentIndex = enabledTabs.findIndex(t => t.key === this.activeTabKey);
+        const currentIndex = enabledTabs.findIndex(tab => tab.key === this.activeTabKey());
         let targetIndex = -1;
 
         switch (event.key) {
@@ -143,41 +145,39 @@ export class TabsComponent implements AfterViewInit, OnDestroy {
         event.preventDefault();
 
         const targetTab = enabledTabs[targetIndex];
+
         this.selectTab(targetTab);
         this.focusTab(targetTab.key);
     }
 
-    onTabClick(tab: Tab): void {
-        if (tab.isDisabled) {
-            return;
-        }
-
-        this.selectTab(tab);
-    }
-
     onOverflowTabClick(tab: Tab): void {
-        this.overflowMenuOpen = false;
+        this.isOverflowMenuOpen.set(false);
         this.onTabClick(tab);
     }
 
+    onTabClick(tab: Tab): void {
+        this.selectTab(tab);
+    }
+
     toggleOverflowMenu(): void {
-        this.overflowMenuOpen = !this.overflowMenuOpen;
+        this.isOverflowMenuOpen.update(isOpen => !isOpen);
     }
 
     private focusTab(key: string): void {
         const buttons = this.elementReference.nativeElement.querySelectorAll<HTMLButtonElement>('[role="tab"]');
-        const allTabs = this.config.tabs;
-        const index = allTabs.findIndex(t => t.key === key);
+        const index = this.config().tabs.findIndex(tab => tab.key === key);
 
         buttons[index]?.focus();
     }
 
     private measureTabWidths(): number[] {
-        if (!this.tabsRowRef) {
+        const row = this.tabsRow();
+
+        if (!row) {
             return [];
         }
 
-        const buttons = this.tabsRowRef.nativeElement.querySelectorAll<HTMLButtonElement>(
+        const buttons = row.nativeElement.querySelectorAll<HTMLButtonElement>(
             '.bey-tabs-tab:not(.bey-tabs-overflow-trigger)'
         );
 
@@ -195,30 +195,17 @@ export class TabsComponent implements AfterViewInit, OnDestroy {
         this.resizeObserver.observe(this.elementReference.nativeElement);
     }
 
-    /**
-     * Mirrors BreadcrumbComponent's collapse strategy: only measure real button widths while every
-     * tab is still rendered (visibleCount === tabs.length), cache them, then fit as many as possible
-     * into the available width — moving the rest into the overflow menu. A containerWidth of 0 means
-     * layout hasn't happened yet (e.g. detached/hidden or first paint), so everything stays visible
-     * rather than being guessed into overflow.
-     */
     private recalculate(): void {
-        if (!this.config) {
-            this.visibleCount = 0;
-
-            return;
-        }
-
-        const { tabs } = this.config;
+        const { tabs } = this.config();
         const containerWidth = this.elementReference.nativeElement.offsetWidth;
 
         if (containerWidth === 0) {
-            this.visibleCount = tabs.length;
+            this.visibleCount.set(tabs.length);
 
             return;
         }
 
-        if (this.visibleCount === tabs.length) {
+        if (this.visibleCount() === tabs.length) {
             const measured = this.measureTabWidths();
 
             if (measured.length === tabs.length && measured.some(width => width > 0)) {
@@ -227,7 +214,7 @@ export class TabsComponent implements AfterViewInit, OnDestroy {
         }
 
         if (this.cachedTabWidths.length !== tabs.length) {
-            this.visibleCount = tabs.length;
+            this.visibleCount.set(tabs.length);
 
             return;
         }
@@ -235,18 +222,21 @@ export class TabsComponent implements AfterViewInit, OnDestroy {
         this.previousContainerWidth = containerWidth;
 
         const widths = this.cachedTabWidths;
-        let totalWidth = 0;
-
-        for (const [index, width] of widths.entries()) {
-            totalWidth += width + (index > 0 ? TAB_GAP_ESTIMATED_WIDTH : 0);
-        }
+        const totalWidth = widths.reduce(
+            (total, width, index) => total + width + (index > 0 ? TAB_GAP_ESTIMATED_WIDTH : 0),
+            0
+        );
 
         if (totalWidth <= containerWidth) {
-            this.visibleCount = tabs.length;
+            this.visibleCount.set(tabs.length);
 
             return;
         }
 
+        this.visibleCount.set(this.countTabsThatFit(widths, containerWidth, tabs));
+    }
+
+    private countTabsThatFit(widths: number[], containerWidth: number, tabs: Tab[]): number {
         const overflowReserve = OVERFLOW_TRIGGER_ESTIMATED_WIDTH + TAB_GAP_ESTIMATED_WIDTH;
         let budget = containerWidth - overflowReserve;
         let count = 0;
@@ -264,14 +254,9 @@ export class TabsComponent implements AfterViewInit, OnDestroy {
 
         count = Math.max(count, 1);
 
-        const activeIndex = tabs.findIndex(tab => tab.key === this.activeTabKey);
+        const activeIndex = tabs.findIndex(tab => tab.key === this.activeTabKey());
 
-        // Never hide the active tab in the overflow menu without any visible indication of it.
-        if (activeIndex >= count) {
-            count = activeIndex + 1;
-        }
-
-        this.visibleCount = count;
+        return activeIndex >= count ? activeIndex + 1 : count;
     }
 
     private scheduleRecalculate(): void {
@@ -279,7 +264,11 @@ export class TabsComponent implements AfterViewInit, OnDestroy {
     }
 
     private selectTab(tab: Tab): void {
-        this.activeTabKey = tab.key;
-        this.config.setActiveTab(tab.key);
+        if (tab.isDisabled || this.activeTabKey() === tab.key) {
+            return;
+        }
+
+        this.activeTabKey.set(tab.key);
+        this.config().onTabChange?.(tab.key);
     }
 }

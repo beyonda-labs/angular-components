@@ -1,145 +1,67 @@
-# Tabs Component (`bey-tabs`)
+# Tabs
 
-Model-driven horizontal tab bar with keyboard navigation, optional icons, and disabled state. The consumer renders content based on the active tab key.
+A horizontal tab bar driven by a config model. It owns which tab is active and reports every change through
+`onTabChange`; the consumer renders the content for that key. Tabs that do not fit collapse into an overflow
+menu rather than being clipped.
 
-Supported capabilities:
-
--   Horizontal tab bar with underline or segmented (pill) active indicator.
--   Keyboard navigation with Arrow keys, Home, and End.
--   Optional FontAwesome icon per tab.
--   Disabled state per tab.
--   Tooltip support per tab.
--   Prefix-based i18n label resolution through `ngx-translate`.
--   Programmatic tab switching via `config.setActiveTab()`.
--   Callback on tab change.
--   ARIA roles and attributes for screen readers.
--   Themeable via CSS custom properties.
--   Automatic overflow: tabs that don't fit the available width collapse into a "…" menu instead of being clipped, measured via `ResizeObserver` and re-checked on every config/size change. The active tab is always kept visible even if it would otherwise overflow.
-
----
-
-## Quick start
+## Usage
 
 ```ts
-import { BeyTabsComponent, BeyTabsConfig, BeyTab } from '@beyonda-labs/angular-components';
-
-const tabsConfig = new BeyTabsConfig({
+const tabs = new BeyTabsConfig({
     prefix: 'myPage',
-    tabs: [new BeyTab({ key: 'overview' }), new BeyTab({ key: 'details' }), new BeyTab({ key: 'history' })],
-    onTabChange: key => {
-        console.log('Active tab:', key);
-    }
+    tabs: [new BeyTab({ key: 'overview' }), new BeyTab({ key: 'details', icon: faList })],
+    onTabChange: key => this.show(key)
 });
 ```
 
 ```html
-<bey-tabs [config]="tabsConfig"></bey-tabs>
-
-@switch (tabsConfig.activeTab) { @case ('overview') {
-<app-overview />
-} @case ('details') {
-<app-details />
-} @case ('history') {
-<app-history />
-} }
+<bey-tabs [config]="tabs"></bey-tabs>
 ```
 
-i18n keys follow the prefix convention:
+## BeyTabsConfig
 
-```json
-{
-    "myPage": {
-        "tabs": {
-            "overview": { "label": "Overview" },
-            "details": { "label": "Details" },
-            "history": { "label": "History" }
-        }
-    }
-}
-```
+| Field         | Required | Default             | Meaning                                                      |
+| ------------- | -------- | ------------------- | ------------------------------------------------------------ |
+| `prefix`      | yes      |                     | i18n prefix used to resolve labels a tab does not carry       |
+| `tabs`        | yes      |                     | The tabs, in display order                                    |
+| `activeTab`   | no       | the first tab's key | Which tab starts selected                                     |
+| `variant`     | no       | `Underline`         | `Underline` or `Segmented`                                    |
+| `onTabChange` | no       |                     | Called with the new key whenever the selection actually moves |
 
----
+## BeyTab
 
-## Models
+| Field        | Required | Default        | Meaning                                              |
+| ------------ | -------- | -------------- | ---------------------------------------------------- |
+| `key`        | yes      |                | Identifies the tab and is what `onTabChange` reports  |
+| `label`      | no       | `<key>.label`  | A literal label, or a key resolved against `prefix`   |
+| `tooltip`    | no       | none           | A literal tooltip, or a key resolved against `prefix` |
+| `icon`       | no       | none           | FontAwesome icon shown before the label               |
+| `isDisabled` | no       | `false`        | Cannot be selected, by click or keyboard              |
 
-### `BeyTabsConfig`
+## Replacing the config
 
-The root configuration object passed to `[config]`.
+The config is read as the initial state, never written to. To move the selection from outside the component,
+build a new `BeyTabsConfig` with the `activeTab` you want and bind that; the component follows the new
+instance. Mutating the one you passed in has no effect.
 
-| Parameter     | Type                    | Required | Default           | Description                        |
-| ------------- | ----------------------- | -------- | ----------------- | ---------------------------------- |
-| `prefix`      | `string`                | yes      | —                 | i18n prefix for label resolution   |
-| `tabs`        | `BeyTab[]`              | yes      | —                 | Array of tab definitions           |
-| `activeTab`   | `string`                | no       | first tab's `key` | Key of the initially active tab    |
-| `variant`     | `BeyTabsVariant`        | no       | `Underline`        | Visual style of the active tab indicator |
-| `onTabChange` | `(key: string) => void` | no       | —                 | Called when the active tab changes |
+## Keyboard
 
-### `BeyTabsVariant`
+`ArrowLeft` and `ArrowRight` walk the enabled tabs and wrap around; `Home` and `End` jump to the first and
+last. Disabled tabs are skipped.
 
-| Value                      | Description                                                                                                     |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `BeyTabsVariant.Underline` | Default. Border under the active tab, text-only inactive tabs.                                                 |
-| `BeyTabsVariant.Segmented` | Pill-shaped active tab inside a bordered, rounded track — suited for a compact view toggle (e.g. table/trash). |
+## Overflow
 
-**Properties:**
+Tab widths are measured only while every tab is still rendered, then cached, so the measurement is never taken
+from an already-collapsed bar. A container width of zero means layout has not happened yet — during first
+paint, or while hidden — and everything stays visible rather than being guessed into the menu. The active tab
+is never pushed into the overflow menu without remaining visible.
 
-| Property    | Type       | Description            |
-| ----------- | ---------- | ---------------------- |
-| `activeTab` | `string`   | Key of the current tab |
-| `prefix`    | `string`   | i18n prefix            |
-| `tabs`      | `BeyTab[]` | Configured tabs        |
+## Theming
 
-**Methods:**
-
-| Method         | Signature                                     | Description                                                                                      |
-| -------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `setActiveTab` | `(key: string, emitChange?: boolean) => void` | Switches to a tab programmatically. Skips disabled or same tab. `emitChange` defaults to `true`. |
-
----
-
-### `BeyTab`
-
-Defines a single tab.
-
-| Parameter    | Type             | Required | Default        | Description                                          |
-| ------------ | ---------------- | -------- | -------------- | ---------------------------------------------------- |
-| `key`        | `string`         | yes      | —              | Unique identifier for the tab                        |
-| `icon`       | `IconDefinition` | no       | —              | FontAwesome icon displayed before the label          |
-| `isDisabled` | `boolean`        | no       | `false`        | Whether the tab is disabled                          |
-| `label`      | `string`         | no       | `${key}.label` | Custom label or i18n key (auto-resolved with prefix) |
-| `tooltip`    | `string`         | no       | `''`           | Tooltip text or i18n key                             |
-
----
-
-## CSS custom properties
-
-| Variable            | Default   | Description                |
-| ------------------- | --------- | -------------------------- |
-| `--bey-tabs-accent` | `#111111` | Active tab text and border |
-| `--bey-tabs-text`   | `#6b6b6b` | Inactive tab text color    |
-| `--bey-tabs-border` | `#ebebeb` | Tab bar bottom border      |
-| `--bey-tabs-hover`  | `#2f2f2f` | Hover text color           |
-| `--bey-tabs-active-underline` | `--bey-tabs-accent` | Active tab underline color, independent of the text color |
-
----
-
-## Keyboard navigation
-
-| Key          | Action                       |
-| ------------ | ---------------------------- |
-| `ArrowRight` | Move to next enabled tab     |
-| `ArrowLeft`  | Move to previous enabled tab |
-| `Home`       | Move to first enabled tab    |
-| `End`        | Move to last enabled tab     |
-
-Disabled tabs are skipped during keyboard navigation.
-
----
-
-## Accessibility
-
--   The tab bar uses `role="tablist"` with a translated `aria-label`.
--   Each tab uses `role="tab"` with `aria-selected` and managed `tabindex`.
--   Disabled tabs are marked with the `disabled` attribute.
-
----
+| Variable                      | Default               |
+| ----------------------------- | --------------------- |
+| `--bey-tabs-accent`           | `--bey-primary`       |
+| `--bey-tabs-text`             | `--bey-text-muted`    |
+| `--bey-tabs-border`           | `--bey-bg-active`     |
+| `--bey-tabs-hover`            | `--bey-text-primary`  |
+| `--bey-tabs-active-underline` | `--bey-tabs-accent`   |
