@@ -76,5 +76,7 @@ replaced config starts over: new rows, the selection `isRowSelected` says, and t
 | `--bey-table-row-selected`          | `--bey-bg-active`      |
 | `--bey-table-row-min-height`        | `2.5rem`               |
 | `--bey-table-checkbox-accent`       | `--bey-primary`        |
+| `--bey-table-checkbox-border`       | `--bey-border-strong`  |
+| `--bey-table-checkbox-mark`         | `--bey-primary-fg`     |
 | `--bey-table-link-underline`        | `--bey-border-strong`  |
 | `--bey-table-link-underline-hover`  | `--bey-primary`        |
