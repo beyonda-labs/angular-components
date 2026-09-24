@@ -46,3 +46,5 @@ Thumbs.db
 
 # NPM
 package-lock.json
+# local tooling
+.hintrc

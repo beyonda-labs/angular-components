@@ -6,7 +6,7 @@
             "projectType": "library",
             "root": "src",
             "sourceRoot": "src/lib",
-            "prefix": "by",
+            "prefix": "bey",
             "architect": {
                 "build": {
                     "builder": "@angular-devkit/build-angular:ng-packagr",
@@ -26,20 +26,7 @@
                 "lint": {
                     "builder": "@angular-eslint/builder:lint",
                     "options": {
-                        "lintFilePatterns": [
-                            "src/**/*.ts",
-                            "src/**/*.html"
-                        ]
-                    }
-                },
-                "test": {
-                    "builder": "@angular-builders/jest:run",
-                    "options": {
-                        "tsConfig": "tsconfig.spec.json",
-                        "polyfills": [
-                            "zone.js",
-                            "zone.js/testing"
-                        ]
+                        "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
                     }
                 }
             },
@@ -52,8 +39,6 @@
     },
     "cli": {
         "analytics": false,
-        "schematicCollections": [
-            "@angular-eslint/schematics"
-        ]
+        "schematicCollections": ["@angular-eslint/schematics"]
     }
 }

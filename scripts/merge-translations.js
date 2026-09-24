@@ -14,6 +14,7 @@ const sourceDirs = [
 ];
 
 const targetDir = path.resolve(__dirname, '../src/lib/assets/i18n');
+const styleGuideTargetDir = path.resolve(__dirname, '../src/lib/assets/i18n-style-guide');
 const languages = ['en', 'es'];
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -49,29 +50,48 @@ function deepMerge(target, source) {
 // Main
 // ────────────────────────────────────────────────────────────────────────────
 
-function mergeTranslations() {
-    fs.mkdirSync(targetDir, { recursive: true });
+/** Demo text: anything under a `docs/` folder, plus the global style-guide module itself. */
+function isStyleGuideFile(filePath) {
+    const segments = filePath.split(path.sep);
 
+    return segments.includes('docs') || segments.includes('style-guide');
+}
+
+/** Merge a list of files into one object, validating each one. */
+function mergeFiles(files) {
+    return files.reduce((acc, filePath) => {
+        try {
+            const json = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+            return deepMerge(acc, json);
+        } catch (err) {
+            throw new Error(`Invalid JSON in: ${filePath}
+  ${err.message}`);
+        }
+    }, {});
+}
+
+/** Write a merged bundle with alphabetically sorted keys. */
+function writeBundle(dir, fileName, merged) {
+    fs.mkdirSync(dir, { recursive: true });
+
+    const outFile = path.join(dir, fileName);
+    fs.writeFileSync(outFile, `${JSON.stringify(sortObjectDeep(merged), null, 4)}
+`, 'utf8');
+    console.log(`✔ ${outFile}`);
+
+    return outFile;
+}
+
+function mergeTranslations() {
     languages.forEach(lang => {
         const extension = `.${lang}.json`;
-
-        // Gather all JSON files for this language
         const files = sourceDirs.flatMap(dir => findFilesRecursively(dir, extension));
 
-        // Merge them, validating each one
-        const merged = files.reduce((acc, filePath) => {
-            try {
-                const json = JSON.parse(fs.readFileSync(filePath, 'utf8'));
-                return deepMerge(acc, json);
-            } catch (err) {
-                throw new Error(`Invalid JSON in: ${filePath}\n  ${err.message}`);
-            }
-        }, {});
+        const libraryFiles = files.filter(filePath => !isStyleGuideFile(filePath));
+        const styleGuideFiles = files.filter(filePath => isStyleGuideFile(filePath));
 
-        // Write output with alphabetically sorted keys
-        const outFile = path.join(targetDir, `angular-components.${lang}.json`);
-        fs.writeFileSync(outFile, JSON.stringify(sortObjectDeep(merged), null, 4), 'utf8');
-        console.log(`✔ Merged translations for ${lang} → ${outFile}`);
+        writeBundle(targetDir, `angular-components.${lang}.json`, mergeFiles(libraryFiles));
+        writeBundle(styleGuideTargetDir, `angular-components-style-guide.${lang}.json`, mergeFiles(styleGuideFiles));
     });
 }
 

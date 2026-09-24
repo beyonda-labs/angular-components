@@ -9,19 +9,26 @@
         "build": "pnpm run test:ci && ng build",
         "build:quick": "pnpm run prebuild && ng build --configuration=development",
         "build:watch": "node scripts/build-watch.js",
+        "check-style-guides": "node scripts/check-style-guides.js",
+        "check-tokens": "node scripts/check-tokens.js",
         "check-translations": "node scripts/check-translations.js",
+        "format": "prettier --write \"src/**/*.{ts,html,css,json}\"",
+        "format:check": "prettier --check \"src/**/*.{ts,html,css,json}\"",
         "lint": "ng lint",
         "lint:fix": "ng lint --fix",
-        "format": "prettier --write \"src/**/*.{ts,html,scss,json}\"",
-        "test:report": "jest --coverage --coverageReporters=lcov --coverageReporters=html",
         "merge-translations": "pnpm run check-translations && node scripts/merge-translations.js",
         "prebuild": "pnpm run merge-translations",
+        "prepare": "husky",
+        "sort-translations": "node scripts/sort-translations.js",
+        "stylelint": "stylelint \"src/**/*.css\"",
+        "stylelint:fix": "stylelint \"src/**/*.css\" --fix",
         "test": "jest",
-        "test:watch": "jest --watch",
         "test:ci": "jest --ci",
         "test:coverage": "jest --coverage",
-        "sort-translations": "node scripts/sort-translations.js",
-        "update-translations": "pnpm run sort-translations && pnpm run merge-translations && node scripts/update-translations.js"
+        "test:report": "jest --coverage --coverageReporters=lcov --coverageReporters=html",
+        "test:watch": "jest --watch",
+        "update-translations": "pnpm run sort-translations && pnpm run merge-translations && node scripts/update-translations.js",
+        "verify": "pnpm run lint && pnpm run stylelint && pnpm run format:check && pnpm run check-tokens && pnpm run check-style-guides && pnpm run test:ci"
     },
     "peerDependencies": {
         "@angular/animations": "19.2.17",
@@ -72,15 +79,21 @@
         "eslint-plugin-simple-import-sort": "^12.1.1",
         "eslint-plugin-unicorn": "^56.0.1",
         "fs-extra": "11.3.3",
+        "husky": "^9.1.7",
         "jest": "29.7.0",
         "jest-mock-extended": "^4.0.0",
         "jest-preset-angular": "14.6.2",
+        "lint-staged": "^17.5.1",
         "ng-packagr": "19.2.2",
         "prettier": "3.3.3",
-        "sass": "1.97.1",
+        "stylelint": "^17.15.0",
+        "stylelint-config-standard": "^40.0.0",
+        "stylelint-declaration-strict-value": "^1.12.1",
         "ts-node": "10.9.2",
         "typescript": "5.5.4"
     },
     "private": false,
-    "sideEffects": true
+    "sideEffects": [
+        "**/*.css"
+    ]
 }
