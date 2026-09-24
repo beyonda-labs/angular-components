@@ -121,6 +121,8 @@ not `p-4`.
 | `--bey-font-size-lg`  | `1rem`      | 16  | Emphasised text    |
 | `--bey-font-size-xl`  | `1.125rem`  | 18  | Section titles     |
 | `--bey-font-size-2xl` | `1.25rem`   | 20  | Page titles        |
+| `--bey-font-size-3xl` | `1.75rem`   | 28  | Hero titles        |
+| `--bey-font-size-4xl` | `2.25rem`   | 36  | Display text       |
 
 | Token                        | Value |
 | ---------------------------- | ----- |

@@ -1,345 +1,119 @@
 :host {
-    --bey-login-line: #e7e7e5;
-    --bey-login-line-2: #d8d8d5;
-    --bey-login-accent: var(--bey-primary);
-    --bey-login-accent-fg: var(--bey-bg-page);
-    --bey-login-accent-hover: #1f1f1e;
-    --bey-login-radius: 10px;
-    --bey-login-font: 'Helvetica Neue', 'Helvetica', 'Inter', 'Arial', system-ui, sans-serif;
+    --bey-login-card-bg: var(--bey-bg-page);
+    --bey-login-card-border: var(--bey-border-subtle);
+    --bey-login-card-radius: var(--bey-radius-xl);
+    --bey-login-card-shadow: var(--bey-shadow-md);
+    --bey-login-card-width: 20.625rem;
+    --bey-login-overlay: var(--bey-bg-page);
+
+    display: block;
 }
 
-:host-context(body.dark) {
-    --bey-login-line: #232322;
-    --bey-login-line-2: #2e2e2c;
-    --bey-login-accent-hover: #e2e2df;
-}
-
-/* ─── Layout ─────────────────────────────────────────────────────────────── */
 .bey-login {
     position: relative;
     height: 100vh;
 }
 
-.bey-login__body > main {
-    position: relative;
-    z-index: 1;
-}
-
-.bey-login__body {
+.bey-login-body {
     position: relative;
     flex: 1 1 auto;
-
     color: var(--bey-text-primary);
-    background-size: cover;
     background-position: center;
-    transition:
-        background 0.18s ease,
-        color 0.18s ease;
+    background-size: cover;
+    transition: background var(--bey-duration-base) var(--bey-easing-standard);
 }
 
-.bey-login__body::before {
+.bey-login-body::before {
     content: '';
     position: absolute;
     inset: 0;
-    z-index: 0;
     pointer-events: none;
     background: linear-gradient(
         180deg,
-        rgba(255, 255, 255, 0.35) 0%,
-        rgba(255, 255, 255, 0.55) 50%,
-        rgba(255, 255, 255, 0.85) 100%
+        color-mix(in srgb, var(--bey-login-overlay) 40%, transparent) 0%,
+        color-mix(in srgb, var(--bey-login-overlay) 60%, transparent) 50%,
+        color-mix(in srgb, var(--bey-login-overlay) 88%, transparent) 100%
     );
 }
 
-:host-context(body.dark) .bey-login__body::before {
-    background: linear-gradient(
-        180deg,
-        rgba(10, 10, 10, 0.55) 0%,
-        rgba(10, 10, 10, 0.7) 50%,
-        rgba(10, 10, 10, 0.92) 100%
-    );
+.bey-login-main {
+    position: relative;
+    z-index: var(--bey-z-base);
 }
 
-/* ─── Cards ──────────────────────────────────────────────────────────────── */
-.bey-login__card {
-    background: var(--bey-bg-page);
-    border: 1px solid var(--bey-login-line);
-    border-radius: 16px;
-    padding: 40px 36px;
-    box-shadow: var(--bey-login-shadow-card, var(--bey-shadow-md));
-    width: 330px;
+.bey-login-cards {
+    gap: var(--bey-space-lg);
 }
 
-/* ─── Left card: presentation ────────────────────────────────────────────── */
-.bey-login__intro-org {
-    gap: 10px;
-    font-size: 12px;
-    letter-spacing: 0.08em;
+.bey-login-card {
+    width: var(--bey-login-card-width);
+    padding: var(--bey-space-2xl);
+    background: var(--bey-login-card-bg);
+    border: var(--bey-border-width) solid var(--bey-login-card-border);
+    border-radius: var(--bey-login-card-radius);
+    box-shadow: var(--bey-login-card-shadow);
+}
+
+.bey-login-org {
+    gap: var(--bey-space-sm);
     color: var(--bey-text-muted);
+    font-size: var(--bey-font-size-xs);
 }
 
-.bey-login__intro-icon {
-    width: 20px;
-    height: 20px;
+.bey-login-org-icon {
     display: block;
+    width: var(--bey-space-xl);
+    height: var(--bey-space-xl);
 }
 
-:host-context(body.dark) .bey-login__intro-icon {
+:host-context(body.dark) .bey-login-org-icon {
     filter: invert(1);
 }
 
-.bey-login__intro-product {
-    font-size: 35px;
-    letter-spacing: -0.025em;
-    line-height: 1.05;
+.bey-login-product {
     color: var(--bey-text-primary);
+    font-size: var(--bey-font-size-4xl);
+    line-height: var(--bey-line-height-tight);
 }
 
-.bey-login__intro-pitch {
-    font-size: 16px;
-    line-height: 1.5;
+.bey-login-pitch {
     color: var(--bey-text-primary);
+    font-size: var(--bey-font-size-lg);
+    line-height: var(--bey-line-height-loose);
 }
 
-/* ─── Left card: view tabs ───────────────────────────────────────────────── */
-.bey-login__view-tabs {
-    display: flex;
-    gap: 8px;
+.bey-login-view-switch {
     margin-top: auto;
-    padding-top: 24px;
+    padding-top: var(--bey-space-xl);
 }
 
-/* ─── Right card: auth ───────────────────────────────────────────────────── */
-.bey-login__welcome h1 {
-    font-size: 28px;
-    letter-spacing: -0.02em;
-    margin: 0 0 6px;
-    line-height: 1.15;
+.bey-login-title {
     color: var(--bey-text-primary);
+    font-size: var(--bey-font-size-3xl);
+    line-height: var(--bey-line-height-tight);
 }
 
-.bey-login__welcome p {
-    color: var(--bey-text-muted);
-    font-size: 14px;
-}
-
-/* ─── Field ──────────────────────────────────────────────────────────────── */
-:host ::ng-deep .bey-field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 14px;
-}
-
-:host ::ng-deep .bey-field-label {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--bey-text-secondary);
-    font-family: var(--bey-login-font);
-}
-
-:host ::ng-deep .bey-field-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    gap: 8px;
-}
-
-:host ::ng-deep .bey-field-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-    background: var(--bey-bg-page);
-    border: 1px solid var(--bey-login-line);
-    border-radius: var(--bey-login-radius);
-    transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease;
-}
-
-:host ::ng-deep .bey-field-wrap:focus-within {
-    border-color: var(--bey-text-primary);
-    box-shadow: 0 0 0 3px rgba(var(--bey-black-rgb), 0.08);
-}
-
-:host-context(body.dark) ::ng-deep .bey-field-wrap:focus-within {
-    box-shadow: 0 0 0 3px rgba(var(--bey-white-rgb), 0.08);
-}
-
-:host ::ng-deep .bey-field.is-error .bey-field-wrap {
-    border-color: var(--bey-danger);
-    box-shadow: 0 0 0 3px rgba(var(--bey-red-rgb), 0.1);
-}
-
-:host ::ng-deep .bey-field-wrap input {
-    flex: 1;
-    min-width: 0;
-    border: 0;
-    background: transparent;
-    outline: none;
-    padding: 12px 14px;
-    font-family: var(--bey-login-font);
-    font-size: 14px;
-    color: var(--bey-text-primary);
-    border-radius: var(--bey-login-radius);
-}
-
-:host ::ng-deep .bey-field-wrap input:-webkit-autofill {
-    border-radius: var(--bey-login-radius);
-}
-
-:host ::ng-deep .bey-field-wrap input::placeholder {
-    color: var(--bey-text-disabled);
-}
-
-:host ::ng-deep .bey-suffix-btn {
-    appearance: none;
-    border: 0;
-    background: transparent;
-    color: var(--bey-text-muted);
-    padding: 0 12px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
-
-:host ::ng-deep .bey-suffix-btn:hover {
-    color: var(--bey-text-primary);
-}
-
-:host ::ng-deep .bey-field-msg {
-    min-height: 14px;
-    font-size: 11.5px;
-    color: var(--bey-danger);
-    font-family: var(--bey-login-font);
-}
-
-:host ::ng-deep .bey-link-muted {
-    color: var(--bey-text-muted);
-    text-decoration: none;
-    font-size: 12px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    font-family: var(--bey-login-font);
-}
-
-:host ::ng-deep .bey-link-muted:hover {
-    color: var(--bey-text-primary);
-}
-
-/* ─── CTA ────────────────────────────────────────────────────────────────── */
-:host ::ng-deep .bey-cta {
-    position: relative;
-    width: 100%;
-    height: 44px;
-    border: 0;
-    border-radius: var(--bey-login-radius);
-    background: var(--bey-login-accent);
-    color: var(--bey-login-accent-fg);
-    font-family: var(--bey-login-font);
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.005em;
-    cursor: pointer;
-    transition:
-        background 0.15s ease,
-        transform 0.05s ease;
-    margin-top: 4px;
-}
-
-:host ::ng-deep .bey-cta:hover {
-    background: var(--bey-login-accent-hover);
-}
-
-:host ::ng-deep .bey-cta:active {
-    transform: translateY(0.5px);
-}
-
-:host ::ng-deep .bey-cta-spinner {
-    position: absolute;
-    right: 14px;
-    top: 50%;
-    width: 14px;
-    height: 14px;
-    border-radius: 50%;
-    border: 2px solid rgba(var(--bey-white-rgb), 0.35);
-    border-top-color: var(--bey-login-accent-fg);
-    transform: translateY(-50%);
-    opacity: 0;
-    animation: bey-login-spin 0.7s linear infinite;
-}
-
-:host ::ng-deep .bey-cta.is-loading .bey-cta-lbl {
-    opacity: 0.55;
-}
-
-:host ::ng-deep .bey-cta.is-loading .bey-cta-spinner {
-    opacity: 1;
-}
-
-@keyframes bey-login-spin {
-    to {
-        rotate: 1turn;
-    }
-}
-
-/* ─── Divider ────────────────────────────────────────────────────────────── */
-:host ::ng-deep .bey-divider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 18px 0;
-    color: var(--bey-text-disabled);
-    font-size: 11.5px;
-    letter-spacing: 0.08em;
-    font-family: var(--bey-login-font);
-}
-
-:host ::ng-deep .bey-divider::before,
-:host ::ng-deep .bey-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--bey-login-line);
-}
-
-/* ─── Providers ──────────────────────────────────────────────────────────── */
-:host ::ng-deep .bey-providers {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-}
-
-/* ─── Responsive ─────────────────────────────────────────────────────────── */
-@media (max-width: 880px) {
-    .bey-login__cards {
+@media (max-width: 991.98px) {
+    .bey-login-cards {
         flex-direction: column;
     }
 
-    .bey-login__card {
+    .bey-login-card {
         width: 100%;
-        padding: 32px 28px;
+        padding: var(--bey-space-xl);
     }
 
-    .bey-login__card.me-3 {
-        margin-right: 0 !important;
-        margin-bottom: 16px;
-    }
-
-    .bey-login__intro-product {
-        font-size: 28px;
+    .bey-login-product {
+        font-size: var(--bey-font-size-3xl);
     }
 }
 
-@media (max-width: 540px) {
-    .bey-login__card {
-        padding: 24px 20px;
+@media (max-width: 575.98px) {
+    .bey-login-card {
+        padding: var(--bey-space-lg);
     }
 
-    .bey-login__intro-product {
-        font-size: 22px;
+    .bey-login-product {
+        font-size: var(--bey-font-size-2xl);
     }
 }

@@ -134,7 +134,10 @@ itself. What looked like the same thing in `properties-menu`, `table` and `tree`
 a callback field and dialog callbacks.
 
 
-- [ ] The remaining 21 modules, one at a time
+- [ ] The remaining modules, one at a time
+- [ ] `form`: a field keeps the control it was created with, so a replaced `FormConfig` is only picked up
+      when the whole `bey-form` is re-created. `login` works around it with a keyed `@for`; the fix belongs
+      in the form migration, after which that workaround goes
 - [ ] `badge` becomes a real component instead of global CSS classes — after `table` and `properties-menu`,
       since both pass a badge css class around as part of their own config, as `header` does
 - [ ] Style-guides for `search` and `page`; READMEs for `badge`, `loading`, `login`, `page`

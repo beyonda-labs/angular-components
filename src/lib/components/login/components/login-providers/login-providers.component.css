@@ -1,0 +1,27 @@
+:host {
+    display: block;
+}
+
+.bey-login-providers-divider {
+    display: flex;
+    align-items: center;
+    gap: var(--bey-space-md);
+    margin: var(--bey-space-xl) 0 var(--bey-space-lg);
+    color: var(--bey-text-disabled);
+    font-size: var(--bey-font-size-2xs);
+    text-transform: uppercase;
+}
+
+.bey-login-providers-divider::before,
+.bey-login-providers-divider::after {
+    content: '';
+    flex: 1;
+    height: var(--bey-border-width);
+    background: var(--bey-border-subtle);
+}
+
+.bey-login-providers-list {
+    display: flex;
+    justify-content: center;
+    gap: var(--bey-space-sm);
+}

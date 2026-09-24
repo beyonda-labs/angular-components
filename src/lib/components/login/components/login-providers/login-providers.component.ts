@@ -1,35 +1,49 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faFacebookF, faGoogle, faMicrosoft } from '@fortawesome/free-brands-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ButtonComponent } from '../../../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../../../internal/button/models/button-config.model';
-import { LoginProviderConfig } from '../../models/login.model';
+import { LoginProvider, LoginProviderConfig } from '../../models/login.model';
+
+const ICONS: Record<LoginProvider, IconDefinition> = {
+    facebook: faFacebookF,
+    google: faGoogle,
+    microsoft: faMicrosoft
+};
+
+interface ProviderButton {
+    button: ButtonConfig;
+    provider: LoginProviderConfig;
+}
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ButtonComponent, TranslateModule],
     selector: 'bey-login-providers',
     standalone: true,
+    styleUrls: ['./login-providers.component.css'],
     templateUrl: './login-providers.component.html'
 })
 export class LoginProvidersComponent {
-    @Input({ required: true }) prefix!: string;
-    @Input({ required: true }) providers!: LoginProviderConfig[];
-    @Output() providerClick = new EventEmitter<LoginProviderConfig>();
+    readonly prefix = input.required<string>();
+    readonly providers = input.required<LoginProviderConfig[]>();
 
-    readonly icons: Record<string, IconDefinition> = {
-        facebook: faFacebookF,
-        google: faGoogle,
-        microsoft: faMicrosoft
-    };
+    readonly providerClick = output<LoginProviderConfig>();
 
-    getProviderButton(provider: LoginProviderConfig): ButtonConfig {
-        return new ButtonConfig({
-            action: () => this.providerClick.emit(provider),
-            icon: this.icons[provider.id],
-            type: ButtonType.Secondary,
-            tooltip: `angular-components.login.provider.${provider.id}`
-        });
-    }
+    readonly buttons = computed<ProviderButton[]>(() =>
+        this.providers()
+            .filter(provider => ICONS[provider.id])
+            .map(provider => ({
+                button: new ButtonConfig({
+                    action: () => this.providerClick.emit(provider),
+                    icon: ICONS[provider.id],
+                    tooltip: `angular-components.login.provider.${provider.id}`,
+                    type: ButtonType.Secondary
+                }),
+                provider
+            }))
+    );
+    readonly label = computed(() => `${this.prefix()}.login.signinWith`);
 }

@@ -3,68 +3,30 @@ import { Observable } from 'rxjs';
 
 import { ENVIRONMENT_CONFIG } from '../../../services/environment/models/environment.model';
 import { HttpService } from '../../../services/http/http.service';
-import { LoginProviderConfig, LoginResponse, RegisterField } from '../models/login.model';
+import { LoginCredentials, LoginProviderConfig, LoginResponse, RegisterField } from '../models/login.model';
+
+const ignoreError = (): void => undefined;
 
 @Injectable({ providedIn: 'root' })
 export class LoginHttpService {
     private readonly envConfig = inject(ENVIRONMENT_CONFIG);
     private readonly httpService = inject(HttpService);
 
+    private readonly baseUrl = this.envConfig.accessControlUrl;
+
     getProviders(): Observable<LoginProviderConfig[]> {
-        return new Observable(observer => {
-            this.httpService.get<LoginProviderConfig[]>(`${this.envConfig.accessControlUrl}/providers`, {
-                onSuccess: result => {
-                    observer.next(result as LoginProviderConfig[]);
-                    observer.complete();
-                },
-                handleError: () => {
-                    observer.next([]);
-                    observer.complete();
-                }
-            });
-        });
+        return this.httpService.get<LoginProviderConfig[]>(`${this.baseUrl}/providers`, { handleError: ignoreError });
     }
 
     getRegisterFields(): Observable<RegisterField[]> {
-        return new Observable(observer => {
-            this.httpService.get<RegisterField[]>(`${this.envConfig.accessControlUrl}/register/fields`, {
-                onSuccess: result => {
-                    observer.next(result as RegisterField[]);
-                    observer.complete();
-                },
-                handleError: () => {
-                    observer.next([]);
-                    observer.complete();
-                }
-            });
-        });
+        return this.httpService.get<RegisterField[]>(`${this.baseUrl}/register/fields`, { handleError: ignoreError });
     }
 
-    login(email: string, password: string): Observable<LoginResponse> {
-        return new Observable(observer => {
-            this.httpService.post<LoginResponse>(
-                `${this.envConfig.accessControlUrl}/login`,
-                { email, password },
-                {
-                    loading: true,
-                    onSuccess: result => {
-                        observer.next(result as LoginResponse);
-                        observer.complete();
-                    }
-                }
-            );
-        });
+    login(credentials: LoginCredentials): Observable<LoginResponse> {
+        return this.httpService.post<LoginResponse>(`${this.baseUrl}/login`, credentials, { loading: true });
     }
 
     register(values: Record<string, unknown>): Observable<LoginResponse> {
-        return new Observable(observer => {
-            this.httpService.post<LoginResponse>(`${this.envConfig.accessControlUrl}/register`, values, {
-                loading: true,
-                onSuccess: result => {
-                    observer.next(result as LoginResponse);
-                    observer.complete();
-                }
-            });
-        });
+        return this.httpService.post<LoginResponse>(`${this.baseUrl}/register`, values, { loading: true });
     }
 }
