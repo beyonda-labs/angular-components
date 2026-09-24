@@ -1,5 +1,17 @@
 # Change Log
 
+## [Unreleased]
+
+### Changed
+
+-   Tabs module: the component owns the active tab and reports it through `onTabChange`; `BeyTabsConfig`
+    carries the initial value only and is never written to.
+
+### Removed
+
+-   Tabs module: `BeyTabsConfig.setActiveTab()`. To move the selection from outside, bind a new config with
+    the `activeTab` you want.
+
 ## [1.1.0] - 2026-??-??
 
 ### Added
@@ -45,8 +57,28 @@
 -   Properties menu module: the attachment field checks the file type before uploading, as the form file field
     already did, instead of leaving it to the server to refuse it.
 
+-   Pdf viewer module: new `bey-pdf-viewer`, wrapping `ngx-extended-pdf-viewer` with its native toolbar hidden and
+    an imperative API (`goToPage`, `setZoom`, `rotate`) for building a custom one.
+-   Properties menu module: new `bey-properties-menu`, a contextual property inspector with data-driven tabs, groups
+    and typed fields.
+-   Header module: optional `backAction` and `badge`, and a `variant` controlling the title size; the three action
+    groups now render as a single end-aligned block instead of opposite sides.
+-   Tabs module: tabs that do not fit the available width collapse into an overflow menu, keeping the active one
+    visible.
+-   App layout module: the left menu's expanded state persists through `AppLayoutService.setExpanded`; new
+    `useBodyPadding`, and top/bottom actions accept their own `action` callback and `disabled`.
+-   Left menu module: on an expanded parent action, clicking the label runs its action and the chevron toggles the
+    submenu.
+-   Floating preferences module: `usePill` renders the language and theme selectors without the floating pill
+    wrapper, for embedding them elsewhere.
+-   Footer module: renders the language and theme switcher inline.
+
 ### Changed
 
+-   Page module: `PageFormConfig` and `ModalFormConfig` are generic over the form value type, so `onCreate` and
+    `onEdit` receive a typed value instead of `unknown`.
+-   Http service: requests configured with `loading`, `successToast` or `onSuccess` behave correctly when the caller
+    also subscribes to the returned observable.
 -   Properties menu module: every field that offers a variable now uses the same icon, taken from one shared
     constant instead of each field declaring its own.
 -   Tooling: the package manager is now pnpm, pinned through `packageManager`.

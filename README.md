@@ -74,6 +74,13 @@ Component documentation:
 
 ---
 
+## Theming
+
+The library ships a set of CSS custom properties that a consuming app re-declares to apply its own look, in
+light and dark mode alike. The full catalogue and an example are in [docs/tokens.md](docs/tokens.md).
+
+---
+
 ## Development
 
 ### Setup
