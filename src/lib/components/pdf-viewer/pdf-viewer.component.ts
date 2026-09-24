@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output } from '@angular/core';
 import { NgxExtendedPdfViewerModule, PageRenderedEvent, PdfLoadedEvent } from 'ngx-extended-pdf-viewer';
 
 import { PdfViewerConfig } from './models/pdf-viewer-config.model';
@@ -11,6 +11,7 @@ import {
 import { PdfViewerRotation, PdfViewerZoom } from './types/pdf-viewer-value';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgxExtendedPdfViewerModule],
     selector: 'bey-pdf-viewer',
     standalone: true,
@@ -18,46 +19,34 @@ import { PdfViewerRotation, PdfViewerZoom } from './types/pdf-viewer-value';
     templateUrl: './pdf-viewer.component.html'
 })
 export class PdfViewerComponent {
-    @Input({ required: true })
-    set config(value: PdfViewerConfig) {
-        this._config = value;
-        this.currentPage = value.page;
-        this.currentRotation = value.rotation;
-        this.currentZoom = value.zoom;
-    }
+    readonly config = input.required<PdfViewerConfig>();
 
-    get config(): PdfViewerConfig {
-        return this._config;
-    }
+    readonly loaded = output<PdfViewerLoaded>();
+    readonly loadingFailed = output<PdfViewerLoadingFailed>();
+    readonly pageChange = output<number>();
+    readonly pageRendered = output<PdfViewerPageRendered>();
+    readonly rotationChange = output<PdfViewerRotationChange>();
+    readonly viewerClick = output<MouseEvent>();
+    readonly zoomChange = output<number>();
 
-    @Output() loaded = new EventEmitter<PdfViewerLoaded>();
-    @Output() loadingFailed = new EventEmitter<PdfViewerLoadingFailed>();
-    @Output() pageChange = new EventEmitter<number>();
-    @Output() pageRendered = new EventEmitter<PdfViewerPageRendered>();
-    @Output() rotationChange = new EventEmitter<PdfViewerRotationChange>();
-    @Output() viewerClick = new EventEmitter<MouseEvent>();
-    @Output() zoomChange = new EventEmitter<number>();
+    readonly currentPage = linkedSignal(() => this.config().page);
+    readonly currentRotation = linkedSignal<PdfViewerRotation>(() => this.config().rotation);
+    readonly currentZoom = linkedSignal<PdfViewerZoom>(() => this.config().zoom);
 
-    currentPage = 1;
-    currentRotation: PdfViewerRotation = 0;
-    currentZoom: PdfViewerZoom = 'auto';
-
-    private _config!: PdfViewerConfig;
-
-    get zoomInput(): PdfViewerZoom {
-        return typeof this.currentZoom === 'number' ? this.currentZoom * 100 : this.currentZoom;
-    }
+    readonly zoomInput = computed<PdfViewerZoom>(() =>
+        typeof this.currentZoom() === 'number' ? (this.currentZoom() as number) * 100 : this.currentZoom()
+    );
 
     goToPage(page: number): void {
-        this.currentPage = page;
+        this.currentPage.set(page);
     }
 
     rotate(rotation: PdfViewerRotation): void {
-        this.currentRotation = rotation;
+        this.currentRotation.set(rotation);
     }
 
     setZoom(zoom: PdfViewerZoom): void {
-        this.currentZoom = zoom;
+        this.currentZoom.set(zoom);
     }
 
     onContainerClick(event: MouseEvent): void {
@@ -69,7 +58,7 @@ export class PdfViewerComponent {
             return;
         }
 
-        this.currentPage = page;
+        this.currentPage.set(page);
         this.pageChange.emit(page);
     }
 
@@ -86,7 +75,7 @@ export class PdfViewerComponent {
     }
 
     onRotationChange(rotation: PdfViewerRotation): void {
-        this.currentRotation = rotation;
+        this.currentRotation.set(rotation);
         this.rotationChange.emit({ rotation });
     }
 
@@ -99,6 +88,6 @@ export class PdfViewerComponent {
             return;
         }
 
-        this.currentZoom = (typeof zoom === 'number' ? zoom / 100 : zoom) as PdfViewerZoom;
+        this.currentZoom.set((typeof zoom === 'number' ? zoom / 100 : zoom) as PdfViewerZoom);
     }
 }

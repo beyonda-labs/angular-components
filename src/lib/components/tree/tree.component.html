@@ -5,8 +5,8 @@
                 class="bey-tree-node"
                 role="treeitem"
                 tabindex="0"
-                [class.bey-tree-node-disabled]="node.isDisabled"
-                [class.bey-tree-node-selected]="isSelected(node)"
+                [class.is-disabled]="node.isDisabled"
+                [class.is-selected]="isSelected(node)"
                 [style.paddingLeft.rem]="getIndent(level)"
                 [attr.aria-disabled]="node.isDisabled || null"
                 [attr.aria-expanded]="hasChildren(node) ? isExpanded(node) : null"
@@ -18,7 +18,7 @@
                 <button
                     type="button"
                     class="bey-tree-toggle"
-                    [class.bey-tree-toggle-hidden]="!hasChildren(node)"
+                    [class.is-hidden]="!hasChildren(node)"
                     [attr.aria-label]="hasChildren(node) ? (getToggleLabel(node) | translate) : null"
                     [tabindex]="hasChildren(node) ? 0 : -1"
                     (click)="onToggleClick($event, node)"
@@ -26,7 +26,7 @@
                     @if (hasChildren(node)) {
                         <fa-icon
                             class="bey-tree-chevron"
-                            [class.bey-tree-chevron-open]="isExpanded(node)"
+                            [class.is-open]="isExpanded(node)"
                             [icon]="toggleIcon"
                         ></fa-icon>
                     }
@@ -58,11 +58,9 @@
     }
 </ng-template>
 
-@if (config) {
-    <div class="bey-tree" role="tree">
-        <ng-container
-            [ngTemplateOutlet]="renderNodes"
-            [ngTemplateOutletContext]="{ $implicit: config.nodes, level: 0 }"
-        ></ng-container>
-    </div>
-}
+<div class="bey-tree" role="tree">
+    <ng-container
+        [ngTemplateOutlet]="renderNodes"
+        [ngTemplateOutletContext]="{ $implicit: config().nodes, level: 0 }"
+    ></ng-container>
+</div>

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { faFolder, faGear, faLaptopCode, faPalette, faServer } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -6,6 +6,7 @@ import { TreeConfig, TreeNode } from '../../models/tree.model';
 import { TreeComponent } from '../../tree.component';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [TreeComponent, TranslateModule],
     selector: 'bey-tree-style-guide',
     standalone: true,

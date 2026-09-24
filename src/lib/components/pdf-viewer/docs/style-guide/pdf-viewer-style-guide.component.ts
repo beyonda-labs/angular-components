@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
     faArrowRotateLeft,
@@ -23,6 +23,7 @@ import {
 const SAMPLE_PDF_URL = 'https://raw.githubusercontent.com/mozilla/pdf.js/master/test/pdfs/tracemonkey.pdf';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [DecimalPipe, FontAwesomeModule, PdfViewerComponent, TranslateModule],
     selector: 'bey-pdf-viewer-style-guide',
     standalone: true,
@@ -49,7 +50,7 @@ export class PdfViewerStyleGuideComponent {
     pageCount = 0;
 
     get currentPage(): number {
-        return this.pdfViewer?.currentPage ?? 1;
+        return this.pdfViewer?.currentPage() ?? 1;
     }
 
     goToNextPage(): void {
@@ -100,10 +101,10 @@ export class PdfViewerStyleGuideComponent {
     }
 
     private rotationMinus90(): 0 | 90 | 180 | 270 {
-        return ((this.pdfViewer.currentRotation + 270) % 360) as 0 | 90 | 180 | 270;
+        return ((this.pdfViewer.currentRotation() + 270) % 360) as 0 | 90 | 180 | 270;
     }
 
     private rotationPlus90(): 0 | 90 | 180 | 270 {
-        return ((this.pdfViewer.currentRotation + 90) % 360) as 0 | 90 | 180 | 270;
+        return ((this.pdfViewer.currentRotation() + 90) % 360) as 0 | 90 | 180 | 270;
     }
 }

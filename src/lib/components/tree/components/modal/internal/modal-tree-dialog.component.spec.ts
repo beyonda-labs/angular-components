@@ -7,10 +7,55 @@ import { ModalTreeConfig } from '../models/modal-tree.model';
 import { ModalTreeDialogComponent } from './modal-tree-dialog.component';
 
 describe('ModalTreeDialogComponent', () => {
-    let component: ModalTreeDialogComponent;
     let fixture: ComponentFixture<ModalTreeDialogComponent>;
-
     const hide = jest.fn();
+
+    function buildConfig(
+        overrides: Partial<{
+            onConfirm: (node: TreeNode | undefined) => void;
+            selectedKey: string;
+            title: string;
+        }> = {}
+    ): ModalTreeConfig {
+        return new ModalTreeConfig({
+            nodes: [
+                new TreeNode({ key: 'root', label: 'Root', children: [new TreeNode({ key: 'child', label: 'Child' })] })
+            ],
+            prefix: 'test.modal-tree',
+            ...overrides
+        });
+    }
+
+    async function render(config: ModalTreeConfig = buildConfig()): Promise<void> {
+        fixture = TestBed.createComponent(ModalTreeDialogComponent);
+        fixture.componentInstance.config = config;
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
+
+    function buttonLabelled(label: string): HTMLButtonElement {
+        const found = [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')].find(button =>
+            button.textContent?.includes(label)
+        );
+
+        if (!found) {
+            throw new Error(`No button labelled ${label}`);
+        }
+
+        return found;
+    }
+
+    function treeNode(name: string): HTMLElement {
+        const found = [...fixture.nativeElement.querySelectorAll<HTMLElement>('[role="treeitem"]')].find(node =>
+            node.textContent?.trim().includes(name)
+        );
+
+        if (!found) {
+            throw new Error(`No node named ${name}`);
+        }
+
+        return found;
+    }
 
     beforeEach(async () => {
         hide.mockReset();
@@ -19,84 +64,59 @@ describe('ModalTreeDialogComponent', () => {
             imports: [ModalTreeDialogComponent, TranslateModule.forRoot()],
             providers: [{ provide: BsModalRef, useValue: { hide } }]
         }).compileComponents();
+    });
 
-        fixture = TestBed.createComponent(ModalTreeDialogComponent);
-        component = fixture.componentInstance;
-        component.config = buildConfig();
+    it('shows the tree inside the dialog', async () => {
+        await render();
 
+        expect(fixture.nativeElement.querySelector('bey-tree')).toBeTruthy();
+        expect(treeNode('Root')).toBeTruthy();
+    });
+
+    it('builds the title from the prefix unless one is given', async () => {
+        await render();
+        expect(fixture.nativeElement.querySelector('h2').textContent.trim()).toBe('test.modal-tree.title');
+
+        await render(buildConfig({ title: 'custom.title' }));
+        expect(fixture.nativeElement.querySelector('h2').textContent.trim()).toBe('custom.title');
+    });
+
+    it('cannot be confirmed until a node is picked', async () => {
+        await render();
+
+        expect(buttonLabelled('confirm').disabled).toBe(true);
+
+        treeNode('Root').click();
         fixture.detectChanges();
+
+        expect(buttonLabelled('confirm').disabled).toBe(false);
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('starts ready to confirm when the config already names a selection', async () => {
+        await render(buildConfig({ selectedKey: 'child' }));
+
+        expect(buttonLabelled('confirm').disabled).toBe(false);
     });
 
-    it('should render the tree inside the modal', () => {
-        const tree = fixture.nativeElement.querySelector('bey-tree');
-
-        expect(tree).toBeTruthy();
-    });
-
-    it('should expose the title key built from the prefix when no title is set', () => {
-        expect(component.getTitle()).toBe('test.modal-tree.title');
-    });
-
-    it('should expose the configured title when set', () => {
-        component.config = buildConfig({ title: 'custom.title' });
-
-        expect(component.getTitle()).toBe('custom.title');
-    });
-
-    it('should hide the modal on dismiss', () => {
-        component.dismiss();
-
-        expect(hide).toHaveBeenCalled();
-    });
-
-    it('should hide the modal when the config close method is called', () => {
-        component.config.close();
-
-        expect(hide).toHaveBeenCalled();
-    });
-
-    it('should disable the confirm button while no node is selected', () => {
-        expect(component.getConfirmButton().isDisabled).toBe(true);
-    });
-
-    it('should enable the confirm button once a node is selected', () => {
-        component.config = buildConfig({ selectedKey: 'child' });
-
-        expect(component.getConfirmButton().isDisabled).toBe(false);
-    });
-
-    it('should confirm with the selected node when the confirm button is clicked', () => {
+    it('reports the node picked in the tree', async () => {
         const onConfirm = jest.fn();
-        component.config = buildConfig({ onConfirm, selectedKey: 'child' });
+        await render(buildConfig({ onConfirm }));
 
-        component.getConfirmButton().action?.();
+        treeNode('Root').click();
+        fixture.detectChanges();
+        buttonLabelled('confirm').click();
 
-        expect(onConfirm).toHaveBeenCalledWith(expect.objectContaining({ key: 'child' }));
+        expect(onConfirm).toHaveBeenCalledWith(expect.objectContaining({ key: 'root' }));
     });
 
-    it('should dismiss when the cancel button is clicked', () => {
-        component.getCancelButton().action?.();
+    it('closes from the cancel button and from the config', async () => {
+        await render();
 
+        buttonLabelled('cancel').click();
+        expect(hide).toHaveBeenCalled();
+
+        hide.mockReset();
+        fixture.componentInstance.config.close();
         expect(hide).toHaveBeenCalled();
     });
 });
-
-function buildConfig(
-    overrides?: Partial<{
-        onConfirm: (node: TreeNode | undefined) => void;
-        selectedKey: string;
-        title: string;
-    }>
-): ModalTreeConfig {
-    return new ModalTreeConfig({
-        nodes: [new TreeNode({ key: 'root', children: [new TreeNode({ key: 'child' })] })],
-        onConfirm: overrides?.onConfirm,
-        prefix: 'test.modal-tree',
-        selectedKey: overrides?.selectedKey,
-        title: overrides?.title
-    });
-}

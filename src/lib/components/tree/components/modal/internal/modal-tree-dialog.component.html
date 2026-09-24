@@ -2,7 +2,7 @@
     <div class="d-flex align-items-start justify-content-between gap-3">
         <div class="d-flex align-items-start gap-3 grow min-w-0">
             <span class="bey-modal-tree-icon" aria-hidden="true">
-                <fa-icon [icon]="getIcon()"></fa-icon>
+                <fa-icon [icon]="titleIcon"></fa-icon>
             </span>
 
             <div class="min-w-0 grow">
@@ -22,16 +22,16 @@
     </div>
 
     <div class="bey-modal-tree-body mt-3">
-        <bey-tree [config]="config.treeConfig"></bey-tree>
+        <bey-tree [config]="treeConfig()"></bey-tree>
     </div>
 
     <div class="d-flex justify-content-end gap-2 mt-4 bey-modal-tree-actions">
         <span class="bey-modal-tree-action-slot">
-            <bey-button [button]="getCancelButton()"></bey-button>
+            <bey-button [button]="cancelButton"></bey-button>
         </span>
 
         <span class="bey-modal-tree-action-slot">
-            <bey-button [button]="getConfirmButton()"></bey-button>
+            <bey-button [button]="confirmButton()"></bey-button>
         </span>
     </div>
 </div>

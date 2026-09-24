@@ -16,16 +16,18 @@
    specificity as the rule below and order-dependent on the vendor's own stylesheet — `!important`
    makes the outcome deterministic instead of relying on import order. A thin bottom border on every
    page but the last replaces the shadow as the page-break cue, since pages have no border by default. */
+/* stylelint-disable selector-class-pattern, declaration-no-important -- pdf.js owns these classes, and its own stylesheet has to be beaten deterministically; the reason is spelled out above. */
 ::ng-deep .bey-pdf-viewer .pdfViewer .page {
     border: none !important;
     border-image: none !important;
     box-shadow: none !important;
-    border-bottom: 1px solid var(--bey-gray-300) !important;
+    border-bottom: var(--bey-border-width) solid var(--bey-border-default) !important;
 }
 
 ::ng-deep .bey-pdf-viewer .pdfViewer .page:last-child {
     border-bottom: none !important;
 }
+/* stylelint-enable selector-class-pattern, declaration-no-important */
 
 /* Background is handled by `PdfViewerConfig.backgroundColor` (bound to the viewer's own
    `[style.backgroundColor]`, see pdf-viewer-config.model.ts) — only the scrollbar needs overriding
@@ -46,7 +48,7 @@
 }
 
 ::ng-deep .bey-pdf-viewer #viewerContainer::-webkit-scrollbar-thumb {
-    border-radius: 999px;
+    border-radius: var(--bey-radius-pill);
     background-color: var(--bey-thin-scroll-thumb);
 }
 

@@ -21,36 +21,36 @@
 .bey-tree-node {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--bey-space-sm);
     width: 100%;
-    padding-block: 0.45rem;
-    padding-right: 0.6rem;
-    border-radius: 0.4rem;
+    padding-block: var(--bey-space-xs);
+    padding-right: var(--bey-space-sm);
+    border-radius: var(--bey-radius-sm);
     color: var(--bey-tree-fg);
-    font-size: 0.86rem;
+    font-size: var(--bey-font-size-sm);
     cursor: pointer;
     transition:
-        background-color 0.15s ease,
-        color 0.15s ease;
+        background-color var(--bey-duration-fast) var(--bey-easing-standard),
+        color var(--bey-duration-fast) var(--bey-easing-standard);
 }
 
-.bey-tree-node:hover:not(.bey-tree-node-disabled) {
+.bey-tree-node:hover:not(.is-disabled) {
     background-color: var(--bey-bg-hover);
 }
 
 .bey-tree-node:focus-visible {
-    outline: 2px solid var(--bey-primary);
+    outline: var(--bey-border-width-thick) solid var(--bey-primary);
     outline-offset: -2px;
 }
 
-.bey-tree-node-selected {
+.bey-tree-node.is-selected {
     background-color: var(--bey-bg-active);
-    font-weight: 600;
+    font-weight: var(--bey-font-weight-semibold);
 }
 
-.bey-tree-node-disabled {
+.bey-tree-node.is-disabled {
     cursor: not-allowed;
-    opacity: 0.45;
+    opacity: var(--bey-opacity-disabled);
 }
 
 .bey-tree-toggle {
@@ -66,23 +66,23 @@
     padding: 0;
 }
 
-.bey-tree-toggle-hidden {
+.bey-tree-toggle.is-hidden {
     visibility: hidden;
 }
 
 .bey-tree-chevron {
-    font-size: 0.7rem;
-    transition: transform 0.15s ease;
+    font-size: var(--bey-font-size-2xs);
+    transition: transform var(--bey-duration-fast) var(--bey-easing-standard);
 }
 
-.bey-tree-chevron-open {
+.bey-tree-chevron.is-open {
     transform: rotate(90deg);
 }
 
 .bey-tree-node-icon {
     flex: 0 0 auto;
     color: currentColor;
-    font-size: 0.86rem;
+    font-size: var(--bey-font-size-sm);
 }
 
 .bey-tree-node-label {
