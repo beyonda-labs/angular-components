@@ -1,7 +1,7 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
 import { BreadcrumbItem } from '../../breadcrumb/models/breadcrumb.model';
-import { FooterConfig } from '../../footer/public-api';
+import { FooterConfig } from '../../footer/models/footer.model';
 import { LeftMenuAction, LeftMenuTitle, LeftMenuUserInfo } from '../../left-menu/models/left-menu.model';
 
 export class AppLayoutConfig {

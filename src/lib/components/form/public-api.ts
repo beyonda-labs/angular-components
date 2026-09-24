@@ -14,7 +14,10 @@ export type { ModalFormConfigParameters as BeyModalFormConfigParameters } from '
 export { ModalFormService as BeyModalFormService } from './components/modal/services/modal-form.service';
 export { modalFormGuard as beyModalFormGuard } from './components/modal/guards/modal-form.guard';
 export { FormField as BeyFormField, FormFieldType as BeyFormFieldType } from './models/form-field.model';
-export type { FormFieldColumn as BeyFormFieldColumn, FormFieldOption as BeyFormFieldOption } from './models/form-field.model';
+export type {
+    FormFieldColumn as BeyFormFieldColumn,
+    FormFieldOption as BeyFormFieldOption
+} from './models/form-field.model';
 export {
     FormFieldLengthValidator as BeyFormFieldLengthValidator,
     FormFieldPatternValidator as BeyFormFieldPatternValidator,
