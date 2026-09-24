@@ -4,22 +4,22 @@
     --bey-left-menu-surface-alt: var(--bey-bg-muted);
     --bey-left-menu-border: var(--bey-gray-200);
     --bey-left-menu-border-strong: var(--bey-gray-400);
-    --bey-left-menu-text: var(--text-primary);
-    --bey-left-menu-text-muted: var(--text-muted);
-    --bey-left-menu-text-soft: var(--text-muted);
+    --bey-left-menu-text: var(--bey-text-primary);
+    --bey-left-menu-text-muted: var(--bey-text-muted);
+    --bey-left-menu-text-soft: var(--bey-text-muted);
     --bey-left-menu-height: 100%;
     --bey-left-menu-surface-subtle: var(--bey-bg-muted);
     --bey-left-menu-surface-subtle-hover: var(--bey-bg-active);
     --bey-left-menu-border-subtle: var(--bey-gray-200);
     --bey-left-menu-border-subtle-hover: var(--bey-gray-400);
-    --bey-left-menu-text-secondary: var(--text-secondary);
-    --bey-left-menu-text-secondary-hover: var(--text-primary);
+    --bey-left-menu-text-secondary: var(--bey-text-secondary);
+    --bey-left-menu-text-secondary-hover: var(--bey-text-primary);
     display: block;
     height: 100%;
 }
 
 :host-context(body.dark) {
-    --bey-left-menu-accent: var(--text-primary);
+    --bey-left-menu-accent: var(--bey-text-primary);
     --bey-left-menu-border: var(--bey-gray-800);
     --bey-left-menu-border-strong: var(--bey-gray-700);
     --bey-left-menu-border-subtle: var(--bey-gray-800);

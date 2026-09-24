@@ -16,12 +16,12 @@
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
     font-size: 0.84rem;
     line-height: 1.35;
 }
 
 .bey-info-field-icon {
-    color: var(--text-muted);
+    color: var(--bey-text-muted);
     font-size: 0.8em;
 }

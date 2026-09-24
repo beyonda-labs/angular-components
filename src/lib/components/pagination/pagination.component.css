@@ -1,7 +1,7 @@
 :host {
     --bey-color-accent: var(--bey-primary);
-    --bey-color-text: var(--text-primary);
-    --bey-color-muted: var(--text-muted);
+    --bey-color-text: var(--bey-text-primary);
+    --bey-color-muted: var(--bey-text-muted);
     --bey-color-surface: var(--bey-bg-surface);
     --bey-color-surface-alt: var(--bey-bg-hover);
     --bey-color-border: var(--bey-gray-200);

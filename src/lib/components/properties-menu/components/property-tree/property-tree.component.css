@@ -4,8 +4,8 @@
     --bey-property-tree-drop: var(--bey-primary);
     --bey-property-tree-drop-invalid: var(--bey-danger);
     --bey-property-tree-hover: var(--bey-bg-hover);
-    --bey-property-tree-text: var(--text-primary);
-    --bey-property-tree-text-muted: var(--text-muted);
+    --bey-property-tree-text: var(--bey-text-primary);
+    --bey-property-tree-text-muted: var(--bey-text-muted);
 
     display: block;
 }

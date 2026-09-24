@@ -1,5 +1,5 @@
 :host {
-    --bey-field-fg: var(--text-primary);
+    --bey-field-fg: var(--bey-text-primary);
     --bey-field-ph: rgba(var(--bey-black-rgb), 0.36);
 
     display: block;
@@ -103,7 +103,7 @@ textarea.form-control {
 
 .bey-spin-btn:hover:not(:disabled) {
     background-color: var(--bey-bg-active);
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 .bey-spin-btn:active:not(:disabled) {
@@ -231,7 +231,7 @@ textarea.form-control {
 
 .bey-chip-remove:hover {
     background-color: var(--bey-bg-hover);
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 .bey-chip-readonly {
@@ -285,7 +285,7 @@ textarea.form-control {
 
 .bey-password-toggle:hover {
     background-color: var(--bey-bg-active);
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 .bey-password-toggle:active {
@@ -330,7 +330,7 @@ textarea.form-control {
 }
 
 .bey-autocomplete-action:hover:not(:disabled) {
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 .bey-autocomplete-action:disabled {
@@ -437,7 +437,7 @@ body.dark .bey-autocomplete-panel {
     border-radius: 0.25rem;
     padding: 0.25rem 0.6rem;
     background-color: var(--bey-bg-active);
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
     font-size: 0.78rem;
     cursor: pointer;
     transition: background-color 0.15s ease;
@@ -497,7 +497,7 @@ body.dark .bey-autocomplete-panel {
 
 .bey-file-clear:hover {
     background-color: var(--bey-bg-hover);
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 .bey-file-hint,

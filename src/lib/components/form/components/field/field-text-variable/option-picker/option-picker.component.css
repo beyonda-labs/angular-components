@@ -2,8 +2,8 @@
     --bey-option-picker-accent: var(--bey-primary);
     --bey-option-picker-border: var(--bey-gray-200);
     --bey-option-picker-surface: var(--bey-bg-surface);
-    --bey-option-picker-text: var(--text-primary);
-    --bey-option-picker-text-muted: var(--text-muted);
+    --bey-option-picker-text: var(--bey-text-primary);
+    --bey-option-picker-text-muted: var(--bey-text-muted);
     --bey-option-picker-hover: var(--bey-bg-hover);
     --bey-option-picker-max-height: 16rem;
 

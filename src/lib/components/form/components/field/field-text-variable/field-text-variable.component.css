@@ -28,7 +28,7 @@
 
 .bey-text-variable-toggle:hover {
     background-color: var(--bey-bg-active);
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 .bey-text-variable-toggle:active,

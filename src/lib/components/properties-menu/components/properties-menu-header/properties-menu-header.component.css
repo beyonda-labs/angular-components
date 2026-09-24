@@ -1,8 +1,8 @@
 :host {
     --bey-properties-menu-header-border: var(--bey-gray-200);
     --bey-properties-menu-header-icon-bg: var(--bey-bg-muted);
-    --bey-properties-menu-header-text: var(--text-primary);
-    --bey-properties-menu-header-text-muted: var(--text-muted);
+    --bey-properties-menu-header-text: var(--bey-text-primary);
+    --bey-properties-menu-header-text-muted: var(--bey-text-muted);
 
     display: block;
 }

@@ -1,6 +1,6 @@
 :host {
-    --bey-modal-tree-fg: var(--text-primary);
-    --bey-modal-tree-fg-muted: var(--text-muted);
+    --bey-modal-tree-fg: var(--bey-text-primary);
+    --bey-modal-tree-fg-muted: var(--bey-text-muted);
     --bey-close-hover-bg: var(--bey-gray-200);
     --bey-modal-tree-scrollbar-thumb: var(--bey-gray-400);
     --bey-modal-tree-scrollbar-thumb-hover: var(--bey-gray-500);

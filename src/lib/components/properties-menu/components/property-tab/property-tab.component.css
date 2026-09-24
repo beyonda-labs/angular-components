@@ -1,7 +1,7 @@
 :host {
     --bey-property-tab-border: var(--bey-gray-200);
     --bey-property-tab-hover: var(--bey-bg-hover);
-    --bey-property-tab-text: var(--text-primary);
+    --bey-property-tab-text: var(--bey-text-primary);
 
     display: block;
 }

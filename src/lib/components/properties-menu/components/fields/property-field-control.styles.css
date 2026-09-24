@@ -3,8 +3,8 @@
     --bey-property-field-border: var(--bey-gray-300);
     --bey-property-field-border-hover: var(--bey-gray-400);
     --bey-property-field-surface: var(--bey-bg-page);
-    --bey-property-field-text: var(--text-primary);
-    --bey-property-field-text-muted: var(--text-muted);
+    --bey-property-field-text: var(--bey-text-primary);
+    --bey-property-field-text-muted: var(--bey-text-muted);
 
     display: block;
 }
@@ -99,7 +99,7 @@
 }
 
 .bey-property-field-variable-trigger-active {
-    color: var(--text-inverse);
+    color: var(--bey-text-inverse);
     background: var(--bey-property-field-accent);
     border-color: var(--bey-property-field-accent);
 }

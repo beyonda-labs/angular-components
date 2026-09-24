@@ -29,7 +29,7 @@
     position: relative;
     flex: 1 1 auto;
 
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
     background-size: cover;
     background-position: center;
     transition:
@@ -66,7 +66,7 @@
     border: 1px solid var(--bey-login-line);
     border-radius: 16px;
     padding: 40px 36px;
-    box-shadow: var(--bey-login-shadow-card);
+    box-shadow: var(--bey-login-shadow-card, var(--bey-shadow-md));
     width: 330px;
 }
 
@@ -75,7 +75,7 @@
     gap: 10px;
     font-size: 12px;
     letter-spacing: 0.08em;
-    color: var(--text-muted);
+    color: var(--bey-text-muted);
 }
 
 .bey-login__intro-icon {
@@ -92,13 +92,13 @@
     font-size: 35px;
     letter-spacing: -0.025em;
     line-height: 1.05;
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 .bey-login__intro-pitch {
     font-size: 16px;
     line-height: 1.5;
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 /* ─── Left card: view tabs ───────────────────────────────────────────────── */
@@ -115,11 +115,11 @@
     letter-spacing: -0.02em;
     margin: 0 0 6px;
     line-height: 1.15;
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 .bey-login__welcome p {
-    color: var(--text-muted);
+    color: var(--bey-text-muted);
     font-size: 14px;
 }
 
@@ -134,7 +134,7 @@
 :host ::ng-deep .bey-field-label {
     font-size: 12px;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: var(--bey-text-secondary);
     font-family: var(--bey-login-font);
 }
 
@@ -158,7 +158,7 @@
 }
 
 :host ::ng-deep .bey-field-wrap:focus-within {
-    border-color: var(--text-primary);
+    border-color: var(--bey-text-primary);
     box-shadow: 0 0 0 3px rgba(var(--bey-black-rgb), 0.08);
 }
 
@@ -180,7 +180,7 @@
     padding: 12px 14px;
     font-family: var(--bey-login-font);
     font-size: 14px;
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
     border-radius: var(--bey-login-radius);
 }
 
@@ -189,14 +189,14 @@
 }
 
 :host ::ng-deep .bey-field-wrap input::placeholder {
-    color: var(--text-disabled);
+    color: var(--bey-text-disabled);
 }
 
 :host ::ng-deep .bey-suffix-btn {
     appearance: none;
     border: 0;
     background: transparent;
-    color: var(--text-muted);
+    color: var(--bey-text-muted);
     padding: 0 12px;
     height: 100%;
     display: flex;
@@ -205,7 +205,7 @@
 }
 
 :host ::ng-deep .bey-suffix-btn:hover {
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 :host ::ng-deep .bey-field-msg {
@@ -216,7 +216,7 @@
 }
 
 :host ::ng-deep .bey-link-muted {
-    color: var(--text-muted);
+    color: var(--bey-text-muted);
     text-decoration: none;
     font-size: 12px;
     background: none;
@@ -227,7 +227,7 @@
 }
 
 :host ::ng-deep .bey-link-muted:hover {
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 /* ─── CTA ────────────────────────────────────────────────────────────────── */
@@ -292,7 +292,7 @@
     align-items: center;
     gap: 12px;
     margin: 18px 0;
-    color: var(--text-disabled);
+    color: var(--bey-text-disabled);
     font-size: 11.5px;
     letter-spacing: 0.08em;
     font-family: var(--bey-login-font);
@@ -312,7 +312,6 @@
     flex-direction: row;
     gap: 8px;
 }
-
 
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
 @media (max-width: 880px) {

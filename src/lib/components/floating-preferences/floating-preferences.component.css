@@ -1,6 +1,6 @@
 :host {
     --bey-fp-fg: var(--bey-gray-700);
-    --bey-fp-fg-hover: var(--text-primary);
+    --bey-fp-fg-hover: var(--bey-text-primary);
     --bey-fp-fg-muted: var(--bey-gray-600);
     --bey-fp-bg-hover: var(--bey-gray-50);
     --bey-fp-border-focus: var(--bey-gray-300);

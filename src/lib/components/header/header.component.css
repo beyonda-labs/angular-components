@@ -1,7 +1,7 @@
 :host {
-    --bey-header-fg: var(--text-primary);
+    --bey-header-fg: var(--bey-text-primary);
     --bey-header-badge-bg: var(--bey-primary);
-    --bey-header-badge-fg: var(--text-inverse);
+    --bey-header-badge-fg: var(--bey-text-inverse);
 
     display: block;
     width: 100%;

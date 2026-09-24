@@ -9,7 +9,7 @@
     border-radius: 0.5rem;
     background: var(--bey-bg-surface);
     box-shadow: 0 8px 24px rgba(var(--bey-black-rgb), 0.1);
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
     pointer-events: auto;
     animation: bey-toast-in 0.3s ease-out;
 }
@@ -33,7 +33,7 @@
 }
 
 .toast-container .bey-toast .toast-message {
-    color: var(--text-secondary);
+    color: var(--bey-text-secondary);
     font-size: 0.84rem;
     line-height: 1.5;
     margin-top: 0.15rem;

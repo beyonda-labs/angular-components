@@ -4,8 +4,8 @@
     min-width: 0;
 
     --bey-table-surface: var(--bey-bg-page);
-    --bey-table-text: var(--text-primary);
-    --bey-table-text-muted: var(--text-muted);
+    --bey-table-text: var(--bey-text-primary);
+    --bey-table-text-muted: var(--bey-text-muted);
     --bey-table-border-subtle: rgba(var(--bey-black-rgb), 0.07);
     --bey-table-border-strong: rgba(var(--bey-black-rgb), 0.1);
     --bey-table-row-hover: var(--bey-bg-hover);

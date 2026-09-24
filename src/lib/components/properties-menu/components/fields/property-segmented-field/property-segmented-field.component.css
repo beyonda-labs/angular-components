@@ -1,8 +1,8 @@
 :host {
     --bey-property-segmented-accent: var(--bey-primary);
     --bey-property-segmented-border: var(--bey-gray-300);
-    --bey-property-segmented-text: var(--text-primary);
-    --bey-property-segmented-text-muted: var(--text-muted);
+    --bey-property-segmented-text: var(--bey-text-primary);
+    --bey-property-segmented-text-muted: var(--bey-text-muted);
 
     display: block;
 }
@@ -44,7 +44,7 @@
 
 .bey-property-segmented-field-option-active {
     background: var(--bey-property-segmented-accent);
-    color: var(--text-inverse);
+    color: var(--bey-text-inverse);
 }
 
 .bey-property-segmented-field-option:focus-visible {

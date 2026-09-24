@@ -1,6 +1,6 @@
 :host {
-    --bey-tree-fg: var(--text-primary);
-    --bey-tree-fg-muted: var(--text-muted);
+    --bey-tree-fg: var(--bey-text-primary);
+    --bey-tree-fg-muted: var(--bey-text-muted);
 
     display: block;
     color: var(--bey-tree-fg);

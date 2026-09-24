@@ -98,11 +98,11 @@ body.dark .btn-link.btn-link-secondary {
 /* ─── Texts  ─────────────────────────────────────────────────────────────── */
 
 .text-dark {
-    color: var(--text-primary) !important;
+    color: var(--bey-text-primary) !important;
 }
 
 .text-muted {
-    color: var(--text-muted) !important;
+    color: var(--bey-text-muted) !important;
 }
 
 /* ─── Form controls ──────────────────────────────────────────────────────── */
@@ -116,7 +116,7 @@ body.dark .btn-link.btn-link-secondary {
 .form-control:disabled,
 .form-select:disabled {
     background-color: var(--bey-bg-muted) !important;
-    color: var(--text-muted) !important;
+    color: var(--bey-text-muted) !important;
     cursor: not-allowed;
 }
 
@@ -188,7 +188,7 @@ input[type='number']::-webkit-outer-spin-button {
 }
 
 .bs-datepicker .bs-datepicker-head button {
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 .bs-datepicker .bs-datepicker-body table th {
@@ -200,7 +200,7 @@ input[type='number']::-webkit-outer-spin-button {
 
 .bs-datepicker .bs-datepicker-body table td span {
     border-radius: 0.25rem;
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 .bs-datepicker .bs-datepicker-body table td span:hover,
@@ -222,7 +222,7 @@ input[type='number']::-webkit-outer-spin-button {
 
 .bs-datepicker .bs-datepicker-body table td.disabled span,
 .bs-datepicker .bs-datepicker-body table td.is-other-month span {
-    color: var(--text-disabled);
+    color: var(--bey-text-disabled);
 }
 
 .bs-datepicker .bs-datepicker-body table td.today span {
@@ -236,7 +236,7 @@ input[type='number']::-webkit-outer-spin-button {
 .bs-datepicker .bs-datepicker-buttons .btn {
     background-color: var(--bey-bg-page);
     border: 1px solid var(--bey-secondary);
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
     font-size: 0.75rem;
 }
 

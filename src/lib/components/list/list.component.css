@@ -1,6 +1,6 @@
 :host {
     --bey-list-border: var(--bey-gray-200);
-    --bey-list-fg-muted: var(--text-muted);
+    --bey-list-fg-muted: var(--bey-text-muted);
     --bey-list-hover-shadow: rgba(var(--bey-black-rgb), 0.08);
 
     display: block;

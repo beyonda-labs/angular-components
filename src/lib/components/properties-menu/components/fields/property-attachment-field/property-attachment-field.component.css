@@ -57,14 +57,14 @@
 
 .bey-property-attachment-option-label {
     overflow: hidden;
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
     font-size: 0.8rem;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .bey-property-attachment-option-description {
-    color: var(--text-muted);
+    color: var(--bey-text-muted);
     font-size: 0.72rem;
 }
 
@@ -80,7 +80,7 @@
 .bey-property-attachment-empty {
     margin: 0;
     padding: 0.4rem 0.5rem;
-    color: var(--text-muted);
+    color: var(--bey-text-muted);
     font-size: 0.78rem;
 }
 

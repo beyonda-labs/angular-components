@@ -2,8 +2,8 @@
     --bey-variable-picker-accent: var(--bey-primary);
     --bey-variable-picker-border: var(--bey-gray-200);
     --bey-variable-picker-surface: var(--bey-bg-surface);
-    --bey-variable-picker-text: var(--text-primary);
-    --bey-variable-picker-text-muted: var(--text-muted);
+    --bey-variable-picker-text: var(--bey-text-primary);
+    --bey-variable-picker-text-muted: var(--bey-text-muted);
     --bey-variable-picker-hover: var(--bey-bg-hover);
     --bey-variable-picker-max-height: 16rem;
 

@@ -1,7 +1,7 @@
 :host {
     --bey-property-group-border: var(--bey-gray-200);
-    --bey-property-group-text: var(--text-primary);
-    --bey-property-group-text-muted: var(--text-muted);
+    --bey-property-group-text: var(--bey-text-primary);
+    --bey-property-group-text-muted: var(--bey-text-muted);
 
     display: block;
 }

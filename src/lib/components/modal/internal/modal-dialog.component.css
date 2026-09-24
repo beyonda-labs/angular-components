@@ -1,7 +1,7 @@
 :host {
-    --bey-modal-fg: var(--text-primary);
-    --bey-modal-fg-muted: var(--text-muted);
-    --bey-modal-fg-message: var(--text-secondary);
+    --bey-modal-fg: var(--bey-text-primary);
+    --bey-modal-fg-muted: var(--bey-text-muted);
+    --bey-modal-fg-message: var(--bey-text-secondary);
     --bey-close-hover-bg: var(--bey-gray-200);
 
     display: block;

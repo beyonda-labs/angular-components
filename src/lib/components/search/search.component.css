@@ -1,6 +1,6 @@
 :host {
-    --bey-search-fg: var(--text-primary);
-    --bey-search-fg-muted: var(--text-muted);
+    --bey-search-fg: var(--bey-text-primary);
+    --bey-search-fg-muted: var(--bey-text-muted);
     --bey-search-border: var(--bey-gray-200);
     --bey-search-surface: var(--bey-bg-surface);
     --bey-search-ph: rgba(var(--bey-black-rgb), 0.36);
@@ -160,7 +160,7 @@
 .bey-search-range {
     display: flex;
     align-items: center;
-    border: 1px solid var(--bs-border-color, var(--bey-search-border));
+    border: var(--bey-border-width) solid var(--bey-search-border);
     border-radius: 0.3rem;
     background: var(--bey-search-surface);
 }

@@ -1,6 +1,6 @@
 :host {
-    --bey-modal-form-fg: var(--text-primary);
-    --bey-modal-form-fg-muted: var(--text-muted);
+    --bey-modal-form-fg: var(--bey-text-primary);
+    --bey-modal-form-fg-muted: var(--bey-text-muted);
     --bey-close-hover-bg: var(--bey-gray-200);
 
     display: block;

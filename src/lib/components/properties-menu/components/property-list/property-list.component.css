@@ -1,6 +1,6 @@
 :host {
-    --bey-property-list-text: var(--text-primary);
-    --bey-property-list-text-muted: var(--text-muted);
+    --bey-property-list-text: var(--bey-text-primary);
+    --bey-property-list-text-muted: var(--bey-text-muted);
 
     display: block;
 }
