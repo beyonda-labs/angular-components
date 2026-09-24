@@ -2,136 +2,111 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { LeftMenuComponent } from './left-menu.component';
-import { LeftMenuAction, LeftMenuConfig, LeftMenuTitle, LeftMenuUserInfo } from './models/left-menu.model';
+import { LeftMenuAction, LeftMenuConfig, LeftMenuConfigParameters, LeftMenuTitle } from './models/left-menu.model';
 
 describe('LeftMenuComponent', () => {
-    let component: LeftMenuComponent;
     let fixture: ComponentFixture<LeftMenuComponent>;
+
+    function buildConfig(overrides: Partial<LeftMenuConfigParameters> = {}): LeftMenuConfig {
+        return new LeftMenuConfig({
+            prefix: 'demo',
+            title: new LeftMenuTitle({ title: 'Demo app' }),
+            topActions: [new LeftMenuAction({ key: 'home', label: 'Home' })],
+            bottomActions: [new LeftMenuAction({ key: 'logout', label: 'Log out' })],
+            ...overrides
+        });
+    }
+
+    async function render(config: LeftMenuConfig = buildConfig()): Promise<void> {
+        fixture = TestBed.createComponent(LeftMenuComponent);
+        fixture.componentRef.setInput('config', config);
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
+
+    function aside(): HTMLElement {
+        return fixture.nativeElement.querySelector('aside');
+    }
+
+    function toggle(): HTMLButtonElement {
+        return fixture.nativeElement.querySelector('.bey-left-menu-toggle');
+    }
+
+    function actionLabels(): string[] {
+        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-left-menu-action-label')].map(
+            label => label.textContent?.trim() ?? ''
+        );
+    }
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [LeftMenuComponent, TranslateModule.forRoot()]
         }).compileComponents();
-
-        fixture = TestBed.createComponent(LeftMenuComponent);
-        component = fixture.componentInstance;
     });
 
-    it('should create', () => {
-        component.config = buildConfig();
+    it('shows the title and the actions of both groups', async () => {
+        await render();
+
+        expect(fixture.nativeElement.textContent).toContain('Demo app');
+        expect(actionLabels()).toEqual(['Home', 'Log out']);
+    });
+
+    it('starts expanded or collapsed as the config says', async () => {
+        await render();
+        expect(aside().classList).not.toContain('is-collapsed');
+
+        await render(buildConfig({ expanded: false }));
+        expect(aside().classList).toContain('is-collapsed');
+    });
+
+    it('collapses and expands from its toggle, reporting each change', async () => {
+        await render();
+        const changes: boolean[] = [];
+        fixture.componentInstance.expandedChange.subscribe(value => changes.push(value));
+
+        toggle().click();
         fixture.detectChanges();
+        expect(aside().classList).toContain('is-collapsed');
 
-        expect(component).toBeTruthy();
+        toggle().click();
+        fixture.detectChanges();
+        expect(aside().classList).not.toContain('is-collapsed');
+
+        expect(changes).toEqual([false, true]);
     });
 
-    it('should sync expanded state from config input', () => {
-        component.config = buildConfig({ expanded: false });
+    it('builds the title from the prefix when the config leaves it at its default', async () => {
+        await render(buildConfig({ title: new LeftMenuTitle({}) }));
 
-        expect(component.expanded).toBe(false);
-        expect(component.config.expanded).toBe(false);
+        expect(fixture.nativeElement.textContent).toContain('demo.title');
     });
 
-    it('should return top and bottom actions from config', () => {
-        const topAction = new LeftMenuAction({ key: 'dashboard' });
-        const bottomAction = new LeftMenuAction({ key: 'support' });
-        component.config = buildConfig({
-            bottomActions: [bottomAction],
-            topActions: [topAction]
-        });
-
-        expect(component.topActions).toEqual([topAction]);
-        expect(component.bottomActions).toEqual([bottomAction]);
-    });
-
-    it('should fallback title text to prefix when title uses default placeholder', () => {
-        component.config = buildConfig({
-            prefix: 'demo.left-menu',
-            title: new LeftMenuTitle({ title: 'title' })
-        });
-
-        expect(component.getTitleText()).toBe('demo.left-menu.title');
-    });
-
-    it('should return configured title styles and title text', () => {
-        component.config = buildConfig({
-            title: new LeftMenuTitle({ styles: 'fw-bold text-uppercase', title: 'custom.title' })
-        });
-
-        expect(component.getTitleClasses()).toBe('fw-bold text-uppercase');
-        expect(component.getTitleText()).toBe('custom.title');
-    });
-
-    it('should resolve user full name and prefer email for tooltip', () => {
-        component.config = buildConfig({
-            userInfo: new LeftMenuUserInfo({
-                email: 'ada@example.com',
-                name: 'Ada',
-                surname: 'Lovelace'
+    it('shows the user of the session', async () => {
+        await render(
+            buildConfig({
+                userInfo: { email: 'ada@example.com', initials: 'AL', name: 'Ada', surname: 'Lovelace' }
             })
-        });
+        );
 
-        expect(component.getUserFullName()).toBe('Ada Lovelace');
-        expect(component.getUserTooltip()).toBe('ada@example.com');
+        expect(fixture.nativeElement.querySelector('.bey-left-menu-footer').textContent).toContain('Ada Lovelace');
     });
 
-    it('should fallback user tooltip to full name when email is missing', () => {
-        component.config = buildConfig({
-            userInfo: new LeftMenuUserInfo({
-                name: 'Ada',
-                surname: 'Lovelace'
-            })
-        });
+    it('shows no user area when the config carries no user', async () => {
+        await render();
 
-        expect(component.getUserTooltip()).toBe('Ada Lovelace');
+        expect(fixture.nativeElement.querySelector('.bey-left-menu-footer')).toBeNull();
     });
 
-    it('should return the correct toggle tooltip for each state', () => {
-        component.config = buildConfig({ expanded: true });
+    it('follows a replaced config', async () => {
+        await render();
 
-        expect(component.getToggleTooltip()).toBe('angular-components.left-menu.collapse');
+        fixture.componentRef.setInput(
+            'config',
+            buildConfig({ topActions: [new LeftMenuAction({ key: 'other', label: 'Other' })] })
+        );
+        fixture.detectChanges();
+        await fixture.whenStable();
 
-        component.expanded = false;
-
-        expect(component.getToggleTooltip()).toBe('angular-components.left-menu.expand');
-    });
-
-    it('should toggle expanded state and persist it into config', () => {
-        component.config = buildConfig({ expanded: true });
-
-        component.toggleExpanded();
-
-        expect(component.expanded).toBe(false);
-        expect(component.config.expanded).toBe(false);
-    });
-
-    it('should emit expandedChange with the new state on toggle', () => {
-        component.config = buildConfig({ expanded: true });
-        const spy = jest.fn();
-        component.expandedChange.subscribe(spy);
-
-        component.toggleExpanded();
-
-        expect(spy).toHaveBeenCalledWith(false);
-
-        component.toggleExpanded();
-
-        expect(spy).toHaveBeenCalledWith(true);
+        expect(actionLabels()).toEqual(['Other', 'Log out']);
     });
 });
-
-function buildConfig(overrides?: Partial<LeftMenuConfig>): LeftMenuConfig {
-    return new LeftMenuConfig({
-        bottomActions: overrides?.bottomActions ?? [],
-        expanded: overrides?.expanded ?? true,
-        prefix: overrides?.prefix ?? 'test.left-menu',
-        title:
-            overrides?.title ??
-            new LeftMenuTitle({
-                icon: 'icon.svg',
-                styles: '',
-                title: 'test.left-menu.title'
-            }),
-        topActions: overrides?.topActions ?? [],
-        userInfo: overrides?.userInfo
-    });
-}

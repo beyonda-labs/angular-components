@@ -11,8 +11,6 @@
         "src/lib/components/form/components/field/field.component.css",
         "src/lib/components/form/components/section/section.component.css",
         "src/lib/components/form/form.component.css",
-        "src/lib/components/left-menu/components/action-list/action-list.component.css",
-        "src/lib/components/left-menu/left-menu.component.css",
         "src/lib/components/login/login.component.css",
         "src/lib/components/page/page.component.css",
         "src/lib/components/properties-menu/components/fields/property-attachment-field/property-attachment-field.component.css",

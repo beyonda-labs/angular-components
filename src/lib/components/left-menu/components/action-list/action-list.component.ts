@@ -1,13 +1,14 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, linkedSignal, output, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faChevronRight, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { LeftMenuAction } from '../../models/left-menu.model';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, NgTemplateOutlet, TooltipModule, TranslateModule],
     selector: 'bey-left-menu-action-list',
     standalone: true,
@@ -15,70 +16,40 @@ import { LeftMenuAction } from '../../models/left-menu.model';
     templateUrl: './action-list.component.html'
 })
 export class ActionListComponent {
-    @Input({ required: true })
-    set actions(value: LeftMenuAction[]) {
-        this._actions = value;
-        this.syncAccordionState();
-    }
+    readonly actions = input.required<LeftMenuAction[]>();
+    readonly expanded = input.required<boolean>();
+    readonly prefix = input.required<string>();
+    readonly groupKey = input('group');
 
-    get actions(): LeftMenuAction[] {
-        return this._actions;
-    }
+    readonly actionTriggered = output<void>();
 
-    @Input({ required: true })
-    set expanded(value: boolean) {
-        this._expanded = value;
-        this.syncAccordionState();
-    }
+    /* Which branches the accordion has open. Reseeded from the active action whenever the inputs change. */
+    readonly openPaths = linkedSignal<Set<string>>(() => {
+        const activePath = this.expanded() ? this.findFirstActivePath(this.actions(), this.groupKey()) : null;
 
-    get expanded(): boolean {
-        return this._expanded;
-    }
+        return new Set(activePath ? this.getPathHierarchy(activePath) : []);
+    });
 
-    @Input({ required: true }) prefix = '';
-    @Input()
-    set groupKey(value: string) {
-        this._groupKey = value;
-        this.syncAccordionState();
-    }
-
-    get groupKey(): string {
-        return this._groupKey;
-    }
-
-    @Output() actionTriggered = new EventEmitter<void>();
+    readonly activeFlyoutPath = signal<string | null>(null);
 
     readonly chevronDownIcon = faChevronDown;
     readonly chevronRightIcon = faChevronRight;
-
-    private _actions: LeftMenuAction[] = [];
-    private _expanded = true;
-    private _groupKey = 'group';
-    private activeFlyoutPath: string | null = null;
-    private hasSeededExpandedOpenPaths = false;
-    private readonly openPaths = new Set<string>();
 
     buildPath(parentPath: string, key: string): string {
         return parentPath ? `${parentPath}.${key}` : key;
     }
 
     getActionTooltip(action: LeftMenuAction, forceExpanded = false): string {
-        if (this.expanded || forceExpanded) {
-            return this.resolveActionText(action, 'tooltip');
-        }
-
-        return this.resolveActionText(action, 'label');
+        return this.expanded() || forceExpanded
+            ? this.resolveActionText(action, 'tooltip')
+            : this.resolveActionText(action, 'label');
     }
 
     getButtonTooltip(action: LeftMenuAction, path: string, forceExpanded = false): string {
-        if (this.shouldShowFlyout(action, path, forceExpanded)) {
-            return '';
-        }
-
-        return this.getActionTooltip(action, forceExpanded);
+        return this.shouldShowFlyout(action, path, forceExpanded) ? '' : this.getActionTooltip(action, forceExpanded);
     }
 
-    getChevronIcon(path: string, forceExpanded = false) {
+    getChevronIcon(path: string, forceExpanded = false): IconDefinition {
         return this.isSubmenuOpen(path, forceExpanded) ? this.chevronDownIcon : this.chevronRightIcon;
     }
 
@@ -103,27 +74,15 @@ export class ActionListComponent {
     }
 
     isInlineExpanded(forceExpanded = false): boolean {
-        return this.expanded || forceExpanded;
+        return this.expanded() || forceExpanded;
     }
 
     isSubmenuOpen(path: string, forceExpanded = false): boolean {
-        if (forceExpanded) {
-            return this.openPaths.has(path);
+        if (forceExpanded || this.expanded()) {
+            return this.openPaths().has(path);
         }
 
-        if (this.expanded) {
-            return this.openPaths.has(path);
-        }
-
-        return this.activeFlyoutPath === path;
-    }
-
-    onItemMouseEnter(action: LeftMenuAction, path: string, forceExpanded = false): void {
-        if (this.expanded || forceExpanded || !this.hasSubActions(action) || action.disabled) {
-            return;
-        }
-
-        this.activeFlyoutPath = path;
+        return this.activeFlyoutPath() === path;
     }
 
     onActionClick(
@@ -148,98 +107,29 @@ export class ActionListComponent {
 
         action.action?.();
         this.actionTriggered.emit();
-        this.activeFlyoutPath = null;
+        this.activeFlyoutPath.set(null);
+    }
+
+    onItemMouseEnter(action: LeftMenuAction, path: string, forceExpanded = false): void {
+        if (this.expanded() || forceExpanded || !this.hasSubActions(action) || action.disabled) {
+            return;
+        }
+
+        this.activeFlyoutPath.set(path);
     }
 
     onItemMouseLeave(path: string, forceExpanded = false): void {
-        if (!this.expanded && !forceExpanded && this.activeFlyoutPath === path) {
-            this.activeFlyoutPath = null;
+        if (!this.expanded() && !forceExpanded && this.activeFlyoutPath() === path) {
+            this.activeFlyoutPath.set(null);
         }
     }
 
     shouldShowFlyout(action: LeftMenuAction, path: string, forceExpanded = false): boolean {
-        return !this.isInlineExpanded(forceExpanded) && this.hasSubActions(action) && this.activeFlyoutPath === path;
+        return !this.isInlineExpanded(forceExpanded) && this.hasSubActions(action) && this.activeFlyoutPath() === path;
     }
 
     shouldShowSubmenu(action: LeftMenuAction, path: string, forceExpanded = false): boolean {
-        return this.isInlineExpanded(forceExpanded) && this.hasSubActions(action) && this.openPaths.has(path);
-    }
-
-    private resolveActionText(action: LeftMenuAction, field: 'label' | 'tooltip'): string {
-        const value = action[field];
-        const defaultValue = `${action.key}.${field}`;
-
-        if (!value || value === defaultValue) {
-            return `${this.prefix}.actions.${defaultValue}`;
-        }
-
-        return value;
-    }
-
-    private toggleSubmenu(path: string, forceExpanded = false): void {
-        if (!this.expanded && !forceExpanded) {
-            this.activeFlyoutPath = this.activeFlyoutPath === path ? null : path;
-
-            return;
-        }
-
-        if (this.openPaths.has(path)) {
-            this.closePathBranch(path);
-
-            return;
-        }
-
-        this.openAccordionPath(path);
-    }
-
-    private closePathBranch(path: string): void {
-        for (const openPath of [...this.openPaths]) {
-            if (openPath === path || openPath.startsWith(`${path}.`)) {
-                this.openPaths.delete(openPath);
-            }
-        }
-    }
-
-    private isChevronTarget(event?: MouseEvent): boolean {
-        return Boolean((event?.target as HTMLElement | undefined)?.closest('.bey-left-menu-action-chevron'));
-    }
-
-    private openAccordionPath(path: string): void {
-        this.openPaths.clear();
-
-        for (const segmentPath of this.getPathHierarchy(path)) {
-            this.openPaths.add(segmentPath);
-        }
-    }
-
-    private getPathHierarchy(path: string): string[] {
-        const segments = path.split('.');
-
-        return segments.map((_segment, index) => segments.slice(0, index + 1).join('.'));
-    }
-
-    private resetExpandedOpenPaths(): void {
-        this.hasSeededExpandedOpenPaths = false;
-        this.openPaths.clear();
-    }
-
-    private syncAccordionState(): void {
-        this.resetExpandedOpenPaths();
-        this.syncExpandedOpenPaths();
-    }
-
-    private syncExpandedOpenPaths(): void {
-        if (!this.expanded || this.hasSeededExpandedOpenPaths) {
-            return;
-        }
-
-        const activePath = this.findFirstActivePath(this.actions, this.groupKey);
-
-        if (activePath) {
-            this.openAccordionPath(activePath);
-        }
-
-        this.hasSeededExpandedOpenPaths = true;
+        return this.isInlineExpanded(forceExpanded) && this.hasSubActions(action) && this.openPaths().has(path);
     }
 
     private findFirstActivePath(actions: LeftMenuAction[], parentPath: string): string | null {
@@ -260,5 +150,52 @@ export class ActionListComponent {
         }
 
         return null;
+    }
+
+    private getPathHierarchy(path: string): string[] {
+        const segments = path.split('.');
+
+        return segments.map((_segment, index) => segments.slice(0, index + 1).join('.'));
+    }
+
+    private isChevronTarget(event?: MouseEvent): boolean {
+        return Boolean((event?.target as HTMLElement | undefined)?.closest('.bey-left-menu-action-chevron'));
+    }
+
+    private resolveActionText(action: LeftMenuAction, field: 'label' | 'tooltip'): string {
+        const value = action[field];
+        const defaultValue = `${action.key}.${field}`;
+
+        if (!value || value === defaultValue) {
+            return `${this.prefix()}.actions.${defaultValue}`;
+        }
+
+        return value;
+    }
+
+    private toggleSubmenu(path: string, forceExpanded = false): void {
+        if (!this.expanded() && !forceExpanded) {
+            this.activeFlyoutPath.update(current => (current === path ? null : path));
+
+            return;
+        }
+
+        if (this.openPaths().has(path)) {
+            this.openPaths.update(paths => {
+                const next = new Set(paths);
+
+                for (const openPath of paths) {
+                    if (openPath === path || openPath.startsWith(`${path}.`)) {
+                        next.delete(openPath);
+                    }
+                }
+
+                return next;
+            });
+
+            return;
+        }
+
+        this.openPaths.set(new Set(this.getPathHierarchy(path)));
     }
 }

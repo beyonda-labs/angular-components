@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
     faCalendarDays,
     faChartColumn,
@@ -20,6 +20,7 @@ const BRAND_ICON =
     'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72 72"%3E%3Crect width="72" height="72" rx="22" fill="%23111111"/%3E%3Ccircle cx="26" cy="36" r="10" fill="%23ffffff"/%3E%3Ccircle cx="46" cy="36" r="10" fill="%23ffffff" opacity="0.9"/%3E%3C/svg%3E';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [LeftMenuComponent, TranslateModule],
     selector: 'bey-left-menu-style-guide',
     standalone: true,
