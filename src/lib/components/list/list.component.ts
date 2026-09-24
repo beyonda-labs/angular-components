@@ -1,34 +1,34 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, ContentChild, Input, TemplateRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, contentChild, input, TemplateRef } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ListConfig, ListItemContext } from './models/list.model';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgTemplateOutlet, TranslateModule],
     selector: 'bey-list',
     standalone: true,
     styleUrls: ['./list.component.css'],
     templateUrl: './list.component.html'
 })
-export class ListComponent {
-    @Input({ required: true }) config!: ListConfig;
+export class ListComponent<TItem = unknown> {
+    readonly config = input.required<ListConfig<TItem>>();
 
-    @ContentChild(TemplateRef) cardTemplate?: TemplateRef<ListItemContext>;
+    readonly cardTemplate = contentChild(TemplateRef<ListItemContext>);
 
-    getEmptyLabel(): string {
-        return this.config.emptyLabel ?? `${this.config.prefix}.empty`;
-    }
+    readonly emptyLabel = computed(() => this.config().emptyLabel ?? `${this.config().prefix}.empty`);
+    readonly isClickable = computed(() => Boolean(this.config().onItemClick));
 
-    getItemContext(item: unknown, index: number): ListItemContext {
+    getItemContext(item: TItem, index: number): ListItemContext {
         return { $implicit: item, index };
     }
 
-    onItemClick(item: unknown, index: number): void {
-        this.config.onItemClick?.(item, index);
+    onItemClick(item: TItem, index: number): void {
+        this.config().onItemClick?.(item, index);
     }
 
-    onItemKeydown(event: Event, item: unknown, index: number): void {
+    onItemKeydown(event: Event, item: TItem, index: number): void {
         if (event.target !== event.currentTarget) {
             return;
         }
@@ -37,5 +37,5 @@ export class ListComponent {
         this.onItemClick(item, index);
     }
 
-    trackByItem = (index: number, item: unknown): string | number => this.config.getItemKey?.(item, index) ?? index;
+    trackByItem = (index: number, item: TItem): string | number => this.config().getItemKey?.(item, index) ?? index;
 }

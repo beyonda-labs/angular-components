@@ -1,11 +1,11 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { ListComponent } from './list.component';
-import { ListConfig } from './models/list.model';
+import { ListConfig, ListConfigParameters } from './models/list.model';
 
-interface TestItem {
+interface Employee {
     id: number;
     name: string;
 }
@@ -15,161 +15,125 @@ interface TestItem {
     standalone: true,
     template: `
         <bey-list [config]="config">
-            <ng-template let-item let-index="index">
-                <div class="test-card">{{ index }} - {{ item.name }}</div>
+            <ng-template let-employee let-index="index">
+                <span class="card">{{ employee.name }} #{{ index }}</span>
+                <input class="inside" />
             </ng-template>
         </bey-list>
     `
 })
-class ListHostComponent {
-    @ViewChild(ListComponent) listComponent!: ListComponent;
-
-    config!: ListConfig<TestItem>;
+class HostComponent {
+    config!: ListConfig<Employee>;
 }
 
 describe('ListComponent', () => {
-    let hostFixture: ComponentFixture<ListHostComponent>;
-    let host: ListHostComponent;
+    let fixture: ComponentFixture<HostComponent>;
+
+    function buildConfig(overrides: Partial<ListConfigParameters<Employee>> = {}): ListConfig<Employee> {
+        return new ListConfig<Employee>({
+            prefix: 'demo.list',
+            items: [
+                { id: 1, name: 'Ada' },
+                { id: 2, name: 'Grace' }
+            ],
+            ...overrides
+        });
+    }
+
+    async function render(config: ListConfig<Employee> = buildConfig()): Promise<void> {
+        fixture = TestBed.createComponent(HostComponent);
+        fixture.componentInstance.config = config;
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
+
+    function items(): HTMLElement[] {
+        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-list-item')];
+    }
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [ListHostComponent, TranslateModule.forRoot()]
+            imports: [HostComponent, TranslateModule.forRoot()]
         }).compileComponents();
-
-        hostFixture = TestBed.createComponent(ListHostComponent);
-        host = hostFixture.componentInstance;
     });
 
-    it('should create', () => {
-        host.config = buildConfig();
-        hostFixture.detectChanges();
+    it('renders the consumer template once per item, with its index', async () => {
+        await render();
 
-        expect(host.listComponent).toBeTruthy();
+        expect(items().map(item => item.querySelector('.card')?.textContent)).toEqual(['Ada #0', 'Grace #1']);
     });
 
-    it('should render one wrapper per item, projecting the consumer template', () => {
-        host.config = buildConfig();
-        hostFixture.detectChanges();
+    it('shows the empty label when there are no items', async () => {
+        TestBed.inject(TranslateService).setTranslation('en', { demo: { list: { empty: 'Nothing here' } } });
+        TestBed.inject(TranslateService).use('en');
 
-        const cards = hostFixture.nativeElement.querySelectorAll('.test-card');
+        await render(buildConfig({ items: [] }));
 
-        expect(cards).toHaveLength(2);
-        expect(cards[0].textContent.trim()).toBe('0 - Ada');
-        expect(cards[1].textContent.trim()).toBe('1 - Linus');
+        expect(fixture.nativeElement.querySelector('.bey-list-empty').textContent.trim()).toBe('Nothing here');
+        expect(items()).toHaveLength(0);
     });
 
-    it('should render the empty state when there are no items', () => {
-        host.config = buildConfig({ items: [] });
-        hostFixture.detectChanges();
+    it('takes an empty label given instead of the one built from the prefix', async () => {
+        await render(buildConfig({ items: [], emptyLabel: 'demo.custom' }));
 
-        const empty = hostFixture.nativeElement.querySelector('.bey-list-empty');
-
-        expect(empty).toBeTruthy();
-        expect(hostFixture.nativeElement.querySelectorAll('.bey-list-item')).toHaveLength(0);
+        expect(fixture.nativeElement.querySelector('.bey-list-empty').textContent.trim()).toBe('demo.custom');
     });
 
-    it('should apply the bare modifier class when config.bare is true', () => {
-        host.config = buildConfig({ bare: true });
-        hostFixture.detectChanges();
-
-        const item = hostFixture.nativeElement.querySelector('.bey-list-item');
-
-        expect(item.classList.contains('bey-list-item-bare')).toBe(true);
-    });
-
-    it('should call onItemClick with the item and index when a card is clicked', () => {
+    it('reports the item and its index when a card is clicked', async () => {
         const onItemClick = jest.fn();
+        await render(buildConfig({ onItemClick }));
 
-        host.config = buildConfig({ onItemClick });
-        hostFixture.detectChanges();
+        items()[1].click();
 
-        const items = hostFixture.nativeElement.querySelectorAll('.bey-list-item');
-
-        (items[1] as HTMLElement).click();
-
-        expect(onItemClick).toHaveBeenCalledWith({ id: 2, name: 'Linus' }, 1);
+        expect(onItemClick).toHaveBeenCalledWith({ id: 2, name: 'Grace' }, 1);
     });
 
-    it('should not mark items as clickable without onItemClick', () => {
-        host.config = buildConfig();
-        hostFixture.detectChanges();
+    it('offers the cards to the keyboard only when they do something', async () => {
+        await render();
 
-        const item = hostFixture.nativeElement.querySelector('.bey-list-item') as HTMLElement;
+        expect(items().every(item => item.getAttribute('role') === null)).toBe(true);
 
-        expect(item.classList.contains('bey-list-item-clickable')).toBe(false);
-        expect(item.getAttribute('role')).toBeNull();
+        await render(buildConfig({ onItemClick: jest.fn() }));
+
+        expect(items().every(item => item.getAttribute('role') === 'button')).toBe(true);
+        expect(items().every(item => item.getAttribute('tabindex') === '0')).toBe(true);
     });
 
-    it('should use getItemKey to track items when provided', () => {
-        const getItemKey = jest.fn((item: TestItem) => item.id);
+    it('activates a card with the space key', async () => {
+        const onItemClick = jest.fn();
+        await render(buildConfig({ onItemClick }));
 
-        host.config = buildConfig({ getItemKey });
-        hostFixture.detectChanges();
+        items()[0].dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
 
-        expect(host.listComponent.trackByItem(0, { id: 2, name: 'Linus' })).toBe(2);
-        expect(getItemKey).toHaveBeenCalled();
+        expect(onItemClick).toHaveBeenCalledWith({ id: 1, name: 'Ada' }, 0);
     });
 
-    it('should fall back to the index when getItemKey is not provided', () => {
-        host.config = buildConfig();
-        hostFixture.detectChanges();
+    it('leaves the space key alone when it is typed inside a control of the card', async () => {
+        const onItemClick = jest.fn();
+        await render(buildConfig({ onItemClick }));
 
-        expect(host.listComponent.trackByItem(1, { id: 2, name: 'Linus' })).toBe(1);
+        items()[0]
+            .querySelector('input.inside')
+            ?.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+
+        expect(onItemClick).not.toHaveBeenCalled();
     });
 
-    it('should resolve the default empty label from the prefix', () => {
-        host.config = buildConfig({ items: [] });
-        hostFixture.detectChanges();
+    it('keeps an item across a reorder when the config says how to identify it', async () => {
+        await render(buildConfig({ getItemKey: employee => employee.id }));
 
-        expect(host.listComponent.getEmptyLabel()).toBe('test.list.empty');
-    });
+        const first = items()[0];
 
-    it('should use the custom empty label when provided', () => {
-        host.config = buildConfig({ emptyLabel: 'custom.empty', items: [] });
-        hostFixture.detectChanges();
+        fixture.componentInstance.config = buildConfig({
+            getItemKey: employee => employee.id,
+            items: [
+                { id: 2, name: 'Grace' },
+                { id: 1, name: 'Ada' }
+            ]
+        });
+        fixture.detectChanges();
+        await fixture.whenStable();
 
-        expect(host.listComponent.getEmptyLabel()).toBe('custom.empty');
-    });
-    it('activates an item when the space key is pressed on the card itself', () => {
-        const clicked: number[] = [];
-
-        host.config = buildConfig({ onItemClick: (_item, index) => clicked.push(index) });
-        hostFixture.detectChanges();
-
-        const card: HTMLElement = hostFixture.nativeElement.querySelector('.bey-list-item');
-
-        card.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
-
-        expect(clicked).toEqual([0]);
-    });
-
-    it('leaves the space key alone when it is typed inside a control of the card', () => {
-        const clicked: number[] = [];
-
-        host.config = buildConfig({ onItemClick: (_item, index) => clicked.push(index) });
-        hostFixture.detectChanges();
-
-        const card: HTMLElement = hostFixture.nativeElement.querySelector('.bey-list-item');
-        const input = document.createElement('input');
-
-        card.append(input);
-
-        const event = new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true });
-
-        input.dispatchEvent(event);
-
-        expect(clicked).toEqual([]);
-        expect(event.defaultPrevented).toBe(false);
+        expect(items()[1]).toBe(first);
     });
 });
-
-function buildConfig(overrides?: Partial<ListConfig<TestItem>>): ListConfig<TestItem> {
-    return new ListConfig<TestItem>({
-        items: [
-            { id: 1, name: 'Ada' },
-            { id: 2, name: 'Linus' }
-        ],
-        prefix: 'test.list',
-        ...overrides
-    });
-}

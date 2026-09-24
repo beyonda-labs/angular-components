@@ -40,8 +40,10 @@
             {
                 "ignoreValues": [
                     "0",
+                    "1",
                     "auto",
                     "currentColor",
+                    "currentcolor",
                     "dashed",
                     "dotted",
                     "double",

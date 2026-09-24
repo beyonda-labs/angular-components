@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { ListComponent } from '../../list.component';
@@ -11,6 +11,7 @@ interface Employee {
 }
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ListComponent, TranslateModule],
     selector: 'bey-list-style-guide',
     standalone: true,

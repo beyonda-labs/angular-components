@@ -72,8 +72,8 @@
     </div>
 </div>
 
-@if (showFullscreenOverlay) {
-    <bey-loading-overlay [fullscreen]="true" (click)="showFullscreenOverlay = false"></bey-loading-overlay>
+@if (showFullscreenOverlay()) {
+    <bey-loading-overlay [fullscreen]="true" (click)="showFullscreenOverlay.set(false)"></bey-loading-overlay>
 }
 
 <h4 class="mt-4 mb-3 fs-6 fw-semibold text-dark">Service</h4>

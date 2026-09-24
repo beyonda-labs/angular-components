@@ -1,88 +1,52 @@
-# List Component (`bey-list`)
+# List
 
-Vertical list of cards with fully custom HTML per card, projected through an `<ng-template>`. The
-component owns the generic shell (vertical stacking, spacing, empty state, optional clickable
-card chrome) while the consumer's template owns the card's layout, texts and per-app styles.
+A vertical list that renders a template the consumer provides, once per item. The component owns spacing,
+the empty state and, when a click handler is given, keyboard access; what a card looks like is entirely the
+consumer's.
 
-Supported capabilities:
-
--   Custom HTML per card via content projection (`let-item`, `let-index`).
--   Consistent card shell (border, radius, hover) shared across every list, or `bare` for full
-    layout control from the consumer's own template.
--   Optional whole-card click handler, keyboard-accessible (`Enter` / `Space`).
--   Configurable gap between cards.
--   Empty state via i18n.
-
----
-
-## Quick start
+## Usage
 
 ```ts
-import { BeyListConfig } from '@beyonda-labs/angular-components';
-
-interface Employee {
-    id: number;
-    name: string;
-    role: string;
-}
-
-readonly config = new BeyListConfig<Employee>({
-    prefix: 'employees.list',
-    items: [
-        { id: 1, name: 'Ada Lovelace', role: 'Engineering' },
-        { id: 2, name: 'Linus Torvalds', role: 'Platform' }
-    ],
-    onItemClick: employee => this.openEmployee(employee)
+const list = new BeyListConfig<Employee>({
+    prefix: 'myPage.employees',
+    items: this.employees(),
+    getItemKey: employee => employee.id,
+    onItemClick: employee => this.open(employee)
 });
 ```
 
 ```html
-<bey-list [config]="config">
+<bey-list [config]="list">
     <ng-template let-employee let-index="index">
-        <div class="employee-card">
-            <span class="employee-card__index">{{ index + 1 }}</span>
-            <div>
-                <h4 class="employee-card__name">{{ employee.name }}</h4>
-                <p class="employee-card__role">{{ employee.role }}</p>
-            </div>
-        </div>
+        <strong>{{ employee.name }}</strong>
     </ng-template>
 </bey-list>
 ```
 
-The `<ng-template>` receives the item as the default context variable (`let-employee`) and its
-index as `let-index="index"`; both are typed `unknown` in the template (cast as needed), matching
-the model-driven, consumer-owned-render convention used by `bey-table`'s `loadRow`.
+## BeyListConfig
 
----
+| Field         | Required | Default          | Meaning                                                      |
+| ------------- | -------- | ---------------- | ------------------------------------------------------------ |
+| `items`       | yes      |                  | What to render, in order                                      |
+| `prefix`      | yes      |                  | i18n prefix the default empty label is built from             |
+| `gap`         | no       | `0.75rem`        | Space between cards                                           |
+| `bare`        | no       | `false`          | Drop the card frame and let the template draw everything      |
+| `emptyLabel`  | no       | `<prefix>.empty` | Key shown when there are no items                             |
+| `getItemKey`  | no       | the index        | Identifies an item so it survives a reorder                   |
+| `onItemClick` | no       |                  | Called with the item and its index; makes the cards focusable |
 
-## `BeyListConfig`
+The component is generic over the item type, so `getItemKey` and `onItemClick` are typed.
 
-| Parameter     | Type                                       | Required | Default    | Description                                                             |
-| ------------- | ------------------------------------------- | -------- | ---------- | ------------------------------------------------------------------------ |
-| `items`       | `TItem[]`                                   | yes      | —          | Items to render, one card each                                          |
-| `prefix`      | `string`                                    | yes      | —          | i18n prefix; used to build the default empty-state key (`{prefix}.empty`) |
-| `bare`        | `boolean`                                   | no       | `false`    | Disables the default card shell (border/padding/background); layout only |
-| `emptyLabel`  | `string`                                    | no       | —          | Overrides the default `{prefix}.empty` key                              |
-| `gap`         | `string`                                    | no       | `'0.75rem'`| CSS `gap` between cards                                                  |
-| `getItemKey`  | `(item: TItem, index: number) => string \| number` | no | index | Stable identity for `@for`'s `track`; falls back to the item's index    |
-| `onItemClick` | `(item: TItem, index: number) => void`      | no       | —          | Makes the whole card clickable/keyboard-activatable (`role="button"`)   |
+## Keyboard
 
----
+A card with `onItemClick` is a button: it takes focus and responds to Enter and Space. A key pressed inside a
+control of the card is left alone, so an input inside a card still accepts spaces.
 
-## Behavior
+## Theming
 
--   Without `onItemClick`, cards are plain containers (no `role`/`tabindex`, no pointer cursor).
--   With `onItemClick`, each card gets `role="button"`, `tabindex="0"`, a pointer cursor, a hover
-    elevation, and responds to `Enter`/`Space` in addition to click.
--   `bare: true` strips the shell entirely (no border, padding or background) so the projected
-    template fully controls the card's appearance; the component still manages stacking, gap,
-    empty state and (if provided) the click/keyboard behavior.
--   The empty state renders `{prefix}.empty` (or `emptyLabel`) when `items` is empty.
-
----
-
-## i18n
-
-Fully consumer-owned: define `{prefix}.empty` in your own translation files. The component ships
-no library-level translation keys.
+| Variable                    | Default               |
+| --------------------------- | --------------------- |
+| `--bey-list-border`         | `--bey-border-subtle` |
+| `--bey-list-border-hover`   | `--bey-secondary`     |
+| `--bey-list-fg-muted`       | `--bey-text-muted`    |
+| `--bey-list-surface`        | `--bey-bg-surface`    |

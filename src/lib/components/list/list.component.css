@@ -1,14 +1,10 @@
 :host {
-    --bey-list-border: var(--bey-gray-200);
+    --bey-list-border: var(--bey-border-subtle);
+    --bey-list-border-hover: var(--bey-secondary);
     --bey-list-fg-muted: var(--bey-text-muted);
-    --bey-list-hover-shadow: rgba(var(--bey-black-rgb), 0.08);
+    --bey-list-surface: var(--bey-bg-surface);
 
     display: block;
-}
-
-:host-context(body.dark) {
-    --bey-list-border: var(--bey-gray-700);
-    --bey-list-hover-shadow: rgba(var(--bey-white-rgb), 0.06);
 }
 
 .bey-list {
@@ -20,39 +16,39 @@
 .bey-list-item {
     display: block;
     width: 100%;
-    padding: 1rem 1.1rem;
-    border: 1px solid var(--bey-list-border);
-    border-radius: 0.5rem;
-    background: var(--bey-bg-surface);
+    padding: var(--bey-space-lg);
+    border: var(--bey-border-width) solid var(--bey-list-border);
+    border-radius: var(--bey-radius-md);
+    background: var(--bey-list-surface);
     transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+        border-color var(--bey-duration-base) var(--bey-easing-standard),
+        box-shadow var(--bey-duration-base) var(--bey-easing-standard);
 }
 
-.bey-list-item-bare {
+.bey-list-item.is-bare {
     padding: 0;
     border: none;
     border-radius: 0;
     background: transparent;
 }
 
-.bey-list-item-clickable {
+.bey-list-item.is-clickable {
     cursor: pointer;
 }
 
-.bey-list-item-clickable:hover {
-    border-color: var(--bey-secondary);
-    box-shadow: 0 6px 18px var(--bey-list-hover-shadow);
+.bey-list-item.is-clickable:hover {
+    border-color: var(--bey-list-border-hover);
+    box-shadow: var(--bey-shadow-sm);
 }
 
-.bey-list-item-clickable:focus-visible {
-    outline: 2px solid var(--bey-primary);
+.bey-list-item.is-clickable:focus-visible {
+    outline: var(--bey-border-width-thick) solid var(--bey-primary);
     outline-offset: 2px;
 }
 
 .bey-list-empty {
-    padding: 2rem 1rem;
+    padding: var(--bey-space-2xl) var(--bey-space-lg);
     color: var(--bey-list-fg-muted);
-    font-size: 0.88rem;
+    font-size: var(--bey-font-size-md);
     text-align: center;
 }

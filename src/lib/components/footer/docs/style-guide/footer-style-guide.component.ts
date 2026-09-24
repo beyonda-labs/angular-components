@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { FooterComponent } from '../../footer.component';
 import { FooterConfig } from '../../models/footer.model';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FooterComponent, TranslateModule],
     selector: 'bey-footer-style-guide',
     standalone: true,

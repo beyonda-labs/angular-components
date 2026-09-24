@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ButtonComponent } from '../../../../internal/button/button.component';
@@ -10,6 +10,7 @@ import { LoadingSize } from '../../models/loading.model';
 import { LoadingService } from '../../services/loading.service';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ButtonComponent, LoadingComponent, LoadingContainerComponent, LoadingOverlayComponent, TranslateModule],
     selector: 'bey-loading-style-guide',
     standalone: true,
@@ -18,7 +19,7 @@ import { LoadingService } from '../../services/loading.service';
 })
 export class LoadingStyleGuideComponent {
     readonly LoadingSize = LoadingSize;
-    showFullscreenOverlay = false;
+    readonly showFullscreenOverlay = signal(false);
 
     private readonly loadingService = inject(LoadingService);
 
@@ -39,10 +40,10 @@ export class LoadingStyleGuideComponent {
     }
 
     toggleFullscreen(): void {
-        this.showFullscreenOverlay = !this.showFullscreenOverlay;
+        this.showFullscreenOverlay.update(isOpen => !isOpen);
 
-        if (this.showFullscreenOverlay) {
-            setTimeout(() => (this.showFullscreenOverlay = false), 3000);
+        if (this.showFullscreenOverlay()) {
+            setTimeout(() => this.showFullscreenOverlay.set(false), 3000);
         }
     }
 

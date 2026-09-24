@@ -37,7 +37,7 @@ describe('LoadingContainerComponent', () => {
         const overlay = fixture.nativeElement.querySelector('bey-loading-overlay');
         expect(overlay).toBeTruthy();
 
-        const inner = fixture.nativeElement.querySelector('.bey-loading-overlay-fullscreen');
+        const inner = fixture.nativeElement.querySelector('.bey-loading-overlay.is-fullscreen');
         expect(inner).toBeTruthy();
     });
 
