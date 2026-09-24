@@ -1,43 +1,69 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { TableColumn, TableConfig, TableRow } from '../../models/table.model';
+import { TableRow } from '../../models/table.model';
 import { TextTableCell } from '../../models/table-cell.model';
 import { TableRowComponent } from './row.component';
 
 describe('TableRowComponent', () => {
-    let component: TableRowComponent;
     let fixture: ComponentFixture<TableRowComponent>;
+    let changes: boolean[];
+
+    async function render(
+        overrides: { isHeader?: boolean; selectable?: boolean; selected?: boolean } = {}
+    ): Promise<void> {
+        fixture = TestBed.createComponent(TableRowComponent);
+        fixture.componentRef.setInput('gridTemplateColumns', '3.25rem minmax(0, 1fr)');
+        fixture.componentRef.setInput('isHeader', overrides.isHeader ?? false);
+        fixture.componentRef.setInput(
+            'row',
+            new TableRow({
+                cells: [new TextTableCell({ content: 'Ada' })],
+                content: { name: 'Ada' },
+                selected: overrides.selected ?? false
+            })
+        );
+        fixture.componentRef.setInput('selectable', overrides.selectable ?? true);
+        changes = [];
+        fixture.componentInstance.selectionChange.subscribe(value => changes.push(value));
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
+
+    function checkbox(): HTMLInputElement | null {
+        return fixture.nativeElement.querySelector('input[type="checkbox"]');
+    }
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [TableRowComponent, TranslateModule.forRoot()]
         }).compileComponents();
-
-        fixture = TestBed.createComponent(TableRowComponent);
-        component = fixture.componentInstance;
-        component.config = new TableConfig({
-            columns: [new TableColumn({ key: 'name' })],
-            loadRow: item => [new TextTableCell({ content: String(item['name'] ?? '') })],
-            prefix: 'test.table'
-        });
-        component.gridTemplateColumns = 'minmax(0, 1fr)';
-        component.row = new TableRow({
-            cells: [new TextTableCell({ content: 'Ada' })],
-            content: { name: 'Ada' }
-        });
-        fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('renders its cells and a labelled checkbox', async () => {
+        await render();
+
+        expect(fixture.nativeElement.textContent).toContain('Ada');
+        expect(checkbox()?.getAttribute('aria-label')).toBe('angular-components.table.select-row');
     });
 
-    it('should emit selected state on row click', () => {
-        const selectionSpy = jest.spyOn(component.selectionChange, 'emit');
+    it('reports the opposite of its selection when clicked, and the checkbox state when ticked', async () => {
+        await render({ selected: true });
 
-        component.onRowClick();
+        (fixture.nativeElement.querySelector('.bey-table-row') as HTMLElement).click();
+        checkbox()?.click();
 
-        expect(selectionSpy).toHaveBeenCalledWith(true);
+        expect(changes).toEqual([false, false]);
+    });
+
+    it('ignores clicks when it is a header or not selectable', async () => {
+        await render({ isHeader: true });
+        (fixture.nativeElement.querySelector('.bey-table-row') as HTMLElement).click();
+        expect(changes).toEqual([]);
+
+        await render({ selectable: false });
+        (fixture.nativeElement.querySelector('.bey-table-row') as HTMLElement).click();
+        expect(changes).toEqual([]);
+        expect(checkbox()).toBeNull();
     });
 });

@@ -1,77 +1,69 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { BadgeTableCell, LinkTableCell } from '../../models/table-cell.model';
+import { BadgeTableCell, LinkTableCell, TableCell, TextTableCell } from '../../models/table-cell.model';
 import { TableCellComponent } from './cell.component';
 
 describe('TableCellComponent', () => {
-    let component: TableCellComponent;
     let fixture: ComponentFixture<TableCellComponent>;
+
+    async function render(cell: TableCell): Promise<void> {
+        fixture = TestBed.createComponent(TableCellComponent);
+        fixture.componentRef.setInput('cell', cell);
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
+
+    function text(): string {
+        return fixture.nativeElement.textContent.trim();
+    }
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [TableCellComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(TableCellComponent);
-        component = fixture.componentInstance;
-        component.cell = new LinkTableCell({
-            action: jest.fn(),
-            content: 'View details'
-        });
-        fixture.detectChanges();
+        TestBed.inject(TranslateService).setTranslation('en', { demo: { open: 'Open', active: 'Active' } });
+        TestBed.inject(TranslateService).use('en');
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('shows a text cell as it is, or translated when asked', async () => {
+        await render(new TextTableCell({ content: 'demo.open' }));
+        expect(text()).toBe('demo.open');
+
+        await render(new TextTableCell({ content: 'demo.open', translate: true }));
+        expect(text()).toBe('Open');
     });
 
-    it('should execute link action', () => {
-        const actionSpy = jest.spyOn(component.linkCell, 'action');
+    it('shows nothing for an empty content', async () => {
+        await render(new TextTableCell({ content: null as never }));
 
-        component.onLinkClick(new MouseEvent('click'));
-
-        expect(actionSpy).toHaveBeenCalled();
+        expect(text()).toBe('');
     });
 
-    it('should expose the cell as a BadgeTableCell through badgeCell', () => {
-        component.cell = new BadgeTableCell({
-            badges: [{ badgeClass: 'bg-success text-white', content: 'Active' }]
-        });
-        fixture.detectChanges();
+    it('runs the action of a link cell', async () => {
+        const action = jest.fn();
+        await render(new LinkTableCell({ action, content: 'demo.open', translate: true }));
+        const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
 
-        expect(component.badgeCell.badges).toEqual([{ badgeClass: 'bg-success text-white', content: 'Active' }]);
+        button.click();
+
+        expect(button.textContent?.trim()).toBe('Open');
+        expect(action).toHaveBeenCalled();
     });
 
-    it('should render a single badge with its classes', () => {
-        component.cell = new BadgeTableCell({
-            badges: [{ badgeClass: 'bg-danger', content: 'Inactive' }]
-        });
-        fixture.detectChanges();
+    it('shows every badge of a badge cell', async () => {
+        await render(
+            new BadgeTableCell({
+                badges: [
+                    { badgeClass: 'bey-badge-color-success', content: 'demo.active' },
+                    { badgeClass: 'bey-badge-color-info', content: 'demo.open' }
+                ],
+                translate: true
+            })
+        );
 
-        const badges = fixture.nativeElement.querySelectorAll('.bey-badge');
-
-        expect(badges.length).toBe(1);
-        expect(badges[0].classList.contains('bg-danger')).toBe(true);
-        expect(badges[0].textContent.trim()).toBe('Inactive');
-    });
-
-    it('should render multiple badges in the same cell', () => {
-        component.cell = new BadgeTableCell({
-            badges: [
-                { badgeClass: 'bg-primary', content: 'Frontend' },
-                { badgeClass: 'bg-info text-dark', content: 'Backend' },
-                { badgeClass: 'bg-secondary', content: 'DevOps' }
-            ]
-        });
-        fixture.detectChanges();
-
-        const badges = fixture.nativeElement.querySelectorAll('.bey-badge');
-
-        expect(badges.length).toBe(3);
-        expect(badges[0].textContent.trim()).toBe('Frontend');
-        expect(badges[1].textContent.trim()).toBe('Backend');
-        expect(badges[1].classList.contains('bg-info')).toBe(true);
-        expect(badges[2].textContent.trim()).toBe('DevOps');
+        expect(text()).toContain('Active');
+        expect(text()).toContain('Open');
     });
 });

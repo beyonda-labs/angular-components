@@ -29,9 +29,6 @@
         "src/lib/components/properties-menu/components/property-tree/property-tree.component.css",
         "src/lib/components/properties-menu/components/variable-picker/variable-picker.component.css",
         "src/lib/components/properties-menu/properties-menu.component.css",
-        "src/lib/components/table/components/cell/cell.component.css",
-        "src/lib/components/table/components/row/row.component.css",
-        "src/lib/components/table/table.component.css",
         "src/lib/internal/button/button.component.css"
     ]
 }

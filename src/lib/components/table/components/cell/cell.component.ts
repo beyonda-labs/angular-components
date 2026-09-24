@@ -1,44 +1,34 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { BadgeTableCell, CellType, LinkTableCell, TableCell } from '../../models/table-cell.model';
+import { BadgeTableCell, CellType, LinkTableCell, TableBadge, TableCell } from '../../models/table-cell.model';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [TooltipModule, TranslateModule],
     selector: 'bey-table-cell',
     standalone: true,
-    templateUrl: './cell.component.html',
-    styleUrls: ['./cell.component.css']
+    styleUrls: ['./cell.component.css'],
+    templateUrl: './cell.component.html'
 })
 export class TableCellComponent {
-    @Input({ required: true }) cell!: TableCell;
-    @Input() isHeader = false;
+    readonly cell = input.required<TableCell>();
+    readonly isHeader = input(false);
 
-    protected readonly cellType = CellType;
+    readonly badges = computed<TableBadge[]>(() => (this.cell() as BadgeTableCell).badges ?? []);
+    readonly content = computed(() => {
+        const { content } = this.cell();
 
-    get content(): string {
-        return this.cell?.content === null || this.cell?.content === undefined ? '' : String(this.cell.content);
-    }
-
-    get linkCell(): LinkTableCell {
-        return this.cell as LinkTableCell;
-    }
-
-    get badgeCell(): BadgeTableCell {
-        return this.cell as BadgeTableCell;
-    }
-
-    hasTooltip(): boolean {
-        return Boolean(this.cell?.tooltip);
-    }
+        return content === null || content === undefined ? '' : String(content);
+    });
+    readonly isBadge = computed(() => this.cell().type === CellType.Badge);
+    readonly isLink = computed(() => this.cell().type === CellType.Link);
+    readonly tooltip = computed(() => this.cell().tooltip ?? '');
 
     onLinkClick(event: MouseEvent): void {
         event.preventDefault();
         event.stopPropagation();
-
-        if (this.cell.type === CellType.Link) {
-            this.linkCell.action();
-        }
+        (this.cell() as LinkTableCell).action();
     }
 }

@@ -1,45 +1,34 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { TableConfig, TableRow } from '../../models/table.model';
+import { TableRow } from '../../models/table.model';
 import { TableCellComponent } from '../cell/cell.component';
 
 @Component({
-    imports: [TranslateModule, TableCellComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [TableCellComponent, TranslateModule],
     selector: 'bey-table-row',
     standalone: true,
-    templateUrl: './row.component.html',
-    styleUrls: ['./row.component.css']
+    styleUrls: ['./row.component.css'],
+    templateUrl: './row.component.html'
 })
 export class TableRowComponent {
-    @Input({ required: true }) config!: TableConfig;
-    @Input({ required: true }) gridTemplateColumns!: string;
-    @Input() isHeader = false;
-    @Input({ required: true }) row!: TableRow;
-    @Input() selectionIndeterminate = false;
-    @Input() selectionLabel = 'angular-components.table.select-row';
+    readonly gridTemplateColumns = input.required<string>();
+    readonly isHeader = input(false);
+    readonly row = input.required<TableRow>();
+    readonly selectable = input.required<boolean>();
+    readonly selectionIndeterminate = input(false);
+    readonly selectionLabel = input('angular-components.table.select-row');
 
-    @Output() selectionChange = new EventEmitter<boolean>();
-
-    getSelectRowLabel(): string {
-        return this.selectionLabel;
-    }
+    readonly selectionChange = output<boolean>();
 
     onCheckboxChange(event: Event): void {
-        const { checked } = event.target as HTMLInputElement;
-
-        this.selectionChange.emit(checked);
-    }
-
-    onCheckboxClick(event: MouseEvent): void {
-        event.stopPropagation();
+        this.selectionChange.emit((event.target as HTMLInputElement).checked);
     }
 
     onRowClick(): void {
-        if (!this.config.selectable || this.isHeader) {
-            return;
+        if (this.selectable() && !this.isHeader()) {
+            this.selectionChange.emit(!this.row().selected);
         }
-
-        this.selectionChange.emit(!this.row.selected);
     }
 }

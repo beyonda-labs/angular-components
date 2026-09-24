@@ -1,52 +1,42 @@
 :host {
-    display: block;
-    width: 100%;
-    min-width: 0;
-
     --bey-table-surface: var(--bey-bg-page);
     --bey-table-text: var(--bey-text-primary);
     --bey-table-text-muted: var(--bey-text-muted);
-    --bey-table-border-subtle: rgba(var(--bey-black-rgb), 0.07);
-    --bey-table-border-strong: rgba(var(--bey-black-rgb), 0.1);
+    --bey-table-border-subtle: var(--bey-border-subtle);
+    --bey-table-border-strong: var(--bey-border-default);
     --bey-table-row-hover: var(--bey-bg-hover);
     --bey-table-row-selected: var(--bey-bg-active);
-    --bey-table-checkbox-border: rgba(var(--bey-black-rgb), 0.18);
+    --bey-table-row-min-height: 2.5rem;
     --bey-table-checkbox-accent: var(--bey-primary);
-    --bey-table-link-underline: rgba(var(--bey-black-rgb), 0.18);
+    --bey-table-link-underline: var(--bey-border-strong);
     --bey-table-link-underline-hover: var(--bey-primary);
-}
 
-:host-context(body.dark) {
-    --bey-table-border-subtle: rgba(var(--bey-white-rgb), 0.07);
-    --bey-table-border-strong: rgba(var(--bey-white-rgb), 0.1);
-    --bey-table-checkbox-border: rgba(var(--bey-white-rgb), 0.18);
-    --bey-table-link-underline: rgba(var(--bey-white-rgb), 0.18);
+    display: block;
+    width: 100%;
+    min-width: 0;
 }
 
 .bey-table {
-    border: 0;
-    border-radius: 6px;
-    background: var(--bey-table-surface);
-    overflow: hidden;
-    box-shadow: none;
     width: 100%;
     min-width: 0;
+    overflow: hidden;
+    background: var(--bey-table-surface);
+    border-radius: var(--bey-radius-sm);
 }
 
 .bey-table-scroll {
     width: 100%;
     min-width: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: hidden auto;
 }
 
 .bey-table-header {
     position: sticky;
     top: 0;
-    z-index: 2;
-    background: var(--bey-table-surface);
+    z-index: var(--bey-z-sticky);
     width: 100%;
     min-width: 0;
+    background: var(--bey-table-surface);
 }
 
 .bey-table-body {
@@ -56,9 +46,9 @@
 }
 
 .bey-table-empty {
-    padding: 2rem 1.25rem;
-    text-align: center;
+    padding: var(--bey-space-2xl) var(--bey-space-xl);
     color: var(--bey-table-text);
-    font-size: 0.88rem;
-    font-weight: 500;
+    font-size: var(--bey-font-size-md);
+    font-weight: var(--bey-font-weight-medium);
+    text-align: center;
 }

@@ -1,146 +1,105 @@
-import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    effect,
+    ElementRef,
+    input,
+    linkedSignal,
+    viewChild
+} from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
 
 import { TableRowComponent } from './components/row/row.component';
 import { TableColumn, TableConfig, TableRow } from './models/table.model';
 import { TextTableCell } from './models/table-cell.model';
 
+const SELECTION_COLUMN_WIDTH = '3.25rem';
+
+function buildRows(config: TableConfig): TableRow[] {
+    return config.items.map(
+        item =>
+            new TableRow({
+                cells: config.loadRow(item),
+                content: item,
+                selected: config.isRowSelected?.(item) ?? false
+            })
+    );
+}
+
+function withSelection(row: TableRow, selected: boolean): TableRow {
+    return new TableRow({ cells: row.cells, content: row.content, selected });
+}
+
 @Component({
-    imports: [CommonModule, TranslateModule, TableRowComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [TableRowComponent, TranslateModule],
     selector: 'bey-table',
     standalone: true,
-    templateUrl: './table.component.html',
-    styleUrls: ['./table.component.css']
+    styleUrls: ['./table.component.css'],
+    templateUrl: './table.component.html'
 })
-export class TableComponent implements OnDestroy {
-    @ViewChild('scrollContainer') private readonly scrollContainer?: ElementRef<HTMLDivElement>;
+export class TableComponent {
+    readonly config = input.required<TableConfig>();
 
-    @Input({ required: true })
-    set config(value: TableConfig) {
-        this._config = value;
-        this.bindRefresh();
-        this.buildRows();
-        this.resetScroll();
-    }
-    get config(): TableConfig {
-        return this._config;
-    }
+    readonly rows = linkedSignal(() => buildRows(this.config()));
 
-    rows: TableRow[] = [];
+    readonly allSelected = computed(() => this.rows().length > 0 && this.rows().every(row => row.selected));
+    readonly emptyLabel = computed(() => `${this.config().prefix}.empty`);
+    readonly gridTemplateColumns = computed(() => {
+        const { columns, selectable } = this.config();
+        const dataColumns = columns.map(column => `minmax(0, ${Math.max(column.width, 1)}fr)`);
 
-    private _config!: TableConfig;
-    private readonly configChange$ = new Subject<void>();
-    private readonly destroy$ = new Subject<void>();
+        return [...(selectable ? [SELECTION_COLUMN_WIDTH] : []), ...dataColumns].join(' ');
+    });
+    readonly headerRow = computed(
+        () =>
+            new TableRow({
+                cells: this.config().columns.map(column => this.buildHeaderCell(column)),
+                content: {},
+                selected: this.allSelected()
+            })
+    );
+    readonly someSelected = computed(() => !this.allSelected() && this.rows().some(row => row.selected));
 
-    ngOnDestroy(): void {
-        this.configChange$.next();
-        this.configChange$.complete();
-        this.destroy$.next();
-        this.destroy$.complete();
-    }
+    private readonly scrollContainer = viewChild<ElementRef<HTMLDivElement>>('scrollContainer');
 
-    get gridTemplateColumns(): string {
-        if (!this.config?.columns?.length) {
-            return '';
-        }
+    constructor() {
+        effect(() => {
+            this.config();
 
-        const selectionColumn = this.config.selectable ? '52px ' : '';
-        const dataColumns = this.config.columns.map(column => `minmax(0, ${Math.max(column.width, 1)}fr)`).join(' ');
+            const container = this.scrollContainer();
 
-        return `${selectionColumn}${dataColumns}`.trim();
-    }
-
-    areAllRowsSelected(): boolean {
-        return this.rows.length > 0 && this.rows.every(row => row.selected);
-    }
-
-    get headerRow(): TableRow {
-        return new TableRow({
-            cells: this.config.columns.map(
-                column =>
-                    new TextTableCell({
-                        content: this.getColumnLabel(column),
-                        tooltip: column.tooltip,
-                        translate: true
-                    })
-            ),
-            content: {},
-            selected: this.areAllRowsSelected()
+            if (container) {
+                container.nativeElement.scrollTop = 0;
+            }
         });
     }
 
-    getColumnLabel(column: TableColumn): string {
-        return `${this.config.prefix}.columns.${column.key}`;
-    }
-
-    getEmptyLabel(): string {
-        return `${this.config.prefix}.empty`;
-    }
-
-    getSelectAllLabel(): string {
-        return 'angular-components.table.select-all';
-    }
-
-    hasSomeRowsSelected(): boolean {
-        return this.rows.some(row => row.selected) && !this.areAllRowsSelected();
-    }
-
-    onAllSelectionChange(checked: boolean): void {
-        this.rows = this.rows.map(
-            row =>
-                new TableRow({
-                    cells: row.cells,
-                    content: row.content,
-                    selected: checked
-                })
-        );
-
-        this.emitSelectionChange();
+    onAllSelectionChange(selected: boolean): void {
+        this.rows.update(rows => rows.map(row => withSelection(row, selected)));
+        this.reportSelection();
     }
 
     onRowSelectionChange(index: number, selected: boolean): void {
-        const row = this.rows[index];
-
-        if (!row) {
-            return;
-        }
-
-        row.selected = selected;
-        this.emitSelectionChange();
+        this.rows.update(rows => rows.map((row, current) => (current === index ? withSelection(row, selected) : row)));
+        this.reportSelection();
     }
 
-    private bindRefresh(): void {
-        this.configChange$.next();
-
-        this.config.$loadTable.pipe(takeUntil(this.configChange$), takeUntil(this.destroy$)).subscribe(() => {
-            this.buildRows();
-            this.resetScroll();
+    private buildHeaderCell(column: TableColumn): TextTableCell {
+        return new TextTableCell({
+            content: `${this.config().prefix}.columns.${column.key}`,
+            tooltip: column.tooltip,
+            translate: true
         });
     }
 
-    private buildRows(): void {
-        this.rows = this.config.items.map(
-            item =>
-                new TableRow({
-                    cells: this.config.loadRow(item),
-                    content: item,
-                    selected: this.config.isRowSelected?.(item) ?? false
-                })
+    private reportSelection(): void {
+        const indexes = this.rows().flatMap((row, index) => (row.selected ? [index] : []));
+
+        this.config().selectedItemsChange?.(
+            indexes.map(index => this.rows()[index].content),
+            indexes
         );
-    }
-
-    private resetScroll(): void {
-        if (this.scrollContainer) {
-            this.scrollContainer.nativeElement.scrollTop = 0;
-        }
-    }
-
-    private emitSelectionChange(): void {
-        const selectedIndexes = this.rows.flatMap((row, index) => (row.selected ? [index] : []));
-        const selectedItems = selectedIndexes.map(index => this.rows[index].content);
-
-        this.config.selectedItemsChange?.(selectedItems, selectedIndexes);
     }
 }

@@ -1,11 +1,31 @@
-import { Component, inject } from '@angular/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 
-import { TableColumn, TableConfig } from '../../models/table.model';
+import { TableColumn, TableConfig, TableItem } from '../../models/table.model';
 import { BadgeTableCell, LinkTableCell, TextTableCell } from '../../models/table-cell.model';
 import { TableComponent } from '../../table.component';
 
+const PREFIX = 'angular-components-style-guide.table';
+const SKILL_BADGE_CLASSES = ['bey-badge-color-primary', 'bey-badge-color-info', 'bey-badge-color-purple'];
+const STATUS_BADGE_CLASSES: Record<string, string> = {
+    active: 'bey-badge-color-success',
+    review: 'bey-badge-color-warning'
+};
+
+const PEOPLE: TableItem[] = [
+    {
+        id: 1,
+        name: 'Ada Lovelace',
+        role: 'Principal Engineer',
+        skills: ['Angular', 'TypeScript', 'RxJS'],
+        status: 'active'
+    },
+    { id: 2, name: 'Grace Hopper', role: 'Platform Architect', skills: ['Node.js', 'Docker'], status: 'review' },
+    { id: 3, name: 'Katherine Johnson', role: 'Operations Analyst', skills: ['SQL'], status: 'paused' }
+];
+
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [TableComponent, TranslateModule],
     selector: 'bey-table-style-guide',
     standalone: true,
@@ -13,134 +33,59 @@ import { TableComponent } from '../../table.component';
     templateUrl: './table-style-guide.component.html'
 })
 export class TableStyleGuideComponent {
-    config: TableConfig;
-    emptyConfig: TableConfig;
+    readonly opened = signal('');
+    readonly selected = signal<string[]>([]);
 
-    private readonly translateService = inject(TranslateService);
+    readonly config = this.buildConfig(PEOPLE);
+    readonly emptyConfig = this.buildConfig([]);
 
-    constructor() {
-        this.config = this.buildConfig({
-            items: [
-                {
-                    id: 1,
-                    name: 'Ada Lovelace',
-                    role: 'Principal Engineer',
-                    skills: ['Angular', 'TypeScript', 'RxJS'],
-                    status: 'angular-components-style-guide.table.status.active'
-                },
-                {
-                    id: 2,
-                    name: 'Grace Hopper',
-                    role: 'Platform Architect',
-                    skills: ['Node.js', 'Docker'],
-                    status: 'angular-components-style-guide.table.status.review'
-                },
-                {
-                    id: 3,
-                    name: 'Katherine Johnson',
-                    role: 'Operations Analyst',
-                    skills: ['SQL'],
-                    status: 'angular-components-style-guide.table.status.paused'
-                }
-            ],
-            selectedItemsChange: (items, indexes) => {
-                const message = this.translateService.instant('angular-components-style-guide.table.selection-changed');
-
-                // eslint-disable-next-line no-console
-                console.log(message, { indexes, items });
-            }
-        });
-
-        this.emptyConfig = this.buildConfig({ items: [] });
-    }
-
-    private buildConfig({
-        items,
-        selectedItemsChange
-    }: {
-        items: Record<string, unknown>[];
-        selectedItemsChange?: (items: Record<string, unknown>[], indexes: number[]) => void;
-    }): TableConfig {
+    private buildConfig(items: TableItem[]): TableConfig {
         return new TableConfig({
             columns: [
-                new TableColumn({
-                    key: 'name',
-                    tooltip: 'angular-components-style-guide.table.tooltips.name',
-                    width: 30
-                }),
+                new TableColumn({ key: 'name', tooltip: `${PREFIX}.tooltips.name`, width: 30 }),
                 new TableColumn({ key: 'role', width: 20 }),
-                new TableColumn({
-                    key: 'status',
-                    tooltip: 'angular-components-style-guide.table.tooltips.status',
-                    width: 15
-                }),
-                new TableColumn({
-                    key: 'skills',
-                    tooltip: 'angular-components-style-guide.table.tooltips.skills',
-                    width: 25
-                }),
+                new TableColumn({ key: 'status', tooltip: `${PREFIX}.tooltips.status`, width: 15 }),
+                new TableColumn({ key: 'skills', tooltip: `${PREFIX}.tooltips.skills`, width: 25 }),
                 new TableColumn({ key: 'action', width: 10 })
             ],
             items,
-            loadRow: item => [
-                new TextTableCell({
-                    content: String(item['name'] ?? ''),
-                    tooltip: String(item['name'] ?? '')
-                }),
-                new TextTableCell({
-                    content: String(item['role'] ?? ''),
-                    tooltip: String(item['role'] ?? '')
-                }),
-                new BadgeTableCell({
-                    badges: [
-                        {
-                            badgeClass: this.getStatusBadgeClass(String(item['status'] ?? '')),
-                            content: String(item['status'] ?? '')
-                        }
-                    ],
-                    tooltip: String(item['status'] ?? ''),
-                    translate: true
-                }),
-                new BadgeTableCell({
-                    badges: ((item['skills'] as string[]) ?? []).map((skill, index) => ({
-                        badgeClass: this.getSkillBadgeClass(index),
-                        content: skill
-                    }))
-                }),
-                new LinkTableCell({
-                    action: () => {
-                        const message = this.translateService.instant(
-                            'angular-components-style-guide.table.actions.opened'
-                        );
-
-                        // eslint-disable-next-line no-console
-                        console.log(message, item);
-                    },
-                    content: 'angular-components-style-guide.table.actions.open',
-                    tooltip: 'angular-components-style-guide.table.actions.open',
-                    translate: true
-                })
-            ],
-            prefix: 'angular-components-style-guide.table',
-            selectedItemsChange
+            loadRow: item => this.loadRow(item),
+            prefix: PREFIX,
+            selectedItemsChange: selected => this.selected.set(selected.map(item => String(item['name'])))
         });
     }
 
-    private getStatusBadgeClass(status: string): string {
-        if (status.endsWith('active')) {
-            return 'bey-badge-color-success';
-        }
+    private loadRow(item: TableItem): (TextTableCell | BadgeTableCell | LinkTableCell)[] {
+        const name = String(item['name']);
+        const role = String(item['role']);
+        const status = String(item['status']);
+        const skills = item['skills'] as string[];
 
-        if (status.endsWith('review')) {
-            return 'bey-badge-color-warning';
-        }
-
-        return 'bey-badge-color-neutral';
-    }
-
-    private getSkillBadgeClass(index: number): string {
-        const skillBadgeClasses = ['bey-badge-color-primary', 'bey-badge-color-info', 'bey-badge-color-purple'];
-
-        return skillBadgeClasses[index % skillBadgeClasses.length];
+        return [
+            new TextTableCell({ content: name, tooltip: name }),
+            new TextTableCell({ content: role, tooltip: role }),
+            new BadgeTableCell({
+                badges: [
+                    {
+                        badgeClass: STATUS_BADGE_CLASSES[status] ?? 'bey-badge-color-neutral',
+                        content: `${PREFIX}.status.${status}`
+                    }
+                ],
+                tooltip: `${PREFIX}.status.${status}`,
+                translate: true
+            }),
+            new BadgeTableCell({
+                badges: skills.map((skill, index) => ({
+                    badgeClass: SKILL_BADGE_CLASSES[index % SKILL_BADGE_CLASSES.length],
+                    content: skill
+                }))
+            }),
+            new LinkTableCell({
+                action: () => this.opened.set(name),
+                content: `${PREFIX}.actions.open`,
+                tooltip: `${PREFIX}.actions.open`,
+                translate: true
+            })
+        ];
     }
 }

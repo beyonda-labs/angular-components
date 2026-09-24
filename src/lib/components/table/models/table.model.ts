@@ -1,18 +1,17 @@
-import { EventEmitter } from '@angular/core';
-
 import { TableCell } from './table-cell.model';
 
+export type TableItem = Record<string, unknown>;
+
 export class TableConfig {
-    $loadTable: EventEmitter<void>;
     columns: TableColumn[];
     height: string;
-    items: Record<string, unknown>[];
-    loadRow: (item: Record<string, unknown>) => TableCell[];
+    items: TableItem[];
+    loadRow: (item: TableItem) => TableCell[];
     prefix: string;
     selectable: boolean;
 
-    isRowSelected?: (item: Record<string, unknown>) => boolean;
-    selectedItemsChange?: (items: Record<string, unknown>[], indexes: number[]) => void;
+    isRowSelected?: (item: TableItem) => boolean;
+    selectedItemsChange?: (items: TableItem[], indexes: number[]) => void;
 
     constructor({
         columns,
@@ -24,7 +23,6 @@ export class TableConfig {
         selectable = true,
         selectedItemsChange
     }: TableConfigParameters) {
-        this.$loadTable = new EventEmitter<void>();
         this.columns = columns;
         this.height = height;
         this.isRowSelected = isRowSelected;
@@ -34,22 +32,18 @@ export class TableConfig {
         this.selectable = selectable;
         this.selectedItemsChange = selectedItemsChange;
     }
-
-    refresh(): void {
-        this.$loadTable.emit();
-    }
 }
 
 export interface TableConfigParameters {
     columns: TableColumn[];
-    loadRow: (item: Record<string, unknown>) => TableCell[];
+    loadRow: (item: TableItem) => TableCell[];
     prefix: string;
 
     height?: string;
-    isRowSelected?: (item: Record<string, unknown>) => boolean;
-    items?: Record<string, unknown>[];
+    isRowSelected?: (item: TableItem) => boolean;
+    items?: TableItem[];
     selectable?: boolean;
-    selectedItemsChange?: (items: Record<string, unknown>[], indexes: number[]) => void;
+    selectedItemsChange?: (items: TableItem[], indexes: number[]) => void;
 }
 
 export class TableColumn {
@@ -74,8 +68,7 @@ export interface TableColumnParameters {
 
 export class TableRow {
     cells: TableCell[];
-    content: Record<string, unknown>;
-
+    content: TableItem;
     selected: boolean;
 
     constructor({ cells, content, selected = false }: TableRowParameters) {
@@ -87,7 +80,7 @@ export class TableRow {
 
 export interface TableRowParameters {
     cells: TableCell[];
-    content: Record<string, unknown>;
+    content: TableItem;
 
     selected?: boolean;
 }

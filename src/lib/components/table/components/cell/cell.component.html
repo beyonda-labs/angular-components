@@ -1,38 +1,24 @@
 <div
     class="bey-table-cell"
-    [class.bey-table-cell-header]="isHeader"
-    [tooltip]="hasTooltip() ? (cell.tooltip! | translate) : ''"
+    [class.bey-table-cell--header]="isHeader()"
+    [tooltip]="tooltip() | translate"
     container="body"
     boundariesElement="viewport"
     placement="top"
 >
-    @if (cell.type === cellType.Link) {
+    @if (isLink()) {
         <button class="bey-table-cell-link bey-table-cell-content" type="button" (click)="onLinkClick($event)">
-            @if (cell.translate) {
-                {{ content | translate }}
-            } @else {
-                {{ content }}
-            }
+            {{ cell().translate ? (content() | translate) : content() }}
         </button>
-    } @else if (cell.type === cellType.Badge) {
+    } @else if (isBadge()) {
         <span class="bey-table-cell-content bey-table-cell-badges">
-            @for (badge of badgeCell.badges; track $index) {
+            @for (badge of badges(); track $index) {
                 <span class="bey-badge bey-table-cell-badge {{ badge.badgeClass }}">
-                    @if (cell.translate) {
-                        {{ badge.content | translate }}
-                    } @else {
-                        {{ badge.content }}
-                    }
+                    {{ cell().translate ? (badge.content | translate) : badge.content }}
                 </span>
             }
         </span>
     } @else {
-        <span class="bey-table-cell-content">
-            @if (cell.translate) {
-                {{ content | translate }}
-            } @else {
-                {{ content }}
-            }
-        </span>
+        <span class="bey-table-cell-content">{{ cell().translate ? (content() | translate) : content() }}</span>
     }
 </div>
