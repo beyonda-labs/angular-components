@@ -1,5 +1,8 @@
 {
     "angular-components": {
+        "app-layout": {
+            "main-content": "Contenido principal"
+        },
         "breadcrumb": {
             "label": "Migas de pan"
         },

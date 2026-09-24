@@ -1,32 +1,25 @@
-@if (config) {
-    <div class="bey-app-layout d-flex">
-        <bey-left-menu
-            class="bey-app-layout-menu"
-            [config]="leftMenuConfig"
-            (expandedChange)="onExpandedChange($event)"
-        ></bey-left-menu>
+<div class="bey-app-layout d-flex">
+    <bey-left-menu
+        class="bey-app-layout-menu"
+        [config]="leftMenuConfig()"
+        (expandedChange)="onExpandedChange($event)"
+    ></bey-left-menu>
 
-        <main
-            class="bey-app-layout-content grow d-flex flex-column min-w-0 overflow-hidden"
-            [attr.aria-label]="'angular-components.app-layout.main-content' | translate"
-        >
-            @if (breadcrumbConfig) {
-                <div class="bey-app-layout-breadcrumb border-bottom shadow-sm sticky-top z-3 py-3 px-4">
-                    <bey-breadcrumb [config]="breadcrumbConfig"></bey-breadcrumb>
-                </div>
-            }
-
-            <div class="bey-app-layout-body grow d-flex flex-column">
-                <div
-                    class="bey-app-layout-body-content flex-fill"
-                    [ngClass]="{
-                        'p-3 pt-2': config.useBodyPadding
-                    }"
-                >
-                    <ng-content></ng-content>
-                </div>
-                <bey-footer [config]="config.footerConfig" class="shrink-0" />
+    <main
+        class="bey-app-layout-content d-flex flex-column"
+        [attr.aria-label]="'angular-components.app-layout.main-content' | translate"
+    >
+        @if (breadcrumbConfig(); as breadcrumb) {
+            <div class="bey-app-layout-breadcrumb">
+                <bey-breadcrumb [config]="breadcrumb"></bey-breadcrumb>
             </div>
-        </main>
-    </div>
-}
+        }
+
+        <div class="bey-app-layout-body d-flex flex-column">
+            <div class="bey-app-layout-body-content flex-fill" [class.has-padding]="config().useBodyPadding">
+                <ng-content></ng-content>
+            </div>
+            <bey-footer class="flex-shrink-0" [config]="config().footerConfig" />
+        </div>
+    </main>
+</div>

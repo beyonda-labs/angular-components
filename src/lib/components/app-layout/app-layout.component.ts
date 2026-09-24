@@ -1,271 +1,202 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { filter, Subscription } from 'rxjs';
+import { filter } from 'rxjs';
 
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { BreadcrumbConfig } from '../breadcrumb/models/breadcrumb.model';
-import { FloatingPreferencesComponent } from '../floating-preferences/floating-preferences.component';
 import { FooterComponent } from '../footer/footer.component';
 import { LeftMenuComponent } from '../left-menu/left-menu.component';
 import { LeftMenuAction, LeftMenuConfig } from '../left-menu/models/left-menu.model';
 import { AppLayoutBreadcrumbItem, AppLayoutConfig } from './models/app-layout.model';
 import { AppLayoutService } from './services/app-layout.service';
 
+function findPathByKey(
+    actions: LeftMenuAction[],
+    key: string,
+    parents: LeftMenuAction[] = []
+): LeftMenuAction[] | null {
+    for (const action of actions) {
+        if (action.key === key) {
+            return [...parents, action];
+        }
+
+        const nested = findPathByKey(action.subActions, key, [...parents, action]);
+
+        if (nested) {
+            return nested;
+        }
+    }
+
+    return null;
+}
+
+function findPathByUrl(
+    actions: LeftMenuAction[],
+    path: string,
+    parents: LeftMenuAction[] = []
+): LeftMenuAction[] | null {
+    let best: LeftMenuAction[] | null = null;
+
+    for (const action of actions) {
+        const current = [...parents, action];
+        const matches = Boolean(action.route) && (path === action.route || path.startsWith(`${action.route}/`));
+        const nested = findPathByUrl(action.subActions, path, current);
+        const candidate = nested ?? (matches ? current : null);
+
+        if (candidate && (!best || candidate.length > best.length)) {
+            best = candidate;
+        }
+    }
+
+    return best;
+}
+
+function hasRoutes(actions: LeftMenuAction[]): boolean {
+    return actions.some(action => Boolean(action.route) || hasRoutes(action.subActions));
+}
+
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        BreadcrumbComponent,
-        CommonModule,
-        FloatingPreferencesComponent,
-        FooterComponent,
-        LeftMenuComponent,
-        TranslateModule
-    ],
+    imports: [BreadcrumbComponent, FooterComponent, LeftMenuComponent, TranslateModule],
     selector: 'bey-app-layout',
     standalone: true,
     styleUrls: ['./app-layout.component.css'],
     templateUrl: './app-layout.component.html'
 })
-export class AppLayoutComponent implements OnInit, OnDestroy {
-    @Input({ required: true })
-    set config(value: AppLayoutConfig) {
-        this._config = value;
-        this.leftMenuConfig = this.buildLeftMenuConfig(value);
-        this.breadcrumbConfig = this.buildBreadcrumbConfig(this.config.breadcrumb);
-    }
-    get config(): AppLayoutConfig {
-        return this._config;
-    }
+export class AppLayoutComponent implements OnInit {
+    readonly config = input.required<AppLayoutConfig>();
 
-    breadcrumbConfig: BreadcrumbConfig | null = null;
-    leftMenuConfig!: LeftMenuConfig;
+    readonly breadcrumbConfig = computed(() => {
+        const items = this.appLayoutService.breadcrumb();
 
-    private _config!: AppLayoutConfig;
-    private activeActionSubscription?: Subscription;
-    private breadcrumbClickSubscription?: Subscription;
-    private breadcrumbItemsSubscription?: Subscription;
-    private langChangeSubscription?: Subscription;
-    private menuClickSubscription?: Subscription;
-    private routerSubscription?: Subscription;
+        return items.length === 0
+            ? null
+            : new BreadcrumbConfig({
+                  items,
+                  onItemClick: (id: number) => this.config().onBreadcrumbClick?.(id),
+                  translate: false
+              });
+    });
+    readonly leftMenuConfig = computed(() => {
+        const { bottomActions, prefix, title, topActions, userInfo } = this.config();
+        const activeKey = this.appLayoutService.activeActionKey();
 
-    private currentActiveKey: string | null = null;
+        return new LeftMenuConfig({
+            bottomActions: this.prepareActions(bottomActions, activeKey),
+            expanded: this.appLayoutService.expanded(),
+            prefix,
+            title,
+            topActions: this.prepareActions(topActions, activeKey),
+            userInfo
+        });
+    });
+    readonly usesRoutes = computed(() => hasRoutes(this.allActions()));
 
     private readonly appLayoutService = inject(AppLayoutService);
-    private readonly cdr = inject(ChangeDetectorRef);
     private readonly router = inject(Router);
     private readonly translateService = inject(TranslateService);
 
-    ngOnInit(): void {
-        this.breadcrumbItemsSubscription ??= this.appLayoutService.breadcrumbItems$.subscribe(items => {
-            this.config.breadcrumb = items;
-            this.breadcrumbConfig = this.buildBreadcrumbConfig(items);
-            this.cdr.markForCheck();
-        });
-        this.breadcrumbClickSubscription ??= this.appLayoutService.onBreadcrumbClick$.subscribe(id => {
-            this.config.onBreadcrumbClick?.(id);
-        });
-        this.menuClickSubscription ??= this.appLayoutService.onMenuClick$.subscribe(key => {
+    constructor() {
+        this.appLayoutService.onBreadcrumbClick$
+            .pipe(takeUntilDestroyed())
+            .subscribe(id => this.config().onBreadcrumbClick?.(id));
+        this.appLayoutService.onMenuClick$.pipe(takeUntilDestroyed()).subscribe(key => {
             this.activateByKey(key);
-            this.config.onMenuActionClick?.(key);
+            this.config().onMenuActionClick?.(key);
         });
-        this.activeActionSubscription ??= this.appLayoutService.activeAction$.subscribe(activeKey => {
-            const allActions: LeftMenuAction[] = [
-                ...this.leftMenuConfig.topActions,
-                ...this.leftMenuConfig.bottomActions
-            ];
-            allActions.forEach(action => this.setActiveAction(action, activeKey));
-            this.cdr.markForCheck();
-        });
-
-        this.config.onLayoutInitialized?.();
-
-        if (this.usesRouteBased) {
-            this.activateByUrl(this.router.url);
-            this.routerSubscription = this.router.events
-                .pipe(filter(event => event instanceof NavigationEnd))
-                .subscribe(event => this.activateByUrl((event as NavigationEnd).urlAfterRedirects));
-            this.langChangeSubscription = this.translateService.onLangChange.subscribe(() => {
-                if (this.currentActiveKey !== null) {
-                    this.activateByKey(this.currentActiveKey);
-                }
-            });
-        }
+        this.router.events
+            .pipe(
+                filter(event => event instanceof NavigationEnd),
+                takeUntilDestroyed()
+            )
+            .subscribe(event => this.activateByUrl((event as NavigationEnd).urlAfterRedirects));
+        this.translateService.onLangChange.pipe(takeUntilDestroyed()).subscribe(() => this.refreshActiveAction());
     }
 
-    ngOnDestroy(): void {
-        this.activeActionSubscription?.unsubscribe();
-        this.breadcrumbClickSubscription?.unsubscribe();
-        this.breadcrumbItemsSubscription?.unsubscribe();
-        this.langChangeSubscription?.unsubscribe();
-        this.menuClickSubscription?.unsubscribe();
-        this.routerSubscription?.unsubscribe();
+    ngOnInit(): void {
+        const { breadcrumb, onLayoutInitialized } = this.config();
+
+        if (breadcrumb.length > 0) {
+            this.appLayoutService.setBreadcrumb(breadcrumb);
+        }
+
+        onLayoutInitialized?.();
+        this.activateByUrl(this.router.url);
     }
 
     onExpandedChange(value: boolean): void {
         this.appLayoutService.setExpanded(value);
     }
 
-    private get usesRouteBased(): boolean {
-        const all = [...this.leftMenuConfig.topActions, ...this.leftMenuConfig.bottomActions];
-
-        return this.anyActionHasRoute(all);
-    }
-
-    private anyActionHasRoute(actions: LeftMenuAction[]): boolean {
-        return actions.some(
-            a => Boolean(a.route) || (Boolean(a.subActions?.length) && this.anyActionHasRoute(a.subActions))
-        );
-    }
-
-    private buildLeftMenuConfig(config: AppLayoutConfig): LeftMenuConfig {
-        const { bottomActions, prefix, title, topActions, userInfo } = config;
-
-        this.initActions(bottomActions);
-        this.initActions(topActions);
-
-        return new LeftMenuConfig({
-            bottomActions,
-            expanded: this.appLayoutService.expanded,
-            prefix,
-            title,
-            topActions,
-            userInfo
-        });
-    }
-
-    private buildBreadcrumbConfig(items: AppLayoutBreadcrumbItem[]): BreadcrumbConfig | null {
-        if (items.length === 0) {
-            return null;
-        }
-
-        return new BreadcrumbConfig({
-            items,
-            onItemClick: (id: number) => this.config.onBreadcrumbClick?.(id),
-            translate: false
-        });
-    }
-
-    private initActions(actions: LeftMenuAction[]): void {
-        actions.forEach(action => {
-            const consumerAction = action.action;
-
-            action.action = () => {
-                consumerAction?.();
-                this.appLayoutService.emitMenuClick(action.key);
-            };
-
-            if (action.subActions?.length) {
-                this.initActions(action.subActions);
-            }
-        });
-    }
-
-    private setActiveAction(action: LeftMenuAction, activeKey: string): void {
-        action.active = action.key === activeKey;
-
-        if (action.subActions) {
-            action.subActions.forEach(sub => this.setActiveAction(sub, activeKey));
-        }
-    }
-
-    // Route-based activation — only used when at least one action declares `route`
-
-    private activateByUrl(url: string): void {
-        const path = url.split('?')[0].split('#')[0];
-        const all = [...this.leftMenuConfig.topActions, ...this.leftMenuConfig.bottomActions];
-        const breadcrumbPath = this.findBreadcrumbPathByUrl(all, path);
-
-        if (breadcrumbPath?.length) {
-            const leaf = breadcrumbPath[breadcrumbPath.length - 1];
-            this.currentActiveKey = leaf.key;
-            this.appLayoutService.activeMenuAction(leaf.key);
-            this.buildAndSetBreadcrumb(breadcrumbPath);
-            this.config.onRouteActivated?.(leaf.key);
-        } else {
-            this.currentActiveKey = null;
-            this.appLayoutService.clearBreadcrumb();
-        }
-    }
-
-    private activateByKey(key: string): void {
-        const all = [...this.leftMenuConfig.topActions, ...this.leftMenuConfig.bottomActions];
-        const breadcrumbPath = this.findBreadcrumbPathByKey(all, key);
-        const leaf = breadcrumbPath?.[breadcrumbPath.length - 1];
-
-        if (!leaf?.route) {
-            return;
-        }
-
-        this.currentActiveKey = key;
-        this.appLayoutService.activeMenuAction(key);
-        this.buildAndSetBreadcrumb(breadcrumbPath!);
-        this.config.onRouteActivated?.(leaf.key);
-    }
-
-    private buildAndSetBreadcrumb(path: LeftMenuAction[]): void {
+    private activate(path: LeftMenuAction[]): void {
+        const leaf = path[path.length - 1];
+        const { onRouteActivated, prefix } = this.config();
         const items = path.map(
             (action, index) =>
                 new AppLayoutBreadcrumbItem({
                     id: index + 1,
-                    label: this.translateService.instant(`${this.config.prefix}.actions.${action.key}.label`)
+                    label: this.translateService.instant(`${prefix}.actions.${action.key}.label`)
                 })
         );
 
+        this.appLayoutService.activeMenuAction(leaf.key);
         this.appLayoutService.setBreadcrumb(items);
+        onRouteActivated?.(leaf.key);
     }
 
-    private findBreadcrumbPathByUrl(
-        actions: LeftMenuAction[],
-        path: string,
-        parents: LeftMenuAction[] = []
-    ): LeftMenuAction[] | null {
-        let best: LeftMenuAction[] | null = null;
+    private activateByKey(key: string): void {
+        const path = findPathByKey(this.allActions(), key);
 
-        for (const action of actions) {
-            const matches = Boolean(action.route) && (path === action.route || path.startsWith(action.route + '/'));
-
-            if (matches) {
-                const current = [...parents, action];
-                const sub = action.subActions?.length
-                    ? this.findBreadcrumbPathByUrl(action.subActions, path, current)
-                    : null;
-                const candidate = sub ?? current;
-
-                if (!best || candidate.length > best.length) {
-                    best = candidate;
-                }
-            } else if (action.subActions?.length) {
-                const sub = this.findBreadcrumbPathByUrl(action.subActions, path, [...parents, action]);
-
-                if (sub && (!best || sub.length > best.length)) {
-                    best = sub;
-                }
-            }
+        if (path?.[path.length - 1].route) {
+            this.activate(path);
         }
-
-        return best;
     }
 
-    private findBreadcrumbPathByKey(
-        actions: LeftMenuAction[],
-        key: string,
-        parents: LeftMenuAction[] = []
-    ): LeftMenuAction[] | null {
-        for (const action of actions) {
-            if (action.key === key) {
-                return [...parents, action];
-            }
-
-            if (action.subActions?.length) {
-                const sub = this.findBreadcrumbPathByKey(action.subActions, key, [...parents, action]);
-                if (sub) {
-                    return sub;
-                }
-            }
+    private activateByUrl(url: string): void {
+        if (!this.usesRoutes()) {
+            return;
         }
 
-        return null;
+        const path = findPathByUrl(this.allActions(), url.split('?')[0].split('#')[0]);
+
+        if (path) {
+            this.activate(path);
+
+            return;
+        }
+
+        this.appLayoutService.clearActiveAction();
+        this.appLayoutService.clearBreadcrumb();
+    }
+
+    private allActions(): LeftMenuAction[] {
+        const { bottomActions, topActions } = this.config();
+
+        return [...topActions, ...bottomActions];
+    }
+
+    private prepareActions(actions: LeftMenuAction[], activeKey: string | null): LeftMenuAction[] {
+        return actions.map(
+            action =>
+                new LeftMenuAction({
+                    ...action,
+                    action: () => {
+                        action.action?.();
+                        this.appLayoutService.emitMenuClick(action.key);
+                    },
+                    active: activeKey === null ? action.active : action.key === activeKey,
+                    subActions: this.prepareActions(action.subActions, activeKey)
+                })
+        );
+    }
+
+    private refreshActiveAction(): void {
+        const key = this.appLayoutService.activeActionKey();
+
+        if (key !== null) {
+            this.activateByKey(key);
+        }
     }
 }

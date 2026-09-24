@@ -1,213 +1,110 @@
-# App Layout Component (`bey-app-layout`)
+# App layout
 
-Full application shell with a collapsible side menu, dynamic breadcrumb bar, and a projected content area.
+The application shell: a `bey-left-menu` on the left, a sticky breadcrumb bar and a footer around the page
+content you project. The layout renders the config it receives; what changes while the app runs, the
+breadcrumb, the active action and whether the menu is collapsed, lives in `BeyAppLayoutService`.
 
-Supported capabilities:
-
--   Collapsible left menu with top and bottom action groups.
--   Nested sub-actions with inline expansion or collapsed flyout (inherited from `bey-left-menu`).
--   Dynamic breadcrumb updated at runtime via `BeyAppLayoutService`.
--   Active menu action state managed via service.
--   Content projection for the main page area.
--   Optional user info footer in the side menu.
--   Footer bar with org branding, product name, and optional legal links (terms and privacy).
--   Lifecycle callbacks: initialization, menu action clicks, and breadcrumb item clicks.
--   i18n support for all menu labels and tooltips through `ngx-translate`.
-
----
-
-## Quick start
+## Usage
 
 ```ts
-import {
-    BeyAppLayoutBreadcrumbItem,
-    BeyAppLayoutBottomAction,
-    BeyAppLayoutConfig,
-    BeyAppLayoutService,
-    BeyAppLayoutTopAction
-} from '@beyonda-labs/angular-components';
-import { BeyLeftMenuTitle, BeyLeftMenuUserInfo } from '@beyonda-labs/angular-components';
-import { faChartLine, faGear, faHouse, faUsers } from '@fortawesome/free-solid-svg-icons';
-import { inject } from '@angular/core';
-
-export class MyLayoutComponent {
-    private readonly appLayoutService = inject(BeyAppLayoutService);
-
-    config = new BeyAppLayoutConfig({
-        iconSrc: 'assets/logo.svg',
-        productName: 'myApp.product',
-        prefix: 'myApp',
-        title: new BeyLeftMenuTitle({ title: 'myApp.title', icon: 'assets/logo.svg' }),
-        topActions: [
-            new BeyAppLayoutTopAction({ key: 'dashboard', icon: faHouse }),
-            new BeyAppLayoutTopAction({
-                key: 'reports',
-                icon: faChartLine,
-                subActions: [
-                    new BeyAppLayoutTopAction({ key: 'reports-monthly', icon: faChartLine }),
-                    new BeyAppLayoutTopAction({ key: 'reports-annual', icon: faChartLine })
-                ]
-            })
-        ],
-        bottomActions: [
-            new BeyAppLayoutBottomAction({ key: 'settings', icon: faGear })
-        ],
-        userInfo: new BeyLeftMenuUserInfo({ name: 'Ada', surname: 'Lovelace', email: 'ada@example.com' }),
-        onLayoutInitialized: () => this.navigateTo('dashboard'),
-        onMenuActionClick: (key: string) => this.navigateTo(key)
-    });
-
-    private navigateTo(key: string): void {
-        this.appLayoutService.setBreadcrumb([
-            new BeyAppLayoutBreadcrumbItem({ id: 1, label: 'Dashboard' }),
-            new BeyAppLayoutBreadcrumbItem({ id: 2, label: key })
-        ]);
-        this.appLayoutService.activeMenuAction(key);
-    }
-}
+readonly config = new BeyAppLayoutConfig({
+    iconSrc: 'assets/logo.svg',
+    productName: 'myApp.product',
+    prefix: 'myApp',
+    title: new BeyLeftMenuTitle({ title: 'myApp.title', icon: 'assets/logo.svg' }),
+    topActions: [
+        new BeyAppLayoutTopAction({ key: 'dashboard', icon: faHouse, route: '/dashboard' }),
+        new BeyAppLayoutTopAction({
+            key: 'reports',
+            icon: faChartLine,
+            route: '/reports',
+            subActions: [new BeyAppLayoutTopAction({ key: 'reports-monthly', icon: faCalendar, route: '/reports/monthly' })]
+        })
+    ],
+    bottomActions: [new BeyAppLayoutBottomAction({ key: 'logout', icon: faRightFromBracket })],
+    userInfo: new BeyLeftMenuUserInfo({ name: 'Ada', surname: 'Lovelace', email: 'ada@example.com' }),
+    onMenuActionClick: key => this.router.navigate([`/${key}`])
+});
 ```
 
 ```html
 <bey-app-layout [config]="config">
-    <div class="p-4">
-        <!-- page content goes here -->
-    </div>
+    <router-outlet />
 </bey-app-layout>
 ```
 
----
+## BeyAppLayoutConfig
 
-## Models
+| Field                 | Required | Default          | Meaning                                                         |
+| --------------------- | -------- | ---------------- | --------------------------------------------------------------- |
+| `iconSrc`             | yes      |                  | Organisation icon shown in the footer                            |
+| `productName`         | yes      |                  | i18n key of the product name shown in the footer                 |
+| `title`               | yes      |                  | Brand of the side menu, a `BeyLeftMenuTitle`                     |
+| `prefix`              | no       | `'app-layout'`   | i18n prefix the action texts are built from                      |
+| `topActions`          | no       | `[]`             | Main navigation                                                  |
+| `bottomActions`       | no       | `[]`             | Secondary group, pinned below                                    |
+| `breadcrumb`          | no       | `[]`             | Items the breadcrumb starts with                                 |
+| `useBodyPadding`      | no       | `true`           | Pads the projected content                                       |
+| `userInfo`            | no       | none             | Shows the signed-in user at the foot of the menu                 |
+| `orgName`             | no       | `'Beyonda Labs'` | Organisation name in the footer                                  |
+| `privacyUrl`          | no       | none             | Route of the privacy link in the footer                          |
+| `termsUrl`            | no       | none             | Route of the terms link in the footer                            |
+| `onLayoutInitialized` | no       |                  | Run once, when the layout is ready                               |
+| `onMenuActionClick`   | no       |                  | Run with the key of any action used, nested ones included        |
+| `onBreadcrumbClick`   | no       |                  | Run with the id of a breadcrumb item that is clicked             |
+| `onRouteActivated`    | no       |                  | Run with the key of the action a route activated                 |
 
-### `BeyAppLayoutConfig`
+`BeyAppLayoutTopAction` takes `key`, `icon`, and optionally `action`, `active`, `disabled`, `route` and
+`subActions`. `BeyAppLayoutBottomAction` takes `key`, `icon` and an optional `action`. Both are
+`BeyLeftMenuAction`s, so their texts resolve as `<prefix>.actions.<key>.label` and `.tooltip`.
 
-The root configuration object passed to `[config]`.
+`BeyAppLayoutBreadcrumbItem` takes `id`, `label` and an optional `icon`. The label is shown as it is: translate
+it before building the item.
 
-| Parameter            | Type                        | Required | Default           | Description                                                   |
-| -------------------- | --------------------------- | -------- | ----------------- | ------------------------------------------------------------- |
-| `iconSrc`            | `string`                    | yes      | —                 | URL or data URI of the org icon shown in the footer           |
-| `productName`        | `string`                    | yes      | —                 | i18n key for the product name shown in the footer             |
-| `title`              | `BeyLeftMenuTitle`          | yes      | —                 | Brand title and icon for the side menu header                 |
-| `orgName`            | `string`                    | no       | `'Beyonda Labs'`  | Organisation name shown in the footer                         |
-| `prefix`             | `string`                    | no       | `'app-layout'`    | Base prefix used to resolve action i18n keys                  |
-| `privacyUrl`         | `string`                    | no       | —                 | Route for the privacy policy link in the footer               |
-| `termsUrl`           | `string`                    | no       | —                 | Route for the terms of service link in the footer             |
-| `topActions`         | `BeyAppLayoutTopAction[]`   | no       | `[]`              | Main navigation actions in the side menu                      |
-| `bottomActions`      | `BeyAppLayoutBottomAction[]`| no       | `[]`              | Secondary actions rendered below the separator                |
-| `breadcrumb`         | `BeyAppLayoutBreadcrumbItem[]` | no    | `[]`              | Initial breadcrumb items (can be updated at runtime via service) |
-| `useBodyPadding`     | `boolean`                   | no       | `true`            | Whether the projected content area gets default padding        |
-| `userInfo`           | `BeyLeftMenuUserInfo`       | no       | —                 | Optional user footer in the side menu                         |
-| `onLayoutInitialized`| `() => void`                | no       | —                 | Called once after the component is initialized                |
-| `onMenuActionClick`  | `(key: string) => void`     | no       | —                 | Called when any menu action (including sub-actions) is triggered |
-| `onBreadcrumbClick`  | `(id: number) => void`      | no       | —                 | Called when a non-last breadcrumb item is clicked             |
+## The actions are yours
 
-Behavior notes:
+The layout never writes into the actions it receives. It builds the menu from copies, wrapping each `action`
+so that using it also reports the key through the service and `onMenuActionClick`, and marking as active
+whichever action the service names. The `active` flag of the config is only honoured until the service names
+one.
 
--   `onMenuActionClick` receives the `key` of the triggered action, not the action object.
--   `onBreadcrumbClick` receives the numeric `id` of the clicked breadcrumb item, not the item object.
--   The breadcrumb bar is hidden when `breadcrumb` is empty and only shown when at least one item is present.
+## Routes
 
----
+When any action declares a `route`, the layout keeps the menu and the breadcrumb in sync with the router on
+its own: on every navigation it activates the deepest action whose route is the url or one of its ancestors,
+builds the breadcrumb from the labels of that path, translated on the spot and again whenever the language
+changes, and calls `onRouteActivated`. A url no action claims clears both. Using a routed action from the
+menu activates it the same way.
 
-### `BeyAppLayoutTopAction`
+Without routes, nothing is activated for you: call `activeMenuAction` and `setBreadcrumb` from
+`onMenuActionClick`, as the style-guide does.
 
-Defines a top navigation action. Supports nested sub-actions.
+## BeyAppLayoutService
 
-| Parameter    | Type                        | Required | Default  | Description                                       |
-| ------------ | --------------------------- | -------- | -------- | ------------------------------------------------- |
-| `key`        | `string`                    | yes      | —        | Unique key used for i18n lookup and click routing |
-| `icon`       | `IconDefinition`            | yes      | —        | Font Awesome icon displayed in the menu           |
-| `action`     | `() => void`                | no       | —        | Optional click handler, run in addition to `onMenuActionClick` |
-| `active`     | `boolean`                   | no       | `false`  | Marks the action as currently selected            |
-| `disabled`   | `boolean`                   | no       | `false`  | Disables interaction                              |
-| `subActions` | `BeyAppLayoutTopAction[]`   | no       | `[]`     | Nested child actions                              |
+A root singleton, so a page can update the shell from anywhere.
 
-Behavior notes:
+| Member                      | Meaning                                                       |
+| --------------------------- | ------------------------------------------------------------- |
+| `breadcrumb`                | Signal with the current items                                  |
+| `setBreadcrumb(items)`      | Replaces them                                                  |
+| `clearBreadcrumb()`         | Hides the bar                                                  |
+| `activeActionKey`           | Signal with the key of the active action, or `null`            |
+| `activeMenuAction(key)`     | Marks that action as active and clears the rest                |
+| `clearActiveAction()`       | Leaves no action active                                        |
+| `expanded`                  | Signal with the state of the menu                              |
+| `setExpanded(value)`        | Collapses or expands it, and persists the choice               |
+| `emitMenuClick(key)`        | Reports an action as if it had been used from the menu         |
+| `emitBreadcrumbClick(id)`   | Reports a breadcrumb item as if it had been clicked            |
+| `onMenuClick$`              | The keys reported by the menu or by `emitMenuClick`            |
+| `onBreadcrumbClick$`        | The ids reported by the bar or by `emitBreadcrumbClick`        |
 
--   When a sub-action is triggered, `onMenuActionClick` is called with the sub-action's `key`.
--   Active state can be managed declaratively via the `active` parameter or at runtime via `BeyAppLayoutService.activeMenuAction()`.
--   A parent action receives a visual selected state when any of its descendants is active.
+The expanded state is stored under `bey-left-menu-expanded` in `localStorage`, so it survives a reload and
+defaults to expanded the first time.
 
----
+## Customisation
 
-### `BeyAppLayoutBottomAction`
-
-Defines a bottom navigation action. Simpler than `BeyAppLayoutTopAction` — no sub-actions or active state.
-
-| Parameter | Type             | Required | Default | Description                                       |
-| --------- | ---------------- | -------- | ------- | ------------------------------------------------- |
-| `key`     | `string`         | yes      | —        | Unique key used for i18n lookup and click routing |
-| `icon`    | `IconDefinition` | yes      | —        | Font Awesome icon displayed in the menu           |
-| `action`  | `() => void`     | no       | —        | Optional click handler, run in addition to `onMenuActionClick` |
-
----
-
-### `BeyAppLayoutBreadcrumbItem`
-
-Defines a single item in the breadcrumb trail.
-
-| Parameter | Type             | Required | Default | Description                                      |
-| --------- | ---------------- | -------- | ------- | ------------------------------------------------ |
-| `id`      | `number`         | yes      | —       | Unique numeric identifier; passed to `onBreadcrumbClick` when clicked |
-| `label`   | `string`         | yes      | —       | Display text shown in the breadcrumb bar         |
-| `icon`    | `IconDefinition` | no       | —       | Optional Font Awesome icon displayed before the label |
-
-Behavior notes:
-
--   The breadcrumb always uses raw labels (`translate: false`). Translate labels before passing them to the model.
--   The last item in the array represents the current page and is not clickable.
-
----
-
-## Service
-
-`BeyAppLayoutService` is the runtime interface for updating layout state after initialization. Inject it anywhere that needs to change the breadcrumb or the active menu action.
-
-### Methods
-
-| Method                          | Description                                                      |
-| ------------------------------- | ---------------------------------------------------------------- |
-| `setBreadcrumb(items)`          | Replaces the current breadcrumb with the provided items          |
-| `clearBreadcrumb()`             | Clears the breadcrumb bar (hides it)                             |
-| `activeMenuAction(key: string)` | Marks the action matching `key` as active (clears all others)    |
-| `emitMenuClick(key: string)`    | Emits a menu click event, triggering `onMenuActionClick`         |
-| `emitBreadcrumbClick(id: number)` | Emits a breadcrumb click event, triggering `onBreadcrumbClick` |
-| `setExpanded(value: boolean)`  | Sets the left menu's collapsed/expanded state and persists it     |
-
-The left menu's expanded/collapsed state (`expanded`) is read from and written to `localStorage` (key `bey-left-menu-expanded`) so it survives page reloads — no wiring needed from the consuming app, it defaults to expanded the first time.
-
-### Observables
-
-| Observable          | Type                                     | Description                                   |
-| ------------------- | ---------------------------------------- | --------------------------------------------- |
-| `breadcrumbItems$`  | `Observable<BeyAppLayoutBreadcrumbItem[]>` | Emits whenever the breadcrumb changes         |
-| `onMenuClick$`      | `Observable<string>`                     | Emits the `key` of the last triggered action  |
-| `onBreadcrumbClick$`| `Observable<number>`                     | Emits the `id` of the last clicked breadcrumb item |
-| `activeAction$`     | `Observable<string>`                     | Emits the `key` of the newly active action    |
-
----
-
-## i18n convention
-
-With `prefix = 'myApp'` and an action with `key = 'dashboard'`:
-
-| Key pattern                        | Example                            | Description              |
-| ---------------------------------- | ---------------------------------- | ------------------------ |
-| `{prefix}.title`                   | `myApp.title`                      | Default menu brand title |
-| `{prefix}.actions.{key}.label`     | `myApp.actions.dashboard.label`    | Action label             |
-| `{prefix}.actions.{key}.tooltip`   | `myApp.actions.dashboard.tooltip`  | Action tooltip           |
-
-Behavior notes:
-
--   Breadcrumb labels are always rendered as raw strings. Pass already-translated labels using `TranslateService.instant()` before building the `BeyAppLayoutBreadcrumbItem` array.
--   Sub-action keys follow the same pattern as top-level action keys. Use distinct keys (e.g., `reports-monthly`) to avoid translation key conflicts.
-
----
-
-## Best practices
-
--   Use `onLayoutInitialized` to set the initial breadcrumb and active action instead of doing it in the component constructor, since the service subscriptions are only active after the layout initializes.
--   Call `BeyAppLayoutService.activeMenuAction(key)` together with `setBreadcrumb()` inside `onMenuActionClick` to keep the menu state and breadcrumb in sync.
--   Keep `topActions` for primary navigation and `bottomActions` for low-frequency items such as settings or help.
--   Use stable `key` values on all actions (including sub-actions) because they drive both i18n resolution and active state routing.
--   Translate breadcrumb labels before passing them to `BeyAppLayoutBreadcrumbItem`; the component renders labels as-is without further translation.
+| Variable                              | Default                 |
+| ------------------------------------- | ----------------------- |
+| `--bey-app-layout-bg`                 | `--bey-bg-page`         |
+| `--bey-app-layout-breadcrumb-border`  | `--bey-border-subtle`   |
+| `--bey-app-layout-breadcrumb-shadow`  | `--bey-shadow-sm`       |

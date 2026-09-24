@@ -3,7 +3,6 @@
     "files": [
         "src/lib/assets/styles/bs-overrides.css",
         "src/lib/assets/styles/tokens.css",
-        "src/lib/components/app-layout/app-layout.component.css",
         "src/lib/components/form/components/field/field-control.styles.css",
         "src/lib/components/form/components/field/field-info/field-info.component.css",
         "src/lib/components/form/components/field/field-text-variable/field-text-variable.component.css",

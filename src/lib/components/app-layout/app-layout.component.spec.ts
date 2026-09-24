@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { faGear, faHome, faUser } from '@fortawesome/free-solid-svg-icons';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideRouter, Router } from '@angular/router';
+import { faGear, faHome } from '@fortawesome/free-solid-svg-icons';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { LeftMenuTitle, LeftMenuUserInfo } from '../left-menu/models/left-menu.model';
 import { AppLayoutComponent } from './app-layout.component';
@@ -9,384 +10,338 @@ import {
     AppLayoutBottomAction,
     AppLayoutBreadcrumbItem,
     AppLayoutConfig,
+    AppLayoutConfigParameters,
     AppLayoutTopAction
 } from './models/app-layout.model';
 import { AppLayoutService } from './services/app-layout.service';
 
-class ResizeObserverMock {
-    observe(): void {}
-    unobserve(): void {}
-    disconnect(): void {}
-}
+@Component({ standalone: true, template: '' })
+class EmptyPageComponent {}
 
 @Component({
-    standalone: true,
     imports: [AppLayoutComponent],
-    template: '<bey-app-layout [config]="config"><p class="test-content">Projected content</p></bey-app-layout>'
+    standalone: true,
+    template: '<bey-app-layout [config]="config"><p class="projected">Projected content</p></bey-app-layout>'
 })
-class TestHostComponent {
-    config!: AppLayoutConfig;
+class HostComponent {
+    config = buildConfig();
 }
 
-function buildConfig(
-    overrides: {
-        topActions?: AppLayoutTopAction[];
-        bottomActions?: AppLayoutBottomAction[];
-        onBreadcrumbClick?: (id: number) => void;
-        onMenuActionClick?: (key: string) => void;
-        onLayoutInitialized?: () => void;
-        useBodyPadding?: boolean;
-    } = {}
-): AppLayoutConfig {
+function buildConfig(overrides: Partial<AppLayoutConfigParameters> = {}): AppLayoutConfig {
     return new AppLayoutConfig({
-        iconSrc: 'test-icon.svg',
-        productName: 'Test Product',
-        title: new LeftMenuTitle({ title: 'Test App' }),
-        topActions: overrides.topActions ?? [],
-        bottomActions: overrides.bottomActions ?? [],
-        onBreadcrumbClick: overrides.onBreadcrumbClick,
-        onMenuActionClick: overrides.onMenuActionClick,
-        onLayoutInitialized: overrides.onLayoutInitialized,
-        useBodyPadding: overrides.useBodyPadding
+        iconSrc: 'icon.svg',
+        prefix: 'demo',
+        productName: 'Demo product',
+        title: new LeftMenuTitle({ title: 'Demo app' }),
+        topActions: [new AppLayoutTopAction({ icon: faHome, key: 'home' })],
+        bottomActions: [new AppLayoutBottomAction({ icon: faGear, key: 'settings' })],
+        ...overrides
     });
 }
 
 describe('AppLayoutComponent', () => {
-    let fixture: ComponentFixture<TestHostComponent>;
-    let host: TestHostComponent;
+    let fixture: ComponentFixture<AppLayoutComponent>;
     let service: AppLayoutService;
 
+    async function render(config: AppLayoutConfig = buildConfig()): Promise<void> {
+        fixture = TestBed.createComponent(AppLayoutComponent);
+        fixture.componentRef.setInput('config', config);
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
+
+    async function settle(): Promise<void> {
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+    }
+
+    function rowOf(name: string): HTMLElement {
+        const found = [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-left-menu-item')].find(
+            item => item.querySelector('.bey-left-menu-action-label')?.textContent?.trim() === name
+        );
+
+        if (!found) {
+            throw new Error(`No row for ${name}`);
+        }
+
+        return found;
+    }
+
+    function buttonOf(name: string): HTMLElement {
+        return rowOf(name).querySelector('.bey-left-menu-action') as HTMLElement;
+    }
+
+    function breadcrumbLabels(): string[] {
+        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-breadcrumb-item-label')].map(
+            label => label.textContent?.trim() ?? ''
+        );
+    }
+
     beforeEach(async () => {
-        global.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
+        localStorage.clear();
+        global.ResizeObserver = class {
+            observe(): void {}
+            unobserve(): void {}
+            disconnect(): void {}
+        } as unknown as typeof ResizeObserver;
 
         await TestBed.configureTestingModule({
-            imports: [TestHostComponent, TranslateModule.forRoot()]
+            imports: [AppLayoutComponent, HostComponent, TranslateModule.forRoot()],
+            providers: [provideRouter([{ path: '**', component: EmptyPageComponent }])]
         }).compileComponents();
 
         service = TestBed.inject(AppLayoutService);
-        fixture = TestBed.createComponent(TestHostComponent);
-        host = fixture.componentInstance;
     });
 
-    it('should create', () => {
-        host.config = buildConfig();
-        fixture.detectChanges();
-        expect(fixture.nativeElement.querySelector('bey-left-menu')).toBeTruthy();
+    it('shows the menu with the title and both action groups', async () => {
+        await render();
+
+        expect(fixture.nativeElement.textContent).toContain('Demo app');
+        expect(rowOf('demo.actions.home.label')).toBeTruthy();
+        expect(rowOf('demo.actions.settings.label')).toBeTruthy();
     });
 
-    it('should render left-menu with provided config', () => {
-        host.config = buildConfig();
-        fixture.detectChanges();
+    it('projects the page content into the body', () => {
+        const host = TestBed.createComponent(HostComponent);
+        host.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-left-menu')).toBeTruthy();
+        expect(host.nativeElement.querySelector('.bey-app-layout-body-content .projected').textContent).toBe(
+            'Projected content'
+        );
     });
 
-    it('should apply body padding by default', () => {
-        host.config = buildConfig();
-        fixture.detectChanges();
+    it('pads the body unless the config opts out', async () => {
+        await render();
+        expect(fixture.nativeElement.querySelector('.bey-app-layout-body-content').classList).toContain('has-padding');
 
-        const body = fixture.nativeElement.querySelector('.bey-app-layout-body-content');
-
-        expect(body.classList.contains('p-3')).toBe(true);
+        await render(buildConfig({ useBodyPadding: false }));
+        expect(fixture.nativeElement.querySelector('.bey-app-layout-body-content').classList).not.toContain(
+            'has-padding'
+        );
     });
 
-    it('should not apply body padding when useBodyPadding is false', () => {
-        host.config = buildConfig({ useBodyPadding: false });
-        fixture.detectChanges();
-
-        const body = fixture.nativeElement.querySelector('.bey-app-layout-body-content');
-
-        expect(body.classList.contains('p-3')).toBe(false);
-    });
-
-    it('should project ng-content into body area', () => {
-        host.config = buildConfig();
-        fixture.detectChanges();
-
-        const projected = fixture.nativeElement.querySelector('.test-content');
-        expect(projected).toBeTruthy();
-        expect(projected.textContent).toBe('Projected content');
-    });
-
-    it('should hide breadcrumb when service has no items', () => {
-        host.config = buildConfig();
-        fixture.detectChanges();
-
-        expect(fixture.nativeElement.querySelector('bey-breadcrumb')).toBeNull();
-    });
-
-    it('should show breadcrumb when service has items', () => {
-        host.config = buildConfig();
-        fixture.detectChanges();
-
-        service.setBreadcrumb([
-            new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' }),
-            new AppLayoutBreadcrumbItem({ id: 2, label: 'Products' })
-        ]);
-        fixture.detectChanges();
-
-        expect(fixture.nativeElement.querySelector('bey-breadcrumb')).toBeTruthy();
-    });
-
-    it('should hide breadcrumb after clearBreadcrumb', () => {
-        host.config = buildConfig();
-        fixture.detectChanges();
-
-        service.setBreadcrumb([new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' })]);
-        fixture.detectChanges();
-        expect(fixture.nativeElement.querySelector('bey-breadcrumb')).toBeTruthy();
-
-        service.clearBreadcrumb();
-        fixture.detectChanges();
-        expect(fixture.nativeElement.querySelector('bey-breadcrumb')).toBeNull();
-    });
-
-    it('should call config.onBreadcrumbClick with item id when a breadcrumb item is clicked', () => {
-        const onBreadcrumbClick = jest.fn();
-        host.config = buildConfig({ onBreadcrumbClick });
-        fixture.detectChanges();
-
-        service.setBreadcrumb([
-            new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' }),
-            new AppLayoutBreadcrumbItem({ id: 2, label: 'Current' })
-        ]);
-        fixture.detectChanges();
-
-        const buttons = fixture.nativeElement.querySelectorAll('.bey-breadcrumb-item-button');
-        buttons[0]?.click();
-
-        expect(onBreadcrumbClick).toHaveBeenCalledWith(1);
-    });
-
-    it('should call config.onBreadcrumbClick when service emits onBreadcrumbClick$', () => {
-        const onBreadcrumbClick = jest.fn();
-        host.config = buildConfig({ onBreadcrumbClick });
-        fixture.detectChanges();
-
-        service.emitBreadcrumbClick(42);
-
-        expect(onBreadcrumbClick).toHaveBeenCalledWith(42);
-    });
-
-    it('should emit on onMenuClick$ when a top action is clicked', () => {
-        const action = new AppLayoutTopAction({ key: 'dashboard', icon: faHome });
-        host.config = buildConfig({ topActions: [action] });
-        fixture.detectChanges();
-
-        const spy = jest.fn();
-        service.onMenuClick$.subscribe(spy);
-
-        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
-        component.leftMenuConfig.topActions[0].action?.();
-
-        expect(spy).toHaveBeenCalled();
-    });
-
-    it("should call the top action's own action callback in addition to emitting onMenuClick$", () => {
-        const onClick = jest.fn();
-        const action = new AppLayoutTopAction({ action: onClick, key: 'dashboard', icon: faHome });
-        host.config = buildConfig({ topActions: [action] });
-        fixture.detectChanges();
-
-        const spy = jest.fn();
-        service.onMenuClick$.subscribe(spy);
-
-        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
-        component.leftMenuConfig.topActions[0].action?.();
-
-        expect(onClick).toHaveBeenCalled();
-        expect(spy).toHaveBeenCalled();
-    });
-
-    it("should call the bottom action's own action callback in addition to emitting onMenuClick$", () => {
-        const onClick = jest.fn();
-        const action = new AppLayoutBottomAction({ action: onClick, key: 'settings', icon: faGear });
-        host.config = buildConfig({ bottomActions: [action] });
-        fixture.detectChanges();
-
-        const spy = jest.fn();
-        service.onMenuClick$.subscribe(spy);
-
-        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
-        component.leftMenuConfig.bottomActions[0].action?.();
-
-        expect(onClick).toHaveBeenCalled();
-        expect(spy).toHaveBeenCalled();
-    });
-
-    it('should emit on onMenuClick$ for bottom actions', () => {
-        const action = new AppLayoutBottomAction({ key: 'settings', icon: faGear });
-        host.config = buildConfig({ bottomActions: [action] });
-        fixture.detectChanges();
-
-        const spy = jest.fn();
-        service.onMenuClick$.subscribe(spy);
-
-        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
-        component.leftMenuConfig.bottomActions[0].action?.();
-
-        expect(spy).toHaveBeenCalled();
-    });
-
-    it('should emit on onMenuClick$ for nested sub-actions', () => {
-        const subAction = new AppLayoutTopAction({ key: 'sub-item', icon: faUser });
-        const parentAction = new AppLayoutTopAction({ key: 'parent', icon: faHome, subActions: [subAction] });
-        host.config = buildConfig({ topActions: [parentAction] });
-        fixture.detectChanges();
-
-        const spy = jest.fn();
-        service.onMenuClick$.subscribe(spy);
-
-        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
-        component.leftMenuConfig.topActions[0].subActions[0].action?.();
-
-        expect(spy).toHaveBeenCalled();
-    });
-
-    it('should call config.onMenuActionClick when service emits onMenuClick$', () => {
-        const onMenuActionClick = jest.fn();
-        host.config = buildConfig({ onMenuActionClick });
-        fixture.detectChanges();
-
-        service.emitMenuClick('dashboard');
-
-        expect(onMenuActionClick).toHaveBeenCalledWith('dashboard');
-    });
-
-    it('should call config.onLayoutInitialized on init', () => {
+    it('reports that it has initialised', async () => {
         const onLayoutInitialized = jest.fn();
-        host.config = buildConfig({ onLayoutInitialized });
-        fixture.detectChanges();
+
+        await render(buildConfig({ onLayoutInitialized }));
 
         expect(onLayoutInitialized).toHaveBeenCalledTimes(1);
     });
 
-    it('should set active state on matching action via activeMenuAction', () => {
-        const action = new AppLayoutTopAction({ key: 'dashboard', icon: faHome });
-        host.config = buildConfig({ topActions: [action] });
-        fixture.detectChanges();
+    it('passes the signed-in user to the menu', async () => {
+        await render(buildConfig({ userInfo: new LeftMenuUserInfo({ name: 'Ada', surname: 'Lovelace' }) }));
 
-        service.activeMenuAction('dashboard');
-        fixture.detectChanges();
-
-        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
-        expect(component.leftMenuConfig.topActions[0].active).toBe(true);
+        expect(fixture.nativeElement.querySelector('.bey-left-menu-footer').textContent).toContain('Ada Lovelace');
     });
 
-    it('should set inactive state on non-matching actions via activeMenuAction', () => {
-        const action1 = new AppLayoutTopAction({ key: 'dashboard', icon: faHome, active: true });
-        const action2 = new AppLayoutTopAction({ key: 'settings', icon: faGear });
-        host.config = buildConfig({ topActions: [action1, action2] });
-        fixture.detectChanges();
+    describe('breadcrumb', () => {
+        it('shows nothing until the service has items, and hides again when they are cleared', async () => {
+            await render();
+            expect(fixture.nativeElement.querySelector('bey-breadcrumb')).toBeNull();
 
-        service.activeMenuAction('settings');
-        fixture.detectChanges();
+            service.setBreadcrumb([new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' })]);
+            await settle();
+            expect(breadcrumbLabels()).toEqual(['Home']);
 
-        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
-        expect(component.leftMenuConfig.topActions[0].active).toBe(false);
-        expect(component.leftMenuConfig.topActions[1].active).toBe(true);
-    });
-
-    it('should build LeftMenuConfig with correct prefix and title', () => {
-        host.config = new AppLayoutConfig({
-            iconSrc: 'test-icon.svg',
-            productName: 'Test Product',
-            prefix: 'my-app',
-            title: new LeftMenuTitle({ title: 'My Application', icon: '/logo.png' })
+            service.clearBreadcrumb();
+            await settle();
+            expect(fixture.nativeElement.querySelector('bey-breadcrumb')).toBeNull();
         });
-        fixture.detectChanges();
 
-        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
-        expect(component.leftMenuConfig.prefix).toBe('my-app');
-        expect(component.leftMenuConfig.title.title).toBe('My Application');
-        expect(component.leftMenuConfig.title.icon).toBe('/logo.png');
-    });
+        it('starts with the items the config carries', async () => {
+            await render(buildConfig({ breadcrumb: [new AppLayoutBreadcrumbItem({ id: 1, label: 'Start' })] }));
+            await settle();
 
-    it('should build breadcrumb with translate disabled', () => {
-        host.config = buildConfig();
-        fixture.detectChanges();
-
-        service.setBreadcrumb([
-            new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' }),
-            new AppLayoutBreadcrumbItem({ id: 2, label: 'Page' })
-        ]);
-        fixture.detectChanges();
-
-        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
-        expect(component.breadcrumbConfig).toBeTruthy();
-        expect(component.breadcrumbConfig!.translate).toBe(false);
-    });
-
-    it('should use breadcrumb item label correctly', () => {
-        host.config = buildConfig();
-        fixture.detectChanges();
-
-        service.setBreadcrumb([
-            new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' }),
-            new AppLayoutBreadcrumbItem({ id: 2, label: 'Details' })
-        ]);
-        fixture.detectChanges();
-
-        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
-        const breadcrumbItems = component.breadcrumbConfig!.items;
-        expect(breadcrumbItems[0].label).toBe('Home');
-        expect(breadcrumbItems[1].label).toBe('Details');
-    });
-
-    it('should build LeftMenuAction with active state from AppLayoutTopAction', () => {
-        const action = new AppLayoutTopAction({ key: 'dashboard', icon: faHome, active: true });
-        host.config = buildConfig({ topActions: [action] });
-        fixture.detectChanges();
-
-        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
-        expect(component.leftMenuConfig.topActions[0].active).toBe(true);
-    });
-
-    it('should pass userInfo to LeftMenuConfig', () => {
-        const userInfo = new LeftMenuUserInfo({ name: 'John', surname: 'Doe', email: 'john@test.com' });
-
-        host.config = new AppLayoutConfig({
-            iconSrc: 'test-icon.svg',
-            productName: 'Test Product',
-            title: new LeftMenuTitle({ title: 'App' }),
-            userInfo
+            expect(breadcrumbLabels()).toEqual(['Start']);
         });
-        fixture.detectChanges();
 
-        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
-        expect(component.leftMenuConfig.userInfo).toBe(userInfo);
+        it('reports a click on an item, from the bar or from the service', async () => {
+            const onBreadcrumbClick = jest.fn();
+            await render(buildConfig({ onBreadcrumbClick }));
+            service.setBreadcrumb([
+                new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' }),
+                new AppLayoutBreadcrumbItem({ id: 2, label: 'Current' })
+            ]);
+            await settle();
+
+            fixture.nativeElement.querySelector('.bey-breadcrumb-item-button').click();
+            service.emitBreadcrumbClick(42);
+
+            expect(onBreadcrumbClick.mock.calls).toEqual([[1], [42]]);
+        });
     });
 
-    it('should build the left-menu with the expanded state from AppLayoutService', () => {
-        service.setExpanded(false);
-        host.config = buildConfig();
-        fixture.detectChanges();
+    describe('menu actions', () => {
+        it('runs the consumer action, reports the key through the service and the config', async () => {
+            const run = jest.fn();
+            const onMenuActionClick = jest.fn();
+            const clicked = jest.fn();
+            await render(
+                buildConfig({
+                    onMenuActionClick,
+                    topActions: [new AppLayoutTopAction({ action: run, icon: faHome, key: 'home' })]
+                })
+            );
+            service.onMenuClick$.subscribe(clicked);
 
-        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
-        expect(component.leftMenuConfig.expanded).toBe(false);
+            buttonOf('demo.actions.home.label').click();
+
+            expect(run).toHaveBeenCalled();
+            expect(clicked).toHaveBeenCalledWith('home');
+            expect(onMenuActionClick).toHaveBeenCalledWith('home');
+        });
+
+        it('reports a nested action and a bottom one alike', async () => {
+            const clicked = jest.fn();
+            await render(
+                buildConfig({
+                    topActions: [
+                        new AppLayoutTopAction({
+                            icon: faHome,
+                            key: 'reports',
+                            subActions: [new AppLayoutTopAction({ icon: faHome, key: 'daily' })]
+                        })
+                    ]
+                })
+            );
+            service.onMenuClick$.subscribe(clicked);
+
+            (rowOf('demo.actions.reports.label').querySelector('.bey-left-menu-action-chevron') as HTMLElement).click();
+            await settle();
+            buttonOf('demo.actions.daily.label').click();
+            buttonOf('demo.actions.settings.label').click();
+
+            expect(clicked.mock.calls).toEqual([['daily'], ['settings']]);
+        });
+
+        it('never writes into the actions the consumer gave', async () => {
+            const run = jest.fn();
+            const action = new AppLayoutTopAction({ action: run, icon: faHome, key: 'home' });
+            await render(buildConfig({ topActions: [action] }));
+
+            service.activeMenuAction('home');
+            await settle();
+
+            expect(action.action).toBe(run);
+            expect(action.active).toBe(false);
+        });
     });
 
-    it('should persist expanded state into AppLayoutService when the left-menu toggles', () => {
-        host.config = buildConfig();
-        fixture.detectChanges();
+    describe('active action', () => {
+        it('honours the flag of the config until the service names one', async () => {
+            await render(
+                buildConfig({
+                    topActions: [
+                        new AppLayoutTopAction({ active: true, icon: faHome, key: 'home' }),
+                        new AppLayoutTopAction({ icon: faGear, key: 'other' })
+                    ]
+                })
+            );
+            expect(buttonOf('demo.actions.home.label').classList).toContain('is-active');
 
-        const component = fixture.debugElement.children[0].componentInstance as AppLayoutComponent;
-        component.onExpandedChange(false);
+            service.activeMenuAction('other');
+            await settle();
 
-        expect(service.expanded).toBe(false);
+            expect(buttonOf('demo.actions.home.label').classList).not.toContain('is-active');
+            expect(buttonOf('demo.actions.other.label').classList).toContain('is-active');
+        });
     });
 
-    it('should clean up subscriptions on destroy without errors', () => {
-        host.config = buildConfig();
-        fixture.detectChanges();
+    describe('expanded state', () => {
+        it('starts as the service remembers and persists every toggle', async () => {
+            service.setExpanded(false);
+            await render();
+            expect(fixture.nativeElement.querySelector('aside').classList).toContain('is-collapsed');
+
+            fixture.nativeElement.querySelector('.bey-left-menu-toggle').click();
+            await settle();
+
+            expect(fixture.nativeElement.querySelector('aside').classList).not.toContain('is-collapsed');
+            expect(service.expanded()).toBe(true);
+            expect(localStorage.getItem('bey-left-menu-expanded')).toBe('true');
+        });
+    });
+
+    describe('routes', () => {
+        const routed = (): AppLayoutConfigParameters['topActions'] => [
+            new AppLayoutTopAction({ icon: faHome, key: 'home', route: '/home' }),
+            new AppLayoutTopAction({
+                icon: faGear,
+                key: 'reports',
+                route: '/reports',
+                subActions: [new AppLayoutTopAction({ icon: faGear, key: 'daily', route: '/reports/daily' })]
+            })
+        ];
+
+        it('activates the action matching the current url and builds the breadcrumb from the path', async () => {
+            const onRouteActivated = jest.fn();
+            await TestBed.inject(Router).navigateByUrl('/reports/daily?tab=1');
+
+            await render(buildConfig({ onRouteActivated, topActions: routed() }));
+            await settle();
+
+            expect(buttonOf('demo.actions.daily.label').classList).toContain('is-active');
+            expect(buttonOf('demo.actions.reports.label').classList).toContain('has-active-descendant');
+            expect(breadcrumbLabels()).toEqual(['demo.actions.reports.label', 'demo.actions.daily.label']);
+            expect(onRouteActivated).toHaveBeenCalledWith('daily');
+        });
+
+        it('follows navigation, and clears everything on a url no action claims', async () => {
+            await render(buildConfig({ topActions: routed() }));
+            const router = TestBed.inject(Router);
+
+            await router.navigateByUrl('/home');
+            await settle();
+            expect(buttonOf('demo.actions.home.label').classList).toContain('is-active');
+            expect(breadcrumbLabels()).toEqual(['demo.actions.home.label']);
+
+            await router.navigateByUrl('/elsewhere');
+            await settle();
+            expect(service.activeActionKey()).toBeNull();
+            expect(fixture.nativeElement.querySelector('bey-breadcrumb')).toBeNull();
+        });
+
+        it('activates a routed action when it is used from the menu', async () => {
+            await render(buildConfig({ topActions: routed() }));
+
+            buttonOf('demo.actions.home.label').click();
+            await settle();
+
+            expect(buttonOf('demo.actions.home.label').classList).toContain('is-active');
+            expect(breadcrumbLabels()).toEqual(['demo.actions.home.label']);
+        });
+
+        it('rebuilds the breadcrumb in the new language', async () => {
+            const translate = TestBed.inject(TranslateService);
+            await TestBed.inject(Router).navigateByUrl('/home');
+            await render(buildConfig({ topActions: routed() }));
+
+            translate.setTranslation('es', { demo: { actions: { home: { label: 'Inicio' } } } });
+            translate.use('es');
+            await settle();
+
+            expect(breadcrumbLabels()).toEqual(['Inicio']);
+        });
+
+        it('leaves the service alone when no action declares a route', async () => {
+            await render();
+            service.setBreadcrumb([new AppLayoutBreadcrumbItem({ id: 1, label: 'Kept' })]);
+
+            await TestBed.inject(Router).navigateByUrl('/anywhere');
+            await settle();
+
+            expect(breadcrumbLabels()).toEqual(['Kept']);
+        });
+    });
+
+    it('stops listening once destroyed', async () => {
+        const onMenuActionClick = jest.fn();
+        await render(buildConfig({ onMenuActionClick }));
 
         fixture.destroy();
+        service.emitMenuClick('home');
 
-        expect(() => {
-            service.setBreadcrumb([new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' })]);
-            service.emitBreadcrumbClick(1);
-            service.emitMenuClick('key');
-            service.activeMenuAction('key');
-        }).not.toThrow();
+        expect(onMenuActionClick).not.toHaveBeenCalled();
     });
 });
