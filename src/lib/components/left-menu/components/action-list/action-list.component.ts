@@ -126,7 +126,12 @@ export class ActionListComponent {
         this.activeFlyoutPath = path;
     }
 
-    onActionClick(action: LeftMenuAction, path: string, forceExpanded = false, event: MouseEvent | undefined = undefined): void {
+    onActionClick(
+        action: LeftMenuAction,
+        path: string,
+        forceExpanded = false,
+        event: MouseEvent | undefined = undefined
+    ): void {
         if (action.disabled) {
             return;
         }

@@ -17,9 +17,12 @@
             }
 
             <div class="bey-app-layout-body grow d-flex flex-column">
-                <div class="bey-app-layout-body-content flex-fill" [ngClass]="{
-                    'p-3 pt-2': config.useBodyPadding
-                }">
+                <div
+                    class="bey-app-layout-body-content flex-fill"
+                    [ngClass]="{
+                        'p-3 pt-2': config.useBodyPadding
+                    }"
+                >
                     <ng-content></ng-content>
                 </div>
                 <bey-footer [config]="config.footerConfig" class="shrink-0" />

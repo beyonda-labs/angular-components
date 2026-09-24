@@ -326,10 +326,8 @@ export class PageActionsService {
         const childrenByParent = new Map<string | number | null, PageItem[]>();
 
         for (const category of categories) {
-            const parentId = ((category as unknown as Record<string, unknown>)[parentField] as
-                | string
-                | number
-                | null) ?? null;
+            const parentId =
+                ((category as unknown as Record<string, unknown>)[parentField] as string | number | null) ?? null;
             const siblings = childrenByParent.get(parentId) ?? [];
 
             siblings.push(category);

@@ -15,7 +15,14 @@ import { AppLayoutService } from './services/app-layout.service';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [BreadcrumbComponent, CommonModule, FloatingPreferencesComponent, FooterComponent, LeftMenuComponent, TranslateModule],
+    imports: [
+        BreadcrumbComponent,
+        CommonModule,
+        FloatingPreferencesComponent,
+        FooterComponent,
+        LeftMenuComponent,
+        TranslateModule
+    ],
     selector: 'bey-app-layout',
     standalone: true,
     styleUrls: ['./app-layout.component.css'],
@@ -76,9 +83,9 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
 
         if (this.usesRouteBased) {
             this.activateByUrl(this.router.url);
-            this.routerSubscription = this.router.events.pipe(
-                filter(event => event instanceof NavigationEnd)
-            ).subscribe(event => this.activateByUrl((event as NavigationEnd).urlAfterRedirects));
+            this.routerSubscription = this.router.events
+                .pipe(filter(event => event instanceof NavigationEnd))
+                .subscribe(event => this.activateByUrl((event as NavigationEnd).urlAfterRedirects));
             this.langChangeSubscription = this.translateService.onLangChange.subscribe(() => {
                 if (this.currentActiveKey !== null) {
                     this.activateByKey(this.currentActiveKey);
@@ -107,7 +114,9 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
     }
 
     private anyActionHasRoute(actions: LeftMenuAction[]): boolean {
-        return actions.some(a => Boolean(a.route) || (Boolean(a.subActions?.length) && this.anyActionHasRoute(a.subActions)));
+        return actions.some(
+            a => Boolean(a.route) || (Boolean(a.subActions?.length) && this.anyActionHasRoute(a.subActions))
+        );
     }
 
     private buildLeftMenuConfig(config: AppLayoutConfig): LeftMenuConfig {
@@ -185,7 +194,9 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         const breadcrumbPath = this.findBreadcrumbPathByKey(all, key);
         const leaf = breadcrumbPath?.[breadcrumbPath.length - 1];
 
-        if (!leaf?.route) {return;}
+        if (!leaf?.route) {
+            return;
+        }
 
         this.currentActiveKey = key;
         this.appLayoutService.activeMenuAction(key);
@@ -194,11 +205,12 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
     }
 
     private buildAndSetBreadcrumb(path: LeftMenuAction[]): void {
-        const items = path.map((action, index) =>
-            new AppLayoutBreadcrumbItem({
-                id: index + 1,
-                label: this.translateService.instant(`${this.config.prefix}.actions.${action.key}.label`)
-            })
+        const items = path.map(
+            (action, index) =>
+                new AppLayoutBreadcrumbItem({
+                    id: index + 1,
+                    label: this.translateService.instant(`${this.config.prefix}.actions.${action.key}.label`)
+                })
         );
 
         this.appLayoutService.setBreadcrumb(items);
@@ -212,8 +224,7 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         let best: LeftMenuAction[] | null = null;
 
         for (const action of actions) {
-            const matches =
-                Boolean(action.route) && (path === action.route || path.startsWith(action.route + '/'));
+            const matches = Boolean(action.route) && (path === action.route || path.startsWith(action.route + '/'));
 
             if (matches) {
                 const current = [...parents, action];
@@ -243,11 +254,15 @@ export class AppLayoutComponent implements OnInit, OnDestroy {
         parents: LeftMenuAction[] = []
     ): LeftMenuAction[] | null {
         for (const action of actions) {
-            if (action.key === key) {return [...parents, action];}
+            if (action.key === key) {
+                return [...parents, action];
+            }
 
             if (action.subActions?.length) {
                 const sub = this.findBreadcrumbPathByKey(action.subActions, key, [...parents, action]);
-                if (sub) {return sub;}
+                if (sub) {
+                    return sub;
+                }
             }
         }
 

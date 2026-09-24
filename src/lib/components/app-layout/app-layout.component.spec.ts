@@ -182,7 +182,7 @@ describe('AppLayoutComponent', () => {
         expect(spy).toHaveBeenCalled();
     });
 
-    it('should call the top action\'s own action callback in addition to emitting onMenuClick$', () => {
+    it("should call the top action's own action callback in addition to emitting onMenuClick$", () => {
         const onClick = jest.fn();
         const action = new AppLayoutTopAction({ action: onClick, key: 'dashboard', icon: faHome });
         host.config = buildConfig({ topActions: [action] });
@@ -198,7 +198,7 @@ describe('AppLayoutComponent', () => {
         expect(spy).toHaveBeenCalled();
     });
 
-    it('should call the bottom action\'s own action callback in addition to emitting onMenuClick$', () => {
+    it("should call the bottom action's own action callback in addition to emitting onMenuClick$", () => {
         const onClick = jest.fn();
         const action = new AppLayoutBottomAction({ action: onClick, key: 'settings', icon: faGear });
         host.config = buildConfig({ bottomActions: [action] });

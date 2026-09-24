@@ -1,11 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 
 import { PropertyTreeNode } from '../models/property-tree-node.model';
-import {
-    PropertyTreeDragEnd,
-    PropertyTreeDragStart,
-    PropertyTreeDrop
-} from '../types/properties-menu-events';
+import { PropertyTreeDragEnd, PropertyTreeDragStart, PropertyTreeDrop } from '../types/properties-menu-events';
 import { PropertyTreeDropPosition } from '../utils/property-tree-drop.util';
 
 interface DropTarget {

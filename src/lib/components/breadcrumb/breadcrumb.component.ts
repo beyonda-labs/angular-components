@@ -58,9 +58,7 @@ export class BreadcrumbComponent implements AfterViewInit, OnDestroy {
     }
 
     get collapsedItemsTooltip(): string {
-        return this.collapsedItems
-            .map(item => this.resolveLabel(item))
-            .join(` ${this.config.separator} `);
+        return this.collapsedItems.map(item => this.resolveLabel(item)).join(` ${this.config.separator} `);
     }
 
     get hasCollapsedItems(): boolean {

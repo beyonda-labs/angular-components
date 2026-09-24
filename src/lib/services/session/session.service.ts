@@ -68,7 +68,9 @@ export class SessionService {
         this._token.set(token);
 
         const user = decodeJwtUser(token);
-        if (user) { this.setUser(user); }
+        if (user) {
+            this.setUser(user);
+        }
     }
 
     setUser(user: SessionUser): void {

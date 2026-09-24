@@ -81,7 +81,9 @@ describe('FormComponent', () => {
                 sections: []
             });
 
-            const buttonConfig = component.getFormButton(new FormButton({ label: 'submit', type: FormButtonType.Submit }));
+            const buttonConfig = component.getFormButton(
+                new FormButton({ label: 'submit', type: FormButtonType.Submit })
+            );
 
             expect(buttonConfig.isDisabled).toBe(true);
             expect(buttonConfig.tooltip).toBe('angular-components.form.submit.without-changes');
@@ -102,7 +104,9 @@ describe('FormComponent', () => {
         });
 
         it('should keep it disabled with the invalid tooltip when dirty but invalid', () => {
-            formServiceMock.initFieldControl.mockReturnValue(new FormControl('', { validators: () => ({ required: true }) }));
+            formServiceMock.initFieldControl.mockReturnValue(
+                new FormControl('', { validators: () => ({ required: true }) })
+            );
 
             component.config = new FormConfig({
                 i18nPrefix: 'test.form',
@@ -115,7 +119,9 @@ describe('FormComponent', () => {
             });
             component.config.formGroup?.markAsDirty();
 
-            const buttonConfig = component.getFormButton(new FormButton({ label: 'submit', type: FormButtonType.Submit }));
+            const buttonConfig = component.getFormButton(
+                new FormButton({ label: 'submit', type: FormButtonType.Submit })
+            );
 
             expect(buttonConfig.isDisabled).toBe(true);
             expect(buttonConfig.tooltip).toBe('angular-components.form.submit.invalid');
@@ -136,7 +142,9 @@ describe('FormComponent', () => {
         });
 
         it('should still block submit when invalid even with allowSubmitWithoutChanges set', () => {
-            formServiceMock.initFieldControl.mockReturnValue(new FormControl('', { validators: () => ({ required: true }) }));
+            formServiceMock.initFieldControl.mockReturnValue(
+                new FormControl('', { validators: () => ({ required: true }) })
+            );
 
             component.config = new FormConfig({
                 allowSubmitWithoutChanges: true,
@@ -149,7 +157,9 @@ describe('FormComponent', () => {
                 ]
             });
 
-            const buttonConfig = component.getFormButton(new FormButton({ label: 'submit', type: FormButtonType.Submit }));
+            const buttonConfig = component.getFormButton(
+                new FormButton({ label: 'submit', type: FormButtonType.Submit })
+            );
 
             expect(buttonConfig.isDisabled).toBe(true);
             expect(buttonConfig.tooltip).toBe('angular-components.form.submit.invalid');

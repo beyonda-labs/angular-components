@@ -50,7 +50,10 @@
 </ng-template>
 
 <div class="bey-property-tree">
-    <ng-container [ngTemplateOutlet]="renderNodes" [ngTemplateOutletContext]="{ $implicit: visibleNodes, level: 0 }"></ng-container>
+    <ng-container
+        [ngTemplateOutlet]="renderNodes"
+        [ngTemplateOutletContext]="{ $implicit: visibleNodes, level: 0 }"
+    ></ng-container>
 
     @if (addBlockLabel) {
         <button type="button" class="bey-property-tree-add-block" (click)="onAddBlockClick()">

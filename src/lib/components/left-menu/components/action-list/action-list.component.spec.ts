@@ -135,7 +135,9 @@ describe('ActionListComponent', () => {
         const action = component.actions[0];
         const actionPath = component.buildPath(component.groupKey, action.key);
 
-        component.onActionClick(action, actionPath, false, { target: document.createElement('span') } as unknown as MouseEvent);
+        component.onActionClick(action, actionPath, false, {
+            target: document.createElement('span')
+        } as unknown as MouseEvent);
 
         expect(parentAction).toHaveBeenCalled();
         expect(component.shouldShowSubmenu(action, actionPath)).toBe(false);

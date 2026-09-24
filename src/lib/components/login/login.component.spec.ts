@@ -28,10 +28,7 @@ describe('LoginComponent', () => {
 
         await TestBed.configureTestingModule({
             imports: [LoginComponent, TranslateModule.forRoot()],
-            providers: [
-                provideRouter([]),
-                { provide: LoginHttpService, useValue: loginHttpSpy }
-            ],
+            providers: [provideRouter([]), { provide: LoginHttpService, useValue: loginHttpSpy }],
             schemas: [NO_ERRORS_SCHEMA]
         }).compileComponents();
 

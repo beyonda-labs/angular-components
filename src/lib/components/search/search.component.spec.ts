@@ -246,7 +246,13 @@ describe('SearchComponent', () => {
         ]);
     });
 
-    function setRow(index: number, fieldKey: string, operator: SearchFilterOperator, value: string, valueTo = ''): void {
+    function setRow(
+        index: number,
+        fieldKey: string,
+        operator: SearchFilterOperator,
+        value: string,
+        valueTo = ''
+    ): void {
         component.onFieldChange(index, buildSelectEvent(fieldKey));
         component.onOperatorChange(index, buildSelectEvent(operator));
         component.onValueChange(index, buildSelectEvent(value));

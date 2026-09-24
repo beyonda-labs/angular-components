@@ -409,7 +409,9 @@ export class PropertiesMenuService {
             ...config,
             tabs: config.tabs.map((tab: PropertyTab) => {
                 const hasField = tab.groups.some(
-                    group => group.content.type === PropertyGroupContentType.FIELDS && group.content.fields.some(field => field.id === fieldId)
+                    group =>
+                        group.content.type === PropertyGroupContentType.FIELDS &&
+                        group.content.fields.some(field => field.id === fieldId)
                 );
 
                 if (!hasField) {
@@ -419,14 +421,19 @@ export class PropertiesMenuService {
                 return new PropertyTab({
                     ...tab,
                     groups: tab.groups.map(group => {
-                        if (group.content.type !== PropertyGroupContentType.FIELDS || !group.content.fields.some(field => field.id === fieldId)) {
+                        if (
+                            group.content.type !== PropertyGroupContentType.FIELDS ||
+                            !group.content.fields.some(field => field.id === fieldId)
+                        ) {
                             return group;
                         }
 
                         return new PropertyGroup({
                             ...group,
                             content: new PropertyFieldsContent({
-                                fields: group.content.fields.map(field => (field.id === fieldId ? field.withValue(value) : field))
+                                fields: group.content.fields.map(field =>
+                                    field.id === fieldId ? field.withValue(value) : field
+                                )
                             })
                         });
                     })

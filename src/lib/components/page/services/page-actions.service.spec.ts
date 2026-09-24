@@ -100,7 +100,9 @@ describe('PageActionsService', () => {
     });
 
     it('should do nothing for an unrecognized standard action key', () => {
-        expect(() => service.executeAction(buildAction('not-a-real-action', PageActionScope.Global), buildContext())).not.toThrow();
+        expect(() =>
+            service.executeAction(buildAction('not-a-real-action', PageActionScope.Global), buildContext())
+        ).not.toThrow();
 
         expect(openForm).not.toHaveBeenCalled();
         expect(openConfirmation).not.toHaveBeenCalled();
@@ -112,7 +114,12 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.Create, PageActionScope.Global), context);
 
-            expect(openForm).toHaveBeenCalledWith(context.config.formConfig, undefined, 'testPage', expect.any(Function));
+            expect(openForm).toHaveBeenCalledWith(
+                context.config.formConfig,
+                undefined,
+                'testPage',
+                expect.any(Function)
+            );
             expect(context.onFormModalOpened).toHaveBeenCalled();
         });
 
@@ -355,7 +362,12 @@ describe('PageActionsService', () => {
 
             onSave({ name: 'Edited category' }, { close: jest.fn() } as unknown as ModalFormConfig);
 
-            expect(editCategory).toHaveBeenCalledWith('/items', 9, { name: 'Edited category' }, 'testPage.toast.edit-category-success');
+            expect(editCategory).toHaveBeenCalledWith(
+                '/items',
+                9,
+                { name: 'Edited category' },
+                'testPage.toast.edit-category-success'
+            );
             expect(context.onCategorySaved).toHaveBeenCalled();
         });
     });
@@ -516,12 +528,19 @@ describe('PageActionsService', () => {
             service.executeAction(buildAction(PageStandardAction.RestoreTrashItem, PageActionScope.Item), context);
 
             expect(openConfirmation).not.toHaveBeenCalled();
-            expect(restoreTrashItems).toHaveBeenCalledWith('/items', items, 'testPage.toast.restore-trash-item-success');
+            expect(restoreTrashItems).toHaveBeenCalledWith(
+                '/items',
+                items,
+                'testPage.toast.restore-trash-item-success'
+            );
             expect(context.onSaved).toHaveBeenCalled();
         });
 
         it('should not restore trash items without selected items', () => {
-            service.executeAction(buildAction(PageStandardAction.RestoreTrashItem, PageActionScope.Item), buildContext());
+            service.executeAction(
+                buildAction(PageStandardAction.RestoreTrashItem, PageActionScope.Item),
+                buildContext()
+            );
 
             expect(restoreTrashItems).not.toHaveBeenCalled();
         });
@@ -547,7 +566,11 @@ describe('PageActionsService', () => {
 
         it('should build nested header actions for sub-actions', () => {
             const execute = jest.fn();
-            const subAction = new PageAction({ key: 'sub-action', scope: PageActionScope.Global, zone: PageActionZone.Left });
+            const subAction = new PageAction({
+                key: 'sub-action',
+                scope: PageActionScope.Global,
+                zone: PageActionZone.Left
+            });
             const action = new PageAction({
                 key: 'parent-action',
                 scope: PageActionScope.Global,

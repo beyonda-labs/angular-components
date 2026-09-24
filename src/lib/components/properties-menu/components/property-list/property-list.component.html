@@ -56,9 +56,9 @@
                 <button
                     type="button"
                     class="bey-property-list-item-action"
-                    [attr.aria-label]="(action.label ?? '') | translate"
+                    [attr.aria-label]="action.label ?? '' | translate"
                     [disabled]="listItem.disabled"
-                    [tooltip]="(action.label ?? '') | translate"
+                    [tooltip]="action.label ?? '' | translate"
                     container="body"
                     (click)="onAction($event, listItem, action.key)"
                 >
@@ -110,7 +110,9 @@
                                 <bey-property-field [field]="row.field" [hideLabel]="true"></bey-property-field>
                             </div>
                         } @else if (row.badge) {
-                            <span class="bey-badge" [ngClass]="row.badge.cssClass">{{ row.badge.label | translate }}</span>
+                            <span class="bey-badge" [ngClass]="row.badge.cssClass">
+                                {{ row.badge.label | translate }}
+                            </span>
                         } @else {
                             <span class="bey-property-summary-row-value">
                                 {{ row.value ? (row.value | translate) : emptyValue }}

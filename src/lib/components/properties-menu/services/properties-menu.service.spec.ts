@@ -1,7 +1,11 @@
 import { PropertyTextField } from '../models/fields/property-text-field.model';
 import { PropertiesMenuConfig } from '../models/properties-menu-config.model';
 import { PropertyGroup } from '../models/property-group.model';
-import { PropertyFieldsContent, PropertyListContent, PropertyTreeContent } from '../models/property-group-content.model';
+import {
+    PropertyFieldsContent,
+    PropertyListContent,
+    PropertyTreeContent
+} from '../models/property-group-content.model';
 import { PropertyListItem } from '../models/property-list-item.model';
 import { PropertySummaryRow } from '../models/property-summary-row.model';
 import { PropertyTab } from '../models/property-tab.model';
@@ -23,7 +27,9 @@ function buildConfig(): PropertiesMenuConfig {
                         id: 'content',
                         label: 'Contenido',
                         expanded: true,
-                        content: new PropertyFieldsContent({ fields: [new PropertyTextField({ id: 'text', value: 'FACTURA' })] })
+                        content: new PropertyFieldsContent({
+                            fields: [new PropertyTextField({ id: 'text', value: 'FACTURA' })]
+                        })
                     })
                 ]
             }),

@@ -9,7 +9,11 @@ const buildField = (searchable: boolean): PropertySelectField =>
         id: 'templateId',
         searchable,
         value: 'b',
-        options: [{ label: 'Invoice', value: 'a' }, { label: 'Letterhead', value: 'b' }, { label: 'Report', value: 'c' }]
+        options: [
+            { label: 'Invoice', value: 'a' },
+            { label: 'Letterhead', value: 'b' },
+            { label: 'Report', value: 'c' }
+        ]
     });
 
 describe('PropertySelectFieldComponent', () => {

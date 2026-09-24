@@ -28,7 +28,14 @@ function buildConfig(): PropertiesMenuConfig {
                         label: 'Contenido',
                         expanded: true,
                         content: new PropertyFieldsContent({
-                            fields: [new PropertyTextField({ id: 'text', label: 'Texto', value: 'FACTURA', acceptsVariable: true })]
+                            fields: [
+                                new PropertyTextField({
+                                    id: 'text',
+                                    label: 'Texto',
+                                    value: 'FACTURA',
+                                    acceptsVariable: true
+                                })
+                            ]
                         })
                     })
                 ]
@@ -42,7 +49,9 @@ function buildConfig(): PropertiesMenuConfig {
                         id: 'structure-tree',
                         showHeader: false,
                         content: new PropertyTreeContent({
-                            tree: new PropertyTreeConfig({ nodes: [new PropertyTreeNode({ id: 'page-1', label: 'Página 1' })] })
+                            tree: new PropertyTreeConfig({
+                                nodes: [new PropertyTreeNode({ id: 'page-1', label: 'Página 1' })]
+                            })
                         })
                     })
                 ]
@@ -54,7 +63,9 @@ function buildConfig(): PropertiesMenuConfig {
                     new PropertyGroup({
                         id: 'simple-blocks',
                         showHeader: false,
-                        content: new PropertyListContent({ list: [new PropertyListItem({ id: 'block-heading', label: 'Encabezado' })] })
+                        content: new PropertyListContent({
+                            list: [new PropertyListItem({ id: 'block-heading', label: 'Encabezado' })]
+                        })
                     })
                 ]
             })

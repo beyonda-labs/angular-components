@@ -108,7 +108,9 @@ describe('PageService', () => {
             service.openCategory({ id: 'cat-1' });
             service.navigateBreadcrumb(0);
 
-            expect(service.categoryBreadcrumbConfig()?.items.map(item => item.label)).toEqual(['testPage.categories.root']);
+            expect(service.categoryBreadcrumbConfig()?.items.map(item => item.label)).toEqual([
+                'testPage.categories.root'
+            ]);
             expect(service.currentCategoryId()).toBeNull();
         });
 

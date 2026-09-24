@@ -64,7 +64,9 @@ export class PdfViewerConfig {
         this.showToolbar = showToolbar;
         this.src = src;
         this.toolbarButtons =
-            toolbarButtons instanceof PdfViewerToolbarButtons ? toolbarButtons : new PdfViewerToolbarButtons(toolbarButtons);
+            toolbarButtons instanceof PdfViewerToolbarButtons
+                ? toolbarButtons
+                : new PdfViewerToolbarButtons(toolbarButtons);
         this.zoom = zoom;
     }
 }

@@ -132,13 +132,16 @@ export class PageHttpService {
 
     loadCategoryPath(relativeUrl: string, categoryId: string | number): Observable<PageItem[]> {
         return new Observable(observer => {
-            this.httpService.get<PageItem[]>(`${this.pageUrlService.resolve(relativeUrl)}/categories/${categoryId}/path`, {
-                onError: error => observer.error(error),
-                onSuccess: result => {
-                    observer.next(result as PageItem[]);
-                    observer.complete();
+            this.httpService.get<PageItem[]>(
+                `${this.pageUrlService.resolve(relativeUrl)}/categories/${categoryId}/path`,
+                {
+                    onError: error => observer.error(error),
+                    onSuccess: result => {
+                        observer.next(result as PageItem[]);
+                        observer.complete();
+                    }
                 }
-            });
+            );
         });
     }
 

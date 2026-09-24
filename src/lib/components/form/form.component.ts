@@ -54,7 +54,9 @@ export class FormComponent implements OnDestroy {
     }
 
     private bindOnValueChangeIfNeeded(formGroup: FormGroup): void {
-        if (!this.config.onValueChange) {return;}
+        if (!this.config.onValueChange) {
+            return;
+        }
 
         formGroup.valueChanges
             .pipe(debounceTime(0), takeUntil(this.configChange$), takeUntil(this.destroy$))

@@ -66,9 +66,9 @@
                 <button
                     type="button"
                     class="bey-property-field-variable-trigger"
-                    [attr.aria-label]="(actionButtonTooltipKey ?? '') | translate"
+                    [attr.aria-label]="actionButtonTooltipKey ?? '' | translate"
                     [disabled]="field.disabled"
-                    [tooltip]="(actionButtonTooltipKey ?? '') | translate"
+                    [tooltip]="actionButtonTooltipKey ?? '' | translate"
                     container="body"
                     (click)="onActionButtonClick()"
                 >

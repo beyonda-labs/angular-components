@@ -65,7 +65,12 @@ export class PropertyFieldComponent {
     }
 
     get labelKey(): string {
-        return resolvePropertyLabelKey(this.propertiesMenuService.config().prefix, 'fields', this.field.id, this.field.label);
+        return resolvePropertyLabelKey(
+            this.propertiesMenuService.config().prefix,
+            'fields',
+            this.field.id,
+            this.field.label
+        );
     }
 
     asAttachmentField(): PropertyAttachmentField {
@@ -121,7 +126,12 @@ export class PropertyFieldComponent {
     }
 
     onActionTriggered(event: PropertyTextFieldActionTrigger): void {
-        this.propertiesMenuService.triggerFieldAction(this.field.id, event.key, event.selectionStart, event.selectionEnd);
+        this.propertiesMenuService.triggerFieldAction(
+            this.field.id,
+            event.key,
+            event.selectionStart,
+            event.selectionEnd
+        );
     }
 
     onVariableInserted(event: PropertyTextFieldVariableInsertion): void {

@@ -2,7 +2,11 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertyGroup } from '../../models/property-group.model';
-import { PropertyFieldsContent, PropertyListContent, PropertyTreeContent } from '../../models/property-group-content.model';
+import {
+    PropertyFieldsContent,
+    PropertyListContent,
+    PropertyTreeContent
+} from '../../models/property-group-content.model';
 import { PropertyListItem } from '../../models/property-list-item.model';
 import { PropertyTreeConfig } from '../../models/property-tree-config.model';
 import { PropertyTreeNode } from '../../models/property-tree-node.model';
@@ -26,7 +30,12 @@ describe('PropertyGroupComponent', () => {
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
 
         component.tabId = 'properties';
-        component.group = new PropertyGroup({ id: 'content', label: 'Contenido', expanded: true, content: new PropertyFieldsContent({}) });
+        component.group = new PropertyGroup({
+            id: 'content',
+            label: 'Contenido',
+            expanded: true,
+            content: new PropertyFieldsContent({})
+        });
         fixture.detectChanges();
     });
 
@@ -118,7 +127,9 @@ describe('PropertyGroupComponent', () => {
         component.group = new PropertyGroup({
             id: 'structure',
             expanded: true,
-            content: new PropertyTreeContent({ tree: new PropertyTreeConfig({ nodes: [new PropertyTreeNode({ id: 'page-1' })] }) })
+            content: new PropertyTreeContent({
+                tree: new PropertyTreeConfig({ nodes: [new PropertyTreeNode({ id: 'page-1' })] })
+            })
         });
         fixture.detectChanges();
 
@@ -158,7 +169,9 @@ describe('PropertyGroupComponent', () => {
         component.group = new PropertyGroup({
             id: 'structure',
             expanded: true,
-            content: new PropertyTreeContent({ tree: new PropertyTreeConfig({ addBlockLabel: 'add.label', showEmptyStateAddBlock: true }) })
+            content: new PropertyTreeContent({
+                tree: new PropertyTreeConfig({ addBlockLabel: 'add.label', showEmptyStateAddBlock: true })
+            })
         });
         fixture.detectChanges();
 
@@ -169,7 +182,9 @@ describe('PropertyGroupComponent', () => {
         component.group = new PropertyGroup({
             id: 'structure',
             expanded: true,
-            content: new PropertyTreeContent({ tree: new PropertyTreeConfig({ addBlockLabel: 'add.label', showEmptyStateAddBlock: true }) })
+            content: new PropertyTreeContent({
+                tree: new PropertyTreeConfig({ addBlockLabel: 'add.label', showEmptyStateAddBlock: true })
+            })
         });
         const onTreeAddBlock = jest.fn();
         propertiesMenuService.onTreeAddBlock = onTreeAddBlock;

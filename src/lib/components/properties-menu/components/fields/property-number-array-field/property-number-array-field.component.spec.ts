@@ -69,7 +69,9 @@ describe('PropertyNumberArrayFieldComponent', () => {
         fixture.detectChanges();
 
         const emitSpy = jest.spyOn(component.valueChange, 'emit');
-        const input: HTMLInputElement = fixture.nativeElement.querySelectorAll('.bey-property-number-array-field-entry input')[1];
+        const input: HTMLInputElement = fixture.nativeElement.querySelectorAll(
+            '.bey-property-number-array-field-entry input'
+        )[1];
 
         input.value = '5';
         input.dispatchEvent(new Event('input'));

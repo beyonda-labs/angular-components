@@ -33,7 +33,9 @@ describe('FormDateFieldComponent', () => {
 
     beforeEach(async () => {
         datepickerLocaleServiceMock = mock<DatepickerLocaleService>();
-        datepickerLocaleServiceMock.getLocale.mockImplementation(language => (language?.startsWith('es') ? 'es' : 'en-gb'));
+        datepickerLocaleServiceMock.getLocale.mockImplementation(language =>
+            language?.startsWith('es') ? 'es' : 'en-gb'
+        );
         formServiceMock = mock<FormService>();
         formServiceMock.getSectionGroup.mockReturnValue(new FormGroup({}));
 

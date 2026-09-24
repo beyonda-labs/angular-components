@@ -149,7 +149,13 @@ export class PageService implements OnDestroy {
 
         if (this.viewMode() === PageViewMode.Trash) {
             return new BreadcrumbConfig({
-                items: [new BreadcrumbItem({ id: 0, label: `${this.config.prefix}.tabs.trash.label`, isTranslationKey: true })],
+                items: [
+                    new BreadcrumbItem({
+                        id: 0,
+                        label: `${this.config.prefix}.tabs.trash.label`,
+                        isTranslationKey: true
+                    })
+                ],
                 translate: false
             });
         }
@@ -219,7 +225,9 @@ export class PageService implements OnDestroy {
             this.pageSearch.update(search => ({ ...search, sort: config.tableConfig!.order }));
         }
 
-        this.openCategorySubscription = config.tableConfig?.categoriesConfig?.$openCategory.subscribe(item => this.openCategory(item));
+        this.openCategorySubscription = config.tableConfig?.categoriesConfig?.$openCategory.subscribe(item =>
+            this.openCategory(item)
+        );
         this.refreshSubscription = config.$refresh.subscribe(() => this.refresh());
         this.initialized.set(true);
     }

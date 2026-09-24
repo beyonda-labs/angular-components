@@ -47,14 +47,7 @@ export class TreeConfig<TData = unknown> {
     /** Key of the currently selected node, controlled by the consumer (like a controlled input). */
     selectedKey?: string;
 
-    constructor({
-        nodes,
-        prefix,
-        expandedKeys,
-        onNodeSelect,
-        onNodeToggle,
-        selectedKey
-    }: TreeConfigParameters<TData>) {
+    constructor({ nodes, prefix, expandedKeys, onNodeSelect, onNodeToggle, selectedKey }: TreeConfigParameters<TData>) {
         this.expandedKeys = expandedKeys;
         this.nodes = nodes;
         this.onNodeSelect = onNodeSelect;

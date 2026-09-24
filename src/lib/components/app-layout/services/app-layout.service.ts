@@ -67,6 +67,8 @@ export class AppLayoutService {
     private saveExpanded(value: boolean): void {
         try {
             localStorage.setItem(STORAGE_KEY, String(value));
-        } catch { /* SSR o modo privado */ }
+        } catch {
+            /* SSR o modo privado */
+        }
     }
 }

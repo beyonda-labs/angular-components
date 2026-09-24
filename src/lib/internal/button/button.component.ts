@@ -50,9 +50,7 @@ export class ButtonComponent {
                 return '';
         }
 
-        return this.button.customClass
-            ? `${classes} ${this.button.customClass}`
-            : classes;
+        return this.button.customClass ? `${classes} ${this.button.customClass}` : classes;
     }
 
     onClick(): void {

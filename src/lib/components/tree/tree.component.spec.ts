@@ -133,9 +133,7 @@ describe('TreeComponent', () => {
     it('should keep a custom label key as-is', () => {
         component.config = buildConfig();
 
-        expect(component.getLabel(new TreeNode({ key: 'fruits', label: 'custom.label.key' }))).toBe(
-            'custom.label.key'
-        );
+        expect(component.getLabel(new TreeNode({ key: 'fruits', label: 'custom.label.key' }))).toBe('custom.label.key');
     });
 
     it('should not toggle or select a disabled node from the toggle button', () => {

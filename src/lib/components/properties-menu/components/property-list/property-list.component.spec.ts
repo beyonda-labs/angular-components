@@ -37,9 +37,9 @@ describe('PropertyListComponent', () => {
     });
 
     it('should render a card per item', () => {
-        const labels: (string | undefined)[] = [...fixture.nativeElement.querySelectorAll('.bey-property-list-item-label')].map(
-            (element: unknown) => (element as HTMLElement).textContent?.trim()
-        );
+        const labels: (string | undefined)[] = [
+            ...fixture.nativeElement.querySelectorAll('.bey-property-list-item-label')
+        ].map((element: unknown) => (element as HTMLElement).textContent?.trim());
 
         expect(labels).toEqual(['Encabezado', 'Bloqueado']);
     });
@@ -99,7 +99,10 @@ const buildItem = (overrides: Partial<PropertyListItemParameters> = {}): Propert
         badges: [{ label: 'Número', cssClass: 'bey-badge-color-purple' }],
         body: [
             new PropertySummaryRow({ label: 'Valor por defecto' }),
-            new PropertySummaryRow({ label: 'Valor', field: new PropertyTextField({ id: 'variable.v1.value', value: 'x' }) })
+            new PropertySummaryRow({
+                label: 'Valor',
+                field: new PropertyTextField({ id: 'variable.v1.value', value: 'x' })
+            })
         ],
         ...overrides
     });
@@ -115,7 +118,9 @@ describe('PropertyListComponent con items desplegables', () => {
             tabs: [
                 new PropertyTab({
                     id: 'variables',
-                    groups: [new PropertyGroup({ id: 'variables-list', content: new PropertyListContent({ list: items }) })]
+                    groups: [
+                        new PropertyGroup({ id: 'variables-list', content: new PropertyListContent({ list: items }) })
+                    ]
                 })
             ]
         });
@@ -343,9 +348,13 @@ describe('PropertyListComponent · copiar y acciones', () => {
         written = [];
         Object.defineProperty(navigator, 'clipboard', {
             configurable: true,
-            value: { writeText: (text: string) => { written.push(text);
+            value: {
+                writeText: (text: string) => {
+                    written.push(text);
 
- return Promise.resolve(); } }
+                    return Promise.resolve();
+                }
+            }
         });
 
         await TestBed.configureTestingModule({

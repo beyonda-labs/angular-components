@@ -172,7 +172,7 @@
     border: 1px solid var(--bey-left-menu-border);
     border-radius: 1.2rem;
     background: var(--bey-left-menu-surface);
-    box-shadow: var(--bey-left-menu-shadow);
+    box-shadow: var(--bey-left-menu-shadow, var(--bey-shadow-md));
 }
 
 .bey-left-menu-flyout-title {

@@ -44,12 +44,9 @@
                     (click)="selectOption(option)"
                     (mouseenter)="activeIndex = index"
                 >
-                    <span
-                        class="bey-option-picker-row-label"
-                        [tooltip]="option.label"
-                        container="body"
-                        placement="top"
-                    >{{ option.label }}</span>
+                    <span class="bey-option-picker-row-label" [tooltip]="option.label" container="body" placement="top">
+                        {{ option.label }}
+                    </span>
                     @if (option.badge) {
                         <span class="bey-option-picker-row-badge">{{ option.badge | translate }}</span>
                     }

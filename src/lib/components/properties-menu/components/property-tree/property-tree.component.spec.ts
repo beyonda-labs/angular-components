@@ -34,9 +34,9 @@ describe('PropertyTreeComponent', () => {
     });
 
     it('should render root and nested node labels', () => {
-        const labels: (string | undefined)[] = [...fixture.nativeElement.querySelectorAll('.bey-property-tree-label')].map(
-            (element: unknown) => (element as HTMLElement).textContent?.trim()
-        );
+        const labels: (string | undefined)[] = [
+            ...fixture.nativeElement.querySelectorAll('.bey-property-tree-label')
+        ].map((element: unknown) => (element as HTMLElement).textContent?.trim());
 
         expect(labels).toEqual(['Página 1', 'Encabezado']);
     });
@@ -78,6 +78,8 @@ describe('PropertyTreeComponent', () => {
     it('should resolve a default node label into a prefixed translation key', () => {
         propertiesMenuService.setConfig({ prefix: 'app.properties-menu' });
 
-        expect(component.getLabelKey(new PropertyTreeNode({ id: 'page-1' }))).toBe('app.properties-menu.tree.page-1.label');
+        expect(component.getLabelKey(new PropertyTreeNode({ id: 'page-1' }))).toBe(
+            'app.properties-menu.tree.page-1.label'
+        );
     });
 });

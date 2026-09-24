@@ -9,7 +9,8 @@ import {
     FormFieldLengthValidator,
     FormFieldPatternValidator,
     FormFieldUrlValidator,
-    FormFieldValidatorType} from '../models/form-field-validator.model';
+    FormFieldValidatorType
+} from '../models/form-field-validator.model';
 import { FormValidatorService } from './form-validator.service';
 
 describe('FormValidatorService', () => {

@@ -95,7 +95,11 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
     });
 
     it('offers no variable button when the field carries no variables', () => {
-        component.field = new PropertyAttachmentField({ id: 'source', value: '', options: [{ id: 'a1', label: 'Logo' }] });
+        component.field = new PropertyAttachmentField({
+            id: 'source',
+            value: '',
+            options: [{ id: 'a1', label: 'Logo' }]
+        });
         fixture.detectChanges();
 
         expect(fixture.nativeElement.querySelectorAll('.bey-property-field-variable-trigger').length).toBe(1);
@@ -140,7 +144,6 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
     });
 
     describe('picking a file to upload', () => {
-
         beforeEach(() => {
             component.field = new PropertyAttachmentField({
                 id: 'source',

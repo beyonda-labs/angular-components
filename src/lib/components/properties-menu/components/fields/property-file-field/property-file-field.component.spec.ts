@@ -42,7 +42,9 @@ describe('PropertyFileFieldComponent', () => {
         fixture.detectChanges();
 
         const emitSpy = jest.spyOn(component.valueChange, 'emit');
-        const clearButton: HTMLButtonElement = fixture.nativeElement.querySelector('.bey-property-field-variable-trigger');
+        const clearButton: HTMLButtonElement = fixture.nativeElement.querySelector(
+            '.bey-property-field-variable-trigger'
+        );
 
         clearButton.click();
 
