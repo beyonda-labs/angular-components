@@ -20,8 +20,12 @@
     height: calc(100vh - var(--bey-left-menu-style-guide-offset-top) - var(--bey-left-menu-style-guide-offset-bottom));
     height: calc(100dvh - var(--bey-left-menu-style-guide-offset-top) - var(--bey-left-menu-style-guide-offset-bottom));
     min-height: 34rem;
-    max-height: calc(100vh - var(--bey-left-menu-style-guide-offset-top) - var(--bey-left-menu-style-guide-offset-bottom));
-    max-height: calc(100dvh - var(--bey-left-menu-style-guide-offset-top) - var(--bey-left-menu-style-guide-offset-bottom));
+    max-height: calc(
+        100vh - var(--bey-left-menu-style-guide-offset-top) - var(--bey-left-menu-style-guide-offset-bottom)
+    );
+    max-height: calc(
+        100dvh - var(--bey-left-menu-style-guide-offset-top) - var(--bey-left-menu-style-guide-offset-bottom)
+    );
 }
 
 .bey-left-menu-style-guide-frame bey-left-menu {

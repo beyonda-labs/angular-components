@@ -7,6 +7,7 @@ import { FloatingPreferencesComponent } from '../../floating-preferences.compone
     imports: [FloatingPreferencesComponent, TranslateModule],
     selector: 'bey-floating-preferences-style-guide',
     standalone: true,
+    styleUrls: ['../../../style-guide/style-guide-shared.css'],
     templateUrl: './floating-preferences-style-guide.component.html'
 })
 export class FloatingPreferencesStyleGuideComponent {}

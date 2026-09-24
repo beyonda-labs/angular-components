@@ -3,13 +3,23 @@
 </p>
 
 <div class="bey-pdf-viewer-style-guide-toolbar">
-    <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="currentPage <= 1" (click)="goToPreviousPage()">
+    <button
+        type="button"
+        class="btn btn-sm btn-outline-secondary"
+        [disabled]="currentPage <= 1"
+        (click)="goToPreviousPage()"
+    >
         <fa-icon [icon]="prevIcon"></fa-icon>
     </button>
 
     <span class="bey-pdf-viewer-style-guide-page">{{ currentPage }} / {{ pageCount }}</span>
 
-    <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="currentPage >= pageCount" (click)="goToNextPage()">
+    <button
+        type="button"
+        class="btn btn-sm btn-outline-secondary"
+        [disabled]="currentPage >= pageCount"
+        (click)="goToNextPage()"
+    >
         <fa-icon [icon]="nextIcon"></fa-icon>
     </button>
 

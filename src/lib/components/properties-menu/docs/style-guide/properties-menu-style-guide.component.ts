@@ -104,7 +104,7 @@ const EXAMPLE_VARIABLES: PropertyVariableParameters[] = [
     imports: [PropertiesMenuComponent, TranslateModule],
     selector: 'bey-properties-menu-style-guide',
     standalone: true,
-    styleUrls: ['../../../style-guide/style-guide.component.css', './properties-menu-style-guide.component.css'],
+    styleUrls: ['../../../style-guide/style-guide-shared.css', './properties-menu-style-guide.component.css'],
     templateUrl: './properties-menu-style-guide.component.html'
 })
 export class PropertiesMenuStyleGuideComponent {
@@ -250,7 +250,11 @@ export class PropertiesMenuStyleGuideComponent {
                                         id: 'borderTop',
                                         label: 'Arriba',
                                         fields: [
-                                            new PropertyColorField({ id: 'topColor', label: 'Color', value: '#000000' }),
+                                            new PropertyColorField({
+                                                id: 'topColor',
+                                                label: 'Color',
+                                                value: '#000000'
+                                            }),
                                             new PropertyNumberField({ id: 'topWidth', label: 'Grosor', value: 1 })
                                         ]
                                     }),
@@ -258,7 +262,11 @@ export class PropertiesMenuStyleGuideComponent {
                                         id: 'borderRight',
                                         label: 'Derecha',
                                         fields: [
-                                            new PropertyColorField({ id: 'rightColor', label: 'Color', value: '#000000' }),
+                                            new PropertyColorField({
+                                                id: 'rightColor',
+                                                label: 'Color',
+                                                value: '#000000'
+                                            }),
                                             new PropertyNumberField({ id: 'rightWidth', label: 'Grosor', value: 1 })
                                         ]
                                     }),
@@ -266,7 +274,11 @@ export class PropertiesMenuStyleGuideComponent {
                                         id: 'borderBottom',
                                         label: 'Abajo',
                                         fields: [
-                                            new PropertyColorField({ id: 'bottomColor', label: 'Color', value: '#000000' }),
+                                            new PropertyColorField({
+                                                id: 'bottomColor',
+                                                label: 'Color',
+                                                value: '#000000'
+                                            }),
                                             new PropertyNumberField({ id: 'bottomWidth', label: 'Grosor', value: 1 })
                                         ]
                                     }),
@@ -274,7 +286,11 @@ export class PropertiesMenuStyleGuideComponent {
                                         id: 'borderLeft',
                                         label: 'Izquierda',
                                         fields: [
-                                            new PropertyColorField({ id: 'leftColor', label: 'Color', value: '#000000' }),
+                                            new PropertyColorField({
+                                                id: 'leftColor',
+                                                label: 'Color',
+                                                value: '#000000'
+                                            }),
                                             new PropertyNumberField({ id: 'leftWidth', label: 'Grosor', value: 1 })
                                         ]
                                     })
@@ -288,7 +304,12 @@ export class PropertiesMenuStyleGuideComponent {
                         new PropertyGroup({
                             content: new PropertyFieldsContent({
                                 fields: [
-                                    new PropertyToggleField({ id: 'bold', label: 'Negrita', span: 'half', value: true }),
+                                    new PropertyToggleField({
+                                        id: 'bold',
+                                        label: 'Negrita',
+                                        span: 'half',
+                                        value: true
+                                    }),
                                     new PropertyToggleField({ id: 'underline', label: 'Subrayado', span: 'half' }),
                                     new PropertyToggleField({ id: 'italic', label: 'Cursiva', span: 'half' }),
                                     new PropertyToggleField({ id: 'strikethrough', label: 'Tachado', span: 'half' }),
@@ -388,7 +409,11 @@ export class PropertiesMenuStyleGuideComponent {
                                                     id: 'totals-section',
                                                     label: 'Sección',
                                                     children: [
-                                                        new PropertyTreeNode({ icon: faCalculator, id: 'totals', label: 'Totales' })
+                                                        new PropertyTreeNode({
+                                                            icon: faCalculator,
+                                                            id: 'totals',
+                                                            label: 'Totales'
+                                                        })
                                                     ]
                                                 }),
                                                 new PropertyTreeNode({

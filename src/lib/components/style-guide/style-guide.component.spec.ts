@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 
 import { LoginHttpService } from '../login/services/login-http.service';
-import { provideBeyModal } from '../modal/public-api';
+import { provideBeyModal } from '../modal/providers/modal.providers';
 import { StyleGuideComponent } from './style-guide.component';
 
 describe('StyleGuideComponent', () => {

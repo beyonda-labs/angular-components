@@ -9,7 +9,7 @@ import { HeaderAction, HeaderActionType, HeaderConfig, HeaderVariant } from '../
     imports: [HeaderComponent, TranslateModule],
     selector: 'bey-header-style-guide',
     standalone: true,
-    styleUrls: ['../../../style-guide/style-guide.component.css', './header-style-guide.component.css'],
+    styleUrls: ['../../../style-guide/style-guide-shared.css', './header-style-guide.component.css'],
     templateUrl: './header-style-guide.component.html'
 })
 export class HeaderStyleGuideComponent {

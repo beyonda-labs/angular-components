@@ -9,6 +9,7 @@ import { TreeComponent } from '../../tree.component';
     imports: [TreeComponent, TranslateModule],
     selector: 'bey-tree-style-guide',
     standalone: true,
+    styleUrls: ['../../../style-guide/style-guide-shared.css'],
     templateUrl: './tree-style-guide.component.html'
 })
 export class TreeStyleGuideComponent {

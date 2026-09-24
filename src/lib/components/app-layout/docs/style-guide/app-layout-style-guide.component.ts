@@ -30,7 +30,7 @@ const BRAND_ICON =
     imports: [AppLayoutComponent, ButtonComponent, TranslateModule],
     selector: 'bey-app-layout-style-guide',
     standalone: true,
-    styleUrls: ['../../../style-guide/style-guide.component.css', './app-layout-style-guide.component.css'],
+    styleUrls: ['../../../style-guide/style-guide-shared.css', './app-layout-style-guide.component.css'],
     templateUrl: './app-layout-style-guide.component.html'
 })
 export class AppLayoutStyleGuideComponent implements OnInit, OnDestroy {

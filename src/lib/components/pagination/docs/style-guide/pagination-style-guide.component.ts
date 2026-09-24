@@ -8,6 +8,7 @@ import { PaginationComponent } from '../../pagination.component';
     imports: [PaginationComponent, TranslateModule],
     selector: 'bey-pagination-style-guide',
     standalone: true,
+    styleUrls: ['../../../style-guide/style-guide-shared.css'],
     templateUrl: './pagination-style-guide.component.html'
 })
 export class PaginationStyleGuideComponent {

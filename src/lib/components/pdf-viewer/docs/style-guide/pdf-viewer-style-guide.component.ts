@@ -13,7 +13,12 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { PdfViewerConfig } from '../../models/pdf-viewer-config.model';
 import { PdfViewerComponent } from '../../pdf-viewer.component';
-import { PdfViewerLoaded, PdfViewerLoadingFailed, PdfViewerPageRendered, PdfViewerRotationChange } from '../../types/pdf-viewer-events';
+import {
+    PdfViewerLoaded,
+    PdfViewerLoadingFailed,
+    PdfViewerPageRendered,
+    PdfViewerRotationChange
+} from '../../types/pdf-viewer-events';
 
 const SAMPLE_PDF_URL = 'https://raw.githubusercontent.com/mozilla/pdf.js/master/test/pdfs/tracemonkey.pdf';
 
@@ -21,7 +26,7 @@ const SAMPLE_PDF_URL = 'https://raw.githubusercontent.com/mozilla/pdf.js/master/
     imports: [DecimalPipe, FontAwesomeModule, PdfViewerComponent, TranslateModule],
     selector: 'bey-pdf-viewer-style-guide',
     standalone: true,
-    styleUrls: ['../../../style-guide/style-guide.component.css', './pdf-viewer-style-guide.component.css'],
+    styleUrls: ['../../../style-guide/style-guide-shared.css', './pdf-viewer-style-guide.component.css'],
     templateUrl: './pdf-viewer-style-guide.component.html'
 })
 export class PdfViewerStyleGuideComponent {

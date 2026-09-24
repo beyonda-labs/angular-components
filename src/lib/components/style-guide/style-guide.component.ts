@@ -20,10 +20,12 @@ import { TableStyleGuideComponent } from '../table/docs/style-guide/table-style-
 import { TabsStyleGuideComponent } from '../tabs/docs/style-guide/tabs-style-guide.component';
 import { ToastStyleGuideComponent } from '../toast/docs/style-guide/toast-style-guide.component';
 import { TreeStyleGuideComponent } from '../tree/docs/style-guide/tree-style-guide.component';
+import { StyleGuideSectionComponent } from './components/section/style-guide-section.component';
 
 @Component({
     imports: [
         TranslateModule,
+        StyleGuideSectionComponent,
         AppLayoutStyleGuideComponent,
         BadgeStyleGuideComponent,
         BreadcrumbStyleGuideComponent,

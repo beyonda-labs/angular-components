@@ -9,7 +9,7 @@ import { ModalService } from '../../services/modal.service';
     imports: [ButtonComponent, TranslateModule],
     selector: 'bey-modal-style-guide',
     standalone: true,
-    styleUrls: ['../../../style-guide/style-guide.component.css', './modal-style-guide.component.css'],
+    styleUrls: ['../../../style-guide/style-guide-shared.css', './modal-style-guide.component.css'],
     templateUrl: './modal-style-guide.component.html'
 })
 export class ModalStyleGuideComponent {

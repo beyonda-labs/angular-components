@@ -13,7 +13,7 @@ import { LoadingService } from '../../services/loading.service';
     imports: [ButtonComponent, LoadingComponent, LoadingContainerComponent, LoadingOverlayComponent, TranslateModule],
     selector: 'bey-loading-style-guide',
     standalone: true,
-    styleUrls: ['../../../style-guide/style-guide.component.css', './loading-style-guide.component.css'],
+    styleUrls: ['../../../style-guide/style-guide-shared.css', './loading-style-guide.component.css'],
     templateUrl: './loading-style-guide.component.html'
 })
 export class LoadingStyleGuideComponent {

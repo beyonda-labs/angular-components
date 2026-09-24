@@ -8,7 +8,7 @@ import { LoginConfig } from '../../models/login.model';
     imports: [LoginComponent, TranslateModule],
     selector: 'bey-login-style-guide',
     standalone: true,
-    styleUrls: ['./login-style-guide.component.css'],
+    styleUrls: ['../../../style-guide/style-guide-shared.css', './login-style-guide.component.css'],
     templateUrl: './login-style-guide.component.html'
 })
 export class LoginStyleGuideComponent {

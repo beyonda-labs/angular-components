@@ -9,7 +9,7 @@ import { ToastService } from '../../services/toast.service';
     imports: [ButtonComponent, TranslateModule],
     selector: 'bey-toast-style-guide',
     standalone: true,
-    styleUrls: ['../../../style-guide/style-guide.component.css', './toast-style-guide.component.css'],
+    styleUrls: ['../../../style-guide/style-guide-shared.css', './toast-style-guide.component.css'],
     templateUrl: './toast-style-guide.component.html'
 })
 export class ToastStyleGuideComponent {

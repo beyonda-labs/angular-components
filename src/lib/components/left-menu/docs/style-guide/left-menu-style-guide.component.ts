@@ -23,7 +23,7 @@ const BRAND_ICON =
     imports: [LeftMenuComponent, TranslateModule],
     selector: 'bey-left-menu-style-guide',
     standalone: true,
-    styleUrls: ['../../../style-guide/style-guide.component.css', './left-menu-style-guide.component.css'],
+    styleUrls: ['../../../style-guide/style-guide-shared.css', './left-menu-style-guide.component.css'],
     templateUrl: './left-menu-style-guide.component.html'
 })
 export class LeftMenuStyleGuideComponent {

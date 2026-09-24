@@ -14,6 +14,7 @@ import { buildStyleGuideSections } from './form-style-guide.sections';
     imports: [ButtonComponent, FormComponent, TranslateModule],
     selector: 'bey-form-style-guide',
     standalone: true,
+    styleUrls: ['../../../style-guide/style-guide-shared.css'],
     templateUrl: './form-style-guide.component.html'
 })
 export class FormStyleGuideComponent {

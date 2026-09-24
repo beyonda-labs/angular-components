@@ -8,6 +8,7 @@ import { FooterConfig } from '../../models/footer.model';
     imports: [FooterComponent, TranslateModule],
     selector: 'bey-footer-style-guide',
     standalone: true,
+    styleUrls: ['../../../style-guide/style-guide-shared.css'],
     templateUrl: './footer-style-guide.component.html'
 })
 export class FooterStyleGuideComponent {

@@ -9,7 +9,7 @@ import { BreadcrumbConfig, BreadcrumbItem } from '../../models/breadcrumb.model'
     imports: [BreadcrumbComponent, TranslateModule],
     selector: 'bey-breadcrumb-style-guide',
     standalone: true,
-    styleUrls: ['../../../style-guide/style-guide.component.css', './breadcrumb-style-guide.component.css'],
+    styleUrls: ['../../../style-guide/style-guide-shared.css', './breadcrumb-style-guide.component.css'],
     templateUrl: './breadcrumb-style-guide.component.html'
 })
 export class BreadcrumbStyleGuideComponent {

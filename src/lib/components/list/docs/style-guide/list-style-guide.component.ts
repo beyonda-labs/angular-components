@@ -14,6 +14,7 @@ interface Employee {
     imports: [ListComponent, TranslateModule],
     selector: 'bey-list-style-guide',
     standalone: true,
+    styleUrls: ['../../../style-guide/style-guide-shared.css'],
     templateUrl: './list-style-guide.component.html'
 })
 export class ListStyleGuideComponent {
