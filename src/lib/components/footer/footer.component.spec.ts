@@ -79,7 +79,7 @@ describe('FooterComponent', () => {
         await render();
 
         expect(fixture.nativeElement.querySelector('bey-floating-preferences')).toBeTruthy();
-        expect(fixture.nativeElement.querySelector('.bey-fp-pill')).toBeNull();
+        expect(fixture.nativeElement.querySelector('.is-pill')).toBeNull();
     });
 
     it('follows a replaced config', async () => {

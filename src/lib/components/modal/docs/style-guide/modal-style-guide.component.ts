@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ButtonComponent } from '../../../../internal/button/button.component';
@@ -6,6 +6,7 @@ import { ButtonConfig, ButtonType } from '../../../../internal/button/models/but
 import { ModalService } from '../../services/modal.service';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ButtonComponent, TranslateModule],
     selector: 'bey-modal-style-guide',
     standalone: true,

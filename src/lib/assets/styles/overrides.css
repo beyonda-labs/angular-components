@@ -44,7 +44,7 @@ body.dark {
 }
 
 /* ─── Floating preferences anchor ─────────────────────────────────────── */
-.bey-fp-anchor {
+.bey-floating-preferences-anchor {
     position: absolute;
     bottom: 15px;
     right: 20px;

@@ -1,34 +1,32 @@
-import { AsyncPipe, CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { merge, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ThemeService } from '../../services/theme/theme.service';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [AsyncPipe, CommonModule, FontAwesomeModule, TranslateModule],
+    imports: [FontAwesomeModule, TranslateModule],
     selector: 'bey-floating-preferences',
     standalone: true,
     styleUrls: ['./floating-preferences.component.css'],
     templateUrl: './floating-preferences.component.html'
 })
 export class FloatingPreferencesComponent {
-    @Input() usePill = true;
+    readonly usePill = input(true);
 
-    readonly faChevronDown = faChevronDown;
+    readonly chevronIcon = faChevronDown;
 
-    private readonly translateService = inject(TranslateService);
     private readonly themeService = inject(ThemeService);
+    private readonly translateService = inject(TranslateService);
 
-    readonly lang$ = merge(
-        of(this.translateService.currentLang ?? this.translateService.defaultLang),
-        this.translateService.onLangChange.pipe(map(event => event.lang))
-    );
-    readonly theme$ = this.themeService.theme$;
+    readonly language = toSignal(this.translateService.onLangChange.pipe(map(event => event.lang)), {
+        initialValue: this.translateService.currentLang ?? this.translateService.defaultLang
+    });
+    readonly theme = toSignal(this.themeService.theme$, { initialValue: 'light' as const });
 
     onLangChange(value: string): void {
         this.translateService.use(value);

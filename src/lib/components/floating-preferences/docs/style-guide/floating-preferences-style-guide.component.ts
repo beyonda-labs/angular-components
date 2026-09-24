@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { FloatingPreferencesComponent } from '../../floating-preferences.component';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FloatingPreferencesComponent, TranslateModule],
     selector: 'bey-floating-preferences-style-guide',
     standalone: true,

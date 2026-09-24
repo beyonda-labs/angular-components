@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
     faCircleInfo,
@@ -16,6 +16,7 @@ import { ButtonConfig, ButtonType } from '../../../internal/button/models/button
 import { InternalModalConfig, ModalType } from '../models/modal.model';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ButtonComponent, FontAwesomeModule, TranslateModule],
     selector: 'bey-modal-dialog',
     standalone: true,
@@ -30,7 +31,7 @@ export class ModalDialogComponent implements OnDestroy {
 
     private resolved = false;
 
-    constructor(private readonly bsModalReference: BsModalRef<ModalDialogComponent>) {}
+    private readonly bsModalReference = inject<BsModalRef<ModalDialogComponent>>(BsModalRef);
 
     ngOnDestroy(): void {
         if (!this.resolved) {

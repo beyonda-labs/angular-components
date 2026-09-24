@@ -1,14 +1,14 @@
 .toast-container .bey-toast {
     --bey-toast-accent: var(--bey-primary);
-    --bey-toast-accent-soft: rgba(var(--bey-black-rgb), 0.08);
+    --bey-toast-accent-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);
 
     width: min(100%, 24rem);
-    padding: 0.85rem 1rem;
-    border: 1px solid var(--bey-gray-200);
+    padding: var(--bey-space-md) var(--bey-space-lg);
+    border: var(--bey-border-width) solid var(--bey-border-subtle);
     border-left: 3px solid var(--bey-toast-accent);
-    border-radius: 0.5rem;
+    border-radius: var(--bey-radius-md);
     background: var(--bey-bg-surface);
-    box-shadow: 0 8px 24px rgba(var(--bey-black-rgb), 0.1);
+    box-shadow: var(--bey-shadow-md);
     color: var(--bey-text-primary);
     pointer-events: auto;
     animation: bey-toast-in 0.3s ease-out;
@@ -53,7 +53,7 @@
 
 .toast-container .bey-toast.toast-info {
     --bey-toast-accent: var(--bey-primary);
-    --bey-toast-accent-soft: rgba(var(--bey-black-rgb), 0.08);
+    --bey-toast-accent-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);
 }
 
 .toast-container .bey-toast.toast-success {
@@ -63,10 +63,10 @@
 
 .toast-container .bey-toast.toast-warning {
     --bey-toast-accent: var(--bey-warning);
-    --bey-toast-accent-soft: rgba(var(--bey-orange-rgb), 0.12);
+    --bey-toast-accent-soft: color-mix(in srgb, var(--bey-warning) 12%, transparent);
 }
 
 .toast-container .bey-toast.toast-error {
     --bey-toast-accent: var(--bey-danger);
-    --bey-toast-accent-soft: rgba(var(--bey-red-rgb), 0.1);
+    --bey-toast-accent-soft: color-mix(in srgb, var(--bey-danger) 10%, transparent);
 }
