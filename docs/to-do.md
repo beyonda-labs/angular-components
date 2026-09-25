@@ -150,7 +150,7 @@ The next version is 1.2.0: the public API breaks (callbacks instead of outputs, 
 translation keys, the style-guide entry point) go out under a minor because nothing is at 1.0 for real yet, and
 the change-log lists every break.
 
--   [ ] Scripts matched to the Jenkins stages (Lint → `lint`, Test → `test:ci`, Build → `build`): `lint` runs
+-   [x] Scripts matched to the Jenkins stages (Lint → `lint`, Test → `test:ci`, Build → `build`): `lint` runs
         ESLint, stylelint, `check-tokens` and `check-style-guides`; `build` stops running the tests, which the
         Test stage already runs; `verify` stays as the local shortcut
 -   [ ] Change-log: `[Unreleased]` completed with every S6 break and renamed to `[1.2.0]`; `[1.1.0]` dated

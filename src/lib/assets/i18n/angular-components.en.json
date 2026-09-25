@@ -358,6 +358,7 @@
             },
             "placeholder": "Search",
             "remove": "Remove filter",
+            "row": "Filter",
             "to-placeholder": "To",
             "value-placeholder": "Enter a value",
             "values": {

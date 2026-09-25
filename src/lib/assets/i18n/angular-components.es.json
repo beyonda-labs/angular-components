@@ -358,6 +358,7 @@
             },
             "placeholder": "Buscar",
             "remove": "Eliminar filtro",
+            "row": "Filtro",
             "to-placeholder": "Hasta",
             "value-placeholder": "Introduce un valor",
             "values": {

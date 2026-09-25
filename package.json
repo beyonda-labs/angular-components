@@ -6,7 +6,7 @@
         "registry": "https://verdaccio.home.arpa/"
     },
     "scripts": {
-        "build": "pnpm run test:ci && ng build",
+        "build": "ng build",
         "build:quick": "pnpm run prebuild && ng build --configuration=development",
         "build:watch": "node scripts/build-watch.js",
         "check-style-guides": "node scripts/check-style-guides.js",
@@ -14,7 +14,7 @@
         "check-translations": "node scripts/check-translations.js",
         "format": "prettier --write \"{src,style-guide}/**/*.{ts,html,css,json}\"",
         "format:check": "prettier --check \"{src,style-guide}/**/*.{ts,html,css,json}\"",
-        "lint": "ng lint",
+        "lint": "ng lint && pnpm run stylelint && pnpm run check-translations && pnpm run check-tokens && pnpm run check-style-guides",
         "lint:fix": "ng lint --fix",
         "merge-translations": "pnpm run check-translations && node scripts/merge-translations.js",
         "prebuild": "pnpm run merge-translations",
@@ -28,7 +28,7 @@
         "test:report": "jest --coverage --coverageReporters=lcov --coverageReporters=html",
         "test:watch": "jest --watch",
         "update-translations": "pnpm run sort-translations && pnpm run merge-translations && node scripts/update-translations.js",
-        "verify": "pnpm run lint && pnpm run stylelint && pnpm run format:check && pnpm run check-tokens && pnpm run check-style-guides && pnpm run test:ci"
+        "verify": "pnpm run lint && pnpm run format:check && pnpm run test:ci"
     },
     "peerDependencies": {
         "@angular/animations": "19.2.17",
