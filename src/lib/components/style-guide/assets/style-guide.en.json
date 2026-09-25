@@ -1,6 +1,7 @@
 {
     "angular-components-style-guide": {
         "appLayouts": "App Layouts",
+        "badge-section": "Badges",
         "breadcrumbs": "Breadcrumbs",
         "components": "Components",
         "compound": "Compound",

@@ -1,37 +1,19 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { BadgeComponent } from '../../badge.component';
+import { BadgeConfig, BadgeVariant } from '../../models/badge.model';
+
 @Component({
-    imports: [TranslateModule],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [BadgeComponent, TranslateModule],
     selector: 'bey-badge-style-guide',
     standalone: true,
     styleUrls: ['../../../style-guide/style-guide-shared.css', './badge-style-guide.component.css'],
     templateUrl: './badge-style-guide.component.html'
 })
 export class BadgeStyleGuideComponent {
-    emphasisClasses = [
-        'bey-badge-default',
-        'bey-badge-outline',
-        'bey-badge-subtle',
-        'bey-badge-soft',
-        'bey-badge-neutral',
-        'bey-badge-secondary',
-        'bey-badge-tertiary',
-        'bey-badge-muted',
-        'bey-badge-strong',
-        'bey-badge-inverse'
-    ];
-
-    colorClasses = [
-        'bey-badge-color-primary',
-        'bey-badge-color-secondary',
-        'bey-badge-color-success',
-        'bey-badge-color-warning',
-        'bey-badge-color-error',
-        'bey-badge-color-info',
-        'bey-badge-color-neutral',
-        'bey-badge-color-purple',
-        'bey-badge-color-teal',
-        'bey-badge-color-pink'
-    ];
+    readonly badges = Object.values(BadgeVariant).map(
+        variant => new BadgeConfig({ label: variant, translate: false, variant })
+    );
 }

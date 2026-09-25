@@ -2,11 +2,13 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { BadgeTableCell, CellType, LinkTableCell, TableBadge, TableCell } from '../../models/table-cell.model';
+import { BadgeComponent } from '../../../badge/badge.component';
+import { BadgeConfig } from '../../../badge/models/badge.model';
+import { BadgeTableCell, CellType, LinkTableCell, TableCell } from '../../models/table-cell.model';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [TooltipModule, TranslateModule],
+    imports: [BadgeComponent, TooltipModule, TranslateModule],
     selector: 'bey-table-cell',
     standalone: true,
     styleUrls: ['./cell.component.css'],
@@ -16,7 +18,14 @@ export class TableCellComponent {
     readonly cell = input.required<TableCell>();
     readonly isHeader = input(false);
 
-    readonly badges = computed<TableBadge[]>(() => (this.cell() as BadgeTableCell).badges ?? []);
+    /** The cell's `translate` decides for its badges too. */
+    readonly badges = computed<BadgeConfig[]>(() => {
+        const cell = this.cell();
+
+        return ((cell as BadgeTableCell).badges ?? []).map(
+            badge => new BadgeConfig({ ...badge, translate: cell.translate })
+        );
+    });
     readonly content = computed(() => {
         const { content } = this.cell();
 

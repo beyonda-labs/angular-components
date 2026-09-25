@@ -11,9 +11,7 @@
         }
 
         @if (config().badge; as badge) {
-            <span class="bey-header-badge" [class]="badge.cssClass || 'bey-header-badge-default'">
-                {{ badge.text | translate }}
-            </span>
+            <bey-badge class="bey-header-badge" [config]="badge"></bey-badge>
         }
     </div>
 

@@ -60,9 +60,3 @@
     overflow: visible;
     white-space: normal;
 }
-
-.bey-table-cell-badge {
-    font-size: var(--bey-font-size-xs);
-    font-weight: var(--bey-font-weight-medium);
-    vertical-align: baseline;
-}

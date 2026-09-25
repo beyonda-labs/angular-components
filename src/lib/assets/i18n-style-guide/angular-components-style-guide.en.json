@@ -38,6 +38,10 @@
             "title": "Demo App"
         },
         "appLayouts": "App Layouts",
+        "badge": {
+            "example": "Every variant of the badge, greyscale emphasis first and the semantic hues after."
+        },
+        "badge-section": "Badges",
         "breadcrumb": {
             "basic": {
                 "detail": {

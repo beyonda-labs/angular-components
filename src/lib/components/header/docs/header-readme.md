@@ -10,7 +10,9 @@ set of sub-actions.
 const header = new BeyHeaderConfig({
     prefix: 'myPage',
     title: 'myPage.title',
-    leftActions: [new BeyHeaderAction({ key: 'save', type: BeyHeaderActionType.PrimaryButton, action: () => this.save() })],
+    leftActions: [
+        new BeyHeaderAction({ key: 'save', type: BeyHeaderActionType.PrimaryButton, action: () => this.save() })
+    ],
     menuActions: [new BeyHeaderAction({ key: 'archive', action: () => this.archive() })]
 });
 ```
@@ -21,29 +23,29 @@ const header = new BeyHeaderConfig({
 
 ## BeyHeaderConfig
 
-| Field          | Required | Default | Meaning                                                        |
-| -------------- | -------- | ------- | -------------------------------------------------------------- |
-| `prefix`       | yes      |         | i18n prefix the action texts are built from                     |
-| `title`        | no       | none    | A literal title or an i18n key; the bar drops it when empty      |
-| `variant`      | no       | `Page`  | `Page` or `SubPage`, which only changes the title size           |
-| `backAction`   | no       | none    | Rendered before the title                                        |
-| `badge`        | no       | none    | `{ text, cssClass }` shown next to the title                     |
-| `leftActions`  | no       | `[]`    | Rendered first inside the group                                  |
-| `menuActions`  | no       | `[]`    | Collapsed behind an overflow toggle                              |
-| `rightActions` | no       | `[]`    | Rendered last inside the group                                   |
+| Field          | Required | Default | Meaning                                                     |
+| -------------- | -------- | ------- | ----------------------------------------------------------- |
+| `prefix`       | yes      |         | i18n prefix the action texts are built from                 |
+| `title`        | no       | none    | A literal title or an i18n key; the bar drops it when empty |
+| `variant`      | no       | `Page`  | `Page` or `SubPage`, which only changes the title size      |
+| `backAction`   | no       | none    | Rendered before the title                                   |
+| `badge`        | no       | none    | A `BeyBadgeConfig` shown next to the title                  |
+| `leftActions`  | no       | `[]`    | Rendered first inside the group                             |
+| `menuActions`  | no       | `[]`    | Collapsed behind an overflow toggle                         |
+| `rightActions` | no       | `[]`    | Rendered last inside the group                              |
 
 ## BeyHeaderAction
 
-| Field        | Required | Default          | Meaning                                                    |
-| ------------ | -------- | ---------------- | ---------------------------------------------------------- |
-| `key`        | yes      |                  | Identifies the action and builds its default texts          |
-| `type`       | yes      |                  | `PrimaryButton`, `SecondaryButton`, `Text` or `Icon`        |
-| `label`      | no       | `<key>.label`    | Resolved against `<prefix>.actions` unless it is a literal  |
-| `tooltip`    | no       | `<key>.tooltip`  | Same resolution as the label                                |
-| `icon`       | no       | none             | FontAwesome icon; an `Icon` action shows only this          |
-| `disabled`   | no       | `false`          | Rendered disabled                                           |
-| `action`     | no       |                  | Run when the button is used                                 |
-| `subActions` | no       | none             | Opens a panel instead of running `action`                   |
+| Field        | Required | Default         | Meaning                                                    |
+| ------------ | -------- | --------------- | ---------------------------------------------------------- |
+| `key`        | yes      |                 | Identifies the action and builds its default texts         |
+| `type`       | yes      |                 | `PrimaryButton`, `SecondaryButton`, `Text` or `Icon`       |
+| `label`      | no       | `<key>.label`   | Resolved against `<prefix>.actions` unless it is a literal |
+| `tooltip`    | no       | `<key>.tooltip` | Same resolution as the label                               |
+| `icon`       | no       | none            | FontAwesome icon; an `Icon` action shows only this         |
+| `disabled`   | no       | `false`         | Rendered disabled                                          |
+| `action`     | no       |                 | Run when the button is used                                |
+| `subActions` | no       | none            | Opens a panel instead of running `action`                  |
 
 An action with `subActions` never runs its own `action`: using it opens the panel. Picking a sub-action closes
 it, and so does Escape or a click outside.
@@ -55,8 +57,6 @@ The config is read as the initial state and never written to. Change the title o
 
 ## Theming
 
-| Variable                   | Default                |
-| -------------------------- | ---------------------- |
-| `--bey-header-fg`          | `--bey-text-primary`   |
-| `--bey-header-badge-bg`    | `--bey-primary`        |
-| `--bey-header-badge-fg`    | `--bey-text-inverse`   |
+| Variable          | Default              |
+| ----------------- | -------------------- |
+| `--bey-header-fg` | `--bey-text-primary` |

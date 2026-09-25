@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
+import { BadgeConfig, BadgeVariant } from '../../../badge/models/badge.model';
 import { BadgeTableCell, LinkTableCell, TableCell, TextTableCell } from '../../models/table-cell.model';
 import { TableCellComponent } from './cell.component';
 
@@ -56,8 +57,8 @@ describe('TableCellComponent', () => {
         await render(
             new BadgeTableCell({
                 badges: [
-                    { badgeClass: 'bey-badge-color-success', content: 'demo.active' },
-                    { badgeClass: 'bey-badge-color-info', content: 'demo.open' }
+                    new BadgeConfig({ label: 'demo.active', variant: BadgeVariant.Success }),
+                    new BadgeConfig({ label: 'demo.open', variant: BadgeVariant.Info })
                 ],
                 translate: true
             })

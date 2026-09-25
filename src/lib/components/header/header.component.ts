@@ -13,6 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType, TooltipPlacement } from '../../internal/button/models/button-config.model';
+import { BadgeComponent } from '../badge/badge.component';
 import { HeaderAction, HeaderActionType, HeaderConfig, HeaderVariant } from './models/header.model';
 
 interface RenderedAction {
@@ -23,7 +24,7 @@ interface RenderedAction {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [ButtonComponent, TranslateModule],
+    imports: [BadgeComponent, ButtonComponent, TranslateModule],
     selector: 'bey-header',
     standalone: true,
     styleUrls: ['./header.component.css'],

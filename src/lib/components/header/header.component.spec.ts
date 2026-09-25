@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { faGear, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { BadgeConfig, BadgeVariant } from '../badge/models/badge.model';
 import { HeaderComponent } from './header.component';
 import {
     HeaderAction,
@@ -75,13 +76,13 @@ describe('HeaderComponent', () => {
         expect(fixture.nativeElement.querySelector('h1')).toBeNull();
     });
 
-    it('shows a badge with the class the config asks for', async () => {
-        await render(buildConfig({ badge: { text: 'demo.badge', cssClass: 'bey-badge-color-success' } }));
+    it('shows a badge with the variant the config asks for', async () => {
+        await render(buildConfig({ badge: new BadgeConfig({ label: 'demo.badge', variant: BadgeVariant.Success }) }));
 
-        const badge = fixture.nativeElement.querySelector('.bey-header-badge');
+        const badge = fixture.nativeElement.querySelector('.bey-header-badge .bey-badge');
 
         expect(badge.textContent.trim()).toBe('demo.badge');
-        expect(badge.classList).toContain('bey-badge-color-success');
+        expect(badge.classList).toContain('bey-badge--success');
     });
 
     it('puts the back action before the title', async () => {

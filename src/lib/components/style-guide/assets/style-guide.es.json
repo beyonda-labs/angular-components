@@ -1,6 +1,7 @@
 {
     "angular-components-style-guide": {
         "appLayouts": "Diseños de aplicación",
+        "badge-section": "Etiquetas",
         "breadcrumbs": "Breadcrumbs",
         "components": "Componentes",
         "compound": "Compuestos",

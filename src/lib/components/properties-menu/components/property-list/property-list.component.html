@@ -28,7 +28,7 @@
                 @if (listItem.badges.length > 0) {
                     <span class="bey-property-list-item-badges">
                         @for (badge of listItem.badges; track badge.label) {
-                            <span class="bey-badge" [class]="badge.cssClass">{{ badge.label | translate }}</span>
+                            <bey-badge [config]="badge"></bey-badge>
                         }
                     </span>
                 }
@@ -110,9 +110,7 @@
                                 <bey-property-field [field]="row.field" [hideLabel]="true"></bey-property-field>
                             </div>
                         } @else if (row.badge) {
-                            <span class="bey-badge" [class]="row.badge.cssClass">
-                                {{ row.badge.label | translate }}
-                            </span>
+                            <bey-badge [config]="row.badge"></bey-badge>
                         } @else {
                             <span class="bey-property-summary-row-value">
                                 {{ row.value ? (row.value | translate) : emptyValue }}

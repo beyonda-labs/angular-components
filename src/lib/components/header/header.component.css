@@ -1,7 +1,5 @@
 :host {
     --bey-header-fg: var(--bey-text-primary);
-    --bey-header-badge-bg: var(--bey-primary);
-    --bey-header-badge-fg: var(--bey-text-inverse);
 
     display: block;
     width: 100%;
@@ -42,15 +40,8 @@
 }
 
 .bey-header-badge {
-    padding: var(--bey-space-3xs) var(--bey-space-md);
-    border-radius: var(--bey-radius-pill);
-    font-size: var(--bey-font-size-xs);
-    font-weight: var(--bey-font-weight-semibold);
-}
-
-.bey-header-badge-default {
-    background: var(--bey-header-badge-bg);
-    color: var(--bey-header-badge-fg);
+    --bey-badge-bg: var(--bey-primary);
+    --bey-badge-fg: var(--bey-primary-fg);
 }
 
 .bey-header-actions {

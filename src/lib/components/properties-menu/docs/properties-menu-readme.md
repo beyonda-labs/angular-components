@@ -116,7 +116,7 @@ reports the selection through `onFieldAction`. The attachment field checks the f
 ## Lists
 
 A `BeyPropertyListItem` renders as a card with `icon` (and `iconClasses` to colour it), `label` with
-`labelParameters`, `description`, `badges`, `actions` (one button per `{ key, icon, label? }`), `copyValue` (a
+`labelParameters`, `description`, `badges` (`BeyBadgeConfig[]`), `actions` (one button per `{ key, icon, label? }`), `copyValue` (a
 copy button that writes that text to the clipboard) and `removable`. A plain card reports `onListItemSelect`. A
 card with a `body` of `BeyPropertySummaryRow` (`label` plus a `field`, a `badge` or a `value`) becomes
 expandable instead: its header and chevron toggle it, its body never does, and a row's field is a normal field

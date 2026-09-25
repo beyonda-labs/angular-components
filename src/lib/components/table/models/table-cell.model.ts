@@ -1,3 +1,5 @@
+import { BadgeConfig } from '../../badge/models/badge.model';
+
 export abstract class TableCell {
     content: unknown;
     type: CellType;
@@ -40,13 +42,8 @@ export interface TextTableCellParameters {
     translate?: boolean;
 }
 
-export interface TableBadge {
-    badgeClass: string;
-    content: string;
-}
-
 export class BadgeTableCell extends TableCell {
-    badges: TableBadge[];
+    badges: BadgeConfig[];
 
     constructor({ badges, translate, tooltip }: BadgeTableCellParameters) {
         super({ content: badges, type: CellType.Badge, translate, tooltip });
@@ -55,7 +52,7 @@ export class BadgeTableCell extends TableCell {
 }
 
 export interface BadgeTableCellParameters {
-    badges: TableBadge[];
+    badges: BadgeConfig[];
 
     tooltip?: string;
     translate?: boolean;

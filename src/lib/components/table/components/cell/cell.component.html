@@ -13,9 +13,7 @@
     } @else if (isBadge()) {
         <span class="bey-table-cell-content bey-table-cell-badges">
             @for (badge of badges(); track $index) {
-                <span class="bey-badge bey-table-cell-badge {{ badge.badgeClass }}">
-                    {{ cell().translate ? (badge.content | translate) : badge.content }}
-                </span>
+                <bey-badge [config]="badge"></bey-badge>
             }
         </span>
     } @else {

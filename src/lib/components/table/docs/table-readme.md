@@ -17,7 +17,7 @@ readonly table = new BeyTableConfig<Person>({
     loadRow: item => [
         new BeyTextTableCell({ content: item.name }),
         new BeyBadgeTableCell({
-            badges: [{ badgeClass: 'bey-badge-color-success', content: `myApp.team.status.${item.status}` }],
+            badges: [new BeyBadgeConfig({ label: `myApp.team.status.${item.status}`, variant: BeyBadgeVariant.Success })],
             translate: true
         }),
         new BeyLinkTableCell({ action: () => this.open(item), content: 'myApp.team.open', translate: true })
@@ -35,27 +35,27 @@ so a table is always built from a typed model, never from a loose record.
 
 ## BeyTableConfig
 
-| Field                 | Required | Default | Meaning                                                             |
-| --------------------- | -------- | ------- | ------------------------------------------------------------------- |
+| Field                 | Required | Default | Meaning                                                                               |
+| --------------------- | -------- | ------- | ------------------------------------------------------------------------------------- |
 | `prefix`              | yes      |         | i18n prefix: headers are `<prefix>.columns.<key>`, the empty message `<prefix>.empty` |
-| `columns`             | yes      |         | The columns, in order                                                |
-| `loadRow`             | yes      |         | Turns an item into one cell per column                               |
-| `items`               | no       | `[]`    | The rows                                                             |
-| `height`              | no       | `60vh`  | Height of the scrolling area, any CSS length                         |
-| `selectable`          | no       | `true`  | Shows the selection column                                           |
-| `isRowSelected`       | no       |         | Marks the rows that start selected                                   |
-| `selectedItemsChange` | no       |         | Run with the selected items and their indexes on every change        |
+| `columns`             | yes      |         | The columns, in order                                                                 |
+| `loadRow`             | yes      |         | Turns an item into one cell per column                                                |
+| `items`               | no       | `[]`    | The rows                                                                              |
+| `height`              | no       | `60vh`  | Height of the scrolling area, any CSS length                                          |
+| `selectable`          | no       | `true`  | Shows the selection column                                                            |
+| `isRowSelected`       | no       |         | Marks the rows that start selected                                                    |
+| `selectedItemsChange` | no       |         | Run with the selected items and their indexes on every change                         |
 
 `BeyTableColumn` takes `key`, an optional `tooltip` and a `width`, which is the share of the row the column
 gets: two columns of width 3 and 1 split it 75 / 25.
 
 ## Cells
 
-| Cell                | Fields                                  | Shows                                              |
-| ------------------- | --------------------------------------- | -------------------------------------------------- |
-| `BeyTextTableCell`  | `content`                               | The text, one line, cut with an ellipsis            |
-| `BeyLinkTableCell`  | `content`, `action`                     | A link that runs `action` without selecting the row |
-| `BeyBadgeTableCell` | `badges: { content, badgeClass }[]`     | One badge per entry, styled by its class            |
+| Cell                | Fields                     | Shows                                               |
+| ------------------- | -------------------------- | --------------------------------------------------- |
+| `BeyTextTableCell`  | `content`                  | The text, one line, cut with an ellipsis            |
+| `BeyLinkTableCell`  | `content`, `action`        | A link that runs `action` without selecting the row |
+| `BeyBadgeTableCell` | `badges: BeyBadgeConfig[]` | One `bey-badge` per entry                           |
 
 Every cell takes an optional `tooltip` and `translate`, which runs the content, the badges and the tooltip
 through the translate pipe.
@@ -68,18 +68,18 @@ replaced config starts over: new rows, the selection `isRowSelected` says, and t
 
 ## Customisation
 
-| Variable                            | Default                |
-| ----------------------------------- | ---------------------- |
-| `--bey-table-surface`               | `--bey-bg-page`        |
-| `--bey-table-text`                  | `--bey-text-primary`   |
-| `--bey-table-text-muted`            | `--bey-text-muted`     |
-| `--bey-table-border-subtle`         | `--bey-border-subtle`  |
-| `--bey-table-border-strong`         | `--bey-border-default` |
-| `--bey-table-row-hover`             | `--bey-bg-hover`       |
-| `--bey-table-row-selected`          | `--bey-bg-active`      |
-| `--bey-table-row-min-height`        | `2.5rem`               |
-| `--bey-table-checkbox-accent`       | `--bey-primary`        |
-| `--bey-table-checkbox-border`       | `--bey-border-strong`  |
-| `--bey-table-checkbox-mark`         | `--bey-primary-fg`     |
-| `--bey-table-link-underline`        | `--bey-border-strong`  |
-| `--bey-table-link-underline-hover`  | `--bey-primary`        |
+| Variable                           | Default                |
+| ---------------------------------- | ---------------------- |
+| `--bey-table-surface`              | `--bey-bg-page`        |
+| `--bey-table-text`                 | `--bey-text-primary`   |
+| `--bey-table-text-muted`           | `--bey-text-muted`     |
+| `--bey-table-border-subtle`        | `--bey-border-subtle`  |
+| `--bey-table-border-strong`        | `--bey-border-default` |
+| `--bey-table-row-hover`            | `--bey-bg-hover`       |
+| `--bey-table-row-selected`         | `--bey-bg-active`      |
+| `--bey-table-row-min-height`       | `2.5rem`               |
+| `--bey-table-checkbox-accent`      | `--bey-primary`        |
+| `--bey-table-checkbox-border`      | `--bey-border-strong`  |
+| `--bey-table-checkbox-mark`        | `--bey-primary-fg`     |
+| `--bey-table-link-underline`       | `--bey-border-strong`  |
+| `--bey-table-link-underline-hover` | `--bey-primary`        |

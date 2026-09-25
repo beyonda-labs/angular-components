@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { BadgeConfig, BadgeVariant } from '../badge/models/badge.model';
 import { TableColumn, TableConfig, TableConfigParameters } from './models/table.model';
 import { BadgeTableCell, LinkTableCell, TextTableCell } from './models/table-cell.model';
 import { TableComponent } from './table.component';
@@ -156,8 +157,8 @@ describe('TableComponent', () => {
                 loadRow: () => [
                     new BadgeTableCell({
                         badges: [
-                            { badgeClass: 'bey-badge-color-primary', content: 'Angular' },
-                            { badgeClass: 'bey-badge-color-info', content: 'RxJS' }
+                            new BadgeConfig({ label: 'Angular', variant: BadgeVariant.Primary }),
+                            new BadgeConfig({ label: 'RxJS', variant: BadgeVariant.Info })
                         ]
                     })
                 ]

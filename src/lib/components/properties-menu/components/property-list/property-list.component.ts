@@ -4,6 +4,7 @@ import { faCheck, faChevronDown, faCopy, faTrash } from '@fortawesome/free-solid
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { BadgeComponent } from '../../../badge/badge.component';
 import { ListComponent } from '../../../list/list.component';
 import { ListConfig } from '../../../list/models/list.model';
 import { PropertyListItem } from '../../models/property-list-item.model';
@@ -16,7 +17,7 @@ const EMPTY_VALUE = '—';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [FontAwesomeModule, ListComponent, PropertyFieldComponent, TooltipModule, TranslateModule],
+    imports: [BadgeComponent, FontAwesomeModule, ListComponent, PropertyFieldComponent, TooltipModule, TranslateModule],
     selector: 'bey-property-list',
     standalone: true,
     styleUrls: ['./property-list.component.css'],

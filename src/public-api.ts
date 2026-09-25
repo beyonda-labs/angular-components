@@ -1,4 +1,5 @@
 /* primitives — self-contained UI, no dependency on other modules */
+export * from './lib/components/badge/public-api';
 export * from './lib/components/breadcrumb/public-api';
 export * from './lib/components/footer/public-api';
 export * from './lib/components/list/public-api';

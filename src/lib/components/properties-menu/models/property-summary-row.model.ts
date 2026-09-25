@@ -1,42 +1,28 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
+import { BadgeConfig } from '../../badge/models/badge.model';
 import { PropertyField } from './property-field.model';
-
-export interface PropertyBadgeParameters {
-    label: string;
-
-    cssClass?: string;
-}
-
-export class PropertyBadge {
-    cssClass: string;
-    label: string;
-
-    constructor({ cssClass = 'bey-badge-color-neutral', label }: PropertyBadgeParameters) {
-        this.cssClass = cssClass;
-        this.label = label;
-    }
-}
 
 export interface PropertySummaryRowParameters {
     label: string;
 
-    badge?: PropertyBadgeParameters;
+    badge?: BadgeConfig;
     field?: PropertyField;
     icon?: IconDefinition;
     value?: string;
 }
 
+/** One line of an expandable list card: a label and a field, a badge or a plain value. */
 export class PropertySummaryRow {
     label: string;
 
-    badge?: PropertyBadge;
+    badge?: BadgeConfig;
     field?: PropertyField;
     icon?: IconDefinition;
     value?: string;
 
     constructor({ badge, field, icon, label, value }: PropertySummaryRowParameters) {
-        this.badge = badge && (badge instanceof PropertyBadge ? badge : new PropertyBadge(badge));
+        this.badge = badge;
         this.field = field;
         this.icon = icon;
         this.label = label;

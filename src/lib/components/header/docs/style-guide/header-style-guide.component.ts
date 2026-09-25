@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { faArrowLeft, faArrowUpFromBracket, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { BadgeConfig, BadgeVariant } from '../../../badge/models/badge.model';
 import { HeaderComponent } from '../../header.component';
 import { HeaderAction, HeaderActionType, HeaderConfig, HeaderVariant } from '../../models/header.model';
 
@@ -21,7 +22,7 @@ export class HeaderStyleGuideComponent {
             key: 'back',
             type: HeaderActionType.Text
         }),
-        badge: { text: 'angular-components-style-guide.header.badge' },
+        badge: new BadgeConfig({ label: 'angular-components-style-guide.header.badge', variant: BadgeVariant.Primary }),
         menuActions: []
     });
     subPageConfig = this.buildConfig({

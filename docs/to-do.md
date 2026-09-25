@@ -136,9 +136,8 @@ a callback field and dialog callbacks.
 -   [ ] The remaining modules, one at a time
 -   [x] `properties-menu`: callbacks on the config, a shared `internal/option-picker`, signals and tokens across
         the root, groups, list, tree and the eleven fields, one README
--   [ ] `badge` becomes a real component instead of global CSS classes — `table`, `properties-menu` and
-        `header` pass a badge css class around as part of their own config
--   [ ] Style-guide for `search`; READMEs for `badge` and `loading`
+-   [x] `badge` is a component with a `BadgeConfig`; `header`, `table` and `properties-menu` render theirs through it
+-   [ ] Style-guide for `search`
 -   [ ] Translation keys to kebab-case (45 in the library, 171 in the style-guides)
 -   [ ] Trim module READMEs to the agreed shape
 -   [ ] Translate what is still in Spanish into English: the `footer` and `floating-preferences` READMEs

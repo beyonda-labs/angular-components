@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
+import { BadgeConfig, BadgeVariant } from '../../../badge/models/badge.model';
 import { PropertyTextField } from '../../models/fields/property-text-field.model';
 import { PropertiesMenuConfig } from '../../models/properties-menu-config.model';
 import { PropertyGroup } from '../../models/property-group.model';
@@ -98,7 +99,7 @@ const buildItem = (overrides: Partial<PropertyListItemParameters> = {}): Propert
     new PropertyListItem({
         id: 'total_pages',
         label: 'total_pages',
-        badges: [{ label: 'Número', cssClass: 'bey-badge-color-purple' }],
+        badges: [new BadgeConfig({ label: 'Número', variant: BadgeVariant.Purple })],
         body: [
             new PropertySummaryRow({ label: 'Valor por defecto' }),
             new PropertySummaryRow({
@@ -153,7 +154,7 @@ describe('PropertyListComponent with expandable items', () => {
         const badge: HTMLElement = fixture.nativeElement.querySelector('.bey-property-list-item-badges .bey-badge');
 
         expect(badge.textContent?.trim()).toBe('Número');
-        expect(badge.classList.contains('bey-badge-color-purple')).toBe(true);
+        expect(badge.classList.contains('bey-badge--purple')).toBe(true);
     });
 
     it('shows a chevron only on the items that carry a body', () => {

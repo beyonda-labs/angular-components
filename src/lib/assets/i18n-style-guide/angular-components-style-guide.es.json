@@ -38,6 +38,10 @@
             "title": "App Demo"
         },
         "appLayouts": "Diseños de aplicación",
+        "badge": {
+            "example": "Todas las variantes de la etiqueta: primero los énfasis en gris y después los tonos semánticos."
+        },
+        "badge-section": "Etiquetas",
         "breadcrumb": {
             "basic": {
                 "detail": {

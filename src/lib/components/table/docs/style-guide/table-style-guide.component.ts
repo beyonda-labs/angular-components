@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { BadgeConfig, BadgeVariant } from '../../../badge/models/badge.model';
 import { TableColumn, TableConfig } from '../../models/table.model';
 import { BadgeTableCell, LinkTableCell, TextTableCell } from '../../models/table-cell.model';
 import { TableComponent } from '../../table.component';
 
 const PREFIX = 'angular-components-style-guide.table';
-const SKILL_BADGE_CLASSES = ['bey-badge-color-primary', 'bey-badge-color-info', 'bey-badge-color-purple'];
-const STATUS_BADGE_CLASSES: Record<string, string> = {
-    active: 'bey-badge-color-success',
-    review: 'bey-badge-color-warning'
+const SKILL_BADGE_VARIANTS = [BadgeVariant.Primary, BadgeVariant.Info, BadgeVariant.Purple];
+const STATUS_BADGE_VARIANTS: Record<string, BadgeVariant> = {
+    active: BadgeVariant.Success,
+    review: BadgeVariant.Warning
 };
 
 interface Person {
@@ -69,19 +70,22 @@ export class TableStyleGuideComponent {
             new TextTableCell({ content: role, tooltip: role }),
             new BadgeTableCell({
                 badges: [
-                    {
-                        badgeClass: STATUS_BADGE_CLASSES[status] ?? 'bey-badge-color-neutral',
-                        content: `${PREFIX}.status.${status}`
-                    }
+                    new BadgeConfig({
+                        label: `${PREFIX}.status.${status}`,
+                        variant: STATUS_BADGE_VARIANTS[status] ?? BadgeVariant.Neutral
+                    })
                 ],
                 tooltip: `${PREFIX}.status.${status}`,
                 translate: true
             }),
             new BadgeTableCell({
-                badges: skills.map((skill, index) => ({
-                    badgeClass: SKILL_BADGE_CLASSES[index % SKILL_BADGE_CLASSES.length],
-                    content: skill
-                }))
+                badges: skills.map(
+                    (skill, index) =>
+                        new BadgeConfig({
+                            label: skill,
+                            variant: SKILL_BADGE_VARIANTS[index % SKILL_BADGE_VARIANTS.length]
+                        })
+                )
             }),
             new LinkTableCell({
                 action: () => this.opened.set(name),
