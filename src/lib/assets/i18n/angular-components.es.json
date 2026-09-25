@@ -62,11 +62,7 @@
                 "without-changes": "No se han realizado cambios en el formulario."
             },
             "text-variable-field": {
-                "close": "Cerrar",
-                "empty": "No se han encontrado opciones",
-                "insert-variable": "Insertar variable",
-                "label": "Variables",
-                "search": "Buscar"
+                "insert-variable": "Insertar variable"
             }
         },
         "header": {
@@ -264,6 +260,12 @@
                 "warning": "Advertencia"
             }
         },
+        "option-picker": {
+            "close": "Cerrar",
+            "empty": "No se han encontrado opciones",
+            "label": "Opciones",
+            "search": "Buscar"
+        },
         "page": {
             "form": {
                 "cancel": "Cancelar",
@@ -328,12 +330,6 @@
             },
             "textField": {
                 "insertVariable": "Insertar variable"
-            },
-            "variablePicker": {
-                "close": "Cerrar",
-                "empty": "No se encontraron variables",
-                "label": "Variables",
-                "search": "Buscar variables"
             }
         },
         "search": {

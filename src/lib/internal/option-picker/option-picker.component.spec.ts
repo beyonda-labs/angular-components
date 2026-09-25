@@ -1,0 +1,106 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateModule } from '@ngx-translate/core';
+
+import { OptionPickerOption } from './models/option-picker-option.model';
+import { OptionPickerComponent } from './option-picker.component';
+
+const OPTIONS: OptionPickerOption[] = [
+    { depth: 0, label: 'Customer', value: 'customer' },
+    { depth: 1, label: 'Name', value: 'customer.name' },
+    { depth: 0, isDisabled: true, label: 'Invoice', value: 'invoice' }
+];
+
+describe('OptionPickerComponent', () => {
+    let component: OptionPickerComponent;
+    let fixture: ComponentFixture<OptionPickerComponent>;
+    let element: HTMLElement;
+
+    function rows(): HTMLButtonElement[] {
+        return [...element.querySelectorAll<HTMLButtonElement>('.bey-option-picker-row')];
+    }
+
+    function search(term: string): void {
+        const input = element.querySelector<HTMLInputElement>('.bey-option-picker-search-input')!;
+
+        input.value = term;
+        input.dispatchEvent(new Event('input'));
+        fixture.detectChanges();
+    }
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [OptionPickerComponent, TranslateModule.forRoot()]
+        }).compileComponents();
+
+        fixture = TestBed.createComponent(OptionPickerComponent);
+        component = fixture.componentInstance;
+        element = fixture.nativeElement;
+        fixture.componentRef.setInput('anchor', document.createElement('div'));
+        fixture.componentRef.setInput('options', OPTIONS);
+        fixture.detectChanges();
+    });
+
+    afterEach(() => {
+        element.remove();
+    });
+
+    it('should list every option, indented by depth, without a search term', () => {
+        expect(rows().map(row => row.textContent?.trim())).toEqual(['Customer', 'Name', 'Invoice']);
+        expect(rows()[1].style.getPropertyValue('--bey-option-picker-row-depth')).toBe('1');
+    });
+
+    it('should filter by value or label as a flat list', () => {
+        search('name');
+
+        expect(rows().map(row => row.textContent?.trim())).toEqual(['Name']);
+        expect(rows()[0].style.getPropertyValue('--bey-option-picker-row-depth')).toBe('0');
+    });
+
+    it('should show an empty state when nothing matches', () => {
+        search('unknown');
+
+        expect(element.querySelector('.bey-option-picker-empty')).not.toBeNull();
+    });
+
+    it('should hide the search header when not searchable', () => {
+        fixture.componentRef.setInput('searchable', false);
+        fixture.detectChanges();
+
+        expect(element.querySelector('.bey-option-picker-header')).toBeNull();
+    });
+
+    it('should emit the clicked option and ignore disabled ones', () => {
+        const selected = jest.fn();
+
+        component.selected.subscribe(selected);
+        rows()[2].click();
+        rows()[1].click();
+
+        expect(selected).toHaveBeenCalledTimes(1);
+        expect(selected).toHaveBeenCalledWith(OPTIONS[1]);
+    });
+
+    it('should move the active row with the arrow keys and select it with Enter', () => {
+        const selected = jest.fn();
+
+        component.selected.subscribe(selected);
+        component.onKeydown(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+        fixture.detectChanges();
+
+        expect(rows()[1].classList.contains('is-active')).toBe(true);
+
+        component.onKeydown(new KeyboardEvent('keydown', { key: 'Enter' }));
+
+        expect(selected).toHaveBeenCalledWith(OPTIONS[1]);
+    });
+
+    it('should emit closed on Escape and on a click outside the picker and its anchor', () => {
+        const closed = jest.fn();
+
+        component.closed.subscribe(closed);
+        component.onKeydown(new KeyboardEvent('keydown', { key: 'Escape' }));
+        document.body.click();
+
+        expect(closed).toHaveBeenCalledTimes(2);
+    });
+});

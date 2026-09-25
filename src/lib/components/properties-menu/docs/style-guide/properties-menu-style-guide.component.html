@@ -9,34 +9,25 @@
 </div>
 
 <div class="bey-properties-menu-style-guide-frame">
-    <bey-properties-menu
-        [config]="headingConfig"
-        (fieldValueChange)="onFieldValueChange($event)"
-        (listItemSelect)="onListItemSelect($event)"
-        (treeAddBlock)="onTreeAddBlock($event)"
-        (treeNodeSelect)="onTreeNodeSelect($event)"
-        (variableSelected)="onVariableSelected($event)"
-    ></bey-properties-menu>
+    <bey-properties-menu [config]="config" [variables]="variables()"></bey-properties-menu>
 </div>
 
-@if (lastFieldChange) {
-    <p class="bey-properties-menu-style-guide-log">
-        fieldValueChange: {{ lastFieldChange.fieldId }} = {{ lastFieldChange.value }}
-    </p>
+@if (lastFieldChange(); as change) {
+    <p class="bey-properties-menu-style-guide-log">onFieldValueChange: {{ change.fieldId }} = {{ change.value }}</p>
 }
 
-@if (lastVariableSelection) {
-    <p class="bey-properties-menu-style-guide-log">variableSelected: {{ lastVariableSelection.expression }}</p>
+@if (lastVariableSelection(); as selection) {
+    <p class="bey-properties-menu-style-guide-log">onVariableSelect: {{ selection.expression }}</p>
 }
 
-@if (lastTreeNodeSelect) {
-    <p class="bey-properties-menu-style-guide-log">treeNodeSelect: {{ lastTreeNodeSelect.node.label }}</p>
+@if (lastTreeNodeSelect(); as event) {
+    <p class="bey-properties-menu-style-guide-log">onTreeNodeSelect: {{ event.node.label }}</p>
 }
 
-@if (lastTreeAddBlock) {
-    <p class="bey-properties-menu-style-guide-log">treeAddBlock: {{ lastTreeAddBlock.tabId }}</p>
+@if (lastTreeAddBlock(); as event) {
+    <p class="bey-properties-menu-style-guide-log">onTreeAddBlock: {{ event.tabId }}</p>
 }
 
-@if (lastListItemSelect) {
-    <p class="bey-properties-menu-style-guide-log">listItemSelect: {{ lastListItemSelect.item.label }}</p>
+@if (lastListItemSelect(); as event) {
+    <p class="bey-properties-menu-style-guide-log">onListItemSelect: {{ event.item.label }}</p>
 }

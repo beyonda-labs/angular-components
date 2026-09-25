@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import {
     faAlignCenter,
     faAlignJustify,
@@ -39,11 +39,7 @@ import { PropertyListItem } from '../../models/property-list-item.model';
 import { PropertyTab } from '../../models/property-tab.model';
 import { PropertyTreeConfig } from '../../models/property-tree-config.model';
 import { PropertyTreeNode } from '../../models/property-tree-node.model';
-import {
-    PropertyVariable,
-    PropertyVariableParameters,
-    PropertyVariableType
-} from '../../models/property-variable.model';
+import { PropertyVariable, PropertyVariableType } from '../../models/property-variable.model';
 import { PropertiesMenuComponent } from '../../properties-menu.component';
 import {
     PropertyFieldValueChange,
@@ -53,8 +49,8 @@ import {
     PropertyVariableSelection
 } from '../../types/properties-menu-events';
 
-const EXAMPLE_VARIABLES: PropertyVariableParameters[] = [
-    {
+const EXAMPLE_VARIABLES: PropertyVariable[] = [
+    new PropertyVariable({
         children: [
             new PropertyVariable({
                 example: 'John Doe',
@@ -75,8 +71,8 @@ const EXAMPLE_VARIABLES: PropertyVariableParameters[] = [
         label: 'Customer',
         path: 'customer',
         type: PropertyVariableType.Object
-    },
-    {
+    }),
+    new PropertyVariable({
         children: [
             new PropertyVariable({
                 example: 'INV-001',
@@ -97,10 +93,11 @@ const EXAMPLE_VARIABLES: PropertyVariableParameters[] = [
         label: 'Invoice',
         path: 'invoice',
         type: PropertyVariableType.Object
-    }
+    })
 ];
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [PropertiesMenuComponent, TranslateModule],
     selector: 'bey-properties-menu-style-guide',
     standalone: true,
@@ -108,38 +105,17 @@ const EXAMPLE_VARIABLES: PropertyVariableParameters[] = [
     templateUrl: './properties-menu-style-guide.component.html'
 })
 export class PropertiesMenuStyleGuideComponent {
-    @ViewChild(PropertiesMenuComponent) propertiesMenu!: PropertiesMenuComponent;
+    readonly lastFieldChange = signal<PropertyFieldValueChange | null>(null);
+    readonly lastListItemSelect = signal<PropertyListItemSelect | null>(null);
+    readonly lastTreeAddBlock = signal<PropertyTreeAddBlock | null>(null);
+    readonly lastTreeNodeSelect = signal<PropertyTreeNodeSelect | null>(null);
+    readonly lastVariableSelection = signal<PropertyVariableSelection | null>(null);
+    readonly variables = signal<PropertyVariable[]>([]);
 
-    readonly headingConfig = this.buildHeadingConfig();
-
-    lastFieldChange: PropertyFieldValueChange | null = null;
-    lastListItemSelect: PropertyListItemSelect | null = null;
-    lastTreeAddBlock: PropertyTreeAddBlock | null = null;
-    lastTreeNodeSelect: PropertyTreeNodeSelect | null = null;
-    lastVariableSelection: PropertyVariableSelection | null = null;
-
-    onFieldValueChange(change: PropertyFieldValueChange): void {
-        this.lastFieldChange = change;
-    }
-
-    onListItemSelect(event: PropertyListItemSelect): void {
-        this.lastListItemSelect = event;
-    }
-
-    onTreeAddBlock(event: PropertyTreeAddBlock): void {
-        this.lastTreeAddBlock = event;
-    }
-
-    onTreeNodeSelect(event: PropertyTreeNodeSelect): void {
-        this.lastTreeNodeSelect = event;
-    }
-
-    onVariableSelected(selection: PropertyVariableSelection): void {
-        this.lastVariableSelection = selection;
-    }
+    readonly config = this.buildHeadingConfig();
 
     provideVariables(): void {
-        this.propertiesMenu.setVariables(EXAMPLE_VARIABLES);
+        this.variables.set(EXAMPLE_VARIABLES);
     }
 
     private buildHeadingConfig(): PropertiesMenuConfig {
@@ -147,6 +123,11 @@ export class PropertiesMenuStyleGuideComponent {
             prefix: 'angular-components-style-guide.propertiesMenu',
             activeTabId: 'properties',
             icon: faFont,
+            onFieldValueChange: change => this.lastFieldChange.set(change),
+            onListItemSelect: event => this.lastListItemSelect.set(event),
+            onTreeAddBlock: event => this.lastTreeAddBlock.set(event),
+            onTreeNodeSelect: event => this.lastTreeNodeSelect.set(event),
+            onVariableSelect: selection => this.lastVariableSelection.set(selection),
             subtitle: 'Bloque: heading',
             tabs: [
                 new PropertyTab({

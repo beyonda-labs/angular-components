@@ -27,11 +27,11 @@
     </button>
 
     @if (isPickerOpen()) {
-        <bey-form-option-picker
+        <bey-option-picker
             [anchor]="anchor"
             [options]="options()"
             (closed)="closePicker()"
             (selected)="onOptionSelected($event)"
-        ></bey-form-option-picker>
+        ></bey-option-picker>
     }
 </div>

@@ -25,7 +25,7 @@ describe('FormTextVariableFieldComponent', () => {
     });
 
     afterEach(() => {
-        document.body.querySelectorAll('bey-form-option-picker').forEach(picker => picker.remove());
+        document.body.querySelectorAll('bey-option-picker').forEach(picker => picker.remove());
     });
 
     it('opens the picker from its button and inserts the chosen variable at the end of the text', async () => {
@@ -33,7 +33,7 @@ describe('FormTextVariableFieldComponent', () => {
         fixture.detectChanges();
         await fixture.whenStable();
 
-        const option = document.body.querySelector('bey-form-option-picker button[type="button"]:not([aria-label])');
+        const option = document.body.querySelector('bey-option-picker button[type="button"]:not([aria-label])');
         expect(document.body.textContent).toContain('Name');
 
         (option as HTMLButtonElement).click();

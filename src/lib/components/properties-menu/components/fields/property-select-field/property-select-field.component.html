@@ -41,12 +41,12 @@
         }
 
         @if (pickerOpen) {
-            <bey-variable-picker
+            <bey-option-picker
                 [anchor]="pickerAnchor"
-                [variables]="field.variables"
+                [options]="variableOptions"
                 (closed)="closeVariablePicker()"
                 (selected)="onVariableSelected($event)"
-            ></bey-variable-picker>
+            ></bey-option-picker>
         }
 
         @if (field.variables.length > 0) {

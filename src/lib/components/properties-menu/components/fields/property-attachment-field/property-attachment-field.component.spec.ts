@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertyAttachmentField } from '../../../models/fields/property-attachment-field.model';
-import { PropertyVariableService } from '../../../services/property-variable.service';
+import { PropertiesMenuService } from '../../../services/properties-menu.service';
 import { PropertyAttachmentFieldComponent } from './property-attachment-field.component';
 
 const buildField = (value = ''): PropertyAttachmentField =>
@@ -87,7 +87,7 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyAttachmentFieldComponent, TranslateModule.forRoot()],
-            providers: [PropertyVariableService]
+            providers: [PropertiesMenuService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyAttachmentFieldComponent);
@@ -118,7 +118,7 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
 
         const emitSpy = jest.spyOn(component.valueChange, 'emit');
 
-        component.onVariableSelected(component.field.variables[0]);
+        component.onVariableSelected(component.variableOptions[0]);
 
         expect(emitSpy).toHaveBeenCalledWith('{{ logo_cliente }}');
         expect(component.pickerOpen).toBe(false);

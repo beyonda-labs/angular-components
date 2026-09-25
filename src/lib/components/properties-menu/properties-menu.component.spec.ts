@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertyTextField } from './models/fields/property-text-field.model';
-import { PropertiesMenuConfig } from './models/properties-menu-config.model';
+import { PropertiesMenuConfig, PropertiesMenuConfigParameters } from './models/properties-menu-config.model';
 import { PropertyGroup } from './models/property-group.model';
 import { PropertyFieldsContent, PropertyListContent, PropertyTreeContent } from './models/property-group-content.model';
 import { PropertyListItem } from './models/property-list-item.model';
@@ -11,72 +11,87 @@ import { PropertyTreeConfig } from './models/property-tree-config.model';
 import { PropertyTreeNode } from './models/property-tree-node.model';
 import { PropertyVariable } from './models/property-variable.model';
 import { PropertiesMenuComponent } from './properties-menu.component';
+import { PropertiesMenuService } from './services/properties-menu.service';
 
-function buildConfig(): PropertiesMenuConfig {
+function buildConfig(overrides: Partial<PropertiesMenuConfigParameters> = {}): PropertiesMenuConfig {
     return new PropertiesMenuConfig({
-        prefix: 'app.properties-menu',
         activeTabId: 'properties',
-        icon: undefined,
-        subtitle: 'Bloque: heading',
+        prefix: 'app.properties-menu',
+        subtitle: 'Block: heading',
         tabs: [
             new PropertyTab({
-                id: 'properties',
-                label: 'Propiedades',
                 groups: [
                     new PropertyGroup({
-                        id: 'content',
-                        label: 'Contenido',
-                        expanded: true,
                         content: new PropertyFieldsContent({
                             fields: [
                                 new PropertyTextField({
+                                    acceptsVariable: true,
                                     id: 'text',
-                                    label: 'Texto',
-                                    value: 'FACTURA',
-                                    acceptsVariable: true
+                                    label: 'Text',
+                                    value: 'INVOICE'
                                 })
                             ]
-                        })
+                        }),
+                        expanded: true,
+                        id: 'content',
+                        label: 'Content'
                     })
-                ]
+                ],
+                id: 'properties',
+                label: 'Properties'
             }),
-            new PropertyTab({ id: 'page', label: 'Página', groups: [] }),
+            new PropertyTab({ groups: [], id: 'page', label: 'Page' }),
             new PropertyTab({
-                id: 'structure',
-                label: 'Estructura',
                 groups: [
                     new PropertyGroup({
-                        id: 'structure-tree',
-                        showHeader: false,
                         content: new PropertyTreeContent({
                             tree: new PropertyTreeConfig({
-                                nodes: [new PropertyTreeNode({ id: 'page-1', label: 'Página 1' })]
+                                nodes: [new PropertyTreeNode({ id: 'page-1', label: 'Page 1' })]
                             })
-                        })
+                        }),
+                        id: 'structure-tree',
+                        showHeader: false
                     })
-                ]
+                ],
+                id: 'structure',
+                label: 'Structure'
             }),
             new PropertyTab({
-                id: 'add',
-                label: 'Añadir',
                 groups: [
                     new PropertyGroup({
-                        id: 'simple-blocks',
-                        showHeader: false,
                         content: new PropertyListContent({
-                            list: [new PropertyListItem({ id: 'block-heading', label: 'Encabezado' })]
-                        })
+                            list: [new PropertyListItem({ id: 'block-heading', label: 'Heading' })]
+                        }),
+                        id: 'simple-blocks',
+                        showHeader: false
                     })
-                ]
+                ],
+                id: 'add',
+                label: 'Add'
             })
         ],
-        title: 'Título'
+        title: 'Title',
+        ...overrides
     });
 }
 
 describe('PropertiesMenuComponent', () => {
-    let component: PropertiesMenuComponent;
     let fixture: ComponentFixture<PropertiesMenuComponent>;
+    let element: HTMLElement;
+
+    function render(config: PropertiesMenuConfig, variables?: PropertyVariable[]): void {
+        fixture.componentRef.setInput('config', config);
+
+        if (variables) {
+            fixture.componentRef.setInput('variables', variables);
+        }
+
+        fixture.detectChanges();
+    }
+
+    function service(): PropertiesMenuService {
+        return fixture.debugElement.injector.get(PropertiesMenuService);
+    }
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -84,131 +99,131 @@ describe('PropertiesMenuComponent', () => {
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertiesMenuComponent);
-        component = fixture.componentInstance;
-        component.config = buildConfig();
-        fixture.detectChanges();
-    });
-
-    it('should create', () => {
-        expect(component).toBeTruthy();
+        element = fixture.nativeElement;
     });
 
     it('should render the header title and subtitle', () => {
-        const title = fixture.nativeElement.querySelector('.bey-properties-menu-header-title');
-        const subtitle = fixture.nativeElement.querySelector('.bey-properties-menu-header-subtitle');
+        render(buildConfig());
 
-        expect(title.textContent).toContain('Título');
-        expect(subtitle.textContent).toContain('Bloque: heading');
+        expect(element.querySelector('.bey-properties-menu-header-title')?.textContent).toContain('Title');
+        expect(element.querySelector('.bey-properties-menu-header-subtitle')?.textContent).toContain('Block: heading');
     });
 
-    it('should hide the header and the card chrome when embedded is true', () => {
-        component.config = new PropertiesMenuConfig({ prefix: 'app.properties-menu', embedded: true });
-        fixture.detectChanges();
+    it('should resolve the default title from the prefix', () => {
+        render(buildConfig({ title: undefined }));
 
-        expect(fixture.nativeElement.querySelector('bey-properties-menu-header')).toBeFalsy();
-        expect(fixture.nativeElement.querySelector('.bey-properties-menu-embedded')).toBeTruthy();
+        expect(element.querySelector('.bey-properties-menu-header-title')?.textContent).toContain(
+            'app.properties-menu.title'
+        );
     });
 
-    it('should default the active tab to the configured activeTabId', () => {
-        expect(component.activeTab?.id).toBe('properties');
+    it('should hide the header and the card chrome when embedded', () => {
+        render(buildConfig({ embedded: true }));
+
+        expect(element.querySelector('bey-properties-menu-header')).toBeNull();
+        expect(element.querySelector('.bey-properties-menu--embedded')).not.toBeNull();
     });
 
-    it('should emit activeTabChange when the active tab changes', () => {
-        const activeTabChangeSpy = jest.spyOn(component.activeTabChange, 'emit');
+    it('should show the close button only when onClose is configured', () => {
+        const onClose = jest.fn();
 
-        component['propertiesMenuService'].setActiveTab('page');
+        render(buildConfig());
+        expect(element.querySelector('.bey-properties-menu-header-close')).toBeNull();
 
-        expect(activeTabChangeSpy).toHaveBeenCalledWith('page');
+        render(buildConfig({ onClose }));
+        element.querySelector<HTMLButtonElement>('.bey-properties-menu-header-close')?.click();
+
+        expect(onClose).toHaveBeenCalled();
     });
 
-    it('should emit fieldValueChange when a field value is updated', () => {
-        const fieldValueChangeSpy = jest.spyOn(component.fieldValueChange, 'emit');
+    it('should render the configured active tab and the tab strip', () => {
+        render(buildConfig());
 
-        component['propertiesMenuService'].updateFieldValue('text', 'NUEVO TEXTO');
+        expect(element.querySelector('bey-property-tabs')).not.toBeNull();
+        expect(element.querySelector('bey-property-field')).not.toBeNull();
+    });
 
-        expect(fieldValueChangeSpy).toHaveBeenCalledWith({
+    it('should hide the tab strip with a single visible tab', () => {
+        render(buildConfig({ tabs: [new PropertyTab({ groups: [], id: 'only' })] }));
+
+        expect(element.querySelector('bey-property-tabs')).toBeNull();
+    });
+
+    it('should follow a replaced config', () => {
+        render(buildConfig());
+        render(buildConfig({ activeTabId: 'page', subtitle: 'Block: page' }));
+
+        expect(element.querySelector('.bey-properties-menu-header-subtitle')?.textContent).toContain('Block: page');
+        expect(element.querySelector('bey-property-field')).toBeNull();
+    });
+
+    it('should call onActiveTabChange when the active tab changes', () => {
+        const onActiveTabChange = jest.fn();
+
+        render(buildConfig({ onActiveTabChange }));
+        service().setActiveTab('page');
+
+        expect(onActiveTabChange).toHaveBeenCalledWith('page');
+    });
+
+    it('should call onFieldValueChange when a field value is updated', () => {
+        const onFieldValueChange = jest.fn();
+
+        render(buildConfig({ onFieldValueChange }));
+        service().updateFieldValue('text', 'NEW TEXT');
+
+        expect(onFieldValueChange).toHaveBeenCalledWith({
             fieldId: 'text',
-            previousValue: 'FACTURA',
-            value: 'NUEVO TEXTO'
+            previousValue: 'INVOICE',
+            value: 'NEW TEXT'
         });
     });
 
-    it('should emit groupToggle when a group is expanded or collapsed', () => {
-        const groupToggleSpy = jest.spyOn(component.groupToggle, 'emit');
+    it('should call onGroupToggle when a group is collapsed', () => {
+        const onGroupToggle = jest.fn();
 
-        component['propertiesMenuService'].toggleGroup('properties', 'content');
+        render(buildConfig({ onGroupToggle }));
+        service().toggleGroup('properties', 'content');
 
-        expect(groupToggleSpy).toHaveBeenCalledWith({ expanded: false, groupId: 'content', tabId: 'properties' });
+        expect(onGroupToggle).toHaveBeenCalledWith({ expanded: false, groupId: 'content', tabId: 'properties' });
     });
 
-    it('should emit treeNodeSelect when a tree node is selected', () => {
-        const treeNodeSelectSpy = jest.spyOn(component.treeNodeSelect, 'emit');
+    it('should call onTreeNodeSelect when a tree node is selected', () => {
+        const onTreeNodeSelect = jest.fn();
 
-        component['propertiesMenuService'].selectTreeNode('structure', 'structure-tree', 'page-1');
+        render(buildConfig({ onTreeNodeSelect }));
+        service().selectTreeNode('structure', 'structure-tree', 'page-1');
 
-        expect(treeNodeSelectSpy).toHaveBeenCalledWith({
-            groupId: 'structure-tree',
-            node: component['propertiesMenuService'].getTreeNode('structure', 'structure-tree', 'page-1'),
-            nodeId: 'page-1',
-            tabId: 'structure'
-        });
+        expect(onTreeNodeSelect).toHaveBeenCalledWith(
+            expect.objectContaining({ groupId: 'structure-tree', nodeId: 'page-1', tabId: 'structure' })
+        );
     });
 
-    it('should emit treeAddBlock when a tree add-block action is triggered', () => {
-        const treeAddBlockSpy = jest.spyOn(component.treeAddBlock, 'emit');
+    it('should call onListItemSelect when a list item is selected', () => {
+        const onListItemSelect = jest.fn();
 
-        component['propertiesMenuService'].triggerTreeAddBlock('structure', 'structure-tree');
+        render(buildConfig({ onListItemSelect }));
+        service().selectListItem('add', 'simple-blocks', 'block-heading');
 
-        expect(treeAddBlockSpy).toHaveBeenCalledWith({ groupId: 'structure-tree', tabId: 'structure' });
+        expect(onListItemSelect).toHaveBeenCalledWith(
+            expect.objectContaining({ groupId: 'simple-blocks', itemId: 'block-heading', tabId: 'add' })
+        );
     });
 
-    it('should emit listItemSelect when a list item is selected', () => {
-        const listItemSelectSpy = jest.spyOn(component.listItemSelect, 'emit');
+    it('should call onTabAdd when a tab add action is triggered', () => {
+        const onTabAdd = jest.fn();
 
-        component['propertiesMenuService'].selectListItem('add', 'simple-blocks', 'block-heading');
+        render(buildConfig({ onTabAdd }));
+        service().triggerTabAdd('properties');
 
-        expect(listItemSelectSpy).toHaveBeenCalledWith({
-            groupId: 'simple-blocks',
-            item: component['propertiesMenuService'].getListItem('add', 'simple-blocks', 'block-heading'),
-            itemId: 'block-heading',
-            tabId: 'add'
-        });
+        expect(onTabAdd).toHaveBeenCalledWith({ tabId: 'properties' });
     });
 
-    it('should emit tabAddRequested when a tab add action is triggered', () => {
-        const tabAddRequestedSpy = jest.spyOn(component.tabAddRequested, 'emit');
+    it('should expose the variables input to the fields', () => {
+        const variables = [new PropertyVariable({ id: 'customer', path: 'customer' })];
 
-        component['propertiesMenuService'].triggerTabAdd('properties');
+        render(buildConfig(), variables);
 
-        expect(tabAddRequestedSpy).toHaveBeenCalledWith({ tabId: 'properties' });
-    });
-
-    it('should emit closed when the header close action is triggered', () => {
-        const closedSpy = jest.spyOn(component.closed, 'emit');
-
-        component.onClose();
-
-        expect(closedSpy).toHaveBeenCalled();
-    });
-
-    describe('variables API', () => {
-        it('should set variables imperatively and expose them through getVariables', () => {
-            component.setVariables([{ id: 'customer', path: 'customer' }]);
-
-            expect(component.getVariables()[0]).toBeInstanceOf(PropertyVariable);
-        });
-
-        it('should set variables through the input setter', () => {
-            component.variables = [{ id: 'invoice', path: 'invoice' }];
-
-            expect(component.getVariables()).toHaveLength(1);
-        });
-
-        it('should clear variables', () => {
-            component.setVariables([{ id: 'customer', path: 'customer' }]);
-            component.clearVariables();
-
-            expect(component.getVariables()).toEqual([]);
-        });
+        expect(service().variables()).toBe(variables);
     });
 });

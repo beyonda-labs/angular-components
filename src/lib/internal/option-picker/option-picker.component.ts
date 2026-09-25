@@ -18,29 +18,34 @@ import { faMagnifyingGlass, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { FormFieldOption } from '../../../../models/form-field.model';
+import { OptionPickerOption } from './models/option-picker-option.model';
 
 const PANEL_MAX_HEIGHT_PX = 256;
 const PANEL_GAP_PX = 4;
 
+/**
+ * Floating list of options anchored to an element. The host node is moved to `<body>` and positioned
+ * with fixed coordinates so it escapes any scrollable ancestor (a modal body, a side panel).
+ */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, TooltipModule, TranslateModule],
-    selector: 'bey-form-option-picker',
+    selector: 'bey-option-picker',
     standalone: true,
     styleUrls: ['./option-picker.component.css'],
     templateUrl: './option-picker.component.html'
 })
 export class OptionPickerComponent {
     readonly anchor = input.required<HTMLElement>();
-    readonly options = input.required<FormFieldOption[]>();
+    readonly options = input.required<OptionPickerOption[]>();
     readonly searchable = input(true);
 
     readonly closed = output<void>();
-    readonly selected = output<FormFieldOption>();
+    readonly selected = output<OptionPickerOption>();
 
     readonly searchTerm = signal('');
 
+    readonly isFiltering = computed(() => this.searchTerm().trim().length > 0);
     readonly visibleOptions = computed(() => {
         const term = this.searchTerm().trim().toLowerCase();
 
@@ -119,11 +124,20 @@ export class OptionPickerComponent {
         }
     }
 
+    /** Nested options are indented while browsing; a search result is a flat list. */
+    indent(option: OptionPickerOption): number {
+        return this.isFiltering() ? 0 : (option.depth ?? 0);
+    }
+
     onSearchTermChange(event: Event): void {
         this.searchTerm.set((event.target as HTMLInputElement).value);
     }
 
-    selectOption(option: FormFieldOption): void {
+    selectOption(option: OptionPickerOption): void {
+        if (option.isDisabled) {
+            return;
+        }
+
         this.selected.emit(option);
     }
 
@@ -138,7 +152,7 @@ export class OptionPickerComponent {
         this.renderer.setStyle(element, 'width', `${rect.width}px`);
         this.renderer.setStyle(
             element,
-            '--bey-form-option-picker-max-height',
+            '--bey-option-picker-max-height',
             `${Math.min(PANEL_MAX_HEIGHT_PX, (opensAbove ? spaceAbove : spaceBelow) - PANEL_GAP_PX)}px`
         );
 

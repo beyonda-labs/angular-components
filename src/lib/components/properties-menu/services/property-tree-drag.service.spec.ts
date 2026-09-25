@@ -1,14 +1,23 @@
+import { TestBed } from '@angular/core/testing';
+
+import { PropertiesMenuConfig, PropertiesMenuConfigParameters } from '../models/properties-menu-config.model';
 import { PropertyTreeNode } from '../models/property-tree-node.model';
 import { PropertyTreeDrop } from '../types/properties-menu-events';
+import { PropertiesMenuService } from './properties-menu.service';
 import { PropertyTreeDragService } from './property-tree-drag.service';
 
 describe('PropertyTreeDragService', () => {
     let service: PropertyTreeDragService;
     let node: PropertyTreeNode;
 
+    function configure(callbacks: Partial<PropertiesMenuConfigParameters>): void {
+        TestBed.inject(PropertiesMenuService).setConfig(new PropertiesMenuConfig({ prefix: 'app', ...callbacks }));
+    }
+
     beforeEach(() => {
-        service = new PropertyTreeDragService();
-        node = new PropertyTreeNode({ id: 'image', draggable: true });
+        TestBed.configureTestingModule({ providers: [PropertiesMenuService, PropertyTreeDragService] });
+        service = TestBed.inject(PropertyTreeDragService);
+        node = new PropertyTreeNode({ draggable: true, id: 'image' });
     });
 
     it('should report the drag as active once started', () => {
@@ -20,10 +29,19 @@ describe('PropertyTreeDragService', () => {
         expect(service.dragNodeId()).toBe('image');
     });
 
-    it('should emit the drop when the target is valid', () => {
+    it('should report the drag start to the config', () => {
+        const onTreeDragStart = jest.fn();
+
+        configure({ onTreeDragStart });
+        service.start('structure', 'tree', node);
+
+        expect(onTreeDragStart).toHaveBeenCalledWith({ groupId: 'tree', node, nodeId: 'image', tabId: 'structure' });
+    });
+
+    it('should report the drop when the target is valid', () => {
         const drops: PropertyTreeDrop[] = [];
 
-        service.onTreeDrop = event => drops.push(event);
+        configure({ onTreeDrop: event => drops.push(event) });
         service.start('structure', 'tree', node);
         service.setDropTarget({ nodeId: 'list', position: 'inside', valid: true });
         service.drop('structure', 'tree');
@@ -33,10 +51,10 @@ describe('PropertyTreeDragService', () => {
         ]);
     });
 
-    it('should not emit the drop when the target is invalid', () => {
+    it('should not report the drop when the target is invalid', () => {
         const onTreeDrop = jest.fn();
 
-        service.onTreeDrop = onTreeDrop;
+        configure({ onTreeDrop });
         service.start('structure', 'tree', node);
         service.setDropTarget({ nodeId: 'list', position: 'inside', valid: false });
         service.drop('structure', 'tree');
@@ -47,7 +65,7 @@ describe('PropertyTreeDragService', () => {
     it('should end the drag after dropping', () => {
         const onTreeDragEnd = jest.fn();
 
-        service.onTreeDragEnd = onTreeDragEnd;
+        configure({ onTreeDragEnd });
         service.start('structure', 'tree', node);
         service.drop('structure', 'tree');
 
@@ -58,7 +76,7 @@ describe('PropertyTreeDragService', () => {
     it('should ignore a cancel when no drag is active', () => {
         const onTreeDragEnd = jest.fn();
 
-        service.onTreeDragEnd = onTreeDragEnd;
+        configure({ onTreeDragEnd });
         service.cancel('structure', 'tree');
 
         expect(onTreeDragEnd).not.toHaveBeenCalled();

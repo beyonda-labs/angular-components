@@ -3,14 +3,15 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { OptionPickerOption } from '../../../../../internal/option-picker/models/option-picker-option.model';
+import { OptionPickerComponent } from '../../../../../internal/option-picker/option-picker.component';
 import { PropertySelectField } from '../../../models/fields/property-select-field.model';
 import { PropertyOption } from '../../../models/property-option.model';
-import { PropertyVariable } from '../../../models/property-variable.model';
 import { PROPERTY_VARIABLE_ICON } from '../../../utils/property-variable-icon.util';
-import { VariablePickerComponent } from '../../variable-picker/variable-picker.component';
+import { toVariableOptions } from '../../../utils/property-variable-options.util';
 
 @Component({
-    imports: [FontAwesomeModule, TooltipModule, TranslateModule, VariablePickerComponent],
+    imports: [FontAwesomeModule, OptionPickerComponent, TooltipModule, TranslateModule],
     selector: 'bey-property-select-field',
     standalone: true,
     styleUrls: ['../property-field-control.styles.css', './property-select-field.component.css'],
@@ -39,9 +40,13 @@ export class PropertySelectFieldComponent {
         this.pickerOpen = false;
     }
 
-    onVariableSelected(variable: PropertyVariable): void {
+    onVariableSelected(option: OptionPickerOption): void {
         this.closeVariablePicker();
-        this.valueChange.emit(`{{ ${variable.path} }}`);
+        this.valueChange.emit(`{{ ${option.value} }}`);
+    }
+
+    get variableOptions(): OptionPickerOption[] {
+        return toVariableOptions(this.field.variables);
     }
 
     private readonly translateService = inject(TranslateService);

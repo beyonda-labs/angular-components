@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { PropertiesMenuConfig } from '../../models/properties-menu-config.model';
 import { PropertyGroup } from '../../models/property-group.model';
 import {
     PropertyFieldsContent,
@@ -73,7 +74,7 @@ describe('PropertyGroupComponent', () => {
     });
 
     it('should resolve the default label into a prefixed translation key', () => {
-        propertiesMenuService.setConfig({ prefix: 'app.properties-menu' });
+        propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
         component.group = new PropertyGroup({ id: 'content' });
         fixture.detectChanges();
 
@@ -187,7 +188,9 @@ describe('PropertyGroupComponent', () => {
             })
         });
         const onTreeAddBlock = jest.fn();
-        propertiesMenuService.onTreeAddBlock = onTreeAddBlock;
+        propertiesMenuService.setConfig(
+            new PropertiesMenuConfig({ ...propertiesMenuService.config(), onTreeAddBlock })
+        );
         fixture.detectChanges();
 
         const button: HTMLButtonElement = fixture.nativeElement.querySelector('.bey-property-tab-empty-add-block');

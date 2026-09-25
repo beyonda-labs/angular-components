@@ -1,9 +1,12 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawesome';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { PropertiesMenuHeaderConfig } from '../../models/properties-menu-header.model';
+
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, TranslateModule],
     selector: 'bey-properties-menu-header',
     standalone: true,
@@ -11,12 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
     templateUrl: './properties-menu-header.component.html'
 })
 export class PropertiesMenuHeaderComponent {
-    @Input() closable = true;
-    @Input() icon?: IconDefinition;
-    @Input() subtitle = '';
-    @Input() title = '';
-
-    @Output() closed = new EventEmitter<void>();
+    readonly config = input.required<PropertiesMenuHeaderConfig>();
 
     readonly closeIcon = faXmark;
 }

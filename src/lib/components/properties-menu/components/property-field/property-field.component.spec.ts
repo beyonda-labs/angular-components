@@ -7,9 +7,9 @@ import { PropertySegmentedField } from '../../models/fields/property-segmented-f
 import { PropertySelectField } from '../../models/fields/property-select-field.model';
 import { PropertyTextField } from '../../models/fields/property-text-field.model';
 import { PropertyToggleField } from '../../models/fields/property-toggle-field.model';
+import { PropertiesMenuConfig } from '../../models/properties-menu-config.model';
 import { PropertyField } from '../../models/property-field.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
-import { PropertyVariableService } from '../../services/property-variable.service';
 import { PropertyFieldComponent } from './property-field.component';
 
 describe('PropertyFieldComponent', () => {
@@ -20,7 +20,7 @@ describe('PropertyFieldComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyFieldComponent, TranslateModule.forRoot()],
-            providers: [PropertiesMenuService, PropertyVariableService]
+            providers: [PropertiesMenuService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyFieldComponent);
@@ -86,7 +86,7 @@ describe('PropertyFieldComponent', () => {
     });
 
     it('should resolve a default field label into a prefixed translation key', () => {
-        propertiesMenuService.setConfig({ prefix: 'app.properties-menu' });
+        propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
         renderField(new PropertyTextField({ id: 'text' }));
 
         expect(component.labelKey).toBe('app.properties-menu.fields.text.label');

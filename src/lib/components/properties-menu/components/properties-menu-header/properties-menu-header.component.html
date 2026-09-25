@@ -1,24 +1,24 @@
 <header class="bey-properties-menu-header">
     <div class="bey-properties-menu-header-icon">
-        @if (icon) {
+        @if (config().icon; as icon) {
             <fa-icon [icon]="icon"></fa-icon>
         }
     </div>
 
     <div class="bey-properties-menu-header-copy">
-        <div class="bey-properties-menu-header-title">{{ title }}</div>
+        <div class="bey-properties-menu-header-title">{{ config().title | translate }}</div>
 
-        @if (subtitle) {
-            <div class="bey-properties-menu-header-subtitle">{{ subtitle }}</div>
+        @if (config().subtitle; as subtitle) {
+            <div class="bey-properties-menu-header-subtitle">{{ subtitle | translate }}</div>
         }
     </div>
 
-    @if (closable) {
+    @if (config().onClose; as onClose) {
         <button
             type="button"
             class="bey-properties-menu-header-close"
             [attr.aria-label]="'angular-components.properties-menu.close' | translate"
-            (click)="closed.emit()"
+            (click)="onClose()"
         >
             <fa-icon [icon]="closeIcon"></fa-icon>
         </button>

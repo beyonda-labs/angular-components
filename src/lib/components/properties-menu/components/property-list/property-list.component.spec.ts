@@ -3,13 +3,13 @@ import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { PropertyTextField } from '../../models/fields/property-text-field.model';
+import { PropertiesMenuConfig } from '../../models/properties-menu-config.model';
 import { PropertyGroup } from '../../models/property-group.model';
 import { PropertyListContent } from '../../models/property-group-content.model';
 import { PropertyListItem, PropertyListItemParameters } from '../../models/property-list-item.model';
 import { PropertySummaryRow } from '../../models/property-summary-row.model';
 import { PropertyTab } from '../../models/property-tab.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
-import { PropertyVariableService } from '../../services/property-variable.service';
 import { PropertyListComponent } from './property-list.component';
 
 describe('PropertyListComponent', () => {
@@ -20,7 +20,7 @@ describe('PropertyListComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyListComponent, TranslateModule.forRoot()],
-            providers: [PropertiesMenuService, PropertyVariableService]
+            providers: [PropertiesMenuService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyListComponent);
@@ -84,7 +84,7 @@ describe('PropertyListComponent', () => {
     });
 
     it('should resolve a default item label into a prefixed translation key', () => {
-        propertiesMenuService.setConfig({ prefix: 'app.properties-menu' });
+        propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
 
         expect(component.getLabelKey(new PropertyListItem({ id: 'block-heading' }))).toBe(
             'app.properties-menu.list.block-heading.label'
@@ -113,17 +113,22 @@ describe('PropertyListComponent con items desplegables', () => {
     let propertiesMenuService: PropertiesMenuService;
 
     const setUp = (items: PropertyListItem[]): void => {
-        propertiesMenuService.setConfig({
-            prefix: 'app.properties-menu',
-            tabs: [
-                new PropertyTab({
-                    id: 'variables',
-                    groups: [
-                        new PropertyGroup({ id: 'variables-list', content: new PropertyListContent({ list: items }) })
-                    ]
-                })
-            ]
-        });
+        propertiesMenuService.setConfig(
+            new PropertiesMenuConfig({
+                prefix: 'app.properties-menu',
+                tabs: [
+                    new PropertyTab({
+                        id: 'variables',
+                        groups: [
+                            new PropertyGroup({
+                                id: 'variables-list',
+                                content: new PropertyListContent({ list: items })
+                            })
+                        ]
+                    })
+                ]
+            })
+        );
         component.items = items;
         fixture.detectChanges();
     };
@@ -131,7 +136,7 @@ describe('PropertyListComponent con items desplegables', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyListComponent, TranslateModule.forRoot()],
-            providers: [PropertiesMenuService, PropertyVariableService]
+            providers: [PropertiesMenuService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyListComponent);
@@ -259,7 +264,7 @@ describe('PropertyListComponent · etiquetas dentro del cuerpo', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyListComponent, TranslateModule.forRoot()],
-            providers: [PropertiesMenuService, PropertyVariableService]
+            providers: [PropertiesMenuService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyListComponent);
@@ -271,7 +276,7 @@ describe('PropertyListComponent · etiquetas dentro del cuerpo', () => {
     });
 
     it('lets the row own the label, so the field does not repeat it', () => {
-        propertiesMenuService.setConfig({ prefix: 'app.properties-menu' });
+        propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
         component.items = [
             new PropertyListItem({
                 id: 'v1',
@@ -299,7 +304,7 @@ describe('PropertyListComponent · parámetros del mensaje', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyListComponent, TranslateModule.forRoot()],
-            providers: [PropertiesMenuService, PropertyVariableService]
+            providers: [PropertiesMenuService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyListComponent);
@@ -359,35 +364,39 @@ describe('PropertyListComponent · copiar y acciones', () => {
 
         await TestBed.configureTestingModule({
             imports: [PropertyListComponent, TranslateModule.forRoot()],
-            providers: [PropertiesMenuService, PropertyVariableService]
+            providers: [PropertiesMenuService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyListComponent);
         component = fixture.componentInstance;
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
-        propertiesMenuService.setConfig({
-            prefix: 'app.properties-menu',
-            tabs: [
-                new PropertyTab({
-                    id: 'variables',
-                    groups: [
-                        new PropertyGroup({
-                            id: 'variables-list',
-                            content: new PropertyListContent({
-                                list: [
-                                    new PropertyListItem({
-                                        id: 'v1',
-                                        label: 'total',
-                                        copyValue: '{{ total }}',
-                                        actions: [{ key: 'duplicate', icon: faCircleExclamation, label: 'Duplicar' }]
-                                    })
-                                ]
+        propertiesMenuService.setConfig(
+            new PropertiesMenuConfig({
+                prefix: 'app.properties-menu',
+                tabs: [
+                    new PropertyTab({
+                        id: 'variables',
+                        groups: [
+                            new PropertyGroup({
+                                id: 'variables-list',
+                                content: new PropertyListContent({
+                                    list: [
+                                        new PropertyListItem({
+                                            id: 'v1',
+                                            label: 'total',
+                                            copyValue: '{{ total }}',
+                                            actions: [
+                                                { key: 'duplicate', icon: faCircleExclamation, label: 'Duplicar' }
+                                            ]
+                                        })
+                                    ]
+                                })
                             })
-                        })
-                    ]
-                })
-            ]
-        });
+                        ]
+                    })
+                ]
+            })
+        );
 
         component.tabId = 'variables';
         component.groupId = 'variables-list';

@@ -45,11 +45,7 @@
                 "without-changes": "No changes have been made to the form."
             },
             "text-variable-field": {
-                "close": "Close",
-                "empty": "No options found",
-                "insert-variable": "Insert variable",
-                "label": "Variables",
-                "search": "Search"
+                "insert-variable": "Insert variable"
             }
         }
     }

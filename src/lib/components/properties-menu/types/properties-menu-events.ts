@@ -59,7 +59,7 @@ export interface PropertyListItemToggle {
     tabId: string;
 }
 
-export interface PropertyTabAddRequested {
+export interface PropertyTabAdd {
     tabId: string;
 }
 

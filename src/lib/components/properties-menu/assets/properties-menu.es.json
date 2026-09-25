@@ -48,12 +48,6 @@
             },
             "textField": {
                 "insertVariable": "Insertar variable"
-            },
-            "variablePicker": {
-                "close": "Cerrar",
-                "empty": "No se encontraron variables",
-                "label": "Variables",
-                "search": "Buscar variables"
             }
         }
     }

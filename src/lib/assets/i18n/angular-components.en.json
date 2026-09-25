@@ -62,11 +62,7 @@
                 "without-changes": "No changes have been made to the form."
             },
             "text-variable-field": {
-                "close": "Close",
-                "empty": "No options found",
-                "insert-variable": "Insert variable",
-                "label": "Variables",
-                "search": "Search"
+                "insert-variable": "Insert variable"
             }
         },
         "header": {
@@ -264,6 +260,12 @@
                 "warning": "Warning"
             }
         },
+        "option-picker": {
+            "close": "Close",
+            "empty": "No options found",
+            "label": "Options",
+            "search": "Search"
+        },
         "page": {
             "form": {
                 "cancel": "Cancel",
@@ -328,12 +330,6 @@
             },
             "textField": {
                 "insertVariable": "Insert variable"
-            },
-            "variablePicker": {
-                "close": "Close",
-                "empty": "No variables found",
-                "label": "Variables",
-                "search": "Search variables"
             }
         },
         "search": {

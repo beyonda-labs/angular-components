@@ -5,9 +5,9 @@ import { faDatabase } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { OptionPickerComponent } from '../../../../../internal/option-picker/option-picker.component';
 import { FormTextVariableField } from '../../../models/fields/form-text-variable-field.model';
 import { FormFieldOption } from '../../../models/form-field.model';
-import { OptionPickerComponent } from './option-picker/option-picker.component';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,

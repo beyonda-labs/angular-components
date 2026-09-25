@@ -3,7 +3,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertyTextField } from '../../../models/fields/property-text-field.model';
 import { PropertyVariable } from '../../../models/property-variable.model';
-import { PropertyVariableService } from '../../../services/property-variable.service';
+import { PropertiesMenuService } from '../../../services/properties-menu.service';
 import { PropertyTextFieldComponent } from './property-text-field.component';
 
 describe('PropertyTextFieldComponent', () => {
@@ -13,7 +13,7 @@ describe('PropertyTextFieldComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyTextFieldComponent, TranslateModule.forRoot()],
-            providers: [PropertyVariableService]
+            providers: [PropertiesMenuService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyTextFieldComponent);
@@ -54,7 +54,8 @@ describe('PropertyTextFieldComponent', () => {
         const emitSpy = jest.spyOn(component.variableInserted, 'emit');
         const variable = new PropertyVariable({ id: 'customer-name', path: 'customer.name' });
 
-        component.onVariableSelected(variable);
+        TestBed.inject(PropertiesMenuService).setVariables([variable]);
+        component.onVariableSelected({ label: variable.label, value: variable.path });
 
         expect(emitSpy).toHaveBeenCalledWith({ value: 'FACTURA{{ customer.name }}', variable });
         expect(component.pickerOpen).toBe(false);

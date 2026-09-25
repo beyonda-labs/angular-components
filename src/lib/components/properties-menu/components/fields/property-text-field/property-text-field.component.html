@@ -36,12 +36,12 @@
         }
 
         @if (pickerOpen) {
-            <bey-variable-picker
+            <bey-option-picker
                 [anchor]="pickerAnchor"
-                [variables]="propertyVariableService.variables()"
+                [options]="variableOptions()"
                 (closed)="closePicker()"
                 (selected)="onVariableSelected($event)"
-            ></bey-variable-picker>
+            ></bey-option-picker>
         }
     </div>
 

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { PropertiesMenuConfig } from '../../models/properties-menu-config.model';
 import { PropertyTreeNode } from '../../models/property-tree-node.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { PropertyTreeDragService } from '../../services/property-tree-drag.service';
@@ -76,7 +77,7 @@ describe('PropertyTreeComponent', () => {
     });
 
     it('should resolve a default node label into a prefixed translation key', () => {
-        propertiesMenuService.setConfig({ prefix: 'app.properties-menu' });
+        propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
 
         expect(component.getLabelKey(new PropertyTreeNode({ id: 'page-1' }))).toBe(
             'app.properties-menu.tree.page-1.label'

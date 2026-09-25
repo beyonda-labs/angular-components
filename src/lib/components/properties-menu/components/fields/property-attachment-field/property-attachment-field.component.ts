@@ -5,16 +5,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { isAcceptedMimeType } from '../../../../../internal/file/accept-pattern.util';
+import { OptionPickerOption } from '../../../../../internal/option-picker/models/option-picker-option.model';
+import { OptionPickerComponent } from '../../../../../internal/option-picker/option-picker.component';
 import {
     PropertyAttachmentField,
     PropertyAttachmentOption
 } from '../../../models/fields/property-attachment-field.model';
-import { PropertyVariable } from '../../../models/property-variable.model';
 import { PROPERTY_VARIABLE_ICON } from '../../../utils/property-variable-icon.util';
-import { VariablePickerComponent } from '../../variable-picker/variable-picker.component';
+import { toVariableOptions } from '../../../utils/property-variable-options.util';
 
 @Component({
-    imports: [FontAwesomeModule, TooltipModule, TranslateModule, VariablePickerComponent],
+    imports: [FontAwesomeModule, OptionPickerComponent, TooltipModule, TranslateModule],
     selector: 'bey-property-attachment-field',
     standalone: true,
     styleUrls: ['../property-field-control.styles.css', './property-attachment-field.component.css'],
@@ -56,9 +57,13 @@ export class PropertyAttachmentFieldComponent {
         this.pickerOpen = false;
     }
 
-    onVariableSelected(variable: PropertyVariable): void {
+    onVariableSelected(option: OptionPickerOption): void {
         this.closeVariablePicker();
-        this.valueChange.emit(`{{ ${variable.path} }}`);
+        this.valueChange.emit(`{{ ${option.value} }}`);
+    }
+
+    get variableOptions(): OptionPickerOption[] {
+        return toVariableOptions(this.field.variables);
     }
 
     get filteredOptions(): PropertyAttachmentOption[] {
