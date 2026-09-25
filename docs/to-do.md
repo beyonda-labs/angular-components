@@ -1,6 +1,6 @@
 # Roadmap
 
-## Standardisation towards 1.0
+## Standardisation, shipped as 1.2.0
 
 Closing a consistent version before adding anything else. The rules themselves live in `rules/`; this list only
 tracks what is left to do in this repo.
@@ -30,11 +30,10 @@ Dark mode is now expressible in one place — every semantic token flips under `
 `:host-context(body.dark)` blocks across 30 components still carry their own palettes. Removing them means
 re-pointing each component's variables at semantic tokens, which is per-module work and belongs in S6.
 
-### S2 - Gates
+### S2 - Gates _(done)_
 
-Strict rules run on the files a commit touches, through husky + lint-staged, so they bite on new and changed
-code without blocking work on the 22.905 lines that predate them. `pnpm run verify` runs every gate over the
-whole repo: it fails today on purpose, and passing it is what "S6 is finished" means.
+Strict rules run on the files a commit touches, through husky + lint-staged, and `pnpm run verify` runs every
+gate over the whole repo. It passes with zero findings and no baseline since the end of S6.
 
 -   [x] stylelint encoding `rules/angular/styles.md`: `bey-` prefixes, `is-*`/`has-*` states, no `!important`,
         no `--bs-*` read, no literal design value outside the token layer
@@ -54,20 +53,14 @@ whole repo: it fails today on purpose, and passing it is what "S6 is finished" m
 -   [x] `complexity` 28 → 15, `max-lines` 500 → 400 lines of code (600 in a spec), `max-len` 300 → 120, the
         prettier width. Calibrated on the migrated code: one method and two style-guide files had to be split
 
-Where a gate cannot be met yet, it warns instead of failing, and flips to an error when its migration lands:
-
-| Gate                                              | Today                         | Flips to error |
-| ------------------------------------------------- | ----------------------------- | -------------- |
-| Literal values outside the token layer            | 549 warnings                  | end of S1      |
-| `OnPush` on every component                       | 85 warnings                   | end of S6      |
-| Kebab-case translation keys                       | 232 warnings                  | end of S6      |
-| stylelint errors (naming, `!important`, `--bs-*`) | 190 errors, staged files only | end of S6      |
-| `check-style-guides`                              | 6 modules failing             | end of S6      |
+While the migration ran, every gate warned instead of failing and flipped to an error once its migration
+landed: literal values outside the token layer (549 warnings at the start), `OnPush` (85), kebab-case
+translation keys (232), stylelint (190 errors) and `check-style-guides` (6 modules). All of them are errors now.
 
 The flat config landed after the migration, once the rules it enforces were met everywhere: rewriting it earlier
 would have risked dropping rules silently, so the effective rule set was diffed before and after.
 
-### S3 - Package hygiene
+### S3 - Package hygiene _(done)_
 
 -   [x] `sideEffects` limited to the CSS files — the library has no module-level side effects, so consumers can
         now tree-shake what they do not import
@@ -82,11 +75,9 @@ would have risked dropping rules silently, so the effective rule set was diffed 
 -   [x] The style-guide is a secondary entry point, `@beyonda-labs/angular-components/style-guide`, with its
         sources under `style-guide/src/<module>/`; the primary bundle no longer carries it (907 KB, from 1.1 MB)
 
-The style-guide translations are split and the demo route is lazy, but the JavaScript is not separated: it is
-14% of the library bundle (206 KB of 1.43 MB in a development build), and 21 `.d.ts` files (14.8 KB). Since
-`document-builder-front` imports `BeyStyleGuideComponent`, the bundler keeps it in the shared chunk that
-`main` loads eagerly, so every user of the product downloads it. Dropping the export removes all of it at
-once; the options are a secondary entry point, or moving the demo page to `angular-components-demo`.
+Before the entry point, the demo was 14% of the library bundle (206 KB of 1.43 MB in a development build) and
+every user of a product that imported `BeyStyleGuideComponent` downloaded it, because the bundler kept it in the
+shared chunk that `main` loads eagerly.
 
 ### S4 - Style-guide infrastructure _(done)_
 
@@ -110,6 +101,8 @@ Eight modules used those shared classes without importing the stylesheet, so the
         `click` + `detectChanges` + `whenStable` pair covers the interactions the components have
 -   [x] No spec asserts a CSS class any more: the tests that only checked a modifier or state class are gone,
         and the ones that checked a state now read `aria-current` / `aria-expanded`, added to `left-menu` for it
+-   [ ] 31 specs still locate elements by class (`querySelector('.bey-…')`, 117 uses), which the test rules
+        forbid. Each needs a role or visible text on the element, most of them in `properties-menu`
 
 What the pilot cost, and what it changed beyond the plan:
 
@@ -132,7 +125,7 @@ Rough cost per module, from this one: a primitive like `breadcrumb` or `paginati
 `table`, `page` and `properties-menu` are several times larger and will each surface their own version of the
 mutable-config question.
 
-### S6 - Migration
+### S6 - Migration _(done)_
 
 A scan for the pattern the pilot uncovered says the API breaks are contained: only `pagination`
 (`setPage`, `setPageSize`, `setTotalItems`) and `form` (`setInitialValue`) have a model that writes into
@@ -150,8 +143,17 @@ a callback field and dialog callbacks.
 
 ### S7 - Release
 
--   [ ] Tag 1.0.0 (the repo has no tags at all today)
--   [ ] Add `lint` to the published path: Jenkins runs `build`, which runs the tests but never the linter
+The next version is 1.2.0: the public API breaks (callbacks instead of outputs, `BeyBadgeConfig`, kebab-case
+translation keys, the style-guide entry point) go out under a minor because nothing is at 1.0 for real yet, and
+the change-log lists every break.
+
+-   [ ] Scripts matched to the Jenkins stages (Lint → `lint`, Test → `test:ci`, Build → `build`): `lint` runs
+        ESLint, stylelint, `check-tokens` and `check-style-guides`; `build` stops running the tests, which the
+        Test stage already runs; `verify` stays as the local shortcut
+-   [ ] Change-log: `[Unreleased]` completed with every S6 break and renamed to `[1.2.0]`; `[1.1.0]` dated
+-   [ ] Coverage thresholds raised to just under today's numbers (90.4 / 77.6 / 85.3 / 90.4), as S2 intended
+-   [ ] `release/1.2.0`, version bump, merge to `main` and `develop`, tag `v1.2.0` (the repo has no tags today)
+-   [ ] Consumers adapted afterwards: `document-builder-front` and `angular-components-demo`
 
 Publishing already runs on Jenkins, configured on the server — there is no `Jenkinsfile` in the repo by design.
 Snapshots per branch, `latest` from `main`, as described in the README.

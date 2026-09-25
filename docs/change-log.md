@@ -2,22 +2,55 @@
 
 ## [Unreleased]
 
+### Added
+
+-   Badge module: `bey-badge` with `BeyBadgeConfig` and `BeyBadgeVariant`.
+-   Form module: `BeyFormHandle` handed to `onReady`, `onSubmit`, `onValueChange` and the button actions.
+-   Form module: `onStepChange` callback, and `BeyFormComponent` exported.
+-   Pdf viewer module: `BeyPdfViewerHandle` handed to `onReady`.
+-   Properties menu module: `BeyPropertiesMenuHeaderConfig`, and `variables` as an input.
+-   Left menu module: `aria-current` on the active action and `aria-expanded` on the toggle.
+-   Styles: `tokens.css`, the design language as `--bey-*` custom properties, with dark mode under `body.dark`.
+-   Style guide: secondary entry point `@beyonda-labs/angular-components/style-guide`.
+-   Package: `sideEffects` limited to the CSS files.
+
 ### Changed
 
--   Tabs module: the component owns the active tab and reports it through `onTabChange`; `BeyTabsConfig`
-    carries the initial value only and is never written to.
-
--   Pagination module: `onPageChange` and `onPageSizeChange` now receive the new page and page size instead of
-    the whole config, and `BeyPaginationConfig` is read as initial state rather than written to.
+-   Every component: `config` is a required signal input, read as initial state and never written to; `OnPush`.
+-   Every public export carries the `Bey` prefix (`BeyFooterConfig`, `BEY_ENVIRONMENT_CONFIG`).
+-   Translation keys are kebab-case (`app-layout`, `pdf-viewer`, `greater-than`, `no-file-selected`).
+-   Tabs module: the component owns the active tab and reports it through `onTabChange`.
+-   Pagination module: `onPageChange` and `onPageSizeChange` receive the new value instead of the config.
+-   Form module: `BeyFormConfig` is immutable; `onSubmit` and `onValueChange` receive the handle.
+-   Table module: `BeyTableConfig<T>` requires its item type.
+-   Header and table modules: badges are `BeyBadgeConfig`.
+-   Left menu module: the expanded state is reported through `onExpandedChange`.
+-   Login module: `translatePrefix` is `prefix`.
+-   Pdf viewer module: every event is a callback on the config; `toolbarButtons` takes a class instance.
+-   Properties menu module: every event is a callback on `BeyPropertiesMenuConfig`.
+-   Properties menu module: `options`, `variables` and `actions` take class instances; `PropertyTabAddRequested`
+    is `BeyPropertyTabAdd`.
+-   Styles: every custom property is `--bey-*` (`--text-primary` → `--bey-text-primary`); `index.css` imports
+    `tokens.css` instead of `color-palette.css`.
+-   Styles: no `!important` left except `.text-dark` and `.text-muted`.
+-   Styles: class names are `bey-<module>-<part>`, variants `bey-x--variant`, states `is-*` / `has-*`.
 
 ### Removed
 
--   Tabs module: `BeyTabsConfig.setActiveTab()`. To move the selection from outside, bind a new config with
-    the `activeTab` you want.
--   Pagination module: `setPage()`, `setPageSize()`, `setTotalItems()`, `refresh()` and `$loadPagination` on
-    `BeyPaginationConfig`. Bind a new config to change page, size or total.
+-   Tabs module: `setActiveTab()`.
+-   Pagination module: `setPage()`, `setPageSize()`, `setTotalItems()`, `refresh()` and `$loadPagination`.
+-   Form module: `getInitialValue()`, `getValue()`, `patchValue()`, `setInitialValue()` and `onFormGroupAdded`.
+-   Table module: `BeyTableRow`.
+-   Header, table and properties menu modules: `BeyHeaderBadge`, `BeyTableBadge` and `BeyPropertyBadge`.
+-   Left menu module: the `expandedChange` output, and `styles` on `BeyLeftMenuTitle`.
+-   Pdf viewer module: the outputs and the public `goToPage` / `setZoom` / `rotate` methods.
+-   Properties menu module: the outputs, `BeyPropertiesMenuService` and `BeyPropertyVariableService`.
+-   Page module: `BeyPageService` and `BeyPageStateRegistry`.
+-   Styles: `badge.css` and `color-palette.css`.
+-   Style guide: `BeyStyleGuideComponent` from the primary entry point.
+-   Package: the `sass` devDependency.
 
-## [1.1.0] - 2026-??-??
+## [1.1.0] - 2026-09-01
 
 ### Added
 
