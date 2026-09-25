@@ -5,9 +5,9 @@
 
 :root {
     /* Primitives — colour */
-    --bey-white: #ffffff;
+    --bey-white: #fff;
     --bey-white-rgb: 255, 255, 255;
-    --bey-black: #000000;
+    --bey-black: #000;
     --bey-black-rgb: 0, 0, 0;
 
     --bey-gray-50: #f5f5f5;

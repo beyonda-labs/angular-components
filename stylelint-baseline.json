@@ -1,4 +1,0 @@
-{
-    "_comment": "CSS written before the style rules existed. The pre-commit hook does not enforce stylelint on these; `pnpm run stylelint` still reports them. Entries are removed as each module is migrated, and nothing is ever added.",
-    "files": ["src/lib/assets/styles/bs-overrides.css", "src/lib/assets/styles/tokens.css"]
-}
