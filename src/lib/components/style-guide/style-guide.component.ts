@@ -13,6 +13,7 @@ import { ListStyleGuideComponent } from '../list/docs/style-guide/list-style-gui
 import { LoadingStyleGuideComponent } from '../loading/docs/style-guide/loading-style-guide.component';
 import { LoginStyleGuideComponent } from '../login/docs/style-guide/login-style-guide.component';
 import { ModalStyleGuideComponent } from '../modal/docs/style-guide/modal-style-guide.component';
+import { PageStyleGuideComponent } from '../page/docs/style-guide/page-style-guide.component';
 import { PaginationStyleGuideComponent } from '../pagination/docs/style-guide/pagination-style-guide.component';
 import { PdfViewerStyleGuideComponent } from '../pdf-viewer/docs/style-guide/pdf-viewer-style-guide.component';
 import { PropertiesMenuStyleGuideComponent } from '../properties-menu/docs/style-guide/properties-menu-style-guide.component';
@@ -45,6 +46,7 @@ import { StyleGuideSectionComponent } from './components/section/style-guide-sec
         ToastStyleGuideComponent,
         LoadingStyleGuideComponent,
         LoginStyleGuideComponent,
+        PageStyleGuideComponent,
         TabsStyleGuideComponent,
         TreeStyleGuideComponent
     ],

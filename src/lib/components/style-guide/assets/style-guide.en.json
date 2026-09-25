@@ -12,13 +12,14 @@
         "loadings": "Loading",
         "login-section": "Login",
         "modals": "Modals",
+        "page-section": "Page",
         "pdfViewers": "PDF Viewer",
         "propertiesMenus": "Properties Menu",
+        "search-section": "Search",
         "simple": "Simple",
         "tables": "Tables",
         "tabs-section": "Tabs",
         "title": "Beyonda Labs - Angular Components - Style Guide",
-        "toasts": "Toasts",
-        "search-section": "Search"
+        "toasts": "Toasts"
     }
 }

@@ -555,6 +555,79 @@
             }
         },
         "modals": "Modals",
+        "page": {
+            "actions": {
+                "create": {
+                    "label": "New product",
+                    "tooltip": "Create a new product"
+                },
+                "delete": {
+                    "label": "Delete",
+                    "tooltip": "Delete the selected products"
+                },
+                "edit": {
+                    "label": "Edit",
+                    "tooltip": "Edit the selected product"
+                }
+            },
+            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form.",
+            "form": {
+                "create": {
+                    "title": "New product"
+                },
+                "edit": {
+                    "title": "Edit product"
+                },
+                "product": {
+                    "category": {
+                        "label": "Category",
+                        "placeholder": "Product category"
+                    },
+                    "label": "Product",
+                    "name": {
+                        "label": "Name",
+                        "placeholder": "Product name"
+                    },
+                    "price": {
+                        "label": "Price (€)",
+                        "placeholder": "0.00"
+                    }
+                }
+            },
+            "modal": {
+                "delete": {
+                    "message": "This will delete {{count}} product(s). Do you want to continue?",
+                    "title": "Delete products"
+                }
+            },
+            "search": {
+                "fields": {
+                    "category": "Category",
+                    "name": "Name",
+                    "price": "Price"
+                }
+            },
+            "table": {
+                "columns": {
+                    "category": "Category",
+                    "name": "Name",
+                    "price": "Price"
+                },
+                "empty": "No products yet",
+                "tooltips": {
+                    "category": "Where the product is filed",
+                    "name": "What the product is called",
+                    "price": "Unit price"
+                }
+            },
+            "title": "Products",
+            "toast": {
+                "create-success": "Product created",
+                "delete-success": "Product(s) deleted",
+                "edit-success": "Product updated"
+            }
+        },
+        "page-section": "Page",
         "pagination": {
             "changed": "Pagination changed:",
             "example": "Minimal paginator with editable page, range tooltip and page-size selector.",

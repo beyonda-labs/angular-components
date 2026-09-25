@@ -123,7 +123,7 @@ describe('PageActionsService', () => {
         });
 
         it('should not open the create modal form without a form config', () => {
-            const context = buildContext({ config: new PageConfig({ page: 'testPage', baseUrl: '/items' }) });
+            const context = buildContext({ config: new PageConfig({ prefix: 'testPage', baseUrl: '/items' }) });
 
             service.executeAction(buildAction(PageStandardAction.Create, PageActionScope.Global), context);
 
@@ -277,7 +277,6 @@ describe('PageActionsService', () => {
             const context = buildCategoryContext({
                 config: new PageConfig({
                     baseUrl: '/items',
-                    page: 'testPage',
                     tableConfig: new PageTableConfig({
                         columns: [],
                         categoriesConfig: new PageCategoriesConfig({}),
@@ -678,7 +677,7 @@ function buildContext(overrides?: Partial<PageActionsContext>): PageActionsConte
                 buildSections: () => [new FormSection({ key: 'section1', rows: [] })],
                 prefix: 'testPage.form'
             }),
-            page: 'testPage'
+            prefix: 'testPage'
         }),
         getCurrentCategoryId: () => null,
         onCategoryDeleted: jest.fn(),
@@ -702,7 +701,7 @@ function buildCategoryContext(overrides?: Partial<PageActionsContext>): PageActi
                 buildSections: () => [new FormSection({ key: 'section1', rows: [] })],
                 prefix: 'testPage.form'
             }),
-            page: 'testPage',
+            prefix: 'testPage',
             tableConfig: new PageTableConfig({
                 columns: [],
                 loadRow: () => [],

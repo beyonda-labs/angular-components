@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 
 import { LoginHttpService } from '../login/services/login-http.service';
 import { provideBeyModal } from '../modal/providers/modal.providers';
+import { PageHttpService } from '../page/services/page-http.service';
 import { StyleGuideComponent } from './style-guide.component';
 
 describe('StyleGuideComponent', () => {
@@ -38,6 +39,10 @@ describe('StyleGuideComponent', () => {
                         getProviders: jest.fn().mockReturnValue(of([])),
                         getRegisterFields: jest.fn().mockReturnValue(of([]))
                     }
+                },
+                {
+                    provide: PageHttpService,
+                    useValue: { load: jest.fn().mockReturnValue(of({ globalActions: [], results: [] })) }
                 }
             ]
         }).compileComponents();

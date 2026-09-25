@@ -1,0 +1,76 @@
+{
+    "angular-components-style-guide": {
+        "page": {
+            "actions": {
+                "create": {
+                    "label": "Nuevo producto",
+                    "tooltip": "Crear un producto"
+                },
+                "delete": {
+                    "label": "Eliminar",
+                    "tooltip": "Eliminar los productos seleccionados"
+                },
+                "edit": {
+                    "label": "Editar",
+                    "tooltip": "Editar el producto seleccionado"
+                }
+            },
+            "example": "Una página autogestionada: acciones de cabecera, búsqueda, tabla y paginación conectadas al backend de demostración, con alta y edición en un formulario modal.",
+            "form": {
+                "create": {
+                    "title": "Nuevo producto"
+                },
+                "edit": {
+                    "title": "Editar producto"
+                },
+                "product": {
+                    "category": {
+                        "label": "Categoría",
+                        "placeholder": "Categoría del producto"
+                    },
+                    "label": "Producto",
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Nombre del producto"
+                    },
+                    "price": {
+                        "label": "Precio (€)",
+                        "placeholder": "0,00"
+                    }
+                }
+            },
+            "modal": {
+                "delete": {
+                    "message": "Se eliminarán {{count}} producto(s). ¿Quieres continuar?",
+                    "title": "Eliminar productos"
+                }
+            },
+            "search": {
+                "fields": {
+                    "category": "Categoría",
+                    "name": "Nombre",
+                    "price": "Precio"
+                }
+            },
+            "table": {
+                "columns": {
+                    "category": "Categoría",
+                    "name": "Nombre",
+                    "price": "Precio"
+                },
+                "empty": "Todavía no hay productos",
+                "tooltips": {
+                    "category": "Dónde está clasificado el producto",
+                    "name": "Cómo se llama el producto",
+                    "price": "Precio unitario"
+                }
+            },
+            "title": "Productos",
+            "toast": {
+                "create-success": "Producto creado",
+                "delete-success": "Producto(s) eliminado(s)",
+                "edit-success": "Producto actualizado"
+            }
+        }
+    }
+}

@@ -137,7 +137,7 @@ a callback field and dialog callbacks.
 - [ ] The remaining modules, one at a time
 - [ ] `badge` becomes a real component instead of global CSS classes — after `table` and `properties-menu`,
       since both pass a badge css class around as part of their own config, as `header` does
-- [ ] Style-guides for `search` and `page`; READMEs for `badge`, `loading`, `login`, `page`
+- [ ] Style-guide for `search`; READMEs for `badge` and `loading`
 - [ ] Translation keys to kebab-case (45 in the library, 171 in the style-guides)
 - [ ] Trim module READMEs to the agreed shape
 - [ ] Translate what is still in Spanish into English: the `footer` and `floating-preferences` READMEs,
@@ -172,6 +172,9 @@ Snapshots per branch, `latest` from `main`, as described in the README.
 - [ ] Drawers
 
 ### Data and navigation
+
+- [ ] `page`: remember the search and the selection when the user comes back to a page (the old
+      registry was removed unfinished)
 
 - [x] Table / grid (configurable columns, sorting, row selection)
 - [ ] Table / grid: filters

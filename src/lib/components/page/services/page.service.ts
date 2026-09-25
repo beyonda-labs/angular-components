@@ -1,6 +1,5 @@
-import { computed, effect, inject, Injectable, OnDestroy, signal, untracked } from '@angular/core';
+import { computed, DestroyRef, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { Subscription } from 'rxjs';
 
 import { BreadcrumbConfig, BreadcrumbItem } from '../../breadcrumb/models/breadcrumb.model';
 import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
@@ -10,7 +9,7 @@ import { SearchConfig } from '../../search/models/search.model';
 import { SearchFilter } from '../../search/models/search-filter.model';
 import { TableColumn, TableConfig } from '../../table/models/table.model';
 import { Tab, TabsConfig, TabsVariant } from '../../tabs/models/tabs.model';
-import { PageConfig } from '../models/page.model';
+import { PageConfig, PageHandle } from '../models/page.model';
 import { PageAction, PageActionZone } from '../models/page-action.model';
 import { PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
@@ -18,75 +17,72 @@ import { PageSearch } from '../models/page-search.model';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
 import { PageSearchService } from './page-search.service';
-import { PageStateRegistry } from './page-state-registry.service';
 
 interface CategoryPathEntry {
     id: string | number;
     label: string;
 }
 
+const INITIAL_SEARCH: PageSearch = { filters: [], page: 1, size: PAGINATION_SIZE_DEFAULT };
+
 @Injectable()
-export class PageService implements OnDestroy {
+export class PageService {
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly pageActionsService = inject(PageActionsService);
+    private readonly pageHttpService = inject(PageHttpService);
+    private readonly pageSearchService = inject(PageSearchService);
+
+    private readonly config = signal<PageConfig | null>(null);
+    private readonly globalActions = signal<string[] | null>(null);
+    private formModalReference?: BsModalRef<ModalFormDialogComponent>;
+
     readonly categoryPath = signal<CategoryPathEntry[]>([]);
     readonly currentCategoryId = signal<string | number | null>(null);
     readonly items = signal<PageItem[]>([]);
     readonly loading = signal(false);
-    readonly pageSearch = signal<PageSearch>({ filters: [], page: 1, size: PAGINATION_SIZE_DEFAULT });
+    readonly pageSearch = signal<PageSearch>(INITIAL_SEARCH);
     readonly selected = signal<PageItem[]>([]);
     readonly totalItems = signal(0);
     readonly viewMode = signal<PageViewMode>(PageViewMode.Table);
 
-    private readonly globalActions = signal<string[] | null>(null);
-    private readonly initialized = signal(false);
+    readonly handle: PageHandle = {
+        openCategory: item => this.openCategory(item),
+        refresh: () => this.refresh(),
+        selected: () => this.selected(),
+        viewMode: () => this.viewMode()
+    };
 
-    private readonly pageActionsService = inject(PageActionsService);
-    private readonly pageHttpService = inject(PageHttpService);
-    private readonly pageSearchService = inject(PageSearchService);
-    private readonly stateRegistry = inject(PageStateRegistry);
-
-    private config?: PageConfig;
-    private formModalReference?: BsModalRef<ModalFormDialogComponent>;
-    private openCategorySubscription?: Subscription;
-    private pendingSelectedIds: (string | number)[] | null = null;
-    private refreshSubscription?: Subscription;
-
-    private readonly executeActionHandler = (action: PageAction): void =>
-        this.pageActionsService.executeAction(action, this.buildActionsContext());
-
-    // eslint-disable-next-line unicorn/consistent-function-scoping
-    readonly visibleActions = computed<PageAction[]>(() => {
-        if (!this.initialized()) {
-            return [];
-        }
-
-        return this.pageActionsService.filterVisibleActions(
-            this.config?.headerConfig?.actions ?? [],
+    readonly visibleActions = computed<PageAction[]>(() =>
+        this.pageActionsService.filterVisibleActions(
+            this.config()?.headerConfig?.actions ?? [],
             this.globalActions(),
             this.selected()
-        );
-    });
-
+        )
+    );
     readonly headerConfig = computed<HeaderConfig | null>(() => {
-        if (!this.initialized() || !this.config?.headerConfig) {
+        const config = this.config();
+
+        if (!config?.headerConfig) {
             return null;
         }
 
         const visible = this.visibleActions();
-        const execute = this.executeActionHandler;
+        const execute = (action: PageAction): void =>
+            this.pageActionsService.executeAction(action, this.buildActionsContext(config));
 
         return new HeaderConfig({
             leftActions: this.pageActionsService.buildHeaderActions(visible, PageActionZone.Left, execute),
             menuActions: this.pageActionsService.buildHeaderActions(visible, PageActionZone.Menu, execute),
-            prefix: this.config.prefix,
+            prefix: config.prefix,
             rightActions: this.pageActionsService.buildHeaderActions(visible, PageActionZone.Right, execute),
-            title: this.config.headerConfig.title
+            title: config.headerConfig.title
         });
     });
-
     readonly searchConfig = computed<SearchConfig | null>(() => {
-        const search = this.config?.tableConfig?.search;
+        const config = this.config();
+        const search = config?.tableConfig?.search;
 
-        if (!this.initialized() || !search) {
+        if (!config || !search) {
             return null;
         }
 
@@ -94,18 +90,18 @@ export class PageService implements OnDestroy {
             fields: search.fields,
             mainField: search.mainField,
             onFiltersChange: filters => this.setFilters(filters),
-            prefix: `${this.config!.prefix}.search`
+            prefix: `${config.prefix}.search`
         });
     });
-
     readonly tableConfig = computed<TableConfig<PageItem> | null>(() => {
-        const pageTable = this.config?.tableConfig;
+        const config = this.config();
+        const pageTable = config?.tableConfig;
 
-        if (!this.initialized() || !pageTable) {
+        if (!config || !pageTable) {
             return null;
         }
 
-        const tablePrefix = `${this.config!.prefix}.table`;
+        const tablePrefix = `${config.prefix}.table`;
 
         return new TableConfig<PageItem>({
             columns: pageTable.columns.map(
@@ -125,9 +121,10 @@ export class PageService implements OnDestroy {
             selectedItemsChange: items => this.setSelected(items)
         });
     });
-
     readonly paginationConfig = computed<PaginationConfig | null>(() => {
-        if (!this.initialized() || !this.config?.tableConfig || this.totalItems() === 0) {
+        const config = this.config();
+
+        if (!config?.tableConfig?.showPagination || this.totalItems() === 0) {
             return null;
         }
 
@@ -141,144 +138,78 @@ export class PageService implements OnDestroy {
             totalItems: this.totalItems()
         });
     });
-
     readonly categoryBreadcrumbConfig = computed<BreadcrumbConfig | null>(() => {
-        if (!this.initialized() || !this.config?.tableConfig?.categoriesConfig) {
+        const config = this.config();
+
+        if (!config?.tableConfig?.categoriesConfig) {
             return null;
         }
 
         if (this.viewMode() === PageViewMode.Trash) {
             return new BreadcrumbConfig({
                 items: [
-                    new BreadcrumbItem({
-                        id: 0,
-                        label: `${this.config.prefix}.tabs.trash.label`,
-                        isTranslationKey: true
-                    })
+                    new BreadcrumbItem({ id: 0, label: `${config.prefix}.tabs.trash.label`, isTranslationKey: true })
                 ],
                 translate: false
             });
         }
 
-        const path = this.categoryPath();
-        const items = [
-            new BreadcrumbItem({ id: 0, label: `${this.config.prefix}.categories.root`, isTranslationKey: true }),
-            ...path.map((entry, index) => new BreadcrumbItem({ id: index + 1, label: entry.label }))
-        ];
-
         return new BreadcrumbConfig({
-            items,
-            translate: false,
-            onItemClick: id => this.navigateBreadcrumb(id)
+            items: [
+                new BreadcrumbItem({ id: 0, label: `${config.prefix}.categories.root`, isTranslationKey: true }),
+                ...this.categoryPath().map((entry, index) => new BreadcrumbItem({ id: index + 1, label: entry.label }))
+            ],
+            onItemClick: id => this.navigateBreadcrumb(id),
+            translate: false
         });
     });
-
     readonly viewToggleConfig = computed<TabsConfig | null>(() => {
-        if (!this.initialized() || !this.config?.tableConfig?.categoriesConfig?.useTrash) {
+        const config = this.config();
+
+        if (!config?.tableConfig?.categoriesConfig?.useTrash) {
             return null;
         }
 
         return new TabsConfig({
             activeTab: this.viewMode(),
-            prefix: this.config.prefix,
-            variant: TabsVariant.Segmented,
+            onTabChange: key => this.setViewMode(key as PageViewMode),
+            prefix: config.prefix,
             tabs: [new Tab({ key: PageViewMode.Table }), new Tab({ key: PageViewMode.Trash })],
-            onTabChange: key => this.setViewMode(key as PageViewMode)
+            variant: TabsVariant.Segmented
         });
     });
 
     constructor() {
         effect(() => {
-            if (!this.initialized()) {
-                return;
+            const config = this.config();
+            const search = this.pageSearch();
+
+            if (config) {
+                untracked(() => this.load(config, search));
             }
-
-            this.pageSearch();
-
-            untracked(() => this.load());
         });
-    }
 
-    ngOnDestroy(): void {
-        this.openCategorySubscription?.unsubscribe();
-        this.refreshSubscription?.unsubscribe();
-        this.formModalReference?.hide();
-
-        //TODO: fix
-        /*if (this.config) {
-            this.stateRegistry.save(this.config.page, {
-                search: this.pageSearch(),
-                selectedIds: this.selected().map(item => item.id)
-            });
-        }*/
-    }
-
-    init(config: PageConfig): void {
-        this.config = config;
-
-        const snapshot = this.stateRegistry.restore(config.page);
-
-        if (snapshot) {
-            this.pageSearch.set(snapshot.search);
-            this.pendingSelectedIds = snapshot.selectedIds;
-        } else if (config.tableConfig?.order) {
-            this.pageSearch.update(search => ({ ...search, sort: config.tableConfig!.order }));
-        }
-
-        this.openCategorySubscription = config.tableConfig?.categoriesConfig?.$openCategory.subscribe(item =>
-            this.openCategory(item)
-        );
-        this.refreshSubscription = config.$refresh.subscribe(() => this.refresh());
-        this.initialized.set(true);
-    }
-
-    load(): void {
-        if (!this.config) {
-            return;
-        }
-
-        if (this.config.baseUrl) {
-            this.loadFromBackend();
-        }
-    }
-
-    refresh(): void {
-        this.pageSearch.update(search => ({ ...search, page: 1 }));
-    }
-
-    setFilters(filters: SearchFilter[]): void {
-        this.pageSearch.update(search => ({ ...search, filters, page: 1 }));
-    }
-
-    setSelected(items: PageItem[]): void {
-        this.selected.set(items);
-        this.config?.tableConfig?.onSelectionChange?.(items);
+        this.destroyRef.onDestroy(() => this.formModalReference?.hide());
     }
 
     navigateBreadcrumb(id: number): void {
-        if (id <= 0) {
-            this.categoryPath.set([]);
-            this.currentCategoryId.set(null);
-        } else {
-            const index = id - 1;
-            const path = this.categoryPath().slice(0, index + 1);
+        const path = id <= 0 ? [] : this.categoryPath().slice(0, id);
 
-            this.categoryPath.set(path);
-            this.currentCategoryId.set(path[index]?.id ?? null);
-        }
-
+        this.categoryPath.set(path);
+        this.currentCategoryId.set(path[path.length - 1]?.id ?? null);
         this.selected.set([]);
         this.refresh();
     }
 
     openCategory(item: PageItem): void {
-        const categoriesConfig = this.config?.tableConfig?.categoriesConfig;
+        const config = this.config();
+        const categoriesConfig = config?.tableConfig?.categoriesConfig;
 
-        if (!categoriesConfig || !this.config?.baseUrl) {
+        if (!config?.baseUrl || !categoriesConfig) {
             return;
         }
 
-        this.pageHttpService.loadCategoryPath(this.config.baseUrl, item.id).subscribe(path => {
+        this.pageHttpService.loadCategoryPath(config.baseUrl, item.id).subscribe(path => {
             this.categoryPath.set(
                 path.map(ancestor => ({
                     id: ancestor.id,
@@ -291,66 +222,85 @@ export class PageService implements OnDestroy {
         });
     }
 
+    refresh(): void {
+        this.pageSearch.update(search => ({ ...search, page: 1 }));
+    }
+
+    setConfig(config: PageConfig): void {
+        this.config.set(config);
+
+        if (config.tableConfig?.order) {
+            const { order } = config.tableConfig;
+
+            this.pageSearch.update(search => ({ ...search, sort: order }));
+        }
+
+        config.onReady?.(this.handle);
+    }
+
+    setFilters(filters: SearchFilter[]): void {
+        this.pageSearch.update(search => ({ ...search, filters, page: 1 }));
+    }
+
+    setSelected(items: PageItem[]): void {
+        this.selected.set(items);
+        this.config()?.tableConfig?.onSelectionChange?.(items);
+    }
+
     setViewMode(mode: PageViewMode): void {
         this.viewMode.set(mode);
         this.selected.set([]);
         this.refresh();
     }
 
-    private buildActionsContext(): PageActionsContext {
+    private buildActionsContext(config: PageConfig): PageActionsContext {
+        const clearAndRefresh = (): void => {
+            this.selected.set([]);
+            this.refresh();
+        };
+
+        const keepModal = (reference: BsModalRef<ModalFormDialogComponent>): void => {
+            this.formModalReference = reference;
+        };
+
         return {
-            config: this.config!,
+            config,
             getCurrentCategoryId: () => this.currentCategoryId(),
-            onCategoryDeleted: () => {
-                this.selected.set([]);
-                this.refresh();
-            },
-            onCategoryFormModalOpened: reference => (this.formModalReference = reference),
-            onCategorySaved: () => {
-                if (this.config?.tableConfig) {
-                    this.refresh();
-                }
-            },
-            onDeleted: () => {
-                this.selected.set([]);
-                this.refresh();
-            },
-            onFormModalOpened: reference => (this.formModalReference = reference),
-            onMoved: () => {
-                this.selected.set([]);
-                this.refresh();
-            },
-            onSaved: () => {
-                if (this.config?.tableConfig) {
-                    this.refresh();
-                }
-            },
-            onTrashItemDeleted: () => {
-                this.selected.set([]);
-                this.refresh();
-            },
+            onCategoryDeleted: clearAndRefresh,
+            onCategoryFormModalOpened: keepModal,
+            onCategorySaved: () => this.refresh(),
+            onDeleted: clearAndRefresh,
+            onFormModalOpened: keepModal,
+            onMoved: clearAndRefresh,
+            onSaved: () => this.refresh(),
+            onTrashItemDeleted: clearAndRefresh,
             selectedItems: () => this.selected()
         };
     }
 
-    private loadFromBackend(): void {
-        this.loading.set(true);
+    private load(config: PageConfig, search: PageSearch): void {
+        const { baseUrl } = config;
 
-        const categoriesConfig = this.config?.tableConfig?.categoriesConfig;
+        if (!baseUrl) {
+            return;
+        }
+
+        const categoriesConfig = config.tableConfig?.categoriesConfig;
         const viewingTrash = this.viewMode() === PageViewMode.Trash;
-
         const queryParameters = this.pageSearchService.buildQueryParameters(
-            this.pageSearch(),
-            Boolean(this.config?.tableConfig?.search)
+            search,
+            Boolean(config.tableConfig?.search)
         );
 
         if (categoriesConfig && !viewingTrash) {
             queryParameters[categoriesConfig.parentField] = this.currentCategoryId() ?? 'null';
         }
 
+        this.loading.set(true);
+
         const request = viewingTrash
-            ? this.pageHttpService.loadTrash(this.config!.baseUrl!, queryParameters)
-            : this.pageHttpService.load(this.config!.baseUrl!, queryParameters);
+            ? this.pageHttpService.loadTrash(baseUrl, queryParameters)
+            : this.pageHttpService.load(baseUrl, queryParameters);
 
         request.subscribe({
             complete: () => this.loading.set(false),
@@ -360,19 +310,15 @@ export class PageService implements OnDestroy {
                 this.totalItems.set(response.search?.total ?? response.results.length);
                 this.globalActions.set(response.globalActions ?? []);
                 this.restoreSelection();
-                this.config?.onDataLoaded?.(response);
+                config.onDataLoaded?.(response);
             }
         });
     }
 
     private restoreSelection(): void {
-        const ids = this.pendingSelectedIds ?? this.selected().map(item => item.id);
+        const ids = new Set(this.selected().map(item => item.id));
 
-        this.pendingSelectedIds = null;
-
-        const restored = this.items().filter(item => ids.includes(item.id));
-
-        this.setSelected(restored);
+        this.setSelected(this.items().filter(item => ids.has(item.id)));
     }
 
     private setPage(page: number): void {

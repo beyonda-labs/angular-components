@@ -7,6 +7,8 @@ import { PageTrashItem } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
 import { PageUrlService } from './page-url.service';
 
+type QueryParameters = Record<string, string | number>;
+
 @Injectable({
     providedIn: 'root'
 })
@@ -15,158 +17,48 @@ export class PageHttpService {
     private readonly pageUrlService = inject(PageUrlService);
 
     create(relativeUrl: string, value: unknown, successToast: string): Observable<unknown> {
-        return new Observable(observer => {
-            this.httpService.post(this.pageUrlService.resolve(relativeUrl), value, {
-                onError: error => observer.error(error),
-                onSuccess: result => {
-                    observer.next(result);
-                    observer.complete();
-                },
-                successToast
-            });
-        });
+        return this.httpService.post(this.url(relativeUrl), value, { successToast });
     }
 
     createCategory(relativeUrl: string, value: unknown, successToast: string): Observable<unknown> {
-        return new Observable(observer => {
-            this.httpService.post(`${this.pageUrlService.resolve(relativeUrl)}/categories`, value, {
-                onError: error => observer.error(error),
-                onSuccess: result => {
-                    observer.next(result);
-                    observer.complete();
-                },
-                successToast
-            });
-        });
-    }
-
-    deleteItems(relativeUrl: string, ids: (string | number)[], successToast: string): Observable<void> {
-        return new Observable(observer => {
-            this.httpService.delete<void>(
-                this.pageUrlService.resolve(relativeUrl),
-                { ids },
-                {
-                    onError: error => observer.error(error),
-                    onSuccess: () => {
-                        observer.next();
-                        observer.complete();
-                    },
-                    successToast
-                }
-            );
-        });
-    }
-
-    edit(relativeUrl: string, id: string | number, value: unknown, successToast: string): Observable<unknown> {
-        return new Observable(observer => {
-            this.httpService.put(`${this.pageUrlService.resolve(relativeUrl)}/${id}`, value, {
-                onError: error => observer.error(error),
-                onSuccess: result => {
-                    observer.next(result);
-                    observer.complete();
-                },
-                successToast
-            });
-        });
-    }
-
-    editCategory(relativeUrl: string, id: string | number, value: unknown, successToast: string): Observable<unknown> {
-        return new Observable(observer => {
-            this.httpService.put(`${this.pageUrlService.resolve(relativeUrl)}/categories/${id}`, value, {
-                onError: error => observer.error(error),
-                onSuccess: result => {
-                    observer.next(result);
-                    observer.complete();
-                },
-                successToast
-            });
-        });
+        return this.httpService.post(this.url(relativeUrl, '/categories'), value, { successToast });
     }
 
     deleteCategories(relativeUrl: string, ids: (string | number)[], successToast: string): Observable<void> {
-        return new Observable(observer => {
-            this.httpService.delete<void>(
-                `${this.pageUrlService.resolve(relativeUrl)}/categories`,
-                { ids },
-                {
-                    onError: error => observer.error(error),
-                    onSuccess: () => {
-                        observer.next();
-                        observer.complete();
-                    },
-                    successToast
-                }
-            );
-        });
+        return this.httpService.delete<void>(this.url(relativeUrl, '/categories'), { ids }, { successToast });
+    }
+
+    deleteItems(relativeUrl: string, ids: (string | number)[], successToast: string): Observable<void> {
+        return this.httpService.delete<void>(this.url(relativeUrl), { ids }, { successToast });
     }
 
     deleteTrashItems(relativeUrl: string, items: PageTrashItem[], successToast: string): Observable<void> {
-        return new Observable(observer => {
-            this.httpService.delete<void>(
-                `${this.pageUrlService.resolve(relativeUrl)}/trash`,
-                { items },
-                {
-                    onError: error => observer.error(error),
-                    onSuccess: () => {
-                        observer.next();
-                        observer.complete();
-                    },
-                    successToast
-                }
-            );
-        });
+        return this.httpService.delete<void>(this.url(relativeUrl, '/trash'), { items }, { successToast });
     }
 
-    load(relativeUrl: string, queryParameters: Record<string, string | number>): Observable<PageBackendResponse> {
-        return new Observable(observer => {
-            this.httpService.get<PageBackendResponse>(this.pageUrlService.resolve(relativeUrl), {
-                queryParams: queryParameters,
-                onError: error => observer.error(error),
-                onSuccess: result => {
-                    observer.next(result as PageBackendResponse);
-                    observer.complete();
-                }
-            });
-        });
+    edit(relativeUrl: string, id: string | number, value: unknown, successToast: string): Observable<unknown> {
+        return this.httpService.put(this.url(relativeUrl, `/${id}`), value, { successToast });
+    }
+
+    editCategory(relativeUrl: string, id: string | number, value: unknown, successToast: string): Observable<unknown> {
+        return this.httpService.put(this.url(relativeUrl, `/categories/${id}`), value, { successToast });
+    }
+
+    load(relativeUrl: string, queryParameters: QueryParameters): Observable<PageBackendResponse> {
+        return this.httpService.get<PageBackendResponse>(this.url(relativeUrl), { queryParams: queryParameters });
     }
 
     loadCategoryPath(relativeUrl: string, categoryId: string | number): Observable<PageItem[]> {
-        return new Observable(observer => {
-            this.httpService.get<PageItem[]>(
-                `${this.pageUrlService.resolve(relativeUrl)}/categories/${categoryId}/path`,
-                {
-                    onError: error => observer.error(error),
-                    onSuccess: result => {
-                        observer.next(result as PageItem[]);
-                        observer.complete();
-                    }
-                }
-            );
-        });
+        return this.httpService.get<PageItem[]>(this.url(relativeUrl, `/categories/${categoryId}/path`));
     }
 
     loadCategoryTree(relativeUrl: string): Observable<PageItem[]> {
-        return new Observable(observer => {
-            this.httpService.get<PageItem[]>(`${this.pageUrlService.resolve(relativeUrl)}/categories/tree`, {
-                onError: error => observer.error(error),
-                onSuccess: result => {
-                    observer.next(result as PageItem[]);
-                    observer.complete();
-                }
-            });
-        });
+        return this.httpService.get<PageItem[]>(this.url(relativeUrl, '/categories/tree'));
     }
 
-    loadTrash(relativeUrl: string, queryParameters: Record<string, string | number>): Observable<PageBackendResponse> {
-        return new Observable(observer => {
-            this.httpService.get<PageBackendResponse>(`${this.pageUrlService.resolve(relativeUrl)}/trash`, {
-                queryParams: queryParameters,
-                onError: error => observer.error(error),
-                onSuccess: result => {
-                    observer.next(result as PageBackendResponse);
-                    observer.complete();
-                }
-            });
+    loadTrash(relativeUrl: string, queryParameters: QueryParameters): Observable<PageBackendResponse> {
+        return this.httpService.get<PageBackendResponse>(this.url(relativeUrl, '/trash'), {
+            queryParams: queryParameters
         });
     }
 
@@ -176,36 +68,14 @@ export class PageHttpService {
         targetId: string | number | null,
         successToast: string
     ): Observable<void> {
-        return new Observable(observer => {
-            this.httpService.put<void>(
-                `${this.pageUrlService.resolve(relativeUrl)}/move`,
-                { items, targetId },
-                {
-                    onError: error => observer.error(error),
-                    onSuccess: () => {
-                        observer.next();
-                        observer.complete();
-                    },
-                    successToast
-                }
-            );
-        });
+        return this.httpService.put<void>(this.url(relativeUrl, '/move'), { items, targetId }, { successToast });
     }
 
     restoreTrashItems(relativeUrl: string, items: PageTrashItem[], successToast: string): Observable<void> {
-        return new Observable(observer => {
-            this.httpService.put<void>(
-                `${this.pageUrlService.resolve(relativeUrl)}/trash`,
-                { items },
-                {
-                    onError: error => observer.error(error),
-                    onSuccess: () => {
-                        observer.next();
-                        observer.complete();
-                    },
-                    successToast
-                }
-            );
-        });
+        return this.httpService.put<void>(this.url(relativeUrl, '/trash'), { items }, { successToast });
+    }
+
+    private url(relativeUrl: string, suffix = ''): string {
+        return `${this.pageUrlService.resolve(relativeUrl)}${suffix}`;
     }
 }

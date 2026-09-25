@@ -1,45 +1,35 @@
-@if (config) {
-    <div class="bey-page">
-        @if (config.headerConfig) {
-            <div class="bey-page-header">
-                @if (service.headerConfig(); as headerConfig) {
-                    <bey-header [config]="headerConfig"></bey-header>
-                }
-            </div>
-        }
+<div class="bey-page">
+    @if (service.headerConfig(); as headerConfig) {
+        <bey-header class="bey-page-header" [config]="headerConfig"></bey-header>
+    }
 
-        @if (service.viewToggleConfig() || service.searchConfig()) {
-            <div class="bey-page-toolbar mb-3">
-                @if (service.viewToggleConfig(); as viewToggleConfig) {
-                    <bey-tabs [config]="viewToggleConfig"></bey-tabs>
-                }
+    @if (hasToolbar()) {
+        <div class="bey-page-toolbar">
+            @if (service.viewToggleConfig(); as viewToggleConfig) {
+                <bey-tabs [config]="viewToggleConfig"></bey-tabs>
+            }
 
-                @if (service.searchConfig(); as searchConfig) {
-                    <div class="bey-page-search">
-                        <bey-search [config]="searchConfig"></bey-search>
-                    </div>
-                }
-            </div>
-        }
+            @if (service.searchConfig(); as searchConfig) {
+                <bey-search class="bey-page-search" [config]="searchConfig"></bey-search>
+            }
+        </div>
+    }
 
-        @if (service.categoryBreadcrumbConfig(); as breadcrumbConfig) {
-            <bey-breadcrumb [config]="breadcrumbConfig" class="mb-2"></bey-breadcrumb>
-        }
+    @if (service.categoryBreadcrumbConfig(); as breadcrumbConfig) {
+        <bey-breadcrumb class="bey-page-breadcrumb" [config]="breadcrumbConfig"></bey-breadcrumb>
+    }
 
-        @if (config.tableConfig) {
-            <div class="bey-page-body">
-                @if (service.loading()) {
-                    <bey-loading-overlay></bey-loading-overlay>
-                }
+    @if (service.tableConfig(); as tableConfig) {
+        <div class="bey-page-body">
+            @if (service.loading()) {
+                <bey-loading-overlay></bey-loading-overlay>
+            }
 
-                @if (service.tableConfig(); as tableConfig) {
-                    <bey-table [config]="tableConfig"></bey-table>
-                }
+            <bey-table [config]="tableConfig"></bey-table>
 
-                @if (showPagination && service.paginationConfig(); as paginationConfig) {
-                    <bey-pagination [config]="paginationConfig"></bey-pagination>
-                }
-            </div>
-        }
-    </div>
-}
+            @if (service.paginationConfig(); as paginationConfig) {
+                <bey-pagination [config]="paginationConfig"></bey-pagination>
+            }
+        </div>
+    }
+</div>
