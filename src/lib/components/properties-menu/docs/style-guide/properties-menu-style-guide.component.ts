@@ -129,11 +129,11 @@ export class PropertiesMenuStyleGuideComponent {
             onTreeAddBlock: event => this.lastTreeAddBlock.set(event),
             onTreeNodeSelect: event => this.lastTreeNodeSelect.set(event),
             onVariableSelect: selection => this.lastVariableSelection.set(selection),
-            subtitle: 'Bloque: heading',
+            subtitle: 'Block: heading',
             tabs: [
                 new PropertyTab({
                     id: 'properties',
-                    label: 'Propiedades',
+                    label: 'Properties',
                     groups: [
                         new PropertyGroup({
                             expanded: true,
@@ -142,12 +142,12 @@ export class PropertiesMenuStyleGuideComponent {
                                     new PropertyTextField({
                                         acceptsVariable: true,
                                         id: 'text',
-                                        label: 'Texto',
-                                        value: 'FACTURA'
+                                        label: 'Text',
+                                        value: 'INVOICE'
                                     }),
                                     new PropertySegmentedField({
                                         id: 'headingLevel',
-                                        label: 'Nivel',
+                                        label: 'Level',
                                         options: [
                                             new PropertyOption({ label: 'H1', value: 'h1' }),
                                             new PropertyOption({ label: 'H2', value: 'h2' }),
@@ -158,7 +158,7 @@ export class PropertiesMenuStyleGuideComponent {
                                     }),
                                     new PropertySegmentedField({
                                         id: 'alignment',
-                                        label: 'Alineación',
+                                        label: 'Alignment',
                                         options: [
                                             new PropertyOption({ icon: faAlignLeft, value: 'left' }),
                                             new PropertyOption({ icon: faAlignCenter, value: 'center' }),
@@ -170,7 +170,7 @@ export class PropertiesMenuStyleGuideComponent {
                                 ]
                             }),
                             id: 'content',
-                            label: 'Contenido'
+                            label: 'Content'
                         }),
                         new PropertyGroup({
                             expanded: true,
@@ -178,7 +178,7 @@ export class PropertiesMenuStyleGuideComponent {
                                 fields: [
                                     new PropertySelectField({
                                         id: 'fontFamily',
-                                        label: 'Tipografía',
+                                        label: 'Font family',
                                         options: [
                                             new PropertyOption({ label: 'Inter', value: 'Inter' }),
                                             new PropertyOption({ label: 'Arial', value: 'Arial' }),
@@ -188,7 +188,7 @@ export class PropertiesMenuStyleGuideComponent {
                                     }),
                                     new PropertyNumberField({
                                         id: 'fontSize',
-                                        label: 'Tamaño',
+                                        label: 'Size',
                                         max: 200,
                                         min: 1,
                                         step: 1,
@@ -197,7 +197,7 @@ export class PropertiesMenuStyleGuideComponent {
                                     }),
                                     new PropertySelectField({
                                         id: 'fontWeight',
-                                        label: 'Peso',
+                                        label: 'Weight',
                                         options: [
                                             new PropertyOption({ label: 'Regular', value: '400' }),
                                             new PropertyOption({ label: 'Medium', value: '500' }),
@@ -210,11 +210,11 @@ export class PropertiesMenuStyleGuideComponent {
                                 ]
                             }),
                             id: 'appearance',
-                            label: 'Apariencia'
+                            label: 'Appearance'
                         }),
                         new PropertyGroup({
                             id: 'spacing',
-                            label: 'Espaciado',
+                            label: 'Spacing',
                             variant: PropertyGroupVariant.SECONDARY
                         }),
                         new PropertyGroup({
@@ -222,7 +222,7 @@ export class PropertiesMenuStyleGuideComponent {
                                 fields: [new PropertyToggleField({ id: 'visible', label: 'Visible', value: true })]
                             }),
                             id: 'visibility',
-                            label: 'Visibilidad',
+                            label: 'Visibility',
                             variant: PropertyGroupVariant.SECONDARY
                         }),
                         new PropertyGroup({
@@ -230,57 +230,57 @@ export class PropertiesMenuStyleGuideComponent {
                                 tabs: [
                                     new PropertyGroupTab({
                                         id: 'borderTop',
-                                        label: 'Arriba',
+                                        label: 'Top',
                                         fields: [
                                             new PropertyColorField({
                                                 id: 'topColor',
                                                 label: 'Color',
                                                 value: '#000000'
                                             }),
-                                            new PropertyNumberField({ id: 'topWidth', label: 'Grosor', value: 1 })
+                                            new PropertyNumberField({ id: 'topWidth', label: 'Width', value: 1 })
                                         ]
                                     }),
                                     new PropertyGroupTab({
                                         id: 'borderRight',
-                                        label: 'Derecha',
+                                        label: 'Right',
                                         fields: [
                                             new PropertyColorField({
                                                 id: 'rightColor',
                                                 label: 'Color',
                                                 value: '#000000'
                                             }),
-                                            new PropertyNumberField({ id: 'rightWidth', label: 'Grosor', value: 1 })
+                                            new PropertyNumberField({ id: 'rightWidth', label: 'Width', value: 1 })
                                         ]
                                     }),
                                     new PropertyGroupTab({
                                         id: 'borderBottom',
-                                        label: 'Abajo',
+                                        label: 'Bottom',
                                         fields: [
                                             new PropertyColorField({
                                                 id: 'bottomColor',
                                                 label: 'Color',
                                                 value: '#000000'
                                             }),
-                                            new PropertyNumberField({ id: 'bottomWidth', label: 'Grosor', value: 1 })
+                                            new PropertyNumberField({ id: 'bottomWidth', label: 'Width', value: 1 })
                                         ]
                                     }),
                                     new PropertyGroupTab({
                                         id: 'borderLeft',
-                                        label: 'Izquierda',
+                                        label: 'Left',
                                         fields: [
                                             new PropertyColorField({
                                                 id: 'leftColor',
                                                 label: 'Color',
                                                 value: '#000000'
                                             }),
-                                            new PropertyNumberField({ id: 'leftWidth', label: 'Grosor', value: 1 })
+                                            new PropertyNumberField({ id: 'leftWidth', label: 'Width', value: 1 })
                                         ]
                                     })
                                 ]
                             }),
                             expanded: true,
                             id: 'borders',
-                            label: 'Bordes',
+                            label: 'Borders',
                             variant: PropertyGroupVariant.SECONDARY
                         }),
                         new PropertyGroup({
@@ -288,21 +288,25 @@ export class PropertiesMenuStyleGuideComponent {
                                 fields: [
                                     new PropertyToggleField({
                                         id: 'bold',
-                                        label: 'Negrita',
+                                        label: 'Bold',
                                         span: 'half',
                                         value: true
                                     }),
-                                    new PropertyToggleField({ id: 'underline', label: 'Subrayado', span: 'half' }),
-                                    new PropertyToggleField({ id: 'italic', label: 'Cursiva', span: 'half' }),
-                                    new PropertyToggleField({ id: 'strikethrough', label: 'Tachado', span: 'half' }),
+                                    new PropertyToggleField({ id: 'underline', label: 'Underline', span: 'half' }),
+                                    new PropertyToggleField({ id: 'italic', label: 'Italic', span: 'half' }),
+                                    new PropertyToggleField({
+                                        id: 'strikethrough',
+                                        label: 'Strikethrough',
+                                        span: 'half'
+                                    }),
                                     new PropertyInfoField({
                                         id: 'scope',
-                                        label: 'Ámbito',
-                                        items: [{ label: 'Global', icon: faCircleInfo }, { label: 'texto' }]
+                                        label: 'Scope',
+                                        items: [{ label: 'Global', icon: faCircleInfo }, { label: 'text' }]
                                     }),
                                     new PropertySelectField({
                                         id: 'templateId',
-                                        label: 'Plantilla',
+                                        label: 'Template',
                                         searchable: true,
                                         value: 'invoice',
                                         options: [
@@ -313,7 +317,7 @@ export class PropertiesMenuStyleGuideComponent {
                                     }),
                                     new PropertyAttachmentField({
                                         id: 'logo',
-                                        label: 'Logotipo',
+                                        label: 'Logo',
                                         accept: 'image/*',
                                         maxSizeBytes: 10 * 1024 * 1024,
                                         value: 'attachment-1',
@@ -325,7 +329,7 @@ export class PropertiesMenuStyleGuideComponent {
                                             }),
                                             new PropertyAttachmentOption({
                                                 id: 'attachment-2',
-                                                label: 'firma.png',
+                                                label: 'signature.png',
                                                 description: '320 × 120'
                                             })
                                         ]
@@ -334,14 +338,14 @@ export class PropertiesMenuStyleGuideComponent {
                             }),
                             expanded: true,
                             id: 'advanced',
-                            label: 'Avanzado',
+                            label: 'Advanced',
                             variant: PropertyGroupVariant.SECONDARY
                         })
                     ]
                 }),
                 new PropertyTab({
                     id: 'structure',
-                    label: 'Estructura',
+                    label: 'Structure',
                     groups: [
                         new PropertyGroup({
                             id: 'structure-tree',
@@ -353,68 +357,68 @@ export class PropertiesMenuStyleGuideComponent {
                                         new PropertyTreeNode({
                                             icon: faFile,
                                             id: 'page-1',
-                                            label: 'Página 1',
+                                            label: 'Page 1',
                                             children: [
                                                 new PropertyTreeNode({
                                                     icon: faLayerGroup,
                                                     id: 'header',
-                                                    label: 'Encabezado',
+                                                    label: 'Heading',
                                                     children: [
                                                         new PropertyTreeNode({
                                                             icon: faImage,
                                                             id: 'header-image',
-                                                            label: 'Imagen'
+                                                            label: 'Image'
                                                         }),
                                                         new PropertyTreeNode({
                                                             icon: faBuilding,
                                                             id: 'header-company-info',
-                                                            label: 'Información de la empresa'
+                                                            label: 'Company details'
                                                         })
                                                     ]
                                                 }),
                                                 new PropertyTreeNode({
                                                     icon: faLayerGroup,
                                                     id: 'invoice-section',
-                                                    label: 'Sección',
+                                                    label: 'Section',
                                                     children: [
                                                         new PropertyTreeNode({
                                                             icon: faHeading,
                                                             id: 'invoice-title',
-                                                            label: 'Título'
+                                                            label: 'Title'
                                                         }),
                                                         new PropertyTreeNode({
                                                             icon: faFileInvoice,
                                                             id: 'invoice-info',
-                                                            label: 'Información de la factura'
+                                                            label: 'Invoice details'
                                                         }),
                                                         new PropertyTreeNode({
                                                             icon: faTable,
                                                             id: 'invoice-products-table',
-                                                            label: 'Tabla de productos'
+                                                            label: 'Product table'
                                                         })
                                                     ]
                                                 }),
                                                 new PropertyTreeNode({
                                                     icon: faLayerGroup,
                                                     id: 'totals-section',
-                                                    label: 'Sección',
+                                                    label: 'Section',
                                                     children: [
                                                         new PropertyTreeNode({
                                                             icon: faCalculator,
                                                             id: 'totals',
-                                                            label: 'Totales'
+                                                            label: 'Totals'
                                                         })
                                                     ]
                                                 }),
                                                 new PropertyTreeNode({
                                                     icon: faFileLines,
                                                     id: 'footer',
-                                                    label: 'Pie de página',
+                                                    label: 'Footer',
                                                     children: [
                                                         new PropertyTreeNode({
                                                             icon: faAlignLeft,
                                                             id: 'footer-text',
-                                                            label: 'Texto'
+                                                            label: 'Text'
                                                         })
                                                     ]
                                                 })
@@ -428,7 +432,7 @@ export class PropertiesMenuStyleGuideComponent {
                 }),
                 new PropertyTab({
                     id: 'add',
-                    label: 'Añadir',
+                    label: 'Add',
                     groups: [
                         new PropertyGroup({
                             id: 'simple-blocks',
@@ -436,34 +440,34 @@ export class PropertiesMenuStyleGuideComponent {
                             content: new PropertyListContent({
                                 list: [
                                     new PropertyListItem({
-                                        description: 'Título o subtítulo destacado',
+                                        description: 'A prominent title or subtitle',
                                         icon: faHeading,
                                         id: 'block-heading',
-                                        label: 'Encabezado'
+                                        label: 'Heading'
                                     }),
                                     new PropertyListItem({
-                                        description: 'Imagen o logotipo',
+                                        description: 'An image or a logo',
                                         icon: faImage,
                                         id: 'block-image',
-                                        label: 'Imagen'
+                                        label: 'Image'
                                     }),
                                     new PropertyListItem({
-                                        description: 'Párrafo de texto libre',
+                                        description: 'A free text paragraph',
                                         icon: faAlignLeft,
                                         id: 'block-text',
-                                        label: 'Texto'
+                                        label: 'Text'
                                     }),
                                     new PropertyListItem({
-                                        description: 'Tabla de líneas de factura',
+                                        description: 'A table of invoice lines',
                                         icon: faTable,
                                         id: 'block-table',
-                                        label: 'Tabla de productos'
+                                        label: 'Product table'
                                     }),
                                     new PropertyListItem({
-                                        description: 'Subtotal, impuestos y total',
+                                        description: 'Subtotal, taxes and total',
                                         icon: faCalculator,
                                         id: 'block-totals',
-                                        label: 'Totales'
+                                        label: 'Totals'
                                     })
                                 ]
                             })
