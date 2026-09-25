@@ -10,6 +10,22 @@ import { FormField, FormFieldType, FormValue } from '../models/form-field.model'
 import { DateFormatService } from './date-format.service';
 import { FormValidatorService } from './form-validator.service';
 
+/** What a control holds until the consumer or the user gives it a value; a type missing here has no control. */
+const EMPTY_VALUES: Partial<Record<FormFieldType, unknown>> = {
+    [FormFieldType.Autocomplete]: '',
+    [FormFieldType.Checkbox]: false,
+    [FormFieldType.Chips]: [],
+    [FormFieldType.Date]: '',
+    [FormFieldType.File]: null,
+    [FormFieldType.Number]: null,
+    [FormFieldType.Password]: '',
+    [FormFieldType.Radio]: '',
+    [FormFieldType.Select]: '',
+    [FormFieldType.Text]: '',
+    [FormFieldType.TextVariable]: '',
+    [FormFieldType.Textarea]: ''
+};
+
 @Injectable({
     providedIn: 'root'
 })
@@ -41,27 +57,11 @@ export class FormService {
     }
 
     initFieldControl(field: FormField, initialValue?: unknown): FormControl | undefined {
-        switch (field.type) {
-            case FormFieldType.Autocomplete:
-            case FormFieldType.Date:
-            case FormFieldType.Password:
-            case FormFieldType.Radio:
-            case FormFieldType.Select:
-            case FormFieldType.Text:
-            case FormFieldType.TextVariable:
-            case FormFieldType.Textarea:
-                return this.buildControl<string | null>(field, (initialValue as string | null) ?? '');
-            case FormFieldType.Checkbox:
-                return this.buildControl<boolean | null>(field, (initialValue as boolean | null) ?? false);
-            case FormFieldType.Chips:
-                return this.buildControl<string[] | null>(field, (initialValue as string[] | null) ?? []);
-            case FormFieldType.File:
-                return this.buildControl<File | null>(field, (initialValue as File | null) ?? null);
-            case FormFieldType.Number:
-                return this.buildControl<number | null>(field, (initialValue as number | null) ?? null);
-            default:
-                return undefined;
+        if (!(field.type in EMPTY_VALUES)) {
+            return undefined;
         }
+
+        return this.buildControl<unknown>(field, initialValue ?? EMPTY_VALUES[field.type]);
     }
 
     private buildControl<T>(field: FormField, value: T): FormControl<T> {

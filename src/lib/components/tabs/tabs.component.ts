@@ -123,7 +123,7 @@ export class TabsComponent implements AfterViewInit {
         }
 
         const currentIndex = enabledTabs.findIndex(tab => tab.key === this.activeTabKey());
-        let targetIndex = -1;
+        let targetIndex: number;
 
         switch (event.key) {
             case 'ArrowRight':

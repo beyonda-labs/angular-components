@@ -87,7 +87,7 @@ export class PaginationComponent {
     }
 
     onPageInputChange(value: string | number): void {
-        const digits = String(value ?? '').replace(/\D+/gu, '');
+        const digits = String(value ?? '').replaceAll(/\D+/gu, '');
         const nextPage = digits ? Math.min(Math.max(Number(digits), 1), this.totalPages()) : this.page();
 
         this.pageInputValue.set(String(nextPage));

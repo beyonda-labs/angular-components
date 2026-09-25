@@ -49,8 +49,10 @@ whole repo: it fails today on purpose, and passing it is what "S6 is finished" m
 -   [x] `check-translations.js`: duplicate keys across files, maximum depth, kebab-case
 -   [x] `check-style-guides.js`: every module has a style-guide, is registered, and has a README
 -   [x] Broken `ng test` target removed from `angular.json` — `pnpm test` is the entry point
--   [ ] ESLint flat config (v9) — deferred, see below
--   [ ] Tighter `complexity` / `max-len` / `max-lines` — better calibrated after S6
+-   [x] ESLint 9 with a flat `eslint.config.js`: the same 228 rules as before, checked by diffing `--print-config`
+        before and after; the formatting rules moved to `@stylistic/js`, as ESLint deprecates its own
+-   [x] `complexity` 28 → 15, `max-lines` 500 → 400 lines of code (600 in a spec), `max-len` 300 → 120, the
+        prettier width. Calibrated on the migrated code: one method and two style-guide files had to be split
 
 Where a gate cannot be met yet, it warns instead of failing, and flips to an error when its migration lands:
 
@@ -62,9 +64,8 @@ Where a gate cannot be met yet, it warns instead of failing, and flips to an err
 | stylelint errors (naming, `!important`, `--bs-*`) | 190 errors, staged files only | end of S6      |
 | `check-style-guides`                              | 6 modules failing             | end of S6      |
 
-Migrating to ESLint flat config is deferred on purpose: it is a rewrite of a 300-line config, it adds no
-guarantee the current setup does not already give, and getting it wrong silently drops rules. It belongs after
-the migration, not in the middle of it.
+The flat config landed after the migration, once the rules it enforces were met everywhere: rewriting it earlier
+would have risked dropping rules silently, so the effective rule set was diffed before and after.
 
 ### S3 - Package hygiene
 
@@ -103,8 +104,10 @@ Eight modules used those shared classes without importing the stylesheet, so the
 
 -   [x] `tabs` migrated end to end: tokens, class naming, signals, tests, i18n, exports, README, and its own
         style-guide. It passes every gate with zero findings
--   [ ] Decide on `@testing-library/angular` — not needed for `tabs`: four local helpers covered it. Worth
-        revisiting on a module with heavier interaction
+-   [x] `@testing-library/angular`: not adopted. The test rules already ask for what it enforces (queries by role
+        and text, behaviour over markup) and every suite follows them with three local helpers, so it would add a
+        second style and a dependency without a new guarantee; `userEvent` is the only thing missed, and the
+        `click` + `detectChanges` + `whenStable` pair covers the interactions the components have
 
 What the pilot cost, and what it changed beyond the plan:
 

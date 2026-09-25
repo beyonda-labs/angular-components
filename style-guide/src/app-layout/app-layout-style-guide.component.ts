@@ -25,7 +25,6 @@ import { StyleGuideButton } from '../models/style-guide-button.model';
 const PREFIX = 'angular-components-style-guide.app-layout';
 const PAGES = ['dashboard', 'documents', 'reports', 'settings', 'help'];
 const BRAND_ICON =
-    // eslint-disable-next-line max-len
     'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 72 72%22%3E%3Crect width=%2272%22 height=%2272%22 rx=%2222%22 fill=%22%23111111%22/%3E%3Ccircle cx=%2226%22 cy=%2236%22 r=%2210%22 fill=%22%23ffffff%22/%3E%3Ccircle cx=%2246%22 cy=%2236%22 r=%2210%22 fill=%22%23ffffff%22 opacity=%220.9%22/%3E%3C/svg%3E';
 
 @Component({

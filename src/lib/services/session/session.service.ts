@@ -5,7 +5,7 @@ import { StorageService } from './storage.service';
 
 function decodeJwtUser(token: string): SessionUser | null {
     try {
-        const base64 = token.split('.')[1].replace(/-/gu, '+').replace(/_/gu, '/');
+        const base64 = token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/');
         const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
         const payload = JSON.parse(new TextDecoder().decode(bytes)) as Record<string, unknown>;
         const allowedPaths = (payload['allowedPaths'] as string[] | undefined) ?? [];
@@ -33,7 +33,6 @@ export class SessionService {
     private readonly _token = signal<string | null>(this.storageService.get<string>(this.config.tokenKey));
     private readonly _user = signal<SessionUser | null>(this.storageService.get<SessionUser>(this.config.userKey));
 
-    // eslint-disable-next-line unicorn/consistent-function-scoping
     readonly isAuthenticated = computed(() => this._token() !== null);
     readonly token = this._token.asReadonly();
     readonly user = this._user.asReadonly();
