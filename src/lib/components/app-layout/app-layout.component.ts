@@ -86,6 +86,7 @@ export class AppLayoutComponent implements OnInit {
         return new LeftMenuConfig({
             bottomActions: this.prepareActions(bottomActions, activeKey),
             expanded: this.appLayoutService.expanded(),
+            onExpandedChange: expanded => this.appLayoutService.setExpanded(expanded),
             prefix,
             title,
             topActions: this.prepareActions(topActions, activeKey),
@@ -124,10 +125,6 @@ export class AppLayoutComponent implements OnInit {
 
         onLayoutInitialized?.();
         this.activateByUrl(this.router.url);
-    }
-
-    onExpandedChange(value: boolean): void {
-        this.appLayoutService.setExpanded(value);
     }
 
     private activate(path: LeftMenuAction[]): void {

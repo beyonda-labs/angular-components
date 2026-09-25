@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faAnglesLeft, faAnglesRight } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,8 +17,6 @@ import { LeftMenuConfig } from './models/left-menu.model';
 })
 export class LeftMenuComponent {
     readonly config = input.required<LeftMenuConfig>();
-
-    readonly expandedChange = output<boolean>();
 
     readonly expanded = linkedSignal(() => this.config().expanded);
 
@@ -47,6 +45,6 @@ export class LeftMenuComponent {
 
     toggleExpanded(): void {
         this.expanded.update(isExpanded => !isExpanded);
-        this.expandedChange.emit(this.expanded());
+        this.config().onExpandedChange?.(this.expanded());
     }
 }

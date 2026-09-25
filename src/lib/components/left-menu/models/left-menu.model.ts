@@ -6,6 +6,8 @@ export class LeftMenuConfig {
     prefix: string;
     title: LeftMenuTitle;
     topActions: LeftMenuAction[];
+
+    onExpandedChange?: (expanded: boolean) => void;
     userInfo?: LeftMenuUserInfo;
 
     constructor({
@@ -14,8 +16,10 @@ export class LeftMenuConfig {
         topActions = [],
         bottomActions = [],
         expanded = true,
+        onExpandedChange,
         userInfo
     }: LeftMenuConfigParameters) {
+        this.onExpandedChange = onExpandedChange;
         this.bottomActions = bottomActions;
         this.expanded = expanded;
         this.prefix = prefix;
@@ -31,6 +35,8 @@ export interface LeftMenuConfigParameters {
 
     bottomActions?: LeftMenuAction[];
     expanded?: boolean;
+    /** Run when the user expands or collapses the menu. */
+    onExpandedChange?: (expanded: boolean) => void;
     topActions?: LeftMenuAction[];
     userInfo?: LeftMenuUserInfo;
 }

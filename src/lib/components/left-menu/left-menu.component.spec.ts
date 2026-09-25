@@ -60,10 +60,9 @@ describe('LeftMenuComponent', () => {
     });
 
     it('collapses and expands from its toggle, reporting each change', async () => {
-        await render();
         const changes: boolean[] = [];
-        fixture.componentInstance.expandedChange.subscribe(value => changes.push(value));
 
+        await render(buildConfig({ onExpandedChange: expanded => changes.push(expanded) }));
         toggle().click();
         fixture.detectChanges();
         expect(aside().classList).toContain('is-collapsed');
