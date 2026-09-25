@@ -1,64 +1,48 @@
 :host {
-    --bey-property-group-border: var(--bey-gray-200);
+    --bey-property-group-border: var(--bey-border-subtle);
     --bey-property-group-text: var(--bey-text-primary);
     --bey-property-group-text-muted: var(--bey-text-muted);
+    --bey-property-group-empty-height: 8rem;
 
     display: block;
 }
 
-:host-context(body.dark) {
-    --bey-property-group-border: var(--bey-gray-800);
-}
-
-.bey-property-tab-empty-state {
-    display: flex;
-    flex: 1 1 auto;
-    align-items: center;
-    justify-content: center;
-    min-height: 8rem;
-    padding: 1rem;
-}
-
-.bey-property-tab-empty-add-block {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.4rem;
-    padding: 0.75rem 1.25rem;
-    border: 1px dashed var(--bey-property-group-border);
-    border-radius: 0.5rem;
-    background: none;
-    color: var(--bey-property-group-text);
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.bey-property-tab-empty-add-block:hover {
-    background: var(--bey-bg-hover);
-}
-
 .bey-property-group {
-    border-bottom: 1px solid var(--bey-property-group-border);
+    padding-bottom: var(--bey-space-lg);
+    border-bottom: var(--bey-border-width) solid var(--bey-property-group-border);
 }
 
-.bey-property-group:last-child {
+:host:last-child .bey-property-group {
+    padding-bottom: 0;
     border-bottom: none;
+}
+
+.bey-property-group.is-disabled {
+    opacity: var(--bey-opacity-disabled);
 }
 
 .bey-property-group-header {
     display: flex;
+    gap: var(--bey-space-sm);
     align-items: center;
-    gap: 0.6rem;
     width: 100%;
-    padding: 0;
+    padding: 0 0 var(--bey-space-sm);
     border: none;
     background: none;
     color: var(--bey-property-group-text);
-    font-size: 0.78rem;
-    font-weight: 700;
+    font-size: var(--bey-font-size-sm);
+    font-weight: var(--bey-font-weight-bold);
     text-align: left;
     cursor: pointer;
+}
+
+.bey-property-group--secondary .bey-property-group-header {
+    color: var(--bey-property-group-text-muted);
+    font-weight: var(--bey-font-weight-semibold);
+}
+
+.bey-property-group-header:disabled {
+    cursor: not-allowed;
 }
 
 .bey-property-group-label {
@@ -71,76 +55,65 @@
 
 .bey-property-group-remove {
     display: inline-flex;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: center;
-    flex: 0 0 auto;
     color: var(--bey-property-group-text-muted);
-    font-size: 0.7rem;
+    font-size: var(--bey-font-size-2xs);
 }
 
 .bey-property-group-remove:hover {
     color: var(--bey-property-group-text);
 }
 
-.bey-property-group-secondary .bey-property-group-header {
-    color: var(--bey-property-group-text-muted);
-    font-weight: 600;
-}
-
-.bey-property-group-header:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-
 .bey-property-group-chevron {
     color: var(--bey-property-group-text-muted);
-    font-size: 0.68rem;
-    transition: transform 0.15s ease;
+    font-size: var(--bey-font-size-2xs);
+    transition: transform var(--bey-duration-fast) var(--bey-easing-standard);
 }
 
-.bey-property-group-chevron-expanded {
+.bey-property-group-chevron.is-expanded {
     transform: rotate(180deg);
 }
 
-.bey-property-group-body {
+.bey-property-group-body,
+.bey-property-group-tab-panel {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.85rem 0.6rem;
+    gap: var(--bey-space-md) var(--bey-space-sm);
 }
 
-.bey-property-group-body > * {
+.bey-property-group-body > *,
+.bey-property-group-tab-panel > * {
     grid-column: span 2;
     min-width: 0;
 }
 
-.bey-property-group-body > .bey-property-field-half {
+.bey-property-group-body > .bey-property-group-field--half,
+.bey-property-group-tab-panel > .bey-property-group-field--half {
     grid-column: span 1;
-}
-
-.bey-property-group-disabled {
-    opacity: 0.55;
 }
 
 .bey-property-group-tabs {
     display: flex;
-    gap: 0.15rem;
-    border-bottom: 1px solid var(--bey-property-group-border);
+    gap: var(--bey-space-2xs);
+    border-bottom: var(--bey-border-width) solid var(--bey-property-group-border);
 }
 
 .bey-property-group-tab {
     display: inline-flex;
+    flex: 1 1 0;
+    gap: var(--bey-space-xs);
     align-items: center;
     justify-content: center;
-    gap: 0.3rem;
-    flex: 1 1 0;
     min-width: 0;
-    padding: 0.3rem 0.35rem;
+    padding: var(--bey-space-xs);
     border: none;
-    border-bottom: 2px solid transparent;
+    border-bottom: var(--bey-border-width-thick) solid transparent;
     background: none;
     color: var(--bey-property-group-text-muted);
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: var(--bey-font-size-2xs);
+    font-weight: var(--bey-font-weight-semibold);
     cursor: pointer;
 }
 
@@ -148,7 +121,7 @@
     color: var(--bey-property-group-text);
 }
 
-.bey-property-group-tab-active {
+.bey-property-group-tab.is-active {
     border-bottom-color: currentcolor;
     color: var(--bey-property-group-text);
 }
@@ -157,17 +130,30 @@
     cursor: not-allowed;
 }
 
-.bey-property-group-tab-panel {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.85rem 0.6rem;
+.bey-property-group-empty {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--bey-property-group-empty-height);
+    padding: var(--bey-space-lg);
 }
 
-.bey-property-group-tab-panel > * {
-    grid-column: span 2;
-    min-width: 0;
+.bey-property-group-empty-add {
+    display: flex;
+    gap: var(--bey-space-xs);
+    align-items: center;
+    justify-content: center;
+    padding: var(--bey-space-md) var(--bey-space-xl);
+    background: none;
+    border: var(--bey-border-width) dashed var(--bey-property-group-border);
+    border-radius: var(--bey-radius-md);
+    color: var(--bey-property-group-text);
+    font-size: var(--bey-font-size-sm);
+    font-weight: var(--bey-font-weight-semibold);
+    cursor: pointer;
 }
 
-.bey-property-group-tab-panel > .bey-property-field-half {
-    grid-column: span 1;
+.bey-property-group-empty-add:hover {
+    background: var(--bey-bg-hover);
 }

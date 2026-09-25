@@ -22,15 +22,15 @@ describe('PropertyTreeComponent', () => {
         component = fixture.componentInstance;
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
 
-        component.tabId = 'structure';
-        component.groupId = 'structure-tree';
-        component.nodes = [
+        fixture.componentRef.setInput('tabId', 'structure');
+        fixture.componentRef.setInput('groupId', 'structure-tree');
+        fixture.componentRef.setInput('nodes', [
             new PropertyTreeNode({
                 id: 'page-1',
-                label: 'Página 1',
-                children: [new PropertyTreeNode({ id: 'header', label: 'Encabezado' })]
+                label: 'Page 1',
+                children: [new PropertyTreeNode({ id: 'header', label: 'Header' })]
             })
-        ];
+        ]);
         fixture.detectChanges();
     });
 
@@ -39,7 +39,7 @@ describe('PropertyTreeComponent', () => {
             ...fixture.nativeElement.querySelectorAll('.bey-property-tree-label')
         ].map((element: unknown) => (element as HTMLElement).textContent?.trim());
 
-        expect(labels).toEqual(['Página 1', 'Encabezado']);
+        expect(labels).toEqual(['Page 1', 'Header']);
     });
 
     it('should call PropertiesMenuService.selectTreeNode when a row is clicked', () => {
@@ -65,7 +65,7 @@ describe('PropertyTreeComponent', () => {
     });
 
     it('should call PropertiesMenuService.triggerTreeAddBlock when the add-block button is clicked', () => {
-        component.addBlockLabel = 'Añadir bloque';
+        fixture.componentRef.setInput('addBlockLabel', 'Add block');
         fixture.detectChanges();
 
         const addBlockSpy = jest.spyOn(propertiesMenuService, 'triggerTreeAddBlock');
@@ -79,7 +79,7 @@ describe('PropertyTreeComponent', () => {
     it('should resolve a default node label into a prefixed translation key', () => {
         propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
 
-        expect(component.getLabelKey(new PropertyTreeNode({ id: 'page-1' }))).toBe(
+        expect(component.labelKey(new PropertyTreeNode({ id: 'page-1' }))).toBe(
             'app.properties-menu.tree.page-1.label'
         );
     });

@@ -1,17 +1,17 @@
-<bey-list [config]="listConfig">
+<bey-list [config]="listConfig()">
     <ng-template let-item>
         @let listItem = asItem(item);
 
         <div
             class="bey-property-list-item"
-            [class.bey-property-list-item-disabled]="listItem.disabled"
-            [class.bey-property-list-item-expandable]="listItem.isExpandable && !listItem.disabled"
+            [class.is-disabled]="listItem.disabled"
+            [class.is-expandable]="listItem.isExpandable && !listItem.disabled"
             (click)="onHeaderClick(listItem)"
         >
             @if (listItem.icon) {
                 <span
                     class="bey-property-list-item-icon"
-                    [ngClass]="listItem.iconClasses || 'bey-property-list-item-icon-default'"
+                    [class]="listItem.iconClasses || 'bey-property-list-item-icon--default'"
                 >
                     <fa-icon [icon]="listItem.icon"></fa-icon>
                 </span>
@@ -20,15 +20,15 @@
             <div class="bey-property-list-item-content">
                 <span
                     class="bey-property-list-item-label"
-                    [title]="getLabelKey(listItem) | translate: listItem.labelParameters"
+                    [title]="labelKey(listItem) | translate: listItem.labelParameters"
                 >
-                    {{ getLabelKey(listItem) | translate: listItem.labelParameters }}
+                    {{ labelKey(listItem) | translate: listItem.labelParameters }}
                 </span>
 
                 @if (listItem.badges.length > 0) {
                     <span class="bey-property-list-item-badges">
                         @for (badge of listItem.badges; track badge.label) {
-                            <span class="bey-badge" [ngClass]="badge.cssClass">{{ badge.label | translate }}</span>
+                            <span class="bey-badge" [class]="badge.cssClass">{{ badge.label | translate }}</span>
                         }
                     </span>
                 }
@@ -48,7 +48,7 @@
                     container="body"
                     (click)="onCopy($event, listItem)"
                 >
-                    <fa-icon [icon]="copiedItemId === listItem.id ? copiedIcon : copyIcon"></fa-icon>
+                    <fa-icon [icon]="copiedItemId() === listItem.id ? copiedIcon : copyIcon"></fa-icon>
                 </button>
             }
 
@@ -83,9 +83,9 @@
                 <button
                     type="button"
                     class="bey-property-list-item-chevron"
-                    [class.bey-property-list-item-chevron-expanded]="listItem.expanded"
+                    [class.is-expanded]="listItem.expanded"
                     [attr.aria-expanded]="listItem.expanded"
-                    [attr.aria-label]="getToggleLabelKey(listItem) | translate"
+                    [attr.aria-label]="toggleLabelKey(listItem) | translate"
                     [disabled]="listItem.disabled"
                     (click)="onToggle($event, listItem)"
                 >
@@ -97,7 +97,7 @@
         @if (listItem.isExpandable && listItem.expanded) {
             <div class="bey-property-list-item-body">
                 @for (row of listItem.body; track row.label) {
-                    <div class="bey-property-summary-row" [class.bey-property-summary-row-editable]="row.isEditable">
+                    <div class="bey-property-summary-row">
                         <span class="bey-property-summary-row-label">
                             @if (row.icon) {
                                 <fa-icon class="bey-property-summary-row-icon" [icon]="row.icon"></fa-icon>
@@ -110,7 +110,7 @@
                                 <bey-property-field [field]="row.field" [hideLabel]="true"></bey-property-field>
                             </div>
                         } @else if (row.badge) {
-                            <span class="bey-badge" [ngClass]="row.badge.cssClass">
+                            <span class="bey-badge" [class]="row.badge.cssClass">
                                 {{ row.badge.label | translate }}
                             </span>
                         } @else {

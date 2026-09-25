@@ -27,12 +27,12 @@ describe('PropertyListComponent', () => {
         component = fixture.componentInstance;
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
 
-        component.tabId = 'add';
-        component.groupId = 'simple-blocks';
-        component.items = [
+        fixture.componentRef.setInput('tabId', 'add');
+        fixture.componentRef.setInput('groupId', 'simple-blocks');
+        fixture.componentRef.setInput('items', [
             new PropertyListItem({ id: 'block-heading', label: 'Encabezado' }),
             new PropertyListItem({ disabled: true, id: 'block-locked', label: 'Bloqueado' })
-        ];
+        ]);
         fixture.detectChanges();
     });
 
@@ -63,30 +63,32 @@ describe('PropertyListComponent', () => {
     });
 
     it('should apply the icon classes an item brings instead of the default colour', () => {
-        component.items = [
+        fixture.componentRef.setInput('items', [
             new PropertyListItem({ icon: faCircleExclamation, id: 'block-heading', iconClasses: 'bey-text-danger' })
-        ];
+        ]);
         fixture.detectChanges();
 
         const icon: HTMLElement = fixture.nativeElement.querySelector('.bey-property-list-item-icon');
 
         expect(icon.classList.contains('bey-text-danger')).toBe(true);
-        expect(icon.classList.contains('bey-property-list-item-icon-default')).toBe(false);
+        expect(icon.classList.contains('bey-property-list-item-icon--default')).toBe(false);
     });
 
     it('should fall back to the default icon colour when an item brings none', () => {
-        component.items = [new PropertyListItem({ icon: faCircleExclamation, id: 'block-heading' })];
+        fixture.componentRef.setInput('items', [
+            new PropertyListItem({ icon: faCircleExclamation, id: 'block-heading' })
+        ]);
         fixture.detectChanges();
 
         const icon: HTMLElement = fixture.nativeElement.querySelector('.bey-property-list-item-icon');
 
-        expect(icon.classList.contains('bey-property-list-item-icon-default')).toBe(true);
+        expect(icon.classList.contains('bey-property-list-item-icon--default')).toBe(true);
     });
 
     it('should resolve a default item label into a prefixed translation key', () => {
         propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
 
-        expect(component.getLabelKey(new PropertyListItem({ id: 'block-heading' }))).toBe(
+        expect(component.labelKey(new PropertyListItem({ id: 'block-heading' }))).toBe(
             'app.properties-menu.list.block-heading.label'
         );
     });
@@ -107,8 +109,7 @@ const buildItem = (overrides: Partial<PropertyListItemParameters> = {}): Propert
         ...overrides
     });
 
-describe('PropertyListComponent con items desplegables', () => {
-    let component: PropertyListComponent;
+describe('PropertyListComponent with expandable items', () => {
     let fixture: ComponentFixture<PropertyListComponent>;
     let propertiesMenuService: PropertiesMenuService;
 
@@ -129,7 +130,7 @@ describe('PropertyListComponent con items desplegables', () => {
                 ]
             })
         );
-        component.items = items;
+        fixture.componentRef.setInput('items', items);
         fixture.detectChanges();
     };
 
@@ -140,11 +141,10 @@ describe('PropertyListComponent con items desplegables', () => {
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyListComponent);
-        component = fixture.componentInstance;
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
 
-        component.tabId = 'variables';
-        component.groupId = 'variables-list';
+        fixture.componentRef.setInput('tabId', 'variables');
+        fixture.componentRef.setInput('groupId', 'variables-list');
     });
 
     it('renders the badges an item brings', () => {
@@ -256,8 +256,7 @@ describe('PropertyListComponent con items desplegables', () => {
     });
 });
 
-describe('PropertyListComponent · etiquetas dentro del cuerpo', () => {
-    let component: PropertyListComponent;
+describe('PropertyListComponent body labels', () => {
     let fixture: ComponentFixture<PropertyListComponent>;
     let propertiesMenuService: PropertiesMenuService;
 
@@ -268,16 +267,15 @@ describe('PropertyListComponent · etiquetas dentro del cuerpo', () => {
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyListComponent);
-        component = fixture.componentInstance;
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
 
-        component.tabId = 'variables';
-        component.groupId = 'variables-list';
+        fixture.componentRef.setInput('tabId', 'variables');
+        fixture.componentRef.setInput('groupId', 'variables-list');
     });
 
     it('lets the row own the label, so the field does not repeat it', () => {
         propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
-        component.items = [
+        fixture.componentRef.setInput('items', [
             new PropertyListItem({
                 id: 'v1',
                 expanded: true,
@@ -288,7 +286,7 @@ describe('PropertyListComponent · etiquetas dentro del cuerpo', () => {
                     })
                 ]
             })
-        ];
+        ]);
         fixture.detectChanges();
 
         expect(fixture.nativeElement.querySelector('.bey-property-field-label')).toBeFalsy();
@@ -296,8 +294,7 @@ describe('PropertyListComponent · etiquetas dentro del cuerpo', () => {
     });
 });
 
-describe('PropertyListComponent · parámetros del mensaje', () => {
-    let component: PropertyListComponent;
+describe('PropertyListComponent label parameters', () => {
     let fixture: ComponentFixture<PropertyListComponent>;
     let translate: TranslateService;
 
@@ -308,23 +305,22 @@ describe('PropertyListComponent · parámetros del mensaje', () => {
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyListComponent);
-        component = fixture.componentInstance;
         translate = TestBed.inject(TranslateService);
         translate.setTranslation('es', { problems: { wrongType: 'Es {{actual}} y se espera {{expected}}' } });
         translate.use('es');
 
-        component.tabId = 'problems';
-        component.groupId = 'problems-list';
+        fixture.componentRef.setInput('tabId', 'problems');
+        fixture.componentRef.setInput('groupId', 'problems-list');
     });
 
     it('interpolates the parameters a list item carries', () => {
-        component.items = [
+        fixture.componentRef.setInput('items', [
             new PropertyListItem({
                 id: 'p1',
                 label: 'problems.wrongType',
                 labelParameters: { actual: 'pdf', expected: 'image' }
             })
-        ];
+        ]);
         fixture.detectChanges();
 
         const label = fixture.nativeElement.querySelector('.bey-property-list-item-label');
@@ -334,7 +330,7 @@ describe('PropertyListComponent · parámetros del mensaje', () => {
 
     it('still renders a label that takes no parameters', () => {
         translate.setTranslation('es', { problems: { plain: 'Sin parámetros' } }, true);
-        component.items = [new PropertyListItem({ id: 'p2', label: 'problems.plain' })];
+        fixture.componentRef.setInput('items', [new PropertyListItem({ id: 'p2', label: 'problems.plain' })]);
         fixture.detectChanges();
 
         const label = fixture.nativeElement.querySelector('.bey-property-list-item-label');
@@ -343,7 +339,7 @@ describe('PropertyListComponent · parámetros del mensaje', () => {
     });
 });
 
-describe('PropertyListComponent · copiar y acciones', () => {
+describe('PropertyListComponent copy and actions', () => {
     let component: PropertyListComponent;
     let fixture: ComponentFixture<PropertyListComponent>;
     let propertiesMenuService: PropertiesMenuService;
@@ -398,16 +394,16 @@ describe('PropertyListComponent · copiar y acciones', () => {
             })
         );
 
-        component.tabId = 'variables';
-        component.groupId = 'variables-list';
-        component.items = [
+        fixture.componentRef.setInput('tabId', 'variables');
+        fixture.componentRef.setInput('groupId', 'variables-list');
+        fixture.componentRef.setInput('items', [
             new PropertyListItem({
                 id: 'v1',
                 label: 'total',
                 copyValue: '{{ total }}',
                 actions: [{ key: 'duplicate', icon: faCircleExclamation, label: 'Duplicar' }]
             })
-        ];
+        ]);
         fixture.detectChanges();
     });
 
@@ -416,16 +412,16 @@ describe('PropertyListComponent · copiar y acciones', () => {
     });
 
     it('copies the expression the item carries, not its label', async () => {
-        await component.onCopy(new MouseEvent('click'), component.items[0]);
+        await component.onCopy(new MouseEvent('click'), component.items()[0]);
 
         expect(written).toEqual(['{{ total }}']);
     });
 
     it('marks the item as copied so the button can confirm it', async () => {
-        await component.onCopy(new MouseEvent('click'), component.items[0]);
+        await component.onCopy(new MouseEvent('click'), component.items()[0]);
 
-        expect(component.copiedItemId).toBe('v1');
-        expect(component.copyLabelKey(component.items[0])).toBe('angular-components.properties-menu.list.copied');
+        expect(component.copiedItemId()).toBe('v1');
+        expect(component.copyLabelKey(component.items()[0])).toBe('angular-components.properties-menu.list.copied');
     });
 
     it('does not leave the copied state on when the clipboard refuses', async () => {
@@ -434,9 +430,9 @@ describe('PropertyListComponent · copiar y acciones', () => {
             value: { writeText: () => Promise.reject(new Error('denied')) }
         });
 
-        await component.onCopy(new MouseEvent('click'), component.items[0]);
+        await component.onCopy(new MouseEvent('click'), component.items()[0]);
 
-        expect(component.copiedItemId).toBeUndefined();
+        expect(component.copiedItemId()).toBeNull();
     });
 
     it('reports the action key without selecting or toggling the card', () => {
@@ -451,7 +447,7 @@ describe('PropertyListComponent · copiar y acciones', () => {
     });
 
     it('renders no copy button when the item carries nothing to copy', () => {
-        component.items = [new PropertyListItem({ id: 'v2', label: 'otra' })];
+        fixture.componentRef.setInput('items', [new PropertyListItem({ id: 'v2', label: 'otra' })]);
         fixture.detectChanges();
 
         expect(fixture.nativeElement.querySelectorAll('.bey-property-list-item-action').length).toBe(0);

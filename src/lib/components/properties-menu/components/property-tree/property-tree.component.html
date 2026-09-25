@@ -5,27 +5,27 @@
                 type="button"
                 class="bey-property-tree-row"
                 [attr.data-node-id]="node.id"
-                [class.bey-property-tree-row-selected]="isSelected(node)"
-                [class.bey-property-tree-row-disabled]="node.disabled"
-                [class.bey-property-tree-row-draggable]="node.draggable"
-                [class.bey-property-tree-row-dragged]="isDragged(node)"
-                [class.bey-property-tree-row-drop-invalid]="isInvalidTarget(node)"
-                [class.bey-property-tree-row-drop-before]="dropPositionFor(node) === 'before'"
-                [class.bey-property-tree-row-drop-inside]="dropPositionFor(node) === 'inside'"
-                [class.bey-property-tree-row-drop-after]="dropPositionFor(node) === 'after'"
-                [style.padding-left.rem]="0.6 + level * 1"
+                [class.is-selected]="isSelected(node)"
+                [class.is-disabled]="node.disabled"
+                [class.is-draggable]="node.draggable"
+                [class.is-dragged]="isDragged(node)"
+                [class.is-drop-invalid]="isInvalidTarget(node)"
+                [class.is-drop-before]="dropPositionFor(node) === 'before'"
+                [class.is-drop-inside]="dropPositionFor(node) === 'inside'"
+                [class.is-drop-after]="dropPositionFor(node) === 'after'"
+                [style.--bey-property-tree-level]="level"
                 [disabled]="node.disabled"
                 (click)="onNodeClick(node)"
                 (pointerdown)="onRowPointerDown($event, node)"
             >
                 <span
                     class="bey-property-tree-toggle"
-                    [class.bey-property-tree-toggle-hidden]="!hasVisibleChildren(node)"
+                    [class.is-hidden]="!hasVisibleChildren(node)"
                     (click)="onToggleClick($event, node)"
                 >
                     <fa-icon
                         class="bey-property-tree-chevron"
-                        [class.bey-property-tree-chevron-expanded]="node.expanded"
+                        [class.is-expanded]="node.expanded"
                         [icon]="chevronIcon"
                     ></fa-icon>
                 </span>
@@ -36,7 +36,7 @@
                     </span>
                 }
 
-                <span class="bey-property-tree-label">{{ getLabelKey(node) | translate }}</span>
+                <span class="bey-property-tree-label">{{ labelKey(node) | translate }}</span>
             </button>
 
             @if (node.expanded && hasVisibleChildren(node)) {
@@ -52,13 +52,13 @@
 <div class="bey-property-tree">
     <ng-container
         [ngTemplateOutlet]="renderNodes"
-        [ngTemplateOutletContext]="{ $implicit: visibleNodes, level: 0 }"
+        [ngTemplateOutletContext]="{ $implicit: visibleNodes(), level: 0 }"
     ></ng-container>
 
-    @if (addBlockLabel) {
+    @if (addBlockLabel(); as label) {
         <button type="button" class="bey-property-tree-add-block" (click)="onAddBlockClick()">
             <fa-icon [icon]="addIcon"></fa-icon>
-            <span>{{ addBlockLabel | translate }}</span>
+            <span>{{ label | translate }}</span>
         </button>
     }
 </div>

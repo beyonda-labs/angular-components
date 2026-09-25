@@ -14,9 +14,6 @@
         "src/lib/components/properties-menu/components/fields/property-spacing-field/property-spacing-field.component.css",
         "src/lib/components/properties-menu/components/fields/property-toggle-field/property-toggle-field.component.css",
         "src/lib/components/properties-menu/components/property-field/property-field.component.css",
-        "src/lib/components/properties-menu/components/property-group/property-group.component.css",
-        "src/lib/components/properties-menu/components/property-list/property-list.component.css",
-        "src/lib/components/properties-menu/components/property-tree/property-tree.component.css",
         "src/lib/internal/button/button.component.css"
     ]
 }

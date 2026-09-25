@@ -30,13 +30,16 @@ describe('PropertyGroupComponent', () => {
         component = fixture.componentInstance;
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
 
-        component.tabId = 'properties';
-        component.group = new PropertyGroup({
-            id: 'content',
-            label: 'Contenido',
-            expanded: true,
-            content: new PropertyFieldsContent({})
-        });
+        fixture.componentRef.setInput('tabId', 'properties');
+        fixture.componentRef.setInput(
+            'group',
+            new PropertyGroup({
+                id: 'content',
+                label: 'Contenido',
+                expanded: true,
+                content: new PropertyFieldsContent({})
+            })
+        );
         fixture.detectChanges();
     });
 
@@ -56,7 +59,10 @@ describe('PropertyGroupComponent', () => {
     });
 
     it('should not toggle a disabled group', () => {
-        component.group = new PropertyGroup({ id: 'content', label: 'Contenido', disabled: true });
+        fixture.componentRef.setInput(
+            'group',
+            new PropertyGroup({ id: 'content', label: 'Contenido', disabled: true })
+        );
         fixture.detectChanges();
 
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleGroup');
@@ -67,7 +73,10 @@ describe('PropertyGroupComponent', () => {
     });
 
     it('should not render the body when collapsed', () => {
-        component.group = new PropertyGroup({ id: 'content', label: 'Contenido', expanded: false });
+        fixture.componentRef.setInput(
+            'group',
+            new PropertyGroup({ id: 'content', label: 'Contenido', expanded: false })
+        );
         fixture.detectChanges();
 
         expect(fixture.nativeElement.querySelector('.bey-property-group-body')).toBeFalsy();
@@ -75,22 +84,22 @@ describe('PropertyGroupComponent', () => {
 
     it('should resolve the default label into a prefixed translation key', () => {
         propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
-        component.group = new PropertyGroup({ id: 'content' });
+        fixture.componentRef.setInput('group', new PropertyGroup({ id: 'content' }));
         fixture.detectChanges();
 
-        expect(component.labelKey).toBe('app.properties-menu.groups.content.label');
+        expect(component.labelKey()).toBe('app.properties-menu.groups.content.label');
     });
 
     it('should keep an explicit label as-is', () => {
-        component.group = new PropertyGroup({ id: 'content', label: 'Contenido' });
+        fixture.componentRef.setInput('group', new PropertyGroup({ id: 'content', label: 'Contenido' }));
         fixture.detectChanges();
 
-        expect(component.labelKey).toBe('Contenido');
+        expect(component.labelKey()).toBe('Contenido');
     });
 
     it('should expose the full label as a tooltip, since a long one is truncated', () => {
         const name = 'unaVariableConUnNombreExageradamenteLargoQueNoCabe';
-        component.group = new PropertyGroup({ id: 'variable', label: name });
+        fixture.componentRef.setInput('group', new PropertyGroup({ id: 'variable', label: name }));
         fixture.detectChanges();
 
         const label = fixture.nativeElement.querySelector('.bey-property-group-label');
@@ -99,25 +108,28 @@ describe('PropertyGroupComponent', () => {
     });
 
     it('should not render a header when showHeader is false', () => {
-        component.group = new PropertyGroup({ id: 'content', showHeader: false });
+        fixture.componentRef.setInput('group', new PropertyGroup({ id: 'content', showHeader: false }));
         fixture.detectChanges();
 
         expect(fixture.nativeElement.querySelector('.bey-property-group-header')).toBeNull();
     });
 
     it('should stay expanded when showHeader is false', () => {
-        component.group = new PropertyGroup({ id: 'content', showHeader: false });
+        fixture.componentRef.setInput('group', new PropertyGroup({ id: 'content', showHeader: false }));
         fixture.detectChanges();
 
         expect(fixture.nativeElement.querySelector('.bey-property-group-body')).toBeTruthy();
     });
 
     it('should render the list content and skip tree/fields rendering', () => {
-        component.group = new PropertyGroup({
-            id: 'add-block',
-            expanded: true,
-            content: new PropertyListContent({ list: [new PropertyListItem({ id: 'block-heading' })] })
-        });
+        fixture.componentRef.setInput(
+            'group',
+            new PropertyGroup({
+                id: 'add-block',
+                expanded: true,
+                content: new PropertyListContent({ list: [new PropertyListItem({ id: 'block-heading' })] })
+            })
+        );
         fixture.detectChanges();
 
         expect(fixture.nativeElement.querySelector('bey-property-list')).toBeTruthy();
@@ -125,13 +137,16 @@ describe('PropertyGroupComponent', () => {
     });
 
     it('should render the tree content and skip list/fields rendering', () => {
-        component.group = new PropertyGroup({
-            id: 'structure',
-            expanded: true,
-            content: new PropertyTreeContent({
-                tree: new PropertyTreeConfig({ nodes: [new PropertyTreeNode({ id: 'page-1' })] })
+        fixture.componentRef.setInput(
+            'group',
+            new PropertyGroup({
+                id: 'structure',
+                expanded: true,
+                content: new PropertyTreeContent({
+                    tree: new PropertyTreeConfig({ nodes: [new PropertyTreeNode({ id: 'page-1' })] })
+                })
             })
-        });
+        );
         fixture.detectChanges();
 
         expect(fixture.nativeElement.querySelector('bey-property-tree')).toBeTruthy();
@@ -139,61 +154,73 @@ describe('PropertyGroupComponent', () => {
     });
 
     it('should not render the empty-state add-block button when the tree has nodes', () => {
-        component.group = new PropertyGroup({
-            id: 'structure',
-            expanded: true,
-            content: new PropertyTreeContent({
-                tree: new PropertyTreeConfig({
-                    nodes: [new PropertyTreeNode({ id: 'page-1' })],
-                    addBlockLabel: 'add.label',
-                    showEmptyStateAddBlock: true
+        fixture.componentRef.setInput(
+            'group',
+            new PropertyGroup({
+                id: 'structure',
+                expanded: true,
+                content: new PropertyTreeContent({
+                    tree: new PropertyTreeConfig({
+                        nodes: [new PropertyTreeNode({ id: 'page-1' })],
+                        addBlockLabel: 'add.label',
+                        showEmptyStateAddBlock: true
+                    })
                 })
             })
-        });
+        );
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-property-tab-empty-add-block')).toBeNull();
+        expect(fixture.nativeElement.querySelector('.bey-property-group-empty-add')).toBeNull();
     });
 
     it('should not render the empty-state add-block button when showEmptyStateAddBlock is false', () => {
-        component.group = new PropertyGroup({
-            id: 'structure',
-            expanded: true,
-            content: new PropertyTreeContent({ tree: new PropertyTreeConfig({ addBlockLabel: 'add.label' }) })
-        });
+        fixture.componentRef.setInput(
+            'group',
+            new PropertyGroup({
+                id: 'structure',
+                expanded: true,
+                content: new PropertyTreeContent({ tree: new PropertyTreeConfig({ addBlockLabel: 'add.label' }) })
+            })
+        );
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-property-tab-empty-add-block')).toBeNull();
+        expect(fixture.nativeElement.querySelector('.bey-property-group-empty-add')).toBeNull();
     });
 
     it('should render the empty-state add-block button when the tree is empty and opted in', () => {
-        component.group = new PropertyGroup({
-            id: 'structure',
-            expanded: true,
-            content: new PropertyTreeContent({
-                tree: new PropertyTreeConfig({ addBlockLabel: 'add.label', showEmptyStateAddBlock: true })
+        fixture.componentRef.setInput(
+            'group',
+            new PropertyGroup({
+                id: 'structure',
+                expanded: true,
+                content: new PropertyTreeContent({
+                    tree: new PropertyTreeConfig({ addBlockLabel: 'add.label', showEmptyStateAddBlock: true })
+                })
             })
-        });
+        );
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-property-tab-empty-add-block')).toBeTruthy();
+        expect(fixture.nativeElement.querySelector('.bey-property-group-empty-add')).toBeTruthy();
     });
 
     it('should trigger the tree add-block event for the tab/group when the empty-state button is clicked', () => {
-        component.group = new PropertyGroup({
-            id: 'structure',
-            expanded: true,
-            content: new PropertyTreeContent({
-                tree: new PropertyTreeConfig({ addBlockLabel: 'add.label', showEmptyStateAddBlock: true })
+        fixture.componentRef.setInput(
+            'group',
+            new PropertyGroup({
+                id: 'structure',
+                expanded: true,
+                content: new PropertyTreeContent({
+                    tree: new PropertyTreeConfig({ addBlockLabel: 'add.label', showEmptyStateAddBlock: true })
+                })
             })
-        });
+        );
         const onTreeAddBlock = jest.fn();
         propertiesMenuService.setConfig(
             new PropertiesMenuConfig({ ...propertiesMenuService.config(), onTreeAddBlock })
         );
         fixture.detectChanges();
 
-        const button: HTMLButtonElement = fixture.nativeElement.querySelector('.bey-property-tab-empty-add-block');
+        const button: HTMLButtonElement = fixture.nativeElement.querySelector('.bey-property-group-empty-add');
         button.click();
 
         expect(onTreeAddBlock).toHaveBeenCalledWith({ groupId: 'structure', tabId: 'properties' });
