@@ -1,181 +1,85 @@
 :host {
-    --bey-field-fg: var(--bey-text-primary);
-    --bey-field-ph: rgba(var(--bey-black-rgb), 0.36);
+    --bey-form-field-fg: var(--bey-text-primary);
+    --bey-form-field-placeholder: var(--bey-text-disabled);
+    --bey-form-field-control-height: 2.125rem;
+    --bey-form-field-action-fg: var(--bey-secondary);
+    --bey-form-field-action-fg-hover: var(--bey-text-primary);
+    --bey-form-field-action-bg-hover: var(--bey-bg-active);
+    --bey-form-field-action-bg-active: var(--bey-bg-hover);
 
     display: block;
     min-width: 0;
 }
 
-:host-context(body.dark) {
-    --bey-field-ph: rgba(var(--bey-white-rgb), 0.36);
+.bey-form-field-control {
+    min-height: var(--bey-form-field-control-height);
+    padding: var(--bey-space-xs) var(--bey-space-md);
+    color: var(--bey-form-field-fg);
+    font-size: var(--bey-font-size-md);
+    line-height: var(--bey-line-height-base);
+    border-radius: var(--bey-radius-sm);
 }
 
-.form-control,
-.form-select,
-.form-check-label {
-    color: var(--bey-field-fg);
-    font-size: 0.84rem;
-    line-height: 1.35;
+.bey-form-field-control::placeholder {
+    color: var(--bey-form-field-placeholder);
+    font-size: var(--bey-font-size-sm);
 }
 
-.form-control,
-.form-select {
-    min-height: 2.1rem;
-    padding: 0.4rem 0.7rem;
-    border-radius: 0.3rem;
-}
-
-textarea.form-control {
-    min-height: 5.25rem;
-}
-
-.form-control::placeholder {
-    color: var(--bey-field-ph);
-    font-size: 0.82rem;
-}
-
-.form-check {
+.bey-form-field-check {
     display: flex;
     align-items: center;
-    gap: 0.45rem;
-    min-height: 1.1rem;
-    margin-bottom: 0.4rem;
+    gap: var(--bey-space-xs);
+    min-height: var(--bey-space-lg);
+    margin-bottom: var(--bey-space-xs);
     padding-left: 0;
 }
 
-.form-check-input {
-    float: none;
+.bey-form-field-check-input {
     flex-shrink: 0;
-    margin-left: 0;
-    margin-top: 0;
-    width: 0.9rem;
-    height: 0.9rem;
+    float: none;
+    width: var(--bey-space-lg);
+    height: var(--bey-space-lg);
+    margin: 0;
 }
 
-.form-check-label {
-    font-size: 0.82rem;
+.bey-form-field-check-label {
     margin-bottom: 0;
-    line-height: 1.25;
+    color: var(--bey-form-field-fg);
+    font-size: var(--bey-font-size-sm);
+    line-height: var(--bey-line-height-base);
 }
 
-/* ─── Number input custom spinners ──────────────────────────────────────── */
-.bey-number-wrapper {
-    position: relative;
-}
-
-.bey-number-wrapper .form-control {
-    padding-right: 1.75rem;
-}
-
-.bey-number-wrapper .form-control::-webkit-inner-spin-button,
-.bey-number-wrapper .form-control::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    appearance: none;
-}
-
-.bey-number-spinners {
-    position: absolute;
-    right: 1px;
-    top: 1px;
-    bottom: 1px;
-    width: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    border-radius: 0 calc(0.3rem - 1px) calc(0.3rem - 1px) 0;
-    overflow: hidden;
-}
-
-.bey-spin-btn {
-    flex: 1;
+.bey-form-field-action {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    border: none;
     padding: 0;
-    cursor: pointer;
-    color: var(--bey-secondary);
-    transition:
-        background-color 0.15s ease,
-        color 0.15s ease;
-    line-height: 1;
-}
-
-.bey-spin-btn:hover:not(:disabled) {
-    background-color: var(--bey-bg-active);
-    color: var(--bey-text-primary);
-}
-
-.bey-spin-btn:active:not(:disabled) {
-    background-color: var(--bey-bg-hover);
-}
-
-.bey-spin-btn:disabled {
-    cursor: default;
-    opacity: 0.35;
-}
-
-/* ─── Switch (toggle) checkbox ───────────────────────────────────────────── */
-.bey-switch-check {
-    align-items: center;
-}
-
-.bey-switch {
-    position: relative;
-    display: inline-flex;
-    flex-shrink: 0;
-    width: 2.15rem;
-    height: 1.15rem;
-}
-
-.bey-switch-input {
-    -webkit-appearance: none;
-    appearance: none;
-    position: absolute;
-    inset: 0;
-    margin: 0;
-    border: 1px solid var(--bey-secondary);
-    border-radius: 1rem;
-    background-color: var(--bey-bg-muted);
+    border: none;
+    background: transparent;
+    color: var(--bey-form-field-action-fg);
     cursor: pointer;
     transition:
-        background-color 0.2s ease,
-        border-color 0.2s ease;
+        background-color var(--bey-duration-fast) var(--bey-easing-standard),
+        color var(--bey-duration-fast) var(--bey-easing-standard);
 }
 
-.bey-switch-knob {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 0.95rem;
-    height: 0.95rem;
-    border-radius: 50%;
-    background-color: var(--bey-bg-page);
-    box-shadow: 0 1px 2px rgba(var(--bey-black-rgb), 0.25);
-    pointer-events: none;
-    transition: transform 0.2s ease;
+.bey-form-field-action:hover:not(:disabled) {
+    background-color: var(--bey-form-field-action-bg-hover);
+    color: var(--bey-form-field-action-fg-hover);
 }
 
-.bey-switch-input:checked {
-    background-color: var(--bey-primary);
-    border-color: var(--bey-primary);
+.bey-form-field-action:active:not(:disabled) {
+    background-color: var(--bey-form-field-action-bg-active);
 }
 
-.bey-switch-input:checked ~ .bey-switch-knob {
-    transform: translateX(1rem);
-}
-
-.bey-switch-input:disabled {
-    opacity: 0.5;
+.bey-form-field-action:disabled {
+    opacity: var(--bey-opacity-disabled);
     cursor: default;
 }
 
-.bey-switch-input:focus-visible {
-    outline: 2px solid var(--bey-primary);
-    outline-offset: 2px;
-}
+/* Blocks below belong to the fields still to migrate and move to their own stylesheets with them. */
+/* stylelint-disable selector-class-pattern, scale-unlimited/declaration-strict-value -- legacy, pending split */
 
-/* ─── Chips ──────────────────────────────────────────────────────────────── */
 .bey-chips-control {
     display: flex;
     flex-wrap: wrap;
@@ -224,9 +128,6 @@ textarea.form-control {
     color: var(--bey-secondary);
     font-size: 0.68rem;
     cursor: pointer;
-    transition:
-        background-color 0.15s ease,
-        color 0.15s ease;
 }
 
 .bey-chip-remove:hover {
@@ -245,54 +146,15 @@ textarea.form-control {
     outline: none;
     background: transparent;
     padding: 0.15rem 0;
-    color: var(--bey-field-fg);
+    color: var(--bey-form-field-fg);
     font-size: 0.84rem;
 }
 
 .bey-chips-input::placeholder {
-    color: var(--bey-field-ph);
+    color: var(--bey-form-field-placeholder);
     font-size: 0.82rem;
 }
 
-/* ─── Password toggle ────────────────────────────────────────────────────── */
-.bey-password-wrapper {
-    position: relative;
-}
-
-.bey-password-wrapper .form-control {
-    padding-right: 2.25rem;
-}
-
-.bey-password-toggle {
-    position: absolute;
-    right: 1px;
-    top: 1px;
-    bottom: 1px;
-    width: 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    border-radius: 0 calc(0.3rem - 1px) calc(0.3rem - 1px) 0;
-    padding: 0;
-    cursor: pointer;
-    color: var(--bey-secondary);
-    transition:
-        background-color 0.15s ease,
-        color 0.15s ease;
-}
-
-.bey-password-toggle:hover {
-    background-color: var(--bey-bg-active);
-    color: var(--bey-text-primary);
-}
-
-.bey-password-toggle:active {
-    background-color: var(--bey-bg-hover);
-}
-
-/* ─── Autocomplete ───────────────────────────────────────────────────────── */
 .bey-autocomplete {
     position: relative;
 }
@@ -326,7 +188,6 @@ textarea.form-control {
     color: var(--bey-secondary);
     font-size: 0.72rem;
     cursor: pointer;
-    transition: color 0.15s ease;
 }
 
 .bey-autocomplete-action:hover:not(:disabled) {
@@ -351,8 +212,6 @@ textarea.form-control {
     transform: rotate(180deg);
 }
 
-/* Moved to <body> and positioned with fixed coordinates by the component, so a scrollable ancestor
-   (a modal body, say) cannot clip it — the same trick bey-variable-picker uses. */
 .bey-autocomplete-panel {
     position: fixed;
     z-index: 1080;
@@ -360,15 +219,11 @@ textarea.form-control {
     flex-direction: column;
     max-height: 13rem;
     overflow-y: auto;
-    border: 1px solid var(--bey-gray-200);
+    border: 1px solid var(--bey-border-subtle);
     border-radius: 0.3rem;
     padding: 0.2rem;
     background: var(--bey-bg-surface);
-    box-shadow: 0 12px 32px rgba(var(--bey-black-rgb), 0.14);
-}
-
-body.dark .bey-autocomplete-panel {
-    border-color: var(--bey-gray-800);
+    box-shadow: var(--bey-shadow-md);
 }
 
 .bey-autocomplete-option {
@@ -378,7 +233,7 @@ body.dark .bey-autocomplete-panel {
     border-radius: 0.25rem;
     padding: 0.35rem 0.5rem;
     background: transparent;
-    color: var(--bey-field-fg);
+    color: var(--bey-form-field-fg);
     font-size: 0.82rem;
     text-align: left;
     text-overflow: ellipsis;
@@ -440,7 +295,6 @@ body.dark .bey-autocomplete-panel {
     color: var(--bey-text-primary);
     font-size: 0.78rem;
     cursor: pointer;
-    transition: background-color 0.15s ease;
 }
 
 .bey-file-button:hover:not(:disabled) {
@@ -490,9 +344,6 @@ body.dark .bey-autocomplete-panel {
     color: var(--bey-secondary);
     font-size: 0.72rem;
     cursor: pointer;
-    transition:
-        background-color 0.15s ease,
-        color 0.15s ease;
 }
 
 .bey-file-clear:hover {

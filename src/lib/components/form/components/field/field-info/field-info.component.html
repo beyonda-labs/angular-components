@@ -1,12 +1,10 @@
-@if (field) {
-    <div class="bey-info-field">
-        @for (item of field.items; track $index) {
-            <span class="bey-info-field-item">
-                @if (item.icon) {
-                    <fa-icon class="bey-info-field-icon" [icon]="item.icon"></fa-icon>
-                }
-                <span class="bey-info-field-label">{{ item.label }}</span>
-            </span>
-        }
-    </div>
-}
+<div class="bey-form-info">
+    @for (item of field().items; track $index) {
+        <span class="bey-form-info-item">
+            @if (item.icon) {
+                <fa-icon class="bey-form-info-icon" [icon]="item.icon"></fa-icon>
+            }
+            <span>{{ item.label }}</span>
+        </span>
+    }
+</div>

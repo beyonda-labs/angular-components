@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -6,6 +6,7 @@ import { FormSelectField } from '../../../models/fields/form-select-field.model'
 import { FormFieldOption } from '../../../models/form-field.model';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, TranslateModule],
     selector: 'bey-form-select-field',
     standalone: true,
@@ -13,17 +14,16 @@ import { FormFieldOption } from '../../../models/form-field.model';
     templateUrl: './field-select.component.html'
 })
 export class FormSelectFieldComponent {
-    @Input({ required: true }) field!: FormSelectField;
-    @Input({ required: true }) prefix!: string;
-    @Input() options: FormFieldOption[] = [];
+    readonly control = input.required<FormControl<string | null>>();
+    readonly field = input.required<FormSelectField>();
+    readonly options = input<FormFieldOption[]>([]);
+    readonly prefix = input.required<string>();
 
-    @Input({ required: true }) control!: FormControl<string | null>;
-
-    getPlaceholder(): string {
-        return this.field.placeholder ?? `${this.prefix}.placeholder`;
-    }
+    readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
 
     isInvalid(): boolean {
-        return (this.control?.invalid && this.control?.touched) ?? false;
+        const control = this.control();
+
+        return control.invalid && control.touched;
     }
 }

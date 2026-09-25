@@ -1,35 +1,31 @@
-@if (field && control) {
-    <div class="form-check" [class.bey-switch-check]="field.isSwitch">
-        @if (field.isSwitch) {
-            <span class="bey-switch">
-                <input
-                    class="bey-switch-input"
-                    type="checkbox"
-                    role="switch"
-                    [id]="field.key"
-                    [formControl]="control"
-                    [attr.aria-required]="field.isRequired || null"
-                    [attr.aria-invalid]="isInvalid() || null"
-                    [attr.aria-label]="!field.isLabelVisible ? (getLabel() | translate) : null"
-                />
-                <span class="bey-switch-knob" aria-hidden="true"></span>
-            </span>
-        } @else {
+<div class="form-check bey-form-field-check">
+    @if (field().isSwitch) {
+        <span class="bey-form-checkbox-switch">
             <input
-                class="form-check-input"
+                class="bey-form-checkbox-switch-input"
                 type="checkbox"
-                [id]="field.key"
-                [formControl]="control"
-                [attr.aria-required]="field.isRequired || null"
+                role="switch"
+                [id]="field().key"
+                [formControl]="control()"
+                [attr.aria-required]="field().isRequired || null"
                 [attr.aria-invalid]="isInvalid() || null"
-                [attr.aria-label]="!field.isLabelVisible ? (getLabel() | translate) : null"
+                [attr.aria-label]="field().isLabelVisible ? null : (label() | translate)"
             />
-        }
+            <span class="bey-form-checkbox-switch-knob" aria-hidden="true"></span>
+        </span>
+    } @else {
+        <input
+            class="form-check-input bey-form-field-check-input"
+            type="checkbox"
+            [id]="field().key"
+            [formControl]="control()"
+            [attr.aria-required]="field().isRequired || null"
+            [attr.aria-invalid]="isInvalid() || null"
+            [attr.aria-label]="field().isLabelVisible ? null : (label() | translate)"
+        />
+    }
 
-        @if (field.isLabelVisible) {
-            <label class="form-check-label" [for]="field.key">
-                {{ getLabel() | translate }}
-            </label>
-        }
-    </div>
-}
+    @if (field().isLabelVisible) {
+        <label class="form-check-label bey-form-field-check-label" [for]="field().key">{{ label() | translate }}</label>
+    }
+</div>

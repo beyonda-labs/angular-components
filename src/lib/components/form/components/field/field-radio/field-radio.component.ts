@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -6,6 +6,7 @@ import { FormRadioField } from '../../../models/fields/form-radio-field.model';
 import { FormFieldOption } from '../../../models/form-field.model';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, TranslateModule],
     selector: 'bey-form-radio-field',
     standalone: true,
@@ -13,13 +14,14 @@ import { FormFieldOption } from '../../../models/form-field.model';
     templateUrl: './field-radio.component.html'
 })
 export class FormRadioFieldComponent {
-    @Input({ required: true }) field!: FormRadioField;
-    @Input({ required: true }) prefix!: string;
-    @Input() options: FormFieldOption[] = [];
-
-    @Input({ required: true }) control!: FormControl<string | null>;
+    readonly control = input.required<FormControl<string | null>>();
+    readonly field = input.required<FormRadioField>();
+    readonly options = input<FormFieldOption[]>([]);
+    readonly prefix = input.required<string>();
 
     isInvalid(): boolean {
-        return (this.control?.invalid && this.control?.touched) ?? false;
+        const control = this.control();
+
+        return control.invalid && control.touched;
     }
 }

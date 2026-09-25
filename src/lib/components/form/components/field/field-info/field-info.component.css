@@ -3,25 +3,25 @@
     min-width: 0;
 }
 
-.bey-info-field {
+.bey-form-info {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.25rem 1rem;
-    min-height: 2.1rem;
-    padding: 0.4rem 0;
+    gap: var(--bey-space-2xs) var(--bey-space-lg);
+    min-height: 2.125rem;
+    padding: var(--bey-space-xs) 0;
 }
 
-.bey-info-field-item {
+.bey-form-info-item {
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: var(--bey-space-xs);
     color: var(--bey-text-primary);
-    font-size: 0.84rem;
-    line-height: 1.35;
+    font-size: var(--bey-font-size-md);
+    line-height: var(--bey-line-height-base);
 }
 
-.bey-info-field-icon {
+.bey-form-info-icon {
     color: var(--bey-text-muted);
-    font-size: 0.8em;
+    font-size: var(--bey-font-size-sm);
 }

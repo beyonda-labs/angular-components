@@ -1,55 +1,40 @@
-@if (field && control) {
-    <div class="bey-number-wrapper">
-        <input
-            class="form-control form-control-sm"
-            type="number"
-            [id]="field.key"
-            [formControl]="control"
-            placeholder="{{ getPlaceholder() | translate }}"
-            [attr.min]="field.min ?? null"
-            [attr.max]="field.max ?? null"
-            [attr.aria-required]="field.isRequired || null"
-            [attr.aria-invalid]="isInvalid() || null"
-        />
-        <div class="bey-number-spinners">
-            <button
-                type="button"
-                class="bey-spin-btn bey-spin-up"
-                tabindex="-1"
-                [disabled]="isIncrementDisabled()"
-                (click)="increment()"
-                aria-label="Increment"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="10"
-                    height="6"
-                    viewBox="0 0 10 6"
-                    fill="currentColor"
-                    aria-hidden="true"
-                >
-                    <path d="M5 0 10 6H0z" />
-                </svg>
-            </button>
-            <button
-                type="button"
-                class="bey-spin-btn bey-spin-down"
-                tabindex="-1"
-                [disabled]="isDecrementDisabled()"
-                (click)="decrement()"
-                aria-label="Decrement"
-            >
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="10"
-                    height="6"
-                    viewBox="0 0 10 6"
-                    fill="currentColor"
-                    aria-hidden="true"
-                >
-                    <path d="M5 6 0 0h10z" />
-                </svg>
-            </button>
-        </div>
+<div class="bey-form-number">
+    <input
+        class="form-control form-control-sm bey-form-field-control bey-form-number-input"
+        type="number"
+        [id]="field().key"
+        [formControl]="control()"
+        [placeholder]="placeholder() | translate"
+        [attr.min]="field().min ?? null"
+        [attr.max]="field().max ?? null"
+        [attr.aria-required]="field().isRequired || null"
+        [attr.aria-invalid]="isInvalid() || null"
+    />
+
+    <div class="bey-form-number-spinners">
+        <button
+            type="button"
+            class="bey-form-field-action bey-form-number-spin"
+            tabindex="-1"
+            [disabled]="isIncrementDisabled()"
+            [attr.aria-label]="'angular-components.form.number-field.increment' | translate"
+            (click)="increment()"
+        >
+            <svg class="bey-form-number-spin-icon" viewBox="0 0 10 6" fill="currentColor" aria-hidden="true">
+                <path d="M5 0 10 6H0z" />
+            </svg>
+        </button>
+        <button
+            type="button"
+            class="bey-form-field-action bey-form-number-spin"
+            tabindex="-1"
+            [disabled]="isDecrementDisabled()"
+            [attr.aria-label]="'angular-components.form.number-field.decrement' | translate"
+            (click)="decrement()"
+        >
+            <svg class="bey-form-number-spin-icon" viewBox="0 0 10 6" fill="currentColor" aria-hidden="true">
+                <path d="M5 6 0 0h10z" />
+            </svg>
+        </button>
     </div>
-}
+</div>

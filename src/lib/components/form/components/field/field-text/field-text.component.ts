@@ -1,10 +1,11 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { FormTextField } from '../../../models/fields/form-text-field.model';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, TranslateModule],
     selector: 'bey-form-text-field',
     standalone: true,
@@ -12,16 +13,15 @@ import { FormTextField } from '../../../models/fields/form-text-field.model';
     templateUrl: './field-text.component.html'
 })
 export class FormTextFieldComponent {
-    @Input({ required: true }) field!: FormTextField;
-    @Input({ required: true }) prefix!: string;
+    readonly control = input.required<FormControl<string | null>>();
+    readonly field = input.required<FormTextField>();
+    readonly prefix = input.required<string>();
 
-    @Input({ required: true }) control!: FormControl<string | null>;
-
-    getPlaceholder(): string {
-        return this.field.placeholder ?? `${this.prefix}.placeholder`;
-    }
+    readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
 
     isInvalid(): boolean {
-        return (this.control?.invalid && this.control?.touched) ?? false;
+        const control = this.control();
+
+        return control.invalid && control.touched;
     }
 }

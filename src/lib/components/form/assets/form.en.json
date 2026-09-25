@@ -27,6 +27,14 @@
                 },
                 "type": "Form"
             },
+            "number-field": {
+                "decrement": "Decrease",
+                "increment": "Increase"
+            },
+            "password-field": {
+                "hide": "Hide password",
+                "show": "Show password"
+            },
             "required": "This field is required",
             "steps": {
                 "back": "Back",

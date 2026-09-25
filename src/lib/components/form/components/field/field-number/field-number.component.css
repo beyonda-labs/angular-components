@@ -1,0 +1,33 @@
+.bey-form-number {
+    position: relative;
+}
+
+.bey-form-number-input {
+    padding-right: var(--bey-space-xl);
+    appearance: textfield;
+}
+
+.bey-form-number-input::-webkit-inner-spin-button,
+.bey-form-number-input::-webkit-outer-spin-button {
+    appearance: none;
+}
+
+.bey-form-number-spinners {
+    position: absolute;
+    inset: var(--bey-border-width) var(--bey-border-width) var(--bey-border-width) auto;
+    display: flex;
+    flex-direction: column;
+    width: var(--bey-space-xl);
+    overflow: hidden;
+    border-radius: 0 var(--bey-radius-sm) var(--bey-radius-sm) 0;
+}
+
+.bey-form-number-spin {
+    flex: 1;
+    line-height: var(--bey-line-height-none);
+}
+
+.bey-form-number-spin-icon {
+    width: var(--bey-space-sm);
+    height: var(--bey-space-xs);
+}

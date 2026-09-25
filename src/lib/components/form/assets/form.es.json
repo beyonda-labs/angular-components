@@ -27,6 +27,14 @@
                 },
                 "type": "Formulario"
             },
+            "number-field": {
+                "decrement": "Disminuir",
+                "increment": "Aumentar"
+            },
+            "password-field": {
+                "hide": "Ocultar contraseña",
+                "show": "Mostrar contraseña"
+            },
             "required": "Este campo es requerido",
             "steps": {
                 "back": "Atrás",
