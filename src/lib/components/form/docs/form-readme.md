@@ -1,363 +1,158 @@
-# Form Component (`bey-form`)
+# Form
 
-Model-driven form component built from sections, rows, and fields.
+A form built from a config: sections of rows of fields, the buttons under them and the callbacks the
+consumer cares about. `bey-form` owns the controls; the consumer talks to them through a handle.
 
-Supported capabilities:
-
--   Dynamic sections and row layouts.
--   Multiple field types: text, textarea, number, date, select, radio, checkbox, chips.
--   Sync and async validation.
--   Action buttons (cancel, submit, next, previous, optional).
--   i18n via `i18nPrefix`.
--   Lifecycle callbacks: `onFormGroupAdded`, `onValueChange`, `onSubmit`, `onCancel`.
--   Modal variant: open a form inside a dialog via `BeyModalFormService` + `BeyModalFormConfig`.
-
----
-
-## Quick start
+## Usage
 
 ```ts
-import {
-    BeyFormButton,
-    BeyFormButtonType,
-    BeyFormConfig,
-    BeyFormDateField,
-    BeyFormNumberField,
-    BeyFormRow,
-    BeyFormSection,
-    BeyFormTextField
-} from '@beyonda-labs/angular-components';
-
-const form = new BeyFormConfig({
-    i18nPrefix: 'userForm',
+readonly form = new BeyFormConfig<ContactValue>({
+    prefix: 'myApp.contact',
     sections: [
         new BeyFormSection({
-            key: 'profile',
+            key: 'person',
             rows: [
                 new BeyFormRow({
                     fields: [
                         new BeyFormTextField({ key: 'name', columns: 6, isRequired: true }),
-                        new BeyFormNumberField({ key: 'age', columns: 3, min: 18, max: 99 }),
-                        new BeyFormDateField({
-                            key: 'joinDate',
-                            columns: 3,
-                            minDate: '2026-01-01',
-                            maxDate: '2026-12-31'
-                        })
+                        new BeyFormTextField({ key: 'email', columns: 6, validators: [new BeyFormFieldEmailValidator()] })
                     ]
                 })
             ]
         })
     ],
     buttons: [
-        new BeyFormButton({ type: BeyFormButtonType.Cancel, label: 'cancel' }),
-        new BeyFormButton({ type: BeyFormButtonType.Submit, label: 'save' })
-    ]
+        new BeyFormButton({ label: 'myApp.contact.cancel', type: BeyFormButtonType.Cancel }),
+        new BeyFormButton({ label: 'myApp.contact.save', type: BeyFormButtonType.Submit })
+    ],
+    initialValue: { person: { name: 'Ada', email: '' } },
+    onSubmit: (value, handle) => this.save(value).subscribe(() => handle.reset())
 });
 ```
 
 ```html
-<bey-form [config]="form"></bey-form>
+<bey-form [config]="form" />
 ```
 
----
+## BeyFormConfig
 
-## Models
+| Field                       | Required | Default | Meaning                                                                 |
+| --------------------------- | -------- | ------- | ----------------------------------------------------------------------- |
+| `prefix`                    | yes      |         | i18n prefix every text of the form resolves from                         |
+| `sections`                  | yes      |         | The sections, in order                                                   |
+| `buttons`                   | no       | `[]`    | Buttons under the form                                                   |
+| `buttonLayout`              | no       | `end`   | `end` lines them up to the right, `stretch` stacks them full width       |
+| `initialValue`              | no       |         | Value the form starts from and cancel goes back to                       |
+| `allowSubmitWithoutChanges` | no       | `false` | Lets a valid but untouched form be submitted                             |
+| `steps`                     | no       | `[]`    | Turns the form into a stepper, see below                                 |
+| `onReady`                   | no       |         | Run with the handle once the controls exist                              |
+| `onValueChange`             | no       |         | Run with the whole value and the handle after every change               |
+| `onSubmit`                  | no       |         | Run with the value and the handle when submit is pressed on a valid form |
+| `onCancel`                  | no       |         | Run after cancel has reset the form                                      |
+| `onStepChange`              | no       |         | Run with the key of the step that just opened                            |
 
-### `BeyFormConfig`
+The value is one object per section, keyed by the section key, with one entry per field:
+`{ person: { name: 'Ada', email: '' } }`.
 
-The root configuration object passed to `[config]`.
+`BeyFormSection` takes `key`, `rows`, and optionally `isHidden` (a rule, see below), `isTitleVisible`,
+`isTooltipVisible` and `prefix`, which lets two sections share the same texts. `BeyFormRow` takes `fields`
+and an `alignment` of `start` or `end`. `BeyFormButton` takes `label`, `type`, an optional `action` that
+receives the handle, `isHidden` and `tooltip`.
 
-**Constructor parameters:**
+## Buttons
 
-| Parameter          | Type                        | Required | Default  | Description                                |
-| ------------------ | --------------------------- | -------- | -------- | ------------------------------------------ |
-| `i18nPrefix`       | `string`                    | yes      | —        | Prefix for all i18n translation keys       |
-| `sections`         | `BeyFormSection[]`          | yes      | —        | Array of form sections                     |
-| `buttons`          | `BeyFormButton[]`           | no       | `[]`     | Action buttons rendered at the bottom      |
-| `id`               | `string`                    | no       | `uuid()` | Unique form ID                             |
-| `steps`            | `BeyFormStep[]`             | no       | `[]`     | Step groups for multi-step forms           |
-| `onFormGroupAdded` | `(formGroup, form) => void` | no       | —        | Called once the `FormGroup` is initialized |
-| `onValueChange`    | `(value, form) => void`     | no       | —        | Called on every value change               |
-| `onSubmit`         | `(value, form) => void`     | no       | —        | Called on form submission                  |
-| `onCancel`         | `() => void`                | no       | —        | Called when the cancel button is clicked   |
+| Type        | What the form does with it                                                              |
+| ----------- | --------------------------------------------------------------------------------------- |
+| `Submit`    | Disabled until the form is valid and changed, then runs `onSubmit`                      |
+| `Cancel`    | Disabled until something changed, then resets to `initialValue` and runs `onCancel`     |
+| `Secondary` | Runs its own `action` with the handle                                                   |
 
-**Methods:**
+A button with an `action` of its own is never disabled by the form, whatever its type.
 
-| Method              | Signature                   | Description                                                           |
-| ------------------- | --------------------------- | --------------------------------------------------------------------- |
-| `getValue()`        | `() => TValue \| undefined` | Returns the current `formGroup.getRawValue()`                         |
-| `patchValue()`      | `(value, emitEvent?)`       | Patches the `FormGroup` value without triggering callbacks by default |
-| `setInitialValue()` | `(value: TValue) => void`   | Resets the form to an initial value                                   |
-| `getInitialValue()` | `() => TValue \| undefined` | Returns the stored `initialValue`                                     |
+## The handle
 
----
+The config never changes once built. Whatever has to happen to the live form goes through the
+`BeyFormHandle` the callbacks receive:
 
-### `BeyFormSection`
+| Member             | Meaning                                                            |
+| ------------------ | ------------------------------------------------------------------ |
+| `value()`          | The current value, disabled fields included                         |
+| `isDirty()`        | Whether anything changed since the last reset                       |
+| `patchValue(part)` | Writes into the form, section by section                            |
+| `reset()`          | Back to `initialValue`                                              |
+| `goToStep(key)`    | Opens that step                                                     |
+| `close()`          | Closes the modal hosting the form; does nothing elsewhere           |
+| `requestClose()`   | Same, asking first when there are changes                           |
 
-Defines a named section containing one or more rows.
+## Rules
 
-| Parameter          | Type           | Required | Default | Description                                        |
-| ------------------ | -------------- | -------- | ------- | -------------------------------------------------- |
-| `key`              | `string`       | yes      | —       | Unique section key (also used as i18n key segment) |
-| `rows`             | `BeyFormRow[]` | yes      | —       | Array of rows inside this section                  |
-| `isHidden`         | `boolean`      | no       | `false` | Hides the entire section                           |
-| `isTitleVisible`   | `boolean`      | no       | `true`  | Shows/hides the section title                      |
-| `isTooltipVisible` | `boolean`      | no       | `false` | Shows/hides a tooltip icon next to the title       |
+A field's `isHidden`, `isDisabled` and `options`, and a section's `isHidden`, take either a value or a
+function of the current form value. The form evaluates them on every change:
 
----
+```ts
+new BeyFormSelectField({ key: 'fileType', isHidden: value => value['main']['type'] !== 'file' })
+```
 
-### `BeyFormRow`
+A hidden field is also disabled, so its validators no longer hold the form back, and its value still comes
+back in `value()` and `onSubmit`. A rule may read a signal of its own: the form re-evaluates it when that
+signal changes too.
 
-Defines a horizontal row of fields within a section.
+## Steps
 
-| Parameter   | Type               | Required | Default   | Description                                   |
-| ----------- | ------------------ | -------- | --------- | --------------------------------------------- |
-| `fields`    | `BeyFormField[]`   | yes      | —         | Array of fields                               |
-| `alignment` | `'start' \| 'end'` | no       | `'start'` | Horizontal alignment of fields within the row |
+```ts
+steps: [
+    new BeyFormStep({ key: 'who', sections: ['person'] }),
+    new BeyFormStep({ key: 'how', sections: ['contact', 'consent'] })
+]
+```
 
----
+Every section keeps its controls from the start; a step only chooses which ones render. The form adds a
+back button on every step but the first and a next button on every step but the last, enabled once the
+sections of the current step are valid. The config buttons show on the last step only. The labels come from
+`angular-components.form.steps.next` and `.back`.
 
-### `BeyFormButton`
+## Texts
 
-An action button at the bottom of the form.
+With `prefix: 'myApp.contact'`, a section `person` and its field `name`:
 
-| Parameter  | Type                | Required | Default | Description                                |
-| ---------- | ------------------- | -------- | ------- | ------------------------------------------ |
-| `type`     | `BeyFormButtonType` | yes      | —       | Button role                                |
-| `label`    | `string`            | yes      | —       | Translation key for button text            |
-| `tooltip`  | `string`            | no       | `''`    | Tooltip text                               |
-| `isHidden` | `boolean`           | no       | `false` | Hides the button                           |
-| `action`   | `() => void`        | no       | —       | Custom click handler. Buttons with a custom action replace the default behavior and are never auto-disabled |
+| Key                                    | Shown as                            |
+| -------------------------------------- | ----------------------------------- |
+| `myApp.contact.person.label`           | Section title                       |
+| `myApp.contact.person.tooltip`         | Section tooltip, when enabled       |
+| `myApp.contact.person.name.label`      | Field label                         |
+| `myApp.contact.person.name.placeholder`| Field placeholder, unless given     |
+| `myApp.contact.person.name.tooltip`    | Field label tooltip, when enabled   |
 
-### `BeyFormButtonType`
-
-| Value                        | Description                             |
-| ---------------------------- | --------------------------------------- |
-| `BeyFormButtonType.Cancel`   | Triggers `onCancel` callback            |
-| `BeyFormButtonType.Submit`   | Triggers form validation and `onSubmit` |
-| `BeyFormButtonType.Next`     | Advances to the next form step          |
-| `BeyFormButtonType.Previous` | Returns to the previous form step       |
-| `BeyFormButtonType.Optional` | Custom button with `action` callback    |
-
----
-
-### `BeyFormStep`
-
-Groups sections by key for multi-step navigation.
-
-| Attribute  | Type       | Description                                          |
-| ---------- | ---------- | ---------------------------------------------------- |
-| `sections` | `string[]` | Array of section `key` values belonging to this step |
-
----
+A section with `prefix: 'person'` resolves its texts from `myApp.contact.person.*` whatever its key.
 
 ## Modal form
 
-A form can also be opened inside a modal dialog (same look and feel as the modal module) using
-`BeyModalFormService` and `BeyModalFormConfig`. `BeyModalFormConfig` extends `BeyFormConfig`, so it
-reuses the same sections, rows, fields, validators and callbacks.
+`BeyModalFormService.open(config)` shows the same form inside a modal. `BeyModalFormConfig` takes everything
+`BeyFormConfig` does except `buttons`, which it builds itself, plus:
 
-Requires `provideBeyModal()` in the application config (it uses `ngx-bootstrap` modals underneath).
+| Field         | Default                    | Meaning                          |
+| ------------- | -------------------------- | -------------------------------- |
+| `title`       | `<prefix>.title`           | Title of the dialog              |
+| `size`        | `BeyModalFormSize.Large`   | Bootstrap modal size             |
+| `cancelLabel` | `<prefix>.buttons.cancel`  | Label of the cancel button       |
+| `submitLabel` | `<prefix>.buttons.submit`  | Label of the submit button       |
 
-```ts
-import { BeyModalFormConfig, BeyModalFormService, BeyModalFormSize } from '@beyonda-labs/angular-components';
+Submit does not close the dialog: call `handle.close()` once the operation succeeds. Cancel, the cross and
+`handle.requestClose()` ask for confirmation when there are changes. The backdrop and Escape do nothing, so
+the confirmation cannot be skipped. `beyModalFormGuard` on a route closes pristine dialogs on navigation and
+asks before leaving a changed one.
 
-private readonly modalFormService = inject(BeyModalFormService);
+## Fields
 
-openContactForm(): void {
-    this.modalFormService.open(
-        new BeyModalFormConfig({
-            i18nPrefix: 'contactForm',
-            initialValue: { contact: { name: '', email: '' } },
-            onSubmit: (value, form) => {
-                // The modal does NOT close automatically: close it only when the backend call succeeds.
-                this.myService.save(value).subscribe({
-                    next: () => form.close(),
-                    error: () => this.modalService.openError({ ... })
-                });
-            },
-            size: BeyModalFormSize.Large,
-            sections: [
-                new BeyFormSection({
-                    key: 'contact',
-                    rows: [
-                        new BeyFormRow({
-                            fields: [
-                                new BeyFormTextField({ key: 'name', columns: 6, isRequired: true }),
-                                new BeyFormTextField({ key: 'email', columns: 6, isRequired: true })
-                            ]
-                        })
-                    ]
-                })
-            ]
-        })
-    );
-}
-```
+See [form-fields-readme.md](./form-fields-readme.md).
 
-### `BeyModalFormConfig`
+## Customisation
 
-**Constructor parameters:**
-
-| Parameter          | Type                        | Required | Default | Description                                        |
-| ------------------ | --------------------------- | -------- | ------- | -------------------------------------------------- |
-| `i18nPrefix`       | `string`                    | yes      | —       | Prefix for the modal title, buttons and all fields |
-| `sections`         | `BeyFormSection[]`          | yes      | —       | Array of form sections                             |
-| `initialValue`     | `TValue`                    | no       | —       | Applied automatically once the `FormGroup` exists  |
-| `steps`            | `BeyFormStep[]`             | no       | `[]`    | Step groups for multi-step forms                   |
-| `onFormGroupAdded` | `(formGroup, form) => void` | no       | —       | Called once the `FormGroup` is initialized         |
-| `onValueChange`    | `(value, form) => void`     | no       | —       | Called on every value change                       |
-| `onSubmit`         | `(value, form) => void`     | no       | —       | Called on valid submission (does not auto-close)   |
-| `size`             | `BeyModalFormSize`          | no       | `Large` | Width of the modal dialog                          |
-| `title`            | `string`                    | no       | —       | Modal title key; overrides `{prefix}.title`        |
-| `cancelLabel`      | `string`                    | no       | —       | Cancel label key; overrides `{prefix}.buttons.cancel` |
-| `submitLabel`      | `string`                    | no       | —       | Submit label key; overrides `{prefix}.buttons.submit` |
-
-Unlike `BeyFormConfig`, buttons are not configurable: the modal always renders a Cancel and a
-Submit button whose labels are derived from `i18nPrefix` (or the explicit label overrides).
-
-**Methods** (besides the inherited `BeyFormConfig` ones):
-
-| Method           | Description                                                                  |
-| ---------------- | ---------------------------------------------------------------------------- |
-| `close()`        | Closes the modal immediately, without confirmation (e.g. after a saved item) |
-| `requestClose()` | Closes the modal, asking for confirmation first if there are unsaved changes |
-| `isDirty()`      | Returns whether the form has unsaved changes                                 |
-
-### `BeyModalFormSize`
-
-| Value                          | Bootstrap class | Width    |
-| ------------------------------ | --------------- | -------- |
-| `BeyModalFormSize.Small`       | `modal-sm`      | ~300px   |
-| `BeyModalFormSize.Medium`      | (default)       | ~500px   |
-| `BeyModalFormSize.Large`       | `modal-lg`      | ~800px   |
-| `BeyModalFormSize.ExtraLarge`  | `modal-xl`      | ~1140px  |
-
-### i18n convention
-
-With `i18nPrefix = 'contactForm'`:
-
-| Key pattern               | Example                     | Description         |
-| ------------------------- | --------------------------- | ------------------- |
-| `{prefix}.title`          | `contactForm.title`         | Modal title         |
-| `{prefix}.buttons.cancel` | `contactForm.buttons.cancel`| Cancel button label |
-| `{prefix}.buttons.submit` | `contactForm.buttons.submit`| Submit button label |
-
-Sections and fields follow the standard form i18n convention under the same prefix.
-
-### Behavior
-
--   `open()` returns the `BsModalRef` of the dialog.
--   Submit runs `onSubmit` (only when the form is valid) but does **not** close the modal: call
-    `form.close()` when the operation succeeds (e.g. after the backend confirms), and leave it open
-    on error.
--   Cancel and the `×` close button ask for confirmation when there are unsaved changes
-    (`angular-components.form.modal.close-confirmation.*` keys); with no changes they close directly.
--   A click on the backdrop or the Esc key does not close the modal, so the unsaved-changes guard
-    cannot be bypassed.
-
-### Unsaved changes and navigation (`beyModalFormGuard`)
-
-To also protect against route navigation while a modal form is open, attach the guard to the routes
-that can open one:
-
-```ts
-import { beyModalFormGuard } from '@beyonda-labs/angular-components';
-
-export const routes: Routes = [
-    { path: 'products', component: ProductsPageComponent, canDeactivate: [beyModalFormGuard] }
-];
-```
-
-On navigation:
-
--   No open modal form → navigation proceeds.
--   Open but pristine modal forms → they are closed and navigation proceeds.
--   Open dirty modal form → a confirmation modal is shown; confirming closes the forms and
-    navigates, rejecting keeps the modal open and cancels the navigation.
-
----
-
-## Field support
-
-See [form-fields-readme.md](./form-fields-readme.md) for full attribute tables and examples for each field type.
-
-Highlights:
-
--   **Date** — supports `minDate` and `maxDate` with `FormControl`-level validation.
--   **Number** — supports `min` and `max` with `FormControl`-level validation.
--   **Textarea** — supports `rows` and `maxHeight`.
--   **Select** and **Radio** — support `options: BeyFormFieldOption[]`.
--   **Checkbox** — uses inline label behavior and no placeholder.
--   **Chips** — tag input backed by a `string[]` control; supports `maxItems` and `allowDuplicates`.
-
----
-
-## i18n convention
-
-With `i18nPrefix = 'userForm'`:
-
-| Key pattern                                    | Example                             | Description         |
-| ---------------------------------------------- | ----------------------------------- | ------------------- |
-| `{prefix}.{sectionKey}.label`                  | `userForm.profile.label`            | Section title       |
-| `{prefix}.{sectionKey}.tooltip`                | `userForm.profile.tooltip`          | Section tooltip     |
-| `{prefix}.{sectionKey}.{fieldKey}.label`       | `userForm.profile.name.label`       | Field label         |
-| `{prefix}.{sectionKey}.{fieldKey}.placeholder` | `userForm.profile.name.placeholder` | Field placeholder   |
-| `{prefix}.{sectionKey}.{fieldKey}.tooltip`     | `userForm.profile.name.tooltip`     | Field label tooltip |
-
----
-
-## Callbacks
-
-### `onFormGroupAdded`
-
-Called once the `FormGroup` has been built and attached. Use this to set initial values safely:
-
-```ts
-onFormGroupAdded: (formGroup, form) => {
-    form.setInitialValue({ name: 'John', age: 30 });
-};
-```
-
-### `onValueChange`
-
-Called on every `valueChanges` event from the `FormGroup`:
-
-```ts
-onValueChange: (value, form) => {
-    console.log('Current value:', value);
-};
-```
-
-### `onSubmit`
-
-Called when the Submit button is clicked and the form is valid:
-
-```ts
-onSubmit: (value, form) => {
-    this.myService.save(value);
-};
-```
-
----
-
-## Testing status
-
-Current module includes tests for:
-
--   `FormComponent`
--   `FormService`
--   `FormValidatorService`
--   Field components: text, textarea, number, date, select, radio, checkbox, chips
--   Section and row rendering helpers
-
----
-
-## Best practices
-
--   Keep field `key` values stable over time (they determine the JSON shape and i18n key structure).
--   Use model validators instead of manual submit-time checks.
--   Set `min`/`max` or `minDate`/`maxDate` whenever the range is business-critical.
--   Use `onFormGroupAdded` to apply initial values — the `FormGroup` is not available before this callback.
--   Use `setInitialValue()` instead of `patchValue()` to support proper form reset behavior.
+| Variable                          | Default                |
+| --------------------------------- | ---------------------- |
+| `--bey-form-sections-max-height`  | `none`                 |
+| `--bey-form-field-fg`             | `--bey-text-primary`   |
+| `--bey-form-field-placeholder`    | `--bey-text-disabled`  |
+| `--bey-form-field-control-height` | `2.125rem`             |
+| `--bey-form-field-label`          | `--bey-text-muted`     |
+| `--bey-modal-form-body-max-height`| `min(70vh, 34rem)`     |

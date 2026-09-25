@@ -1,83 +1,88 @@
 :host {
     --bey-modal-form-fg: var(--bey-text-primary);
     --bey-modal-form-fg-muted: var(--bey-text-muted);
-    --bey-close-hover-bg: var(--bey-gray-200);
+    --bey-modal-form-accent: var(--bey-primary);
+    --bey-modal-form-accent-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);
+    --bey-modal-form-border: var(--bey-border-subtle);
+    --bey-modal-form-surface: var(--bey-bg-surface);
+    --bey-modal-form-close-bg-hover: var(--bey-bg-active);
+    --bey-modal-form-body-max-height: min(70vh, 34rem);
 
     display: block;
     color: var(--bey-modal-form-fg);
 }
 
-:host-context(body.dark) {
-    --bey-close-hover-bg: var(--bey-gray-700);
+.bey-modal-form {
+    width: 100%;
+    padding: var(--bey-space-xl) var(--bey-space-lg);
+    background: var(--bey-modal-form-surface);
+    border: var(--bey-border-width) solid var(--bey-modal-form-border);
+    border-radius: var(--bey-radius-md);
+    box-shadow: var(--bey-shadow-lg);
 }
 
-.bey-modal-form {
-    --bey-modal-form-accent: var(--bey-primary);
-    --bey-modal-form-accent-soft: rgba(var(--bey-black-rgb), 0.08);
-    --bey-modal-form-border: var(--bey-gray-200);
-    --bey-modal-form-surface: var(--bey-bg-surface);
-    width: 100%;
-    padding: 1.2rem 1rem;
-    border: 1px solid var(--bey-modal-form-border);
-    border-radius: 0.5rem;
-    background: var(--bey-modal-form-surface);
-    box-shadow: 0 24px 64px rgba(var(--bey-black-rgb), 0.16);
+.bey-modal-form-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--bey-space-lg);
 }
 
 .bey-modal-form-icon {
     display: inline-flex;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: center;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 1rem;
+    width: var(--bey-space-2xl);
+    height: var(--bey-space-2xl);
     background: var(--bey-modal-form-accent-soft);
+    border-radius: var(--bey-radius-lg);
     color: var(--bey-modal-form-accent);
-    font-size: 1.05rem;
-    flex: 0 0 auto;
+    font-size: var(--bey-font-size-lg);
+}
+
+.bey-modal-form-heading {
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .bey-modal-form-type {
     color: var(--bey-modal-form-accent);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
+    font-size: var(--bey-font-size-2xs);
+    font-weight: var(--bey-font-weight-bold);
     text-transform: uppercase;
 }
 
 .bey-modal-form-title {
+    margin: 0;
     color: var(--bey-modal-form-fg);
-    font-size: 1.15rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
+    font-size: var(--bey-font-size-xl);
+    font-weight: var(--bey-font-weight-bold);
+    line-height: var(--bey-line-height-tight);
 }
 
 .bey-modal-form-close {
-    width: 2rem;
-    height: 2rem;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--bey-space-2xl);
+    height: var(--bey-space-2xl);
+    border-radius: var(--bey-radius-circle);
     color: var(--bey-modal-form-fg-muted);
-    font-size: 1.2rem;
-    line-height: 1;
+    font-size: var(--bey-font-size-2xl);
+    line-height: var(--bey-line-height-none);
     transition:
-        border-color 0.2s ease,
-        background-color 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
+        background-color var(--bey-duration-base) var(--bey-easing-standard),
+        color var(--bey-duration-base) var(--bey-easing-standard);
 }
 
 .bey-modal-form-close:hover {
+    background-color: var(--bey-modal-form-close-bg-hover);
     color: var(--bey-modal-form-fg);
-    background-color: var(--bey-close-hover-bg);
-    transform: translateY(-1px);
 }
 
 .bey-modal-form-body {
-    --bey-form-sections-max-height: min(70vh, 34rem);
-}
+    --bey-form-sections-max-height: var(--bey-modal-form-body-max-height);
 
-@media (max-width: 575.98px) {
-    .bey-modal-form {
-        padding: 1.15rem;
-        border-radius: 1.25rem;
-    }
+    margin-top: var(--bey-space-lg);
 }
