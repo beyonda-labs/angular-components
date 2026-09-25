@@ -5,7 +5,7 @@ const config: Config = {
     testEnvironment: 'jsdom',
     setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
 
-    roots: ['<rootDir>/src'],
+    roots: ['<rootDir>/src', '<rootDir>/style-guide'],
     testMatch: ['**/?(*.)+(spec).ts'],
 
     transform: {
@@ -20,9 +20,20 @@ const config: Config = {
 
     moduleFileExtensions: ['ts', 'html', 'js', 'json', 'mjs'],
 
+    moduleNameMapper: {
+        '^@beyonda-labs/angular-components$': '<rootDir>/src/public-api.ts',
+        '^@beyonda-labs/angular-components/style-guide$': '<rootDir>/style-guide/src/public-api.ts'
+    },
+
     testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],
 
-    collectCoverageFrom: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/**/public-api.ts', '!src/**/*.module.ts'],
+    collectCoverageFrom: [
+        'src/**/*.ts',
+        'style-guide/src/**/*.ts',
+        '!**/*.spec.ts',
+        '!**/public-api.ts',
+        '!**/*.module.ts'
+    ],
 
     coverageThreshold: {
         global: {

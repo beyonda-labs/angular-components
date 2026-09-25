@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { faGear, faHome } from '@fortawesome/free-solid-svg-icons';
@@ -15,10 +15,11 @@ import {
 } from './models/app-layout.model';
 import { AppLayoutService } from './services/app-layout.service';
 
-@Component({ standalone: true, template: '' })
+@Component({ changeDetection: ChangeDetectionStrategy.OnPush, standalone: true, template: '' })
 class EmptyPageComponent {}
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [AppLayoutComponent],
     standalone: true,
     template: '<bey-app-layout [config]="config"><p class="projected">Projected content</p></bey-app-layout>'

@@ -1,0 +1,13 @@
+:host {
+    display: block;
+}
+
+.bey-header-style-guide-examples {
+    display: grid;
+    gap: var(--bey-space-xl);
+}
+
+.bey-header-style-guide-item {
+    display: grid;
+    gap: var(--bey-space-md);
+}

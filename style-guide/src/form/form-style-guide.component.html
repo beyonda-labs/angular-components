@@ -1,0 +1,23 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.form.example' | translate }}
+</p>
+
+<bey-form [config]="config"></bey-form>
+
+@if (lastEvent()) {
+    <p class="text-muted mt-2 mb-0">{{ lastEvent() | translate }}</p>
+}
+
+<p class="bey-style-guide-description text-muted mt-4 mb-3">
+    {{ 'angular-components-style-guide.form.modal.example' | translate }}
+</p>
+
+<button
+    type="button"
+    class="btn btn-sm"
+    [class.btn-dark]="modalFormButton.isPrimary"
+    [class.btn-outline-dark]="!modalFormButton.isPrimary"
+    (click)="modalFormButton.action()"
+>
+    {{ modalFormButton.label | translate }}
+</button>

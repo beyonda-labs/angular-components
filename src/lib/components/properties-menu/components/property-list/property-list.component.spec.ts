@@ -7,7 +7,11 @@ import { PropertyTextField } from '../../models/fields/property-text-field.model
 import { PropertiesMenuConfig } from '../../models/properties-menu-config.model';
 import { PropertyGroup } from '../../models/property-group.model';
 import { PropertyListContent } from '../../models/property-group-content.model';
-import { PropertyListItem, PropertyListItemParameters } from '../../models/property-list-item.model';
+import {
+    PropertyListItem,
+    PropertyListItemAction,
+    PropertyListItemParameters
+} from '../../models/property-list-item.model';
 import { PropertySummaryRow } from '../../models/property-summary-row.model';
 import { PropertyTab } from '../../models/property-tab.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
@@ -383,7 +387,11 @@ describe('PropertyListComponent copy and actions', () => {
                                             label: 'total',
                                             copyValue: '{{ total }}',
                                             actions: [
-                                                { key: 'duplicate', icon: faCircleExclamation, label: 'Duplicar' }
+                                                new PropertyListItemAction({
+                                                    icon: faCircleExclamation,
+                                                    key: 'duplicate',
+                                                    label: 'Duplicar'
+                                                })
                                             ]
                                         })
                                     ]
@@ -402,7 +410,9 @@ describe('PropertyListComponent copy and actions', () => {
                 id: 'v1',
                 label: 'total',
                 copyValue: '{{ total }}',
-                actions: [{ key: 'duplicate', icon: faCircleExclamation, label: 'Duplicar' }]
+                actions: [
+                    new PropertyListItemAction({ icon: faCircleExclamation, key: 'duplicate', label: 'Duplicar' })
+                ]
             })
         ]);
         fixture.detectChanges();

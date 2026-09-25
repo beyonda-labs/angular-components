@@ -1,0 +1,25 @@
+<p class="bey-style-guide-description text-muted">
+    {{ 'angular-components-style-guide.app-layout.example' | translate }}
+</p>
+
+<div class="bey-style-guide-frame mt-4">
+    <bey-app-layout [config]="config">
+        <div class="bey-app-layout-style-guide-content">
+            <h5 class="mb-3">{{ 'angular-components-style-guide.app-layout.content.title' | translate }}</h5>
+
+            <div class="bey-app-layout-style-guide-actions">
+                @for (button of pageButtons; track button.label) {
+                    <button
+                        type="button"
+                        class="btn btn-sm"
+                        [class.btn-dark]="button.isPrimary"
+                        [class.btn-outline-dark]="!button.isPrimary"
+                        (click)="button.action()"
+                    >
+                        {{ button.label | translate }}
+                    </button>
+                }
+            </div>
+        </div>
+    </bey-app-layout>
+</div>

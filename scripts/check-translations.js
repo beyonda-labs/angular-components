@@ -17,7 +17,8 @@ const path = require('path');
 const sourceDirs = [
     path.resolve(__dirname, '../src/lib/components'),
     path.resolve(__dirname, '../src/lib/internal'),
-    path.resolve(__dirname, '../src/lib/services')
+    path.resolve(__dirname, '../src/lib/services'),
+    path.resolve(__dirname, '../style-guide/src')
 ];
 
 const BASE_LANG = 'en';

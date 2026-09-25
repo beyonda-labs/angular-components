@@ -30,6 +30,3 @@ export * from './lib/services/environment/public-api';
 export * from './lib/services/http/public-api';
 export * from './lib/services/session/public-api';
 export * from './lib/services/theme/public-api';
-
-/* demo — the interactive style guide, not part of the component surface */
-export { StyleGuideComponent as BeyStyleGuideComponent } from './lib/components/style-guide/style-guide.component';

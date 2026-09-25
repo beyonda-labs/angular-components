@@ -2,13 +2,8 @@
     "extends": "./tsconfig.json",
     "compilerOptions": {
         "outDir": "./out-tsc/spec",
-        "types": [
-            "jest"
-        ]
+        "types": ["jest"]
     },
-    "include": [
-        "src/**/*.ts",
-        "src/**/*.spec.ts"
-    ],
+    "include": ["src/**/*.ts", "style-guide/**/*.ts"],
     "exclude": []
 }

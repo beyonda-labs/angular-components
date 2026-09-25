@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -11,10 +11,11 @@ interface Employee {
 }
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ListComponent],
     standalone: true,
     template: `
-        <bey-list [config]="config">
+        <bey-list [config]="config()">
             <ng-template let-employee let-index="index">
                 <span class="card">{{ employee.name }} #{{ index }}</span>
                 <input class="inside" />
@@ -23,7 +24,7 @@ interface Employee {
     `
 })
 class HostComponent {
-    config!: ListConfig<Employee>;
+    readonly config = signal<ListConfig<Employee>>(new ListConfig<Employee>({ items: [], prefix: 'demo.list' }));
 }
 
 describe('ListComponent', () => {
@@ -42,7 +43,7 @@ describe('ListComponent', () => {
 
     async function render(config: ListConfig<Employee> = buildConfig()): Promise<void> {
         fixture = TestBed.createComponent(HostComponent);
-        fixture.componentInstance.config = config;
+        fixture.componentInstance.config.set(config);
         fixture.detectChanges();
         await fixture.whenStable();
     }
@@ -124,13 +125,15 @@ describe('ListComponent', () => {
 
         const first = items()[0];
 
-        fixture.componentInstance.config = buildConfig({
-            getItemKey: employee => employee.id,
-            items: [
-                { id: 2, name: 'Grace' },
-                { id: 1, name: 'Ada' }
-            ]
-        });
+        fixture.componentInstance.config.set(
+            buildConfig({
+                getItemKey: employee => employee.id,
+                items: [
+                    { id: 2, name: 'Grace' },
+                    { id: 1, name: 'Ada' }
+                ]
+            })
+        );
         fixture.detectChanges();
         await fixture.whenStable();
 

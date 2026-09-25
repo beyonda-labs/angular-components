@@ -9,7 +9,8 @@ const path = require('path');
 const sourceDirs = [
     path.resolve(__dirname, '../src/lib/components'),
     path.resolve(__dirname, '../src/lib/internal'),
-    path.resolve(__dirname, '../src/lib/services')
+    path.resolve(__dirname, '../src/lib/services'),
+    path.resolve(__dirname, '../style-guide/src')
 ];
 
 const languages = ['en', 'es'];
@@ -49,9 +50,7 @@ function sortObjectDeep(obj) {
 // ────────────────────────────────────────────────────────────────────────────
 
 function sortTranslations() {
-    const files = languages.flatMap(lang =>
-        sourceDirs.flatMap(dir => findFilesRecursively(dir, `.${lang}.json`))
-    );
+    const files = languages.flatMap(lang => sourceDirs.flatMap(dir => findFilesRecursively(dir, `.${lang}.json`)));
 
     let sortedCount = 0;
 

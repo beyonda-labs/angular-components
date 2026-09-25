@@ -78,7 +78,8 @@ the migration, not in the middle of it.
         bundles. The library one drops from 45 KB to 17.5 KB, and the product's own bundle from 52 KB to 35.6 KB
 -   [x] `sass` devDependency dropped — no `.scss` is left in the workspace, and `@angular-devkit/build-angular`
         carries its own copy
--   [ ] The style-guide's code and declarations still ship — see below
+-   [x] The style-guide is a secondary entry point, `@beyonda-labs/angular-components/style-guide`, with its
+        sources under `style-guide/src/<module>/`; the primary bundle no longer carries it (907 KB, from 1.1 MB)
 
 The style-guide translations are split and the demo route is lazy, but the JavaScript is not separated: it is
 14% of the library bundle (206 KB of 1.43 MB in a development build), and 21 `.d.ts` files (14.8 KB). Since

@@ -1,3 +1,4 @@
+export { FormComponent as BeyFormComponent } from './form.component';
 export {
     FormButton as BeyFormButton,
     FormButtonType as BeyFormButtonType,

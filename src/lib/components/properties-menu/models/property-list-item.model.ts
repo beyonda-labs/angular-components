@@ -26,7 +26,7 @@ export class PropertyListItemAction {
 export interface PropertyListItemParameters {
     id: string;
 
-    actions?: PropertyListItemActionParameters[];
+    actions?: PropertyListItemAction[];
     badges?: BadgeConfig[];
     body?: PropertySummaryRow[];
     copyValue?: string;
@@ -77,9 +77,7 @@ export class PropertyListItem {
         metadata = {},
         removable = false
     }: PropertyListItemParameters) {
-        this.actions = actions.map(action =>
-            action instanceof PropertyListItemAction ? action : new PropertyListItemAction(action)
-        );
+        this.actions = actions;
         this.badges = badges;
         this.body = body;
         this.copyValue = copyValue;

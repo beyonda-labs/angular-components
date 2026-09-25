@@ -20,15 +20,14 @@
         "importHelpers": true,
         "target": "ES2022",
         "module": "ES2022",
-        "lib": [
-            "ES2022",
-            "dom",
-            "dom.iterable"
-        ],
+        "lib": ["ES2022", "dom", "dom.iterable"],
         "useDefineForClassFields": false,
-        "types": [
-            "jest"
-        ]
+        "types": ["jest"],
+        "baseUrl": ".",
+        "paths": {
+            "@beyonda-labs/angular-components": ["src/public-api.ts"],
+            "@beyonda-labs/angular-components/style-guide": ["style-guide/src/public-api.ts"]
+        }
     },
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false,

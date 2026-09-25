@@ -2,7 +2,7 @@
  * Verify that every component module documents itself.
  *
  * Aborts when a module:
- *   - has no `docs/style-guide/` folder
+ *   - has no `style-guide/src/<module>/` folder
  *   - has a style-guide that is not registered in the global style-guide component
  *   - has no `docs/<module>-readme.md`
  */
@@ -11,10 +11,8 @@ const fs = require('fs');
 const path = require('path');
 
 const componentsDir = path.resolve(__dirname, '../src/lib/components');
-const globalStyleGuideDir = path.join(componentsDir, 'style-guide');
-
-/* Modules that are infrastructure rather than a documented component. */
-const EXEMPT = new Set(['style-guide']);
+/* The demo lives in the style-guide entry point, one folder per module next to the global component. */
+const styleGuideDir = path.resolve(__dirname, '../style-guide/src');
 
 // ────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -25,14 +23,13 @@ function findModules() {
     return fs
         .readdirSync(componentsDir)
         .filter(entry => fs.statSync(path.join(componentsDir, entry)).isDirectory())
-        .filter(entry => !EXEMPT.has(entry))
         .sort();
 }
 
 /** The text of the global style-guide component and its template. */
 function readGlobalStyleGuide() {
     return ['style-guide.component.ts', 'style-guide.component.html']
-        .map(file => path.join(globalStyleGuideDir, file))
+        .map(file => path.join(styleGuideDir, file))
         .filter(file => fs.existsSync(file))
         .map(file => fs.readFileSync(file, 'utf8'))
         .join('\n');
@@ -48,11 +45,11 @@ function checkStyleGuides() {
 
     findModules().forEach(module => {
         const moduleDir = path.join(componentsDir, module);
-        const styleGuideDir = path.join(moduleDir, 'docs', 'style-guide');
+        const moduleStyleGuideDir = path.join(styleGuideDir, module);
         const readme = path.join(moduleDir, 'docs', `${module}-readme.md`);
 
-        if (!fs.existsSync(styleGuideDir)) {
-            errors.push(`${module}: no docs/style-guide/`);
+        if (!fs.existsSync(moduleStyleGuideDir)) {
+            errors.push(`${module}: no style-guide/src/${module}/`);
         } else if (!globalStyleGuide.includes(`bey-${module}-style-guide`)) {
             errors.push(`${module}: style-guide exists but is not registered in the global style-guide`);
         }

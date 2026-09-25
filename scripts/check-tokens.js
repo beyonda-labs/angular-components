@@ -13,7 +13,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const sourceDir = path.resolve(__dirname, '../src/lib');
+const sourceDirs = [path.resolve(__dirname, '../src/lib'), path.resolve(__dirname, '../style-guide/src')];
 
 /* Bootstrap and third-party variables are defined outside this repo. */
 const EXTERNAL_PREFIXES = ['--bs-'];
@@ -54,8 +54,8 @@ function isExternal(name) {
 // ────────────────────────────────────────────────────────────────────────────
 
 function checkTokens() {
-    const cssFiles = findFilesRecursively(sourceDir, '.css');
-    const htmlFiles = findFilesRecursively(sourceDir, '.html');
+    const cssFiles = sourceDirs.flatMap(dir => findFilesRecursively(dir, '.css'));
+    const htmlFiles = sourceDirs.flatMap(dir => findFilesRecursively(dir, '.html'));
 
     const defined = new Set(collectTemplateDefinitions(htmlFiles));
     const reads = [];
@@ -73,9 +73,7 @@ function checkTokens() {
     const orphans = reads.filter(read => !defined.has(read.name));
 
     if (orphans.length > 0) {
-        orphans.forEach(({ file, name }) =>
-            console.error(`✖ ${name} is read but never defined, and has no fallback`)
-        );
+        orphans.forEach(({ file, name }) => console.error(`✖ ${name} is read but never defined, and has no fallback`));
         orphans.forEach(({ file }) => console.error(`    ${path.relative(process.cwd(), file)}`));
         throw new Error(`${orphans.length} custom propert(ies) resolve to nothing`);
     }

@@ -10,7 +10,8 @@ const { sortObjectDeep } = require('./sort-translations');
 const sourceDirs = [
     path.resolve(__dirname, '../src/lib/components'),
     path.resolve(__dirname, '../src/lib/internal'),
-    path.resolve(__dirname, '../src/lib/services')
+    path.resolve(__dirname, '../src/lib/services'),
+    path.resolve(__dirname, '../style-guide/src')
 ];
 
 const targetDir = path.resolve(__dirname, '../src/lib/assets/i18n');
@@ -50,11 +51,9 @@ function deepMerge(target, source) {
 // Main
 // ────────────────────────────────────────────────────────────────────────────
 
-/** Demo text: anything under a `docs/` folder, plus the global style-guide module itself. */
+/** Demo text: anything inside the style-guide entry point. */
 function isStyleGuideFile(filePath) {
-    const segments = filePath.split(path.sep);
-
-    return segments.includes('docs') || segments.includes('style-guide');
+    return filePath.split(path.sep).includes('style-guide');
 }
 
 /** Merge a list of files into one object, validating each one. */
@@ -75,8 +74,12 @@ function writeBundle(dir, fileName, merged) {
     fs.mkdirSync(dir, { recursive: true });
 
     const outFile = path.join(dir, fileName);
-    fs.writeFileSync(outFile, `${JSON.stringify(sortObjectDeep(merged), null, 4)}
-`, 'utf8');
+    fs.writeFileSync(
+        outFile,
+        `${JSON.stringify(sortObjectDeep(merged), null, 4)}
+`,
+        'utf8'
+    );
     console.log(`✔ ${outFile}`);
 
     return outFile;
