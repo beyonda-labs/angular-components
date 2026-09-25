@@ -137,10 +137,8 @@ a callback field and dialog callbacks.
 -   [x] `properties-menu`: callbacks on the config, a shared `internal/option-picker`, signals and tokens across
         the root, groups, list, tree and the eleven fields, one README
 -   [x] `badge` is a component with a `BadgeConfig`; `header`, `table` and `properties-menu` render theirs through it
--   [ ] Style-guide for `search`
--   [ ] Translation keys to kebab-case (45 in the library, 171 in the style-guides)
+-   [x] Translation keys to kebab-case
 -   [ ] Trim module READMEs to the agreed shape
--   [ ] Translate what is still in Spanish into English: the `footer` and `floating-preferences` READMEs
 -   [ ] Remove the 35 `:host-context(body.dark)` blocks that only restate the palette, one module at a time
 
 ### S7 - Release

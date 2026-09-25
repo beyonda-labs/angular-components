@@ -26,15 +26,15 @@
                     "label": "Exportar",
                     "tooltip": "Exportar objetivos"
                 },
-                "individualGoal": {
+                "individual-goal": {
                     "label": "Objetivo individual",
                     "tooltip": "Crear un nuevo objetivo individual"
                 },
-                "newGoal": {
+                "new-goal": {
                     "label": "Nuevo objetivo",
                     "tooltip": "Crear un nuevo objetivo"
                 },
-                "teamGoal": {
+                "team-goal": {
                     "label": "Objetivo de equipo",
                     "tooltip": "Crear un nuevo objetivo de equipo"
                 }
@@ -44,7 +44,7 @@
             "examples": {
                 "back": "Cabecera con botón de volver y badge de estado",
                 "default": "Cabecera normal, sin botón de volver",
-                "subPage": "Variante de subpágina, título más pequeño"
+                "sub-page": "Variante de subpágina, título más pequeño"
             },
             "title": "Objetivos"
         }

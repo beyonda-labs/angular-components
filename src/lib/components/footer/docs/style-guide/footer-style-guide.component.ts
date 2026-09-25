@@ -19,13 +19,13 @@ export class FooterStyleGuideComponent {
     constructor() {
         this.minimalConfig = new FooterConfig({
             iconSrc: '',
-            productName: 'angular-components-style-guide.footer.minimal.productName'
+            productName: 'angular-components-style-guide.footer.minimal.product-name'
         });
 
         this.fullConfig = new FooterConfig({
             iconSrc: '',
-            orgName: 'angular-components-style-guide.footer.withLinks.orgName',
-            productName: 'angular-components-style-guide.footer.withLinks.productName',
+            orgName: 'angular-components-style-guide.footer.with-links.org-name',
+            productName: 'angular-components-style-guide.footer.with-links.product-name',
             privacyUrl: '/privacy',
             termsUrl: '/terms'
         });

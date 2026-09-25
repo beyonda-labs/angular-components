@@ -86,6 +86,6 @@ describe('LoginFormComponent', () => {
     it('offers the providers it is given', async () => {
         await render([{ id: 'google', authUrl: 'https://google' }]);
 
-        expect(fixture.nativeElement.textContent).toContain('angular-components.login.login.signinWith');
+        expect(fixture.nativeElement.textContent).toContain('angular-components.login.login.signin-with');
     });
 });

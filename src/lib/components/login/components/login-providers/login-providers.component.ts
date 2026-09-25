@@ -45,5 +45,5 @@ export class LoginProvidersComponent {
                 provider
             }))
     );
-    readonly label = computed(() => `${this.prefix()}.login.signinWith`);
+    readonly label = computed(() => `${this.prefix()}.login.signin-with`);
 }

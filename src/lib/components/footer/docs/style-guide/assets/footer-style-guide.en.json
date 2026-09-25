@@ -4,14 +4,14 @@
             "example": "Model-driven footer bar with brand identity (icon, organization and product name) and optional legal navigation links (Terms & Conditions, Privacy Policy) via Angular Router.",
             "examples": {
                 "minimal": "Minimal",
-                "withLinks": "With legal links"
+                "with-links": "With legal links"
             },
             "minimal": {
-                "productName": "My Application"
+                "product-name": "My Application"
             },
-            "withLinks": {
-                "orgName": "Beyonda Labs",
-                "productName": "My Application"
+            "with-links": {
+                "org-name": "Beyonda Labs",
+                "product-name": "My Application"
             }
         }
     }

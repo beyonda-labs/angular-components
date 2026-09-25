@@ -22,7 +22,7 @@ import {
 } from '../../models/app-layout.model';
 import { AppLayoutService } from '../../services/app-layout.service';
 
-const PREFIX = 'angular-components-style-guide.appLayout';
+const PREFIX = 'angular-components-style-guide.app-layout';
 const PAGES = ['dashboard', 'documents', 'reports', 'settings', 'help'];
 const BRAND_ICON =
     // eslint-disable-next-line max-len

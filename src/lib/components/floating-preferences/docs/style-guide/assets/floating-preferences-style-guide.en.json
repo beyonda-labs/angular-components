@@ -3,7 +3,7 @@
         "floating-preferences": {
             "example": "Self-contained language and theme selectors. Reads and writes state directly via TranslateService and BeyThemeService — no callbacks required.",
             "examples": {
-                "noPill": "Without the pill (usePill = false), for embedding in another container",
+                "no-pill": "Without the pill (usePill = false), for embedding in another container",
                 "pill": "Default (floating pill)"
             }
         }

@@ -29,7 +29,7 @@
                 "submitted": "El formulario modal ha sido enviado: ",
                 "title": "Nuevo contacto"
             },
-            "sectionAutocomplete": {
+            "section-autocomplete": {
                 "autocomplete1": {
                     "label": "Typeahead básico",
                     "options": {
@@ -63,7 +63,7 @@
                 "label": "Campos con búsqueda",
                 "tooltip": "Variantes de typeahead con comportamiento básico, obligatorio y deshabilitado"
             },
-            "sectionCheckbox": {
+            "section-checkbox": {
                 "checkbox1": {
                     "label": "Aceptar términos"
                 },
@@ -79,7 +79,7 @@
                 "label": "Campos de checkbox",
                 "tooltip": "Variantes de checkbox con estado básico, obligatorio, deshabilitado e interruptor"
             },
-            "sectionChips": {
+            "section-chips": {
                 "chips1": {
                     "label": "Chips básico",
                     "placeholder": "Escriba y pulse Enter"
@@ -94,7 +94,7 @@
                 "label": "Campos de chips",
                 "tooltip": "Variantes de chips con estado básico, obligatorio con maxItems, y deshabilitado"
             },
-            "sectionDate": {
+            "section-date": {
                 "date1": {
                     "label": "Fecha con rango"
                 },
@@ -107,7 +107,7 @@
                 "label": "Campos de fecha",
                 "tooltip": "Campos de fecha con rango, obligatorio y deshabilitado"
             },
-            "sectionInfo": {
+            "section-info": {
                 "info1": {
                     "label": "Versión"
                 },
@@ -117,7 +117,7 @@
                 "label": "Campos de información",
                 "tooltip": "Pares de icono/etiqueta de solo lectura — sin estilo de input, sin FormControl"
             },
-            "sectionNumber": {
+            "section-number": {
                 "label": "Campos numéricos",
                 "number1": {
                     "label": "Número con rango",
@@ -133,7 +133,7 @@
                 },
                 "tooltip": "Campos numéricos con rango, obligatorio y deshabilitado"
             },
-            "sectionPassword": {
+            "section-password": {
                 "label": "Campos de contraseña",
                 "password1": {
                     "label": "Contraseña",
@@ -153,7 +153,7 @@
                 },
                 "tooltip": "Campos de contraseña con toggle, obligatorio y deshabilitado"
             },
-            "sectionRadio": {
+            "section-radio": {
                 "label": "Campos de radio",
                 "radio1": {
                     "label": "Radio básico",
@@ -172,7 +172,7 @@
                 },
                 "tooltip": "Variantes de radio con configuración básica y obligatoria"
             },
-            "sectionSelect": {
+            "section-select": {
                 "label": "Campos de selección",
                 "select1": {
                     "label": "Select básico",
@@ -200,7 +200,7 @@
                 },
                 "tooltip": "Variantes de select con comportamiento básico, obligatorio y deshabilitado"
             },
-            "sectionText": {
+            "section-text": {
                 "label": "Campos de texto",
                 "text1": {
                     "label": "Texto obligatorio",
@@ -226,7 +226,7 @@
                 },
                 "tooltip": "Diferentes configuraciones de campos de texto"
             },
-            "sectionTextarea": {
+            "section-textarea": {
                 "label": "Campos de texto largo",
                 "textarea1": {
                     "label": "Textarea con altura máxima",

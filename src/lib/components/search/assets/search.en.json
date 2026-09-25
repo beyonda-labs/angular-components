@@ -14,15 +14,15 @@
             "operators": {
                 "between": "Between",
                 "contains": "Contains",
-                "endsWith": "Ends with",
+                "ends-with": "Ends with",
                 "equals": "Equals",
-                "greaterThan": "Greater than",
-                "greaterThanOrEquals": "Greater or equal",
-                "lessThan": "Less than",
-                "lessThanOrEquals": "Less or equal",
-                "notContains": "Does not contain",
-                "notEquals": "Not equals",
-                "startsWith": "Starts with"
+                "greater-than": "Greater than",
+                "greater-than-or-equals": "Greater or equal",
+                "less-than": "Less than",
+                "less-than-or-equals": "Less or equal",
+                "not-contains": "Does not contain",
+                "not-equals": "Not equals",
+                "starts-with": "Starts with"
             },
             "placeholder": "Search",
             "remove": "Remove filter",

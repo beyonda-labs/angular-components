@@ -19,8 +19,8 @@ export class LoginStyleGuideComponent {
         iconSrc: 'assets/angular-components/icons/demo-icon.svg',
         orgName: 'Beyonda Labs',
         privacyUrl: '/privacy',
-        productDescription: `${PREFIX}.productDescription`,
-        productName: `${PREFIX}.productName`,
+        productDescription: `${PREFIX}.product-description`,
+        productName: `${PREFIX}.product-name`,
         termsUrl: '/terms'
     });
 }

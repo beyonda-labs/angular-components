@@ -52,7 +52,7 @@
                     "label": "Password",
                     "placeholder": "Type your password"
                 },
-                "signinWith": "Continue with"
+                "signin-with": "Continue with"
             },
             "provider": {
                 "facebook": "Facebook",

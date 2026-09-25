@@ -209,7 +209,7 @@
                     "label": "Contraseña",
                     "placeholder": "Escribe tu contraseña"
                 },
-                "signinWith": "Continuar con"
+                "signin-with": "Continuar con"
             },
             "provider": {
                 "facebook": "Facebook",
@@ -346,15 +346,15 @@
             "operators": {
                 "between": "Entre",
                 "contains": "Contiene",
-                "endsWith": "Termina por",
+                "ends-with": "Termina por",
                 "equals": "Igual a",
-                "greaterThan": "Mayor que",
-                "greaterThanOrEquals": "Mayor o igual",
-                "lessThan": "Menor que",
-                "lessThanOrEquals": "Menor o igual",
-                "notContains": "No contiene",
-                "notEquals": "Distinto de",
-                "startsWith": "Empieza por"
+                "greater-than": "Mayor que",
+                "greater-than-or-equals": "Mayor o igual",
+                "less-than": "Menor que",
+                "less-than-or-equals": "Menor o igual",
+                "not-contains": "No contiene",
+                "not-equals": "Distinto de",
+                "starts-with": "Empieza por"
             },
             "placeholder": "Buscar",
             "remove": "Eliminar filtro",

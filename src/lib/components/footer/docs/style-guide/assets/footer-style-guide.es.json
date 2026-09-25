@@ -4,14 +4,14 @@
             "example": "Barra de pie de página orientada a modelos con identidad de marca (icono, organización y nombre de producto) y enlaces de navegación legal opcionales (Términos y condiciones, Política de privacidad) mediante Angular Router.",
             "examples": {
                 "minimal": "Mínimo",
-                "withLinks": "Con enlaces legales"
+                "with-links": "Con enlaces legales"
             },
             "minimal": {
-                "productName": "Mi Aplicación"
+                "product-name": "Mi Aplicación"
             },
-            "withLinks": {
-                "orgName": "Beyonda Labs",
-                "productName": "Mi Aplicación"
+            "with-links": {
+                "org-name": "Beyonda Labs",
+                "product-name": "Mi Aplicación"
             }
         }
     }

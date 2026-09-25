@@ -32,7 +32,7 @@ describe('LoginProvidersComponent', () => {
             { id: 'microsoft', authUrl: 'https://microsoft' }
         ]);
 
-        expect(fixture.nativeElement.textContent).toContain('demo.login.signinWith');
+        expect(fixture.nativeElement.textContent).toContain('demo.login.signin-with');
         expect(buttons()).toHaveLength(2);
     });
 

@@ -124,7 +124,9 @@ export class SearchComponent {
     }
 
     getOperatorLabel(operator: SearchFilterOperator): string {
-        return `angular-components.search.operators.${operator}`;
+        const key = operator.replaceAll(/[A-Z]/gu, letter => `-${letter.toLowerCase()}`);
+
+        return `angular-components.search.operators.${key}`;
     }
 
     getOperators(row: SearchDraftRow): SearchFilterOperator[] {

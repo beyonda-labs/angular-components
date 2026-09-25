@@ -29,7 +29,7 @@
                 "submitted": "The modal form has been submitted: ",
                 "title": "New Contact"
             },
-            "sectionAutocomplete": {
+            "section-autocomplete": {
                 "autocomplete1": {
                     "label": "Basic typeahead",
                     "options": {
@@ -63,7 +63,7 @@
                 "label": "Searchable fields",
                 "tooltip": "Typeahead variants with basic, required and disabled behaviour"
             },
-            "sectionCheckbox": {
+            "section-checkbox": {
                 "checkbox1": {
                     "label": "Accept Terms"
                 },
@@ -79,7 +79,7 @@
                 "label": "Checkbox Fields",
                 "tooltip": "Checkbox variants with basic, required, disabled and switch states"
             },
-            "sectionChips": {
+            "section-chips": {
                 "chips1": {
                     "label": "Basic Chips",
                     "placeholder": "Type and press Enter"
@@ -94,7 +94,7 @@
                 "label": "Chips Fields",
                 "tooltip": "Chips variants with basic, required with maxItems, and disabled states"
             },
-            "sectionDate": {
+            "section-date": {
                 "date1": {
                     "label": "Date With Range"
                 },
@@ -107,7 +107,7 @@
                 "label": "Date Fields",
                 "tooltip": "Date fields with range, required and disabled states"
             },
-            "sectionInfo": {
+            "section-info": {
                 "info1": {
                     "label": "Version"
                 },
@@ -117,7 +117,7 @@
                 "label": "Info Fields",
                 "tooltip": "Read-only icon/label pairs — no input styling, no FormControl"
             },
-            "sectionNumber": {
+            "section-number": {
                 "label": "Number Fields",
                 "number1": {
                     "label": "Number With Range",
@@ -133,7 +133,7 @@
                 },
                 "tooltip": "Number fields with range, required and disabled states"
             },
-            "sectionPassword": {
+            "section-password": {
                 "label": "Password Fields",
                 "password1": {
                     "label": "Password",
@@ -153,7 +153,7 @@
                 },
                 "tooltip": "Password fields with toggle, required and disabled states"
             },
-            "sectionRadio": {
+            "section-radio": {
                 "label": "Radio Fields",
                 "radio1": {
                     "label": "Basic Radio",
@@ -172,7 +172,7 @@
                 },
                 "tooltip": "Radio variants with basic and required configurations"
             },
-            "sectionSelect": {
+            "section-select": {
                 "label": "Select Fields",
                 "select1": {
                     "label": "Basic Select",
@@ -200,7 +200,7 @@
                 },
                 "tooltip": "Select variants with basic, required and disabled behavior"
             },
-            "sectionText": {
+            "section-text": {
                 "label": "Text Fields",
                 "text1": {
                     "label": "Required Text",
@@ -226,7 +226,7 @@
                 },
                 "tooltip": "Different text field configurations"
             },
-            "sectionTextarea": {
+            "section-textarea": {
                 "label": "Textarea Fields",
                 "textarea1": {
                     "label": "Textarea With Max Height",

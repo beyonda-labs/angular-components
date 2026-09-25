@@ -121,7 +121,7 @@ export class PropertiesMenuStyleGuideComponent {
 
     private buildHeadingConfig(): PropertiesMenuConfig {
         return new PropertiesMenuConfig({
-            prefix: 'angular-components-style-guide.propertiesMenu',
+            prefix: 'angular-components-style-guide.properties-menu',
             activeTabId: 'properties',
             icon: faFont,
             onFieldValueChange: change => this.lastFieldChange.set(change),

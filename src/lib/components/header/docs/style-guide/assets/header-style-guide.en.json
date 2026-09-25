@@ -26,15 +26,15 @@
                     "label": "Export",
                     "tooltip": "Export goal"
                 },
-                "individualGoal": {
+                "individual-goal": {
                     "label": "Individual goal",
                     "tooltip": "Create a new individual goal"
                 },
-                "newGoal": {
+                "new-goal": {
                     "label": "New goal",
                     "tooltip": "Create a new goal"
                 },
-                "teamGoal": {
+                "team-goal": {
                     "label": "Team goal",
                     "tooltip": "Create a new team goal"
                 }
@@ -44,7 +44,7 @@
             "examples": {
                 "back": "Header with back button and status badge",
                 "default": "Default header, no back button",
-                "subPage": "Sub-page variant, smaller title"
+                "sub-page": "Sub-page variant, smaller title"
             },
             "title": "Goals"
         }

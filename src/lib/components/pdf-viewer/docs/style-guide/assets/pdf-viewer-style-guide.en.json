@@ -1,6 +1,6 @@
 {
     "angular-components-style-guide": {
-        "pdfViewer": {
+        "pdf-viewer": {
             "example": "PDF preview built on ngx-extended-pdf-viewer with its native toolbar hidden and a fully custom toolbar driven through the viewer's imperative API and events."
         }
     }

@@ -18,7 +18,7 @@ import { FormFieldPatternValidator } from '../../models/form-field-validator.mod
 export function buildStyleGuideSections(): FormSection[] {
     return [
         new FormSection({
-            key: 'sectionText',
+            key: 'section-text',
             isTooltipVisible: true,
             rows: [
                 new FormRow({
@@ -60,7 +60,7 @@ export function buildStyleGuideSections(): FormSection[] {
             ]
         }),
         new FormSection({
-            key: 'sectionPassword',
+            key: 'section-password',
             isTooltipVisible: true,
             rows: [
                 new FormRow({
@@ -93,7 +93,7 @@ export function buildStyleGuideSections(): FormSection[] {
             ]
         }),
         new FormSection({
-            key: 'sectionDate',
+            key: 'section-date',
             isTooltipVisible: true,
             rows: [
                 new FormRow({
@@ -123,7 +123,7 @@ export function buildStyleGuideSections(): FormSection[] {
             ]
         }),
         new FormSection({
-            key: 'sectionInfo',
+            key: 'section-info',
             isTooltipVisible: true,
             rows: [
                 new FormRow({
@@ -146,7 +146,7 @@ export function buildStyleGuideSections(): FormSection[] {
             ]
         }),
         new FormSection({
-            key: 'sectionNumber',
+            key: 'section-number',
             isTooltipVisible: true,
             rows: [
                 new FormRow({
@@ -176,7 +176,7 @@ export function buildStyleGuideSections(): FormSection[] {
             ]
         }),
         new FormSection({
-            key: 'sectionSelect',
+            key: 'section-select',
             isTooltipVisible: true,
             rows: [
                 new FormRow({
@@ -186,11 +186,11 @@ export function buildStyleGuideSections(): FormSection[] {
                             columns: 6,
                             options: [
                                 {
-                                    label: 'angular-components-style-guide.form.sectionSelect.select1.options.option1',
+                                    label: 'angular-components-style-guide.form.section-select.select1.options.option1',
                                     value: 'option1'
                                 },
                                 {
-                                    label: 'angular-components-style-guide.form.sectionSelect.select1.options.option2',
+                                    label: 'angular-components-style-guide.form.section-select.select1.options.option2',
                                     value: 'option2'
                                 }
                             ]
@@ -201,11 +201,11 @@ export function buildStyleGuideSections(): FormSection[] {
                             isRequired: true,
                             options: [
                                 {
-                                    label: 'angular-components-style-guide.form.sectionSelect.select2.options.option1',
+                                    label: 'angular-components-style-guide.form.section-select.select2.options.option1',
                                     value: 'option1'
                                 },
                                 {
-                                    label: 'angular-components-style-guide.form.sectionSelect.select2.options.option2',
+                                    label: 'angular-components-style-guide.form.section-select.select2.options.option2',
                                     value: 'option2'
                                 }
                             ]
@@ -220,11 +220,11 @@ export function buildStyleGuideSections(): FormSection[] {
                             isDisabled: true,
                             options: [
                                 {
-                                    label: 'angular-components-style-guide.form.sectionSelect.select3.options.option1',
+                                    label: 'angular-components-style-guide.form.section-select.select3.options.option1',
                                     value: 'option1'
                                 },
                                 {
-                                    label: 'angular-components-style-guide.form.sectionSelect.select3.options.option2',
+                                    label: 'angular-components-style-guide.form.section-select.select3.options.option2',
                                     value: 'option2'
                                 }
                             ]
@@ -234,7 +234,7 @@ export function buildStyleGuideSections(): FormSection[] {
             ]
         }),
         new FormSection({
-            key: 'sectionAutocomplete',
+            key: 'section-autocomplete',
             isTooltipVisible: true,
             rows: [
                 new FormRow({
@@ -265,7 +265,7 @@ export function buildStyleGuideSections(): FormSection[] {
             ]
         }),
         new FormSection({
-            key: 'sectionRadio',
+            key: 'section-radio',
             isTooltipVisible: true,
             rows: [
                 new FormRow({
@@ -275,11 +275,11 @@ export function buildStyleGuideSections(): FormSection[] {
                             columns: 6,
                             options: [
                                 {
-                                    label: 'angular-components-style-guide.form.sectionRadio.radio1.options.option1',
+                                    label: 'angular-components-style-guide.form.section-radio.radio1.options.option1',
                                     value: 'option1'
                                 },
                                 {
-                                    label: 'angular-components-style-guide.form.sectionRadio.radio1.options.option2',
+                                    label: 'angular-components-style-guide.form.section-radio.radio1.options.option2',
                                     value: 'option2'
                                 }
                             ]
@@ -290,15 +290,15 @@ export function buildStyleGuideSections(): FormSection[] {
                             isRequired: true,
                             options: [
                                 {
-                                    label: 'angular-components-style-guide.form.sectionRadio.radio2.options.option1',
+                                    label: 'angular-components-style-guide.form.section-radio.radio2.options.option1',
                                     value: 'option1'
                                 },
                                 {
-                                    label: 'angular-components-style-guide.form.sectionRadio.radio2.options.option2',
+                                    label: 'angular-components-style-guide.form.section-radio.radio2.options.option2',
                                     value: 'option2'
                                 },
                                 {
-                                    label: 'angular-components-style-guide.form.sectionRadio.radio2.options.option3',
+                                    label: 'angular-components-style-guide.form.section-radio.radio2.options.option3',
                                     value: 'option3',
                                     isDisabled: true
                                 }
@@ -309,7 +309,7 @@ export function buildStyleGuideSections(): FormSection[] {
             ]
         }),
         new FormSection({
-            key: 'sectionTextarea',
+            key: 'section-textarea',
             isTooltipVisible: true,
             rows: [
                 new FormRow({
@@ -341,7 +341,7 @@ export function buildStyleGuideSections(): FormSection[] {
             ]
         }),
         new FormSection({
-            key: 'sectionCheckbox',
+            key: 'section-checkbox',
             isTooltipVisible: true,
             rows: [
                 new FormRow({
@@ -370,7 +370,7 @@ export function buildStyleGuideSections(): FormSection[] {
             ]
         }),
         new FormSection({
-            key: 'sectionChips',
+            key: 'section-chips',
             isTooltipVisible: true,
             rows: [
                 new FormRow({
@@ -398,7 +398,7 @@ export function buildStyleGuideSections(): FormSection[] {
 }
 
 function buildAutocompleteOptions(fieldKey: string): FormFieldOption[] {
-    const prefix = `angular-components-style-guide.form.sectionAutocomplete.${fieldKey}.options`;
+    const prefix = `angular-components-style-guide.form.section-autocomplete.${fieldKey}.options`;
 
     return ['option1', 'option2', 'option3', 'option4'].map(option => ({
         label: `${prefix}.${option}`,

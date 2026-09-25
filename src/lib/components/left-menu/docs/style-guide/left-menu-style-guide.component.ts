@@ -46,10 +46,10 @@ export class LeftMenuStyleGuideComponent {
                 })
             ],
             expanded,
-            prefix: 'angular-components-style-guide.leftMenu',
+            prefix: 'angular-components-style-guide.left-menu',
             title: new LeftMenuTitle({
                 icon: BRAND_ICON,
-                title: 'angular-components-style-guide.leftMenu.title'
+                title: 'angular-components-style-guide.left-menu.title'
             }),
             topActions: [
                 new LeftMenuAction({

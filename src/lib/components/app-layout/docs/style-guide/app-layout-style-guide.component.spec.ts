@@ -32,7 +32,7 @@ describe('AppLayoutStyleGuideComponent', () => {
     });
 
     it('opens on the dashboard', () => {
-        expect(breadcrumbLabels()).toEqual(['angular-components-style-guide.appLayout.actions.dashboard.label']);
+        expect(breadcrumbLabels()).toEqual(['angular-components-style-guide.app-layout.actions.dashboard.label']);
     });
 
     it('navigates from the page buttons', async () => {
@@ -43,6 +43,6 @@ describe('AppLayoutStyleGuideComponent', () => {
         await fixture.whenStable();
         fixture.detectChanges();
 
-        expect(breadcrumbLabels()).toEqual(['angular-components-style-guide.appLayout.actions.reports.label']);
+        expect(breadcrumbLabels()).toEqual(['angular-components-style-guide.app-layout.actions.reports.label']);
     });
 });

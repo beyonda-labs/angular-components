@@ -63,14 +63,14 @@ export class HeaderStyleGuideComponent {
                 }),
                 new HeaderAction({
                     icon: faPlus,
-                    key: 'newGoal',
+                    key: 'new-goal',
                     subActions: [
                         new HeaderAction({
-                            key: 'individualGoal',
+                            key: 'individual-goal',
                             type: HeaderActionType.Text
                         }),
                         new HeaderAction({
-                            key: 'teamGoal',
+                            key: 'team-goal',
                             type: HeaderActionType.Text
                         })
                     ],

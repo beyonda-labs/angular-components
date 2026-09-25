@@ -29,15 +29,15 @@ export class FormStyleGuideComponent {
             new FormButton({ label: `${PREFIX}.button.submit`, type: FormButtonType.Submit })
         ],
         initialValue: {
-            sectionText: { text1: '', text2: '', text3: '', text4: 'Disabled value', text5: '' },
-            sectionPassword: { password1: '', password2: '', password3: 'disabledpass', password4: '' },
-            sectionDate: { date1: '', date2: '', date3: '2026-06-15' },
-            sectionNumber: { number1: null, number2: null, number3: 25 },
-            sectionSelect: { select1: '', select2: '', select3: 'option1' },
-            sectionRadio: { radio1: '', radio2: '' },
-            sectionTextarea: { textarea1: '', textarea2: '', textarea3: 'Disabled long text' },
-            sectionCheckbox: { checkbox1: false, checkbox2: false, checkbox3: true, checkbox4: false },
-            sectionChips: { chips1: [], chips2: [], chips3: ['Angular', 'TypeScript'] }
+            'section-text': { text1: '', text2: '', text3: '', text4: 'Disabled value', text5: '' },
+            'section-password': { password1: '', password2: '', password3: 'disabledpass', password4: '' },
+            'section-date': { date1: '', date2: '', date3: '2026-06-15' },
+            'section-number': { number1: null, number2: null, number3: 25 },
+            'section-select': { select1: '', select2: '', select3: 'option1' },
+            'section-radio': { radio1: '', radio2: '' },
+            'section-textarea': { textarea1: '', textarea2: '', textarea3: 'Disabled long text' },
+            'section-checkbox': { checkbox1: false, checkbox2: false, checkbox3: true, checkbox4: false },
+            'section-chips': { chips1: [], chips2: [], chips3: ['Angular', 'TypeScript'] }
         },
         onCancel: () => this.lastEvent.set(`${PREFIX}.canceled`),
         onSubmit: () => this.lastEvent.set(`${PREFIX}.submitted`),

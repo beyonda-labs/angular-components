@@ -1,6 +1,6 @@
 {
     "angular-components-style-guide": {
-        "appLayout": {
+        "app-layout": {
             "actions": {
                 "dashboard": {
                     "label": "Dashboard",

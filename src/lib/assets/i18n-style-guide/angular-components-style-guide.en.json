@@ -1,6 +1,6 @@
 {
     "angular-components-style-guide": {
-        "appLayout": {
+        "app-layout": {
             "actions": {
                 "dashboard": {
                     "label": "Dashboard",
@@ -37,7 +37,7 @@
             "example": "Full application layout with collapsible side menu, dynamic breadcrumb and content area. Use the buttons or the menu to simulate page navigation.",
             "title": "Demo App"
         },
-        "appLayouts": "App Layouts",
+        "app-layout-section": "App Layouts",
         "badge": {
             "example": "Every variant of the badge, greyscale emphasis first and the semantic hues after."
         },
@@ -108,7 +108,7 @@
         "floating-preferences": {
             "example": "Self-contained language and theme selectors. Reads and writes state directly via TranslateService and BeyThemeService — no callbacks required.",
             "examples": {
-                "noPill": "Without the pill (usePill = false), for embedding in another container",
+                "no-pill": "Without the pill (usePill = false), for embedding in another container",
                 "pill": "Default (floating pill)"
             }
         },
@@ -117,14 +117,14 @@
             "example": "Model-driven footer bar with brand identity (icon, organization and product name) and optional legal navigation links (Terms & Conditions, Privacy Policy) via Angular Router.",
             "examples": {
                 "minimal": "Minimal",
-                "withLinks": "With legal links"
+                "with-links": "With legal links"
             },
             "minimal": {
-                "productName": "My Application"
+                "product-name": "My Application"
             },
-            "withLinks": {
-                "orgName": "Beyonda Labs",
-                "productName": "My Application"
+            "with-links": {
+                "org-name": "Beyonda Labs",
+                "product-name": "My Application"
             }
         },
         "footers": "Footers",
@@ -157,7 +157,7 @@
                 "submitted": "The modal form has been submitted: ",
                 "title": "New Contact"
             },
-            "sectionAutocomplete": {
+            "section-autocomplete": {
                 "autocomplete1": {
                     "label": "Basic typeahead",
                     "options": {
@@ -191,7 +191,7 @@
                 "label": "Searchable fields",
                 "tooltip": "Typeahead variants with basic, required and disabled behaviour"
             },
-            "sectionCheckbox": {
+            "section-checkbox": {
                 "checkbox1": {
                     "label": "Accept Terms"
                 },
@@ -207,7 +207,7 @@
                 "label": "Checkbox Fields",
                 "tooltip": "Checkbox variants with basic, required, disabled and switch states"
             },
-            "sectionChips": {
+            "section-chips": {
                 "chips1": {
                     "label": "Basic Chips",
                     "placeholder": "Type and press Enter"
@@ -222,7 +222,7 @@
                 "label": "Chips Fields",
                 "tooltip": "Chips variants with basic, required with maxItems, and disabled states"
             },
-            "sectionDate": {
+            "section-date": {
                 "date1": {
                     "label": "Date With Range"
                 },
@@ -235,7 +235,7 @@
                 "label": "Date Fields",
                 "tooltip": "Date fields with range, required and disabled states"
             },
-            "sectionInfo": {
+            "section-info": {
                 "info1": {
                     "label": "Version"
                 },
@@ -245,7 +245,7 @@
                 "label": "Info Fields",
                 "tooltip": "Read-only icon/label pairs — no input styling, no FormControl"
             },
-            "sectionNumber": {
+            "section-number": {
                 "label": "Number Fields",
                 "number1": {
                     "label": "Number With Range",
@@ -261,7 +261,7 @@
                 },
                 "tooltip": "Number fields with range, required and disabled states"
             },
-            "sectionPassword": {
+            "section-password": {
                 "label": "Password Fields",
                 "password1": {
                     "label": "Password",
@@ -281,7 +281,7 @@
                 },
                 "tooltip": "Password fields with toggle, required and disabled states"
             },
-            "sectionRadio": {
+            "section-radio": {
                 "label": "Radio Fields",
                 "radio1": {
                     "label": "Basic Radio",
@@ -300,7 +300,7 @@
                 },
                 "tooltip": "Radio variants with basic and required configurations"
             },
-            "sectionSelect": {
+            "section-select": {
                 "label": "Select Fields",
                 "select1": {
                     "label": "Basic Select",
@@ -328,7 +328,7 @@
                 },
                 "tooltip": "Select variants with basic, required and disabled behavior"
             },
-            "sectionText": {
+            "section-text": {
                 "label": "Text Fields",
                 "text1": {
                     "label": "Required Text",
@@ -354,7 +354,7 @@
                 },
                 "tooltip": "Different text field configurations"
             },
-            "sectionTextarea": {
+            "section-textarea": {
                 "label": "Textarea Fields",
                 "textarea1": {
                     "label": "Textarea With Max Height",
@@ -399,15 +399,15 @@
                     "label": "Export",
                     "tooltip": "Export goal"
                 },
-                "individualGoal": {
+                "individual-goal": {
                     "label": "Individual goal",
                     "tooltip": "Create a new individual goal"
                 },
-                "newGoal": {
+                "new-goal": {
                     "label": "New goal",
                     "tooltip": "Create a new goal"
                 },
-                "teamGoal": {
+                "team-goal": {
                     "label": "Team goal",
                     "tooltip": "Create a new team goal"
                 }
@@ -417,12 +417,12 @@
             "examples": {
                 "back": "Header with back button and status badge",
                 "default": "Default header, no back button",
-                "subPage": "Sub-page variant, smaller title"
+                "sub-page": "Sub-page variant, smaller title"
             },
             "title": "Goals"
         },
         "headers": "Headers",
-        "leftMenu": {
+        "left-menu": {
             "actions": {
                 "calendar": {
                     "label": "Calendar",
@@ -465,8 +465,8 @@
                     "tooltip": "Get support"
                 }
             },
-            "documentsClicked": "\"Documents\" action was triggered by clicking its label.",
-            "documentsHint": "\"Documents\" has both its own action and sub-actions: click its label to run the action, click the chevron to toggle the submenu.",
+            "documents-clicked": "\"Documents\" action was triggered by clicking its label.",
+            "documents-hint": "\"Documents\" has both its own action and sub-actions: click its label to run the action, click the chevron to toggle the submenu.",
             "example": "Left menu with grouped actions, nested navigation and collapsed behavior.",
             "examples": {
                 "collapsed": "Collapsed example",
@@ -478,7 +478,7 @@
             },
             "title": "Beyonda Labs"
         },
-        "leftMenus": "Left Menus",
+        "left-menu-section": "Left Menus",
         "list": {
             "empty": "No employees found",
             "empty-example": "Empty state (no items):",
@@ -512,8 +512,8 @@
         "loadings": "Loading",
         "login": {
             "demo": {
-                "productDescription": "Generate, sign and share PDFs in seconds. Templates, branding and e-signature — all from your browser.",
-                "productName": "PDF Generator"
+                "product-description": "Generate, sign and share PDFs in seconds. Templates, branding and e-signature — all from your browser.",
+                "product-name": "PDF Generator"
             },
             "example": "Full-page authentication component with light/dark theme support, optional OAuth providers (fetched from backend), and optional registration flow.",
             "examples": {
@@ -641,15 +641,15 @@
             }
         },
         "pagination-section": "Pagination",
-        "pdfViewer": {
+        "pdf-viewer": {
             "example": "PDF preview built on ngx-extended-pdf-viewer with its native toolbar hidden and a fully custom toolbar driven through the viewer's imperative API and events."
         },
-        "pdfViewers": "PDF Viewer",
-        "propertiesMenu": {
+        "pdf-viewer-section": "PDF Viewer",
+        "properties-menu": {
             "example": "Property inspector for a selected editor block, with tabs, collapsible groups and variable insertion.",
-            "provideVariables": "Provide variables"
+            "provide-variables": "Provide variables"
         },
-        "propertiesMenus": "Properties Menu",
+        "properties-menu-section": "Properties Menu",
         "search": {
             "applied": "Applied filters",
             "example": "Quick search box plus a panel of typed filter rows. Every change is reported through onFiltersChange; the consumer runs the query.",

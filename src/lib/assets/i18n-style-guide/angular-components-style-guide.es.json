@@ -1,6 +1,6 @@
 {
     "angular-components-style-guide": {
-        "appLayout": {
+        "app-layout": {
             "actions": {
                 "dashboard": {
                     "label": "Panel",
@@ -37,7 +37,7 @@
             "example": "Diseño completo de aplicación con menú lateral colapsable, breadcrumb dinámico y área de contenido. Usa los botones o el menú para simular la navegación entre páginas.",
             "title": "App Demo"
         },
-        "appLayouts": "Diseños de aplicación",
+        "app-layout-section": "Diseños de aplicación",
         "badge": {
             "example": "Todas las variantes de la etiqueta: primero los énfasis en gris y después los tonos semánticos."
         },
@@ -108,7 +108,7 @@
         "floating-preferences": {
             "example": "Selectores de idioma y tema autogestionados. Lee y escribe el estado directamente a través de TranslateService y BeyThemeService — no requiere callbacks.",
             "examples": {
-                "noPill": "Sin la píldora (usePill = false), para embeberlo en otro contenedor",
+                "no-pill": "Sin la píldora (usePill = false), para embeberlo en otro contenedor",
                 "pill": "Por defecto (píldora flotante)"
             }
         },
@@ -117,14 +117,14 @@
             "example": "Barra de pie de página orientada a modelos con identidad de marca (icono, organización y nombre de producto) y enlaces de navegación legal opcionales (Términos y condiciones, Política de privacidad) mediante Angular Router.",
             "examples": {
                 "minimal": "Mínimo",
-                "withLinks": "Con enlaces legales"
+                "with-links": "Con enlaces legales"
             },
             "minimal": {
-                "productName": "Mi Aplicación"
+                "product-name": "Mi Aplicación"
             },
-            "withLinks": {
-                "orgName": "Beyonda Labs",
-                "productName": "Mi Aplicación"
+            "with-links": {
+                "org-name": "Beyonda Labs",
+                "product-name": "Mi Aplicación"
             }
         },
         "footers": "Pies de página",
@@ -157,7 +157,7 @@
                 "submitted": "El formulario modal ha sido enviado: ",
                 "title": "Nuevo contacto"
             },
-            "sectionAutocomplete": {
+            "section-autocomplete": {
                 "autocomplete1": {
                     "label": "Typeahead básico",
                     "options": {
@@ -191,7 +191,7 @@
                 "label": "Campos con búsqueda",
                 "tooltip": "Variantes de typeahead con comportamiento básico, obligatorio y deshabilitado"
             },
-            "sectionCheckbox": {
+            "section-checkbox": {
                 "checkbox1": {
                     "label": "Aceptar términos"
                 },
@@ -207,7 +207,7 @@
                 "label": "Campos de checkbox",
                 "tooltip": "Variantes de checkbox con estado básico, obligatorio, deshabilitado e interruptor"
             },
-            "sectionChips": {
+            "section-chips": {
                 "chips1": {
                     "label": "Chips básico",
                     "placeholder": "Escriba y pulse Enter"
@@ -222,7 +222,7 @@
                 "label": "Campos de chips",
                 "tooltip": "Variantes de chips con estado básico, obligatorio con maxItems, y deshabilitado"
             },
-            "sectionDate": {
+            "section-date": {
                 "date1": {
                     "label": "Fecha con rango"
                 },
@@ -235,7 +235,7 @@
                 "label": "Campos de fecha",
                 "tooltip": "Campos de fecha con rango, obligatorio y deshabilitado"
             },
-            "sectionInfo": {
+            "section-info": {
                 "info1": {
                     "label": "Versión"
                 },
@@ -245,7 +245,7 @@
                 "label": "Campos de información",
                 "tooltip": "Pares de icono/etiqueta de solo lectura — sin estilo de input, sin FormControl"
             },
-            "sectionNumber": {
+            "section-number": {
                 "label": "Campos numéricos",
                 "number1": {
                     "label": "Número con rango",
@@ -261,7 +261,7 @@
                 },
                 "tooltip": "Campos numéricos con rango, obligatorio y deshabilitado"
             },
-            "sectionPassword": {
+            "section-password": {
                 "label": "Campos de contraseña",
                 "password1": {
                     "label": "Contraseña",
@@ -281,7 +281,7 @@
                 },
                 "tooltip": "Campos de contraseña con toggle, obligatorio y deshabilitado"
             },
-            "sectionRadio": {
+            "section-radio": {
                 "label": "Campos de radio",
                 "radio1": {
                     "label": "Radio básico",
@@ -300,7 +300,7 @@
                 },
                 "tooltip": "Variantes de radio con configuración básica y obligatoria"
             },
-            "sectionSelect": {
+            "section-select": {
                 "label": "Campos de selección",
                 "select1": {
                     "label": "Select básico",
@@ -328,7 +328,7 @@
                 },
                 "tooltip": "Variantes de select con comportamiento básico, obligatorio y deshabilitado"
             },
-            "sectionText": {
+            "section-text": {
                 "label": "Campos de texto",
                 "text1": {
                     "label": "Texto obligatorio",
@@ -354,7 +354,7 @@
                 },
                 "tooltip": "Diferentes configuraciones de campos de texto"
             },
-            "sectionTextarea": {
+            "section-textarea": {
                 "label": "Campos de texto largo",
                 "textarea1": {
                     "label": "Textarea con altura máxima",
@@ -399,15 +399,15 @@
                     "label": "Exportar",
                     "tooltip": "Exportar objetivos"
                 },
-                "individualGoal": {
+                "individual-goal": {
                     "label": "Objetivo individual",
                     "tooltip": "Crear un nuevo objetivo individual"
                 },
-                "newGoal": {
+                "new-goal": {
                     "label": "Nuevo objetivo",
                     "tooltip": "Crear un nuevo objetivo"
                 },
-                "teamGoal": {
+                "team-goal": {
                     "label": "Objetivo de equipo",
                     "tooltip": "Crear un nuevo objetivo de equipo"
                 }
@@ -417,12 +417,12 @@
             "examples": {
                 "back": "Cabecera con botón de volver y badge de estado",
                 "default": "Cabecera normal, sin botón de volver",
-                "subPage": "Variante de subpágina, título más pequeño"
+                "sub-page": "Variante de subpágina, título más pequeño"
             },
             "title": "Objetivos"
         },
         "headers": "Cabeceras",
-        "leftMenu": {
+        "left-menu": {
             "actions": {
                 "calendar": {
                     "label": "Calendario",
@@ -465,8 +465,8 @@
                     "tooltip": "Obtener soporte"
                 }
             },
-            "documentsClicked": "La acción \"Documentos\" se ha ejecutado al pulsar su etiqueta.",
-            "documentsHint": "\"Documentos\" tiene acción propia y subacciones: pulsa su etiqueta para ejecutar la acción, pulsa el chevron para desplegar el submenú.",
+            "documents-clicked": "La acción \"Documentos\" se ha ejecutado al pulsar su etiqueta.",
+            "documents-hint": "\"Documentos\" tiene acción propia y subacciones: pulsa su etiqueta para ejecutar la acción, pulsa el chevron para desplegar el submenú.",
             "example": "Menú lateral con acciones agrupadas, navegación anidada y comportamiento colapsado.",
             "examples": {
                 "collapsed": "Ejemplo colapsado",
@@ -478,7 +478,7 @@
             },
             "title": "Beyonda Labs"
         },
-        "leftMenus": "Menús laterales",
+        "left-menu-section": "Menús laterales",
         "list": {
             "empty": "No se han encontrado empleados",
             "empty-example": "Estado vacío (sin elementos):",
@@ -512,8 +512,8 @@
         "loadings": "Cargando",
         "login": {
             "demo": {
-                "productDescription": "Genera, firma y comparte PDFs en segundos. Plantillas, marca y firma electrónica — todo desde tu navegador.",
-                "productName": "PDF Generator"
+                "product-description": "Genera, firma y comparte PDFs en segundos. Plantillas, marca y firma electrónica — todo desde tu navegador.",
+                "product-name": "PDF Generator"
             },
             "example": "Componente de autenticación a pantalla completa con soporte de tema claro/oscuro y proveedores OAuth opcionales obtenidos del backend.",
             "examples": {
@@ -641,15 +641,15 @@
             }
         },
         "pagination-section": "Paginación",
-        "pdfViewer": {
+        "pdf-viewer": {
             "example": "Previsualizador de PDF construido sobre ngx-extended-pdf-viewer con su toolbar nativa oculta y una toolbar propia controlada mediante la API imperativa y los eventos del visor."
         },
-        "pdfViewers": "Visor de PDF",
-        "propertiesMenu": {
+        "pdf-viewer-section": "Visor de PDF",
+        "properties-menu": {
             "example": "Inspector de propiedades de un bloque seleccionado, con pestañas, grupos plegables e inserción de variables.",
-            "provideVariables": "Aportar variables"
+            "provide-variables": "Aportar variables"
         },
-        "propertiesMenus": "Menú de propiedades",
+        "properties-menu-section": "Menú de propiedades",
         "search": {
             "applied": "Filtros aplicados",
             "example": "Caja de búsqueda rápida más un panel de filtros tipados. Cada cambio se informa por onFiltersChange; la consulta la ejecuta el consumidor.",
