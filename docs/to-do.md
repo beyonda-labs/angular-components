@@ -133,13 +133,14 @@ A scan for the pattern the pilot uncovered says the API breaks are contained: on
 itself. What looked like the same thing in `properties-menu`, `table` and `tree` is a service's own signal,
 a callback field and dialog callbacks.
 
--   [ ] The remaining modules, one at a time
+-   [x] The remaining modules, one at a time; the internal `button` was the last one on `@Input`
 -   [x] `properties-menu`: callbacks on the config, a shared `internal/option-picker`, signals and tokens across
         the root, groups, list, tree and the eleven fields, one README
 -   [x] `badge` is a component with a `BadgeConfig`; `header`, `table` and `properties-menu` render theirs through it
 -   [x] Translation keys to kebab-case
 -   [ ] Trim module READMEs to the agreed shape
--   [ ] Remove the 35 `:host-context(body.dark)` blocks that only restate the palette, one module at a time
+-   [x] `:host-context(body.dark)` only survives for non-token swaps: the inverted icons of `footer` and `login`, the
+        `color-scheme` of the tree dialog
 
 ### S7 - Release
 

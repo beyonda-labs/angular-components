@@ -1,18 +1,20 @@
-@if (button && !button.isHidden) {
+@let current = button();
+
+@if (!current.isHidden) {
     <span
         class="d-inline-block"
-        [tooltip]="button.tooltip | translate"
-        [placement]="button.tooltipPlacement ?? 'top'"
+        [tooltip]="current.tooltip | translate"
+        [placement]="current.tooltipPlacement ?? 'top'"
         container="body"
         boundariesElement="viewport"
-        [style]="button.customStyles"
+        [style]="current.customStyles"
     >
-        <button [class]="getClasses()" [disabled]="button.isDisabled" (click)="onClick()">
-            @if (button.icon) {
-                <fa-icon [class]="'bey-button-icon' + (button.label ? ' me-2' : '')" [icon]="button.icon"></fa-icon>
+        <button type="button" [class]="classes()" [disabled]="current.isDisabled" (click)="onClick()">
+            @if (current.icon) {
+                <fa-icon class="bey-button-icon" [class.me-2]="current.label" [icon]="current.icon"></fa-icon>
             }
-            @if (button.label) {
-                {{ button.label | translate }}
+            @if (current.label) {
+                {{ current.label | translate }}
             }
         </button>
     </span>

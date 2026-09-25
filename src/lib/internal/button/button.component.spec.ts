@@ -1,102 +1,71 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { ButtonComponent } from './button.component';
-import { ButtonConfig, ButtonType } from './models/button-config.model';
-
-const createButton = (overrides?: Partial<ButtonConfig>): ButtonConfig =>
-    ({
-        type: ButtonType.Primary,
-        label: 'test',
-        isDisabled: false,
-        action: jest.fn(),
-        ...overrides
-    }) as ButtonConfig;
+import { ButtonConfig, ButtonParameters, ButtonType } from './models/button-config.model';
 
 describe('ButtonComponent', () => {
-    let component: ButtonComponent;
     let fixture: ComponentFixture<ButtonComponent>;
+    let element: HTMLElement;
+
+    function render(overrides: Partial<ButtonParameters> = {}): HTMLButtonElement | null {
+        fixture.componentRef.setInput(
+            'button',
+            new ButtonConfig({ action: jest.fn(), label: 'demo.label', ...overrides })
+        );
+        fixture.detectChanges();
+
+        return element.querySelector('button');
+    }
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [ButtonComponent]
+            imports: [ButtonComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
         fixture = TestBed.createComponent(ButtonComponent);
-        component = fixture.componentInstance;
+        element = fixture.nativeElement;
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('should render the label with the primary look by default', () => {
+        const button = render();
+
+        expect(button?.textContent?.trim()).toBe('demo.label');
+        expect(button?.classList).toContain('btn-dark');
     });
 
-    describe('getClasses()', () => {
-        it('should return empty string when button is undefined', () => {
-            component.button = undefined as unknown as ButtonConfig;
-
-            expect(component.getClasses()).toBe('');
-        });
-
-        it('should return primary button classes', () => {
-            component.button = createButton({ type: ButtonType.Primary });
-
-            const classes = component.getClasses();
-
-            expect(classes).toContain('btn');
-            expect(classes).toContain('btn-dark');
-        });
-
-        it('should return secondary button classes', () => {
-            component.button = createButton({ type: ButtonType.Secondary });
-
-            const classes = component.getClasses();
-
-            expect(classes).toContain('btn');
-            expect(classes).toContain('btn-outline-dark');
-        });
-
-        it('should return tertiary button classes', () => {
-            component.button = createButton({ type: ButtonType.Tertiary });
-
-            const classes = component.getClasses();
-
-            expect(classes).toContain('btn');
-            expect(classes).toContain('btn-link');
-        });
-
-        it('should return link-secondary button classes', () => {
-            component.button = createButton({ type: ButtonType.LinkSecondary });
-
-            const classes = component.getClasses();
-
-            expect(classes).toContain('btn');
-            expect(classes).toContain('btn-link');
-            expect(classes).toContain('btn-link-secondary');
-        });
+    it.each([
+        [ButtonType.Secondary, 'btn-outline-dark'],
+        [ButtonType.Tertiary, 'btn-link'],
+        [ButtonType.LinkSecondary, 'btn-link-secondary']
+    ])('should map the %s type to its bootstrap class', (type, expected) => {
+        expect(render({ type })?.classList).toContain(expected);
     });
 
-    describe('onClick()', () => {
-        it('should call action when button is enabled', () => {
-            const action = jest.fn();
-            component.button = createButton({ action, isDisabled: false });
+    it('should add the custom class to the button and to the host', () => {
+        const button = render({ customClass: 'demo-class' });
 
-            component.onClick();
+        expect(button?.classList).toContain('demo-class');
+        expect(element.classList).toContain('demo-class');
+    });
 
-            expect(action).toHaveBeenCalledTimes(1);
-        });
+    it('should render nothing when hidden', () => {
+        expect(render({ isHidden: true })).toBeNull();
+    });
 
-        it('should NOT call action when button is disabled', () => {
-            const action = jest.fn();
-            component.button = createButton({ action, isDisabled: true });
+    it('should run the action on click unless disabled', () => {
+        const action = jest.fn();
 
-            component.onClick();
+        render({ action })?.click();
+        expect(action).toHaveBeenCalledTimes(1);
 
-            expect(action).not.toHaveBeenCalled();
-        });
+        render({ action, isDisabled: true })?.click();
+        expect(action).toHaveBeenCalledTimes(1);
+    });
 
-        it('should NOT throw if button is undefined', () => {
-            component.button = undefined as unknown as ButtonConfig;
+    it('should show the icon before the label', () => {
+        const button = render({ icon: { iconName: 'plus', prefix: 'fas', icon: [512, 512, [], '', ''] } });
 
-            expect(() => component.onClick()).not.toThrow();
-        });
+        expect(button?.querySelector('fa-icon.bey-button-icon')).not.toBeNull();
     });
 });

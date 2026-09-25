@@ -1,27 +1,24 @@
 :host {
     --bey-modal-tree-fg: var(--bey-text-primary);
     --bey-modal-tree-fg-muted: var(--bey-text-muted);
-    --bey-close-hover-bg: var(--bey-gray-200);
-    --bey-modal-tree-scrollbar-thumb: var(--bey-gray-400);
-    --bey-modal-tree-scrollbar-thumb-hover: var(--bey-gray-500);
+    --bey-close-hover-bg: var(--bey-bg-hover);
+    --bey-modal-tree-scrollbar-thumb: var(--bey-border-default);
+    --bey-modal-tree-scrollbar-thumb-hover: var(--bey-border-strong);
 
     display: block;
     color: var(--bey-modal-tree-fg);
     color-scheme: light;
 }
 
+/* The native scrollbar follows the theme; the palette already does through the tokens. */
 :host-context(body.dark) {
-    --bey-close-hover-bg: var(--bey-gray-700);
-    --bey-modal-tree-scrollbar-thumb: var(--bey-gray-600);
-    --bey-modal-tree-scrollbar-thumb-hover: var(--bey-gray-500);
-
     color-scheme: dark;
 }
 
 .bey-modal-tree {
     --bey-modal-tree-accent: var(--bey-primary);
     --bey-modal-tree-accent-soft: rgba(var(--bey-black-rgb), 0.08);
-    --bey-modal-tree-border: var(--bey-gray-200);
+    --bey-modal-tree-border: var(--bey-border-subtle);
     --bey-modal-tree-surface: var(--bey-bg-surface);
     width: 100%;
     padding: var(--bey-space-xl) var(--bey-space-lg);
