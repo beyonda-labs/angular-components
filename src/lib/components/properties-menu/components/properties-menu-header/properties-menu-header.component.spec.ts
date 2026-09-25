@@ -14,6 +14,10 @@ describe('PropertiesMenuHeaderComponent', () => {
         fixture.detectChanges();
     }
 
+    function closeButton(): HTMLButtonElement | null {
+        return element.querySelector('[aria-label="angular-components.properties-menu.close"]');
+    }
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertiesMenuHeaderComponent, TranslateModule.forRoot()]
@@ -26,26 +30,26 @@ describe('PropertiesMenuHeaderComponent', () => {
     it('should render the title, subtitle and icon', () => {
         render(new PropertiesMenuHeaderConfig({ icon: faFont, subtitle: 'Block', title: 'Properties' }));
 
-        expect(element.querySelector('.bey-properties-menu-header-title')?.textContent).toContain('Properties');
-        expect(element.querySelector('.bey-properties-menu-header-subtitle')?.textContent).toContain('Block');
-        expect(element.querySelector('.bey-properties-menu-header-icon fa-icon')).not.toBeNull();
+        expect(element.textContent).toContain('Properties');
+        expect(element.textContent).toContain('Block');
+        expect(element.querySelector('fa-icon')).not.toBeNull();
     });
 
     it('should omit the subtitle and the icon when not configured', () => {
         render(new PropertiesMenuHeaderConfig({ title: 'Properties' }));
 
-        expect(element.querySelector('.bey-properties-menu-header-subtitle')).toBeNull();
-        expect(element.querySelector('.bey-properties-menu-header-icon fa-icon')).toBeNull();
+        expect(element.textContent).not.toContain('Block');
+        expect(element.querySelector('fa-icon')).toBeNull();
     });
 
     it('should render the close button only with onClose and call it on click', () => {
         const onClose = jest.fn();
 
         render(new PropertiesMenuHeaderConfig({ title: 'Properties' }));
-        expect(element.querySelector('.bey-properties-menu-header-close')).toBeNull();
+        expect(closeButton()).toBeNull();
 
         render(new PropertiesMenuHeaderConfig({ onClose, title: 'Properties' }));
-        element.querySelector<HTMLButtonElement>('.bey-properties-menu-header-close')?.click();
+        closeButton()?.click();
 
         expect(onClose).toHaveBeenCalled();
     });

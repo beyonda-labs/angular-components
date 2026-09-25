@@ -14,7 +14,7 @@ describe('FormAutocompleteFieldComponent', () => {
     }
 
     function panelOptions(): HTMLButtonElement[] {
-        return [...document.body.querySelectorAll<HTMLButtonElement>('.bey-form-autocomplete-option')];
+        return [...document.body.querySelectorAll<HTMLButtonElement>('[role="option"]')];
     }
 
     async function settle(): Promise<void> {
@@ -76,9 +76,11 @@ describe('FormAutocompleteFieldComponent', () => {
         control.setValue('mad');
         await settle();
 
-        (fixture.nativeElement.querySelector('.bey-form-autocomplete-clear') as HTMLButtonElement).dispatchEvent(
-            new MouseEvent('mousedown')
-        );
+        (
+            fixture.nativeElement.querySelector(
+                '[aria-label="angular-components.form.autocomplete-field.clear"]'
+            ) as HTMLButtonElement
+        ).dispatchEvent(new MouseEvent('mousedown'));
         await settle();
 
         expect(control.value).toBe('');
@@ -87,11 +89,11 @@ describe('FormAutocompleteFieldComponent', () => {
     it('moves the panel to the body while open and takes it away on close', async () => {
         input().dispatchEvent(new Event('focus'));
         await settle();
-        expect(document.body.querySelector('.bey-form-autocomplete-panel')).not.toBeNull();
+        expect(document.body.querySelector('[role="listbox"]')).not.toBeNull();
 
         input().dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
         await settle();
 
-        expect(document.body.querySelector('.bey-form-autocomplete-panel')).toBeNull();
+        expect(document.body.querySelector('[role="listbox"]')).toBeNull();
     });
 });

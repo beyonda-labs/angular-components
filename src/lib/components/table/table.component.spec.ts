@@ -173,7 +173,7 @@ describe('TableComponent', () => {
         await render();
         rowOf('Ada').querySelector('input')?.click();
         await settle();
-        const scroll = fixture.nativeElement.querySelector('.bey-table-scroll') as HTMLDivElement;
+        const scroll = fixture.nativeElement.querySelector('[role="table"]') as HTMLDivElement;
         scroll.scrollTop = 120;
 
         fixture.componentRef.setInput('config', buildConfig({ items: [{ id: 3, name: 'Grace', role: 'Ops' }] }));

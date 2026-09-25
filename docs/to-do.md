@@ -101,8 +101,11 @@ Eight modules used those shared classes without importing the stylesheet, so the
         `click` + `detectChanges` + `whenStable` pair covers the interactions the components have
 -   [x] No spec asserts a CSS class any more: the tests that only checked a modifier or state class are gone,
         and the ones that checked a state now read `aria-current` / `aria-expanded`, added to `left-menu` for it
--   [ ] 31 specs still locate elements by class (`querySelector('.bey-…')`, 117 uses), which the test rules
-        forbid. Each needs a role or visible text on the element, most of them in `properties-menu`
+-   [x] No spec locates an element by class any more: every locator is a role, an `aria-*` attribute or visible
+        text, and the templates gained the ARIA they lacked (`table` / `row` / `cell`, `list` / `listitem`, `tree` /
+        `treeitem`, `searchbox`, `aria-expanded` on submenus and groups)
+-   [ ] The submenu chevron of `left-menu` and the toggle of the property tree are spans with a click handler inside
+        the row button, so they are decorative for assistive technology; each should become a sibling button
 
 What the pilot cost, and what it changed beyond the plan:
 

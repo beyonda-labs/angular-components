@@ -16,11 +16,13 @@ describe('OptionPickerComponent', () => {
     let element: HTMLElement;
 
     function rows(): HTMLButtonElement[] {
-        return [...element.querySelectorAll<HTMLButtonElement>('.bey-option-picker-row')];
+        return [...element.querySelectorAll<HTMLButtonElement>('[role="option"]')];
     }
 
     function search(term: string): void {
-        const input = element.querySelector<HTMLInputElement>('.bey-option-picker-search-input')!;
+        const input = element.querySelector<HTMLInputElement>(
+            '[aria-label="angular-components.option-picker.search"]'
+        )!;
 
         input.value = term;
         input.dispatchEvent(new Event('input'));
@@ -59,14 +61,14 @@ describe('OptionPickerComponent', () => {
     it('should show an empty state when nothing matches', () => {
         search('unknown');
 
-        expect(element.querySelector('.bey-option-picker-empty')).not.toBeNull();
+        expect(element.textContent).toContain('angular-components.option-picker.empty');
     });
 
     it('should hide the search header when not searchable', () => {
         fixture.componentRef.setInput('searchable', false);
         fixture.detectChanges();
 
-        expect(element.querySelector('.bey-option-picker-header')).toBeNull();
+        expect(element.querySelector('[aria-label="angular-components.option-picker.search"]')).toBeNull();
     });
 
     it('should emit the clicked option and ignore disabled ones', () => {

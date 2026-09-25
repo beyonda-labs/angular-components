@@ -29,7 +29,11 @@ describe('FormTextVariableFieldComponent', () => {
     });
 
     it('opens the picker from its button and inserts the chosen variable at the end of the text', async () => {
-        (fixture.nativeElement.querySelector('.bey-form-text-variable-toggle') as HTMLButtonElement).click();
+        (
+            fixture.nativeElement.querySelector(
+                '[aria-label="angular-components.form.text-variable-field.insert-variable"]'
+            ) as HTMLButtonElement
+        ).click();
         fixture.detectChanges();
         await fixture.whenStable();
 

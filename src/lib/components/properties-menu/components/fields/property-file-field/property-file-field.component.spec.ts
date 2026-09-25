@@ -4,6 +4,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PropertyFileField } from '../../../models/fields/property-file-field.model';
 import { PropertyFileFieldComponent } from './property-file-field.component';
 
+const CLEAR_LABEL = 'angular-components.properties-menu.file-field.clear';
+const TOO_LARGE_TEXT = 'angular-components.properties-menu.file-field.too-large';
+
 describe('PropertyFileFieldComponent', () => {
     let component: PropertyFileFieldComponent;
     let fixture: ComponentFixture<PropertyFileFieldComponent>;
@@ -17,18 +20,22 @@ describe('PropertyFileFieldComponent', () => {
         component = fixture.componentInstance;
     });
 
+    function clearButton(): HTMLButtonElement | null {
+        return fixture.nativeElement.querySelector(`[aria-label="${CLEAR_LABEL}"]`);
+    }
+
     it('shows no clear button when the value is unset', () => {
         fixture.componentRef.setInput('field', new PropertyFileField({ id: 'source', value: '' }));
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-property-field-action')).toBeFalsy();
+        expect(clearButton()).toBeNull();
     });
 
     it('shows a clear button once a value is set', () => {
         fixture.componentRef.setInput('field', new PropertyFileField({ id: 'source', value: 'AAAA' }));
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-property-field-action')).toBeTruthy();
+        expect(clearButton()).not.toBeNull();
     });
 
     it('emits an empty string when the clear button is clicked', () => {
@@ -36,9 +43,8 @@ describe('PropertyFileFieldComponent', () => {
         fixture.detectChanges();
 
         const emitSpy = jest.spyOn(component.valueChange, 'emit');
-        const clearButton: HTMLButtonElement = fixture.nativeElement.querySelector('.bey-property-field-action');
 
-        clearButton.click();
+        clearButton()?.click();
 
         expect(emitSpy).toHaveBeenCalledWith('');
         expect(component.selectedFileName()).toBeNull();
@@ -79,7 +85,7 @@ describe('PropertyFileFieldComponent', () => {
         expect(emitSpy).not.toHaveBeenCalled();
         expect(component.selectedFileName()).toBeNull();
         expect(component.sizeErrorMaxSizeMB()).toBe(0);
-        expect(fixture.nativeElement.querySelector('.bey-property-field-error')).toBeTruthy();
+        expect(fixture.nativeElement.textContent).toContain(TOO_LARGE_TEXT);
     });
 
     it('accepts a file at or under maxSizeBytes', done => {

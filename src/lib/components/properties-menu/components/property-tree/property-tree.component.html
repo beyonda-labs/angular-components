@@ -4,6 +4,9 @@
             <button
                 type="button"
                 class="bey-property-tree-row"
+                role="treeitem"
+                [attr.aria-expanded]="hasVisibleChildren(node) ? node.expanded : null"
+                [attr.aria-selected]="isSelected(node)"
                 [attr.data-node-id]="node.id"
                 [class.is-selected]="isSelected(node)"
                 [class.is-disabled]="node.disabled"
@@ -20,6 +23,7 @@
             >
                 <span
                     class="bey-property-tree-toggle"
+                    aria-hidden="true"
                     [class.is-hidden]="!hasVisibleChildren(node)"
                     (click)="onToggleClick($event, node)"
                 >
@@ -49,7 +53,7 @@
     }
 </ng-template>
 
-<div class="bey-property-tree">
+<div class="bey-property-tree" role="tree">
     <ng-container
         [ngTemplateOutlet]="renderNodes"
         [ngTemplateOutletContext]="{ $implicit: visibleNodes(), level: 0 }"

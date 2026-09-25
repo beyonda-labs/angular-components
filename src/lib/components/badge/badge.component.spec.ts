@@ -12,7 +12,7 @@ describe('BadgeComponent', () => {
         fixture.componentRef.setInput('config', config);
         fixture.detectChanges();
 
-        return element.querySelector('.bey-badge')!;
+        return element;
     }
 
     beforeEach(async () => {

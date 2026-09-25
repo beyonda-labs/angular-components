@@ -12,6 +12,14 @@ describe('PropertyTreeComponent', () => {
     let fixture: ComponentFixture<PropertyTreeComponent>;
     let propertiesMenuService: PropertiesMenuService;
 
+    const treeItems = (): HTMLButtonElement[] => [...fixture.nativeElement.querySelectorAll('[role="treeitem"]')];
+
+    const toggle = (index: number): HTMLElement | null =>
+        treeItems()[index].querySelector(':scope > span[aria-hidden="true"]');
+
+    const button = (text: string): HTMLButtonElement | undefined =>
+        [...fixture.nativeElement.querySelectorAll('button')].find(element => element.textContent?.trim() === text);
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyTreeComponent, TranslateModule.forRoot()],
@@ -35,33 +43,25 @@ describe('PropertyTreeComponent', () => {
     });
 
     it('should render root and nested node labels', () => {
-        const labels: (string | undefined)[] = [
-            ...fixture.nativeElement.querySelectorAll('.bey-property-tree-label')
-        ].map((element: unknown) => (element as HTMLElement).textContent?.trim());
-
-        expect(labels).toEqual(['Page 1', 'Header']);
+        expect(treeItems().map(element => element.textContent?.trim())).toEqual(['Page 1', 'Header']);
     });
 
     it('should call PropertiesMenuService.selectTreeNode when a row is clicked', () => {
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectTreeNode');
-        const row: HTMLButtonElement = fixture.nativeElement.querySelector('.bey-property-tree-row');
-
-        row.click();
+        treeItems()[0].click();
 
         expect(selectSpy).toHaveBeenCalledWith('structure', 'structure-tree', 'page-1');
     });
 
     it('should call PropertiesMenuService.toggleTreeNode when the chevron is clicked', () => {
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleTreeNode');
-        const toggle: HTMLSpanElement = fixture.nativeElement.querySelector('.bey-property-tree-toggle');
-
-        toggle.click();
+        toggle(0)?.click();
 
         expect(toggleSpy).toHaveBeenCalledWith('structure', 'structure-tree', 'page-1');
     });
 
     it('should not render the add-block button without a label', () => {
-        expect(fixture.nativeElement.querySelector('.bey-property-tree-add-block')).toBeFalsy();
+        expect(fixture.nativeElement.textContent).not.toContain('Add block');
     });
 
     it('should call PropertiesMenuService.triggerTreeAddBlock when the add-block button is clicked', () => {
@@ -69,9 +69,7 @@ describe('PropertyTreeComponent', () => {
         fixture.detectChanges();
 
         const addBlockSpy = jest.spyOn(propertiesMenuService, 'triggerTreeAddBlock');
-        const button: HTMLButtonElement = fixture.nativeElement.querySelector('.bey-property-tree-add-block');
-
-        button.click();
+        button('Add block')?.click();
 
         expect(addBlockSpy).toHaveBeenCalledWith('structure', 'structure-tree');
     });

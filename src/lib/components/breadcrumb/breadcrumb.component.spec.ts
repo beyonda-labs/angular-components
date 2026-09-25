@@ -33,7 +33,7 @@ describe('BreadcrumbComponent', () => {
     }
 
     function items(): HTMLElement[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-breadcrumb-item')];
+        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('li:not([aria-hidden])')];
     }
 
     function labels(): string[] {
@@ -105,7 +105,7 @@ describe('BreadcrumbComponent', () => {
     it('separates the items with the configured separator', async () => {
         await render(buildConfig({ separator: '>' }));
 
-        const separators = [...fixture.nativeElement.querySelectorAll('.bey-breadcrumb-separator')];
+        const separators = [...fixture.nativeElement.querySelectorAll('li[aria-hidden="true"]')];
 
         expect(separators.map(element => element.textContent?.trim())).toEqual(['>', '>']);
     });

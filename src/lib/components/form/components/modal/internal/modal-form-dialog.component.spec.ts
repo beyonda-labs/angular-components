@@ -85,7 +85,11 @@ describe('ModalFormDialogComponent', () => {
         button('demo.modal-form.buttons.cancel').click();
         expect(hide).not.toHaveBeenCalled();
 
-        (fixture.nativeElement.querySelector('.bey-modal-form-close') as HTMLButtonElement).click();
+        (
+            fixture.nativeElement.querySelector(
+                '[aria-label="angular-components.modal.actions.close"]'
+            ) as HTMLButtonElement
+        ).click();
         expect(hide).toHaveBeenCalled();
     });
 

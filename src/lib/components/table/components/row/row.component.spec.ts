@@ -50,7 +50,7 @@ describe('TableRowComponent', () => {
     it('reports the opposite of its selection when clicked, and the checkbox state when ticked', async () => {
         await render({ selected: true });
 
-        (fixture.nativeElement.querySelector('.bey-table-row') as HTMLElement).click();
+        (fixture.nativeElement.querySelector('[role="row"]') as HTMLElement).click();
         checkbox()?.click();
 
         expect(changes).toEqual([false, false]);
@@ -58,11 +58,11 @@ describe('TableRowComponent', () => {
 
     it('ignores clicks when it is a header or not selectable', async () => {
         await render({ isHeader: true });
-        (fixture.nativeElement.querySelector('.bey-table-row') as HTMLElement).click();
+        (fixture.nativeElement.querySelector('[role="row"]') as HTMLElement).click();
         expect(changes).toEqual([]);
 
         await render({ selectable: false });
-        (fixture.nativeElement.querySelector('.bey-table-row') as HTMLElement).click();
+        (fixture.nativeElement.querySelector('[role="row"]') as HTMLElement).click();
         expect(changes).toEqual([]);
         expect(checkbox()).toBeNull();
     });

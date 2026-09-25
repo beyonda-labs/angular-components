@@ -39,7 +39,7 @@ describe('HeaderComponent', () => {
     }
 
     function panels(): HTMLElement[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-header-menu-panel')];
+        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('[role="group"]')];
     }
 
     beforeEach(async () => {
@@ -61,7 +61,7 @@ describe('HeaderComponent', () => {
         await render();
 
         expect(buttons()).toHaveLength(0);
-        expect(fixture.nativeElement.querySelector('.bey-header-badge')).toBeNull();
+        expect(fixture.nativeElement.querySelector('bey-badge')).toBeNull();
     });
 
     it('drops the title when the config does not give one', async () => {
@@ -73,7 +73,7 @@ describe('HeaderComponent', () => {
     it('shows the badge the config gives', async () => {
         await render(buildConfig({ badge: new BadgeConfig({ label: 'demo.badge' }) }));
 
-        const badge = fixture.nativeElement.querySelector('.bey-header-badge .bey-badge');
+        const badge = fixture.nativeElement.querySelector('bey-badge');
 
         expect(badge.textContent.trim()).toBe('demo.badge');
     });

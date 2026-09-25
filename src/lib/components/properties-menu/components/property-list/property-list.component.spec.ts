@@ -17,6 +17,30 @@ import { PropertyTab } from '../../models/property-tab.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { PropertyListComponent } from './property-list.component';
 
+const items = (fixture: ComponentFixture<PropertyListComponent>): HTMLElement[] =>
+    [...fixture.nativeElement.querySelectorAll('[role="button"]')].filter(
+        element => !element.parentElement?.closest('[role="button"]')
+    );
+
+const button = (fixture: ComponentFixture<PropertyListComponent>, name: string): HTMLElement | null =>
+    fixture.nativeElement.querySelector(`[aria-label="${name}"]`);
+
+const byText = (fixture: ComponentFixture<PropertyListComponent>, text: string): HTMLElement => {
+    const found = [...fixture.nativeElement.querySelectorAll('*')].findLast(
+        element => element.textContent?.trim() === text
+    );
+
+    if (!found) {
+        throw new Error(`No element with text ${text}`);
+    }
+
+    return found;
+};
+
+const EXPAND = 'angular-components.properties-menu.list.expand';
+const REMOVE = 'angular-components.properties-menu.remove';
+const COPY = 'angular-components.properties-menu.list.copy';
+
 describe('PropertyListComponent', () => {
     let component: PropertyListComponent;
     let fixture: ComponentFixture<PropertyListComponent>;
@@ -42,27 +66,19 @@ describe('PropertyListComponent', () => {
     });
 
     it('should render a card per item', () => {
-        const labels: (string | undefined)[] = [
-            ...fixture.nativeElement.querySelectorAll('.bey-property-list-item-label')
-        ].map((element: unknown) => (element as HTMLElement).textContent?.trim());
-
-        expect(labels).toEqual(['Encabezado', 'Bloqueado']);
+        expect(items(fixture).map(element => element.textContent?.trim())).toEqual(['Encabezado', 'Bloqueado']);
     });
 
     it('should call PropertiesMenuService.selectListItem when a card is clicked', () => {
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
-        const card: HTMLElement = fixture.nativeElement.querySelector('.bey-list-item');
-
-        card.click();
+        items(fixture)[0].click();
 
         expect(selectSpy).toHaveBeenCalledWith('add', 'simple-blocks', 'block-heading');
     });
 
     it('should not call PropertiesMenuService.selectListItem for a disabled item', () => {
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
-        const cards: HTMLElement[] = [...fixture.nativeElement.querySelectorAll('.bey-list-item')];
-
-        cards[1].click();
+        items(fixture)[1].click();
 
         expect(selectSpy).not.toHaveBeenCalled();
     });
@@ -132,25 +148,24 @@ describe('PropertyListComponent with expandable items', () => {
     it('renders the badges an item brings', () => {
         setUp([buildItem()]);
 
-        const badge: HTMLElement = fixture.nativeElement.querySelector('.bey-property-list-item-badges .bey-badge');
-
-        expect(badge.textContent?.trim()).toBe('Número');
+        expect(fixture.nativeElement.querySelector('bey-badge').textContent?.trim()).toBe('Número');
     });
 
     it('shows a chevron only on the items that carry a body', () => {
         setUp([buildItem(), new PropertyListItem({ id: 'plain' })]);
 
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-list-item-chevron').length).toBe(1);
+        expect(fixture.nativeElement.querySelectorAll(`[aria-label="${EXPAND}"]`).length).toBe(1);
     });
 
     it('keeps the body hidden until the item is expanded', () => {
         setUp([buildItem()]);
 
-        expect(fixture.nativeElement.querySelector('.bey-property-list-item-body')).toBeFalsy();
+        expect(fixture.nativeElement.textContent).not.toContain('Valor por defecto');
 
         setUp([buildItem({ expanded: true })]);
 
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-summary-row').length).toBe(2);
+        expect(fixture.nativeElement.textContent).toContain('Valor por defecto');
+        expect(fixture.nativeElement.querySelector('input').value).toBe('x');
     });
 
     it('toggles from the header, without selecting the card', () => {
@@ -159,7 +174,7 @@ describe('PropertyListComponent with expandable items', () => {
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
 
-        (fixture.nativeElement.querySelector('.bey-property-list-item') as HTMLElement).click();
+        byText(fixture, 'total_pages').click();
 
         expect(toggleSpy).toHaveBeenCalledWith('variables', 'variables-list', 'total_pages');
         expect(selectSpy).not.toHaveBeenCalled();
@@ -169,9 +184,7 @@ describe('PropertyListComponent with expandable items', () => {
         setUp([buildItem({ expanded: true })]);
 
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
-        const field: HTMLElement = fixture.nativeElement.querySelector('.bey-property-summary-row-field input');
-
-        field.click();
+        fixture.nativeElement.querySelector('input').click();
 
         expect(toggleSpy).not.toHaveBeenCalled();
     });
@@ -181,7 +194,7 @@ describe('PropertyListComponent with expandable items', () => {
 
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
 
-        (fixture.nativeElement.querySelector('.bey-property-list-item-body') as HTMLElement).click();
+        byText(fixture, 'Valor por defecto').click();
 
         expect(toggleSpy).not.toHaveBeenCalled();
     });
@@ -192,7 +205,7 @@ describe('PropertyListComponent with expandable items', () => {
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
 
-        (fixture.nativeElement.querySelector('.bey-property-list-item-chevron') as HTMLElement).click();
+        button(fixture, EXPAND)?.click();
 
         expect(toggleSpy).toHaveBeenCalledWith('variables', 'variables-list', 'total_pages');
         expect(selectSpy).not.toHaveBeenCalled();
@@ -204,7 +217,7 @@ describe('PropertyListComponent with expandable items', () => {
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
 
-        (fixture.nativeElement.querySelector('.bey-list-item') as HTMLElement).click();
+        items(fixture)[0].click();
 
         expect(selectSpy).toHaveBeenCalledWith('variables', 'variables-list', 'problem-1');
         expect(toggleSpy).not.toHaveBeenCalled();
@@ -215,9 +228,7 @@ describe('PropertyListComponent with expandable items', () => {
 
         const removeSpy = jest.spyOn(propertiesMenuService, 'removeListItem');
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
-        const remove: HTMLElement = fixture.nativeElement.querySelector('.bey-property-list-item-remove');
-
-        remove.click();
+        button(fixture, REMOVE)?.click();
 
         expect(removeSpy).toHaveBeenCalledWith('variables', 'variables-list', 'total_pages');
         expect(toggleSpy).not.toHaveBeenCalled();
@@ -226,14 +237,14 @@ describe('PropertyListComponent with expandable items', () => {
     it('does not render a remove button on a non-removable item', () => {
         setUp([buildItem()]);
 
-        expect(fixture.nativeElement.querySelector('.bey-property-list-item-remove')).toBeFalsy();
+        expect(button(fixture, REMOVE)).toBeNull();
     });
 
     it('renders a real field for an editable row and a dash for an empty one', () => {
         setUp([buildItem({ expanded: true })]);
 
-        expect(fixture.nativeElement.querySelector('.bey-property-summary-row-field')).toBeTruthy();
-        expect(fixture.nativeElement.querySelector('.bey-property-summary-row-value').textContent?.trim()).toBe('—');
+        expect(fixture.nativeElement.querySelector('input').value).toBe('x');
+        expect(fixture.nativeElement.textContent).toContain('—');
     });
 });
 
@@ -270,8 +281,8 @@ describe('PropertyListComponent body labels', () => {
         ]);
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-property-field-label')).toBeFalsy();
-        expect(fixture.nativeElement.querySelector('.bey-property-summary-row-label').textContent.trim()).toBe('Valor');
+        expect(fixture.nativeElement.querySelector('label')).toBeNull();
+        expect(byText(fixture, 'Valor')).toBeTruthy();
     });
 });
 
@@ -304,9 +315,7 @@ describe('PropertyListComponent label parameters', () => {
         ]);
         fixture.detectChanges();
 
-        const label = fixture.nativeElement.querySelector('.bey-property-list-item-label');
-
-        expect(label.textContent.trim()).toBe('Es pdf y se espera image');
+        expect(items(fixture)[0].textContent?.trim()).toBe('Es pdf y se espera image');
     });
 
     it('still renders a label that takes no parameters', () => {
@@ -314,9 +323,7 @@ describe('PropertyListComponent label parameters', () => {
         fixture.componentRef.setInput('items', [new PropertyListItem({ id: 'p2', label: 'problems.plain' })]);
         fixture.detectChanges();
 
-        const label = fixture.nativeElement.querySelector('.bey-property-list-item-label');
-
-        expect(label.textContent.trim()).toBe('Sin parámetros');
+        expect(items(fixture)[0].textContent?.trim()).toBe('Sin parámetros');
     });
 });
 
@@ -395,7 +402,8 @@ describe('PropertyListComponent copy and actions', () => {
     });
 
     it('shows one button per action plus the copy one', () => {
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-list-item-action').length).toBe(2);
+        expect(button(fixture, COPY)).toBeTruthy();
+        expect(button(fixture, 'Duplicar')).toBeTruthy();
     });
 
     it('copies the expression the item carries, not its label', async () => {
@@ -425,9 +433,7 @@ describe('PropertyListComponent copy and actions', () => {
     it('reports the action key without selecting or toggling the card', () => {
         const actionSpy = jest.spyOn(propertiesMenuService, 'triggerListItemAction');
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
-        const buttons = fixture.nativeElement.querySelectorAll('.bey-property-list-item-action');
-
-        (buttons[1] as HTMLElement).click();
+        button(fixture, 'Duplicar')?.click();
 
         expect(actionSpy).toHaveBeenCalledWith('variables', 'variables-list', 'v1', 'duplicate');
         expect(toggleSpy).not.toHaveBeenCalled();
@@ -437,6 +443,7 @@ describe('PropertyListComponent copy and actions', () => {
         fixture.componentRef.setInput('items', [new PropertyListItem({ id: 'v2', label: 'otra' })]);
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-list-item-action').length).toBe(0);
+        expect(button(fixture, COPY)).toBeNull();
+        expect(button(fixture, 'Duplicar')).toBeNull();
     });
 });

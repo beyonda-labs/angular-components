@@ -22,7 +22,7 @@ class EmptyPageComponent {}
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [AppLayoutComponent],
     standalone: true,
-    template: '<bey-app-layout [config]="config"><p class="projected">Projected content</p></bey-app-layout>'
+    template: '<bey-app-layout [config]="config"><p>Projected content</p></bey-app-layout>'
 })
 class HostComponent {
     config = buildConfig();
@@ -57,26 +57,32 @@ describe('AppLayoutComponent', () => {
         fixture.detectChanges();
     }
 
-    function rowOf(name: string): HTMLElement {
-        const found = [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-left-menu-item')].find(
-            item => item.querySelector('.bey-left-menu-action-label')?.textContent?.trim() === name
+    function buttonOf(name: string): HTMLButtonElement {
+        const found = [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')].find(
+            button => button.textContent?.trim() === name
         );
 
         if (!found) {
-            throw new Error(`No row for ${name}`);
+            throw new Error(`No button for ${name}`);
         }
 
         return found;
     }
 
-    function buttonOf(name: string): HTMLElement {
-        return rowOf(name).querySelector('.bey-left-menu-action') as HTMLElement;
+    function chevronOf(name: string): HTMLElement {
+        return buttonOf(name).querySelector(':scope > span[aria-hidden="true"]') as HTMLElement;
+    }
+
+    function toggle(): HTMLButtonElement {
+        return fixture.nativeElement.querySelector(
+            '[aria-label="angular-components.left-menu.collapse"], [aria-label="angular-components.left-menu.expand"]'
+        );
     }
 
     function breadcrumbLabels(): string[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-breadcrumb-item-label')].map(
-            label => label.textContent?.trim() ?? ''
-        );
+        return [
+            ...fixture.nativeElement.querySelectorAll<HTMLElement>('bey-breadcrumb li:not([aria-hidden="true"])')
+        ].map(item => item.textContent?.trim() ?? '');
     }
 
     beforeEach(async () => {
@@ -99,17 +105,15 @@ describe('AppLayoutComponent', () => {
         await render();
 
         expect(fixture.nativeElement.textContent).toContain('Demo app');
-        expect(rowOf('demo.actions.home.label')).toBeTruthy();
-        expect(rowOf('demo.actions.settings.label')).toBeTruthy();
+        expect(buttonOf('demo.actions.home.label')).toBeTruthy();
+        expect(buttonOf('demo.actions.settings.label')).toBeTruthy();
     });
 
     it('projects the page content into the body', () => {
         const host = TestBed.createComponent(HostComponent);
         host.detectChanges();
 
-        expect(host.nativeElement.querySelector('.bey-app-layout-body-content .projected').textContent).toBe(
-            'Projected content'
-        );
+        expect(host.nativeElement.querySelector('main').textContent).toContain('Projected content');
     });
 
     it('reports that it has initialised', async () => {
@@ -123,7 +127,7 @@ describe('AppLayoutComponent', () => {
     it('passes the signed-in user to the menu', async () => {
         await render(buildConfig({ userInfo: new LeftMenuUserInfo({ name: 'Ada', surname: 'Lovelace' }) }));
 
-        expect(fixture.nativeElement.querySelector('.bey-left-menu-footer').textContent).toContain('Ada Lovelace');
+        expect(fixture.nativeElement.querySelector('aside').textContent).toContain('Ada Lovelace');
     });
 
     describe('breadcrumb', () => {
@@ -156,7 +160,7 @@ describe('AppLayoutComponent', () => {
             ]);
             await settle();
 
-            fixture.nativeElement.querySelector('.bey-breadcrumb-item-button').click();
+            buttonOf('Home').click();
             service.emitBreadcrumbClick(42);
 
             expect(onBreadcrumbClick.mock.calls).toEqual([[1], [42]]);
@@ -198,7 +202,7 @@ describe('AppLayoutComponent', () => {
             );
             service.onMenuClick$.subscribe(clicked);
 
-            (rowOf('demo.actions.reports.label').querySelector('.bey-left-menu-action-chevron') as HTMLElement).click();
+            chevronOf('demo.actions.reports.label').click();
             await settle();
             buttonOf('demo.actions.daily.label').click();
             buttonOf('demo.actions.settings.label').click();
@@ -243,16 +247,12 @@ describe('AppLayoutComponent', () => {
         it('starts as the service remembers and persists every toggle', async () => {
             service.setExpanded(false);
             await render();
-            expect(fixture.nativeElement.querySelector('.bey-left-menu-toggle').getAttribute('aria-expanded')).toBe(
-                'false'
-            );
+            expect(toggle().getAttribute('aria-expanded')).toBe('false');
 
-            fixture.nativeElement.querySelector('.bey-left-menu-toggle').click();
+            toggle().click();
             await settle();
 
-            expect(fixture.nativeElement.querySelector('.bey-left-menu-toggle').getAttribute('aria-expanded')).toBe(
-                'true'
-            );
+            expect(toggle().getAttribute('aria-expanded')).toBe('true');
             expect(service.expanded()).toBe(true);
             expect(localStorage.getItem('bey-left-menu-expanded')).toBe('true');
         });

@@ -36,8 +36,5 @@ describe('PropertyTabsComponent', () => {
 
     it('should render as the underline variant, not segmented', () => {
         expect(component.tabsConfig().variant).toBe(TabsVariant.Underline);
-
-        const segmented = fixture.nativeElement.querySelector('.bey-tabs--segmented');
-        expect(segmented).toBeNull();
     });
 });

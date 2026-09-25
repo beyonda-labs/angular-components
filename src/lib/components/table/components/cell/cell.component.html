@@ -1,5 +1,6 @@
 <div
     class="bey-table-cell"
+    [attr.role]="isHeader() ? 'columnheader' : 'cell'"
     [class.bey-table-cell--header]="isHeader()"
     [tooltip]="tooltip() | translate"
     container="body"

@@ -73,7 +73,8 @@ describe('PropertyFieldComponent', () => {
     it('should not render anything for a hidden field', () => {
         renderField(new PropertyTextField({ id: 'text', hidden: true }));
 
-        expect(fixture.nativeElement.querySelector('.bey-property-field')).toBeFalsy();
+        expect(fixture.nativeElement.querySelector('bey-property-text-field')).toBeNull();
+        expect(fixture.nativeElement.textContent?.trim()).toBe('');
     });
 
     it('should forward value changes to the menu service', () => {

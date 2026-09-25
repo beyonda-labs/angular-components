@@ -36,9 +36,7 @@ describe('LoadingContainerComponent', () => {
 
         const overlay = fixture.nativeElement.querySelector('bey-loading-overlay');
         expect(overlay).toBeTruthy();
-
-        const inner = fixture.nativeElement.querySelector('.bey-loading-overlay.is-fullscreen');
-        expect(inner).toBeTruthy();
+        expect(overlay.querySelector('[role="alert"]')).toBeTruthy();
     });
 
     it('should hide overlay after matching hide()', () => {

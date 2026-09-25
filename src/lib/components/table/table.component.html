@@ -1,6 +1,6 @@
 <div class="bey-table">
-    <div class="bey-table-scroll" #scrollContainer [style.height]="config().height">
-        <div class="bey-table-header">
+    <div class="bey-table-scroll" #scrollContainer role="table" [style.height]="config().height">
+        <div class="bey-table-header" role="rowgroup">
             <bey-table-row
                 [gridTemplateColumns]="gridTemplateColumns()"
                 [isHeader]="true"
@@ -12,7 +12,7 @@
             ></bey-table-row>
         </div>
 
-        <div class="bey-table-body">
+        <div class="bey-table-body" role="rowgroup">
             @for (row of rows(); track $index) {
                 <bey-table-row
                     [gridTemplateColumns]="gridTemplateColumns()"

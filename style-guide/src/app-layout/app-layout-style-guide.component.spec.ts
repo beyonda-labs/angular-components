@@ -8,9 +8,9 @@ describe('AppLayoutStyleGuideComponent', () => {
     let fixture: ComponentFixture<AppLayoutStyleGuideComponent>;
 
     function breadcrumbLabels(): string[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-breadcrumb-item-label')].map(
-            label => label.textContent?.trim() ?? ''
-        );
+        return [
+            ...fixture.nativeElement.querySelectorAll<HTMLElement>('bey-breadcrumb li:not([aria-hidden="true"])')
+        ].map(label => label.textContent?.trim() ?? '');
     }
 
     beforeEach(async () => {
@@ -36,11 +36,11 @@ describe('AppLayoutStyleGuideComponent', () => {
     });
 
     it('navigates from the page buttons', async () => {
-        const buttons = [
-            ...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('.bey-app-layout-style-guide-actions button')
-        ];
+        const reports = [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')].find(
+            button => button.textContent?.trim() === 'angular-components-style-guide.app-layout.actions.reports.label'
+        );
 
-        buttons[2].click();
+        reports?.click();
         fixture.detectChanges();
         await fixture.whenStable();
         fixture.detectChanges();

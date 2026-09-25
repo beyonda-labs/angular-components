@@ -17,6 +17,8 @@
                 [class.has-children]="hasSubActions(action)"
                 [class.is-open]="isSubmenuOpen(actionPath, forceExpanded)"
                 [attr.aria-current]="isActionActive(action) ? 'page' : null"
+                [attr.aria-expanded]="hasSubActions(action) ? isSubmenuOpen(actionPath, forceExpanded) : null"
+                [attr.aria-label]="isInlineExpanded(forceExpanded) ? null : (getLabel(action) | translate)"
                 [disabled]="action.disabled"
                 [tooltip]="getButtonTooltip(action, actionPath, forceExpanded) | translate"
                 container="body"
@@ -38,7 +40,7 @@
 
                 @if (hasSubActions(action)) {
                     @if (isInlineExpanded(forceExpanded)) {
-                        <span class="bey-left-menu-action-chevron">
+                        <span class="bey-left-menu-action-chevron" aria-hidden="true">
                             <fa-icon [icon]="getChevronIcon(actionPath, forceExpanded)"></fa-icon>
                         </span>
                     } @else {

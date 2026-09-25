@@ -11,6 +11,9 @@ describe('PropertyTabComponent', () => {
     let fixture: ComponentFixture<PropertyTabComponent>;
     let service: PropertiesMenuService;
 
+    const button = (text: string): HTMLButtonElement | undefined =>
+        [...fixture.nativeElement.querySelectorAll('button')].find(element => element.textContent?.trim() === text);
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyTabComponent, TranslateModule.forRoot()],
@@ -38,14 +41,14 @@ describe('PropertyTabComponent', () => {
         fixture.componentRef.setInput('tab', new PropertyTab({ id: 'properties', groups: [] }));
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-property-tab-add-group')).toBeNull();
+        expect(button('add.label')).toBeUndefined();
     });
 
     it('should render the add-group button when addLabel is set', () => {
         fixture.componentRef.setInput('tab', new PropertyTab({ id: 'properties', addLabel: 'add.label', groups: [] }));
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-property-tab-add-group')).toBeTruthy();
+        expect(button('add.label')).toBeTruthy();
     });
 
     it('should trigger the tab-add event when the add-group button is clicked', () => {
@@ -54,8 +57,7 @@ describe('PropertyTabComponent', () => {
         service.setConfig(new PropertiesMenuConfig({ onTabAdd, prefix: 'app' }));
         fixture.detectChanges();
 
-        const button: HTMLButtonElement = fixture.nativeElement.querySelector('.bey-property-tab-add-group');
-        button.click();
+        button('add.label')?.click();
 
         expect(onTabAdd).toHaveBeenCalledWith({ tabId: 'properties' });
     });

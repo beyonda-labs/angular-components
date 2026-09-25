@@ -89,6 +89,10 @@ describe('PropertiesMenuComponent', () => {
         fixture.detectChanges();
     }
 
+    function closeButton(): HTMLButtonElement | null {
+        return element.querySelector('[aria-label="angular-components.properties-menu.close"]');
+    }
+
     function service(): PropertiesMenuService {
         return fixture.debugElement.injector.get(PropertiesMenuService);
     }
@@ -105,33 +109,31 @@ describe('PropertiesMenuComponent', () => {
     it('should render the header title and subtitle', () => {
         render(buildConfig());
 
-        expect(element.querySelector('.bey-properties-menu-header-title')?.textContent).toContain('Title');
-        expect(element.querySelector('.bey-properties-menu-header-subtitle')?.textContent).toContain('Block: heading');
+        expect(element.textContent).toContain('Title');
+        expect(element.textContent).toContain('Block: heading');
     });
 
     it('should resolve the default title from the prefix', () => {
         render(buildConfig({ title: undefined }));
 
-        expect(element.querySelector('.bey-properties-menu-header-title')?.textContent).toContain(
-            'app.properties-menu.title'
-        );
+        expect(element.textContent).toContain('app.properties-menu.title');
     });
 
-    it('should hide the header and the card chrome when embedded', () => {
+    it('should hide the header when embedded', () => {
         render(buildConfig({ embedded: true }));
 
         expect(element.querySelector('bey-properties-menu-header')).toBeNull();
-        expect(element.querySelector('.bey-properties-menu--embedded')).not.toBeNull();
+        expect(element.textContent).not.toContain('Title');
     });
 
     it('should show the close button only when onClose is configured', () => {
         const onClose = jest.fn();
 
         render(buildConfig());
-        expect(element.querySelector('.bey-properties-menu-header-close')).toBeNull();
+        expect(closeButton()).toBeNull();
 
         render(buildConfig({ onClose }));
-        element.querySelector<HTMLButtonElement>('.bey-properties-menu-header-close')?.click();
+        closeButton()?.click();
 
         expect(onClose).toHaveBeenCalled();
     });
@@ -153,7 +155,7 @@ describe('PropertiesMenuComponent', () => {
         render(buildConfig());
         render(buildConfig({ activeTabId: 'page', subtitle: 'Block: page' }));
 
-        expect(element.querySelector('.bey-properties-menu-header-subtitle')?.textContent).toContain('Block: page');
+        expect(element.textContent).toContain('Block: page');
         expect(element.querySelector('bey-property-field')).toBeNull();
     });
 

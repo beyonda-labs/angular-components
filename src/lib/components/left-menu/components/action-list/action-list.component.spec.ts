@@ -23,39 +23,32 @@ describe('ActionListComponent', () => {
         await fixture.whenStable();
     }
 
-    function labels(): string[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-left-menu-action-label')].map(
-            label => label.textContent?.trim() ?? ''
-        );
+    function buttons(): HTMLButtonElement[] {
+        return [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')];
     }
 
-    function rowOf(name: string): HTMLElement {
-        const found = [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-left-menu-item')].find(
-            item => item.querySelector('.bey-left-menu-action-label')?.textContent?.trim() === name
+    function labels(): string[] {
+        return buttons().map(button => button.textContent?.trim() ?? '');
+    }
+
+    function buttonOf(name: string): HTMLButtonElement {
+        const found = buttons().find(
+            button => button.textContent?.trim() === name || button.getAttribute('aria-label') === name
         );
 
         if (!found) {
-            throw new Error(`No row for ${name}`);
+            throw new Error(`No button for ${name}`);
         }
 
         return found;
     }
 
-    function buttonOf(name: string): HTMLElement {
-        return rowOf(name).querySelector('.bey-left-menu-action') as HTMLElement;
-    }
-
     function chevronOf(name: string): HTMLElement {
-        return rowOf(name).querySelector('.bey-left-menu-action-chevron') as HTMLElement;
+        return buttonOf(name).querySelector(':scope > span[aria-hidden="true"]') as HTMLElement;
     }
 
-    /* Collapsed rows render no label, so there they are addressed by position. */
-    function rowAt(index: number): HTMLElement {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-left-menu-item')][index];
-    }
-
-    function flyouts(): HTMLElement[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-left-menu-flyout')];
+    function rowOf(name: string): HTMLElement {
+        return buttonOf(name).parentElement as HTMLElement;
     }
 
     beforeEach(async () => {
@@ -163,33 +156,37 @@ describe('ActionListComponent', () => {
         it('opens a flyout on hover and closes it on leave', async () => {
             await render([action('reports', { subActions: [action('daily')] })], false);
 
-            (rowAt(0).querySelector('.bey-left-menu-action') as HTMLElement).dispatchEvent(new MouseEvent('mouseover'));
+            buttonOf('reports').dispatchEvent(new MouseEvent('mouseover'));
             fixture.detectChanges();
-            expect(flyouts()).toHaveLength(1);
+            expect(buttonOf('reports').getAttribute('aria-expanded')).toBe('true');
+            expect(labels()).toContain('daily');
 
-            rowAt(0).dispatchEvent(new MouseEvent('mouseleave'));
+            rowOf('reports').dispatchEvent(new MouseEvent('mouseleave'));
             fixture.detectChanges();
-            expect(flyouts()).toHaveLength(0);
+            expect(buttonOf('reports').getAttribute('aria-expanded')).toBe('false');
+            expect(labels()).not.toContain('daily');
         });
 
         it('opens the flyout on a click instead of running the action', async () => {
             const run = jest.fn();
             await render([action('reports', { action: run, subActions: [action('daily')] })], false);
 
-            (rowAt(0).querySelector('.bey-left-menu-action') as HTMLElement).click();
+            buttonOf('reports').click();
             fixture.detectChanges();
 
             expect(run).not.toHaveBeenCalled();
-            expect(flyouts()).toHaveLength(1);
+            expect(buttonOf('reports').getAttribute('aria-expanded')).toBe('true');
+            expect(labels()).toContain('daily');
         });
 
         it('never opens a flyout for an action without children', async () => {
             await render([action('home')], false);
 
-            (rowAt(0).querySelector('.bey-left-menu-action') as HTMLElement).dispatchEvent(new MouseEvent('mouseover'));
+            buttonOf('home').dispatchEvent(new MouseEvent('mouseover'));
             fixture.detectChanges();
 
-            expect(flyouts()).toHaveLength(0);
+            expect(buttonOf('home').getAttribute('aria-expanded')).toBeNull();
+            expect(fixture.nativeElement.textContent).not.toContain('home');
         });
     });
 });

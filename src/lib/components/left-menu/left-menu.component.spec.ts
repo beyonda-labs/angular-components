@@ -25,12 +25,14 @@ describe('LeftMenuComponent', () => {
     }
 
     function toggle(): HTMLButtonElement {
-        return fixture.nativeElement.querySelector('.bey-left-menu-toggle');
+        return fixture.nativeElement.querySelector(
+            '[aria-label="angular-components.left-menu.collapse"], [aria-label="angular-components.left-menu.expand"]'
+        );
     }
 
     function actionLabels(): string[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-left-menu-action-label')].map(
-            label => label.textContent?.trim() ?? ''
+        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('bey-left-menu-action-list button')].map(
+            button => button.textContent?.trim() ?? ''
         );
     }
 
@@ -83,13 +85,13 @@ describe('LeftMenuComponent', () => {
             })
         );
 
-        expect(fixture.nativeElement.querySelector('.bey-left-menu-footer').textContent).toContain('Ada Lovelace');
+        expect(fixture.nativeElement.querySelector('footer').textContent).toContain('Ada Lovelace');
     });
 
     it('shows no user area when the config carries no user', async () => {
         await render();
 
-        expect(fixture.nativeElement.querySelector('.bey-left-menu-footer')).toBeNull();
+        expect(fixture.nativeElement.querySelector('footer')).toBeNull();
     });
 
     it('follows a replaced config', async () => {

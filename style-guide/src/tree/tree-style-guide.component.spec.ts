@@ -24,7 +24,7 @@ describe('TreeStyleGuideComponent', () => {
     it('should update selectedKey when a different node is selected', () => {
         expect(component.config.selectedKey).toBe('frontend');
 
-        const nodes = fixture.nativeElement.querySelectorAll('.bey-tree-node');
+        const nodes = fixture.nativeElement.querySelectorAll('[role="treeitem"]');
 
         (nodes[2] as HTMLElement).click();
 

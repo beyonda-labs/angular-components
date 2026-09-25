@@ -4,6 +4,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PropertyNumberArrayField } from '../../../models/fields/property-number-array-field.model';
 import { PropertyNumberArrayFieldComponent } from './property-number-array-field.component';
 
+const ADD_TEXT = 'angular-components.properties-menu.number-array-field.add';
+const REMOVE_LABEL = 'angular-components.properties-menu.remove';
+
 describe('PropertyNumberArrayFieldComponent', () => {
     let component: PropertyNumberArrayFieldComponent;
     let fixture: ComponentFixture<PropertyNumberArrayFieldComponent>;
@@ -17,13 +20,21 @@ describe('PropertyNumberArrayFieldComponent', () => {
         component = fixture.componentInstance;
     });
 
+    function entryInputs(): HTMLInputElement[] {
+        return [...fixture.nativeElement.querySelectorAll('input[type="number"]')];
+    }
+
+    function addButton(): HTMLButtonElement | undefined {
+        const buttons: HTMLButtonElement[] = [...fixture.nativeElement.querySelectorAll('button')];
+
+        return buttons.find(element => element.textContent?.includes(ADD_TEXT));
+    }
+
     it('renders one input per entry', () => {
         fixture.componentRef.setInput('field', new PropertyNumberArrayField({ id: 'widths', value: [1, 1, 1, 1] }));
         fixture.detectChanges();
 
-        const inputs = fixture.nativeElement.querySelectorAll('.bey-property-number-array-field-entry input');
-
-        expect(inputs).toHaveLength(4);
+        expect(entryInputs()).toHaveLength(4);
     });
 
     it('emits the array with the new entry appended when "add" is clicked', () => {
@@ -60,9 +71,7 @@ describe('PropertyNumberArrayFieldComponent', () => {
         component.onRemove(0);
 
         expect(emitSpy).not.toHaveBeenCalled();
-        expect(
-            fixture.nativeElement.querySelector('.bey-property-number-array-field-entry .bey-property-field-action')
-        ).toBeFalsy();
+        expect(fixture.nativeElement.querySelector(`[aria-label="${REMOVE_LABEL}"]`)).toBeNull();
     });
 
     it('hides the add button once maxLength is reached', () => {
@@ -72,7 +81,7 @@ describe('PropertyNumberArrayFieldComponent', () => {
         );
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-property-number-array-field-add')).toBeFalsy();
+        expect(addButton()).toBeUndefined();
     });
 
     it('emits the updated entry value on input', () => {
@@ -80,9 +89,7 @@ describe('PropertyNumberArrayFieldComponent', () => {
         fixture.detectChanges();
 
         const emitSpy = jest.spyOn(component.valueChange, 'emit');
-        const input: HTMLInputElement = fixture.nativeElement.querySelectorAll(
-            '.bey-property-number-array-field-entry input'
-        )[1];
+        const input = entryInputs()[1];
 
         input.value = '5';
         input.dispatchEvent(new Event('input'));

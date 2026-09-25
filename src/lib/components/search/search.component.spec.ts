@@ -30,7 +30,7 @@ describe('SearchComponent', () => {
     }
 
     function mainInput(): HTMLInputElement {
-        return fixture.nativeElement.querySelector('.bey-search-box input');
+        return fixture.nativeElement.querySelector('[role="searchbox"]');
     }
 
     function type(element: HTMLInputElement | HTMLSelectElement, value: string): void {
@@ -39,8 +39,12 @@ describe('SearchComponent', () => {
         fixture.detectChanges();
     }
 
+    function toggle(): HTMLButtonElement {
+        return fixture.nativeElement.querySelector('[aria-expanded]');
+    }
+
     function openPanel(): void {
-        fixture.nativeElement.querySelector('[aria-expanded]').click();
+        toggle().click();
         fixture.detectChanges();
     }
 
@@ -52,7 +56,7 @@ describe('SearchComponent', () => {
     }
 
     function rows(): HTMLElement[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-search-row')];
+        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('[role="group"]')];
     }
 
     function selectsOf(row: HTMLElement): HTMLSelectElement[] {
@@ -221,17 +225,17 @@ describe('SearchComponent', () => {
         tick(300);
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-search-badge').textContent.trim()).toBe('1');
+        expect(toggle().textContent).toContain('1');
     }));
 
     it('closes the panel on a click outside', fakeAsync(() => {
         render();
         openPanel();
-        expect(fixture.nativeElement.querySelector('.bey-search-panel')).toBeTruthy();
+        expect(toggle().getAttribute('aria-expanded')).toBe('true');
 
         document.body.click();
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-search-panel')).toBeNull();
+        expect(toggle().getAttribute('aria-expanded')).toBe('false');
     }));
 });

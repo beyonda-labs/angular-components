@@ -5,6 +5,7 @@
             <input
                 class="form-control form-control-sm bey-search-box-input"
                 type="text"
+                role="searchbox"
                 [placeholder]="placeholder() | translate"
                 [value]="searchTerm()"
                 (input)="onSearchTermChange($event)"
@@ -46,7 +47,11 @@
                 } @else {
                     <div class="bey-search-rows">
                         @for (row of rows(); track $index) {
-                            <div class="bey-search-row">
+                            <div
+                                class="bey-search-row"
+                                role="group"
+                                [attr.aria-label]="'angular-components.search.row' | translate"
+                            >
                                 <select
                                     class="form-select form-select-sm bey-search-field"
                                     (change)="onFieldChange($index, $event)"

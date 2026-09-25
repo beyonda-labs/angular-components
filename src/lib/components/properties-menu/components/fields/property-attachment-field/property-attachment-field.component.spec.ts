@@ -19,8 +19,15 @@ const buildField = (value = ''): PropertyAttachmentField =>
         ]
     });
 
+const CLEAR_LABEL = 'angular-components.properties-menu.attachment-field.clear';
+const USE_VARIABLE_LABEL = 'angular-components.properties-menu.attachment-field.use-variable';
+
 function selectFileOn(component: PropertyAttachmentFieldComponent, file: File): void {
     component.onFileSelected({ target: { files: [file], value: 'C:/fake/path' } } as unknown as Event);
+}
+
+function button(fixture: ComponentFixture<PropertyAttachmentFieldComponent>, label: string): HTMLButtonElement | null {
+    return fixture.nativeElement.querySelector(`button[aria-label="${label}"]`);
 }
 
 describe('PropertyAttachmentFieldComponent', () => {
@@ -40,12 +47,12 @@ describe('PropertyAttachmentFieldComponent', () => {
         fixture.componentRef.setInput('field', buildField());
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-field-action').length).toBe(1);
+        expect(button(fixture, CLEAR_LABEL)).toBeNull();
 
         fixture.componentRef.setInput('field', buildField('a1'));
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-field-action').length).toBe(2);
+        expect(button(fixture, CLEAR_LABEL)).not.toBeNull();
     });
 
     it('filters the options by the typed query', () => {
@@ -96,7 +103,7 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
         );
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-field-action').length).toBe(1);
+        expect(button(fixture, USE_VARIABLE_LABEL)).toBeNull();
     });
 
     it('offers a variable button when the field carries variables', () => {
@@ -106,7 +113,7 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
         );
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-field-action').length).toBe(2);
+        expect(button(fixture, USE_VARIABLE_LABEL)).not.toBeNull();
     });
 
     it('emits the reference expression when a variable is picked', () => {

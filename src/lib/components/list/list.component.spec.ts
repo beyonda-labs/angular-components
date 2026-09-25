@@ -49,7 +49,11 @@ describe('ListComponent', () => {
     }
 
     function items(): HTMLElement[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('.bey-list-item')];
+        return [
+            ...fixture.nativeElement.querySelectorAll<HTMLElement>(
+                '[role="list"] > [role="listitem"], [role="list"] > [role="button"]'
+            )
+        ];
     }
 
     beforeEach(async () => {
@@ -70,14 +74,14 @@ describe('ListComponent', () => {
 
         await render(buildConfig({ items: [] }));
 
-        expect(fixture.nativeElement.querySelector('.bey-list-empty').textContent.trim()).toBe('Nothing here');
+        expect(fixture.nativeElement.textContent.trim()).toBe('Nothing here');
         expect(items()).toHaveLength(0);
     });
 
     it('takes an empty label given instead of the one built from the prefix', async () => {
         await render(buildConfig({ items: [], emptyLabel: 'demo.custom' }));
 
-        expect(fixture.nativeElement.querySelector('.bey-list-empty').textContent.trim()).toBe('demo.custom');
+        expect(fixture.nativeElement.textContent.trim()).toBe('demo.custom');
     });
 
     it('reports the item and its index when a card is clicked', async () => {
@@ -92,7 +96,7 @@ describe('ListComponent', () => {
     it('offers the cards to the keyboard only when they do something', async () => {
         await render();
 
-        expect(items().every(item => item.getAttribute('role') === null)).toBe(true);
+        expect(items().every(item => item.getAttribute('role') === 'listitem')).toBe(true);
 
         await render(buildConfig({ onItemClick: jest.fn() }));
 

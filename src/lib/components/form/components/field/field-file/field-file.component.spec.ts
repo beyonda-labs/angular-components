@@ -37,7 +37,11 @@ describe('FormFileFieldComponent', () => {
         expect(control.value).toBe(file);
         expect(fixture.nativeElement.textContent).toContain('invoice.pdf');
 
-        (fixture.nativeElement.querySelector('.bey-form-file-clear') as HTMLButtonElement).click();
+        (
+            fixture.nativeElement.querySelector(
+                '[aria-label="angular-components.form.file-field.clear"]'
+            ) as HTMLButtonElement
+        ).click();
 
         expect(control.value).toBeNull();
     });
