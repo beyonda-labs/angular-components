@@ -41,7 +41,7 @@ interface ProductFormValue {
 export class PageStyleGuideComponent {
     readonly config = new PageConfig({
         baseUrl: '/products',
-        formConfig: new PageFormConfig({
+        formConfig: new PageFormConfig<unknown>({
             buildSections: () => [
                 new FormSection({
                     isTitleVisible: false,
