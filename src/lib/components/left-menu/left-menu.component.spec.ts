@@ -24,10 +24,6 @@ describe('LeftMenuComponent', () => {
         await fixture.whenStable();
     }
 
-    function aside(): HTMLElement {
-        return fixture.nativeElement.querySelector('aside');
-    }
-
     function toggle(): HTMLButtonElement {
         return fixture.nativeElement.querySelector('.bey-left-menu-toggle');
     }
@@ -53,10 +49,10 @@ describe('LeftMenuComponent', () => {
 
     it('starts expanded or collapsed as the config says', async () => {
         await render();
-        expect(aside().classList).not.toContain('is-collapsed');
+        expect(toggle().getAttribute('aria-expanded')).toBe('true');
 
         await render(buildConfig({ expanded: false }));
-        expect(aside().classList).toContain('is-collapsed');
+        expect(toggle().getAttribute('aria-expanded')).toBe('false');
     });
 
     it('collapses and expands from its toggle, reporting each change', async () => {
@@ -65,11 +61,11 @@ describe('LeftMenuComponent', () => {
         await render(buildConfig({ onExpandedChange: expanded => changes.push(expanded) }));
         toggle().click();
         fixture.detectChanges();
-        expect(aside().classList).toContain('is-collapsed');
+        expect(toggle().getAttribute('aria-expanded')).toBe('false');
 
         toggle().click();
         fixture.detectChanges();
-        expect(aside().classList).not.toContain('is-collapsed');
+        expect(toggle().getAttribute('aria-expanded')).toBe('true');
 
         expect(changes).toEqual([false, true]);
     });

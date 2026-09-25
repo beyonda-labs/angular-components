@@ -17,13 +17,10 @@ describe('PropertyFileFieldComponent', () => {
         component = fixture.componentInstance;
     });
 
-    it('shows the empty state and no clear button when the value is unset', () => {
+    it('shows no clear button when the value is unset', () => {
         fixture.componentRef.setInput('field', new PropertyFileField({ id: 'source', value: '' }));
         fixture.detectChanges();
 
-        const name = fixture.nativeElement.querySelector('.bey-property-file-field-name');
-
-        expect(name.classList.contains('is-empty')).toBe(true);
         expect(fixture.nativeElement.querySelector('.bey-property-field-action')).toBeFalsy();
     });
 
@@ -31,9 +28,6 @@ describe('PropertyFileFieldComponent', () => {
         fixture.componentRef.setInput('field', new PropertyFileField({ id: 'source', value: 'AAAA' }));
         fixture.detectChanges();
 
-        const name = fixture.nativeElement.querySelector('.bey-property-file-field-name');
-
-        expect(name.classList.contains('is-empty')).toBe(false);
         expect(fixture.nativeElement.querySelector('.bey-property-field-action')).toBeTruthy();
     });
 

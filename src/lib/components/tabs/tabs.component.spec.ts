@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { Tab, TabsConfig, TabsConfigParameters, TabsVariant } from './models/tabs.model';
+import { Tab, TabsConfig, TabsConfigParameters } from './models/tabs.model';
 import { TabsComponent } from './tabs.component';
 
 class ResizeObserverMock {
@@ -176,12 +176,6 @@ describe('TabsComponent', () => {
 
         expect(list.getAttribute('aria-label')).toBe('angular-components.tabs.label');
         expect(tabs().map(element => element.getAttribute('aria-selected'))).toEqual(['true', 'false', 'false']);
-    });
-
-    it('renders as a segmented bar when the config asks for it', async () => {
-        await render(buildConfig({ variant: TabsVariant.Segmented }));
-
-        expect(fixture.nativeElement.querySelector('[role="tablist"]').className).toContain('bey-tabs--segmented');
     });
 
     it('follows a replaced config', async () => {

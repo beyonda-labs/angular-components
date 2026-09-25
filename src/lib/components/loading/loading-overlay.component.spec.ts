@@ -30,15 +30,6 @@ describe('LoadingOverlayComponent', () => {
         expect(overlay().getAttribute('aria-busy')).toBe('true');
     });
 
-    /* Covering the container or the screen is expressed only in CSS, so the class is the contract here. */
-    it('switches to the fullscreen variant when asked to', async () => {
-        await render();
-        expect(overlay().classList).not.toContain('is-fullscreen');
-
-        await render({ fullscreen: true });
-        expect(overlay().classList).toContain('is-fullscreen');
-    });
-
     it('spins large by default', async () => {
         await render();
 

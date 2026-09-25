@@ -108,6 +108,8 @@ Eight modules used those shared classes without importing the stylesheet, so the
         and text, behaviour over markup) and every suite follows them with three local helpers, so it would add a
         second style and a dependency without a new guarantee; `userEvent` is the only thing missed, and the
         `click` + `detectChanges` + `whenStable` pair covers the interactions the components have
+-   [x] No spec asserts a CSS class any more: the tests that only checked a modifier or state class are gone,
+        and the ones that checked a state now read `aria-current` / `aria-expanded`, added to `left-menu` for it
 
 What the pilot cost, and what it changed beyond the plan:
 

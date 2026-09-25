@@ -67,29 +67,6 @@ describe('PropertyListComponent', () => {
         expect(selectSpy).not.toHaveBeenCalled();
     });
 
-    it('should apply the icon classes an item brings instead of the default colour', () => {
-        fixture.componentRef.setInput('items', [
-            new PropertyListItem({ icon: faCircleExclamation, id: 'block-heading', iconClasses: 'bey-text-danger' })
-        ]);
-        fixture.detectChanges();
-
-        const icon: HTMLElement = fixture.nativeElement.querySelector('.bey-property-list-item-icon');
-
-        expect(icon.classList.contains('bey-text-danger')).toBe(true);
-        expect(icon.classList.contains('bey-property-list-item-icon--default')).toBe(false);
-    });
-
-    it('should fall back to the default icon colour when an item brings none', () => {
-        fixture.componentRef.setInput('items', [
-            new PropertyListItem({ icon: faCircleExclamation, id: 'block-heading' })
-        ]);
-        fixture.detectChanges();
-
-        const icon: HTMLElement = fixture.nativeElement.querySelector('.bey-property-list-item-icon');
-
-        expect(icon.classList.contains('bey-property-list-item-icon--default')).toBe(true);
-    });
-
     it('should resolve a default item label into a prefixed translation key', () => {
         propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
 
@@ -158,7 +135,6 @@ describe('PropertyListComponent with expandable items', () => {
         const badge: HTMLElement = fixture.nativeElement.querySelector('.bey-property-list-item-badges .bey-badge');
 
         expect(badge.textContent?.trim()).toBe('Número');
-        expect(badge.classList.contains('bey-badge--purple')).toBe(true);
     });
 
     it('shows a chevron only on the items that carry a body', () => {

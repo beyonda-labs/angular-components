@@ -2,15 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { faGear, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { BadgeConfig, BadgeVariant } from '../badge/models/badge.model';
+import { BadgeConfig } from '../badge/models/badge.model';
 import { HeaderComponent } from './header.component';
-import {
-    HeaderAction,
-    HeaderActionType,
-    HeaderConfig,
-    HeaderConfigParameters,
-    HeaderVariant
-} from './models/header.model';
+import { HeaderAction, HeaderActionType, HeaderConfig, HeaderConfigParameters } from './models/header.model';
 
 describe('HeaderComponent', () => {
     let fixture: ComponentFixture<HeaderComponent>;
@@ -76,13 +70,12 @@ describe('HeaderComponent', () => {
         expect(fixture.nativeElement.querySelector('h1')).toBeNull();
     });
 
-    it('shows a badge with the variant the config asks for', async () => {
-        await render(buildConfig({ badge: new BadgeConfig({ label: 'demo.badge', variant: BadgeVariant.Success }) }));
+    it('shows the badge the config gives', async () => {
+        await render(buildConfig({ badge: new BadgeConfig({ label: 'demo.badge' }) }));
 
         const badge = fixture.nativeElement.querySelector('.bey-header-badge .bey-badge');
 
         expect(badge.textContent.trim()).toBe('demo.badge');
-        expect(badge.classList).toContain('bey-badge--success');
     });
 
     it('puts the back action before the title', async () => {
@@ -226,12 +219,6 @@ describe('HeaderComponent', () => {
 
         expect(subAction).toHaveBeenCalled();
         expect(panels()).toHaveLength(0);
-    });
-
-    it('renders a subpage title differently from a page title', async () => {
-        await render(buildConfig({ variant: HeaderVariant.SubPage }));
-
-        expect(fixture.nativeElement.querySelector('h1').classList).toContain('is-subpage');
     });
 
     it('follows a replaced config', async () => {

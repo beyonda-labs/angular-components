@@ -16,6 +16,7 @@
                 [class.is-disabled]="action.disabled"
                 [class.has-children]="hasSubActions(action)"
                 [class.is-open]="isSubmenuOpen(actionPath, forceExpanded)"
+                [attr.aria-current]="isActionActive(action) ? 'page' : null"
                 [disabled]="action.disabled"
                 [tooltip]="getButtonTooltip(action, actionPath, forceExpanded) | translate"
                 container="body"

@@ -87,7 +87,7 @@ describe('OptionPickerComponent', () => {
         component.onKeydown(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
         fixture.detectChanges();
 
-        expect(rows()[1].classList.contains('is-active')).toBe(true);
+        expect(rows()[1].getAttribute('aria-selected')).toBe('true');
 
         component.onKeydown(new KeyboardEvent('keydown', { key: 'Enter' }));
 

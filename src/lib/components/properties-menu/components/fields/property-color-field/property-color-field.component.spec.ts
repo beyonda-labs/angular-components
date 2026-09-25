@@ -17,26 +17,22 @@ describe('PropertyColorFieldComponent', () => {
         component = fixture.componentInstance;
     });
 
-    it('shows the empty (checkerboard) state and no clear button when the value is unset', () => {
+    it('shows no clear button when the value is unset', () => {
         fixture.componentRef.setInput('field', new PropertyColorField({ id: 'fill', value: '' }));
         fixture.detectChanges();
 
-        const swatch = fixture.nativeElement.querySelector('.bey-property-color-field-swatch');
         const textInput: HTMLInputElement = fixture.nativeElement.querySelector('.bey-property-field-input');
 
-        expect(swatch.classList.contains('is-empty')).toBe(true);
         expect(textInput.value).toBe('');
         expect(fixture.nativeElement.querySelector('.bey-property-field-action')).toBeFalsy();
     });
 
-    it('shows the real color and a clear button once a value is set', () => {
+    it('shows the value and a clear button once a value is set', () => {
         fixture.componentRef.setInput('field', new PropertyColorField({ id: 'fill', value: '#ff0000' }));
         fixture.detectChanges();
 
-        const swatch = fixture.nativeElement.querySelector('.bey-property-color-field-swatch');
         const textInput: HTMLInputElement = fixture.nativeElement.querySelector('.bey-property-field-input');
 
-        expect(swatch.classList.contains('is-empty')).toBe(false);
         expect(textInput.value).toBe('#ff0000');
         expect(fixture.nativeElement.querySelector('.bey-property-field-action')).toBeTruthy();
     });

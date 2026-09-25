@@ -36,29 +36,16 @@ describe('PropertyAttachmentFieldComponent', () => {
         component = fixture.componentInstance;
     });
 
-    it('styles the upload trigger with the shared property button class', () => {
-        fixture.componentRef.setInput('field', buildField());
-        fixture.detectChanges();
-
-        const upload = fixture.nativeElement.querySelector('.bey-property-attachment-field-upload');
-
-        expect(upload.classList.contains('bey-property-field-action')).toBe(true);
-    });
-
-    it('styles the clear trigger with the shared property button class once a value is set', () => {
-        fixture.componentRef.setInput('field', buildField('a1'));
-        fixture.detectChanges();
-
-        const triggers = fixture.nativeElement.querySelectorAll('.bey-property-field-action');
-
-        expect(triggers.length).toBe(2);
-    });
-
-    it('does not render a clear trigger while no attachment is selected', () => {
+    it('renders a clear trigger only once an attachment is selected', () => {
         fixture.componentRef.setInput('field', buildField());
         fixture.detectChanges();
 
         expect(fixture.nativeElement.querySelectorAll('.bey-property-field-action').length).toBe(1);
+
+        fixture.componentRef.setInput('field', buildField('a1'));
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.querySelectorAll('.bey-property-field-action').length).toBe(2);
     });
 
     it('filters the options by the typed query', () => {

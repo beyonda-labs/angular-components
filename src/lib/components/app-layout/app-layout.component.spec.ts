@@ -112,16 +112,6 @@ describe('AppLayoutComponent', () => {
         );
     });
 
-    it('pads the body unless the config opts out', async () => {
-        await render();
-        expect(fixture.nativeElement.querySelector('.bey-app-layout-body-content').classList).toContain('has-padding');
-
-        await render(buildConfig({ useBodyPadding: false }));
-        expect(fixture.nativeElement.querySelector('.bey-app-layout-body-content').classList).not.toContain(
-            'has-padding'
-        );
-    });
-
     it('reports that it has initialised', async () => {
         const onLayoutInitialized = jest.fn();
 
@@ -239,13 +229,13 @@ describe('AppLayoutComponent', () => {
                     ]
                 })
             );
-            expect(buttonOf('demo.actions.home.label').classList).toContain('is-active');
+            expect(buttonOf('demo.actions.home.label').getAttribute('aria-current')).toBe('page');
 
             service.activeMenuAction('other');
             await settle();
 
-            expect(buttonOf('demo.actions.home.label').classList).not.toContain('is-active');
-            expect(buttonOf('demo.actions.other.label').classList).toContain('is-active');
+            expect(buttonOf('demo.actions.home.label').getAttribute('aria-current')).toBeNull();
+            expect(buttonOf('demo.actions.other.label').getAttribute('aria-current')).toBe('page');
         });
     });
 
@@ -253,12 +243,16 @@ describe('AppLayoutComponent', () => {
         it('starts as the service remembers and persists every toggle', async () => {
             service.setExpanded(false);
             await render();
-            expect(fixture.nativeElement.querySelector('aside').classList).toContain('is-collapsed');
+            expect(fixture.nativeElement.querySelector('.bey-left-menu-toggle').getAttribute('aria-expanded')).toBe(
+                'false'
+            );
 
             fixture.nativeElement.querySelector('.bey-left-menu-toggle').click();
             await settle();
 
-            expect(fixture.nativeElement.querySelector('aside').classList).not.toContain('is-collapsed');
+            expect(fixture.nativeElement.querySelector('.bey-left-menu-toggle').getAttribute('aria-expanded')).toBe(
+                'true'
+            );
             expect(service.expanded()).toBe(true);
             expect(localStorage.getItem('bey-left-menu-expanded')).toBe('true');
         });
@@ -282,8 +276,7 @@ describe('AppLayoutComponent', () => {
             await render(buildConfig({ onRouteActivated, topActions: routed() }));
             await settle();
 
-            expect(buttonOf('demo.actions.daily.label').classList).toContain('is-active');
-            expect(buttonOf('demo.actions.reports.label').classList).toContain('has-active-descendant');
+            expect(buttonOf('demo.actions.daily.label').getAttribute('aria-current')).toBe('page');
             expect(breadcrumbLabels()).toEqual(['demo.actions.reports.label', 'demo.actions.daily.label']);
             expect(onRouteActivated).toHaveBeenCalledWith('daily');
         });
@@ -294,7 +287,7 @@ describe('AppLayoutComponent', () => {
 
             await router.navigateByUrl('/home');
             await settle();
-            expect(buttonOf('demo.actions.home.label').classList).toContain('is-active');
+            expect(buttonOf('demo.actions.home.label').getAttribute('aria-current')).toBe('page');
             expect(breadcrumbLabels()).toEqual(['demo.actions.home.label']);
 
             await router.navigateByUrl('/elsewhere');
@@ -309,7 +302,7 @@ describe('AppLayoutComponent', () => {
             buttonOf('demo.actions.home.label').click();
             await settle();
 
-            expect(buttonOf('demo.actions.home.label').classList).toContain('is-active');
+            expect(buttonOf('demo.actions.home.label').getAttribute('aria-current')).toBe('page');
             expect(breadcrumbLabels()).toEqual(['demo.actions.home.label']);
         });
 
