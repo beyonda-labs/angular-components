@@ -18,7 +18,7 @@ describe('PropertyNumberArrayFieldComponent', () => {
     });
 
     it('renders one input per entry', () => {
-        component.field = new PropertyNumberArrayField({ id: 'widths', value: [1, 1, 1, 1] });
+        fixture.componentRef.setInput('field', new PropertyNumberArrayField({ id: 'widths', value: [1, 1, 1, 1] }));
         fixture.detectChanges();
 
         const inputs = fixture.nativeElement.querySelectorAll('.bey-property-number-array-field-entry input');
@@ -27,7 +27,10 @@ describe('PropertyNumberArrayFieldComponent', () => {
     });
 
     it('emits the array with the new entry appended when "add" is clicked', () => {
-        component.field = new PropertyNumberArrayField({ id: 'widths', value: [1, 1], entryDefaultValue: 1 });
+        fixture.componentRef.setInput(
+            'field',
+            new PropertyNumberArrayField({ id: 'widths', value: [1, 1], entryDefaultValue: 1 })
+        );
         fixture.detectChanges();
 
         const emitSpy = jest.spyOn(component.valueChange, 'emit');
@@ -37,7 +40,7 @@ describe('PropertyNumberArrayFieldComponent', () => {
     });
 
     it('emits the array without that entry when "remove" is clicked', () => {
-        component.field = new PropertyNumberArrayField({ id: 'widths', value: [1, 2, 3] });
+        fixture.componentRef.setInput('field', new PropertyNumberArrayField({ id: 'widths', value: [1, 2, 3] }));
         fixture.detectChanges();
 
         const emitSpy = jest.spyOn(component.valueChange, 'emit');
@@ -47,25 +50,33 @@ describe('PropertyNumberArrayFieldComponent', () => {
     });
 
     it('does not allow removing below minLength', () => {
-        component.field = new PropertyNumberArrayField({ id: 'widths', value: [1], minLength: 1 });
+        fixture.componentRef.setInput(
+            'field',
+            new PropertyNumberArrayField({ id: 'widths', value: [1], minLength: 1 })
+        );
         fixture.detectChanges();
 
         const emitSpy = jest.spyOn(component.valueChange, 'emit');
         component.onRemove(0);
 
         expect(emitSpy).not.toHaveBeenCalled();
-        expect(fixture.nativeElement.querySelector('.bey-property-number-array-field-remove')).toBeFalsy();
+        expect(
+            fixture.nativeElement.querySelector('.bey-property-number-array-field-entry .bey-property-field-action')
+        ).toBeFalsy();
     });
 
     it('hides the add button once maxLength is reached', () => {
-        component.field = new PropertyNumberArrayField({ id: 'widths', value: [1, 1], maxLength: 2 });
+        fixture.componentRef.setInput(
+            'field',
+            new PropertyNumberArrayField({ id: 'widths', value: [1, 1], maxLength: 2 })
+        );
         fixture.detectChanges();
 
         expect(fixture.nativeElement.querySelector('.bey-property-number-array-field-add')).toBeFalsy();
     });
 
     it('emits the updated entry value on input', () => {
-        component.field = new PropertyNumberArrayField({ id: 'widths', value: [1, 2] });
+        fixture.componentRef.setInput('field', new PropertyNumberArrayField({ id: 'widths', value: [1, 2] }));
         fixture.detectChanges();
 
         const emitSpy = jest.spyOn(component.valueChange, 'emit');

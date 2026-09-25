@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
@@ -10,7 +10,9 @@ import { PropertyOption } from '../../../models/property-option.model';
 import { PROPERTY_VARIABLE_ICON } from '../../../utils/property-variable-icon.util';
 import { toVariableOptions } from '../../../utils/property-variable-options.util';
 
+/** A native select, or a filter box with its own option panel when the field is searchable. */
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, OptionPickerComponent, TooltipModule, TranslateModule],
     selector: 'bey-property-select-field',
     standalone: true,
@@ -18,76 +20,73 @@ import { toVariableOptions } from '../../../utils/property-variable-options.util
     templateUrl: './property-select-field.component.html'
 })
 export class PropertySelectFieldComponent {
-    @Input({ required: true }) field!: PropertySelectField;
+    readonly field = input.required<PropertySelectField>();
 
-    @Output() valueChange = new EventEmitter<unknown>();
+    readonly valueChange = output<unknown>();
 
-    isOpen = false;
-    pickerOpen = false;
-    query = '';
+    readonly isOpen = signal(false);
+    readonly pickerOpen = signal(false);
+    readonly query = signal('');
+
+    readonly filteredOptions = computed(() => {
+        const term = this.query().trim().toLowerCase();
+        const { options } = this.field();
+
+        return term
+            ? options.filter(option => this.translateService.instant(option.label).toLowerCase().includes(term))
+            : options;
+    });
+    readonly selectedLabel = computed(() => {
+        const { options, value } = this.field();
+        const selected = options.find(option => option.value === value);
+
+        return selected ? this.translateService.instant(selected.label) : '';
+    });
+    readonly inputValue = computed(() => (this.isOpen() ? this.query() : this.selectedLabel()));
+    readonly variableOptions = computed(() => toVariableOptions(this.field().variables));
 
     readonly variableIcon = PROPERTY_VARIABLE_ICON;
 
-    toggleVariablePicker(): void {
-        this.pickerOpen = !this.pickerOpen;
+    private readonly translateService = inject(TranslateService);
 
-        if (this.pickerOpen) {
-            this.close();
-        }
+    close(): void {
+        this.isOpen.set(false);
+        this.query.set('');
     }
 
     closeVariablePicker(): void {
-        this.pickerOpen = false;
-    }
-
-    onVariableSelected(option: OptionPickerOption): void {
-        this.closeVariablePicker();
-        this.valueChange.emit(`{{ ${option.value} }}`);
-    }
-
-    get variableOptions(): OptionPickerOption[] {
-        return toVariableOptions(this.field.variables);
-    }
-
-    private readonly translateService = inject(TranslateService);
-
-    get inputValue(): string {
-        return this.isOpen ? this.query : this.selectedLabel;
-    }
-
-    get selectedLabel(): string {
-        const selected = this.field.options.find(option => option.value === this.field.value);
-
-        return selected ? this.translateService.instant(selected.label) : '';
-    }
-
-    get filteredOptions(): PropertyOption[] {
-        const term = this.query.trim().toLowerCase();
-
-        if (!term) {
-            return this.field.options;
-        }
-
-        return this.field.options.filter(option =>
-            this.translateService.instant(option.label).toLowerCase().includes(term)
-        );
+        this.pickerOpen.set(false);
     }
 
     onChange(event: Event): void {
         const rawValue = (event.target as HTMLSelectElement).value;
-        const option = this.field.options.find(current => String(current.value) === rawValue);
+        const option = this.field().options.find(current => String(current.value) === rawValue);
 
         this.valueChange.emit(option ? option.value : rawValue);
     }
 
     onFocus(): void {
-        this.isOpen = true;
-        this.query = '';
+        this.isOpen.set(true);
+        this.query.set('');
     }
 
-    onQueryInput(event: Event): void {
-        this.query = (event.target as HTMLInputElement).value;
-        this.isOpen = true;
+    onKeydown(event: KeyboardEvent): void {
+        if (event.key === 'Escape') {
+            this.close();
+
+            return;
+        }
+
+        if (event.key === 'Enter') {
+            event.preventDefault();
+
+            const first = this.filteredOptions().find(option => !option.disabled);
+
+            if (first) {
+                this.close();
+                this.valueChange.emit(first.value);
+            }
+        }
     }
 
     onOptionPicked(option: PropertyOption, event: Event): void {
@@ -101,27 +100,21 @@ export class PropertySelectFieldComponent {
         this.valueChange.emit(option.value);
     }
 
-    onKeydown(event: KeyboardEvent): void {
-        if (event.key === 'Escape') {
-            this.close();
-
-            return;
-        }
-
-        if (event.key === 'Enter') {
-            event.preventDefault();
-
-            const first = this.filteredOptions.find(option => !option.disabled);
-
-            if (first) {
-                this.close();
-                this.valueChange.emit(first.value);
-            }
-        }
+    onQueryInput(event: Event): void {
+        this.query.set((event.target as HTMLInputElement).value);
+        this.isOpen.set(true);
     }
 
-    close(): void {
-        this.isOpen = false;
-        this.query = '';
+    onVariableSelected(option: OptionPickerOption): void {
+        this.closeVariablePicker();
+        this.valueChange.emit(`{{ ${option.value} }}`);
+    }
+
+    toggleVariablePicker(): void {
+        this.pickerOpen.update(isOpen => !isOpen);
+
+        if (this.pickerOpen()) {
+            this.close();
+        }
     }
 }

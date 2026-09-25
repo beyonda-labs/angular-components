@@ -1,7 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { PropertyAttachmentField } from '../../../models/fields/property-attachment-field.model';
+import {
+    PropertyAttachmentField,
+    PropertyAttachmentOption
+} from '../../../models/fields/property-attachment-field.model';
+import { PropertyVariable } from '../../../models/property-variable.model';
 import { PropertiesMenuService } from '../../../services/properties-menu.service';
 import { PropertyAttachmentFieldComponent } from './property-attachment-field.component';
 
@@ -10,8 +14,8 @@ const buildField = (value = ''): PropertyAttachmentField =>
         id: 'source',
         value,
         options: [
-            { id: 'a1', label: 'Logo A4' },
-            { id: 'a2', label: 'Imagen migrado 1' }
+            new PropertyAttachmentOption({ id: 'a1', label: 'Logo A4' }),
+            new PropertyAttachmentOption({ id: 'a2', label: 'Imagen migrado 1' })
         ]
     });
 
@@ -33,52 +37,52 @@ describe('PropertyAttachmentFieldComponent', () => {
     });
 
     it('styles the upload trigger with the shared property button class', () => {
-        component.field = buildField();
+        fixture.componentRef.setInput('field', buildField());
         fixture.detectChanges();
 
-        const upload = fixture.nativeElement.querySelector('.bey-property-attachment-upload');
+        const upload = fixture.nativeElement.querySelector('.bey-property-attachment-field-upload');
 
-        expect(upload.classList.contains('bey-property-field-variable-trigger')).toBe(true);
+        expect(upload.classList.contains('bey-property-field-action')).toBe(true);
     });
 
     it('styles the clear trigger with the shared property button class once a value is set', () => {
-        component.field = buildField('a1');
+        fixture.componentRef.setInput('field', buildField('a1'));
         fixture.detectChanges();
 
-        const triggers = fixture.nativeElement.querySelectorAll('.bey-property-field-variable-trigger');
+        const triggers = fixture.nativeElement.querySelectorAll('.bey-property-field-action');
 
         expect(triggers.length).toBe(2);
     });
 
     it('does not render a clear trigger while no attachment is selected', () => {
-        component.field = buildField();
+        fixture.componentRef.setInput('field', buildField());
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-field-variable-trigger').length).toBe(1);
+        expect(fixture.nativeElement.querySelectorAll('.bey-property-field-action').length).toBe(1);
     });
 
     it('filters the options by the typed query', () => {
-        component.field = buildField();
-        component.query = 'migrado';
+        fixture.componentRef.setInput('field', buildField());
+        component.query.set('migrado');
 
-        expect(component.filteredOptions.map(option => option.id)).toEqual(['a2']);
+        expect(component.filteredOptions().map(option => option.id)).toEqual(['a2']);
     });
 
     it('emits the picked option and closes the panel', () => {
-        component.field = buildField();
+        fixture.componentRef.setInput('field', buildField());
         fixture.detectChanges();
 
         const emitSpy = jest.spyOn(component.valueChange, 'emit');
         component.onFocus();
 
-        component.onOptionPicked(component.field.options[1], new MouseEvent('mousedown'));
+        component.onOptionPicked(component.field().options[1], new MouseEvent('mousedown'));
 
         expect(emitSpy).toHaveBeenCalledWith('a2');
-        expect(component.isOpen).toBe(false);
+        expect(component.isOpen()).toBe(false);
     });
 });
 
-const VARIABLES = [{ id: 'v1', path: 'logo_cliente', label: 'logo_cliente' }];
+const VARIABLES = [new PropertyVariable({ id: 'v1', label: 'logo_cliente', path: 'logo_cliente' })];
 
 describe('PropertyAttachmentFieldComponent · variables', () => {
     let component: PropertyAttachmentFieldComponent;
@@ -95,44 +99,56 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
     });
 
     it('offers no variable button when the field carries no variables', () => {
-        component.field = new PropertyAttachmentField({
-            id: 'source',
-            value: '',
-            options: [{ id: 'a1', label: 'Logo' }]
-        });
+        fixture.componentRef.setInput(
+            'field',
+            new PropertyAttachmentField({
+                id: 'source',
+                value: '',
+                options: [new PropertyAttachmentOption({ id: 'a1', label: 'Logo' })]
+            })
+        );
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-field-variable-trigger').length).toBe(1);
+        expect(fixture.nativeElement.querySelectorAll('.bey-property-field-action').length).toBe(1);
     });
 
     it('offers a variable button when the field carries variables', () => {
-        component.field = new PropertyAttachmentField({ id: 'source', value: '', variables: VARIABLES });
+        fixture.componentRef.setInput(
+            'field',
+            new PropertyAttachmentField({ id: 'source', value: '', variables: VARIABLES })
+        );
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-field-variable-trigger').length).toBe(2);
+        expect(fixture.nativeElement.querySelectorAll('.bey-property-field-action').length).toBe(2);
     });
 
     it('emits the reference expression when a variable is picked', () => {
-        component.field = new PropertyAttachmentField({ id: 'source', value: '', variables: VARIABLES });
+        fixture.componentRef.setInput(
+            'field',
+            new PropertyAttachmentField({ id: 'source', value: '', variables: VARIABLES })
+        );
         fixture.detectChanges();
 
         const emitSpy = jest.spyOn(component.valueChange, 'emit');
 
-        component.onVariableSelected(component.variableOptions[0]);
+        component.onVariableSelected(component.variableOptions()[0]);
 
         expect(emitSpy).toHaveBeenCalledWith('{{ logo_cliente }}');
-        expect(component.pickerOpen).toBe(false);
+        expect(component.pickerOpen()).toBe(false);
     });
 
     it('closes the attachment list when the variable picker opens', () => {
-        component.field = new PropertyAttachmentField({ id: 'source', value: '', variables: VARIABLES });
+        fixture.componentRef.setInput(
+            'field',
+            new PropertyAttachmentField({ id: 'source', value: '', variables: VARIABLES })
+        );
         fixture.detectChanges();
 
         component.onFocus();
         component.toggleVariablePicker();
 
-        expect(component.pickerOpen).toBe(true);
-        expect(component.isOpen).toBe(false);
+        expect(component.pickerOpen()).toBe(true);
+        expect(component.isOpen()).toBe(false);
     });
 
     it('tells apart a value holding a variable from a plain attachment id', () => {
@@ -145,11 +161,14 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
 
     describe('picking a file to upload', () => {
         beforeEach(() => {
-            component.field = new PropertyAttachmentField({
-                id: 'source',
-                accept: 'image/*,application/pdf',
-                maxSizeBytes: 1000
-            });
+            fixture.componentRef.setInput(
+                'field',
+                new PropertyAttachmentField({
+                    id: 'source',
+                    accept: 'image/*,application/pdf',
+                    maxSizeBytes: 1000
+                })
+            );
             fixture.detectChanges();
         });
 
@@ -160,7 +179,7 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
             selectFileOn(component, new File(['x'], 'logo.png', { type: 'image/png' }));
 
             expect(uploads.length).toBe(1);
-            expect(component.hasTypeError).toBe(false);
+            expect(component.hasTypeError()).toBe(false);
         });
 
         it('rejects a file whose type is not accepted, without uploading it', () => {
@@ -170,14 +189,14 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
             selectFileOn(component, new File(['x'], 'notes.txt', { type: 'text/plain' }));
 
             expect(onUpload).not.toHaveBeenCalled();
-            expect(component.hasTypeError).toBe(true);
+            expect(component.hasTypeError()).toBe(true);
         });
 
         it('clears the type error once an accepted file is picked', () => {
             selectFileOn(component, new File(['x'], 'notes.txt', { type: 'text/plain' }));
             selectFileOn(component, new File(['x'], 'logo.png', { type: 'image/png' }));
 
-            expect(component.hasTypeError).toBe(false);
+            expect(component.hasTypeError()).toBe(false);
         });
 
         it('still rejects a file over the size limit', () => {
@@ -188,16 +207,19 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
             selectFileOn(component, big);
 
             expect(onUpload).not.toHaveBeenCalled();
-            expect(component.sizeErrorMaxSizeMB).toBeDefined();
+            expect(component.sizeErrorMaxSizeMB()).not.toBeNull();
         });
     });
 
     it('no longer renders any preview image', () => {
-        component.field = new PropertyAttachmentField({
-            id: 'source',
-            value: 'a1',
-            options: [{ id: 'a1', label: 'Logo' }]
-        });
+        fixture.componentRef.setInput(
+            'field',
+            new PropertyAttachmentField({
+                id: 'source',
+                value: 'a1',
+                options: [new PropertyAttachmentOption({ id: 'a1', label: 'Logo' })]
+            })
+        );
         fixture.detectChanges();
         component.onFocus();
         fixture.detectChanges();

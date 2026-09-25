@@ -21,21 +21,21 @@ describe('PropertyTextFieldComponent', () => {
     });
 
     it('should not show the variable trigger when acceptsVariable is false', () => {
-        component.field = new PropertyTextField({ id: 'text', acceptsVariable: false });
+        fixture.componentRef.setInput('field', new PropertyTextField({ id: 'text', acceptsVariable: false }));
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-property-field-variable-trigger')).toBeFalsy();
+        expect(fixture.nativeElement.querySelector('.bey-property-field-action')).toBeFalsy();
     });
 
     it('should show the variable trigger when acceptsVariable is true', () => {
-        component.field = new PropertyTextField({ id: 'text', acceptsVariable: true });
+        fixture.componentRef.setInput('field', new PropertyTextField({ id: 'text', acceptsVariable: true }));
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-property-field-variable-trigger')).toBeTruthy();
+        expect(fixture.nativeElement.querySelector('.bey-property-field-action')).toBeTruthy();
     });
 
     it('should emit valueChange on input', () => {
-        component.field = new PropertyTextField({ id: 'text', value: '' });
+        fixture.componentRef.setInput('field', new PropertyTextField({ id: 'text', value: '' }));
         fixture.detectChanges();
 
         const emitSpy = jest.spyOn(component.valueChange, 'emit');
@@ -48,7 +48,10 @@ describe('PropertyTextFieldComponent', () => {
     });
 
     it('should append the expression at the end when no cursor position is known', () => {
-        component.field = new PropertyTextField({ id: 'text', value: 'FACTURA', acceptsVariable: true });
+        fixture.componentRef.setInput(
+            'field',
+            new PropertyTextField({ id: 'text', value: 'FACTURA', acceptsVariable: true })
+        );
         fixture.detectChanges();
 
         const emitSpy = jest.spyOn(component.variableInserted, 'emit');
@@ -58,6 +61,6 @@ describe('PropertyTextFieldComponent', () => {
         component.onVariableSelected({ label: variable.label, value: variable.path });
 
         expect(emitSpy).toHaveBeenCalledWith({ value: 'FACTURA{{ customer.name }}', variable });
-        expect(component.pickerOpen).toBe(false);
+        expect(component.pickerOpen()).toBe(false);
     });
 });

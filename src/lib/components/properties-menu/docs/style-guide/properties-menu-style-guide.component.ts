@@ -18,7 +18,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { PropertyAttachmentField } from '../../models/fields/property-attachment-field.model';
+import { PropertyAttachmentField, PropertyAttachmentOption } from '../../models/fields/property-attachment-field.model';
 import { PropertyColorField } from '../../models/fields/property-color-field.model';
 import { PropertyInfoField } from '../../models/fields/property-info-field.model';
 import { PropertyNumberField } from '../../models/fields/property-number-field.model';
@@ -36,6 +36,7 @@ import {
     PropertyTreeContent
 } from '../../models/property-group-content.model';
 import { PropertyListItem } from '../../models/property-list-item.model';
+import { PropertyOption } from '../../models/property-option.model';
 import { PropertyTab } from '../../models/property-tab.model';
 import { PropertyTreeConfig } from '../../models/property-tree-config.model';
 import { PropertyTreeNode } from '../../models/property-tree-node.model';
@@ -148,10 +149,10 @@ export class PropertiesMenuStyleGuideComponent {
                                         id: 'headingLevel',
                                         label: 'Nivel',
                                         options: [
-                                            { label: 'H1', value: 'h1' },
-                                            { label: 'H2', value: 'h2' },
-                                            { label: 'H3', value: 'h3' },
-                                            { label: 'H4', value: 'h4' }
+                                            new PropertyOption({ label: 'H1', value: 'h1' }),
+                                            new PropertyOption({ label: 'H2', value: 'h2' }),
+                                            new PropertyOption({ label: 'H3', value: 'h3' }),
+                                            new PropertyOption({ label: 'H4', value: 'h4' })
                                         ],
                                         value: 'h2'
                                     }),
@@ -159,10 +160,10 @@ export class PropertiesMenuStyleGuideComponent {
                                         id: 'alignment',
                                         label: 'Alineación',
                                         options: [
-                                            { icon: faAlignLeft, value: 'left' },
-                                            { icon: faAlignCenter, value: 'center' },
-                                            { icon: faAlignRight, value: 'right' },
-                                            { icon: faAlignJustify, value: 'justify' }
+                                            new PropertyOption({ icon: faAlignLeft, value: 'left' }),
+                                            new PropertyOption({ icon: faAlignCenter, value: 'center' }),
+                                            new PropertyOption({ icon: faAlignRight, value: 'right' }),
+                                            new PropertyOption({ icon: faAlignJustify, value: 'justify' })
                                         ],
                                         value: 'center'
                                     })
@@ -179,9 +180,9 @@ export class PropertiesMenuStyleGuideComponent {
                                         id: 'fontFamily',
                                         label: 'Tipografía',
                                         options: [
-                                            { label: 'Inter', value: 'Inter' },
-                                            { label: 'Arial', value: 'Arial' },
-                                            { label: 'Georgia', value: 'Georgia' }
+                                            new PropertyOption({ label: 'Inter', value: 'Inter' }),
+                                            new PropertyOption({ label: 'Arial', value: 'Arial' }),
+                                            new PropertyOption({ label: 'Georgia', value: 'Georgia' })
                                         ],
                                         value: 'Inter'
                                     }),
@@ -198,10 +199,10 @@ export class PropertiesMenuStyleGuideComponent {
                                         id: 'fontWeight',
                                         label: 'Peso',
                                         options: [
-                                            { label: 'Regular', value: '400' },
-                                            { label: 'Medium', value: '500' },
-                                            { label: 'Semibold', value: '600' },
-                                            { label: 'Bold', value: '700' }
+                                            new PropertyOption({ label: 'Regular', value: '400' }),
+                                            new PropertyOption({ label: 'Medium', value: '500' }),
+                                            new PropertyOption({ label: 'Semibold', value: '600' }),
+                                            new PropertyOption({ label: 'Bold', value: '700' })
                                         ],
                                         value: '600'
                                     }),
@@ -305,9 +306,9 @@ export class PropertiesMenuStyleGuideComponent {
                                         searchable: true,
                                         value: 'invoice',
                                         options: [
-                                            { label: 'Factura', value: 'invoice' },
-                                            { label: 'Membrete', value: 'letterhead' },
-                                            { label: 'Informe', value: 'report' }
+                                            new PropertyOption({ label: 'Factura', value: 'invoice' }),
+                                            new PropertyOption({ label: 'Membrete', value: 'letterhead' }),
+                                            new PropertyOption({ label: 'Informe', value: 'report' })
                                         ]
                                     }),
                                     new PropertyAttachmentField({
@@ -317,8 +318,16 @@ export class PropertiesMenuStyleGuideComponent {
                                         maxSizeBytes: 10 * 1024 * 1024,
                                         value: 'attachment-1',
                                         options: [
-                                            { id: 'attachment-1', label: 'logo.png', description: '800 × 600' },
-                                            { id: 'attachment-2', label: 'firma.png', description: '320 × 120' }
+                                            new PropertyAttachmentOption({
+                                                id: 'attachment-1',
+                                                label: 'logo.png',
+                                                description: '800 × 600'
+                                            }),
+                                            new PropertyAttachmentOption({
+                                                id: 'attachment-2',
+                                                label: 'firma.png',
+                                                description: '320 × 120'
+                                            })
                                         ]
                                     })
                                 ]

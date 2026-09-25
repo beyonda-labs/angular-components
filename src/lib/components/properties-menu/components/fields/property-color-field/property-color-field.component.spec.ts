@@ -18,37 +18,35 @@ describe('PropertyColorFieldComponent', () => {
     });
 
     it('shows the empty (checkerboard) state and no clear button when the value is unset', () => {
-        component.field = new PropertyColorField({ id: 'fill', value: '' });
+        fixture.componentRef.setInput('field', new PropertyColorField({ id: 'fill', value: '' }));
         fixture.detectChanges();
 
         const swatch = fixture.nativeElement.querySelector('.bey-property-color-field-swatch');
         const textInput: HTMLInputElement = fixture.nativeElement.querySelector('.bey-property-field-input');
 
-        expect(swatch.classList.contains('bey-property-color-field-swatch-empty')).toBe(true);
+        expect(swatch.classList.contains('is-empty')).toBe(true);
         expect(textInput.value).toBe('');
-        expect(fixture.nativeElement.querySelector('.bey-property-field-variable-trigger')).toBeFalsy();
+        expect(fixture.nativeElement.querySelector('.bey-property-field-action')).toBeFalsy();
     });
 
     it('shows the real color and a clear button once a value is set', () => {
-        component.field = new PropertyColorField({ id: 'fill', value: '#ff0000' });
+        fixture.componentRef.setInput('field', new PropertyColorField({ id: 'fill', value: '#ff0000' }));
         fixture.detectChanges();
 
         const swatch = fixture.nativeElement.querySelector('.bey-property-color-field-swatch');
         const textInput: HTMLInputElement = fixture.nativeElement.querySelector('.bey-property-field-input');
 
-        expect(swatch.classList.contains('bey-property-color-field-swatch-empty')).toBe(false);
+        expect(swatch.classList.contains('is-empty')).toBe(false);
         expect(textInput.value).toBe('#ff0000');
-        expect(fixture.nativeElement.querySelector('.bey-property-field-variable-trigger')).toBeTruthy();
+        expect(fixture.nativeElement.querySelector('.bey-property-field-action')).toBeTruthy();
     });
 
     it('emits an empty string when the clear button is clicked', () => {
-        component.field = new PropertyColorField({ id: 'fill', value: '#ff0000' });
+        fixture.componentRef.setInput('field', new PropertyColorField({ id: 'fill', value: '#ff0000' }));
         fixture.detectChanges();
 
         const emitSpy = jest.spyOn(component.valueChange, 'emit');
-        const clearButton: HTMLButtonElement = fixture.nativeElement.querySelector(
-            '.bey-property-field-variable-trigger'
-        );
+        const clearButton: HTMLButtonElement = fixture.nativeElement.querySelector('.bey-property-field-action');
 
         clearButton.click();
 

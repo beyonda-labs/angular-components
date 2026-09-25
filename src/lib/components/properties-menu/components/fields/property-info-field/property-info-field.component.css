@@ -1,4 +1,6 @@
 :host {
+    --bey-property-info-field-min-height: 1.75rem;
+
     display: block;
     min-width: 0;
 }
@@ -6,25 +8,25 @@
 .bey-property-info-field {
     display: flex;
     flex-wrap: wrap;
+    gap: var(--bey-space-2xs) var(--bey-space-md);
     align-items: center;
-    gap: 0.2rem 0.75rem;
-    min-height: 1.75rem;
-    padding: 0.2rem 0;
+    min-height: var(--bey-property-info-field-min-height);
+    padding: var(--bey-space-2xs) 0;
 }
 
 .bey-property-info-field-item {
     display: inline-flex;
+    gap: var(--bey-space-xs);
     align-items: center;
-    gap: 0.35rem;
     min-width: 0;
     color: var(--bey-text-primary);
-    font-size: 0.8rem;
-    line-height: 1.35;
-    word-break: break-word;
+    font-size: var(--bey-font-size-sm);
+    line-height: var(--bey-line-height-base);
+    overflow-wrap: anywhere;
 }
 
 .bey-property-info-field-icon {
     flex: none;
     color: var(--bey-text-muted);
-    font-size: 0.8em;
+    font-size: var(--bey-font-size-xs);
 }

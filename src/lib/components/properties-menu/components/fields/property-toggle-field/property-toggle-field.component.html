@@ -1,11 +1,13 @@
+@let current = field();
+
 <label class="bey-property-toggle-field">
     <input
         type="checkbox"
         class="bey-property-toggle-field-input"
-        [attr.aria-label]="field.label"
-        [checked]="field.value ?? false"
-        [disabled]="field.disabled"
-        [required]="field.required"
+        [attr.aria-label]="current.label"
+        [checked]="current.value ?? false"
+        [disabled]="current.disabled"
+        [required]="current.required"
         (change)="onChange($event)"
     />
     <span class="bey-property-toggle-field-track">

@@ -1,23 +1,21 @@
 :host {
     --bey-property-segmented-accent: var(--bey-primary);
-    --bey-property-segmented-border: var(--bey-gray-300);
+    --bey-property-segmented-border: var(--bey-border-default);
+    --bey-property-segmented-bg: var(--bey-bg-muted);
     --bey-property-segmented-text: var(--bey-text-primary);
     --bey-property-segmented-text-muted: var(--bey-text-muted);
+    --bey-property-segmented-disabled-opacity: 0.4;
 
     display: block;
-}
-
-:host-context(body.dark) {
-    --bey-property-segmented-border: var(--bey-gray-700);
 }
 
 .bey-property-segmented-field {
     display: inline-flex;
     width: 100%;
-    padding: 0.15rem;
-    border: 1px solid var(--bey-property-segmented-border);
-    border-radius: 0.45rem;
-    background: var(--bey-bg-muted);
+    padding: var(--bey-space-2xs);
+    background: var(--bey-property-segmented-bg);
+    border: var(--bey-border-width) solid var(--bey-property-segmented-border);
+    border-radius: var(--bey-radius-md);
 }
 
 .bey-property-segmented-field-option {
@@ -25,34 +23,34 @@
     flex: 1 1 0;
     align-items: center;
     justify-content: center;
-    padding: 0.35rem 0.5rem;
+    padding: var(--bey-space-xs) var(--bey-space-sm);
     border: none;
-    border-radius: 0.35rem;
     background: none;
+    border-radius: var(--bey-radius-sm);
     color: var(--bey-property-segmented-text-muted);
-    font-size: 0.76rem;
-    font-weight: 600;
+    font-size: var(--bey-font-size-xs);
+    font-weight: var(--bey-font-weight-semibold);
     cursor: pointer;
     transition:
-        background-color 0.15s ease,
-        color 0.15s ease;
+        background-color var(--bey-duration-fast) var(--bey-easing-standard),
+        color var(--bey-duration-fast) var(--bey-easing-standard);
 }
 
-.bey-property-segmented-field-option:hover:not(:disabled):not(.bey-property-segmented-field-option-active) {
+.bey-property-segmented-field-option:hover:not(:disabled, .is-active) {
     color: var(--bey-property-segmented-text);
 }
 
-.bey-property-segmented-field-option-active {
+.bey-property-segmented-field-option.is-active {
     background: var(--bey-property-segmented-accent);
-    color: var(--bey-text-inverse);
+    color: var(--bey-primary-fg);
 }
 
 .bey-property-segmented-field-option:focus-visible {
-    outline: 2px solid var(--bey-property-segmented-accent);
-    outline-offset: 1px;
+    outline: var(--bey-border-width-thick) solid var(--bey-property-segmented-accent);
+    outline-offset: var(--bey-border-width);
 }
 
 .bey-property-segmented-field-option:disabled {
-    opacity: 0.4;
     cursor: not-allowed;
+    opacity: var(--bey-property-segmented-disabled-opacity);
 }

@@ -1,69 +1,71 @@
-<div class="bey-property-field-control bey-property-attachment">
-    <div class="bey-property-attachment-picker" #pickerAnchor>
+@let current = field();
+
+<div class="bey-property-field-control bey-property-attachment-field">
+    <div class="bey-property-field-anchor" #pickerAnchor>
         <input
             class="bey-property-field-input"
             type="text"
             role="combobox"
             autocomplete="off"
-            [attr.aria-controls]="field.id + '-attachments'"
-            [attr.aria-expanded]="isOpen"
-            [attr.aria-label]="field.label"
-            [disabled]="field.disabled"
-            [placeholder]="'angular-components.properties-menu.attachmentField.search' | translate"
-            [readonly]="field.holdsVariable"
-            [value]="isOpen ? query : selectedLabel"
+            [attr.aria-controls]="current.id + '-attachments'"
+            [attr.aria-expanded]="isOpen()"
+            [attr.aria-label]="current.label"
+            [disabled]="current.disabled"
+            [placeholder]="'angular-components.properties-menu.attachment-field.search' | translate"
+            [readonly]="current.holdsVariable"
+            [value]="inputValue()"
             (blur)="close()"
             (focus)="onFocus()"
             (input)="onQueryInput($event)"
             (keydown)="onKeydown($event)"
         />
 
-        @if (isOpen) {
-            <div class="bey-property-attachment-panel" role="listbox" [id]="field.id + '-attachments'">
-                @for (option of filteredOptions; track option.id) {
+        @if (isOpen()) {
+            <div class="bey-property-attachment-field-panel" role="listbox" [id]="current.id + '-attachments'">
+                @for (option of filteredOptions(); track option.id) {
                     <button
-                        class="bey-property-attachment-option"
+                        class="bey-property-attachment-field-option"
                         type="button"
                         role="option"
-                        [attr.aria-selected]="option.id === field.value"
+                        [attr.aria-selected]="option.id === current.value"
                         [disabled]="option.disabled"
                         (mousedown)="onOptionPicked(option, $event)"
                     >
-                        <span class="bey-property-attachment-option-text">
-                            <span class="bey-property-attachment-option-label">{{ option.label }}</span>
+                        <span class="bey-property-attachment-field-option-label">{{ option.label }}</span>
 
-                            @if (option.description) {
-                                <span class="bey-property-attachment-option-description">{{ option.description }}</span>
-                            }
-                        </span>
+                        @if (option.description) {
+                            <span class="bey-property-attachment-field-option-description">
+                                {{ option.description }}
+                            </span>
+                        }
                     </button>
                 } @empty {
-                    <p class="bey-property-attachment-empty">
-                        {{ 'angular-components.properties-menu.attachmentField.empty' | translate }}
+                    <p class="bey-property-attachment-field-empty">
+                        {{ 'angular-components.properties-menu.attachment-field.empty' | translate }}
                     </p>
                 }
             </div>
         }
 
-        @if (pickerOpen) {
+        @if (pickerOpen()) {
             <bey-option-picker
                 [anchor]="pickerAnchor"
-                [options]="variableOptions"
+                [options]="variableOptions()"
                 (closed)="closeVariablePicker()"
                 (selected)="onVariableSelected($event)"
             ></bey-option-picker>
         }
     </div>
 
-    <div class="bey-property-field-button-stack bey-property-attachment-actions">
-        @if (field.variables.length > 0) {
+    <div class="bey-property-field-actions bey-property-attachment-field-actions">
+        @if (current.variables.length > 0) {
             <button
-                class="bey-property-field-variable-trigger"
+                class="bey-property-field-action"
                 type="button"
-                [attr.aria-label]="'angular-components.properties-menu.attachmentField.useVariable' | translate"
-                [class.bey-property-field-variable-trigger-active]="pickerOpen"
-                [disabled]="field.disabled"
-                [tooltip]="'angular-components.properties-menu.attachmentField.useVariable' | translate"
+                [attr.aria-label]="'angular-components.properties-menu.attachment-field.use-variable' | translate"
+                [class.is-active]="pickerOpen()"
+                [disabled]="current.disabled"
+                [tooltip]="'angular-components.properties-menu.attachment-field.use-variable' | translate"
                 container="body"
                 (click)="toggleVariablePicker()"
             >
@@ -72,29 +74,29 @@
         }
 
         <label
-            class="bey-property-field-variable-trigger bey-property-attachment-upload"
-            [class.bey-property-attachment-upload-disabled]="field.disabled"
-            [tooltip]="'angular-components.properties-menu.attachmentField.upload' | translate"
+            class="bey-property-field-action bey-property-attachment-field-upload"
+            [class.is-disabled]="current.disabled"
+            [tooltip]="'angular-components.properties-menu.attachment-field.upload' | translate"
             container="body"
         >
             <fa-icon [icon]="uploadIcon"></fa-icon>
             <input
                 type="file"
                 hidden
-                [accept]="field.accept ?? '*/*'"
-                [attr.aria-label]="'angular-components.properties-menu.attachmentField.upload' | translate"
-                [disabled]="field.disabled"
+                [accept]="current.accept ?? '*/*'"
+                [attr.aria-label]="'angular-components.properties-menu.attachment-field.upload' | translate"
+                [disabled]="current.disabled"
                 (change)="onFileSelected($event)"
             />
         </label>
 
-        @if (field.value) {
+        @if (current.value) {
             <button
-                class="bey-property-field-variable-trigger"
+                class="bey-property-field-action"
                 type="button"
-                [attr.aria-label]="'angular-components.properties-menu.attachmentField.clear' | translate"
-                [disabled]="field.disabled"
-                [tooltip]="'angular-components.properties-menu.attachmentField.clear' | translate"
+                [attr.aria-label]="'angular-components.properties-menu.attachment-field.clear' | translate"
+                [disabled]="current.disabled"
+                [tooltip]="'angular-components.properties-menu.attachment-field.clear' | translate"
                 container="body"
                 (click)="onClear()"
             >
@@ -103,20 +105,20 @@
         }
     </div>
 
-    @if (sizeErrorMaxSizeMB !== undefined) {
-        <p class="bey-property-attachment-error">
+    @if (sizeErrorMaxSizeMB() !== null) {
+        <p class="bey-property-field-error">
             {{
-                'angular-components.properties-menu.attachmentField.tooLarge'
-                    | translate: { maxSizeMB: sizeErrorMaxSizeMB }
+                'angular-components.properties-menu.attachment-field.too-large'
+                    | translate: { maxSizeMB: sizeErrorMaxSizeMB() }
             }}
         </p>
     }
 
-    @if (hasTypeError) {
-        <p class="bey-property-attachment-error">
+    @if (hasTypeError()) {
+        <p class="bey-property-field-error">
             {{
-                'angular-components.properties-menu.attachmentField.wrongType'
-                    | translate: { accept: field.accept ?? '' }
+                'angular-components.properties-menu.attachment-field.wrong-type'
+                    | translate: { accept: current.accept ?? '' }
             }}
         </p>
     }

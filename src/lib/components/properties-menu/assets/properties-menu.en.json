@@ -1,43 +1,43 @@
 {
     "angular-components": {
         "properties-menu": {
-            "attachmentField": {
+            "attachment-field": {
                 "clear": "Clear",
                 "empty": "No attachments found",
                 "search": "Search attachments",
-                "tooLarge": "This file exceeds the {{maxSizeMB}} MB limit.",
+                "too-large": "This file exceeds the {{maxSizeMB}} MB limit.",
                 "upload": "Upload a new file",
-                "useVariable": "Use a variable",
-                "wrongType": "This file type is not accepted ({{accept}})."
+                "use-variable": "Use a variable",
+                "wrong-type": "This file type is not accepted ({{accept}})."
             },
             "close": "Close",
-            "colorField": {
+            "color-field": {
                 "clear": "Clear"
             },
-            "fileField": {
+            "file-field": {
                 "choose": "Choose file",
                 "clear": "Clear",
-                "fileSelected": "File selected",
-                "noFileSelected": "No file selected",
-                "tooLarge": "This file exceeds the {{maxSizeMB}} MB limit."
+                "file-selected": "File selected",
+                "no-file-selected": "No file selected",
+                "too-large": "This file exceeds the {{maxSizeMB}} MB limit."
             },
             "list": {
                 "collapse": "Collapse",
-                "empty": "No items",
-                "expand": "Expand",
+                "copied": "Copied",
                 "copy": "Copy the reference",
-                "copied": "Copied"
+                "empty": "No items",
+                "expand": "Expand"
             },
-            "numberArray": {
+            "number-array-field": {
                 "add": "Add"
             },
             "remove": "Remove",
-            "select": {
-                "noMatches": "No matches",
-                "searchPlaceholder": "Search…",
-                "useVariable": "Use a variable"
+            "select-field": {
+                "no-matches": "No matches",
+                "search": "Search…",
+                "use-variable": "Use a variable"
             },
-            "spacing": {
+            "spacing-field": {
                 "bottom": "Bottom",
                 "left": "Left",
                 "right": "Right",
@@ -46,8 +46,8 @@
             "tabs": {
                 "label": "Property tabs"
             },
-            "textField": {
-                "insertVariable": "Insert variable"
+            "text-field": {
+                "insert-variable": "Insert variable"
             }
         }
     }

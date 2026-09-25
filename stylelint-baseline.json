@@ -3,17 +3,6 @@
     "files": [
         "src/lib/assets/styles/bs-overrides.css",
         "src/lib/assets/styles/tokens.css",
-        "src/lib/components/properties-menu/components/fields/property-attachment-field/property-attachment-field.component.css",
-        "src/lib/components/properties-menu/components/fields/property-color-field/property-color-field.component.css",
-        "src/lib/components/properties-menu/components/fields/property-field-control.styles.css",
-        "src/lib/components/properties-menu/components/fields/property-file-field/property-file-field.component.css",
-        "src/lib/components/properties-menu/components/fields/property-info-field/property-info-field.component.css",
-        "src/lib/components/properties-menu/components/fields/property-number-array-field/property-number-array-field.component.css",
-        "src/lib/components/properties-menu/components/fields/property-segmented-field/property-segmented-field.component.css",
-        "src/lib/components/properties-menu/components/fields/property-select-field/property-select-field.component.css",
-        "src/lib/components/properties-menu/components/fields/property-spacing-field/property-spacing-field.component.css",
-        "src/lib/components/properties-menu/components/fields/property-toggle-field/property-toggle-field.component.css",
-        "src/lib/components/properties-menu/components/property-field/property-field.component.css",
         "src/lib/internal/button/button.component.css"
     ]
 }

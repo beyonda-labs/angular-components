@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faFileArrowUp, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
@@ -14,7 +14,11 @@ import {
 import { PROPERTY_VARIABLE_ICON } from '../../../utils/property-variable-icon.util';
 import { toVariableOptions } from '../../../utils/property-variable-options.util';
 
+const BYTES_PER_MB = 1024 * 1024;
+
+/** Picks an existing attachment from a filterable list, uploads a new one, or references a variable. */
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, OptionPickerComponent, TooltipModule, TranslateModule],
     selector: 'bey-property-attachment-field',
     standalone: true,
@@ -22,68 +26,86 @@ import { toVariableOptions } from '../../../utils/property-variable-options.util
     templateUrl: './property-attachment-field.component.html'
 })
 export class PropertyAttachmentFieldComponent {
-    @Input({ required: true }) field!: PropertyAttachmentField;
+    readonly field = input.required<PropertyAttachmentField>();
 
-    @Output() uploadRequested = new EventEmitter<File>();
-    @Output() valueChange = new EventEmitter<string>();
+    readonly uploadRequested = output<File>();
+    readonly valueChange = output<string>();
+
+    readonly hasTypeError = signal(false);
+    readonly isOpen = signal(false);
+    readonly pickerOpen = signal(false);
+    readonly query = signal('');
+    readonly sizeErrorMaxSizeMB = signal<number | null>(null);
+
+    readonly filteredOptions = computed(() => {
+        const term = this.query().trim().toLowerCase();
+        const { options } = this.field();
+
+        return term ? options.filter(option => option.label.toLowerCase().includes(term)) : options;
+    });
+    readonly selectedLabel = computed(() => {
+        const field = this.field();
+
+        return field.selectedOption?.label ?? field.value ?? '';
+    });
+    readonly inputValue = computed(() => (this.isOpen() ? this.query() : this.selectedLabel()));
+    readonly variableOptions = computed(() => toVariableOptions(this.field().variables));
 
     readonly clearIcon = faXmark;
     readonly uploadIcon = faFileArrowUp;
     readonly variableIcon = PROPERTY_VARIABLE_ICON;
 
-    hasTypeError = false;
-    isOpen = false;
-    pickerOpen = false;
-    query = '';
-    sizeErrorMaxSizeMB?: number;
-
-    get selected(): PropertyAttachmentOption | undefined {
-        return this.field.selectedOption;
-    }
-
-    get selectedLabel(): string {
-        return this.selected?.label ?? this.field.value ?? '';
-    }
-
-    toggleVariablePicker(): void {
-        this.pickerOpen = !this.pickerOpen;
-
-        if (this.pickerOpen) {
-            this.close();
-        }
+    close(): void {
+        this.isOpen.set(false);
+        this.query.set('');
     }
 
     closeVariablePicker(): void {
-        this.pickerOpen = false;
+        this.pickerOpen.set(false);
     }
 
-    onVariableSelected(option: OptionPickerOption): void {
-        this.closeVariablePicker();
-        this.valueChange.emit(`{{ ${option.value} }}`);
+    onClear(): void {
+        this.clearFileErrors();
+        this.valueChange.emit('');
     }
 
-    get variableOptions(): OptionPickerOption[] {
-        return toVariableOptions(this.field.variables);
-    }
+    onFileSelected(event: Event): void {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
+        const { accept, maxSizeBytes } = this.field();
 
-    get filteredOptions(): PropertyAttachmentOption[] {
-        const term = this.query.trim().toLowerCase();
+        input.value = '';
 
-        if (!term) {
-            return this.field.options;
+        if (!file) {
+            return;
         }
 
-        return this.field.options.filter(option => option.label.toLowerCase().includes(term));
-    }
+        this.clearFileErrors();
 
-    onQueryInput(event: Event): void {
-        this.query = (event.target as HTMLInputElement).value;
-        this.isOpen = true;
+        if (!isAcceptedMimeType(this.acceptedMimeTypes(accept), file.type)) {
+            this.hasTypeError.set(true);
+
+            return;
+        }
+
+        if (maxSizeBytes !== undefined && file.size > maxSizeBytes) {
+            this.sizeErrorMaxSizeMB.set(Math.round(maxSizeBytes / BYTES_PER_MB));
+
+            return;
+        }
+
+        this.uploadRequested.emit(file);
     }
 
     onFocus(): void {
-        this.isOpen = true;
-        this.query = '';
+        this.isOpen.set(true);
+        this.query.set('');
+    }
+
+    onKeydown(event: KeyboardEvent): void {
+        if (event.key === 'Escape') {
+            this.close();
+        }
     }
 
     onOptionPicked(option: PropertyAttachmentOption, event: Event): void {
@@ -97,58 +119,33 @@ export class PropertyAttachmentFieldComponent {
         this.valueChange.emit(option.id);
     }
 
-    onKeydown(event: KeyboardEvent): void {
-        if (event.key === 'Escape') {
+    onQueryInput(event: Event): void {
+        this.query.set((event.target as HTMLInputElement).value);
+        this.isOpen.set(true);
+    }
+
+    onVariableSelected(option: OptionPickerOption): void {
+        this.closeVariablePicker();
+        this.valueChange.emit(`{{ ${option.value} }}`);
+    }
+
+    toggleVariablePicker(): void {
+        this.pickerOpen.update(isOpen => !isOpen);
+
+        if (this.pickerOpen()) {
             this.close();
         }
     }
 
-    onClear(): void {
-        this.clearFileErrors();
-        this.valueChange.emit('');
-    }
-
-    onFileSelected(event: Event): void {
-        const input = event.target as HTMLInputElement;
-        const file = input.files?.[0];
-
-        input.value = '';
-
-        if (!file) {
-            return;
-        }
-
-        this.clearFileErrors();
-
-        if (!isAcceptedMimeType(this.acceptedMimeTypes, file.type)) {
-            this.hasTypeError = true;
-
-            return;
-        }
-
-        if (this.field.maxSizeBytes !== undefined && file.size > this.field.maxSizeBytes) {
-            this.sizeErrorMaxSizeMB = Math.round(this.field.maxSizeBytes / (1024 * 1024));
-
-            return;
-        }
-
-        this.uploadRequested.emit(file);
-    }
-
-    private get acceptedMimeTypes(): string[] {
-        return (this.field.accept ?? '')
+    private acceptedMimeTypes(accept: string | undefined): string[] {
+        return (accept ?? '')
             .split(',')
             .map(pattern => pattern.trim())
             .filter(Boolean);
     }
 
     private clearFileErrors(): void {
-        this.hasTypeError = false;
-        this.sizeErrorMaxSizeMB = undefined;
-    }
-
-    close(): void {
-        this.isOpen = false;
-        this.query = '';
+        this.hasTypeError.set(false);
+        this.sizeErrorMaxSizeMB.set(null);
     }
 }

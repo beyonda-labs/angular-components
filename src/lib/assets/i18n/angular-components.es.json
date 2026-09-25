@@ -283,25 +283,25 @@
             "results-range": "Mostrando {{ start }}-{{ end }} de {{ total }} resultados"
         },
         "properties-menu": {
-            "attachmentField": {
+            "attachment-field": {
                 "clear": "Vaciar",
                 "empty": "No se han encontrado adjuntos",
                 "search": "Buscar adjuntos",
-                "tooLarge": "Este archivo supera el límite de {{maxSizeMB}} MB.",
+                "too-large": "Este archivo supera el límite de {{maxSizeMB}} MB.",
                 "upload": "Subir un archivo nuevo",
-                "useVariable": "Usar una variable",
-                "wrongType": "Este tipo de archivo no se acepta ({{accept}})."
+                "use-variable": "Usar una variable",
+                "wrong-type": "Este tipo de archivo no se acepta ({{accept}})."
             },
             "close": "Cerrar",
-            "colorField": {
+            "color-field": {
                 "clear": "Vaciar"
             },
-            "fileField": {
+            "file-field": {
                 "choose": "Elegir archivo",
                 "clear": "Vaciar",
-                "fileSelected": "Archivo seleccionado",
-                "noFileSelected": "Ningún archivo seleccionado",
-                "tooLarge": "Este archivo supera el límite de {{maxSizeMB}} MB."
+                "file-selected": "Archivo seleccionado",
+                "no-file-selected": "Ningún archivo seleccionado",
+                "too-large": "Este archivo supera el límite de {{maxSizeMB}} MB."
             },
             "list": {
                 "collapse": "Plegar",
@@ -310,16 +310,16 @@
                 "empty": "No hay elementos",
                 "expand": "Desplegar"
             },
-            "numberArray": {
+            "number-array-field": {
                 "add": "Añadir"
             },
             "remove": "Eliminar",
-            "select": {
-                "noMatches": "Sin coincidencias",
-                "searchPlaceholder": "Buscar…",
-                "useVariable": "Usar una variable"
+            "select-field": {
+                "no-matches": "Sin coincidencias",
+                "search": "Buscar…",
+                "use-variable": "Usar una variable"
             },
-            "spacing": {
+            "spacing-field": {
                 "bottom": "Abajo",
                 "left": "Izquierda",
                 "right": "Derecha",
@@ -328,8 +328,8 @@
             "tabs": {
                 "label": "Pestañas de propiedades"
             },
-            "textField": {
-                "insertVariable": "Insertar variable"
+            "text-field": {
+                "insert-variable": "Insertar variable"
             }
         },
         "search": {

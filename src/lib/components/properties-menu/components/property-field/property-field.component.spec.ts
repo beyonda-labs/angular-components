@@ -9,6 +9,7 @@ import { PropertyTextField } from '../../models/fields/property-text-field.model
 import { PropertyToggleField } from '../../models/fields/property-toggle-field.model';
 import { PropertiesMenuConfig } from '../../models/properties-menu-config.model';
 import { PropertyField } from '../../models/property-field.model';
+import { PropertyOption } from '../../models/property-option.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { PropertyFieldComponent } from './property-field.component';
 
@@ -29,7 +30,7 @@ describe('PropertyFieldComponent', () => {
     });
 
     function renderField(field: PropertyField): void {
-        component.field = field;
+        fixture.componentRef.setInput('field', field);
         fixture.detectChanges();
     }
 
@@ -46,7 +47,7 @@ describe('PropertyFieldComponent', () => {
     });
 
     it('should render the select field for type "select"', () => {
-        renderField(new PropertySelectField({ id: 'font', options: [{ value: 'Inter' }] }));
+        renderField(new PropertySelectField({ id: 'font', options: [new PropertyOption({ value: 'Inter' })] }));
 
         expect(fixture.nativeElement.querySelector('bey-property-select-field')).toBeTruthy();
     });
@@ -64,7 +65,7 @@ describe('PropertyFieldComponent', () => {
     });
 
     it('should render the segmented field for type "segmented"', () => {
-        renderField(new PropertySegmentedField({ id: 'alignment', options: [{ value: 'left' }] }));
+        renderField(new PropertySegmentedField({ id: 'alignment', options: [new PropertyOption({ value: 'left' })] }));
 
         expect(fixture.nativeElement.querySelector('bey-property-segmented-field')).toBeTruthy();
     });
@@ -89,6 +90,6 @@ describe('PropertyFieldComponent', () => {
         propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
         renderField(new PropertyTextField({ id: 'text' }));
 
-        expect(component.labelKey).toBe('app.properties-menu.fields.text.label');
+        expect(component.labelKey()).toBe('app.properties-menu.fields.text.label');
     });
 });

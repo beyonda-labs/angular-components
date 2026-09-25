@@ -1,12 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertySpacingField } from '../../../models/fields/property-spacing-field.model';
 import { PropertySpacingValue } from '../../../types/property-value';
 
 const EMPTY_SPACING: PropertySpacingValue = { bottom: 0, left: 0, right: 0, top: 0 };
+const SIDES: (keyof PropertySpacingValue)[] = ['top', 'right', 'bottom', 'left'];
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [TranslateModule],
     selector: 'bey-property-spacing-field',
     standalone: true,
@@ -14,17 +16,17 @@ const EMPTY_SPACING: PropertySpacingValue = { bottom: 0, left: 0, right: 0, top:
     templateUrl: './property-spacing-field.component.html'
 })
 export class PropertySpacingFieldComponent {
-    @Input({ required: true }) field!: PropertySpacingField;
+    readonly field = input.required<PropertySpacingField>();
 
-    @Output() valueChange = new EventEmitter<PropertySpacingValue>();
+    readonly valueChange = output<PropertySpacingValue>();
 
-    get spacing(): PropertySpacingValue {
-        return this.field.value ?? EMPTY_SPACING;
-    }
+    readonly spacing = computed(() => this.field().value ?? EMPTY_SPACING);
+
+    readonly sides = SIDES;
 
     onSideChange(side: keyof PropertySpacingValue, event: Event): void {
         const rawValue = (event.target as HTMLInputElement).value;
 
-        this.valueChange.emit({ ...this.spacing, [side]: rawValue === '' ? 0 : Number(rawValue) });
+        this.valueChange.emit({ ...this.spacing(), [side]: rawValue === '' ? 0 : Number(rawValue) });
     }
 }

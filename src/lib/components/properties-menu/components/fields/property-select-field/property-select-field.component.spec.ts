@@ -2,18 +2,19 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertySelectField } from '../../../models/fields/property-select-field.model';
+import { PropertyOption } from '../../../models/property-option.model';
 import { PropertySelectFieldComponent } from './property-select-field.component';
 
-const buildField = (searchable: boolean): PropertySelectField =>
+const buildField = (searchable: boolean, disabledValue?: string): PropertySelectField =>
     new PropertySelectField({
         id: 'templateId',
-        searchable,
-        value: 'b',
         options: [
-            { label: 'Invoice', value: 'a' },
-            { label: 'Letterhead', value: 'b' },
-            { label: 'Report', value: 'c' }
-        ]
+            new PropertyOption({ disabled: disabledValue === 'a', label: 'Invoice', value: 'a' }),
+            new PropertyOption({ label: 'Letterhead', value: 'b' }),
+            new PropertyOption({ label: 'Report', value: 'c' })
+        ],
+        searchable,
+        value: 'b'
     });
 
 describe('PropertySelectFieldComponent', () => {
@@ -31,7 +32,7 @@ describe('PropertySelectFieldComponent', () => {
 
     describe('as a plain select', () => {
         beforeEach(() => {
-            component.field = buildField(false);
+            fixture.componentRef.setInput('field', buildField(false));
             fixture.detectChanges();
         });
 
@@ -45,7 +46,7 @@ describe('PropertySelectFieldComponent', () => {
 
     describe('as a searchable select', () => {
         beforeEach(() => {
-            component.field = buildField(true);
+            fixture.componentRef.setInput('field', buildField(true));
             fixture.detectChanges();
         });
 
@@ -57,24 +58,24 @@ describe('PropertySelectFieldComponent', () => {
         });
 
         it('shows the current selection while closed, and the query once open', () => {
-            expect(component.inputValue).toBe('Letterhead');
+            expect(component.inputValue()).toBe('Letterhead');
 
             component.onFocus();
-            component.query = 'rep';
+            component.query.set('rep');
 
-            expect(component.inputValue).toBe('rep');
+            expect(component.inputValue()).toBe('rep');
         });
 
         it('filters options by their translated label, case-insensitively', () => {
-            component.query = 'LETTER';
+            component.query.set('LETTER');
 
-            expect(component.filteredOptions.map(option => option.value)).toEqual(['b']);
+            expect(component.filteredOptions().map(option => option.value)).toEqual(['b']);
         });
 
         it('returns every option for an empty query', () => {
-            component.query = '   ';
+            component.query.set('   ');
 
-            expect(component.filteredOptions).toHaveLength(3);
+            expect(component.filteredOptions()).toHaveLength(3);
         });
 
         it('emits the option value and closes when one is picked', () => {
@@ -82,18 +83,18 @@ describe('PropertySelectFieldComponent', () => {
 
             component.valueChange.subscribe(value => emitted.push(value));
             component.onFocus();
-            component.onOptionPicked(component.field.options[2], new MouseEvent('mousedown'));
+            component.onOptionPicked(component.field().options[2], new MouseEvent('mousedown'));
 
             expect(emitted).toEqual(['c']);
-            expect(component.isOpen).toBe(false);
+            expect(component.isOpen()).toBe(false);
         });
 
         it('ignores a disabled option', () => {
             const emitted: unknown[] = [];
 
-            component.field.options[0].disabled = true;
+            fixture.componentRef.setInput('field', buildField(true, 'a'));
             component.valueChange.subscribe(value => emitted.push(value));
-            component.onOptionPicked(component.field.options[0], new MouseEvent('mousedown'));
+            component.onOptionPicked(component.field().options[0], new MouseEvent('mousedown'));
 
             expect(emitted).toEqual([]);
         });
@@ -102,7 +103,7 @@ describe('PropertySelectFieldComponent', () => {
             const emitted: unknown[] = [];
 
             component.valueChange.subscribe(value => emitted.push(value));
-            component.query = 'e';
+            component.query.set('e');
             component.onKeydown(new KeyboardEvent('keydown', { key: 'Enter' }));
 
             expect(emitted).toEqual(['a']);
@@ -115,7 +116,7 @@ describe('PropertySelectFieldComponent', () => {
             component.onFocus();
             component.onKeydown(new KeyboardEvent('keydown', { key: 'Escape' }));
 
-            expect(component.isOpen).toBe(false);
+            expect(component.isOpen()).toBe(false);
             expect(emitted).toEqual([]);
         });
     });
