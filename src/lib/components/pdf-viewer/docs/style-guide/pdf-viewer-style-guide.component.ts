@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
     faArrowRotateLeft,
@@ -11,16 +11,15 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { PdfViewerConfig } from '../../models/pdf-viewer-config.model';
+import { PdfViewerConfig, PdfViewerHandle } from '../../models/pdf-viewer-config.model';
 import { PdfViewerComponent } from '../../pdf-viewer.component';
-import {
-    PdfViewerLoaded,
-    PdfViewerLoadingFailed,
-    PdfViewerPageRendered,
-    PdfViewerRotationChange
-} from '../../types/pdf-viewer-events';
+import { PdfViewerLoadingFailed, PdfViewerRotationChange } from '../../types/pdf-viewer-events';
+import { PdfViewerRotation } from '../../types/pdf-viewer-value';
 
 const SAMPLE_PDF_URL = 'https://raw.githubusercontent.com/mozilla/pdf.js/master/test/pdfs/tracemonkey.pdf';
+const ZOOM_STEP = 0.25;
+const QUARTER_TURN = 90;
+const FULL_TURN = 360;
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,9 +30,21 @@ const SAMPLE_PDF_URL = 'https://raw.githubusercontent.com/mozilla/pdf.js/master/
     templateUrl: './pdf-viewer-style-guide.component.html'
 })
 export class PdfViewerStyleGuideComponent {
-    @ViewChild(PdfViewerComponent) pdfViewer!: PdfViewerComponent;
+    readonly currentPage = signal(1);
+    readonly lastLoadingFailed = signal<PdfViewerLoadingFailed | null>(null);
+    readonly lastRotationChange = signal<PdfViewerRotationChange | null>(null);
+    readonly lastZoomFactor = signal<number | null>(null);
+    readonly pageCount = signal(0);
 
-    readonly config = new PdfViewerConfig({ src: SAMPLE_PDF_URL, showToolbar: false });
+    readonly config = new PdfViewerConfig({
+        onLoaded: ({ pagesCount }) => this.pageCount.set(pagesCount),
+        onLoadingFailed: event => this.lastLoadingFailed.set(event),
+        onPageChange: page => this.currentPage.set(page),
+        onReady: handle => (this.viewer = handle),
+        onRotationChange: event => this.lastRotationChange.set(event),
+        onZoomChange: zoom => this.lastZoomFactor.set(zoom),
+        src: SAMPLE_PDF_URL
+    });
 
     readonly nextIcon = faChevronRight;
     readonly prevIcon = faChevronLeft;
@@ -42,69 +53,45 @@ export class PdfViewerStyleGuideComponent {
     readonly zoomInIcon = faMagnifyingGlassPlus;
     readonly zoomOutIcon = faMagnifyingGlassMinus;
 
-    lastLoaded: PdfViewerLoaded | null = null;
-    lastLoadingFailed: PdfViewerLoadingFailed | null = null;
-    lastPageRendered: PdfViewerPageRendered | null = null;
-    lastRotationChange: PdfViewerRotationChange | null = null;
-    lastZoomFactor: number | null = null;
-    pageCount = 0;
-
-    get currentPage(): number {
-        return this.pdfViewer?.currentPage() ?? 1;
-    }
+    private viewer?: PdfViewerHandle;
 
     goToNextPage(): void {
-        this.pdfViewer.goToPage(this.currentPage + 1);
+        this.goToPage(this.currentPage() + 1);
     }
 
     goToPreviousPage(): void {
-        this.pdfViewer.goToPage(this.currentPage - 1);
-    }
-
-    onLoaded(event: PdfViewerLoaded): void {
-        this.lastLoaded = event;
-        this.pageCount = event.pagesCount;
-    }
-
-    onLoadingFailed(event: PdfViewerLoadingFailed): void {
-        this.lastLoadingFailed = event;
-    }
-
-    onPageRendered(event: PdfViewerPageRendered): void {
-        this.lastPageRendered = event;
-    }
-
-    onRotationChange(event: PdfViewerRotationChange): void {
-        this.lastRotationChange = event;
-    }
-
-    onZoomChange(zoomFactor: number): void {
-        this.lastZoomFactor = zoomFactor;
+        this.goToPage(this.currentPage() - 1);
     }
 
     rotateLeft(): void {
-        this.pdfViewer.rotate(this.rotationMinus90());
+        this.rotateBy(-QUARTER_TURN);
     }
 
     rotateRight(): void {
-        this.pdfViewer.rotate(this.rotationPlus90());
+        this.rotateBy(QUARTER_TURN);
     }
 
     zoomIn(): void {
-        this.lastZoomFactor = (this.lastZoomFactor ?? 1) + 0.25;
-        this.pdfViewer.setZoom(this.lastZoomFactor);
+        this.zoomTo((this.lastZoomFactor() ?? 1) + ZOOM_STEP);
     }
 
     zoomOut(): void {
-        this.lastZoomFactor = Math.max(0.25, (this.lastZoomFactor ?? 1) - 0.25);
-        this.pdfViewer.setZoom(this.lastZoomFactor);
+        this.zoomTo(Math.max(ZOOM_STEP, (this.lastZoomFactor() ?? 1) - ZOOM_STEP));
     }
 
-    private rotationMinus90(): 0 | 90 | 180 | 270 {
-        return ((this.pdfViewer.currentRotation() + 270) % 360) as 0 | 90 | 180 | 270;
+    private goToPage(page: number): void {
+        this.currentPage.set(page);
+        this.viewer?.goToPage(page);
     }
 
-    private rotationPlus90(): 0 | 90 | 180 | 270 {
-        return ((this.pdfViewer.currentRotation() + 90) % 360) as 0 | 90 | 180 | 270;
+    private rotateBy(degrees: number): void {
+        const current = this.viewer?.currentRotation() ?? 0;
+
+        this.viewer?.rotate(((current + degrees + FULL_TURN) % FULL_TURN) as PdfViewerRotation);
+    }
+
+    private zoomTo(zoom: number): void {
+        this.lastZoomFactor.set(zoom);
+        this.viewer?.setZoom(zoom);
     }
 }

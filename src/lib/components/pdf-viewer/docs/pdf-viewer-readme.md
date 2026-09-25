@@ -1,60 +1,60 @@
 # Pdf viewer
 
 A thin wrapper around `ngx-extended-pdf-viewer` with its toolbar hidden by default, so the consumer can build
-its own. Configuration comes in through a config model; what happens in the document goes out through outputs.
+its own. The config drives the viewer and reports what happens in it; the handle from `onReady` moves it.
 
 ## Usage
 
 ```ts
-const viewer = new BeyPdfViewerConfig({ src: 'invoice.pdf', page: 1, zoom: 'page-width' });
+readonly viewer = new BeyPdfViewerConfig({
+    src: 'invoice.pdf',
+    zoom: 'page-width',
+    onLoaded: ({ pagesCount }) => this.pageCount.set(pagesCount),
+    onPageChange: page => this.page.set(page),
+    onReady: handle => (this.pdf = handle)
+});
 ```
 
 ```html
-<bey-pdf-viewer
-    #viewer
-    [config]="viewer"
-    (loaded)="onLoaded($event)"
-    (pageChange)="page.set($event)"
-></bey-pdf-viewer>
+<bey-pdf-viewer [config]="viewer" />
 
-<button (click)="viewer.goToPage(page() + 1)">Next</button>
+<button (click)="pdf.goToPage(page() + 1)">Next</button>
 ```
 
 ## BeyPdfViewerConfig
 
-| Field                 | Required | Default  | Meaning                                                   |
-| --------------------- | -------- | -------- | --------------------------------------------------------- |
-| `src`                 | yes      |          | Url, blob or bytes of the document                         |
-| `page`                | no       | `1`      | Page shown on load                                         |
-| `zoom`                | no       | `auto`   | A fraction, or a keyword such as `page-fit`                 |
-| `rotation`            | no       | `0`      | `0`, `90`, `180` or `270`                                   |
-| `showToolbar`         | no       | `false`  | The viewer's own toolbar                                    |
-| `toolbarButtons`      | no       | all off  | Which buttons that toolbar shows                            |
-| `backgroundColor`     | no       |          | Colour behind the pages                                     |
-| `height`              | no       |          | Height of the viewer                                        |
-| `minZoom` / `maxZoom` | no       |          | Bounds for zooming                                          |
-| `password`            | no       |          | Password for a protected document                           |
-| `filenameForDownload` | no       |          | Name suggested when downloading                             |
+| Field                 | Required | Default | Meaning                                                    |
+| --------------------- | -------- | ------- | ---------------------------------------------------------- |
+| `src`                 | yes      |         | Url, blob or bytes of the document                         |
+| `page`                | no       | `1`     | Page shown on load                                         |
+| `zoom`                | no       | `auto`  | A fraction, or a keyword such as `page-fit`                |
+| `rotation`            | no       | `0`     | `0`, `90`, `180` or `270`                                  |
+| `showToolbar`         | no       | `false` | The viewer's own toolbar                                   |
+| `toolbarButtons`      | no       | all on  | A `BeyPdfViewerToolbarButtons` naming the buttons it shows |
+| `backgroundColor`     | no       | surface | Colour behind the pages, a token by default                |
+| `height`              | no       | `100%`  | Height of the viewer                                       |
+| `minZoom` / `maxZoom` | no       |         | Bounds for zooming                                         |
+| `password`            | no       |         | Password for a protected document                          |
+| `filenameForDownload` | no       |         | Name suggested when downloading                            |
 
-## Driving it
+### Callbacks
 
-`goToPage`, `setZoom` and `rotate` are called on the component through a template reference. They change what
-is shown without reporting a change, since the caller already knows.
+| Callback           | Receives                    | When                                    |
+| ------------------ | --------------------------- | --------------------------------------- |
+| `onReady`          | The handle                  | The viewer exists, and again per config |
+| `onLoaded`         | `{ pagesCount }`            | The document opens                      |
+| `onLoadingFailed`  | `{ error }`                 | It cannot be opened                     |
+| `onPageChange`     | The page                    | The reader moves to another page        |
+| `onPageRendered`   | `{ pageNumber }`            | A page paints                           |
+| `onRotationChange` | `{ rotation }`              | The reader rotates                      |
+| `onZoomChange`     | The zoom factor, a fraction | The viewer settles on a zoom            |
+| `onClick`          | The mouse event             | A click anywhere on the viewer          |
 
-## Outputs
+## The handle
 
-| Output           | Emits                                     |
-| ---------------- | ----------------------------------------- |
-| `loaded`         | `{ pagesCount }` once the document opens   |
-| `loadingFailed`  | `{ error }` when it cannot be opened       |
-| `pageChange`     | The page the reader moved to               |
-| `pageRendered`   | `{ pageNumber }` as pages paint            |
-| `rotationChange` | `{ rotation }` after a rotation            |
-| `zoomChange`     | The zoom factor the viewer settled on      |
-| `viewerClick`    | Clicks anywhere on the viewer              |
-
-Zoom is a fraction in the config and in `zoomChange`; the percentage the underlying library wants is handled
-inside.
+`goToPage`, `setZoom` and `rotate` change what is shown without reporting a change, since the caller
+already knows; `currentPage()`, `currentRotation()` and `currentZoom()` read the live state. A new config
+resets the three to its own values.
 
 ## Styles
 

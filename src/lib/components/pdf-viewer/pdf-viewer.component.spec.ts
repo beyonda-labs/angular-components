@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PdfViewerConfig, PdfViewerConfigParameters } from './models/pdf-viewer-config.model';
+import { PdfViewerConfig, PdfViewerConfigParameters, PdfViewerHandle } from './models/pdf-viewer-config.model';
 import { PdfViewerComponent } from './pdf-viewer.component';
 
 describe('PdfViewerComponent', () => {
@@ -8,7 +8,7 @@ describe('PdfViewerComponent', () => {
     let component: PdfViewerComponent;
 
     function buildConfig(overrides: Partial<PdfViewerConfigParameters> = {}): PdfViewerConfig {
-        return new PdfViewerConfig({ src: 'invoice.pdf', page: 3, rotation: 90, zoom: 1.5, ...overrides });
+        return new PdfViewerConfig({ page: 3, rotation: 90, src: 'invoice.pdf', zoom: 1.5, ...overrides });
     }
 
     async function render(config: PdfViewerConfig = buildConfig()): Promise<void> {
@@ -19,6 +19,14 @@ describe('PdfViewerComponent', () => {
         component = fixture.componentInstance;
     }
 
+    async function renderWithHandle(overrides: Partial<PdfViewerConfigParameters> = {}): Promise<PdfViewerHandle> {
+        let handle: PdfViewerHandle | undefined;
+
+        await render(buildConfig({ onReady: ready => (handle = ready), ...overrides }));
+
+        return handle!;
+    }
+
     beforeEach(async () => {
         /* The wrapped viewer is a heavy third-party component; this suite is about the wrapper. */
         await TestBed.configureTestingModule({ imports: [PdfViewerComponent] })
@@ -26,115 +34,95 @@ describe('PdfViewerComponent', () => {
             .compileComponents();
     });
 
-    it('starts where the config says', async () => {
-        await render();
+    it('starts where the config says and hands the handle over', async () => {
+        const handle = await renderWithHandle();
 
-        expect(component.currentPage()).toBe(3);
-        expect(component.currentRotation()).toBe(90);
-        expect(component.currentZoom()).toBe(1.5);
+        expect(handle.currentPage()).toBe(3);
+        expect(handle.currentRotation()).toBe(90);
+        expect(handle.currentZoom()).toBe(1.5);
     });
 
-    it('moves to a page on request, without reporting it as a user change', async () => {
-        await render();
-        const pageChange = jest.spyOn(component.pageChange, 'emit');
+    it('moves to a page through the handle without reporting it as a reader change', async () => {
+        const onPageChange = jest.fn();
+        const handle = await renderWithHandle({ onPageChange });
 
-        component.goToPage(5);
+        handle.goToPage(5);
 
-        expect(component.currentPage()).toBe(5);
-        expect(pageChange).not.toHaveBeenCalled();
+        expect(handle.currentPage()).toBe(5);
+        expect(onPageChange).not.toHaveBeenCalled();
     });
 
-    it('rotates and zooms on request', async () => {
-        await render();
+    it('rotates and zooms through the handle', async () => {
+        const handle = await renderWithHandle();
 
-        component.rotate(180);
-        component.setZoom(2);
+        handle.rotate(180);
+        handle.setZoom(2);
 
-        expect(component.currentRotation()).toBe(180);
-        expect(component.currentZoom()).toBe(2);
+        expect(handle.currentRotation()).toBe(180);
+        expect(handle.currentZoom()).toBe(2);
     });
 
     it('hands the viewer a percentage for a fractional zoom, and a keyword as it is', async () => {
-        await render();
+        const handle = await renderWithHandle();
 
-        component.setZoom(1.25);
+        handle.setZoom(1.25);
         expect(component.zoomInput()).toBe(125);
 
-        component.setZoom('page-fit');
+        handle.setZoom('page-fit');
         expect(component.zoomInput()).toBe('page-fit');
     });
 
-    it('follows the viewer when the reader turns the page, and reports it', async () => {
-        await render();
-        const pageChange = jest.spyOn(component.pageChange, 'emit');
+    it('follows the reader turning the page, and reports it', async () => {
+        const onPageChange = jest.fn();
 
+        await render(buildConfig({ onPageChange }));
         component.onPageChange(4);
-
-        expect(component.currentPage()).toBe(4);
-        expect(pageChange).toHaveBeenCalledWith(4);
-    });
-
-    it('ignores a page the viewer does not name', async () => {
-        await render();
-        const pageChange = jest.spyOn(component.pageChange, 'emit');
-
         component.onPageChange();
 
-        expect(component.currentPage()).toBe(3);
-        expect(pageChange).not.toHaveBeenCalled();
+        expect(component.currentPage()).toBe(4);
+        expect(onPageChange).toHaveBeenCalledTimes(1);
+        expect(onPageChange).toHaveBeenCalledWith(4);
     });
 
-    it('follows the viewer when the reader rotates, and reports it', async () => {
-        await render();
-        const rotationChange = jest.spyOn(component.rotationChange, 'emit');
+    it('follows the reader rotating, and reports it', async () => {
+        const onRotationChange = jest.fn();
 
+        await render(buildConfig({ onRotationChange }));
         component.onRotationChange(270);
 
         expect(component.currentRotation()).toBe(270);
-        expect(rotationChange).toHaveBeenCalledWith({ rotation: 270 });
+        expect(onRotationChange).toHaveBeenCalledWith({ rotation: 270 });
     });
 
-    it('reports the zoom factor the viewer settles on', async () => {
-        await render();
-        const zoomChange = jest.spyOn(component.zoomChange, 'emit');
+    it('reports the zoom factor the viewer settles on and reads back a percentage as a fraction', async () => {
+        const onZoomChange = jest.fn();
 
+        await render(buildConfig({ onZoomChange }));
         component.onZoomFactorChange(1.75);
-
-        expect(zoomChange).toHaveBeenCalledWith(1.75);
-    });
-
-    it('turns a zoom the viewer reports as a percentage back into a fraction', async () => {
-        await render();
-
         component.onZoomModelChange(150);
 
+        expect(onZoomChange).toHaveBeenCalledWith(1.75);
         expect(component.currentZoom()).toBe(1.5);
     });
 
-    it('reports a loaded document and a failed one', async () => {
-        await render();
-        const loaded = jest.spyOn(component.loaded, 'emit');
-        const loadingFailed = jest.spyOn(component.loadingFailed, 'emit');
+    it('reports a loaded document, a failed one, a rendered page and a click', async () => {
+        const onClick = jest.fn();
+        const onLoaded = jest.fn();
+        const onLoadingFailed = jest.fn();
+        const onPageRendered = jest.fn();
         const error = new Error('broken');
-
-        component.onPdfLoaded({ pagesCount: 12 } as never);
-        component.onPdfLoadingFailed(error);
-
-        expect(loaded).toHaveBeenCalledWith({ pagesCount: 12 });
-        expect(loadingFailed).toHaveBeenCalledWith({ error });
-    });
-
-    it('reports a rendered page and a click on the viewer', async () => {
-        await render();
-        const pageRendered = jest.spyOn(component.pageRendered, 'emit');
-        const viewerClick = jest.spyOn(component.viewerClick, 'emit');
         const event = new MouseEvent('click');
 
+        await render(buildConfig({ onClick, onLoaded, onLoadingFailed, onPageRendered }));
+        component.onPdfLoaded({ pagesCount: 12 } as never);
+        component.onPdfLoadingFailed(error);
         component.onPageRendered({ pageNumber: 2 } as never);
         component.onContainerClick(event);
 
-        expect(pageRendered).toHaveBeenCalledWith({ pageNumber: 2 });
-        expect(viewerClick).toHaveBeenCalledWith(event);
+        expect(onLoaded).toHaveBeenCalledWith({ pagesCount: 12 });
+        expect(onLoadingFailed).toHaveBeenCalledWith({ error });
+        expect(onPageRendered).toHaveBeenCalledWith({ pageNumber: 2 });
+        expect(onClick).toHaveBeenCalledWith(event);
     });
 
     it('follows a replaced config', async () => {

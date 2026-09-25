@@ -1,15 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, input, linkedSignal, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, input, linkedSignal } from '@angular/core';
 import { NgxExtendedPdfViewerModule, PageRenderedEvent, PdfLoadedEvent } from 'ngx-extended-pdf-viewer';
 
-import { PdfViewerConfig } from './models/pdf-viewer-config.model';
-import {
-    PdfViewerLoaded,
-    PdfViewerLoadingFailed,
-    PdfViewerPageRendered,
-    PdfViewerRotationChange
-} from './types/pdf-viewer-events';
+import { PdfViewerConfig, PdfViewerHandle } from './models/pdf-viewer-config.model';
 import { PdfViewerRotation, PdfViewerZoom } from './types/pdf-viewer-value';
 
+const PERCENT = 100;
+
+/** A thin wrapper around ngx-extended-pdf-viewer: the config drives it, the handle moves it, the callbacks report. */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [NgxExtendedPdfViewerModule],
@@ -21,36 +18,32 @@ import { PdfViewerRotation, PdfViewerZoom } from './types/pdf-viewer-value';
 export class PdfViewerComponent {
     readonly config = input.required<PdfViewerConfig>();
 
-    readonly loaded = output<PdfViewerLoaded>();
-    readonly loadingFailed = output<PdfViewerLoadingFailed>();
-    readonly pageChange = output<number>();
-    readonly pageRendered = output<PdfViewerPageRendered>();
-    readonly rotationChange = output<PdfViewerRotationChange>();
-    readonly viewerClick = output<MouseEvent>();
-    readonly zoomChange = output<number>();
-
     readonly currentPage = linkedSignal(() => this.config().page);
     readonly currentRotation = linkedSignal<PdfViewerRotation>(() => this.config().rotation);
     readonly currentZoom = linkedSignal<PdfViewerZoom>(() => this.config().zoom);
 
-    readonly zoomInput = computed<PdfViewerZoom>(() =>
-        typeof this.currentZoom() === 'number' ? (this.currentZoom() as number) * 100 : this.currentZoom()
-    );
+    /** The underlying viewer wants a percentage for a fractional zoom and the keywords as they are. */
+    readonly zoomInput = computed<PdfViewerZoom>(() => {
+        const zoom = this.currentZoom();
 
-    goToPage(page: number): void {
-        this.currentPage.set(page);
-    }
+        return typeof zoom === 'number' ? zoom * PERCENT : zoom;
+    });
 
-    rotate(rotation: PdfViewerRotation): void {
-        this.currentRotation.set(rotation);
-    }
+    readonly handle: PdfViewerHandle = {
+        currentPage: () => this.currentPage(),
+        currentRotation: () => this.currentRotation(),
+        currentZoom: () => this.currentZoom(),
+        goToPage: page => this.currentPage.set(page),
+        rotate: rotation => this.currentRotation.set(rotation),
+        setZoom: zoom => this.currentZoom.set(zoom)
+    };
 
-    setZoom(zoom: PdfViewerZoom): void {
-        this.currentZoom.set(zoom);
+    constructor() {
+        effect(() => this.config().onReady?.(this.handle));
     }
 
     onContainerClick(event: MouseEvent): void {
-        this.viewerClick.emit(event);
+        this.config().onClick?.(event);
     }
 
     onPageChange(page?: number): void {
@@ -59,28 +52,28 @@ export class PdfViewerComponent {
         }
 
         this.currentPage.set(page);
-        this.pageChange.emit(page);
+        this.config().onPageChange?.(page);
     }
 
     onPageRendered(event: PageRenderedEvent): void {
-        this.pageRendered.emit({ pageNumber: event.pageNumber });
+        this.config().onPageRendered?.({ pageNumber: event.pageNumber });
     }
 
     onPdfLoaded(event: PdfLoadedEvent): void {
-        this.loaded.emit({ pagesCount: event.pagesCount });
+        this.config().onLoaded?.({ pagesCount: event.pagesCount });
     }
 
     onPdfLoadingFailed(error: Error): void {
-        this.loadingFailed.emit({ error });
+        this.config().onLoadingFailed?.({ error });
     }
 
     onRotationChange(rotation: PdfViewerRotation): void {
         this.currentRotation.set(rotation);
-        this.rotationChange.emit({ rotation });
+        this.config().onRotationChange?.({ rotation });
     }
 
     onZoomFactorChange(zoomFactor: number): void {
-        this.zoomChange.emit(zoomFactor);
+        this.config().onZoomChange?.(zoomFactor);
     }
 
     onZoomModelChange(zoom?: string | number): void {
@@ -88,6 +81,6 @@ export class PdfViewerComponent {
             return;
         }
 
-        this.currentZoom.set((typeof zoom === 'number' ? zoom / 100 : zoom) as PdfViewerZoom);
+        this.currentZoom.set((typeof zoom === 'number' ? zoom / PERCENT : zoom) as PdfViewerZoom);
     }
 }

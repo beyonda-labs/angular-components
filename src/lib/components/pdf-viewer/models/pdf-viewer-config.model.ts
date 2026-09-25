@@ -1,5 +1,21 @@
+import {
+    PdfViewerLoaded,
+    PdfViewerLoadingFailed,
+    PdfViewerPageRendered,
+    PdfViewerRotationChange
+} from '../types/pdf-viewer-events';
 import { PdfViewerRotation, PdfViewerSource, PdfViewerZoom } from '../types/pdf-viewer-value';
-import { PdfViewerToolbarButtons, PdfViewerToolbarButtonsParameters } from './pdf-viewer-toolbar-buttons.model';
+import { PdfViewerToolbarButtons } from './pdf-viewer-toolbar-buttons.model';
+
+/** What the consumer can do to the live viewer, delivered through `onReady`. */
+export interface PdfViewerHandle {
+    currentPage(): number;
+    currentRotation(): PdfViewerRotation;
+    currentZoom(): PdfViewerZoom;
+    goToPage(page: number): void;
+    rotate(rotation: PdfViewerRotation): void;
+    setZoom(zoom: PdfViewerZoom): void;
+}
 
 export interface PdfViewerConfigParameters {
     src: PdfViewerSource;
@@ -9,19 +25,25 @@ export interface PdfViewerConfigParameters {
     height?: string;
     maxZoom?: number;
     minZoom?: number;
+    onClick?: (event: MouseEvent) => void;
+    onLoaded?: (event: PdfViewerLoaded) => void;
+    onLoadingFailed?: (event: PdfViewerLoadingFailed) => void;
+    onPageChange?: (page: number) => void;
+    onPageRendered?: (event: PdfViewerPageRendered) => void;
+    onReady?: (handle: PdfViewerHandle) => void;
+    onRotationChange?: (event: PdfViewerRotationChange) => void;
+    /** The zoom factor the viewer settles on, as a fraction. */
+    onZoomChange?: (zoom: number) => void;
     page?: number;
     password?: string;
     rotation?: PdfViewerRotation;
     showToolbar?: boolean;
-    toolbarButtons?: PdfViewerToolbarButtonsParameters | PdfViewerToolbarButtons;
+    toolbarButtons?: PdfViewerToolbarButtons;
     zoom?: PdfViewerZoom;
 }
 
-// pdf.js's own container background is `light-dark()`-themed off the OS `prefers-color-scheme`, not
-// this app's `body.dark` toggle, so it never matched the rest of the UI. `backgroundColor` binds
-// straight to the viewer's `[style.backgroundColor]`, and a CSS custom property is a valid value there
-// — so defaulting to this token keeps the viewer in sync with the app's actual theme with no extra
-// wiring, while a consumer can still override it with a literal color for a one-off case.
+// pdf.js themes its own background off the OS `prefers-color-scheme`, not this app's `body.dark` toggle;
+// a token as the default keeps the viewer in sync with the theme, and a literal colour still overrides it.
 const DEFAULT_BACKGROUND_COLOR = 'var(--bey-bg-surface)';
 
 export class PdfViewerConfig {
@@ -37,6 +59,14 @@ export class PdfViewerConfig {
     zoom: PdfViewerZoom;
 
     filenameForDownload?: string;
+    onClick?: (event: MouseEvent) => void;
+    onLoaded?: (event: PdfViewerLoaded) => void;
+    onLoadingFailed?: (event: PdfViewerLoadingFailed) => void;
+    onPageChange?: (page: number) => void;
+    onPageRendered?: (event: PdfViewerPageRendered) => void;
+    onReady?: (handle: PdfViewerHandle) => void;
+    onRotationChange?: (event: PdfViewerRotationChange) => void;
+    onZoomChange?: (zoom: number) => void;
     password?: string;
 
     constructor({
@@ -50,9 +80,11 @@ export class PdfViewerConfig {
         rotation = 0,
         showToolbar = false,
         src,
-        toolbarButtons = {},
-        zoom = 'auto'
+        toolbarButtons = new PdfViewerToolbarButtons(),
+        zoom = 'auto',
+        ...callbacks
     }: PdfViewerConfigParameters) {
+        Object.assign(this, callbacks);
         this.backgroundColor = backgroundColor;
         this.filenameForDownload = filenameForDownload;
         this.height = height;
@@ -63,10 +95,7 @@ export class PdfViewerConfig {
         this.rotation = rotation;
         this.showToolbar = showToolbar;
         this.src = src;
-        this.toolbarButtons =
-            toolbarButtons instanceof PdfViewerToolbarButtons
-                ? toolbarButtons
-                : new PdfViewerToolbarButtons(toolbarButtons);
+        this.toolbarButtons = toolbarButtons;
         this.zoom = zoom;
     }
 }
