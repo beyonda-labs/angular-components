@@ -26,7 +26,7 @@ describe('FormFileFieldComponent', () => {
         const file = new File(['pdf'], 'invoice.pdf', { type: 'application/pdf' });
         const input = fixture.nativeElement.querySelector('input[type="file"]') as HTMLInputElement;
 
-        expect(fixture.nativeElement.textContent).toContain('angular-components.form.fileField.empty');
+        expect(fixture.nativeElement.textContent).toContain('angular-components.form.file-field.empty');
         expect(input.accept).toBe('.pdf');
 
         Object.defineProperty(input, 'files', { value: [file] });
@@ -37,7 +37,7 @@ describe('FormFileFieldComponent', () => {
         expect(control.value).toBe(file);
         expect(fixture.nativeElement.textContent).toContain('invoice.pdf');
 
-        (fixture.nativeElement.querySelector('.bey-file-clear') as HTMLButtonElement).click();
+        (fixture.nativeElement.querySelector('.bey-form-file-clear') as HTMLButtonElement).click();
 
         expect(control.value).toBeNull();
     });

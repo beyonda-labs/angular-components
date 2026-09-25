@@ -3,9 +3,6 @@
     "files": [
         "src/lib/assets/styles/bs-overrides.css",
         "src/lib/assets/styles/tokens.css",
-        "src/lib/components/form/components/field/field-control.styles.css",
-        "src/lib/components/form/components/field/field-text-variable/field-text-variable.component.css",
-        "src/lib/components/form/components/field/field-text-variable/option-picker/option-picker.component.css",
         "src/lib/components/page/page.component.css",
         "src/lib/components/properties-menu/components/fields/property-attachment-field/property-attachment-field.component.css",
         "src/lib/components/properties-menu/components/fields/property-color-field/property-color-field.component.css",

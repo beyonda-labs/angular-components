@@ -14,7 +14,7 @@ describe('FormAutocompleteFieldComponent', () => {
     }
 
     function panelOptions(): HTMLButtonElement[] {
-        return [...document.body.querySelectorAll<HTMLButtonElement>('.bey-autocomplete-option')];
+        return [...document.body.querySelectorAll<HTMLButtonElement>('.bey-form-autocomplete-option')];
     }
 
     async function settle(): Promise<void> {
@@ -76,7 +76,7 @@ describe('FormAutocompleteFieldComponent', () => {
         control.setValue('mad');
         await settle();
 
-        (fixture.nativeElement.querySelector('.bey-autocomplete-action') as HTMLButtonElement).dispatchEvent(
+        (fixture.nativeElement.querySelector('.bey-form-autocomplete-clear') as HTMLButtonElement).dispatchEvent(
             new MouseEvent('mousedown')
         );
         await settle();
@@ -87,11 +87,11 @@ describe('FormAutocompleteFieldComponent', () => {
     it('moves the panel to the body while open and takes it away on close', async () => {
         input().dispatchEvent(new Event('focus'));
         await settle();
-        expect(document.body.querySelector('.bey-autocomplete-panel')).not.toBeNull();
+        expect(document.body.querySelector('.bey-form-autocomplete-panel')).not.toBeNull();
 
         input().dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
         await settle();
 
-        expect(document.body.querySelector('.bey-autocomplete-panel')).toBeNull();
+        expect(document.body.querySelector('.bey-form-autocomplete-panel')).toBeNull();
     });
 });

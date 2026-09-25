@@ -18,7 +18,7 @@
             "terms": "Términos y condiciones"
         },
         "form": {
-            "autocompleteField": {
+            "autocomplete-field": {
                 "clear": "Vaciar",
                 "empty": "No se han encontrado opciones",
                 "toggle": "Mostrar opciones"
@@ -29,13 +29,13 @@
             "chips": {
                 "remove": "Eliminar"
             },
-            "fileField": {
+            "file-field": {
                 "choose": "Elegir archivo",
                 "clear": "Quitar archivo",
                 "empty": "Ningún archivo seleccionado",
-                "maxSize": "Tamaño máximo: {{maxSize}}",
-                "tooLarge": "El archivo supera el tamaño máximo de {{maxSize}}",
-                "unsupportedType": "Tipo de archivo no admitido. Permitidos: {{accept}}"
+                "max-size": "Tamaño máximo: {{maxSize}}",
+                "too-large": "El archivo supera el tamaño máximo de {{maxSize}}",
+                "unsupported-type": "Tipo de archivo no admitido. Permitidos: {{accept}}"
             },
             "modal": {
                 "close-confirmation": {
@@ -61,10 +61,10 @@
                 "invalid": "Hay errores en el formulario, por favor corrija o complete los campos requeridos antes de enviar.",
                 "without-changes": "No se han realizado cambios en el formulario."
             },
-            "textVariableField": {
+            "text-variable-field": {
                 "close": "Cerrar",
                 "empty": "No se han encontrado opciones",
-                "insertVariable": "Insertar variable",
+                "insert-variable": "Insertar variable",
                 "label": "Variables",
                 "search": "Buscar"
             }

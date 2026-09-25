@@ -1,38 +1,37 @@
-@if (field && control) {
-    <div class="bey-text-variable-wrapper" #pickerAnchor>
-        <input
-            class="form-control form-control-sm"
-            type="text"
-            [id]="field.key"
-            [formControl]="control"
-            placeholder="{{ getPlaceholder() | translate }}"
-            [attr.aria-required]="field.isRequired || null"
-            [attr.aria-invalid]="isInvalid() || null"
-            (blur)="onBlur($event)"
-            (keyup)="onKeyup($event)"
-            (mouseup)="onSelect($event)"
-            (select)="onSelect($event)"
-        />
-        <button
-            type="button"
-            class="bey-text-variable-toggle"
-            [class.bey-text-variable-toggle-active]="pickerOpen"
-            tabindex="-1"
-            [attr.aria-label]="'angular-components.form.textVariableField.insertVariable' | translate"
-            [tooltip]="'angular-components.form.textVariableField.insertVariable' | translate"
-            container="body"
-            (click)="togglePicker()"
-        >
-            <fa-icon [icon]="variableIcon" size="sm"></fa-icon>
-        </button>
+<div class="bey-form-text-variable" #anchor>
+    <input
+        class="form-control form-control-sm bey-form-field-control bey-form-text-variable-input"
+        type="text"
+        [id]="field().key"
+        [formControl]="control()"
+        [placeholder]="placeholder() | translate"
+        [attr.aria-required]="field().isRequired || null"
+        [attr.aria-invalid]="isInvalid() || null"
+        (blur)="trackSelection($event)"
+        (keyup)="trackSelection($event)"
+        (mouseup)="trackSelection($event)"
+        (select)="trackSelection($event)"
+    />
+    <button
+        type="button"
+        class="bey-form-field-action bey-form-text-variable-toggle"
+        [class.is-active]="isPickerOpen()"
+        tabindex="-1"
+        [attr.aria-label]="insertLabel | translate"
+        [attr.aria-expanded]="isPickerOpen()"
+        [tooltip]="insertLabel | translate"
+        container="body"
+        (click)="togglePicker()"
+    >
+        <fa-icon [icon]="variableIcon" size="sm"></fa-icon>
+    </button>
 
-        @if (pickerOpen) {
-            <bey-form-option-picker
-                [anchor]="pickerAnchor"
-                [options]="options"
-                (closed)="closePicker()"
-                (selected)="onOptionSelected($event)"
-            ></bey-form-option-picker>
-        }
-    </div>
-}
+    @if (isPickerOpen()) {
+        <bey-form-option-picker
+            [anchor]="anchor"
+            [options]="options()"
+            (closed)="closePicker()"
+            (selected)="onOptionSelected($event)"
+        ></bey-form-option-picker>
+    }
+</div>
