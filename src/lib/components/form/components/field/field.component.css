@@ -1,22 +1,42 @@
 :host {
+    --bey-form-field-label: var(--bey-text-muted);
+    --bey-form-field-required: var(--bey-text-disabled);
+    --bey-form-field-required-invalid: var(--bey-danger);
+
     display: block;
     min-width: 0;
 }
 
+.bey-form-field-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--bey-space-2xs);
+    margin-bottom: var(--bey-space-2xs);
+}
+
 .bey-form-field-label {
     margin: 0;
-    font-size: 0.8rem;
-    line-height: 1.35;
-    font-weight: 500;
+    color: var(--bey-form-field-label);
+    font-size: var(--bey-font-size-sm);
+    font-weight: var(--bey-font-weight-semibold);
+    line-height: var(--bey-line-height-base);
 }
 
 .bey-form-field-required {
-    font-size: 0.78rem;
-    line-height: 1.35;
+    color: var(--bey-form-field-required);
+    font-size: var(--bey-font-size-sm);
+    font-weight: var(--bey-font-weight-bold);
+    line-height: var(--bey-line-height-base);
+}
+
+.bey-form-field-required.is-invalid {
+    color: var(--bey-form-field-required-invalid);
 }
 
 .bey-form-field-tooltip {
     align-self: center;
-    font-size: 0.72rem;
-    line-height: 1;
+    margin-left: var(--bey-space-2xs);
+    color: var(--bey-text-muted);
+    font-size: var(--bey-font-size-2xs);
+    line-height: var(--bey-line-height-none);
 }

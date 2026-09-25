@@ -1,12 +1,10 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Component, Input } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { FormChipsField } from '../../../models/fields/form-chips-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
-import { FormService } from '../../../services/form.service';
 
 @Component({
     imports: [FontAwesomeModule, FormsModule, ReactiveFormsModule, TranslateModule],
@@ -15,34 +13,17 @@ import { FormService } from '../../../services/form.service';
     styleUrls: ['../field-control.styles.css'],
     templateUrl: './field-chips.component.html'
 })
-export class FormChipsFieldComponent implements OnInit {
-    @Input() field: FormChipsField;
-    @Input() formConfig: FormConfig;
-    @Input() section: FormSection;
+export class FormChipsFieldComponent {
+    @Input({ required: true }) field!: FormChipsField;
+    @Input({ required: true }) prefix!: string;
 
-    control?: FormControl<string[] | null>;
-    sectionGroup?: FormGroup;
+    @Input({ required: true }) control!: FormControl<string[] | null>;
     inputValue = '';
 
     readonly removeIcon = faXmark;
 
-    private readonly formService = inject(FormService);
-
-    ngOnInit(): void {
-        this.sectionGroup = this.formService.getSectionGroup(this.formConfig, this.section.key);
-
-        if (this.sectionGroup) {
-            this.control = this.formService.getFieldControl(this.sectionGroup, this.field) as FormControl<
-                string[] | null
-            >;
-        }
-    }
-
     getPlaceholder(): string {
-        return (
-            this.field.placeholder ??
-            this.formService.getFieldPrefix(this.formConfig, this.section, this.field) + '.placeholder'
-        );
+        return this.field.placeholder ?? `${this.prefix}.placeholder`;
     }
 
     isInvalid(): boolean {

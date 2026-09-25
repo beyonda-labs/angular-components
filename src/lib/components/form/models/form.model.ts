@@ -1,87 +1,84 @@
-import type { FormGroup } from '@angular/forms';
-import { v4 as uuid } from 'uuid';
+import { FormField, FormRule } from './form-field.model';
 
-import { FormField } from './form-field.model';
+export type FormButtonLayout = 'end' | 'stretch';
+
+export interface FormHandle<TValue = unknown> {
+    close(): void;
+    goToStep(key: string): void;
+    isDirty(): boolean;
+    patchValue(value: Partial<TValue>): void;
+    requestClose(): void;
+    reset(): void;
+    value(): TValue;
+}
 
 export class FormConfig<TValue = unknown> {
     allowSubmitWithoutChanges: boolean;
+    buttonLayout: FormButtonLayout;
     buttons: FormButton[];
-    i18nPrefix: string;
-    id: string;
+    prefix: string;
     sections: FormSection[];
     steps: FormStep[];
 
-    formGroup?: FormGroup;
     initialValue?: TValue;
     onCancel?: () => void;
-    onFormGroupAdded?: (formGroup: FormGroup, form: FormConfig<TValue>) => void;
-    onSubmit?: (currentValue: TValue, form: FormConfig<TValue>) => void;
-    onValueChange?: (currentValue: TValue, form: FormConfig<TValue>) => void;
+    onReady?: (handle: FormHandle<TValue>) => void;
+    onStepChange?: (key: string) => void;
+    onSubmit?: (value: TValue, handle: FormHandle<TValue>) => void;
+    onValueChange?: (value: TValue, handle: FormHandle<TValue>) => void;
 
     constructor({
-        i18nPrefix,
+        prefix,
         sections,
 
         allowSubmitWithoutChanges = false,
+        buttonLayout = 'end',
         buttons = [],
-        id = uuid(),
+        initialValue,
         onCancel,
-        onFormGroupAdded,
+        onReady,
+        onStepChange,
         onSubmit,
         onValueChange,
         steps = []
     }: FormConfigParameters<TValue>) {
         this.allowSubmitWithoutChanges = allowSubmitWithoutChanges;
+        this.buttonLayout = buttonLayout;
         this.buttons = buttons;
-        this.id = id;
-        this.i18nPrefix = i18nPrefix;
+        this.initialValue = initialValue;
         this.onCancel = onCancel;
-        this.onFormGroupAdded = onFormGroupAdded;
+        this.onReady = onReady;
+        this.onStepChange = onStepChange;
         this.onSubmit = onSubmit;
         this.onValueChange = onValueChange;
+        this.prefix = prefix;
         this.sections = sections;
         this.steps = steps;
     }
-
-    getInitialValue(): TValue | undefined {
-        return this.initialValue;
-    }
-
-    getValue(): TValue | undefined {
-        return this.formGroup?.getRawValue();
-    }
-
-    patchValue(value: Partial<TValue>, emitEvent = false): void {
-        this.formGroup?.patchValue(value as Record<string, unknown>, { emitEvent });
-    }
-
-    setInitialValue(value: TValue): void {
-        if (this.formGroup) {
-            this.initialValue = value;
-            this.formGroup.reset(value, { emitEvent: false });
-        }
-    }
 }
 
-interface FormConfigParameters<TValue> {
-    i18nPrefix: string;
+export interface FormConfigParameters<TValue = unknown> {
+    prefix: string;
     sections: FormSection[];
 
     allowSubmitWithoutChanges?: boolean;
+    buttonLayout?: FormButtonLayout;
     buttons?: FormButton[];
-    id?: string;
+    initialValue?: TValue;
     onCancel?: () => void;
-    onFormGroupAdded?: (formGroup: FormGroup, form: FormConfig<TValue>) => void;
-    onSubmit?: (currentValue: TValue, form: FormConfig<TValue>) => void;
-    onValueChange?: (currentValue: TValue, form: FormConfig<TValue>) => void;
+    onReady?: (handle: FormHandle<TValue>) => void;
+    onStepChange?: (key: string) => void;
+    onSubmit?: (value: TValue, handle: FormHandle<TValue>) => void;
+    onValueChange?: (value: TValue, handle: FormHandle<TValue>) => void;
     steps?: FormStep[];
 }
 
 export class FormSection {
-    isHidden: boolean;
+    isHidden: FormRule<boolean>;
     isTitleVisible: boolean;
     isTooltipVisible: boolean;
     key: string;
+    prefix: string;
     rows: FormRow[];
 
     constructor({
@@ -90,46 +87,56 @@ export class FormSection {
 
         isHidden = false,
         isTitleVisible = true,
-        isTooltipVisible = false
+        isTooltipVisible = false,
+        prefix = key
     }: FormSectionParameters) {
         this.isHidden = isHidden;
         this.isTitleVisible = isTitleVisible;
         this.isTooltipVisible = isTooltipVisible;
         this.key = key;
+        this.prefix = prefix;
         this.rows = rows;
     }
 }
 
-interface FormSectionParameters {
+export interface FormSectionParameters {
     key: string;
     rows: FormRow[];
 
-    isHidden?: boolean;
+    isHidden?: FormRule<boolean>;
     isTitleVisible?: boolean;
     isTooltipVisible?: boolean;
+    prefix?: string;
 }
 
 export class FormRow {
     alignment: 'start' | 'end';
     fields: FormField[];
 
-    constructor({
-        fields,
-
-        alignment = 'start'
-    }: FormRowParameters) {
+    constructor({ fields, alignment = 'start' }: FormRowParameters) {
         this.alignment = alignment;
         this.fields = fields;
     }
 }
 
-interface FormRowParameters {
+export interface FormRowParameters {
     fields: FormField[];
 
     alignment?: 'start' | 'end';
 }
 
 export class FormStep {
+    key: string;
+    sections: string[];
+
+    constructor({ key, sections }: FormStepParameters) {
+        this.key = key;
+        this.sections = sections;
+    }
+}
+
+export interface FormStepParameters {
+    key: string;
     sections: string[];
 }
 
@@ -139,23 +146,10 @@ export class FormButton {
     tooltip: string;
     type: FormButtonType;
 
-    action?: () => void;
-    customClass?: string;
-    customStyles?: string;
+    action?: (handle: FormHandle) => void;
 
-    constructor({
-        action,
-        label,
-        type,
-
-        customClass,
-        customStyles,
-        isHidden = false,
-        tooltip = ''
-    }: FormButtonParameters) {
+    constructor({ label, type, action, isHidden = false, tooltip = '' }: FormButtonParameters) {
         this.action = action;
-        this.customClass = customClass;
-        this.customStyles = customStyles;
         this.isHidden = isHidden;
         this.label = label;
         this.tooltip = tooltip;
@@ -163,21 +157,17 @@ export class FormButton {
     }
 }
 
-interface FormButtonParameters {
+export interface FormButtonParameters {
     label: string;
     type: FormButtonType;
 
-    action?: () => void;
-    customClass?: string;
-    customStyles?: string;
+    action?: (handle: FormHandle) => void;
     isHidden?: boolean;
     tooltip?: string;
 }
 
 export enum FormButtonType {
-    Cancel,
-    Next,
-    Optional,
-    Previous,
-    Submit
+    Cancel = 'cancel',
+    Secondary = 'secondary',
+    Submit = 'submit'
 }

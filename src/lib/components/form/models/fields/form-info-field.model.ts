@@ -1,6 +1,6 @@
-import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
-import { FormField, FormFieldColumn, FormFieldType } from '../form-field.model';
+import { FormField, FormFieldBaseParameters, FormFieldType } from '../form-field.model';
 
 export interface FormInfoItem {
     label: string;
@@ -11,35 +11,13 @@ export interface FormInfoItem {
 export class FormInfoField extends FormField {
     items: FormInfoItem[];
 
-    constructor({
-        key,
-        columns,
-        isHidden,
-        isLabelTooltipVisible,
-        isLabelVisible,
-        items = []
-    }: FormInfoFieldParameters) {
-        super({
-            key,
-            columns,
-            isDisabled: true,
-            isHidden,
-            isLabelTooltipVisible,
-            isLabelVisible,
-            isRequired: false,
-            type: FormFieldType.Info
-        });
+    constructor({ items = [], ...base }: FormInfoFieldParameters) {
+        super({ ...base, type: FormFieldType.Info });
 
         this.items = items;
     }
 }
 
-interface FormInfoFieldParameters {
-    key: string;
-
-    columns?: FormFieldColumn;
-    isHidden?: boolean;
-    isLabelTooltipVisible?: boolean;
-    isLabelVisible?: boolean;
+export interface FormInfoFieldParameters extends FormFieldBaseParameters {
     items?: FormInfoItem[];
 }

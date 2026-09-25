@@ -7,7 +7,7 @@
         [attr.aria-invalid]="isInvalid() || null"
     >
         <option value="" disabled>{{ getPlaceholder() | translate }}</option>
-        @for (option of field.options; track option.value) {
+        @for (option of options; track option.value) {
             <option [value]="option.value" [disabled]="option.isDisabled ?? false">
                 {{ option.label | translate }}
             </option>

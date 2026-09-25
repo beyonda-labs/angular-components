@@ -6,6 +6,7 @@ export {
     FormSection as BeyFormSection,
     FormStep as BeyFormStep
 } from './models/form.model';
+export type { FormButtonLayout as BeyFormButtonLayout, FormHandle as BeyFormHandle } from './models/form.model';
 export {
     ModalFormConfig as BeyModalFormConfig,
     ModalFormSize as BeyModalFormSize
@@ -16,7 +17,9 @@ export { modalFormGuard as beyModalFormGuard } from './components/modal/guards/m
 export { FormField as BeyFormField, FormFieldType as BeyFormFieldType } from './models/form-field.model';
 export type {
     FormFieldColumn as BeyFormFieldColumn,
-    FormFieldOption as BeyFormFieldOption
+    FormFieldOption as BeyFormFieldOption,
+    FormRule as BeyFormRule,
+    FormValue as BeyFormValue
 } from './models/form-field.model';
 export {
     FormFieldLengthValidator as BeyFormFieldLengthValidator,

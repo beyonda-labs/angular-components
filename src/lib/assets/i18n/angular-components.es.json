@@ -45,6 +45,10 @@
                 "type": "Formulario"
             },
             "required": "Este campo es requerido",
+            "steps": {
+                "back": "Atrás",
+                "next": "Siguiente"
+            },
             "submit": {
                 "invalid": "Hay errores en el formulario, por favor corrija o complete los campos requeridos antes de enviar.",
                 "without-changes": "No se han realizado cambios en el formulario."
@@ -210,8 +214,6 @@
             },
             "register": {
                 "button": {
-                    "back": "Atrás",
-                    "next": "Siguiente",
                     "register": "Crear cuenta"
                 },
                 "email": {

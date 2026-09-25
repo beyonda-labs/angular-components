@@ -38,7 +38,8 @@ export class LoginFormComponent {
 
     private buildForm(prefix: string): FormConfig {
         return new FormConfig({
-            i18nPrefix: prefix,
+            buttonLayout: 'stretch',
+            prefix,
             sections: [
                 new FormSection({
                     key: 'login',
@@ -57,14 +58,7 @@ export class LoginFormComponent {
                     ]
                 })
             ],
-            buttons: [
-                new FormButton({
-                    label: `${prefix}.login.button.login`,
-                    type: FormButtonType.Submit,
-                    customClass: 'w-100 d-block ms-0 justify-content-center',
-                    customStyles: 'width: 100%'
-                })
-            ],
+            buttons: [new FormButton({ label: `${prefix}.login.button.login`, type: FormButtonType.Submit })],
             onSubmit: value => this.signIn((value as LoginFormValue).login)
         });
     }

@@ -1,10 +1,8 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, Input } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { FormNumberField } from '../../../models/fields/form-number-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
-import { FormService } from '../../../services/form.service';
 
 @Component({
     imports: [ReactiveFormsModule, TranslateModule],
@@ -13,31 +11,14 @@ import { FormService } from '../../../services/form.service';
     styleUrls: ['../field-control.styles.css'],
     templateUrl: './field-number.component.html'
 })
-export class FormNumberFieldComponent implements OnInit {
-    @Input() field: FormNumberField;
-    @Input() formConfig: FormConfig;
-    @Input() section: FormSection;
+export class FormNumberFieldComponent {
+    @Input({ required: true }) field!: FormNumberField;
+    @Input({ required: true }) prefix!: string;
 
-    control?: FormControl<number | null>;
-    sectionGroup?: FormGroup;
-
-    private readonly formService = inject(FormService);
-
-    ngOnInit(): void {
-        this.sectionGroup = this.formService.getSectionGroup(this.formConfig, this.section.key);
-
-        if (this.sectionGroup) {
-            this.control = this.formService.getFieldControl(this.sectionGroup, this.field) as FormControl<
-                number | null
-            >;
-        }
-    }
+    @Input({ required: true }) control!: FormControl<number | null>;
 
     getPlaceholder(): string {
-        return (
-            this.field.placeholder ??
-            this.formService.getFieldPrefix(this.formConfig, this.section, this.field) + '.placeholder'
-        );
+        return this.field.placeholder ?? `${this.prefix}.placeholder`;
     }
 
     increment(): void {

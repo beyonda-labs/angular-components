@@ -1,153 +1,69 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { mock, MockProxy } from 'jest-mock-extended';
 
-import { FormConfig, FormRow, FormSection } from '../../models/form.model';
-import { FormService } from '../../services/form.service';
+import { FormFieldState } from '../../form.component';
+import { FormTextField } from '../../models/fields/form-text-field.model';
+import { FormRow, FormSection, FormSectionParameters } from '../../models/form.model';
 import { FormSectionComponent } from './section.component';
 
-describe('FormSectionComponent', () => {
-    let component: FormSectionComponent;
-    let fixture: ComponentFixture<FormSectionComponent>;
-    let formServiceMock: MockProxy<FormService>;
+const VISIBLE: FormFieldState = { isDisabled: false, isHidden: false, isValid: true, options: [] };
+const HIDDEN: FormFieldState = { ...VISIBLE, isHidden: true };
+const ALL_VISIBLE: Record<string, FormFieldState> = { 'contact.name': VISIBLE, 'contact.email': VISIBLE };
 
-    const prefixMock = 'prefix';
+describe('FormSectionComponent', () => {
+    let fixture: ComponentFixture<FormSectionComponent>;
+
+    async function render(
+        overrides: Partial<FormSectionParameters> = {},
+        states: Record<string, FormFieldState> = ALL_VISIBLE
+    ): Promise<void> {
+        fixture = TestBed.createComponent(FormSectionComponent);
+        fixture.componentRef.setInput('fieldStates', new Map(Object.entries(states)));
+        fixture.componentRef.setInput(
+            'group',
+            new FormGroup({ name: new FormControl(''), email: new FormControl('') })
+        );
+        fixture.componentRef.setInput('prefix', 'demo');
+        fixture.componentRef.setInput(
+            'section',
+            new FormSection({
+                key: 'contact',
+                rows: [
+                    new FormRow({ fields: [new FormTextField({ key: 'name' })] }),
+                    new FormRow({ fields: [new FormTextField({ key: 'email' })] })
+                ],
+                ...overrides
+            })
+        );
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
 
     beforeEach(async () => {
-        formServiceMock = mock<FormService>();
-        formServiceMock.getSectionPrefix.mockReturnValue(prefixMock);
-
         await TestBed.configureTestingModule({
-            imports: [FormSectionComponent, TranslateModule.forRoot()],
-            providers: [{ provide: FormService, useValue: formServiceMock }]
+            imports: [FormSectionComponent, TranslateModule.forRoot()]
         }).compileComponents();
-
-        fixture = TestBed.createComponent(FormSectionComponent);
-        component = fixture.componentInstance;
-
-        component.formConfig = {} as FormConfig;
-        component.section = {} as FormSection;
-
-        fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('shows the title from the prefix and the section key, and one row per row with a visible field', async () => {
+        await render();
+
+        expect(fixture.nativeElement.textContent).toContain('demo.contact.label');
+        expect(fixture.nativeElement.querySelectorAll('input')).toHaveLength(2);
     });
 
-    it('getSectionLabel', () => {
-        // Act
-        const result = component.getSectionLabel();
+    it('resolves the texts from its own prefix when the section names one', async () => {
+        await render({ prefix: 'person' });
 
-        // Assert
-        expect(result).toBe(`${prefixMock}.label`);
+        expect(fixture.nativeElement.textContent).toContain('demo.person.label');
+        expect(fixture.nativeElement.textContent).toContain('demo.person.name.label');
     });
 
-    it('getSectionTooltip', () => {
-        // Arrange
-        component.section = {
-            isTooltipVisible: true
-        } as FormSection;
+    it('hides the title when asked, and skips a row with no visible field', async () => {
+        await render({ isTitleVisible: false }, { 'contact.name': VISIBLE, 'contact.email': HIDDEN });
 
-        // Act
-        const result = component.getSectionTooltip();
-
-        // Assert
-        expect(result).toBe(`${prefixMock}.tooltip`);
-    });
-
-    describe('hasVisibleField', () => {
-        it('should return false when every field in the row is hidden', () => {
-            // Arrange
-            const row = { fields: [{ isHidden: true }, { isHidden: true }] } as FormRow;
-
-            // Act
-            const result = component.hasVisibleField(row);
-
-            // Assert
-            expect(result).toBe(false);
-        });
-
-        it('should return true when at least one field in the row is visible', () => {
-            // Arrange
-            const row = { fields: [{ isHidden: true }, { isHidden: false }] } as FormRow;
-
-            // Act
-            const result = component.hasVisibleField(row);
-
-            // Assert
-            expect(result).toBe(true);
-        });
-    });
-
-    describe('isSectionVisible', () => {
-        it('should return false if section is hidden', () => {
-            // Arrange
-            component.section = { isHidden: true } as FormSection;
-
-            // Act
-            const result = component.isSectionVisible();
-
-            // Assert
-            expect(result).toBe(false);
-        });
-
-        it('should return false if all fields are hidden', () => {
-            // Arrange
-            component.section = {
-                isHidden: false,
-                rows: [
-                    {
-                        fields: [
-                            {
-                                isHidden: true
-                            }
-                        ]
-                    }
-                ]
-            } as FormSection;
-
-            // Act
-            const result = component.isSectionVisible();
-
-            // Assert
-            expect(result).toBe(false);
-        });
-
-        it('should return true if there are no fields and is not hidden', () => {
-            // Arrange
-            component.section = {
-                isHidden: false,
-                rows: [] as FormRow[]
-            } as FormSection;
-
-            // Act
-            const result = component.isSectionVisible();
-
-            // Assert
-            expect(result).toBe(true);
-        });
-
-        it('should return true if there are a visible field', () => {
-            // Arrange
-            component.section = {
-                isHidden: false,
-                rows: [
-                    {
-                        fields: [
-                            {
-                                isHidden: false
-                            }
-                        ]
-                    }
-                ]
-            } as FormSection;
-
-            // Act
-            const result = component.isSectionVisible();
-
-            // Assert
-            expect(result).toBe(true);
-        });
+        expect(fixture.nativeElement.textContent).not.toContain('demo.contact.label');
+        expect(fixture.nativeElement.querySelectorAll('input')).toHaveLength(1);
     });
 });

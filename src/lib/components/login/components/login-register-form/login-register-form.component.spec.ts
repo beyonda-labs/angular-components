@@ -54,7 +54,7 @@ describe('LoginRegisterFormComponent', () => {
 
     async function press(label: string): Promise<void> {
         const found = [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')].find(button =>
-            button.textContent?.includes(`register.button.${label}`)
+            button.textContent?.includes(label)
         );
 
         if (!found) {
@@ -87,12 +87,12 @@ describe('LoginRegisterFormComponent', () => {
         expect(input('email')).toBeNull();
 
         await type('name', 'Ada');
-        await press('next');
+        await press('angular-components.form.steps.next');
 
         expect(input('name')).toBeNull();
         await type('email', 'ada@example.com');
         await type('password', 'secret');
-        await press('register');
+        await press('register.button.register');
 
         expect(loginHttpService.register).toHaveBeenCalledWith({
             name: 'Ada',
@@ -106,8 +106,8 @@ describe('LoginRegisterFormComponent', () => {
         await render();
 
         await type('name', 'Ada');
-        await press('next');
-        await press('back');
+        await press('angular-components.form.steps.next');
+        await press('angular-components.form.steps.back');
 
         expect(input('name')?.value).toBe('Ada');
     });

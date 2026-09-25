@@ -1,23 +1,11 @@
-import {
-    AfterViewChecked,
-    Component,
-    ElementRef,
-    inject,
-    Input,
-    OnDestroy,
-    OnInit,
-    Renderer2,
-    ViewChild
-} from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { AfterViewChecked, Component, ElementRef, inject, Input, OnDestroy, Renderer2, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { FormAutocompleteField } from '../../../models/fields/form-autocomplete-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
 import { FormFieldOption } from '../../../models/form-field.model';
-import { FormService } from '../../../services/form.service';
 
 const EMPTY_KEY = 'angular-components.form.autocompleteField.empty';
 const PANEL_GAP_PX = 2;
@@ -30,10 +18,10 @@ const PANEL_MAX_HEIGHT_PX = 208;
     styleUrls: ['../field-control.styles.css'],
     templateUrl: './field-autocomplete.component.html'
 })
-export class FormAutocompleteFieldComponent implements AfterViewChecked, OnDestroy, OnInit {
-    @Input() field: FormAutocompleteField;
-    @Input() formConfig: FormConfig;
-    @Input() section: FormSection;
+export class FormAutocompleteFieldComponent implements AfterViewChecked, OnDestroy {
+    @Input({ required: true }) field!: FormAutocompleteField;
+    @Input({ required: true }) prefix!: string;
+    @Input() options: FormFieldOption[] = [];
 
     @ViewChild('queryInput') queryInput?: ElementRef<HTMLInputElement>;
     @ViewChild('panel') panel?: ElementRef<HTMLElement>;
@@ -45,10 +33,8 @@ export class FormAutocompleteFieldComponent implements AfterViewChecked, OnDestr
     isOpen = false;
     query = '';
 
-    control?: FormControl<string | null>;
-    sectionGroup?: FormGroup;
+    @Input({ required: true }) control!: FormControl<string | null>;
 
-    private readonly formService = inject(FormService);
     private readonly renderer = inject(Renderer2);
     private readonly translateService = inject(TranslateService);
 
@@ -83,16 +69,6 @@ export class FormAutocompleteFieldComponent implements AfterViewChecked, OnDestr
         this.releasePanel();
     }
 
-    ngOnInit(): void {
-        this.sectionGroup = this.formService.getSectionGroup(this.formConfig, this.section.key);
-
-        if (this.sectionGroup) {
-            this.control = this.formService.getFieldControl(this.sectionGroup, this.field) as FormControl<
-                string | null
-            >;
-        }
-    }
-
     get displayValue(): string {
         return this.isOpen ? this.query : this.getSelectedLabel();
     }
@@ -105,10 +81,10 @@ export class FormAutocompleteFieldComponent implements AfterViewChecked, OnDestr
         const term = this.query.trim().toLowerCase();
 
         if (!term) {
-            return this.field.options;
+            return this.options;
         }
 
-        return this.field.options.filter(option => this.getOptionLabel(option).toLowerCase().includes(term));
+        return this.options.filter(option => this.getOptionLabel(option).toLowerCase().includes(term));
     }
 
     getOptionLabel(option: FormFieldOption): string {
@@ -116,14 +92,11 @@ export class FormAutocompleteFieldComponent implements AfterViewChecked, OnDestr
     }
 
     getPlaceholder(): string {
-        return (
-            this.field.placeholder ??
-            this.formService.getFieldPrefix(this.formConfig, this.section, this.field) + '.placeholder'
-        );
+        return this.field.placeholder ?? `${this.prefix}.placeholder`;
     }
 
     getSelectedLabel(): string {
-        const selected = this.field.options.find(option => option.value === this.control?.value);
+        const selected = this.options.find(option => option.value === this.control?.value);
 
         return selected ? this.getOptionLabel(selected) : '';
     }

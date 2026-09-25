@@ -135,9 +135,9 @@ a callback field and dialog callbacks.
 
 
 - [ ] The remaining modules, one at a time
-- [ ] `form`: a field keeps the control it was created with, so a replaced `FormConfig` is only picked up
-      when the whole `bey-form` is re-created. `login` works around it with a keyed `@for`; the fix belongs
-      in the form migration, after which that workaround goes
+- [ ] `form`: the core (models, `bey-form`, section, row, field wrapper, modal, steps) is migrated; the
+      thirteen field components still take decorator inputs, share `field-control.styles.css` and keep
+      their camelCase translation keys, and the READMEs describe the old API
 - [ ] `badge` becomes a real component instead of global CSS classes — after `table` and `properties-menu`,
       since both pass a badge css class around as part of their own config, as `header` does
 - [ ] Style-guides for `search` and `page`; READMEs for `badge`, `loading`, `login`, `page`

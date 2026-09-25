@@ -1,50 +1,56 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { mock, MockProxy } from 'jest-mock-extended';
 
 import { FormTextField } from '../../../models/fields/form-text-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
-import { FormService } from '../../../services/form.service';
 import { FormTextFieldComponent } from './field-text.component';
 
 describe('FormTextFieldComponent', () => {
-    let component: FormTextFieldComponent;
     let fixture: ComponentFixture<FormTextFieldComponent>;
-    let formServiceMock: MockProxy<FormService>;
+    let control: FormControl<string | null>;
 
-    const prefixMock = 'prefix';
+    async function render(field: FormTextField = new FormTextField({ key: 'name' })): Promise<void> {
+        control = new FormControl<string | null>('', Validators.required);
+        fixture = TestBed.createComponent(FormTextFieldComponent);
+        fixture.componentRef.setInput('control', control);
+        fixture.componentRef.setInput('field', field);
+        fixture.componentRef.setInput('prefix', 'demo.contact.name');
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
+
+    function input(): HTMLInputElement {
+        return fixture.nativeElement.querySelector('input');
+    }
 
     beforeEach(async () => {
-        formServiceMock = mock<FormService>();
-        formServiceMock.getSectionGroup.mockReturnValue(new FormGroup({}));
-        formServiceMock.getFieldControl.mockReturnValue(new FormControl());
-        formServiceMock.getFieldPrefix.mockReturnValue(prefixMock);
-
         await TestBed.configureTestingModule({
-            imports: [FormTextFieldComponent, TranslateModule.forRoot()],
-            providers: [{ provide: FormService, useValue: formServiceMock }]
+            imports: [FormTextFieldComponent, TranslateModule.forRoot()]
         }).compileComponents();
+    });
 
-        fixture = TestBed.createComponent(FormTextFieldComponent);
-        component = fixture.componentInstance;
+    it('binds the control and resolves the placeholder from the prefix', async () => {
+        await render();
 
-        component.formConfig = {} as FormConfig;
-        component.section = {} as FormSection;
-        component.field = {} as FormTextField;
+        expect(input().id).toBe('name');
+        expect(input().placeholder).toBe('demo.contact.name.placeholder');
 
+        input().value = 'Ada';
+        input().dispatchEvent(new Event('input'));
+
+        expect(control.value).toBe('Ada');
+    });
+
+    it('keeps an explicit placeholder and flags an invalid touched control', async () => {
+        await render(new FormTextField({ key: 'name', isRequired: true, placeholder: 'Type a name' }));
+
+        expect(input().placeholder).toBe('Type a name');
+        expect(input().getAttribute('aria-invalid')).toBeNull();
+
+        control.markAsTouched();
         fixture.detectChanges();
-    });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
-
-    it('getPlaceholder', () => {
-        // Act
-        const result = component.getPlaceholder();
-
-        // Assert
-        expect(result).toBe(`${prefixMock}.placeholder`);
+        expect(input().getAttribute('aria-invalid')).toBe('true');
+        expect(input().getAttribute('aria-required')).toBe('true');
     });
 });

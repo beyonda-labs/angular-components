@@ -1,51 +1,15 @@
-import { FormField, FormFieldColumn, FormFieldOption, FormFieldType } from '../form-field.model';
-import { FormFieldAsyncValidator, FormFieldValidator } from '../form-field-validator.model';
+import { FormField, FormFieldBaseParameters, FormFieldOption, FormFieldType, FormRule } from '../form-field.model';
 
 export class FormTextVariableField extends FormField {
-    options: FormFieldOption[];
+    options: FormRule<FormFieldOption[]>;
 
-    constructor({
-        asyncValidators,
-        columns,
-        isDisabled,
-        isHidden,
-        isLabelVisible,
-        isLabelTooltipVisible,
-        isRequired,
-        key,
-        options = [],
-        placeholder,
-        validators
-    }: FormTextVariableFieldParameters) {
-        super({
-            asyncValidators,
-            columns,
-            isDisabled,
-            isHidden,
-            isLabelVisible,
-            isLabelTooltipVisible,
-            isRequired,
-            key,
-            placeholder,
-            type: FormFieldType.TextVariable,
-            validators
-        });
+    constructor({ options = [], ...base }: FormTextVariableFieldParameters) {
+        super({ ...base, type: FormFieldType.TextVariable });
 
         this.options = options;
     }
 }
 
-interface FormTextVariableFieldParameters {
-    key: string;
-
-    asyncValidators?: FormFieldAsyncValidator[];
-    columns?: FormFieldColumn;
-    isDisabled?: boolean;
-    isHidden?: boolean;
-    isLabelVisible?: boolean;
-    isLabelTooltipVisible?: boolean;
-    isRequired?: boolean;
-    options?: FormFieldOption[];
-    placeholder?: string;
-    validators?: FormFieldValidator[];
+export interface FormTextVariableFieldParameters extends FormFieldBaseParameters {
+    options?: FormRule<FormFieldOption[]>;
 }

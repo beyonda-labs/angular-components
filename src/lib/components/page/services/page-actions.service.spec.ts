@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 
-import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
-import { FormSection } from '../../form/models/form.model';
+import { FormHandle, FormSection } from '../../form/models/form.model';
 import { ModalService } from '../../modal/services/modal.service';
 import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
 import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
@@ -155,9 +154,9 @@ describe('PageActionsService', () => {
             service.executeAction(buildAction(PageStandardAction.Create, PageActionScope.Global), context);
 
             const close = jest.fn();
-            const onSave = openForm.mock.calls[0][3] as (value: unknown, form: ModalFormConfig) => void;
+            const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'New' }, { close } as unknown as ModalFormConfig);
+            onSave({ name: 'New' }, { close } as unknown as FormHandle);
 
             expect(create).toHaveBeenCalledWith('/items', { name: 'New' }, 'testPage.toast.create-success');
             expect(close).toHaveBeenCalled();
@@ -171,9 +170,9 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.Edit, PageActionScope.Item), context);
 
-            const onSave = openForm.mock.calls[0][3] as (value: unknown, form: ModalFormConfig) => void;
+            const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'Edited' }, { close: jest.fn() } as unknown as ModalFormConfig);
+            onSave({ name: 'Edited' }, { close: jest.fn() } as unknown as FormHandle);
 
             expect(edit).toHaveBeenCalledWith('/items', 7, { name: 'Edited' }, 'testPage.toast.edit-success');
         });
@@ -184,9 +183,9 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.Create, PageActionScope.Global), context);
 
-            const onSave = openForm.mock.calls[0][3] as (value: unknown, form: ModalFormConfig) => void;
+            const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'New' }, { close: jest.fn() } as unknown as ModalFormConfig);
+            onSave({ name: 'New' }, { close: jest.fn() } as unknown as FormHandle);
 
             expect(create).toHaveBeenCalledWith(
                 '/items',
@@ -202,9 +201,9 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.Edit, PageActionScope.Item), context);
 
-            const onSave = openForm.mock.calls[0][3] as (value: unknown, form: ModalFormConfig) => void;
+            const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'Edited' }, { close: jest.fn() } as unknown as ModalFormConfig);
+            onSave({ name: 'Edited' }, { close: jest.fn() } as unknown as FormHandle);
 
             expect(edit).toHaveBeenCalledWith('/items', 7, { name: 'Edited' }, 'testPage.toast.edit-success');
         });
@@ -321,9 +320,9 @@ describe('PageActionsService', () => {
             service.executeAction(buildAction(PageStandardAction.CreateCategory, PageActionScope.Global), context);
 
             const close = jest.fn();
-            const onSave = openForm.mock.calls[0][3] as (value: unknown, form: ModalFormConfig) => void;
+            const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'New category' }, { close } as unknown as ModalFormConfig);
+            onSave({ name: 'New category' }, { close } as unknown as FormHandle);
 
             expect(createCategory).toHaveBeenCalledWith(
                 '/items',
@@ -340,9 +339,9 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.CreateCategory, PageActionScope.Global), context);
 
-            const onSave = openForm.mock.calls[0][3] as (value: unknown, form: ModalFormConfig) => void;
+            const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'Root category' }, { close: jest.fn() } as unknown as ModalFormConfig);
+            onSave({ name: 'Root category' }, { close: jest.fn() } as unknown as FormHandle);
 
             expect(createCategory).toHaveBeenCalledWith(
                 '/items',
@@ -358,9 +357,9 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.EditCategory, PageActionScope.Item), context);
 
-            const onSave = openForm.mock.calls[0][3] as (value: unknown, form: ModalFormConfig) => void;
+            const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'Edited category' }, { close: jest.fn() } as unknown as ModalFormConfig);
+            onSave({ name: 'Edited category' }, { close: jest.fn() } as unknown as FormHandle);
 
             expect(editCategory).toHaveBeenCalledWith(
                 '/items',

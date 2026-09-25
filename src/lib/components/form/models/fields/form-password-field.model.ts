@@ -1,51 +1,15 @@
-import { FormField, FormFieldColumn, FormFieldType } from '../form-field.model';
-import { FormFieldAsyncValidator, FormFieldValidator } from '../form-field-validator.model';
+import { FormField, FormFieldBaseParameters, FormFieldType } from '../form-field.model';
 
 export class FormPasswordField extends FormField {
     showToggle: boolean;
 
-    constructor({
-        asyncValidators,
-        columns,
-        isDisabled,
-        isHidden,
-        isLabelVisible,
-        isLabelTooltipVisible,
-        isRequired,
-        key,
-        placeholder,
-        showToggle = true,
-        validators
-    }: FormPasswordFieldParameters) {
-        super({
-            asyncValidators,
-            columns,
-            isDisabled,
-            isHidden,
-            isLabelVisible,
-            isLabelTooltipVisible,
-            isRequired,
-            key,
-            placeholder,
-            type: FormFieldType.Password,
-            validators
-        });
+    constructor({ showToggle = true, ...base }: FormPasswordFieldParameters) {
+        super({ ...base, type: FormFieldType.Password });
 
         this.showToggle = showToggle;
     }
 }
 
-interface FormPasswordFieldParameters {
-    key: string;
-
-    asyncValidators?: FormFieldAsyncValidator[];
-    columns?: FormFieldColumn;
-    isDisabled?: boolean;
-    isHidden?: boolean;
-    isLabelVisible?: boolean;
-    isLabelTooltipVisible?: boolean;
-    isRequired?: boolean;
-    placeholder?: string;
+export interface FormPasswordFieldParameters extends FormFieldBaseParameters {
     showToggle?: boolean;
-    validators?: FormFieldValidator[];
 }

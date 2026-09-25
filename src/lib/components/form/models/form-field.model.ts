@@ -2,11 +2,18 @@ import { FormFieldAsyncValidator, FormFieldValidator } from './form-field-valida
 
 export type FormFieldColumn = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 
+export type FormValue = Record<string, Record<string, unknown>>;
+
+export type FormRule<T> = T | ((value: FormValue) => T);
+
+export function resolveRule<T>(rule: FormRule<T>, value: FormValue): T {
+    return typeof rule === 'function' ? (rule as (current: FormValue) => T)(value) : rule;
+}
+
 export interface FormFieldOption {
     label: string;
     value: string;
-    // i18n key, not literal text — rendered through the `translate` pipe wherever it's shown (e.g. the
-    // TextVariable field's option picker).
+
     badge?: string;
     isDisabled?: boolean;
 }
@@ -14,17 +21,16 @@ export interface FormFieldOption {
 export abstract class FormField {
     asyncValidators: FormFieldAsyncValidator[];
     columns: FormFieldColumn;
-    isDisabled: boolean;
-    isHidden: boolean;
-    isLabelVisible: boolean;
+    isDisabled: FormRule<boolean>;
+    isHidden: FormRule<boolean>;
     isLabelTooltipVisible: boolean;
+    isLabelVisible: boolean;
     isRequired: boolean;
     key: string;
-    placeholder?: string;
     type: FormFieldType;
     validators: FormFieldValidator[];
 
-    label?: string;
+    placeholder?: string;
 
     constructor({
         key,
@@ -34,8 +40,8 @@ export abstract class FormField {
         columns = 12,
         isDisabled = false,
         isHidden = false,
-        isLabelVisible = true,
         isLabelTooltipVisible = false,
+        isLabelVisible = true,
         isRequired = false,
         placeholder,
         validators = []
@@ -44,8 +50,8 @@ export abstract class FormField {
         this.columns = columns;
         this.isDisabled = isDisabled;
         this.isHidden = isHidden;
-        this.isLabelVisible = isLabelVisible;
         this.isLabelTooltipVisible = isLabelTooltipVisible;
+        this.isLabelVisible = isLabelVisible;
         this.isRequired = isRequired;
         this.key = key;
         this.placeholder = placeholder;
@@ -54,19 +60,22 @@ export abstract class FormField {
     }
 }
 
-interface FormFieldParameters {
+export interface FormFieldBaseParameters {
     key: string;
-    type: FormFieldType;
 
     asyncValidators?: FormFieldAsyncValidator[];
     columns?: FormFieldColumn;
-    isDisabled?: boolean;
-    isHidden?: boolean;
-    isLabelVisible?: boolean;
+    isDisabled?: FormRule<boolean>;
+    isHidden?: FormRule<boolean>;
     isLabelTooltipVisible?: boolean;
+    isLabelVisible?: boolean;
     isRequired?: boolean;
     placeholder?: string;
     validators?: FormFieldValidator[];
+}
+
+export interface FormFieldParameters extends FormFieldBaseParameters {
+    type: FormFieldType;
 }
 
 export enum FormFieldType {

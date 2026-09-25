@@ -61,8 +61,6 @@
             },
             "register": {
                 "button": {
-                    "back": "Atrás",
-                    "next": "Siguiente",
                     "register": "Crear cuenta"
                 },
                 "email": {

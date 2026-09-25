@@ -10,11 +10,35 @@ import { ModalFormConfig } from '../models/modal-form.model';
 import { ModalFormDialogComponent } from './modal-form-dialog.component';
 
 describe('ModalFormDialogComponent', () => {
-    let component: ModalFormDialogComponent;
     let fixture: ComponentFixture<ModalFormDialogComponent>;
-
     const hide = jest.fn();
     const openConfirmation = jest.fn();
+
+    async function settle(): Promise<void> {
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+    }
+
+    async function type(value: string): Promise<void> {
+        const input = fixture.nativeElement.querySelector('#name') as HTMLInputElement;
+
+        input.value = value;
+        input.dispatchEvent(new Event('input'));
+        await settle();
+    }
+
+    function button(label: string): HTMLButtonElement {
+        const found = [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')].find(element =>
+            element.textContent?.includes(label)
+        );
+
+        if (!found) {
+            throw new Error(`No button ${label}`);
+        }
+
+        return found;
+    }
 
     beforeEach(async () => {
         hide.mockReset();
@@ -29,89 +53,48 @@ describe('ModalFormDialogComponent', () => {
         }).compileComponents();
 
         fixture = TestBed.createComponent(ModalFormDialogComponent);
-        component = fixture.componentInstance;
-        component.config = buildConfig();
-
-        fixture.detectChanges();
+        fixture.componentInstance.config = new ModalFormConfig({
+            onSubmit: (_value, handle) => handle.close(),
+            prefix: 'demo.modal-form',
+            sections: [
+                new FormSection({
+                    key: 'contact',
+                    rows: [new FormRow({ fields: [new FormTextField({ key: 'name' })] })]
+                })
+            ]
+        });
+        await settle();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('shows the title and the form', () => {
+        expect(fixture.nativeElement.textContent).toContain('demo.modal-form.title');
+        expect(fixture.nativeElement.querySelector('#name')).not.toBeNull();
     });
 
-    it('should render the form inside the modal', () => {
-        const form = fixture.nativeElement.querySelector('bey-form');
-
-        expect(form).toBeTruthy();
-    });
-
-    it('should expose the title key built from the i18n prefix', () => {
-        expect(component.getTitle()).toBe('test.modal-form.title');
-    });
-
-    it('should hide the modal on dismiss when the form has no changes', () => {
-        component.dismiss();
+    it('closes straight away while the form has no changes', () => {
+        button('demo.modal-form.buttons.cancel').click();
 
         expect(openConfirmation).not.toHaveBeenCalled();
         expect(hide).toHaveBeenCalled();
     });
 
-    it('should ask for confirmation on dismiss when the form has changes and hide when confirmed', () => {
-        openConfirmation.mockReturnValue(of(true));
-        component.config.formGroup?.markAsDirty();
+    it('asks before closing a changed form, from the cancel button or the cross', async () => {
+        openConfirmation.mockReturnValueOnce(of(false)).mockReturnValueOnce(of(true));
+        await type('Ada');
 
-        component.dismiss();
+        button('demo.modal-form.buttons.cancel').click();
+        expect(hide).not.toHaveBeenCalled();
 
-        expect(openConfirmation).toHaveBeenCalled();
+        (fixture.nativeElement.querySelector('.bey-modal-form-close') as HTMLButtonElement).click();
         expect(hide).toHaveBeenCalled();
     });
 
-    it('should keep the modal open when the close confirmation is rejected', () => {
-        openConfirmation.mockReturnValue(of(false));
-        component.config.formGroup?.markAsDirty();
+    it('lets the submit callback close the dialog through the handle', async () => {
+        await type('Ada');
 
-        component.dismiss();
+        button('demo.modal-form.buttons.submit').click();
 
-        expect(openConfirmation).toHaveBeenCalled();
-        expect(hide).not.toHaveBeenCalled();
-    });
-
-    it('should request a guarded close when the cancel button is clicked', () => {
-        component.config.buttons[0].action?.();
-
-        expect(hide).toHaveBeenCalled();
-    });
-
-    it('should not hide the modal on submit', () => {
-        const onSubmit = jest.fn();
-        const config = buildConfig(onSubmit);
-
-        component.config = config;
-        component.ngOnInit();
-
-        const currentValue = { section1: { text1: 'value' } };
-        config.onSubmit?.(currentValue, config);
-
-        expect(onSubmit).toHaveBeenCalledWith(currentValue, config);
-        expect(hide).not.toHaveBeenCalled();
-    });
-
-    it('should hide the modal when the config close method is called', () => {
-        component.config.close();
-
+        expect(openConfirmation).not.toHaveBeenCalled();
         expect(hide).toHaveBeenCalled();
     });
 });
-
-function buildConfig(onSubmit?: (currentValue: unknown, form: ModalFormConfig) => void): ModalFormConfig {
-    return new ModalFormConfig({
-        i18nPrefix: 'test.modal-form',
-        onSubmit,
-        sections: [
-            new FormSection({
-                key: 'section1',
-                rows: [new FormRow({ fields: [new FormTextField({ key: 'text1' })] })]
-            })
-        ]
-    });
-}

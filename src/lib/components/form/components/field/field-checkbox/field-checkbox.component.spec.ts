@@ -1,63 +1,48 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { mock, MockProxy } from 'jest-mock-extended';
 
 import { FormCheckboxField } from '../../../models/fields/form-checkbox-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
-import { FormService } from '../../../services/form.service';
 import { FormCheckboxFieldComponent } from './field-checkbox.component';
 
 describe('FormCheckboxFieldComponent', () => {
-    let component: FormCheckboxFieldComponent;
     let fixture: ComponentFixture<FormCheckboxFieldComponent>;
-    let formServiceMock: MockProxy<FormService>;
+    let control: FormControl<boolean | null>;
+
+    async function render(field: FormCheckboxField): Promise<void> {
+        control = new FormControl<boolean | null>(false);
+        fixture = TestBed.createComponent(FormCheckboxFieldComponent);
+        fixture.componentRef.setInput('control', control);
+        fixture.componentRef.setInput('field', field);
+        fixture.componentRef.setInput('prefix', 'demo.person.subscribed');
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
+
+    function input(): HTMLInputElement {
+        return fixture.nativeElement.querySelector('input');
+    }
 
     beforeEach(async () => {
-        formServiceMock = mock<FormService>();
-        formServiceMock.getSectionGroup.mockReturnValue(new FormGroup({}));
-        formServiceMock.getFieldControl.mockReturnValue(new FormControl(false));
-        formServiceMock.getFieldPrefix.mockReturnValue('prefix');
-
         await TestBed.configureTestingModule({
-            imports: [FormCheckboxFieldComponent, TranslateModule.forRoot()],
-            providers: [{ provide: FormService, useValue: formServiceMock }]
+            imports: [FormCheckboxFieldComponent, TranslateModule.forRoot()]
         }).compileComponents();
-
-        fixture = TestBed.createComponent(FormCheckboxFieldComponent);
-        component = fixture.componentInstance;
-
-        component.formConfig = {} as FormConfig;
-        component.section = { key: 'section1' } as FormSection;
-        component.field = { key: 'check1' } as FormCheckboxField;
-
-        fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('renders a labelled checkbox bound to the control', async () => {
+        await render(new FormCheckboxField({ key: 'subscribed' }));
+
+        expect(fixture.nativeElement.querySelector('label').textContent.trim()).toBe('demo.person.subscribed.label');
+        expect(input().getAttribute('role')).toBeNull();
+
+        input().click();
+
+        expect(control.value).toBe(true);
     });
 
-    it('getLabel should return translated key', () => {
-        expect(component.getLabel()).toBe('prefix.label');
-    });
+    it('renders a switch when asked', async () => {
+        await render(new FormCheckboxField({ key: 'subscribed', isSwitch: true }));
 
-    it('should render the plain checkbox input by default', () => {
-        const nativeElement = fixture.nativeElement as HTMLElement;
-
-        expect(nativeElement.querySelector('.form-check-input')).toBeTruthy();
-        expect(nativeElement.querySelector('.bey-switch-input')).toBeNull();
-    });
-
-    it('should render the switch input when isSwitch is true', () => {
-        component.field = { isSwitch: true, key: 'check1' } as FormCheckboxField;
-        fixture.detectChanges();
-
-        const nativeElement = fixture.nativeElement as HTMLElement;
-        const switchInput = nativeElement.querySelector('.bey-switch-input');
-
-        expect(switchInput).toBeTruthy();
-        expect(switchInput?.getAttribute('role')).toBe('switch');
-        expect(nativeElement.querySelector('.form-check-input')).toBeNull();
+        expect(input().getAttribute('role')).toBe('switch');
     });
 });

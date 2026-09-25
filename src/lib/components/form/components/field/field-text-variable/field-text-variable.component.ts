@@ -1,14 +1,12 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { Component, Input } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faDatabase } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { FormTextVariableField } from '../../../models/fields/form-text-variable-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
 import { FormFieldOption } from '../../../models/form-field.model';
-import { FormService } from '../../../services/form.service';
 import { OptionPickerComponent } from './option-picker/option-picker.component';
 
 @Component({
@@ -18,33 +16,20 @@ import { OptionPickerComponent } from './option-picker/option-picker.component';
     styleUrls: ['../field-control.styles.css', './field-text-variable.component.css'],
     templateUrl: './field-text-variable.component.html'
 })
-export class FormTextVariableFieldComponent implements OnInit {
-    @Input() field: FormTextVariableField;
-    @Input() formConfig: FormConfig;
-    @Input() section: FormSection;
+export class FormTextVariableFieldComponent {
+    @Input({ required: true }) field!: FormTextVariableField;
+    @Input({ required: true }) prefix!: string;
+    @Input() options: FormFieldOption[] = [];
 
-    control?: FormControl<string | null>;
-    sectionGroup?: FormGroup;
+    @Input({ required: true }) control!: FormControl<string | null>;
     pickerOpen = false;
 
     readonly variableIcon = faDatabase;
 
-    private readonly formService = inject(FormService);
-
     private selectionStart: number | null = null;
 
-    ngOnInit(): void {
-        this.sectionGroup = this.formService.getSectionGroup(this.formConfig, this.section.key);
-
-        if (this.sectionGroup) {
-            this.control = this.formService.getFieldControl(this.sectionGroup, this.field) as FormControl<
-                string | null
-            >;
-        }
-    }
-
     getPlaceholder(): string {
-        return this.field.placeholder ?? `${this.getPrefix()}.placeholder`;
+        return this.field.placeholder ?? `${this.prefix}.placeholder`;
     }
 
     isInvalid(): boolean {
@@ -84,14 +69,6 @@ export class FormTextVariableFieldComponent implements OnInit {
         this.control.setValue(updatedValue);
         this.control.markAsDirty();
         this.pickerOpen = false;
-    }
-
-    private getPrefix(): string {
-        if (this.formConfig && this.section && this.field) {
-            return this.formService.getFieldPrefix(this.formConfig, this.section, this.field);
-        }
-
-        return '';
     }
 
     private trackSelection(target: HTMLInputElement): void {

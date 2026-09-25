@@ -1,66 +1,64 @@
 import { TestBed } from '@angular/core/testing';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 
+import { FormCheckboxField } from '../models/fields/form-checkbox-field.model';
 import { FormChipsField } from '../models/fields/form-chips-field.model';
 import { FormDateField } from '../models/fields/form-date-field.model';
 import { FormNumberField } from '../models/fields/form-number-field.model';
 import { FormTextField } from '../models/fields/form-text-field.model';
-import { FormConfig, FormSection } from '../models/form.model';
+import { FormConfig, FormRow, FormSection } from '../models/form.model';
 import { FormService } from './form.service';
-import { FormValidatorService } from './form-validator.service';
 
 describe('FormService', () => {
     let service: FormService;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({
-            providers: [FormService, FormValidatorService]
-        });
-
+        TestBed.configureTestingModule({});
         service = TestBed.inject(FormService);
     });
 
-    it('should create', () => {
-        expect(service).toBeTruthy();
-    });
-
-    it('getFieldPrefix should build prefix correctly', () => {
-        const result = service.getFieldPrefix(
-            { i18nPrefix: 'my.form' } as FormConfig,
-            { key: 'sectionA' } as FormSection,
-            { key: 'fieldA' } as FormTextField
+    it('builds one group per section, seeded from the initial value and the field defaults', () => {
+        const group = service.buildFormGroup(
+            new FormConfig({
+                initialValue: { contact: { name: 'Ada' } },
+                prefix: 'demo',
+                sections: [
+                    new FormSection({
+                        key: 'contact',
+                        rows: [
+                            new FormRow({
+                                fields: [
+                                    new FormTextField({ key: 'name' }),
+                                    new FormTextField({ key: 'email' }),
+                                    new FormCheckboxField({ key: 'subscribed', isDisabled: true }),
+                                    new FormNumberField({ key: 'age' }),
+                                    new FormChipsField({ key: 'tags' })
+                                ]
+                            })
+                        ]
+                    })
+                ]
+            })
         );
 
-        expect(result).toBe('my.form.sectionA.fieldA');
+        expect(group.getRawValue()).toEqual({
+            contact: { name: 'Ada', email: '', subscribed: false, age: null, tags: [] }
+        });
+        expect(group.get('contact.subscribed')?.disabled).toBe(true);
     });
 
-    it('should validate minDate and maxDate for date controls', () => {
-        const control = service.initFieldControl(
-            new FormDateField({
-                key: 'date1',
-                minDate: '2026-01-01',
-                maxDate: '2026-12-31'
-            })
-        ) as FormControl<string | null>;
+    it('requires a value when the field is required', () => {
+        const control = service.initFieldControl(new FormTextField({ key: 'name', isRequired: true }));
 
-        control.setValue('2025-01-01');
-        expect(control.errors?.['minDate']).toBeTruthy();
+        expect(control?.valid).toBe(false);
 
-        control.setValue('2027-01-01');
-        expect(control.errors?.['maxDate']).toBeTruthy();
-
-        control.setValue('2026-06-15');
-        expect(control.valid).toBe(true);
+        control?.setValue('Ada');
+        expect(control?.valid).toBe(true);
     });
 
-    it('should validate minDate and maxDate using the configured date format', () => {
+    it('validates minDate and maxDate in the format of the field', () => {
         const control = service.initFieldControl(
-            new FormDateField({
-                key: 'date1',
-                format: 'DD/MM/YYYY',
-                minDate: '01/04/2026',
-                maxDate: '30/04/2026'
-            })
+            new FormDateField({ key: 'date', format: 'DD/MM/YYYY', minDate: '01/04/2026', maxDate: '30/04/2026' })
         ) as FormControl<string | null>;
 
         control.setValue('31/03/2026');
@@ -73,14 +71,10 @@ describe('FormService', () => {
         expect(control.valid).toBe(true);
     });
 
-    it('should validate min and max for number controls', () => {
-        const control = service.initFieldControl(
-            new FormNumberField({
-                key: 'number1',
-                min: 10,
-                max: 20
-            })
-        ) as FormControl<number | null>;
+    it('validates min and max for number fields', () => {
+        const control = service.initFieldControl(new FormNumberField({ key: 'age', min: 10, max: 20 })) as FormControl<
+            number | null
+        >;
 
         control.setValue(5);
         expect(control.errors?.['min']).toBeTruthy();
@@ -92,24 +86,15 @@ describe('FormService', () => {
         expect(control.valid).toBe(true);
     });
 
-    it('should validate maxItems for chips controls', () => {
-        const control = service.initFieldControl(
-            new FormChipsField({
-                key: 'chips1',
-                maxItems: 2
-            })
-        ) as FormControl<string[] | null>;
+    it('validates maxItems for chips fields', () => {
+        const control = service.initFieldControl(new FormChipsField({ key: 'tags', maxItems: 2 })) as FormControl<
+            string[] | null
+        >;
 
         control.setValue(['a', 'b', 'c']);
         expect(control.errors?.['maxItems']).toBeTruthy();
 
         control.setValue(['a', 'b']);
         expect(control.valid).toBe(true);
-    });
-
-    it('getSectionGroup should return undefined if section does not exist', () => {
-        const result = service.getSectionGroup({ formGroup: new FormGroup({}) } as FormConfig, 'missing');
-
-        expect(result).toBeUndefined();
     });
 });

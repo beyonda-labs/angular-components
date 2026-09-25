@@ -1,12 +1,10 @@
-import { Component, ElementRef, inject, Input, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPaperclip, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { FormFileField } from '../../../models/fields/form-file-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
-import { FormService } from '../../../services/form.service';
 
 const BYTES_PER_UNIT = 1024;
 const SIZE_UNITS = ['B', 'KB', 'MB', 'GB'];
@@ -18,28 +16,16 @@ const SIZE_UNITS = ['B', 'KB', 'MB', 'GB'];
     styleUrls: ['../field-control.styles.css'],
     templateUrl: './field-file.component.html'
 })
-export class FormFileFieldComponent implements OnInit {
-    @Input() field: FormFileField;
-    @Input() formConfig: FormConfig;
-    @Input() section: FormSection;
+export class FormFileFieldComponent {
+    @Input({ required: true }) field!: FormFileField;
+    @Input({ required: true }) prefix!: string;
 
     @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
 
     clearIcon = faXmark;
     fileIcon = faPaperclip;
 
-    control?: FormControl<File | null>;
-    sectionGroup?: FormGroup;
-
-    private readonly formService = inject(FormService);
-
-    ngOnInit(): void {
-        this.sectionGroup = this.formService.getSectionGroup(this.formConfig, this.section.key);
-
-        if (this.sectionGroup) {
-            this.control = this.formService.getFieldControl(this.sectionGroup, this.field) as FormControl<File | null>;
-        }
-    }
+    @Input({ required: true }) control!: FormControl<File | null>;
 
     get accept(): string | null {
         return this.field.accept.length > 0 ? this.field.accept.join(',') : null;

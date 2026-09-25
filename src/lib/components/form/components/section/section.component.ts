@@ -1,12 +1,14 @@
-import { Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { FormConfig, FormRow, FormSection } from '../../models/form.model';
-import { FormService } from '../../services/form.service';
+import { fieldStateKey, FormFieldStates } from '../../form.component';
+import { FormRow, FormSection } from '../../models/form.model';
 import { FormRowComponent } from '../row/row.component';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FormRowComponent, TooltipModule, TranslateModule],
     selector: 'bey-form-section',
     standalone: true,
@@ -14,56 +16,19 @@ import { FormRowComponent } from '../row/row.component';
     templateUrl: './section.component.html'
 })
 export class FormSectionComponent {
-    @Input() formConfig: FormConfig;
-    @Input() section: FormSection;
+    readonly fieldStates = input.required<FormFieldStates>();
+    readonly group = input.required<FormGroup>();
+    readonly prefix = input.required<string>();
+    readonly section = input.required<FormSection>();
 
-    private readonly formService = inject(FormService);
+    readonly sectionPrefix = computed(() => `${this.prefix()}.${this.section().prefix}`);
+    readonly label = computed(() => `${this.sectionPrefix()}.label`);
+    readonly tooltip = computed(() => (this.section().isTooltipVisible ? `${this.sectionPrefix()}.tooltip` : ''));
+    readonly visibleRows = computed(() => this.section().rows.filter(row => this.hasVisibleField(row)));
 
-    getSectionLabel(): string {
-        return `${this.getPrefix()}.label`;
-    }
+    private hasVisibleField(row: FormRow): boolean {
+        const { key } = this.section();
 
-    getSectionTooltip(): string {
-        if (this.section.isTooltipVisible) {
-            return `${this.getPrefix()}.tooltip`;
-        }
-
-        return '';
-    }
-
-    hasVisibleField(row: FormRow): boolean {
-        return row.fields.some(field => !field.isHidden);
-    }
-
-    isSectionVisible(): boolean {
-        if (!this.section || !this.formConfig) {
-            return false;
-        }
-
-        if (this.section.isHidden) {
-            return false;
-        }
-
-        if (this.countFields() > 0 && !this.hasAnyVisibleField()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private countFields(): number {
-        return (this.section.rows ?? []).reduce((accumulator, row) => accumulator + row.fields.length, 0);
-    }
-
-    private getPrefix(): string {
-        if (this.formConfig && this.section) {
-            return this.formService.getSectionPrefix(this.formConfig, this.section);
-        }
-
-        return '';
-    }
-
-    private hasAnyVisibleField(): boolean {
-        return this.section.rows.some(row => this.hasVisibleField(row));
+        return row.fields.some(field => !this.fieldStates().get(fieldStateKey(key, field.key))?.isHidden);
     }
 }

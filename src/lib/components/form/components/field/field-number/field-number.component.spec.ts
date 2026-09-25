@@ -1,44 +1,45 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { mock, MockProxy } from 'jest-mock-extended';
 
 import { FormNumberField } from '../../../models/fields/form-number-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
-import { FormService } from '../../../services/form.service';
 import { FormNumberFieldComponent } from './field-number.component';
 
 describe('FormNumberFieldComponent', () => {
-    let component: FormNumberFieldComponent;
     let fixture: ComponentFixture<FormNumberFieldComponent>;
-    let formServiceMock: MockProxy<FormService>;
+    let control: FormControl<number | null>;
+
+    function buttons(): HTMLButtonElement[] {
+        return [...fixture.nativeElement.querySelectorAll('button')];
+    }
 
     beforeEach(async () => {
-        formServiceMock = mock<FormService>();
-        formServiceMock.getSectionGroup.mockReturnValue(new FormGroup({}));
-        formServiceMock.getFieldControl.mockReturnValue(new FormControl(0));
-        formServiceMock.getFieldPrefix.mockReturnValue('prefix');
-
         await TestBed.configureTestingModule({
-            imports: [FormNumberFieldComponent, TranslateModule.forRoot()],
-            providers: [{ provide: FormService, useValue: formServiceMock }]
+            imports: [FormNumberFieldComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
+        control = new FormControl<number | null>(null);
         fixture = TestBed.createComponent(FormNumberFieldComponent);
-        component = fixture.componentInstance;
+        fixture.componentRef.setInput('control', control);
+        fixture.componentRef.setInput('field', new FormNumberField({ key: 'age', min: 0, max: 2 }));
+        fixture.componentRef.setInput('prefix', 'demo.person.age');
+        fixture.detectChanges();
+        await fixture.whenStable();
+    });
 
-        component.formConfig = {} as FormConfig;
-        component.section = { key: 'section1' } as FormSection;
-        component.field = { key: 'number1' } as FormNumberField;
+    it('steps the value with the spinners, inside the limits of the field', () => {
+        const [up, down] = buttons();
+
+        up.click();
+        up.click();
+        expect(control.value).toBe(2);
 
         fixture.detectChanges();
-    });
+        expect(up.disabled).toBe(true);
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
-
-    it('getPlaceholder should return translated key', () => {
-        expect(component.getPlaceholder()).toBe('prefix.placeholder');
+        down.click();
+        down.click();
+        down.click();
+        expect(control.value).toBe(0);
     });
 });

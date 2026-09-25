@@ -1,14 +1,12 @@
 import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 import { FormDateField } from '../../../models/fields/form-date-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
 import { DateFormatService } from '../../../services/date-format.service';
 import { DatepickerLocaleService } from '../../../services/datepicker-locale.service';
-import { FormService } from '../../../services/form.service';
 
 type FormDatepickerConfig = Partial<BsDatepickerConfig & { locale: string }>;
 
@@ -20,11 +18,10 @@ type FormDatepickerConfig = Partial<BsDatepickerConfig & { locale: string }>;
     templateUrl: './field-date.component.html'
 })
 export class FormDateFieldComponent implements OnInit {
-    @Input() field: FormDateField;
-    @Input() formConfig: FormConfig;
-    @Input() section: FormSection;
+    @Input({ required: true }) field!: FormDateField;
+    @Input({ required: true }) prefix!: string;
 
-    control?: FormControl<string | null>;
+    @Input({ required: true }) control!: FormControl<string | null>;
     readonly datepickerControl = new FormControl<Date | null>(null);
     datepickerConfig: FormDatepickerConfig = {
         dateInputFormat: DateFormatService.DEFAULT_FORMAT,
@@ -32,12 +29,9 @@ export class FormDateFieldComponent implements OnInit {
         showWeekNumbers: false
     };
 
-    sectionGroup?: FormGroup;
-
     private readonly datepickerLocaleService = inject(DatepickerLocaleService);
     private readonly dateFormatService = inject(DateFormatService);
     private readonly destroyRef = inject(DestroyRef);
-    private readonly formService = inject(FormService);
     private readonly translateService = inject(TranslateService);
 
     ngOnInit(): void {
@@ -45,32 +39,25 @@ export class FormDateFieldComponent implements OnInit {
 
         this.datepickerConfig = this.createDatepickerConfig(this.field.format, initialLanguage);
         this.syncDatepickerLocale(initialLanguage);
-        this.sectionGroup = this.formService.getSectionGroup(this.formConfig, this.section.key);
 
         this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(event => {
             this.syncDatepickerLocale(event.lang);
         });
 
-        if (this.sectionGroup) {
-            this.control = this.formService.getFieldControl(this.sectionGroup, this.field) as FormControl<
-                string | null
-            >;
+        this.syncDatepickerState();
+        this.syncDatepickerValue(this.control.value);
 
+        this.control.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(value => {
+            this.syncDatepickerValue(value);
+        });
+
+        this.control.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
             this.syncDatepickerState();
-            this.syncDatepickerValue(this.control.value);
+        });
 
-            this.control.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(value => {
-                this.syncDatepickerValue(value);
-            });
-
-            this.control.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-                this.syncDatepickerState();
-            });
-
-            this.datepickerControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(value => {
-                this.onDatepickerValueChange(value);
-            });
-        }
+        this.datepickerControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(value => {
+            this.onDatepickerValueChange(value);
+        });
     }
 
     getMaxDate(): Date | undefined {

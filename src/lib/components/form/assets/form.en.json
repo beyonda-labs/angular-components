@@ -28,6 +28,10 @@
                 "type": "Form"
             },
             "required": "This field is required",
+            "steps": {
+                "back": "Back",
+                "next": "Next"
+            },
             "submit": {
                 "invalid": "There are errors in the form, please correct or complete the required fields before submitting.",
                 "without-changes": "No changes have been made to the form."

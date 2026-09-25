@@ -29,7 +29,7 @@
         @if (pickerOpen) {
             <bey-form-option-picker
                 [anchor]="pickerAnchor"
-                [options]="field.options"
+                [options]="options"
                 (closed)="closePicker()"
                 (selected)="onOptionSelected($event)"
             ></bey-form-option-picker>

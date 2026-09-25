@@ -1,72 +1,47 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { mock, MockProxy } from 'jest-mock-extended';
 
-import { FormConfig, FormSection } from '../../models/form.model';
+import { FormFieldState } from '../../form.component';
+import { FormCheckboxField } from '../../models/fields/form-checkbox-field.model';
+import { FormTextField } from '../../models/fields/form-text-field.model';
 import { FormField } from '../../models/form-field.model';
-import { FormService } from '../../services/form.service';
 import { FormFieldComponent } from './field.component';
 
-describe('FormFieldComponent', () => {
-    let component: FormFieldComponent;
-    let fixture: ComponentFixture<FormFieldComponent>;
-    let formServiceMock: MockProxy<FormService>;
+const VALID: FormFieldState = { isDisabled: false, isHidden: false, isValid: true, options: [] };
 
-    const prefixMock = 'prefix';
+describe('FormFieldComponent', () => {
+    let fixture: ComponentFixture<FormFieldComponent>;
+
+    async function render(field: FormField, state: FormFieldState = VALID): Promise<void> {
+        fixture = TestBed.createComponent(FormFieldComponent);
+        fixture.componentRef.setInput('control', new FormControl(''));
+        fixture.componentRef.setInput('field', field);
+        fixture.componentRef.setInput('prefix', 'demo.contact');
+        fixture.componentRef.setInput('state', state);
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
 
     beforeEach(async () => {
-        formServiceMock = mock<FormService>();
-        formServiceMock.getSectionGroup.mockReturnValue(new FormGroup({}));
-        formServiceMock.getFieldControl.mockReturnValue(new FormControl());
-        formServiceMock.getFieldPrefix.mockReturnValue(prefixMock);
-
         await TestBed.configureTestingModule({
-            imports: [FormFieldComponent, TranslateModule.forRoot()],
-            providers: [{ provide: FormService, useValue: formServiceMock }]
+            imports: [FormFieldComponent, TranslateModule.forRoot()]
         }).compileComponents();
-
-        fixture = TestBed.createComponent(FormFieldComponent);
-        component = fixture.componentInstance;
-
-        component.formConfig = {} as FormConfig;
-        component.section = {} as FormSection;
-        component.field = {} as FormField;
-
-        fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('labels the input from the prefix and marks a required field until it is valid', async () => {
+        await render(new FormTextField({ key: 'name', isRequired: true }), { ...VALID, isValid: false });
+        const label = fixture.nativeElement.querySelector('label') as HTMLLabelElement;
+
+        expect(label.textContent?.trim()).toBe('demo.contact.name.label');
+        expect(label.htmlFor).toBe('name');
+        expect(fixture.nativeElement.textContent).toContain('*');
     });
 
-    it('getFieldLabel', () => {
-        // Act
-        const result = component.getFieldLabel();
+    it('leaves the label to the checkbox itself', async () => {
+        await render(new FormCheckboxField({ key: 'subscribed' }));
 
-        // Assert
-        expect(result).toBe(`${prefixMock}.label`);
-    });
-
-    it('getFieldTooltip', () => {
-        // Act
-        const result = component.getFieldTooltip();
-
-        // Assert
-        expect(result).toBe(`${prefixMock}.tooltip`);
-    });
-
-    it('isFieldValid', () => {
-        // Arrange
-        const control: MockProxy<FormControl> = mock<FormControl>({
-            valid: true
-        });
-        formServiceMock.getFieldControl.mockReturnValue(control);
-
-        // Act
-        const result = component.isFieldValid();
-
-        // Assert
-        expect(result).toBe(true);
+        expect(fixture.nativeElement.querySelectorAll('label')).toHaveLength(1);
+        expect(fixture.nativeElement.querySelector('input[type="checkbox"]')).not.toBeNull();
     });
 });

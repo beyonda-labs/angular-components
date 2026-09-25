@@ -13,7 +13,7 @@
                 [attr.aria-expanded]="isOpen"
                 [attr.aria-invalid]="isInvalid() || null"
                 [attr.aria-required]="field.isRequired || null"
-                [disabled]="field.isDisabled"
+                [disabled]="control.disabled"
                 [placeholder]="getPlaceholder() | translate"
                 [value]="displayValue"
                 (blur)="onBlur()"
@@ -22,7 +22,7 @@
                 (keydown)="onKeydown($event)"
             />
 
-            @if (control.value && !field.isDisabled) {
+            @if (control.value && !control.disabled) {
                 <button
                     type="button"
                     class="bey-autocomplete-action"
@@ -39,7 +39,7 @@
                 tabindex="-1"
                 [attr.aria-label]="'angular-components.form.autocompleteField.toggle' | translate"
                 [class.bey-autocomplete-toggle-open]="isOpen"
-                [disabled]="field.isDisabled"
+                [disabled]="control.disabled"
                 (mousedown)="onToggle()"
             >
                 <fa-icon [icon]="toggleIcon" aria-hidden="true"></fa-icon>

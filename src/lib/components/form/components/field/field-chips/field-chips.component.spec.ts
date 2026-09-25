@@ -1,156 +1,61 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { mock, MockProxy } from 'jest-mock-extended';
 
 import { FormChipsField } from '../../../models/fields/form-chips-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
-import { FormService } from '../../../services/form.service';
 import { FormChipsFieldComponent } from './field-chips.component';
 
 describe('FormChipsFieldComponent', () => {
-    let component: FormChipsFieldComponent;
     let fixture: ComponentFixture<FormChipsFieldComponent>;
-    let formServiceMock: MockProxy<FormService>;
+    let control: FormControl<string[] | null>;
+
+    async function render(field: FormChipsField = new FormChipsField({ key: 'tags' })): Promise<void> {
+        control = new FormControl<string[] | null>([]);
+        fixture = TestBed.createComponent(FormChipsFieldComponent);
+        fixture.componentRef.setInput('control', control);
+        fixture.componentRef.setInput('field', field);
+        fixture.componentRef.setInput('prefix', 'demo.person.tags');
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
+
+    async function typeChip(value: string): Promise<void> {
+        const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+
+        input.value = value;
+        input.dispatchEvent(new Event('input'));
+        fixture.detectChanges();
+        await fixture.whenStable();
+        input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+        fixture.detectChanges();
+        await fixture.whenStable();
+    }
 
     beforeEach(async () => {
-        formServiceMock = mock<FormService>();
-        formServiceMock.getSectionGroup.mockReturnValue(new FormGroup({}));
-        formServiceMock.getFieldControl.mockReturnValue(new FormControl<string[]>([]));
-        formServiceMock.getFieldPrefix.mockReturnValue('prefix');
-
         await TestBed.configureTestingModule({
-            imports: [FormChipsFieldComponent, TranslateModule.forRoot()],
-            providers: [{ provide: FormService, useValue: formServiceMock }]
+            imports: [FormChipsFieldComponent, TranslateModule.forRoot()]
         }).compileComponents();
-
-        fixture = TestBed.createComponent(FormChipsFieldComponent);
-        component = fixture.componentInstance;
-
-        component.formConfig = {} as FormConfig;
-        component.section = { key: 'section1' } as FormSection;
-        component.field = new FormChipsField({ key: 'chips1' });
-
-        fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('adds a chip on Enter, ignoring blanks and duplicates, and removes it from its button', async () => {
+        await render();
+
+        await typeChip('angular');
+        await typeChip('  ');
+        await typeChip('angular');
+        expect(control.value).toEqual(['angular']);
+
+        (fixture.nativeElement.querySelector('button') as HTMLButtonElement).click();
+        expect(control.value).toEqual([]);
     });
 
-    it('getPlaceholder should return translated key', () => {
-        expect(component.getPlaceholder()).toBe('prefix.placeholder');
-    });
+    it('accepts duplicates and stops at the limit when the field says so', async () => {
+        await render(new FormChipsField({ key: 'tags', allowDuplicates: true, maxItems: 2 }));
 
-    it('addChip should append a trimmed value and clear the input', () => {
-        component.inputValue = '  frontend  ';
+        await typeChip('a');
+        await typeChip('a');
+        await typeChip('b');
 
-        component.addChip();
-
-        expect(component.control?.value).toEqual(['frontend']);
-        expect(component.inputValue).toBe('');
-    });
-
-    it('addChip should not append an empty value', () => {
-        component.inputValue = '   ';
-
-        component.addChip();
-
-        expect(component.control?.value).toEqual([]);
-    });
-
-    it('addChip should not append duplicates by default', () => {
-        component.control?.setValue(['frontend']);
-        component.inputValue = 'frontend';
-
-        component.addChip();
-
-        expect(component.control?.value).toEqual(['frontend']);
-    });
-
-    it('addChip should append duplicates when allowDuplicates is true', () => {
-        component.field = new FormChipsField({ key: 'chips1', allowDuplicates: true });
-        component.control?.setValue(['frontend']);
-        component.inputValue = 'frontend';
-
-        component.addChip();
-
-        expect(component.control?.value).toEqual(['frontend', 'frontend']);
-    });
-
-    it('addChip should not append beyond maxItems', () => {
-        component.field = new FormChipsField({ key: 'chips1', maxItems: 1 });
-        component.control?.setValue(['frontend']);
-        component.inputValue = 'backend';
-
-        component.addChip();
-
-        expect(component.control?.value).toEqual(['frontend']);
-    });
-
-    it('removeChip should remove the chip at the given index', () => {
-        component.control?.setValue(['frontend', 'backend']);
-
-        component.removeChip(0);
-
-        expect(component.control?.value).toEqual(['backend']);
-    });
-
-    it('removeChip should do nothing when the field is disabled', () => {
-        component.field.isDisabled = true;
-        component.control?.setValue(['frontend']);
-
-        component.removeChip(0);
-
-        expect(component.control?.value).toEqual(['frontend']);
-    });
-
-    it('isMaxItemsReached should be false without maxItems', () => {
-        expect(component.isMaxItemsReached()).toBe(false);
-    });
-
-    it('isMaxItemsReached should be true once the limit is reached', () => {
-        component.field = new FormChipsField({ key: 'chips1', maxItems: 1 });
-        component.control?.setValue(['frontend']);
-
-        expect(component.isMaxItemsReached()).toBe(true);
-    });
-
-    it('onKeyDown with Enter should add the current chip and prevent default', () => {
-        component.inputValue = 'frontend';
-        const event = new KeyboardEvent('keydown', { key: 'Enter' });
-        jest.spyOn(event, 'preventDefault');
-
-        component.onKeyDown(event);
-
-        expect(event.preventDefault).toHaveBeenCalled();
-        expect(component.control?.value).toEqual(['frontend']);
-    });
-
-    it('onKeyDown with Backspace on empty input should remove the last chip', () => {
-        component.control?.setValue(['frontend', 'backend']);
-        component.inputValue = '';
-        const event = new KeyboardEvent('keydown', { key: 'Backspace' });
-
-        component.onKeyDown(event);
-
-        expect(component.control?.value).toEqual(['frontend']);
-    });
-
-    it('onKeyDown with Backspace on a non-empty input should not remove chips', () => {
-        component.control?.setValue(['frontend']);
-        component.inputValue = 'back';
-        const event = new KeyboardEvent('keydown', { key: 'Backspace' });
-
-        component.onKeyDown(event);
-
-        expect(component.control?.value).toEqual(['frontend']);
-    });
-
-    it('isInvalid should reflect control state', () => {
-        component.control?.markAsTouched();
-        component.control?.setErrors({ maxItems: true });
-
-        expect(component.isInvalid()).toBe(true);
+        expect(control.value).toEqual(['a', 'a']);
     });
 });
