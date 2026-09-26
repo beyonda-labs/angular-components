@@ -34,8 +34,8 @@ describe('ModalTreeDialogComponent', () => {
     }
 
     function buttonLabelled(label: string): HTMLButtonElement {
-        const found = [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')].find(button =>
-            button.textContent?.includes(label)
+        const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(
+            button => button.textContent?.includes(label)
         );
 
         if (!found) {
@@ -46,9 +46,9 @@ describe('ModalTreeDialogComponent', () => {
     }
 
     function treeNode(name: string): HTMLElement {
-        const found = [...fixture.nativeElement.querySelectorAll<HTMLElement>('[role="treeitem"]')].find(node =>
-            node.textContent?.trim().includes(name)
-        );
+        const found = [
+            ...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('[role="treeitem"]')
+        ].find(node => node.textContent?.trim().includes(name));
 
         if (!found) {
             throw new Error(`No node named ${name}`);

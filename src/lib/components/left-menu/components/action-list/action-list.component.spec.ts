@@ -24,7 +24,7 @@ describe('ActionListComponent', () => {
     }
 
     function buttons(): HTMLButtonElement[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')];
+        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')];
     }
 
     function labels(): string[] {

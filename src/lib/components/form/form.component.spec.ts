@@ -77,8 +77,8 @@ describe('FormComponent', () => {
     }
 
     function button(label: string): HTMLButtonElement {
-        const found = [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')].find(element =>
-            element.textContent?.includes(label)
+        const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(
+            element => element.textContent?.includes(label)
         );
 
         if (!found) {

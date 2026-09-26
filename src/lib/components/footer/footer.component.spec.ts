@@ -20,7 +20,7 @@ describe('FooterComponent', () => {
     }
 
     function links(): HTMLElement[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('nav button')];
+        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('nav button')];
     }
 
     beforeEach(async () => {

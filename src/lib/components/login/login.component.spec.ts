@@ -43,7 +43,7 @@ describe('LoginComponent', () => {
     }
 
     function buttonWith(label: string): HTMLButtonElement | undefined {
-        return [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')].find(button =>
+        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(button =>
             button.textContent?.includes(label)
         );
     }

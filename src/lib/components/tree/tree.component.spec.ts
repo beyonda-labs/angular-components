@@ -30,7 +30,7 @@ describe('TreeComponent', () => {
     }
 
     function nodes(): HTMLElement[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('[role="treeitem"]')];
+        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('[role="treeitem"]')];
     }
 
     function labels(): string[] {

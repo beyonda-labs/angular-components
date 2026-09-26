@@ -53,8 +53,8 @@ describe('LoginRegisterFormComponent', () => {
     }
 
     async function press(label: string): Promise<void> {
-        const found = [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')].find(button =>
-            button.textContent?.includes(label)
+        const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(
+            button => button.textContent?.includes(label)
         );
 
         if (!found) {

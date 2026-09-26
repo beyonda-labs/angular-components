@@ -37,6 +37,10 @@ gate over the whole repo. It passes with zero findings and no baseline since the
 
 -   [x] stylelint encoding `rules/angular/styles.md`: `bey-` prefixes, `is-*`/`has-*` states, no `!important`,
         no `--bs-*` read, no literal design value outside the token layer
+-   [x] `typecheck` in `lint`: jest transpiles each spec in isolation and never checks types, so 35 type errors had
+        built up in the specs unseen; `tsc -p tsconfig.spec.json --noEmit` now fails the Lint stage instead
+-   [x] `prettier-plugin-organize-attributes`: template attributes grouped (structural, `#ref`, `id`, `class`, static,
+        inputs, two-way, outputs) and alphabetical within each group; 58 templates reordered
 -   [x] `stylelint-order`: custom properties first, then declarations in alphabetical order (shorthand before its
         longhands); 565 declarations moved by `stylelint --fix`, none across a shorthand boundary
 -   [x] Prettier on save, `format` and `format:check` over `{ts,html,css,json}`, plus the one-off pass that

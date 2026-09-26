@@ -16,7 +16,7 @@ const ADA: Person = { id: 1, name: 'Ada', role: 'Lead' };
 const LINUS: Person = { id: 2, name: 'Linus', role: 'Research' };
 
 describe('TableComponent', () => {
-    let fixture: ComponentFixture<TableComponent>;
+    let fixture: ComponentFixture<TableComponent<unknown>>;
 
     function buildConfig(overrides: Partial<TableConfigParameters<Person>> = {}): TableConfig<Person> {
         return new TableConfig<Person>({
@@ -28,7 +28,7 @@ describe('TableComponent', () => {
         });
     }
 
-    async function render(config: TableConfig = buildConfig()): Promise<void> {
+    async function render(config: TableConfig<Person> = buildConfig()): Promise<void> {
         fixture = TestBed.createComponent(TableComponent);
         fixture.componentRef.setInput('config', config);
         fixture.detectChanges();
@@ -46,8 +46,8 @@ describe('TableComponent', () => {
     }
 
     function rowOf(name: string): HTMLElement {
-        const found = [...fixture.nativeElement.querySelectorAll<HTMLElement>('bey-table-row')].find(row =>
-            row.textContent?.includes(name)
+        const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('bey-table-row')].find(
+            row => row.textContent?.includes(name)
         );
 
         if (!found) {

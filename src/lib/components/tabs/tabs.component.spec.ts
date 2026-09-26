@@ -33,7 +33,7 @@ describe('TabsComponent', () => {
     }
 
     function tabs(): HTMLElement[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('[role="tab"]')];
+        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('[role="tab"]')];
     }
 
     function tab(name: string): HTMLElement {

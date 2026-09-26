@@ -49,14 +49,14 @@ describe('SearchComponent', () => {
     }
 
     function clickByLabel(label: string): void {
-        [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')]
+        [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')]
             .find(button => button.textContent?.includes(label))
             ?.click();
         fixture.detectChanges();
     }
 
     function rows(): HTMLElement[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('[role="group"]')];
+        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('[role="group"]')];
     }
 
     function selectsOf(row: HTMLElement): HTMLSelectElement[] {

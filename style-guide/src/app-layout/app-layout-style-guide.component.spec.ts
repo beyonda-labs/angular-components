@@ -9,7 +9,9 @@ describe('AppLayoutStyleGuideComponent', () => {
 
     function breadcrumbLabels(): string[] {
         return [
-            ...fixture.nativeElement.querySelectorAll<HTMLElement>('bey-breadcrumb li:not([aria-hidden="true"])')
+            ...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>(
+                'bey-breadcrumb li:not([aria-hidden="true"])'
+            )
         ].map(label => label.textContent?.trim() ?? '');
     }
 
@@ -36,7 +38,7 @@ describe('AppLayoutStyleGuideComponent', () => {
     });
 
     it('navigates from the page buttons', async () => {
-        const reports = [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')].find(
+        const reports = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(
             button => button.textContent?.trim() === 'angular-components-style-guide.app-layout.actions.reports.label'
         );
 

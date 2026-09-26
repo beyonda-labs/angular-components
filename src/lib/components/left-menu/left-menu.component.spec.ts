@@ -2,7 +2,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { LeftMenuComponent } from './left-menu.component';
-import { LeftMenuAction, LeftMenuConfig, LeftMenuConfigParameters, LeftMenuTitle } from './models/left-menu.model';
+import {
+    LeftMenuAction,
+    LeftMenuConfig,
+    LeftMenuConfigParameters,
+    LeftMenuTitle,
+    LeftMenuUserInfo
+} from './models/left-menu.model';
 
 describe('LeftMenuComponent', () => {
     let fixture: ComponentFixture<LeftMenuComponent>;
@@ -31,9 +37,9 @@ describe('LeftMenuComponent', () => {
     }
 
     function actionLabels(): string[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('bey-left-menu-action-list button')].map(
-            button => button.textContent?.trim() ?? ''
-        );
+        return [
+            ...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('bey-left-menu-action-list button')
+        ].map(button => button.textContent?.trim() ?? '');
     }
 
     beforeEach(async () => {
@@ -81,7 +87,7 @@ describe('LeftMenuComponent', () => {
     it('shows the user of the session', async () => {
         await render(
             buildConfig({
-                userInfo: { email: 'ada@example.com', initials: 'AL', name: 'Ada', surname: 'Lovelace' }
+                userInfo: new LeftMenuUserInfo({ email: 'ada@example.com', name: 'Ada', surname: 'Lovelace' })
             })
         );
 

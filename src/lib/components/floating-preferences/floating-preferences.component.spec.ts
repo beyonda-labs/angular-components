@@ -18,7 +18,7 @@ describe('FloatingPreferencesComponent', () => {
     }
 
     function selects(): HTMLSelectElement[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLSelectElement>('select')];
+        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLSelectElement>('select')];
     }
 
     function choose(select: HTMLSelectElement, value: string): void {

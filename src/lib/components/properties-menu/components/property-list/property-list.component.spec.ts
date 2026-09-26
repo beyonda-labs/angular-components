@@ -26,9 +26,9 @@ const button = (fixture: ComponentFixture<PropertyListComponent>, name: string):
     fixture.nativeElement.querySelector(`[aria-label="${name}"]`);
 
 const byText = (fixture: ComponentFixture<PropertyListComponent>, text: string): HTMLElement => {
-    const found = [...fixture.nativeElement.querySelectorAll('*')].findLast(
-        element => element.textContent?.trim() === text
-    );
+    const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('*')]
+        .reverse()
+        .find(element => element.textContent?.trim() === text);
 
     if (!found) {
         throw new Error(`No element with text ${text}`);

@@ -27,7 +27,9 @@ describe('FormRadioFieldComponent', () => {
     });
 
     it('offers one radio per option and writes the chosen one', () => {
-        const radios = [...fixture.nativeElement.querySelectorAll<HTMLInputElement>('input[type="radio"]')];
+        const radios = [
+            ...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLInputElement>('input[type="radio"]')
+        ];
 
         expect(fixture.nativeElement.textContent).toContain('Small');
         expect(radios).toHaveLength(2);

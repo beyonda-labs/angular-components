@@ -33,7 +33,7 @@ describe('BreadcrumbComponent', () => {
     }
 
     function items(): HTMLElement[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('li:not([aria-hidden])')];
+        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('li:not([aria-hidden])')];
     }
 
     function labels(): string[] {
@@ -41,7 +41,7 @@ describe('BreadcrumbComponent', () => {
     }
 
     function link(name: string): HTMLButtonElement | undefined {
-        return [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')].find(
+        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(
             button => button.textContent?.trim() === name
         );
     }

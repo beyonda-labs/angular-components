@@ -31,7 +31,7 @@ describe('HeaderComponent', () => {
     }
 
     function buttons(): HTMLButtonElement[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')];
+        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')];
     }
 
     function labels(): string[] {
@@ -39,7 +39,7 @@ describe('HeaderComponent', () => {
     }
 
     function panels(): HTMLElement[] {
-        return [...fixture.nativeElement.querySelectorAll<HTMLElement>('[role="group"]')];
+        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('[role="group"]')];
     }
 
     beforeEach(async () => {

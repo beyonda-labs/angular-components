@@ -6,7 +6,7 @@ import { TextTableCell } from '../../models/table-cell.model';
 import { TableRowComponent } from './row.component';
 
 describe('TableRowComponent', () => {
-    let fixture: ComponentFixture<TableRowComponent>;
+    let fixture: ComponentFixture<TableRowComponent<unknown>>;
     let changes: boolean[];
 
     async function render(

@@ -34,8 +34,8 @@ describe('LoginFormComponent', () => {
     }
 
     function submitButton(): HTMLButtonElement {
-        const found = [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')].find(button =>
-            button.textContent?.includes('login.button.login')
+        const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(
+            button => button.textContent?.includes('login.button.login')
         );
 
         if (!found) {

@@ -50,7 +50,7 @@ describe('ListComponent', () => {
 
     function items(): HTMLElement[] {
         return [
-            ...fixture.nativeElement.querySelectorAll<HTMLElement>(
+            ...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>(
                 '[role="list"] > [role="listitem"], [role="list"] > [role="button"]'
             )
         ];

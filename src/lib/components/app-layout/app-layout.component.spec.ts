@@ -58,7 +58,7 @@ describe('AppLayoutComponent', () => {
     }
 
     function buttonOf(name: string): HTMLButtonElement {
-        const found = [...fixture.nativeElement.querySelectorAll<HTMLButtonElement>('button')].find(
+        const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(
             button => button.textContent?.trim() === name
         );
 
@@ -81,7 +81,9 @@ describe('AppLayoutComponent', () => {
 
     function breadcrumbLabels(): string[] {
         return [
-            ...fixture.nativeElement.querySelectorAll<HTMLElement>('bey-breadcrumb li:not([aria-hidden="true"])')
+            ...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>(
+                'bey-breadcrumb li:not([aria-hidden="true"])'
+            )
         ].map(item => item.textContent?.trim() ?? '');
     }
 

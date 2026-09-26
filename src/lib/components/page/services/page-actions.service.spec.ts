@@ -277,6 +277,7 @@ describe('PageActionsService', () => {
             const context = buildCategoryContext({
                 config: new PageConfig({
                     baseUrl: '/items',
+                    prefix: 'testPage',
                     tableConfig: new PageTableConfig({
                         columns: [],
                         categoriesConfig: new PageCategoriesConfig({}),
