@@ -171,6 +171,13 @@ the change-log lists every break.
 Publishing already runs on Jenkins, configured on the server — there is no `Jenkinsfile` in the repo by design.
 Snapshots per branch, `latest` from `main`, as described in the README.
 
+### After 1.2.0
+
+-   [ ] `check-translations`: a key segment that is not kebab-case is still only a warning; make it an error, as the
+        demo's copy already does. Keep the translation scripts identical across repos (library, demo, products),
+        possibly from a shared scripts repo
+-   [ ] `BeyPageConfig` generic over the form value, so a typed `BeyPageFormConfig<T>` fits without a cast
+
 ---
 
 ## Features
