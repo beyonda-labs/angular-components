@@ -8,6 +8,8 @@
 -   Form module: `BeyFormHandle` handed to `onReady`, `onSubmit`, `onValueChange` and the button actions.
 -   Form module: `onStepChange` callback, and `BeyFormComponent` exported.
 -   Pdf viewer module: `BeyPdfViewerHandle` handed to `onReady`.
+-   Page module: `onValueChange(value, handle)` on `BeyPageFormConfig`, forwarded to the create and edit form.
+-   Left menu module: `--bey-left-menu-title-font-size` to size the title.
 -   Properties menu module: `BeyPropertiesMenuHeaderConfig`, and `variables` as an input.
 -   Left menu module: `aria-current` on the active action and `aria-expanded` on the toggle.
 -   Styles: `tokens.css`, the design language as `--bey-*` custom properties, with dark mode under `body.dark`.

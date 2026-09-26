@@ -16,6 +16,7 @@ export class PageFormConfig<TValue = unknown> {
     onCreate?: (value: TValue, handle: FormHandle<TValue>) => void;
     onEdit?: (value: TValue, handle: FormHandle<TValue>) => void;
     onReady?: (handle: FormHandle<TValue>) => void;
+    onValueChange?: (value: TValue, handle: FormHandle<TValue>) => void;
 
     constructor({
         afterCreate,
@@ -24,6 +25,7 @@ export class PageFormConfig<TValue = unknown> {
         onCreate,
         onEdit,
         onReady,
+        onValueChange,
         prefix,
         toFormValue = (item?: PageItem) => item as TValue | undefined,
         toItem = (value: TValue) => value
@@ -34,6 +36,7 @@ export class PageFormConfig<TValue = unknown> {
         this.onCreate = onCreate;
         this.onEdit = onEdit;
         this.onReady = onReady;
+        this.onValueChange = onValueChange;
         this.prefix = prefix;
         this.toFormValue = toFormValue;
         this.toItem = toItem;
@@ -49,6 +52,7 @@ export interface PageFormConfigParameters<TValue = unknown> {
     onCreate?: (value: TValue, handle: FormHandle<TValue>) => void;
     onEdit?: (value: TValue, handle: FormHandle<TValue>) => void;
     onReady?: (handle: FormHandle<TValue>) => void;
+    onValueChange?: (value: TValue, handle: FormHandle<TValue>) => void;
     toFormValue?: (item?: PageItem) => TValue | undefined;
     toItem?: (value: TValue) => unknown;
 }

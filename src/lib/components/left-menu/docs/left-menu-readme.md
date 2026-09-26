@@ -69,13 +69,14 @@ Collapsed, branches open as a flyout on hover or click instead, and the labels g
 
 ## Theming
 
-| Variable                        | Default               |
-| ------------------------------- | --------------------- |
-| `--bey-left-menu-accent`        | `--bey-primary`       |
-| `--bey-left-menu-surface`       | `--bey-bg-surface`    |
-| `--bey-left-menu-surface-alt`   | `--bey-bg-muted`      |
-| `--bey-left-menu-border`        | `--bey-border-subtle` |
-| `--bey-left-menu-border-strong` | `--bey-border-strong` |
-| `--bey-left-menu-text`          | `--bey-text-primary`  |
-| `--bey-left-menu-text-muted`    | `--bey-text-muted`    |
-| `--bey-left-menu-height`        | `100%`                |
+| Variable                          | Default               |
+| --------------------------------- | --------------------- |
+| `--bey-left-menu-accent`          | `--bey-primary`       |
+| `--bey-left-menu-surface`         | `--bey-bg-surface`    |
+| `--bey-left-menu-surface-alt`     | `--bey-bg-muted`      |
+| `--bey-left-menu-border`          | `--bey-border-subtle` |
+| `--bey-left-menu-border-strong`   | `--bey-border-strong` |
+| `--bey-left-menu-text`            | `--bey-text-primary`  |
+| `--bey-left-menu-text-muted`      | `--bey-text-muted`    |
+| `--bey-left-menu-height`          | `100%`                |
+| `--bey-left-menu-title-font-size` | `--bey-font-size-2xl` |

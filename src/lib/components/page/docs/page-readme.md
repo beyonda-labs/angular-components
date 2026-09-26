@@ -35,15 +35,15 @@ readonly config = new BeyPageConfig({
 
 ## BeyPageConfig
 
-| Field          | Required | Meaning                                                                 |
-| -------------- | -------- | ----------------------------------------------------------------------- |
-| `prefix`       | yes      | i18n prefix every text of the page resolves from                         |
-| `baseUrl`      | no       | Path of the resource, resolved against the environment's `baseUrl` and `webApiPath`; without it nothing is loaded |
-| `headerConfig` | no       | `title` and the `actions` catalogue                                      |
+| Field          | Required | Meaning                                                                                                                      |
+| -------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `prefix`       | yes      | i18n prefix every text of the page resolves from                                                                             |
+| `baseUrl`      | no       | Path of the resource, resolved against the environment's `baseUrl` and `webApiPath`; without it nothing is loaded            |
+| `headerConfig` | no       | `title` and the `actions` catalogue                                                                                          |
 | `tableConfig`  | no       | Columns, `loadRow`, `height`, `order`, `search`, `allowSelection`, `showPagination`, `categoriesConfig`, `onSelectionChange` |
-| `formConfig`   | no       | How the create and edit modal forms are built, see below                 |
-| `onDataLoaded` | no       | Run with the backend response after every load                           |
-| `onReady`      | no       | Run with the page handle once the page exists                            |
+| `formConfig`   | no       | How the create and edit modal forms are built, see below                                                                     |
+| `onDataLoaded` | no       | Run with the backend response after every load                                                                               |
+| `onReady`      | no       | Run with the page handle once the page exists                                                                                |
 
 The config is never written to. What the consumer needs to do to the live page goes through the
 `BeyPageHandle` that `onReady` delivers: `refresh()` reloads the current page, `openCategory(item)` drills
@@ -51,12 +51,12 @@ into a category, `selected()` and `viewMode()` read the state.
 
 ## Backend contract
 
-| Operation             | Request                                                                    |
-| --------------------- | -------------------------------------------------------------------------- |
-| List                  | `GET {baseUrl}?search=<base64 json>` when `tableConfig.search` is set, plain `GET` otherwise |
-| Create                | `POST {baseUrl}` with the form value mapped through `toItem`               |
-| Edit                  | `PUT {baseUrl}/{id}`                                                       |
-| Delete                | `DELETE {baseUrl}` with `{ ids }`                                          |
+| Operation | Request                                                                                      |
+| --------- | -------------------------------------------------------------------------------------------- |
+| List      | `GET {baseUrl}?search=<base64 json>` when `tableConfig.search` is set, plain `GET` otherwise |
+| Create    | `POST {baseUrl}` with the form value mapped through `toItem`                                 |
+| Edit      | `PUT {baseUrl}/{id}`                                                                         |
+| Delete    | `DELETE {baseUrl}` with `{ ids }`                                                            |
 
 The list answers with `{ globalActions, results, search? }`: `globalActions` names the global actions the
 user may see, each result may carry its own `actions`, and `search.total` feeds the paginator. The `search`
@@ -72,11 +72,11 @@ goes through `BeyHttpService`, so errors open the standard modal and writes show
 An action has a `key`, a `scope`, a `zone` and optionally an `icon`, a `label`, a `tooltip`, a `type`, a
 `handler` and `subActions`.
 
-| Scope    | Shown when                                                                                   |
-| -------- | -------------------------------------------------------------------------------------------- |
-| `Global` | The backend listed its key in `globalActions`                                                 |
+| Scope    | Shown when                                                                                                |
+| -------- | --------------------------------------------------------------------------------------------------------- |
+| `Global` | The backend listed its key in `globalActions`                                                             |
 | `Item`   | Something is selected and every selected row lists the key in its `actions`; `edit` needs exactly one row |
-| `Group`  | Any of its `subActions` is shown; the group itself is never checked                          |
+| `Group`  | Any of its `subActions` is shown; the group itself is never checked                                       |
 
 Zones are `Left` next to the title, `Right` for the main buttons and `Menu` for the kebab. A standard key
 (`create`, `edit`, `delete`, `move`, `create-category`, `edit-category`, `delete-category`,
@@ -100,20 +100,21 @@ category, disabling the selected ones and their descendants.
 ## Forms
 
 `BeyPageFormConfig` takes `prefix`, `buildSections(item?)`, and optionally `toFormValue(item?)`,
-`toItem(value)`, `onReady(handle)`, `onCreate(value, handle)`, `onEdit(value, handle)`,
-`afterCreate(created)` and `allowSubmitWithoutChanges`. Create and edit open a modal form from the form
+`toItem(value)`, `onReady(handle)`, `onValueChange(value, handle)`, `onCreate(value, handle)`,
+`onEdit(value, handle)`, `afterCreate(created)` and `allowSubmitWithoutChanges`. `onValueChange` runs on every
+change of the open form, so a field can fill another through `handle.patchValue`. Create and edit open a modal form from the form
 module; on success the modal closes and the table reloads, on error it stays open. `afterCreate` returns an
 observable the page waits for before closing, for entities that need a second request. Titles come from
 `<prefix>.form.create.title` and `.edit.title`, the buttons from the library.
 
 ## Texts
 
-| Key                                       | Shown as                                   |
-| ----------------------------------------- | ------------------------------------------ |
-| `<prefix>.title`                          | Page title                                  |
-| `<prefix>.actions.<key>.label` / `.tooltip` | Header actions                           |
-| `<prefix>.table.columns.<key>` / `.tooltips.<key>` / `.empty` | Table                    |
-| `<prefix>.search.fields.<key>`            | Filters                                     |
-| `<prefix>.modal.<key>.title` / `.message` | Confirmation of a destructive action, with `{{count}}` |
-| `<prefix>.toast.<key>-success`            | Success toast of every standard action      |
-| `<prefix>.categories.root`, `<prefix>.tabs.table.label`, `<prefix>.tabs.trash.label`, `<prefix>.move.title` | Categories and trash |
+| Key                                                                                                         | Shown as                                               |
+| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `<prefix>.title`                                                                                            | Page title                                             |
+| `<prefix>.actions.<key>.label` / `.tooltip`                                                                 | Header actions                                         |
+| `<prefix>.table.columns.<key>` / `.tooltips.<key>` / `.empty`                                               | Table                                                  |
+| `<prefix>.search.fields.<key>`                                                                              | Filters                                                |
+| `<prefix>.modal.<key>.title` / `.message`                                                                   | Confirmation of a destructive action, with `{{count}}` |
+| `<prefix>.toast.<key>-success`                                                                              | Success toast of every standard action                 |
+| `<prefix>.categories.root`, `<prefix>.tabs.table.label`, `<prefix>.tabs.trash.label`, `<prefix>.move.title` | Categories and trash                                   |

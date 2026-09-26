@@ -75,6 +75,19 @@ describe('PageFormService', () => {
         expect(getOpenedConfig().initialValue).toEqual({ section1: { text1: 'default' } });
     });
 
+    it('should forward every value change of the modal form with its handle', () => {
+        const onValueChange = jest.fn();
+        const pageForm = buildPageForm();
+        const handle = {} as FormHandle<TestFormValue>;
+        const value: TestFormValue = { section1: { text1: 'Ada' } };
+
+        pageForm.onValueChange = onValueChange;
+        service.open(pageForm, undefined, 'testPage', jest.fn());
+        getOpenedConfig().onValueChange?.(value, handle);
+
+        expect(onValueChange).toHaveBeenCalledWith(value, handle);
+    });
+
     it('should map the submitted value through toItem and delegate saving', () => {
         const onCreate = jest.fn();
         const onSave = jest.fn();

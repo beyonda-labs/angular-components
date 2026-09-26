@@ -197,6 +197,15 @@ The `dark` class on `body` is toggled by `bey-floating-preferences`; no consumer
 A module that exposes extra customisation points declares them in its own `:host` as `--bey-<module>-*`, always
 reading from a token here. Those are listed in the module README, not in this file.
 
+A `:host` rule compiles to an attribute selector, so re-declaring one of those on the bare tag loses to it. The
+override needs more specificity:
+
+```css
+:root bey-left-menu {
+    --bey-left-menu-title-font-size: var(--bey-font-size-lg);
+}
+```
+
 ## Where the scales come from
 
 Snapped from what the codebase already used, not invented: 36 distinct font sizes collapse into 7 steps, 20

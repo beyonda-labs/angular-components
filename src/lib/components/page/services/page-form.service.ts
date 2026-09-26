@@ -37,6 +37,7 @@ export class PageFormService {
                     callback?.(value, handle);
                     onSave(pageForm.toItem(value), handle);
                 },
+                onValueChange: (value, handle) => pageForm.onValueChange?.(value, handle),
                 prefix: pageForm.prefix,
                 sections: pageForm.buildSections(item),
                 submitLabel: SUBMIT_LABEL_KEY,

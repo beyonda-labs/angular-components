@@ -10,6 +10,7 @@
     --bey-left-menu-text: var(--bey-text-primary);
     --bey-left-menu-text-muted: var(--bey-text-muted);
     --bey-left-menu-text-soft: var(--bey-text-muted);
+    --bey-left-menu-title-font-size: var(--bey-font-size-2xl);
     --bey-left-menu-height: 100%;
     --bey-left-menu-surface-subtle: var(--bey-bg-muted);
     --bey-left-menu-surface-subtle-hover: var(--bey-bg-active);
@@ -114,7 +115,7 @@
 
 .bey-left-menu-brand-title {
     color: var(--bey-left-menu-text);
-    font-size: var(--bey-font-size-2xl);
+    font-size: var(--bey-left-menu-title-font-size);
     font-weight: var(--bey-font-weight-bold);
     letter-spacing: -0.03em;
     overflow: hidden;
