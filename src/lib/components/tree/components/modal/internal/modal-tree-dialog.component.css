@@ -4,10 +4,10 @@
     --bey-close-hover-bg: var(--bey-bg-hover);
     --bey-modal-tree-scrollbar-thumb: var(--bey-border-default);
     --bey-modal-tree-scrollbar-thumb-hover: var(--bey-border-strong);
-
-    display: block;
     color: var(--bey-modal-tree-fg);
     color-scheme: light;
+
+    display: block;
 }
 
 /* The native scrollbar follows the theme; the palette already does through the tokens. */
@@ -20,25 +20,25 @@
     --bey-modal-tree-accent-soft: rgba(var(--bey-black-rgb), 0.08);
     --bey-modal-tree-border: var(--bey-border-subtle);
     --bey-modal-tree-surface: var(--bey-bg-surface);
-    width: 100%;
-    padding: var(--bey-space-xl) var(--bey-space-lg);
+    background: var(--bey-modal-tree-surface);
     border: var(--bey-border-width) solid var(--bey-modal-tree-border);
     border-radius: var(--bey-radius-md);
-    background: var(--bey-modal-tree-surface);
     box-shadow: var(--bey-shadow-lg);
+    padding: var(--bey-space-xl) var(--bey-space-lg);
+    width: 100%;
 }
 
 .bey-modal-tree-icon {
-    display: inline-flex;
     align-items: center;
+    background: var(--bey-modal-tree-accent-soft);
+    border-radius: var(--bey-radius-xl);
+    color: var(--bey-modal-tree-accent);
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: var(--bey-font-size-xl);
+    height: 3rem;
     justify-content: center;
     width: 3rem;
-    height: 3rem;
-    border-radius: var(--bey-radius-xl);
-    background: var(--bey-modal-tree-accent-soft);
-    color: var(--bey-modal-tree-accent);
-    font-size: var(--bey-font-size-xl);
-    flex: 0 0 auto;
 }
 
 .bey-modal-tree-title {
@@ -49,34 +49,34 @@
 }
 
 .bey-modal-tree-close {
-    width: 2rem;
-    height: 2rem;
     color: var(--bey-modal-tree-fg-muted);
     font-size: var(--bey-font-size-2xl);
+    height: 2rem;
     line-height: var(--bey-line-height-none);
     transition:
         border-color var(--bey-duration-base) var(--bey-easing-standard),
         background-color var(--bey-duration-base) var(--bey-easing-standard),
         color var(--bey-duration-base) var(--bey-easing-standard),
         transform var(--bey-duration-base) var(--bey-easing-standard);
+    width: 2rem;
 }
 
 .bey-modal-tree-close:hover {
-    color: var(--bey-modal-tree-fg);
     background-color: var(--bey-close-hover-bg);
+    color: var(--bey-modal-tree-fg);
     transform: translateY(-1px);
 }
 
 .bey-modal-tree-body {
     max-height: min(60vh, 28rem);
     overflow: auto;
-    scrollbar-width: thin;
     scrollbar-color: var(--bey-modal-tree-scrollbar-thumb) transparent;
+    scrollbar-width: thin;
 }
 
 .bey-modal-tree-body::-webkit-scrollbar {
-    width: 0.6rem;
     height: 0.6rem;
+    width: 0.6rem;
 }
 
 .bey-modal-tree-body::-webkit-scrollbar-track {
@@ -98,8 +98,8 @@
 
 @media (max-width: 575.98px) {
     .bey-modal-tree {
-        padding: 1.15rem;
         border-radius: var(--bey-radius-xl);
+        padding: 1.15rem;
     }
 
     .bey-modal-tree-actions {

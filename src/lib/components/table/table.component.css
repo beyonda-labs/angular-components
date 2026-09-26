@@ -14,43 +14,43 @@
     --bey-table-link-underline-hover: var(--bey-primary);
 
     display: block;
-    width: 100%;
     min-width: 0;
+    width: 100%;
 }
 
 .bey-table {
-    width: 100%;
-    min-width: 0;
-    overflow: hidden;
     background: var(--bey-table-surface);
     border-radius: var(--bey-radius-sm);
+    min-width: 0;
+    overflow: hidden;
+    width: 100%;
 }
 
 .bey-table-scroll {
-    width: 100%;
     min-width: 0;
     overflow: hidden auto;
+    width: 100%;
 }
 
 .bey-table-header {
+    background: var(--bey-table-surface);
+    min-width: 0;
     position: sticky;
     top: 0;
-    z-index: var(--bey-z-sticky);
     width: 100%;
-    min-width: 0;
-    background: var(--bey-table-surface);
+    z-index: var(--bey-z-sticky);
 }
 
 .bey-table-body {
-    width: 100%;
-    min-width: 0;
     background: var(--bey-table-surface);
+    min-width: 0;
+    width: 100%;
 }
 
 .bey-table-empty {
-    padding: var(--bey-space-2xl) var(--bey-space-xl);
     color: var(--bey-table-text);
     font-size: var(--bey-font-size-md);
     font-weight: var(--bey-font-weight-medium);
+    padding: var(--bey-space-2xl) var(--bey-space-xl);
     text-align: center;
 }

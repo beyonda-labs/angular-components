@@ -6,27 +6,27 @@
 }
 
 .bey-property-info-field {
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
     gap: var(--bey-space-2xs) var(--bey-space-md);
-    align-items: center;
     min-height: var(--bey-property-info-field-min-height);
     padding: var(--bey-space-2xs) 0;
 }
 
 .bey-property-info-field-item {
-    display: inline-flex;
-    gap: var(--bey-space-xs);
     align-items: center;
-    min-width: 0;
     color: var(--bey-text-primary);
+    display: inline-flex;
     font-size: var(--bey-font-size-sm);
+    gap: var(--bey-space-xs);
     line-height: var(--bey-line-height-base);
+    min-width: 0;
     overflow-wrap: anywhere;
 }
 
 .bey-property-info-field-icon {
-    flex: none;
     color: var(--bey-text-muted);
+    flex: none;
     font-size: var(--bey-font-size-xs);
 }

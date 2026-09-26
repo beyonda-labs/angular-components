@@ -6,45 +6,45 @@
     --bey-floating-preferences-border-focus: var(--bey-border-default);
     --bey-floating-preferences-pill-bg: color-mix(in srgb, var(--bey-bg-page) 70%, transparent);
     --bey-floating-preferences-pill-border: var(--bey-border-subtle);
+    align-items: center;
+    animation: bey-floating-preferences-in var(--bey-duration-slow) var(--bey-easing-standard);
 
     display: inline-flex;
-    align-items: center;
     gap: var(--bey-space-2xs);
-    animation: bey-floating-preferences-in var(--bey-duration-slow) var(--bey-easing-standard);
 }
 
 .bey-floating-preferences.is-pill {
-    padding: var(--bey-space-2xs);
-    border-radius: var(--bey-radius-pill);
-    border: var(--bey-border-width) solid var(--bey-floating-preferences-pill-border);
-    background: var(--bey-floating-preferences-pill-bg);
     backdrop-filter: blur(14px) saturate(160%);
+    background: var(--bey-floating-preferences-pill-bg);
+    border: var(--bey-border-width) solid var(--bey-floating-preferences-pill-border);
+    border-radius: var(--bey-radius-pill);
     box-shadow: var(--bey-shadow-md);
+    padding: var(--bey-space-2xs);
 }
 
 .bey-floating-preferences-select {
-    position: relative;
-    display: inline-flex;
     align-items: center;
+    display: inline-flex;
+    position: relative;
 }
 
 .bey-floating-preferences-control {
-    position: relative;
-    display: inline-flex;
     align-items: center;
+    display: inline-flex;
+    position: relative;
 }
 
 .bey-floating-preferences-control select {
     appearance: none;
     background: transparent;
     border: var(--bey-border-width) solid transparent;
+    border-radius: var(--bey-radius-sm);
     color: var(--bey-floating-preferences-fg);
+    cursor: pointer;
     font-size: var(--bey-font-size-xs);
     font-weight: var(--bey-font-weight-medium);
-    padding: var(--bey-space-2xs) var(--bey-space-xl) var(--bey-space-2xs) var(--bey-space-sm);
-    border-radius: var(--bey-radius-sm);
-    cursor: pointer;
     outline: none;
+    padding: var(--bey-space-2xs) var(--bey-space-xl) var(--bey-space-2xs) var(--bey-space-sm);
     transition:
         background var(--bey-duration-fast) var(--bey-easing-standard),
         border-color var(--bey-duration-fast) var(--bey-easing-standard),
@@ -57,19 +57,19 @@
 }
 
 .bey-floating-preferences-select select:focus-visible {
-    border-color: var(--bey-floating-preferences-border-focus);
     background: var(--bey-floating-preferences-bg-hover);
+    border-color: var(--bey-floating-preferences-border-focus);
 }
 
 .bey-floating-preferences-chevron {
+    color: var(--bey-floating-preferences-fg-muted);
+    display: flex;
+    font-size: var(--bey-font-size-2xs);
+    pointer-events: none;
     position: absolute;
     right: var(--bey-space-sm);
     top: 50%;
     transform: translateY(-50%);
-    pointer-events: none;
-    color: var(--bey-floating-preferences-fg-muted);
-    display: flex;
-    font-size: var(--bey-font-size-2xs);
 }
 
 @keyframes bey-floating-preferences-in {

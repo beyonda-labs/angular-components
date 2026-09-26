@@ -112,8 +112,8 @@ body.dark .btn-link.btn-link-secondary {
 .form-control,
 .form-select,
 .form-check-input {
-    border-color: var(--bey-secondary);
     background-color: var(--bey-bg-page);
+    border-color: var(--bey-secondary);
 }
 
 .form-control:disabled,

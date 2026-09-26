@@ -3,8 +3,8 @@
 }
 
 .bey-form-number-input {
-    padding-right: var(--bey-space-xl);
     appearance: textfield;
+    padding-right: var(--bey-space-xl);
 }
 
 .bey-form-number-input::-webkit-inner-spin-button,
@@ -13,13 +13,13 @@
 }
 
 .bey-form-number-spinners {
-    position: absolute;
-    inset: var(--bey-border-width) var(--bey-border-width) var(--bey-border-width) auto;
+    border-radius: 0 var(--bey-radius-sm) var(--bey-radius-sm) 0;
     display: flex;
     flex-direction: column;
-    width: var(--bey-space-xl);
+    inset: var(--bey-border-width) var(--bey-border-width) var(--bey-border-width) auto;
     overflow: hidden;
-    border-radius: 0 var(--bey-radius-sm) var(--bey-radius-sm) 0;
+    position: absolute;
+    width: var(--bey-space-xl);
 }
 
 .bey-form-number-spin {
@@ -28,6 +28,6 @@
 }
 
 .bey-form-number-spin-icon {
-    width: var(--bey-space-sm);
     height: var(--bey-space-xs);
+    width: var(--bey-space-sm);
 }

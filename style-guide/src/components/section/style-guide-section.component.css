@@ -6,15 +6,15 @@
 }
 
 .bey-style-guide-section-title {
-    margin-bottom: var(--bey-space-sm);
     color: var(--bey-text-primary);
     font-size: var(--bey-font-size-2xl);
     font-weight: var(--bey-font-weight-semibold);
+    margin-bottom: var(--bey-space-sm);
 }
 
 .bey-style-guide-section-card {
-    padding: var(--bey-space-xl);
+    background: var(--bey-style-guide-section-gradient);
     border: var(--bey-border-width) solid var(--bey-border-subtle);
     border-radius: var(--bey-radius-xl);
-    background: var(--bey-style-guide-section-gradient);
+    padding: var(--bey-space-xl);
 }

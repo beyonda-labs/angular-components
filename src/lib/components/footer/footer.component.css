@@ -18,30 +18,30 @@
 }
 
 .bey-footer-container {
-    height: 32px;
     align-items: center;
     border-top-color: var(--bey-footer-border);
     font-size: var(--bey-font-size-2xs);
+    height: 32px;
 }
 
 .bey-footer-preferences {
-    display: flex;
     align-items: center;
+    display: flex;
     margin-left: auto;
 }
 
 .bey-footer-brand {
-    display: flex;
     align-items: center;
+    display: flex;
     gap: var(--bey-space-2xs);
     margin-right: var(--bey-space-md);
 }
 
 .bey-footer-icon {
-    width: 12px;
-    height: 12px;
     display: block;
     flex-shrink: 0;
+    height: 12px;
+    width: 12px;
 }
 
 .bey-footer-org {
@@ -58,8 +58,8 @@
 }
 
 .bey-footer-links {
-    display: flex;
     align-items: center;
+    display: flex;
 }
 
 .bey-footer-links bey-button {

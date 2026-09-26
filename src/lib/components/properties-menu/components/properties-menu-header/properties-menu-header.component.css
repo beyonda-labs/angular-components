@@ -9,24 +9,24 @@
 }
 
 .bey-properties-menu-header {
+    align-items: center;
+    border-bottom: var(--bey-border-width) solid var(--bey-properties-menu-header-border);
     display: flex;
     gap: var(--bey-space-sm);
-    align-items: center;
     padding: var(--bey-space-md) var(--bey-space-lg);
-    border-bottom: var(--bey-border-width) solid var(--bey-properties-menu-header-border);
 }
 
 .bey-properties-menu-header-icon {
-    display: inline-flex;
-    flex: 0 0 auto;
     align-items: center;
-    justify-content: center;
-    width: var(--bey-properties-menu-header-icon-size);
-    height: var(--bey-properties-menu-header-icon-size);
     background: var(--bey-properties-menu-header-icon-bg);
     border-radius: var(--bey-radius-sm);
     color: var(--bey-properties-menu-header-text);
+    display: inline-flex;
+    flex: 0 0 auto;
     font-size: var(--bey-font-size-sm);
+    height: var(--bey-properties-menu-header-icon-size);
+    justify-content: center;
+    width: var(--bey-properties-menu-header-icon-size);
 }
 
 .bey-properties-menu-header-copy {
@@ -35,34 +35,34 @@
 }
 
 .bey-properties-menu-header-title {
-    overflow: hidden;
     color: var(--bey-properties-menu-header-text);
     font-size: var(--bey-font-size-sm);
     font-weight: var(--bey-font-weight-bold);
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .bey-properties-menu-header-subtitle {
-    overflow: hidden;
     color: var(--bey-properties-menu-header-text-muted);
     font-size: var(--bey-font-size-2xs);
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .bey-properties-menu-header-close {
-    display: inline-flex;
-    flex: 0 0 auto;
     align-items: center;
-    justify-content: center;
-    width: var(--bey-space-2xl);
-    height: var(--bey-space-2xl);
-    border: none;
     background: none;
+    border: none;
     border-radius: var(--bey-radius-sm);
     color: var(--bey-properties-menu-header-text-muted);
     cursor: pointer;
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: var(--bey-space-2xl);
+    justify-content: center;
+    width: var(--bey-space-2xl);
 }
 
 .bey-properties-menu-header-close:hover {

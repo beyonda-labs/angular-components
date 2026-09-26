@@ -7,10 +7,10 @@
 }
 
 .bey-form-text-variable-toggle {
-    position: absolute;
-    inset: var(--bey-border-width) var(--bey-border-width) var(--bey-border-width) auto;
-    width: var(--bey-space-2xl);
     border-radius: 0 var(--bey-radius-sm) var(--bey-radius-sm) 0;
+    inset: var(--bey-border-width) var(--bey-border-width) var(--bey-border-width) auto;
+    position: absolute;
+    width: var(--bey-space-2xl);
 }
 
 .bey-form-text-variable-toggle.is-active {

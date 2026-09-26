@@ -1,8 +1,10 @@
 {
     "extends": ["stylelint-config-standard"],
-    "plugins": ["stylelint-declaration-strict-value"],
+    "plugins": ["stylelint-declaration-strict-value", "stylelint-order"],
     "ignoreFiles": ["dist/**/*", "node_modules/**/*"],
     "rules": {
+        "order/order": ["custom-properties", "declarations", "rules", "at-rules"],
+        "order/properties-alphabetical-order": true,
         "declaration-no-important": true,
         "selector-class-pattern": [
             "^(bey-[a-z0-9]+(-[a-z0-9]+)*(--[a-z0-9]+(-[a-z0-9]+)*)?|(is|has)-[a-z0-9]+(-[a-z0-9]+)*|dark)$",

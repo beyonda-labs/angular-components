@@ -4,20 +4,20 @@
 }
 
 .bey-form-info {
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     gap: var(--bey-space-2xs) var(--bey-space-lg);
     min-height: 2.125rem;
     padding: var(--bey-space-xs) 0;
 }
 
 .bey-form-info-item {
-    display: inline-flex;
     align-items: center;
-    gap: var(--bey-space-xs);
     color: var(--bey-text-primary);
+    display: inline-flex;
     font-size: var(--bey-font-size-md);
+    gap: var(--bey-space-xs);
     line-height: var(--bey-line-height-base);
 }
 

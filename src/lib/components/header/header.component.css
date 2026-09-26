@@ -6,31 +6,31 @@
 }
 
 .bey-header {
-    display: flex;
     align-items: center;
-    justify-content: space-between;
+    display: flex;
     gap: var(--bey-space-lg) var(--bey-space-xl);
-    width: 100%;
+    justify-content: space-between;
     padding: var(--bey-space-2xs) 0;
+    width: 100%;
 }
 
 .bey-header-start {
-    display: flex;
     align-items: center;
+    display: flex;
     gap: var(--bey-space-md);
     min-width: 0;
 }
 
 .bey-header-title {
+    color: var(--bey-header-fg);
     font-size: var(--bey-font-size-2xl);
-    overflow: hidden;
+    font-weight: var(--bey-font-weight-bold);
+    letter-spacing: -0.03em;
+    line-height: var(--bey-line-height-tight);
+    margin: 0;
     max-width: 500px;
     min-width: 0;
-    margin: 0;
-    color: var(--bey-header-fg);
-    font-weight: var(--bey-font-weight-bold);
-    line-height: var(--bey-line-height-tight);
-    letter-spacing: -0.03em;
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -45,8 +45,8 @@
 }
 
 .bey-header-actions {
-    display: flex;
     align-items: center;
+    display: flex;
     flex-wrap: wrap;
     gap: var(--bey-space-sm);
 }
@@ -60,14 +60,14 @@
 }
 
 .bey-header-menu {
-    position: relative;
     display: inline-flex;
+    position: relative;
     width: 25px;
 }
 
 .bey-header-action-menu {
-    position: relative;
     display: inline-flex;
+    position: relative;
 }
 
 bey-button.bey-header-menu-toggle {
@@ -78,20 +78,20 @@ bey-button.bey-header-menu-toggle {
 }
 
 .bey-header-menu-panel {
-    position: absolute;
-    top: calc(100% + var(--bey-space-xs));
-    left: 0;
-    z-index: var(--bey-z-dropdown);
-    display: flex;
-    flex-direction: column;
     align-items: stretch;
-    gap: var(--bey-space-2xs);
-    width: max-content;
-    padding: var(--bey-space-xs);
+    background-color: var(--bey-bg-surface);
     border: var(--bey-border-width) solid var(--bey-border-subtle);
     border-radius: var(--bey-radius-md);
-    background-color: var(--bey-bg-surface);
     box-shadow: var(--bey-shadow-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--bey-space-2xs);
+    left: 0;
+    padding: var(--bey-space-xs);
+    position: absolute;
+    top: calc(100% + var(--bey-space-xs));
+    width: max-content;
+    z-index: var(--bey-z-dropdown);
 }
 
 .bey-header-actions-end .bey-header-menu-panel {

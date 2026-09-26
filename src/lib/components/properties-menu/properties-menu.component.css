@@ -7,20 +7,20 @@
 }
 
 .bey-properties-menu {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: var(--bey-properties-menu-max-width);
-    height: 100%;
-    overflow: hidden;
     border: var(--bey-border-width) solid var(--bey-properties-menu-border);
     border-radius: var(--bey-radius-lg);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: var(--bey-properties-menu-max-width);
+    overflow: hidden;
+    width: 100%;
 }
 
 .bey-properties-menu--embedded {
-    max-width: none;
     border: none;
     border-radius: 0;
+    max-width: none;
 }
 
 .bey-properties-menu-body {
@@ -28,6 +28,6 @@
     flex: 1 1 auto;
     flex-direction: column;
     min-height: 0;
-    padding: var(--bey-space-sm);
     overflow-y: auto;
+    padding: var(--bey-space-sm);
 }

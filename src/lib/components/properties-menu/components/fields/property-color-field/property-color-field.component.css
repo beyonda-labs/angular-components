@@ -4,14 +4,14 @@
 }
 
 .bey-property-color-field-swatch {
-    position: relative;
-    flex: 0 0 auto;
-    width: var(--bey-property-field-control-size);
-    height: var(--bey-property-field-control-size);
-    overflow: hidden;
     border: var(--bey-border-width) solid var(--bey-property-field-border);
     border-radius: var(--bey-radius-sm);
     cursor: pointer;
+    flex: 0 0 auto;
+    height: var(--bey-property-field-control-size);
+    overflow: hidden;
+    position: relative;
+    width: var(--bey-property-field-control-size);
 }
 
 /* Checkerboard for "no colour", so an empty field does not look like a solid colour is applied. */
@@ -30,12 +30,12 @@
 }
 
 .bey-property-color-field-swatch-input {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    padding: 0;
     border: none;
     cursor: pointer;
+    height: 100%;
+    inset: 0;
     opacity: 0;
+    padding: 0;
+    position: absolute;
+    width: 100%;
 }

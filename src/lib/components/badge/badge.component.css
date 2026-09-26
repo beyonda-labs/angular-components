@@ -9,16 +9,16 @@
 }
 
 .bey-badge {
-    display: inline-flex;
     align-items: center;
-    padding: var(--bey-space-3xs) var(--bey-space-md);
     background-color: var(--bey-badge-bg);
     border: var(--bey-border-width) solid var(--bey-badge-border);
     border-radius: var(--bey-radius-pill);
     color: var(--bey-badge-fg);
+    display: inline-flex;
     font-size: var(--bey-font-size-xs);
     font-weight: var(--bey-font-weight-semibold);
     line-height: var(--bey-line-height-base);
+    padding: var(--bey-space-3xs) var(--bey-space-md);
     white-space: nowrap;
 }
 

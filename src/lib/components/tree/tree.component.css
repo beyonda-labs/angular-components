@@ -1,16 +1,16 @@
 :host {
     --bey-tree-fg: var(--bey-text-primary);
     --bey-tree-fg-muted: var(--bey-text-muted);
+    color: var(--bey-tree-fg);
 
     display: block;
-    color: var(--bey-tree-fg);
 }
 
 .bey-tree {
     display: flex;
     flex-direction: column;
-    width: fit-content;
     min-width: 100%;
+    width: fit-content;
 }
 
 .bey-tree-item {
@@ -19,19 +19,19 @@
 }
 
 .bey-tree-node {
-    display: flex;
     align-items: center;
-    gap: var(--bey-space-sm);
-    width: 100%;
-    padding-block: var(--bey-space-xs);
-    padding-right: var(--bey-space-sm);
     border-radius: var(--bey-radius-sm);
     color: var(--bey-tree-fg);
-    font-size: var(--bey-font-size-sm);
     cursor: pointer;
+    display: flex;
+    font-size: var(--bey-font-size-sm);
+    gap: var(--bey-space-sm);
+    padding-block: var(--bey-space-xs);
+    padding-right: var(--bey-space-sm);
     transition:
         background-color var(--bey-duration-fast) var(--bey-easing-standard),
         color var(--bey-duration-fast) var(--bey-easing-standard);
+    width: 100%;
 }
 
 .bey-tree-node:hover:not(.is-disabled) {
@@ -54,16 +54,16 @@
 }
 
 .bey-tree-toggle {
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    width: 1.1rem;
-    height: 1.1rem;
-    border: none;
     background: transparent;
+    border: none;
     color: var(--bey-tree-fg-muted);
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: 1.1rem;
+    justify-content: center;
     padding: 0;
+    width: 1.1rem;
 }
 
 .bey-tree-toggle.is-hidden {
@@ -80,8 +80,8 @@
 }
 
 .bey-tree-node-icon {
-    flex: 0 0 auto;
     color: currentColor;
+    flex: 0 0 auto;
     font-size: var(--bey-font-size-sm);
 }
 

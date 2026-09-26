@@ -11,20 +11,19 @@
 }
 
 .bey-left-menu-action {
-    position: relative;
-    display: flex;
     align-items: center;
-    gap: var(--bey-space-md);
-    width: 100%;
-    min-height: 2.75rem;
-    padding: var(--bey-space-md) var(--bey-space-md);
+    background: transparent;
     border: var(--bey-border-width) solid transparent;
     border-radius: var(--bey-radius-lg);
-    background: transparent;
     color: var(--bey-left-menu-text);
+    display: flex;
     font-size: var(--bey-font-size-md);
     font-weight: var(--bey-font-weight-medium);
+    gap: var(--bey-space-md);
     line-height: var(--bey-line-height-tight);
+    min-height: 2.75rem;
+    padding: var(--bey-space-md) var(--bey-space-md);
+    position: relative;
     text-align: left;
     transition:
         background-color var(--bey-duration-base) var(--bey-easing-standard),
@@ -32,6 +31,7 @@
         color var(--bey-duration-base) var(--bey-easing-standard),
         box-shadow var(--bey-duration-base) var(--bey-easing-standard),
         transform var(--bey-duration-base) var(--bey-easing-standard);
+    width: 100%;
 }
 
 .bey-left-menu-action:hover:not(.bey-left-menu-action.is-disabled) {
@@ -40,9 +40,9 @@
 }
 
 .bey-left-menu-action:focus-visible {
-    outline: 0;
     border-color: var(--bey-left-menu-accent);
     box-shadow: var(--bey-left-menu-focus-ring);
+    outline: 0;
 }
 
 .bey-left-menu-action.is-open {
@@ -83,25 +83,25 @@
 
 .bey-left-menu-action.is-collapsed {
     justify-content: center;
-    width: 2.75rem;
+    margin-inline: auto;
     min-width: 2.75rem;
     padding: var(--bey-space-sm);
-    margin-inline: auto;
+    width: 2.75rem;
 }
 
 .bey-left-menu-action.is-disabled {
-    opacity: var(--bey-opacity-disabled);
     cursor: not-allowed;
+    opacity: var(--bey-opacity-disabled);
 }
 
 .bey-left-menu-action-icon {
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    width: 1.1rem;
     color: currentColor;
+    display: inline-flex;
+    flex: 0 0 auto;
     font-size: var(--bey-font-size-md);
+    justify-content: center;
+    width: 1.1rem;
 }
 
 .bey-left-menu-action-label {
@@ -113,28 +113,28 @@
 }
 
 .bey-left-menu-action-chevron {
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
+    display: inline-flex;
     flex: 0 0 auto;
-    width: 1rem;
     font-size: var(--bey-font-size-sm);
+    justify-content: center;
+    width: 1rem;
 }
 
 .bey-left-menu-action-marker {
-    position: absolute;
-    top: 0.55rem;
-    right: 0.55rem;
-    width: 0.42rem;
-    height: 0.42rem;
-    border-radius: var(--bey-radius-pill);
     background: currentColor;
+    border-radius: var(--bey-radius-pill);
     box-shadow: var(--bey-left-menu-marker-ring);
+    height: 0.42rem;
     opacity: var(--bey-opacity-disabled);
+    position: absolute;
+    right: 0.55rem;
+    top: 0.55rem;
     transition:
         opacity var(--bey-duration-base) var(--bey-easing-standard),
         transform var(--bey-duration-base) var(--bey-easing-standard),
         box-shadow var(--bey-duration-base) var(--bey-easing-standard);
+    width: 0.42rem;
 }
 
 .bey-left-menu-action.has-children.bey-left-menu-action.is-open .bey-left-menu-action-marker,
@@ -151,34 +151,34 @@
 }
 
 .bey-left-menu-subactions {
+    border-left: var(--bey-border-width) solid var(--bey-left-menu-border);
     display: grid;
     gap: var(--bey-space-xs);
     margin-top: var(--bey-space-xs);
     padding-left: var(--bey-space-md);
-    border-left: var(--bey-border-width) solid var(--bey-left-menu-border);
 }
 
 .bey-left-menu-flyout {
-    position: absolute;
-    top: 0;
     left: 100%;
-    z-index: var(--bey-z-sticky);
     min-width: 15rem;
     padding-left: var(--bey-space-lg);
+    position: absolute;
+    top: 0;
+    z-index: var(--bey-z-sticky);
 }
 
 .bey-left-menu-flyout-card {
-    padding: var(--bey-space-lg);
+    background: var(--bey-left-menu-surface);
     border: var(--bey-border-width) solid var(--bey-left-menu-border);
     border-radius: var(--bey-radius-xl);
-    background: var(--bey-left-menu-surface);
     box-shadow: var(--bey-left-menu-shadow, var(--bey-shadow-md));
+    padding: var(--bey-space-lg);
 }
 
 .bey-left-menu-flyout-title {
-    margin-bottom: var(--bey-space-md);
     color: var(--bey-left-menu-text);
     font-size: var(--bey-font-size-sm);
     font-weight: var(--bey-font-weight-bold);
     letter-spacing: -0.01em;
+    margin-bottom: var(--bey-space-md);
 }

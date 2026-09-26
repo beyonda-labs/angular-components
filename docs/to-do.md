@@ -37,6 +37,8 @@ gate over the whole repo. It passes with zero findings and no baseline since the
 
 -   [x] stylelint encoding `rules/angular/styles.md`: `bey-` prefixes, `is-*`/`has-*` states, no `!important`,
         no `--bs-*` read, no literal design value outside the token layer
+-   [x] `stylelint-order`: custom properties first, then declarations in alphabetical order (shorthand before its
+        longhands); 565 declarations moved by `stylelint --fix`, none across a shorthand boundary
 -   [x] Prettier on save, `format` and `format:check` over `{ts,html,css,json}`, plus the one-off pass that
         brought 523 files into line. ESLint's `quotes` rule now allows the double quotes Prettier uses around
         an apostrophe, and `merge-translations` ends its bundles with a newline, so a generated file no

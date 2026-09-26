@@ -7,34 +7,34 @@
 }
 
 .bey-property-attachment-field-actions {
-    flex-direction: row;
     align-self: flex-start;
+    flex-direction: row;
 }
 
 .bey-property-attachment-field-panel {
-    position: absolute;
-    top: calc(100% + var(--bey-border-width-thick));
-    right: 0;
-    left: 0;
-    z-index: var(--bey-z-sticky);
-    max-height: var(--bey-property-attachment-field-panel-max-height);
-    overflow-y: auto;
     background: var(--bey-bg-surface);
     border: var(--bey-border-width) solid var(--bey-property-field-border);
     border-radius: var(--bey-radius-md);
     box-shadow: var(--bey-shadow-md);
+    left: 0;
+    max-height: var(--bey-property-attachment-field-panel-max-height);
+    overflow-y: auto;
+    position: absolute;
+    right: 0;
+    top: calc(100% + var(--bey-border-width-thick));
+    z-index: var(--bey-z-sticky);
 }
 
 .bey-property-attachment-field-option {
+    background: none;
+    border: 0;
+    cursor: pointer;
     display: flex;
     flex-direction: column;
-    width: 100%;
     min-width: 0;
     padding: var(--bey-space-xs) var(--bey-space-sm);
-    border: 0;
-    background: none;
     text-align: left;
-    cursor: pointer;
+    width: 100%;
 }
 
 .bey-property-attachment-field-option:hover,
@@ -48,9 +48,9 @@
 }
 
 .bey-property-attachment-field-option-label {
-    overflow: hidden;
     color: var(--bey-text-primary);
     font-size: var(--bey-font-size-sm);
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -61,8 +61,8 @@
 }
 
 .bey-property-attachment-field-empty {
-    margin: 0;
-    padding: var(--bey-space-xs) var(--bey-space-sm);
     color: var(--bey-text-muted);
     font-size: var(--bey-font-size-sm);
+    margin: 0;
+    padding: var(--bey-space-xs) var(--bey-space-sm);
 }

@@ -15,17 +15,17 @@
 }
 
 .bey-property-field-label {
-    min-width: 0;
     color: var(--bey-property-field-label-color);
     font-size: var(--bey-font-size-2xs);
     font-weight: var(--bey-font-weight-semibold);
+    min-width: 0;
     overflow-wrap: anywhere;
 }
 
 .bey-property-field-toggle-row {
+    align-items: center;
     display: flex;
     gap: var(--bey-space-sm);
-    align-items: center;
 }
 
 .bey-property-field-toggle-label {
@@ -34,7 +34,7 @@
 }
 
 .bey-property-field-description {
-    margin: 0;
     color: var(--bey-text-muted);
     font-size: var(--bey-font-size-2xs);
+    margin: 0;
 }

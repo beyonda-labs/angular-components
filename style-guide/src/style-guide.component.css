@@ -7,9 +7,9 @@
 }
 
 .bey-style-guide-group-title {
-    margin-bottom: var(--bey-space-md);
     color: var(--bey-text-muted);
     font-size: var(--bey-font-size-2xl);
+    margin-bottom: var(--bey-space-md);
 }
 
 .bey-style-guide-group-title + bey-style-guide-section {

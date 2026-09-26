@@ -8,13 +8,13 @@
 }
 
 .bey-property-group {
-    padding-bottom: var(--bey-space-lg);
     border-bottom: var(--bey-border-width) solid var(--bey-property-group-border);
+    padding-bottom: var(--bey-space-lg);
 }
 
 :host:last-child .bey-property-group {
-    padding-bottom: 0;
     border-bottom: none;
+    padding-bottom: 0;
 }
 
 .bey-property-group.is-disabled {
@@ -22,18 +22,18 @@
 }
 
 .bey-property-group-header {
-    display: flex;
-    gap: var(--bey-space-sm);
     align-items: center;
-    width: 100%;
-    padding: 0 0 var(--bey-space-sm);
-    border: none;
     background: none;
+    border: none;
     color: var(--bey-property-group-text);
+    cursor: pointer;
+    display: flex;
     font-size: var(--bey-font-size-sm);
     font-weight: var(--bey-font-weight-bold);
+    gap: var(--bey-space-sm);
+    padding: 0 0 var(--bey-space-sm);
     text-align: left;
-    cursor: pointer;
+    width: 100%;
 }
 
 .bey-property-group--secondary .bey-property-group-header {
@@ -54,12 +54,12 @@
 }
 
 .bey-property-group-remove {
+    align-items: center;
+    color: var(--bey-property-group-text-muted);
     display: inline-flex;
     flex: 0 0 auto;
-    align-items: center;
-    justify-content: center;
-    color: var(--bey-property-group-text-muted);
     font-size: var(--bey-font-size-2xs);
+    justify-content: center;
 }
 
 .bey-property-group-remove:hover {
@@ -79,8 +79,8 @@
 .bey-property-group-body,
 .bey-property-group-tab-panel {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--bey-space-md) var(--bey-space-sm);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .bey-property-group-body > *,
@@ -95,26 +95,26 @@
 }
 
 .bey-property-group-tabs {
+    border-bottom: var(--bey-border-width) solid var(--bey-property-group-border);
     display: flex;
     gap: var(--bey-space-2xs);
-    border-bottom: var(--bey-border-width) solid var(--bey-property-group-border);
 }
 
 .bey-property-group-tab {
+    align-items: center;
+    background: none;
+    border: none;
+    border-bottom: var(--bey-border-width-thick) solid transparent;
+    color: var(--bey-property-group-text-muted);
+    cursor: pointer;
     display: inline-flex;
     flex: 1 1 0;
+    font-size: var(--bey-font-size-2xs);
+    font-weight: var(--bey-font-weight-semibold);
     gap: var(--bey-space-xs);
-    align-items: center;
     justify-content: center;
     min-width: 0;
     padding: var(--bey-space-xs);
-    border: none;
-    border-bottom: var(--bey-border-width-thick) solid transparent;
-    background: none;
-    color: var(--bey-property-group-text-muted);
-    font-size: var(--bey-font-size-2xs);
-    font-weight: var(--bey-font-weight-semibold);
-    cursor: pointer;
 }
 
 .bey-property-group-tab:hover:not(:disabled) {
@@ -131,27 +131,27 @@
 }
 
 .bey-property-group-empty {
+    align-items: center;
     display: flex;
     flex: 1 1 auto;
-    align-items: center;
     justify-content: center;
     min-height: var(--bey-property-group-empty-height);
     padding: var(--bey-space-lg);
 }
 
 .bey-property-group-empty-add {
-    display: flex;
-    gap: var(--bey-space-xs);
     align-items: center;
-    justify-content: center;
-    padding: var(--bey-space-md) var(--bey-space-xl);
     background: none;
     border: var(--bey-border-width) dashed var(--bey-property-group-border);
     border-radius: var(--bey-radius-md);
     color: var(--bey-property-group-text);
+    cursor: pointer;
+    display: flex;
     font-size: var(--bey-font-size-sm);
     font-weight: var(--bey-font-weight-semibold);
-    cursor: pointer;
+    gap: var(--bey-space-xs);
+    justify-content: center;
+    padding: var(--bey-space-md) var(--bey-space-xl);
 }
 
 .bey-property-group-empty-add:hover {

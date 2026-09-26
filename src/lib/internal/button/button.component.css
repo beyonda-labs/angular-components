@@ -8,11 +8,11 @@
 }
 
 .bey-button {
-    margin-inline: var(--bey-button-inline-gap);
-    padding: var(--bey-button-padding-block) var(--bey-button-padding-inline);
     border-radius: var(--bey-radius-sm);
     font-size: var(--bey-font-size-sm);
     line-height: var(--bey-line-height-tight);
+    margin-inline: var(--bey-button-inline-gap);
+    padding: var(--bey-button-padding-block) var(--bey-button-padding-inline);
 }
 
 .bey-button-icon {

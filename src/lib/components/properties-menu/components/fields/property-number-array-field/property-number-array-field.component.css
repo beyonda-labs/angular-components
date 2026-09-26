@@ -5,14 +5,14 @@
 }
 
 .bey-property-number-array-field-entry {
+    align-items: center;
     display: flex;
     gap: var(--bey-space-xs);
-    align-items: center;
 }
 
 .bey-property-number-array-field-add {
-    gap: var(--bey-space-xs);
-    width: auto;
-    padding: 0 var(--bey-space-sm);
     font-size: var(--bey-font-size-xs);
+    gap: var(--bey-space-xs);
+    padding: 0 var(--bey-space-sm);
+    width: auto;
 }

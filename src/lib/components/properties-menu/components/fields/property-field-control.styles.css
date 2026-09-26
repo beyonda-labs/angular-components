@@ -15,25 +15,25 @@
 }
 
 .bey-property-field-control {
-    position: relative;
+    align-items: center;
     display: flex;
     gap: var(--bey-space-xs);
-    align-items: center;
+    position: relative;
 }
 
 .bey-property-field-input,
 .bey-property-field-select {
-    width: 100%;
-    padding: var(--bey-space-xs) var(--bey-space-sm);
     background: var(--bey-property-field-surface);
     border: var(--bey-border-width) solid var(--bey-property-field-border);
     border-radius: var(--bey-radius-sm);
     color: var(--bey-property-field-text);
     font-size: var(--bey-font-size-sm);
     line-height: var(--bey-line-height-tight);
+    padding: var(--bey-space-xs) var(--bey-space-sm);
     transition:
         border-color var(--bey-duration-fast) var(--bey-easing-standard),
         box-shadow var(--bey-duration-fast) var(--bey-easing-standard);
+    width: 100%;
 }
 
 .bey-property-field-input:hover,
@@ -43,9 +43,9 @@
 
 .bey-property-field-input:focus,
 .bey-property-field-select:focus {
-    outline: none;
     border-color: var(--bey-property-field-accent);
     box-shadow: var(--bey-property-field-focus-ring);
+    outline: none;
 }
 
 .bey-property-field-input:disabled,
@@ -77,21 +77,21 @@
 }
 
 .bey-property-field-action {
-    display: inline-flex;
-    flex: 0 0 auto;
     align-items: center;
-    justify-content: center;
-    width: var(--bey-property-field-control-size);
-    height: var(--bey-property-field-control-size);
-    margin: 0;
     background: var(--bey-property-field-surface);
     border: var(--bey-border-width) solid var(--bey-property-field-border);
     border-radius: var(--bey-radius-sm);
     color: var(--bey-property-field-text-muted);
     cursor: pointer;
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: var(--bey-property-field-control-size);
+    justify-content: center;
+    margin: 0;
     transition:
         color var(--bey-duration-fast) var(--bey-easing-standard),
         border-color var(--bey-duration-fast) var(--bey-easing-standard);
+    width: var(--bey-property-field-control-size);
 }
 
 .bey-property-field-action:hover:not(:disabled) {
@@ -112,14 +112,14 @@
 }
 
 .bey-property-field-anchor {
-    position: relative;
     flex: 1 1 auto;
     min-width: 0;
+    position: relative;
 }
 
 .bey-property-field-error {
-    width: 100%;
-    margin: var(--bey-space-2xs) 0 0;
     color: var(--bey-danger);
     font-size: var(--bey-font-size-2xs);
+    margin: var(--bey-space-2xs) 0 0;
+    width: 100%;
 }

@@ -1,15 +1,15 @@
 .bey-property-file-field-choose {
-    display: inline-flex;
-    flex: 0 0 auto;
-    gap: var(--bey-space-xs);
     align-items: center;
-    padding: var(--bey-space-xs) var(--bey-space-sm);
     background: var(--bey-property-field-surface);
     border: var(--bey-border-width) solid var(--bey-property-field-border);
     border-radius: var(--bey-radius-sm);
     color: var(--bey-property-field-text);
-    font-size: var(--bey-font-size-sm);
     cursor: pointer;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-size: var(--bey-font-size-sm);
+    gap: var(--bey-space-xs);
+    padding: var(--bey-space-xs) var(--bey-space-sm);
     transition:
         color var(--bey-duration-fast) var(--bey-easing-standard),
         border-color var(--bey-duration-fast) var(--bey-easing-standard);
@@ -26,11 +26,11 @@
 }
 
 .bey-property-file-field-name {
+    color: var(--bey-property-field-text);
     flex: 1 1 auto;
+    font-size: var(--bey-font-size-sm);
     min-width: 0;
     overflow: hidden;
-    color: var(--bey-property-field-text);
-    font-size: var(--bey-font-size-sm);
     text-overflow: ellipsis;
     white-space: nowrap;
 }

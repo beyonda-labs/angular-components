@@ -7,14 +7,14 @@
 }
 
 .bey-form-section-title {
-    display: inline-block;
-    width: fit-content;
-    max-width: 100%;
-    margin: 0 0 var(--bey-space-md);
     color: var(--bey-text-primary);
+    display: inline-block;
     font-size: var(--bey-font-size-lg);
     font-weight: var(--bey-font-weight-semibold);
     line-height: var(--bey-line-height-tight);
+    margin: 0 0 var(--bey-space-md);
+    max-width: 100%;
+    width: fit-content;
 }
 
 .bey-form-section-row {

@@ -9,25 +9,25 @@
 }
 
 .bey-tabs {
+    border-bottom: var(--bey-border-width) solid var(--bey-tabs-border);
     display: flex;
     gap: var(--bey-space-2xs);
-    border-bottom: var(--bey-border-width) solid var(--bey-tabs-border);
 }
 
 .bey-tabs-tab {
-    position: relative;
-    display: inline-flex;
     align-items: center;
-    gap: var(--bey-space-xs);
-    padding: var(--bey-space-sm) var(--bey-space-lg);
+    background: none;
     border: none;
     border-bottom: var(--bey-border-width-thick) solid transparent;
-    background: none;
     color: var(--bey-tabs-text);
+    cursor: pointer;
+    display: inline-flex;
     font-size: var(--bey-font-size-sm);
     font-weight: var(--bey-font-weight-semibold);
+    gap: var(--bey-space-xs);
     line-height: var(--bey-line-height-tight);
-    cursor: pointer;
+    padding: var(--bey-space-sm) var(--bey-space-lg);
+    position: relative;
     transition:
         color var(--bey-duration-base) var(--bey-easing-standard),
         border-color var(--bey-duration-base) var(--bey-easing-standard);
@@ -39,8 +39,8 @@
 }
 
 .bey-tabs-tab.is-active {
-    color: var(--bey-tabs-accent);
     border-bottom-color: var(--bey-tabs-active-underline, var(--bey-tabs-accent));
+    color: var(--bey-tabs-accent);
 }
 
 .bey-tabs-tab.is-active:hover:not(:disabled) {
@@ -48,14 +48,14 @@
 }
 
 .bey-tabs-tab:focus-visible {
+    border-radius: var(--bey-radius-xs) var(--bey-radius-xs) 0 0;
     outline: var(--bey-border-width-thick) solid var(--bey-tabs-accent);
     outline-offset: -2px;
-    border-radius: var(--bey-radius-xs) var(--bey-radius-xs) 0 0;
 }
 
 .bey-tabs-tab.is-disabled {
-    opacity: var(--bey-opacity-disabled);
     cursor: not-allowed;
+    opacity: var(--bey-opacity-disabled);
 }
 
 .bey-tabs-tab-icon {
@@ -63,29 +63,29 @@
 }
 
 .bey-tabs--segmented {
+    background: var(--bey-bg-muted);
+    border-bottom: none;
+    border-radius: var(--bey-radius-md);
     display: inline-flex;
     gap: var(--bey-space-3xs);
     padding: var(--bey-space-2xs);
-    border-bottom: none;
-    border-radius: var(--bey-radius-md);
-    background: var(--bey-bg-muted);
 }
 
 .bey-tabs--segmented .bey-tabs-tab {
-    padding: var(--bey-space-xs) var(--bey-space-md);
     border-bottom: none;
     border-radius: var(--bey-radius-sm);
+    padding: var(--bey-space-xs) var(--bey-space-md);
 }
 
 .bey-tabs--segmented .bey-tabs-tab:hover:not(:disabled):not(.is-active) {
-    color: var(--bey-tabs-hover);
     background: var(--bey-bg-hover);
+    color: var(--bey-tabs-hover);
 }
 
 .bey-tabs--segmented .bey-tabs-tab.is-active {
-    color: var(--bey-text-inverse);
     background: var(--bey-tabs-accent);
     border-bottom-color: transparent;
+    color: var(--bey-text-inverse);
 }
 
 .bey-tabs--segmented .bey-tabs-tab.is-active:hover:not(:disabled) {
@@ -97,8 +97,8 @@
 }
 
 .bey-tabs-overflow {
-    position: relative;
     flex: 0 0 auto;
+    position: relative;
 }
 
 .bey-tabs-overflow-trigger {
@@ -106,34 +106,34 @@
 }
 
 .bey-tabs-overflow-menu {
-    position: absolute;
-    top: calc(100% + var(--bey-space-2xs));
-    right: 0;
-    z-index: var(--bey-z-dropdown);
+    background: var(--bey-bg-page);
+    border: var(--bey-border-width) solid var(--bey-tabs-border);
+    border-radius: var(--bey-radius-md);
+    box-shadow: var(--bey-shadow-md);
     display: flex;
     flex-direction: column;
     min-width: 10rem;
     padding: var(--bey-space-xs);
-    border: var(--bey-border-width) solid var(--bey-tabs-border);
-    border-radius: var(--bey-radius-md);
-    background: var(--bey-bg-page);
-    box-shadow: var(--bey-shadow-md);
+    position: absolute;
+    right: 0;
+    top: calc(100% + var(--bey-space-2xs));
+    z-index: var(--bey-z-dropdown);
 }
 
 .bey-tabs-overflow-menu-item {
-    display: flex;
     align-items: center;
-    gap: var(--bey-space-sm);
-    padding: var(--bey-space-sm);
+    background: none;
     border: none;
     border-radius: var(--bey-radius-sm);
-    background: none;
     color: var(--bey-tabs-text);
+    cursor: pointer;
+    display: flex;
     font-size: var(--bey-font-size-sm);
     font-weight: var(--bey-font-weight-semibold);
+    gap: var(--bey-space-sm);
+    padding: var(--bey-space-sm);
     text-align: left;
     white-space: nowrap;
-    cursor: pointer;
 }
 
 .bey-tabs-overflow-menu-item:hover:not(:disabled) {
@@ -146,6 +146,6 @@
 }
 
 .bey-tabs-overflow-menu-item:disabled {
-    opacity: var(--bey-opacity-disabled);
     cursor: not-allowed;
+    opacity: var(--bey-opacity-disabled);
 }

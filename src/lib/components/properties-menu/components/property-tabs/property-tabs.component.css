@@ -1,5 +1,5 @@
 :host {
     display: block;
-    min-width: 0;
     margin-bottom: var(--bey-space-sm);
+    min-width: 0;
 }

@@ -7,7 +7,7 @@
 }
 
 .bey-properties-menu-style-guide-log {
-    margin-top: 0.75rem;
     color: var(--bey-text-muted);
     font-size: var(--bey-font-size-sm);
+    margin-top: 0.75rem;
 }

@@ -7,37 +7,37 @@
     --bey-modal-form-surface: var(--bey-bg-surface);
     --bey-modal-form-close-bg-hover: var(--bey-bg-active);
     --bey-modal-form-body-max-height: min(70vh, 34rem);
+    color: var(--bey-modal-form-fg);
 
     display: block;
-    color: var(--bey-modal-form-fg);
 }
 
 .bey-modal-form {
-    width: 100%;
-    padding: var(--bey-space-xl) var(--bey-space-lg);
     background: var(--bey-modal-form-surface);
     border: var(--bey-border-width) solid var(--bey-modal-form-border);
     border-radius: var(--bey-radius-md);
     box-shadow: var(--bey-shadow-lg);
+    padding: var(--bey-space-xl) var(--bey-space-lg);
+    width: 100%;
 }
 
 .bey-modal-form-header {
-    display: flex;
     align-items: flex-start;
+    display: flex;
     gap: var(--bey-space-lg);
 }
 
 .bey-modal-form-icon {
-    display: inline-flex;
-    flex: 0 0 auto;
     align-items: center;
-    justify-content: center;
-    width: var(--bey-space-2xl);
-    height: var(--bey-space-2xl);
     background: var(--bey-modal-form-accent-soft);
     border-radius: var(--bey-radius-lg);
     color: var(--bey-modal-form-accent);
+    display: inline-flex;
+    flex: 0 0 auto;
     font-size: var(--bey-font-size-lg);
+    height: var(--bey-space-2xl);
+    justify-content: center;
+    width: var(--bey-space-2xl);
 }
 
 .bey-modal-form-heading {
@@ -53,27 +53,27 @@
 }
 
 .bey-modal-form-title {
-    margin: 0;
     color: var(--bey-modal-form-fg);
     font-size: var(--bey-font-size-xl);
     font-weight: var(--bey-font-weight-bold);
     line-height: var(--bey-line-height-tight);
+    margin: 0;
 }
 
 .bey-modal-form-close {
-    display: inline-flex;
-    flex-shrink: 0;
     align-items: center;
-    justify-content: center;
-    width: var(--bey-space-2xl);
-    height: var(--bey-space-2xl);
     border-radius: var(--bey-radius-circle);
     color: var(--bey-modal-form-fg-muted);
+    display: inline-flex;
+    flex-shrink: 0;
     font-size: var(--bey-font-size-2xl);
+    height: var(--bey-space-2xl);
+    justify-content: center;
     line-height: var(--bey-line-height-none);
     transition:
         background-color var(--bey-duration-base) var(--bey-easing-standard),
         color var(--bey-duration-base) var(--bey-easing-standard);
+    width: var(--bey-space-2xl);
 }
 
 .bey-modal-form-close:hover {

@@ -10,30 +10,30 @@
 }
 
 .bey-login {
-    position: relative;
     height: 100vh;
+    position: relative;
 }
 
 .bey-login-body {
-    position: relative;
-    flex: 1 1 auto;
-    color: var(--bey-text-primary);
     background-position: center;
     background-size: cover;
+    color: var(--bey-text-primary);
+    flex: 1 1 auto;
+    position: relative;
     transition: background var(--bey-duration-base) var(--bey-easing-standard);
 }
 
 .bey-login-body::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
     background: linear-gradient(
         180deg,
         color-mix(in srgb, var(--bey-login-overlay) 40%, transparent) 0%,
         color-mix(in srgb, var(--bey-login-overlay) 60%, transparent) 50%,
         color-mix(in srgb, var(--bey-login-overlay) 88%, transparent) 100%
     );
+    content: '';
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
 }
 
 .bey-login-main {
@@ -46,24 +46,24 @@
 }
 
 .bey-login-card {
-    width: var(--bey-login-card-width);
-    padding: var(--bey-space-2xl);
     background: var(--bey-login-card-bg);
     border: var(--bey-border-width) solid var(--bey-login-card-border);
     border-radius: var(--bey-login-card-radius);
     box-shadow: var(--bey-login-card-shadow);
+    padding: var(--bey-space-2xl);
+    width: var(--bey-login-card-width);
 }
 
 .bey-login-org {
-    gap: var(--bey-space-sm);
     color: var(--bey-text-muted);
     font-size: var(--bey-font-size-xs);
+    gap: var(--bey-space-sm);
 }
 
 .bey-login-org-icon {
     display: block;
-    width: var(--bey-space-xl);
     height: var(--bey-space-xl);
+    width: var(--bey-space-xl);
 }
 
 :host-context(body.dark) .bey-login-org-icon {
@@ -99,8 +99,8 @@
     }
 
     .bey-login-card {
-        width: 100%;
         padding: var(--bey-space-xl);
+        width: 100%;
     }
 
     .bey-login-product {

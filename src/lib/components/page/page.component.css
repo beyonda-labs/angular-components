@@ -16,18 +16,18 @@
 }
 
 .bey-page-toolbar {
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     gap: var(--bey-space-lg);
 }
 
 .bey-page-search {
-    position: relative;
-    z-index: var(--bey-z-raised);
     display: flex;
     justify-content: flex-end;
     margin-left: auto;
+    position: relative;
+    z-index: var(--bey-z-raised);
 }
 
 .bey-page-breadcrumb {
@@ -36,10 +36,10 @@
 }
 
 .bey-page-body {
-    position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--bey-space-lg);
-    width: 100%;
     overflow: hidden;
+    position: relative;
+    width: 100%;
 }

@@ -7,9 +7,9 @@
 }
 
 .bey-app-layout {
+    background-color: var(--bey-app-layout-bg);
     height: 100vh;
     min-height: 0;
-    background-color: var(--bey-app-layout-bg);
 }
 
 .bey-app-layout-menu {
@@ -18,34 +18,34 @@
 }
 
 .bey-app-layout-content {
-    position: relative;
     flex: 1 1 0%;
-    width: 0;
     min-width: 0;
     overflow: hidden;
+    position: relative;
+    width: 0;
 }
 
 .bey-app-layout-breadcrumb {
+    border-bottom: var(--bey-border-width) solid var(--bey-app-layout-breadcrumb-border);
+    box-shadow: var(--bey-app-layout-breadcrumb-shadow);
+    min-width: 0;
+    padding: var(--bey-space-lg) var(--bey-space-xl);
     position: sticky;
     top: 0;
     z-index: var(--bey-z-sticky);
-    min-width: 0;
-    padding: var(--bey-space-lg) var(--bey-space-xl);
-    border-bottom: var(--bey-border-width) solid var(--bey-app-layout-breadcrumb-border);
-    box-shadow: var(--bey-app-layout-breadcrumb-shadow);
 }
 
 .bey-app-layout-body {
     flex: 1 1 auto;
     height: 100%;
-    min-width: 0;
     min-height: 0;
+    min-width: 0;
     overflow: hidden auto;
 }
 
 .bey-app-layout-body-content {
-    min-width: 0;
     min-height: 0;
+    min-width: 0;
 }
 
 .bey-app-layout-body-content.has-padding {

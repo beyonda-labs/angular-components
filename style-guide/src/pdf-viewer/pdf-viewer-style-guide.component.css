@@ -1,6 +1,6 @@
 .bey-pdf-viewer-style-guide-toolbar {
-    display: flex;
     align-items: center;
+    display: flex;
     gap: var(--bey-space-sm);
     margin-bottom: 0.75rem;
 }
@@ -11,14 +11,14 @@
 }
 
 .bey-pdf-viewer-style-guide-frame {
-    height: 32rem;
     border: var(--bey-border-width) solid var(--bey-border-subtle);
     border-radius: var(--bey-radius-md);
+    height: 32rem;
     overflow: hidden;
 }
 
 .bey-pdf-viewer-style-guide-log {
-    margin-top: 0.5rem;
     color: var(--bey-text-muted);
     font-size: var(--bey-font-size-sm);
+    margin-top: 0.5rem;
 }

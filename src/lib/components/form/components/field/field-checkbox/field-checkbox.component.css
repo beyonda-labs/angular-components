@@ -8,38 +8,38 @@
 }
 
 .bey-form-checkbox-switch {
-    position: relative;
     display: inline-flex;
     flex-shrink: 0;
-    width: var(--bey-form-checkbox-switch-width);
     height: var(--bey-form-checkbox-switch-height);
+    position: relative;
+    width: var(--bey-form-checkbox-switch-width);
 }
 
 .bey-form-checkbox-switch-input {
-    position: absolute;
-    inset: 0;
-    margin: 0;
     appearance: none;
     background-color: var(--bey-form-checkbox-switch-track);
     border: var(--bey-border-width) solid var(--bey-form-checkbox-switch-border);
     border-radius: var(--bey-radius-pill);
     cursor: pointer;
+    inset: 0;
+    margin: 0;
+    position: absolute;
     transition:
         background-color var(--bey-duration-base) var(--bey-easing-standard),
         border-color var(--bey-duration-base) var(--bey-easing-standard);
 }
 
 .bey-form-checkbox-switch-knob {
-    position: absolute;
-    top: var(--bey-space-3xs);
-    left: var(--bey-space-3xs);
-    width: calc(var(--bey-form-checkbox-switch-height) - 2 * var(--bey-space-3xs));
-    height: calc(var(--bey-form-checkbox-switch-height) - 2 * var(--bey-space-3xs));
     background-color: var(--bey-form-checkbox-switch-knob);
     border-radius: var(--bey-radius-circle);
     box-shadow: var(--bey-shadow-sm);
+    height: calc(var(--bey-form-checkbox-switch-height) - 2 * var(--bey-space-3xs));
+    left: var(--bey-space-3xs);
     pointer-events: none;
+    position: absolute;
+    top: var(--bey-space-3xs);
     transition: transform var(--bey-duration-base) var(--bey-easing-standard);
+    width: calc(var(--bey-form-checkbox-switch-height) - 2 * var(--bey-space-3xs));
 }
 
 .bey-form-checkbox-switch-input:checked {
@@ -52,8 +52,8 @@
 }
 
 .bey-form-checkbox-switch-input:disabled {
-    opacity: var(--bey-opacity-disabled);
     cursor: default;
+    opacity: var(--bey-opacity-disabled);
 }
 
 .bey-form-checkbox-switch-input:focus-visible {

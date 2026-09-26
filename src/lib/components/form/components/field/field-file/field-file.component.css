@@ -6,16 +6,16 @@
 }
 
 .bey-form-file-input {
-    position: absolute;
-    width: var(--bey-border-width);
     height: var(--bey-border-width);
     opacity: 0;
     pointer-events: none;
+    position: absolute;
+    width: var(--bey-border-width);
 }
 
 .bey-form-file-control {
-    display: flex;
     align-items: center;
+    display: flex;
     gap: var(--bey-space-sm);
     height: auto;
     padding: var(--bey-space-2xs) var(--bey-space-xs) var(--bey-space-2xs) var(--bey-space-2xs);
@@ -26,17 +26,17 @@
 }
 
 .bey-form-file-button {
-    display: inline-flex;
-    flex-shrink: 0;
     align-items: center;
-    gap: var(--bey-space-xs);
-    padding: var(--bey-space-2xs) var(--bey-space-md);
-    border: none;
     background-color: var(--bey-form-file-button-bg);
+    border: none;
     border-radius: var(--bey-radius-xs);
     color: var(--bey-text-primary);
-    font-size: var(--bey-font-size-sm);
     cursor: pointer;
+    display: inline-flex;
+    flex-shrink: 0;
+    font-size: var(--bey-font-size-sm);
+    gap: var(--bey-space-xs);
+    padding: var(--bey-space-2xs) var(--bey-space-md);
     transition: background-color var(--bey-duration-fast) var(--bey-easing-standard);
 }
 
@@ -45,16 +45,16 @@
 }
 
 .bey-form-file-button:disabled {
-    opacity: var(--bey-opacity-disabled);
     cursor: default;
+    opacity: var(--bey-opacity-disabled);
 }
 
 .bey-form-file-name,
 .bey-form-file-empty {
     flex: 1 1 auto;
+    font-size: var(--bey-font-size-sm);
     min-width: 0;
     overflow: hidden;
-    font-size: var(--bey-font-size-sm);
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -70,17 +70,17 @@
 }
 
 .bey-form-file-clear {
-    flex-shrink: 0;
-    width: var(--bey-space-xl);
-    height: var(--bey-space-xl);
     border-radius: var(--bey-radius-circle);
+    flex-shrink: 0;
     font-size: var(--bey-font-size-2xs);
+    height: var(--bey-space-xl);
+    width: var(--bey-space-xl);
 }
 
 .bey-form-file-message {
-    margin-top: var(--bey-space-2xs);
     color: var(--bey-form-file-muted);
     font-size: var(--bey-font-size-xs);
+    margin-top: var(--bey-space-2xs);
 }
 
 .bey-form-file-message.is-error {

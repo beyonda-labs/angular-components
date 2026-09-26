@@ -4,41 +4,41 @@
     --bey-search-border: var(--bey-border-subtle);
     --bey-search-surface: var(--bey-bg-surface);
     --bey-search-placeholder: var(--bey-text-disabled);
+    color: var(--bey-search-fg);
 
     display: block;
-    color: var(--bey-search-fg);
 }
 
 .bey-search {
-    display: flex;
     align-items: center;
-    justify-content: flex-end;
-    gap: var(--bey-space-sm);
+    display: flex;
     flex-wrap: wrap;
+    gap: var(--bey-space-sm);
+    justify-content: flex-end;
 }
 
 /* ─── Main search input ─────────────────────────────────────────────────── */
 .bey-search-box {
-    position: relative;
     min-width: 14rem;
+    position: relative;
 }
 
 .bey-search-box-icon {
-    position: absolute;
-    left: var(--bey-space-md);
-    top: 50%;
-    transform: translateY(-50%);
     color: var(--bey-search-fg-muted);
     font-size: var(--bey-font-size-sm);
+    left: var(--bey-space-md);
     pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .bey-search-box-input {
-    padding-left: var(--bey-space-2xl);
-    min-height: 2.1rem;
     border-radius: var(--bey-radius-sm);
-    font-size: var(--bey-font-size-sm);
     color: var(--bey-search-fg);
+    font-size: var(--bey-font-size-sm);
+    min-height: 2.1rem;
+    padding-left: var(--bey-space-2xl);
 }
 
 .bey-search-box-input::placeholder {
@@ -52,30 +52,30 @@
 }
 
 .bey-search-toggle {
+    font-size: var(--bey-font-size-sm);
     gap: var(--bey-space-xs);
     min-height: 2.1rem;
     padding: var(--bey-space-xs) var(--bey-space-md);
-    font-size: var(--bey-font-size-sm);
 }
 
 .bey-search-badge {
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    min-width: 1.2rem;
-    height: 1.2rem;
-    padding: 0 var(--bey-space-2xs);
-    border-radius: var(--bey-radius-md);
     background: var(--bey-primary);
+    border-radius: var(--bey-radius-md);
     color: var(--bey-primary-fg);
+    display: inline-flex;
     font-size: var(--bey-font-size-2xs);
     font-weight: var(--bey-font-weight-bold);
+    height: 1.2rem;
+    justify-content: center;
     line-height: var(--bey-line-height-none);
+    min-width: 1.2rem;
+    padding: 0 var(--bey-space-2xs);
 }
 
 .bey-search-chevron {
-    font-size: var(--bey-font-size-2xs);
     color: var(--bey-search-fg-muted);
+    font-size: var(--bey-font-size-2xs);
     transition: transform var(--bey-duration-base) var(--bey-easing-standard);
 }
 
@@ -85,16 +85,16 @@
 
 /* ─── Filters panel ─────────────────────────────────────────────────────── */
 .bey-search-panel {
-    position: absolute;
-    top: calc(100% + var(--bey-space-xs));
-    right: 0;
-    z-index: var(--bey-z-dropdown);
-    min-width: min(38rem, 92vw);
-    padding: var(--bey-space-lg);
+    background: var(--bey-search-surface);
     border: var(--bey-border-width) solid var(--bey-search-border);
     border-radius: var(--bey-radius-md);
-    background: var(--bey-search-surface);
     box-shadow: var(--bey-shadow-md);
+    min-width: min(38rem, 92vw);
+    padding: var(--bey-space-lg);
+    position: absolute;
+    right: 0;
+    top: calc(100% + var(--bey-space-xs));
+    z-index: var(--bey-z-dropdown);
 }
 
 .bey-search-empty {
@@ -107,9 +107,9 @@
 }
 
 .bey-search-empty-description {
-    margin-top: var(--bey-space-3xs);
     color: var(--bey-search-fg-muted);
     font-size: var(--bey-font-size-sm);
+    margin-top: var(--bey-space-3xs);
 }
 
 .bey-search-rows {
@@ -120,20 +120,20 @@
 }
 
 .bey-search-row {
-    display: flex;
     align-items: center;
+    display: flex;
     gap: var(--bey-space-sm);
 }
 
 /* stylelint-disable selector-class-pattern -- .form-select and .form-control are Bootstrap's, sized for the panel. */
 .bey-search-row .form-select,
 .bey-search-row .form-control {
-    min-height: 2.1rem;
-    padding-top: var(--bey-space-xs);
-    padding-bottom: var(--bey-space-xs);
     border-radius: var(--bey-radius-sm);
-    font-size: var(--bey-font-size-sm);
     color: var(--bey-search-fg);
+    font-size: var(--bey-font-size-sm);
+    min-height: 2.1rem;
+    padding-bottom: var(--bey-space-xs);
+    padding-top: var(--bey-space-xs);
 }
 
 .bey-search-row .form-control::placeholder {
@@ -156,11 +156,11 @@
 
 /* Range (between): two inputs that read as a single grouped field */
 .bey-search-range {
-    display: flex;
     align-items: center;
+    background: var(--bey-search-surface);
     border: var(--bey-border-width) solid var(--bey-search-border);
     border-radius: var(--bey-radius-sm);
-    background: var(--bey-search-surface);
+    display: flex;
 }
 
 .bey-search-range:focus-within {
@@ -168,11 +168,11 @@
 }
 
 .bey-search-range-input {
+    background: transparent;
+    border: none;
+    box-shadow: none;
     flex: 1 1 0;
     min-width: 0;
-    border: none;
-    background: transparent;
-    box-shadow: none;
 }
 
 .bey-search-range-input:focus {
@@ -188,18 +188,18 @@
 }
 
 .bey-search-remove {
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 1.9rem;
-    height: 1.9rem;
-    flex: 0 0 auto;
-    padding: 0;
     border-radius: var(--bey-radius-circle);
     color: var(--bey-search-fg-muted);
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: 1.9rem;
+    justify-content: center;
+    padding: 0;
     transition:
         background-color var(--bey-duration-base) var(--bey-easing-standard),
         color var(--bey-duration-base) var(--bey-easing-standard);
+    width: 1.9rem;
 }
 
 .bey-search-remove:hover {
@@ -209,17 +209,17 @@
 
 /* ─── Panel footer ──────────────────────────────────────────────────────── */
 .bey-search-panel-footer {
-    display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--bey-space-sm);
     border-top: var(--bey-border-width) solid var(--bey-search-border);
+    display: flex;
+    gap: var(--bey-space-sm);
+    justify-content: space-between;
     padding-top: var(--bey-space-md);
 }
 
 .bey-search-panel-actions {
-    display: inline-flex;
     align-items: center;
+    display: inline-flex;
     gap: var(--bey-space-sm);
 }
 

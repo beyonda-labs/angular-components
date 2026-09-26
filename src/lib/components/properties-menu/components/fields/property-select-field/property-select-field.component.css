@@ -10,29 +10,29 @@
 }
 
 .bey-property-select-field-panel {
-    position: absolute;
-    top: calc(100% + var(--bey-border-width-thick));
-    right: 0;
-    left: 0;
-    z-index: var(--bey-z-sticky);
-    max-height: var(--bey-property-select-panel-max-height);
-    overflow-y: auto;
     background-color: var(--bey-property-select-surface);
     border: var(--bey-border-width) solid var(--bey-property-select-border);
     border-radius: var(--bey-radius-sm);
     box-shadow: var(--bey-shadow-md);
+    left: 0;
+    max-height: var(--bey-property-select-panel-max-height);
+    overflow-y: auto;
+    position: absolute;
+    right: 0;
+    top: calc(100% + var(--bey-border-width-thick));
+    z-index: var(--bey-z-sticky);
 }
 
 .bey-property-select-field-option {
-    display: block;
-    width: 100%;
-    padding: var(--bey-space-xs) var(--bey-space-sm);
-    border: 0;
     background: none;
+    border: 0;
     color: var(--bey-text-primary);
-    font-size: var(--bey-font-size-sm);
-    text-align: left;
     cursor: pointer;
+    display: block;
+    font-size: var(--bey-font-size-sm);
+    padding: var(--bey-space-xs) var(--bey-space-sm);
+    text-align: left;
+    width: 100%;
 }
 
 .bey-property-select-field-option:hover,
@@ -50,8 +50,8 @@
 }
 
 .bey-property-select-field-empty {
-    margin: 0;
-    padding: var(--bey-space-xs) var(--bey-space-sm);
     color: var(--bey-text-muted);
     font-size: var(--bey-font-size-sm);
+    margin: 0;
+    padding: var(--bey-space-xs) var(--bey-space-sm);
 }

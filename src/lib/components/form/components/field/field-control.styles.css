@@ -12,12 +12,12 @@
 }
 
 .bey-form-field-control {
-    min-height: var(--bey-form-field-control-height);
-    padding: var(--bey-space-xs) var(--bey-space-md);
+    border-radius: var(--bey-radius-sm);
     color: var(--bey-form-field-fg);
     font-size: var(--bey-font-size-md);
     line-height: var(--bey-line-height-base);
-    border-radius: var(--bey-radius-sm);
+    min-height: var(--bey-form-field-control-height);
+    padding: var(--bey-space-xs) var(--bey-space-md);
 }
 
 .bey-form-field-control::placeholder {
@@ -26,38 +26,38 @@
 }
 
 .bey-form-field-check {
-    display: flex;
     align-items: center;
+    display: flex;
     gap: var(--bey-space-xs);
-    min-height: var(--bey-space-lg);
     margin-bottom: var(--bey-space-xs);
+    min-height: var(--bey-space-lg);
     padding-left: 0;
 }
 
 .bey-form-field-check-input {
     flex-shrink: 0;
     float: none;
-    width: var(--bey-space-lg);
     height: var(--bey-space-lg);
     margin: 0;
+    width: var(--bey-space-lg);
 }
 
 .bey-form-field-check-label {
-    margin-bottom: 0;
     color: var(--bey-form-field-fg);
     font-size: var(--bey-font-size-sm);
     line-height: var(--bey-line-height-base);
+    margin-bottom: 0;
 }
 
 .bey-form-field-action {
-    display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: none;
     background: transparent;
+    border: none;
     color: var(--bey-form-field-action-fg);
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    padding: 0;
     transition:
         background-color var(--bey-duration-fast) var(--bey-easing-standard),
         color var(--bey-duration-fast) var(--bey-easing-standard);
@@ -73,6 +73,6 @@
 }
 
 .bey-form-field-action:disabled {
-    opacity: var(--bey-opacity-disabled);
     cursor: default;
+    opacity: var(--bey-opacity-disabled);
 }

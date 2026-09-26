@@ -15,18 +15,18 @@
 }
 
 .bey-property-tab-add-group {
-    display: flex;
-    gap: var(--bey-space-xs);
     align-items: center;
-    justify-content: center;
-    padding: var(--bey-space-sm);
     background: none;
     border: var(--bey-border-width) dashed var(--bey-property-tab-border);
     border-radius: var(--bey-radius-sm);
     color: var(--bey-property-tab-text);
+    cursor: pointer;
+    display: flex;
     font-size: var(--bey-font-size-sm);
     font-weight: var(--bey-font-weight-semibold);
-    cursor: pointer;
+    gap: var(--bey-space-xs);
+    justify-content: center;
+    padding: var(--bey-space-sm);
 }
 
 .bey-property-tab-add-group:hover {

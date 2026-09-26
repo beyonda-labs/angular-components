@@ -23,20 +23,20 @@
 }
 
 .bey-property-tree-row {
-    display: flex;
-    gap: var(--bey-space-xs);
     align-items: center;
-    width: 100%;
-    padding-block: var(--bey-space-xs);
-    padding-right: var(--bey-space-sm);
-    padding-left: calc(var(--bey-space-sm) + var(--bey-property-tree-level, 0) * var(--bey-space-lg));
-    border: none;
     background: none;
+    border: none;
     border-radius: var(--bey-radius-sm);
     color: var(--bey-property-tree-text);
-    font-size: var(--bey-font-size-sm);
-    text-align: left;
     cursor: pointer;
+    display: flex;
+    font-size: var(--bey-font-size-sm);
+    gap: var(--bey-space-xs);
+    padding-block: var(--bey-space-xs);
+    padding-left: calc(var(--bey-space-sm) + var(--bey-property-tree-level, 0) * var(--bey-space-lg));
+    padding-right: var(--bey-space-sm);
+    text-align: left;
+    width: 100%;
 }
 
 .bey-property-tree-row:hover {
@@ -79,12 +79,12 @@
 }
 
 .bey-property-tree-toggle {
+    align-items: center;
     display: inline-flex;
     flex: 0 0 auto;
-    align-items: center;
+    height: var(--bey-space-lg);
     justify-content: center;
     width: var(--bey-space-lg);
-    height: var(--bey-space-lg);
 }
 
 .bey-property-tree-toggle.is-hidden {
@@ -94,8 +94,8 @@
 .bey-property-tree-chevron {
     color: var(--bey-property-tree-text-muted);
     font-size: var(--bey-font-size-2xs);
-    transition: transform var(--bey-duration-fast) var(--bey-easing-standard);
     transform: rotate(-90deg);
+    transition: transform var(--bey-duration-fast) var(--bey-easing-standard);
 }
 
 .bey-property-tree-chevron.is-expanded {
@@ -103,9 +103,9 @@
 }
 
 .bey-property-tree-icon {
+    color: var(--bey-property-tree-text-muted);
     display: inline-flex;
     flex: 0 0 auto;
-    color: var(--bey-property-tree-text-muted);
     font-size: var(--bey-font-size-xs);
 }
 
@@ -116,19 +116,19 @@
 }
 
 .bey-property-tree-add-block {
-    display: flex;
-    gap: var(--bey-space-xs);
     align-items: center;
-    justify-content: center;
-    margin-top: var(--bey-space-sm);
-    padding: var(--bey-space-sm);
     background: none;
     border: var(--bey-border-width) dashed var(--bey-property-tree-border);
     border-radius: var(--bey-radius-sm);
     color: var(--bey-property-tree-text);
+    cursor: pointer;
+    display: flex;
     font-size: var(--bey-font-size-sm);
     font-weight: var(--bey-font-weight-semibold);
-    cursor: pointer;
+    gap: var(--bey-space-xs);
+    justify-content: center;
+    margin-top: var(--bey-space-sm);
+    padding: var(--bey-space-sm);
 }
 
 .bey-property-tree-add-block:hover {

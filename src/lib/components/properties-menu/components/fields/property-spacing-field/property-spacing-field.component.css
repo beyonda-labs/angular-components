@@ -1,7 +1,7 @@
 .bey-property-spacing-field {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
     gap: var(--bey-space-sm);
+    grid-template-columns: repeat(2, 1fr);
 }
 
 .bey-property-spacing-field-side {

@@ -12,10 +12,10 @@
 }
 
 .bey-pagination-shell {
-    padding: var(--bey-space-xs) var(--bey-space-md);
-    border-radius: var(--bey-radius-lg);
     background-color: var(--bey-pagination-surface);
     border: var(--bey-border-width) solid var(--bey-pagination-border);
+    border-radius: var(--bey-radius-lg);
+    padding: var(--bey-space-xs) var(--bey-space-md);
 }
 
 .bey-pagination-label,
@@ -33,25 +33,25 @@
 
 .bey-pagination-select,
 .bey-pagination-input {
+    border-radius: var(--bey-radius-sm);
     min-height: 2.1rem;
     padding: var(--bey-space-xs) var(--bey-space-sm);
-    border-radius: var(--bey-radius-sm);
 }
 
 .bey-pagination-select {
-    width: 50px;
-    flex-shrink: 0;
     background: transparent;
     color: var(--bey-pagination-text);
     cursor: pointer;
+    flex-shrink: 0;
     padding-right: var(--bey-space-md);
     transition: color var(--bey-duration-fast) var(--bey-easing-standard);
+    width: 50px;
 }
 
 .bey-pagination-input {
+    flex-shrink: 0;
     min-width: 3.2rem;
     text-align: center;
-    flex-shrink: 0;
 }
 
 .bey-pagination-input::-webkit-outer-spin-button,
@@ -70,21 +70,21 @@
 }
 
 .bey-pagination-icon-button {
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    padding: 0;
+    background: transparent;
     border: 0;
     border-radius: var(--bey-radius-sm);
-    background: transparent;
     color: var(--bey-pagination-accent);
+    display: inline-flex;
+    height: 2rem;
+    justify-content: center;
+    padding: 0;
     text-decoration: none;
     transition:
         background-color var(--bey-duration-fast) var(--bey-easing-standard),
         color var(--bey-duration-fast) var(--bey-easing-standard),
         opacity var(--bey-duration-fast) var(--bey-easing-standard);
+    width: 2rem;
 }
 
 .bey-pagination-icon-button:hover:not(:disabled) {
@@ -93,8 +93,8 @@
 }
 
 .bey-pagination-icon-button:disabled {
-    opacity: var(--bey-opacity-disabled);
     cursor: not-allowed;
+    opacity: var(--bey-opacity-disabled);
 }
 
 .bey-pagination-icon-button:focus-visible {

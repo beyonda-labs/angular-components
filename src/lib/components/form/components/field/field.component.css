@@ -8,18 +8,18 @@
 }
 
 .bey-form-field-header {
-    display: flex;
     align-items: baseline;
+    display: flex;
     gap: var(--bey-space-2xs);
     margin-bottom: var(--bey-space-2xs);
 }
 
 .bey-form-field-label {
-    margin: 0;
     color: var(--bey-form-field-label);
     font-size: var(--bey-font-size-sm);
     font-weight: var(--bey-font-weight-semibold);
     line-height: var(--bey-line-height-base);
+    margin: 0;
 }
 
 .bey-form-field-required {
@@ -35,8 +35,8 @@
 
 .bey-form-field-tooltip {
     align-self: center;
-    margin-left: var(--bey-space-2xs);
     color: var(--bey-text-muted);
     font-size: var(--bey-font-size-2xs);
     line-height: var(--bey-line-height-none);
+    margin-left: var(--bey-space-2xs);
 }

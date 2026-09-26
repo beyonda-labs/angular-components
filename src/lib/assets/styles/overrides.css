@@ -45,11 +45,11 @@ body.dark {
 
 /* ─── Floating preferences anchor ─────────────────────────────────────── */
 .bey-floating-preferences-anchor {
-    position: absolute;
     bottom: 15px;
+    pointer-events: auto;
+    position: absolute;
     right: 20px;
     z-index: var(--bey-z-raised);
-    pointer-events: auto;
 }
 
 /* ─── Thin scrollbar ───────────────────────────────────────────────────── */
@@ -67,8 +67,8 @@ body.dark {
 }
 
 .bey-thin-scroll::-webkit-scrollbar-thumb {
-    border-radius: var(--bey-radius-pill);
     background-color: var(--bey-thin-scroll-thumb);
+    border-radius: var(--bey-radius-pill);
 }
 
 .bey-thin-scroll::-webkit-scrollbar-thumb:hover {

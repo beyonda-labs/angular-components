@@ -4,13 +4,13 @@
 }
 
 .bey-form-chips {
+    align-items: center;
+    cursor: text;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     gap: var(--bey-space-xs);
     height: auto;
     padding: var(--bey-space-2xs) var(--bey-space-sm);
-    cursor: text;
 }
 
 .bey-form-chips.is-disabled {
@@ -19,15 +19,15 @@
 }
 
 .bey-form-chips-chip {
-    display: inline-flex;
     align-items: center;
-    gap: var(--bey-space-2xs);
-    max-width: 100%;
-    padding: var(--bey-space-3xs) var(--bey-space-3xs) var(--bey-space-3xs) var(--bey-space-sm);
     background-color: var(--bey-form-chips-chip-bg);
     border-radius: var(--bey-radius-pill);
+    display: inline-flex;
     font-size: var(--bey-font-size-sm);
+    gap: var(--bey-space-2xs);
     line-height: var(--bey-line-height-base);
+    max-width: 100%;
+    padding: var(--bey-space-3xs) var(--bey-space-3xs) var(--bey-space-3xs) var(--bey-space-sm);
 }
 
 .bey-form-chips.is-disabled .bey-form-chips-chip {
@@ -41,22 +41,22 @@
 }
 
 .bey-form-chips-chip-remove {
-    flex-shrink: 0;
-    width: var(--bey-space-lg);
-    height: var(--bey-space-lg);
     border-radius: var(--bey-radius-circle);
+    flex-shrink: 0;
     font-size: var(--bey-font-size-2xs);
+    height: var(--bey-space-lg);
+    width: var(--bey-space-lg);
 }
 
 .bey-form-chips-input {
-    flex: 1 1 var(--bey-form-chips-input-min-width);
-    min-width: var(--bey-form-chips-input-min-width);
-    padding: var(--bey-space-3xs) 0;
-    border: none;
-    outline: none;
     background: transparent;
+    border: none;
     color: var(--bey-form-field-fg);
+    flex: 1 1 var(--bey-form-chips-input-min-width);
     font-size: var(--bey-font-size-md);
+    min-width: var(--bey-form-chips-input-min-width);
+    outline: none;
+    padding: var(--bey-space-3xs) 0;
 }
 
 .bey-form-chips-input::placeholder {

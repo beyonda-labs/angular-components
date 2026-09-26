@@ -4,30 +4,30 @@
 }
 
 .bey-table-cell {
-    display: flex;
     align-items: center;
-    min-width: 0;
-    min-height: var(--bey-table-row-min-height);
-    padding: var(--bey-space-xs) var(--bey-space-md);
     color: var(--bey-table-text);
+    display: flex;
+    min-height: var(--bey-table-row-min-height);
+    min-width: 0;
+    padding: var(--bey-space-xs) var(--bey-space-md);
 }
 
 .bey-table-cell--header {
     min-height: 0;
-    padding-top: var(--bey-space-md);
     padding-bottom: var(--bey-space-md);
+    padding-top: var(--bey-space-md);
 }
 
 .bey-table-cell-content {
     display: block;
-    width: 100%;
-    min-width: 0;
-    overflow: hidden;
     font-size: var(--bey-font-size-md);
     font-weight: var(--bey-font-weight-medium);
     line-height: var(--bey-line-height-base);
+    min-width: 0;
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    width: 100%;
 }
 
 .bey-table-cell--header .bey-table-cell-content {
@@ -37,15 +37,15 @@
 }
 
 .bey-table-cell-link {
-    width: 100%;
-    padding: 0;
-    border: 0;
     background: transparent;
+    border: 0;
     color: var(--bey-table-text);
     font-family: inherit;
+    padding: 0;
     text-align: left;
     text-decoration: underline;
     text-decoration-color: var(--bey-table-link-underline);
+    width: 100%;
 }
 
 .bey-table-cell-link:hover {
@@ -53,9 +53,9 @@
 }
 
 .bey-table-cell-badges {
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
     gap: var(--bey-space-xs);
     overflow: visible;
     white-space: normal;
