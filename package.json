@@ -1,6 +1,6 @@
 {
     "name": "@beyonda-labs/angular-components",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "packageManager": "pnpm@10.34.5",
     "publishConfig": {
         "registry": "https://verdaccio.home.arpa/"
@@ -23,7 +23,7 @@
         "stylelint": "stylelint \"{src,style-guide}/**/*.css\"",
         "stylelint:fix": "stylelint \"{src,style-guide}/**/*.css\" --fix",
         "test": "jest",
-        "test:ci": "jest --ci",
+        "test:ci": "jest --ci --coverage --coverageReporters=text-summary",
         "test:coverage": "jest --coverage",
         "test:report": "jest --coverage --coverageReporters=lcov --coverageReporters=html",
         "test:watch": "jest --watch",
