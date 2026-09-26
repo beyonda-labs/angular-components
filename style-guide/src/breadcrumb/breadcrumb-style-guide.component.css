@@ -1,0 +1,7 @@
+:host {
+    display: block;
+}
+
+.bey-breadcrumb-style-guide-narrow {
+    max-width: 500px;
+}

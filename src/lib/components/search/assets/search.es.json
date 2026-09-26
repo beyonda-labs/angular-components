@@ -14,18 +14,19 @@
             "operators": {
                 "between": "Entre",
                 "contains": "Contiene",
-                "endsWith": "Termina por",
+                "ends-with": "Termina por",
                 "equals": "Igual a",
-                "greaterThan": "Mayor que",
-                "greaterThanOrEquals": "Mayor o igual",
-                "lessThan": "Menor que",
-                "lessThanOrEquals": "Menor o igual",
-                "notContains": "No contiene",
-                "notEquals": "Distinto de",
-                "startsWith": "Empieza por"
+                "greater-than": "Mayor que",
+                "greater-than-or-equals": "Mayor o igual",
+                "less-than": "Menor que",
+                "less-than-or-equals": "Menor o igual",
+                "not-contains": "No contiene",
+                "not-equals": "Distinto de",
+                "starts-with": "Empieza por"
             },
             "placeholder": "Buscar",
             "remove": "Eliminar filtro",
+            "row": "Filtro",
             "to-placeholder": "Hasta",
             "value-placeholder": "Introduce un valor",
             "values": {

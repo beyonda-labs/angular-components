@@ -1,135 +1,150 @@
-import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, inject, Input } from '@angular/core';
+import {
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    ElementRef,
+    HostListener,
+    inject,
+    input,
+    signal
+} from '@angular/core';
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ButtonComponent } from '../../internal/button/button.component';
-import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
-import { HeaderAction, HeaderActionType, HeaderConfig } from './models/header.model';
+import { ButtonConfig, ButtonType, TooltipPlacement } from '../../internal/button/models/button-config.model';
+import { BadgeComponent } from '../badge/badge.component';
+import { HeaderAction, HeaderActionType, HeaderConfig, HeaderVariant } from './models/header.model';
+
+interface RenderedAction {
+    action: HeaderAction;
+    button: ButtonConfig;
+    subButtons: ButtonConfig[];
+}
 
 @Component({
-    imports: [ButtonComponent, CommonModule, TranslateModule],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [BadgeComponent, ButtonComponent, TranslateModule],
     selector: 'bey-header',
     standalone: true,
     styleUrls: ['./header.component.css'],
     templateUrl: './header.component.html'
 })
 export class HeaderComponent {
-    @Input({ required: true }) config!: HeaderConfig;
+    readonly config = input.required<HeaderConfig>();
 
-    isMenuOpen = false;
-    openActionKey: string | null = null;
+    readonly isMenuOpen = signal(false);
+    readonly openActionKey = signal<string | null>(null);
+
+    readonly backButton = computed(() => {
+        const { backAction } = this.config();
+
+        return backAction ? this.buildActionButton(backAction) : null;
+    });
+    readonly leftActions = computed(() => this.render(this.config().leftActions));
+    readonly rightActions = computed(() => this.render(this.config().rightActions));
+    readonly menuButtons = computed(() =>
+        this.config().menuActions.map(action =>
+            this.buildActionButton(action, {
+                onRun: () => this.isMenuOpen.set(false),
+                tooltipPlacement: 'left'
+            })
+        )
+    );
+
+    readonly hasActions = computed(
+        () => this.leftActions().length + this.menuButtons().length + this.rightActions().length > 0
+    );
+    readonly isSubpage = computed(() => this.config().variant === HeaderVariant.SubPage);
+    readonly title = computed(() => this.config().title);
+
+    readonly menuToggleButton = new ButtonConfig({
+        action: () => this.isMenuOpen.update(isOpen => !isOpen),
+        customClass: 'bey-header-menu-toggle',
+        icon: faEllipsis,
+        tooltip: 'angular-components.header.menu',
+        tooltipPlacement: 'left',
+        type: ButtonType.Tertiary
+    });
 
     private readonly elementRef = inject(ElementRef);
-
-    get leftActions(): HeaderAction[] {
-        return this.config?.leftActions ?? [];
-    }
-
-    get menuActions(): HeaderAction[] {
-        return this.config?.menuActions ?? [];
-    }
-
-    get rightActions(): HeaderAction[] {
-        return this.config?.rightActions ?? [];
-    }
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent): void {
         if (!this.elementRef.nativeElement.contains(event.target)) {
-            this.isMenuOpen = false;
-            this.openActionKey = null;
+            this.closeMenus();
         }
     }
 
     @HostListener('document:keydown.escape')
     onEscape(): void {
-        this.isMenuOpen = false;
-        this.openActionKey = null;
+        this.closeMenus();
     }
 
-    getTitle(): string {
-        return this.config.title ?? '';
+    isActionMenuOpen(action: HeaderAction): boolean {
+        return this.openActionKey() === action.key;
     }
 
-    getActionButton(action: HeaderAction): ButtonConfig {
+    private buildActionButton(
+        action: HeaderAction,
+        options: { onRun?: () => void; tooltipPlacement?: TooltipPlacement } = {}
+    ): ButtonConfig {
         const isIconOnly = action.type === HeaderActionType.Icon;
+        const run = action.action ?? ((): void => {});
 
         return new ButtonConfig({
-            action: action.action ?? (() => {}),
+            action: () => {
+                options.onRun?.();
+                run();
+            },
             customClass: isIconOnly ? 'bey-header-action-icon' : undefined,
             icon: action.icon,
             isDisabled: action.disabled,
             label: isIconOnly ? '' : this.resolveActionText(action, 'label'),
             tooltip: this.resolveActionText(action, 'tooltip'),
-            type: this.getButtonType(action.type)
+            tooltipPlacement: options.tooltipPlacement,
+            type: this.toButtonType(action.type)
         });
     }
 
-    getMenuActionButton(action: HeaderAction): ButtonConfig {
-        const button = this.getActionButton(action);
-        const buttonAction = button.action;
-
-        button.action = () => {
-            this.isMenuOpen = false;
-            buttonAction();
-        };
-
-        button.tooltipPlacement = 'left';
-
-        return button;
+    private closeMenus(): void {
+        this.isMenuOpen.set(false);
+        this.openActionKey.set(null);
     }
 
-    getMenuToggleButton(): ButtonConfig {
-        return new ButtonConfig({
-            action: () => this.toggleMenu(),
-            customClass: 'bey-header-menu-toggle',
-            icon: faEllipsis,
-            tooltip: 'angular-components.header.menu',
-            tooltipPlacement: 'left',
-            type: ButtonType.Tertiary
+    private render(actions: HeaderAction[]): RenderedAction[] {
+        return actions.map(action => {
+            const hasSubActions = Boolean(action.subActions?.length);
+
+            return {
+                action,
+                button: hasSubActions
+                    ? this.buildActionButton({ ...action, action: undefined } as HeaderAction, {
+                          onRun: () => this.toggleActionMenu(action)
+                      })
+                    : this.buildActionButton(action),
+                subButtons: (action.subActions ?? []).map(subAction =>
+                    this.buildActionButton(subAction, {
+                        onRun: () => this.openActionKey.set(null),
+                        tooltipPlacement: 'left'
+                    })
+                )
+            };
         });
     }
 
-    toggleMenu(): void {
-        this.isMenuOpen = !this.isMenuOpen;
+    private resolveActionText(action: HeaderAction, field: 'label' | 'tooltip'): string {
+        const value = action[field];
+        const defaultValue = `${action.key}.${field}`;
+
+        if (!value || value === defaultValue) {
+            return `${this.config().prefix}.actions.${defaultValue}`;
+        }
+
+        return value;
     }
 
-    hasSubActions(action: HeaderAction): boolean {
-        return Boolean(action.subActions?.length);
-    }
-
-    isActionMenuOpen(action: HeaderAction): boolean {
-        return this.openActionKey === action.key;
-    }
-
-    toggleActionMenu(action: HeaderAction): void {
-        this.openActionKey = this.isActionMenuOpen(action) ? null : action.key;
-    }
-
-    getActionToggleButton(action: HeaderAction): ButtonConfig {
-        const button = this.getActionButton(action);
-
-        button.action = () => this.toggleActionMenu(action);
-
-        return button;
-    }
-
-    getSubActionButton(subAction: HeaderAction): ButtonConfig {
-        const button = this.getActionButton(subAction);
-        const buttonAction = button.action;
-
-        button.action = () => {
-            this.openActionKey = null;
-            buttonAction();
-        };
-
-        button.tooltipPlacement = 'left';
-
-        return button;
-    }
-
-    private getButtonType(type: HeaderActionType): ButtonType {
+    private toButtonType(type: HeaderActionType): ButtonType {
         switch (type) {
             case HeaderActionType.PrimaryButton:
                 return ButtonType.Primary;
@@ -142,14 +157,7 @@ export class HeaderComponent {
         }
     }
 
-    private resolveActionText(action: HeaderAction, field: 'label' | 'tooltip'): string {
-        const value = action[field];
-        const defaultValue = `${action.key}.${field}`;
-
-        if (!value || value === defaultValue) {
-            return `${this.config.prefix}.actions.${defaultValue}`;
-        }
-
-        return value;
+    private toggleActionMenu(action: HeaderAction): void {
+        this.openActionKey.set(this.isActionMenuOpen(action) ? null : action.key);
     }
 }

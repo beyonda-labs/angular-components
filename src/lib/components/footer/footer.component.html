@@ -1,23 +1,23 @@
-<div class="bey-footer__container d-flex px-3 w-100 align-middle border-top">
-    <div class="bey-footer__brand">
-        <img [src]="config.iconSrc" class="bey-footer__icon" alt="" aria-hidden="true" />
-        <span class="bey-footer__org">&#64;{{ config.orgName | translate }}</span>
-        <span class="bey-footer__sep" aria-hidden="true">—</span>
-        <span class="bey-footer__product">{{ config.productName | translate }}</span>
+<div class="bey-footer-container d-flex px-3 w-100 align-middle border-top">
+    <div class="bey-footer-brand">
+        <img class="bey-footer-icon" alt="" aria-hidden="true" [src]="config().iconSrc" />
+        <span class="bey-footer-org">&#64;{{ config().orgName | translate }}</span>
+        <span class="bey-footer-sep" aria-hidden="true">—</span>
+        <span class="bey-footer-product">{{ config().productName | translate }}</span>
     </div>
 
-    @if (config.termsUrl || config.privacyUrl) {
-        <nav class="bey-footer__links" [attr.aria-label]="'angular-components.footer.legal' | translate">
-            @if (config.termsUrl) {
-                <bey-button [button]="termsButton" />
+    @if (config().termsUrl || config().privacyUrl) {
+        <nav class="bey-footer-links" [attr.aria-label]="'angular-components.footer.legal' | translate">
+            @if (config().termsUrl) {
+                <bey-button [button]="termsButton()" />
             }
-            @if (config.privacyUrl) {
-                <bey-button [button]="privacyButton" />
+            @if (config().privacyUrl) {
+                <bey-button [button]="privacyButton()" />
             }
         </nav>
     }
 
-    <div class="bey-footer__preferences">
+    <div class="bey-footer-preferences">
         <bey-floating-preferences [usePill]="false" />
     </div>
 </div>

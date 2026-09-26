@@ -1,7 +1,7 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
 import { BreadcrumbItem } from '../../breadcrumb/models/breadcrumb.model';
-import { FooterConfig } from '../../footer/public-api';
+import { FooterConfig } from '../../footer/models/footer.model';
 import { LeftMenuAction, LeftMenuTitle, LeftMenuUserInfo } from '../../left-menu/models/left-menu.model';
 
 export class AppLayoutConfig {
@@ -58,7 +58,7 @@ export class AppLayoutConfig {
     }
 }
 
-interface AppLayoutConfigParameters {
+export interface AppLayoutConfigParameters {
     iconSrc: string;
     productName: string;
     title: LeftMenuTitle;
@@ -92,7 +92,7 @@ export class AppLayoutTopAction extends LeftMenuAction {
     }
 }
 
-interface AppLayoutTopActionParameters {
+export interface AppLayoutTopActionParameters {
     key: string;
     icon: IconDefinition;
 
@@ -109,7 +109,7 @@ export class AppLayoutBottomAction extends LeftMenuAction {
     }
 }
 
-interface AppLayoutBottomActionParameters {
+export interface AppLayoutBottomActionParameters {
     icon: IconDefinition;
     key: string;
 
@@ -122,7 +122,7 @@ export class AppLayoutBreadcrumbItem extends BreadcrumbItem {
     }
 }
 
-interface AppLayoutBreadcrumbItemParameters {
+export interface AppLayoutBreadcrumbItemParameters {
     id: number;
     label: string;
 

@@ -1,7 +1,11 @@
 import { PropertyTextField } from '../models/fields/property-text-field.model';
 import { PropertiesMenuConfig } from '../models/properties-menu-config.model';
 import { PropertyGroup } from '../models/property-group.model';
-import { PropertyFieldsContent, PropertyListContent, PropertyTreeContent } from '../models/property-group-content.model';
+import {
+    PropertyFieldsContent,
+    PropertyListContent,
+    PropertyTreeContent
+} from '../models/property-group-content.model';
 import { PropertyListItem } from '../models/property-list-item.model';
 import { PropertySummaryRow } from '../models/property-summary-row.model';
 import { PropertyTab } from '../models/property-tab.model';
@@ -23,7 +27,9 @@ function buildConfig(): PropertiesMenuConfig {
                         id: 'content',
                         label: 'Contenido',
                         expanded: true,
-                        content: new PropertyFieldsContent({ fields: [new PropertyTextField({ id: 'text', value: 'FACTURA' })] })
+                        content: new PropertyFieldsContent({
+                            fields: [new PropertyTextField({ id: 'text', value: 'FACTURA' })]
+                        })
                     })
                 ]
             }),
@@ -129,7 +135,7 @@ describe('PropertiesMenuService', () => {
             service.setConfig(buildConfig());
 
             const onActiveTabChange = jest.fn();
-            service.onActiveTabChange = onActiveTabChange;
+            service.setConfig(new PropertiesMenuConfig({ ...service.config(), onActiveTabChange }));
 
             service.setActiveTab('page');
 
@@ -151,7 +157,7 @@ describe('PropertiesMenuService', () => {
             service.setConfig(buildConfig());
 
             const onGroupToggle = jest.fn();
-            service.onGroupToggle = onGroupToggle;
+            service.setConfig(new PropertiesMenuConfig({ ...service.config(), onGroupToggle }));
 
             service.toggleGroup('properties', 'content');
 
@@ -165,7 +171,7 @@ describe('PropertiesMenuService', () => {
             service.setConfig(buildConfig());
 
             const onGroupToggle = jest.fn();
-            service.onGroupToggle = onGroupToggle;
+            service.setConfig(new PropertiesMenuConfig({ ...service.config(), onGroupToggle }));
 
             service.toggleGroup('structure', 'structure-tree');
 
@@ -178,7 +184,7 @@ describe('PropertiesMenuService', () => {
             service.setConfig(buildConfig());
 
             const onFieldValueChange = jest.fn();
-            service.onFieldValueChange = onFieldValueChange;
+            service.setConfig(new PropertiesMenuConfig({ ...service.config(), onFieldValueChange }));
 
             const previousConfig = service.config();
 
@@ -199,9 +205,9 @@ describe('PropertiesMenuService', () => {
             service.setConfig(buildConfig());
 
             const onFieldValueChange = jest.fn();
-            const onVariableSelected = jest.fn();
-            service.onFieldValueChange = onFieldValueChange;
-            service.onVariableSelected = onVariableSelected;
+            const onVariableSelect = jest.fn();
+            service.setConfig(new PropertiesMenuConfig({ ...service.config(), onFieldValueChange }));
+            service.setConfig(new PropertiesMenuConfig({ ...service.config(), onVariableSelect }));
 
             const variable = new PropertyVariable({ id: 'customer-name', path: 'customer.name' });
 
@@ -209,7 +215,7 @@ describe('PropertiesMenuService', () => {
 
             expect(service.getField('text')?.value).toBe('FACTURA {{ customer.name }}');
             expect(onFieldValueChange).toHaveBeenCalled();
-            expect(onVariableSelected).toHaveBeenCalledWith({
+            expect(onVariableSelect).toHaveBeenCalledWith({
                 expression: '{{ customer.name }}',
                 fieldId: 'text',
                 variable
@@ -230,7 +236,7 @@ describe('PropertiesMenuService', () => {
             service.setConfig(buildConfig());
 
             const onTreeNodeSelect = jest.fn();
-            service.onTreeNodeSelect = onTreeNodeSelect;
+            service.setConfig(new PropertiesMenuConfig({ ...service.config(), onTreeNodeSelect }));
 
             service.selectTreeNode('structure', 'structure-tree', 'header');
 
@@ -268,7 +274,7 @@ describe('PropertiesMenuService', () => {
             service.setConfig(buildConfig());
 
             const onTreeNodeToggle = jest.fn();
-            service.onTreeNodeToggle = onTreeNodeToggle;
+            service.setConfig(new PropertiesMenuConfig({ ...service.config(), onTreeNodeToggle }));
 
             service.toggleTreeNode('structure', 'structure-tree', 'header');
 
@@ -286,7 +292,7 @@ describe('PropertiesMenuService', () => {
             service.setConfig(buildConfig());
 
             const onTreeAddBlock = jest.fn();
-            service.onTreeAddBlock = onTreeAddBlock;
+            service.setConfig(new PropertiesMenuConfig({ ...service.config(), onTreeAddBlock }));
 
             service.triggerTreeAddBlock('structure', 'structure-tree');
 
@@ -313,7 +319,7 @@ describe('PropertiesMenuService', () => {
             service.setConfig(buildConfig());
 
             const onListItemSelect = jest.fn();
-            service.onListItemSelect = onListItemSelect;
+            service.setConfig(new PropertiesMenuConfig({ ...service.config(), onListItemSelect }));
 
             service.selectListItem('add', 'simple-blocks', 'block-heading');
 
@@ -329,7 +335,7 @@ describe('PropertiesMenuService', () => {
             service.setConfig(buildConfig());
 
             const onListItemSelect = jest.fn();
-            service.onListItemSelect = onListItemSelect;
+            service.setConfig(new PropertiesMenuConfig({ ...service.config(), onListItemSelect }));
 
             service.selectListItem('add', 'simple-blocks', 'block-locked');
 
@@ -340,7 +346,7 @@ describe('PropertiesMenuService', () => {
             service.setConfig(buildConfig());
 
             const onListItemSelect = jest.fn();
-            service.onListItemSelect = onListItemSelect;
+            service.setConfig(new PropertiesMenuConfig({ ...service.config(), onListItemSelect }));
 
             service.selectListItem('add', 'simple-blocks', 'missing');
 
@@ -396,7 +402,9 @@ describe('PropertiesMenuService · items de lista desplegables', () => {
         setUpList([new PropertyListItem(EXPANDABLE_ITEM)]);
 
         const toggles: boolean[] = [];
-        service.onListItemToggle = event => toggles.push(event.expanded);
+        service.setConfig(
+            new PropertiesMenuConfig({ ...service.config(), onListItemToggle: event => toggles.push(event.expanded) })
+        );
 
         service.toggleListItem('variables', 'variables-list', 'total_pages');
         expect(service.getListItem('variables', 'variables-list', 'total_pages')?.expanded).toBe(true);
@@ -411,7 +419,7 @@ describe('PropertiesMenuService · items de lista desplegables', () => {
         setUpList([new PropertyListItem({ id: 'plain' })]);
 
         const toggleSpy = jest.fn();
-        service.onListItemToggle = toggleSpy;
+        service.setConfig(new PropertiesMenuConfig({ ...service.config(), onListItemToggle: toggleSpy }));
 
         service.toggleListItem('variables', 'variables-list', 'plain');
 
@@ -422,7 +430,7 @@ describe('PropertiesMenuService · items de lista desplegables', () => {
         setUpList([new PropertyListItem({ ...EXPANDABLE_ITEM, disabled: true })]);
 
         const toggleSpy = jest.fn();
-        service.onListItemToggle = toggleSpy;
+        service.setConfig(new PropertiesMenuConfig({ ...service.config(), onListItemToggle: toggleSpy }));
 
         service.toggleListItem('variables', 'variables-list', 'total_pages');
 
@@ -433,7 +441,7 @@ describe('PropertiesMenuService · items de lista desplegables', () => {
         setUpList([new PropertyListItem({ ...EXPANDABLE_ITEM, removable: true })]);
 
         const removeSpy = jest.fn();
-        service.onListItemRemove = removeSpy;
+        service.setConfig(new PropertiesMenuConfig({ ...service.config(), onListItemRemove: removeSpy }));
 
         service.removeListItem('variables', 'variables-list', 'total_pages');
 
@@ -448,7 +456,7 @@ describe('PropertiesMenuService · items de lista desplegables', () => {
         setUpList([new PropertyListItem(EXPANDABLE_ITEM)]);
 
         const removeSpy = jest.fn();
-        service.onListItemRemove = removeSpy;
+        service.setConfig(new PropertiesMenuConfig({ ...service.config(), onListItemRemove: removeSpy }));
 
         service.removeListItem('variables', 'variables-list', 'total_pages');
 

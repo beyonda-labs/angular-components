@@ -1,0 +1,88 @@
+:host {
+    --bey-form-file-button-bg: var(--bey-bg-active);
+    --bey-form-file-button-bg-hover: var(--bey-bg-hover);
+    --bey-form-file-muted: var(--bey-secondary);
+    --bey-form-file-error: var(--bey-danger);
+}
+
+.bey-form-file-input {
+    height: var(--bey-border-width);
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    width: var(--bey-border-width);
+}
+
+.bey-form-file-control {
+    align-items: center;
+    display: flex;
+    gap: var(--bey-space-sm);
+    height: auto;
+    padding: var(--bey-space-2xs) var(--bey-space-xs) var(--bey-space-2xs) var(--bey-space-2xs);
+}
+
+.bey-form-file-control.is-invalid {
+    border-color: var(--bey-form-file-error);
+}
+
+.bey-form-file-button {
+    align-items: center;
+    background-color: var(--bey-form-file-button-bg);
+    border: none;
+    border-radius: var(--bey-radius-xs);
+    color: var(--bey-text-primary);
+    cursor: pointer;
+    display: inline-flex;
+    flex-shrink: 0;
+    font-size: var(--bey-font-size-sm);
+    gap: var(--bey-space-xs);
+    padding: var(--bey-space-2xs) var(--bey-space-md);
+    transition: background-color var(--bey-duration-fast) var(--bey-easing-standard);
+}
+
+.bey-form-file-button:hover:not(:disabled) {
+    background-color: var(--bey-form-file-button-bg-hover);
+}
+
+.bey-form-file-button:disabled {
+    cursor: default;
+    opacity: var(--bey-opacity-disabled);
+}
+
+.bey-form-file-name,
+.bey-form-file-empty {
+    flex: 1 1 auto;
+    font-size: var(--bey-font-size-sm);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bey-form-file-size,
+.bey-form-file-empty {
+    color: var(--bey-form-file-muted);
+}
+
+.bey-form-file-size {
+    flex-shrink: 0;
+    font-size: var(--bey-font-size-sm);
+}
+
+.bey-form-file-clear {
+    border-radius: var(--bey-radius-circle);
+    flex-shrink: 0;
+    font-size: var(--bey-font-size-2xs);
+    height: var(--bey-space-xl);
+    width: var(--bey-space-xl);
+}
+
+.bey-form-file-message {
+    color: var(--bey-form-file-muted);
+    font-size: var(--bey-font-size-xs);
+    margin-top: var(--bey-space-2xs);
+}
+
+.bey-form-file-message.is-error {
+    color: var(--bey-form-file-error);
+}

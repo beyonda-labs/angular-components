@@ -1,11 +1,12 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, forwardRef, inject, viewChild } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faPenToSquare, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
 import { ModalService } from '../../../../modal/services/modal.service';
 import { FormComponent } from '../../../form.component';
+import { FORM_HOST, FormHost } from '../../../models/form-host.model';
 import {
     MODAL_FORM_CLOSE_CONFIRMATION_MESSAGE,
     MODAL_FORM_CLOSE_CONFIRMATION_TITLE,
@@ -13,46 +14,36 @@ import {
 } from '../models/modal-form.model';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, FormComponent, TranslateModule],
+    providers: [{ provide: FORM_HOST, useExisting: forwardRef(() => ModalFormDialogComponent) }],
     selector: 'bey-modal-form-dialog',
     standalone: true,
     styleUrls: ['./modal-form-dialog.component.css'],
     templateUrl: './modal-form-dialog.component.html'
 })
-export class ModalFormDialogComponent implements OnInit {
+export class ModalFormDialogComponent implements FormHost {
     config!: ModalFormConfig;
+
+    readonly icon = faPenToSquare;
+    readonly typeLabel = 'angular-components.form.modal.type';
+
+    private readonly form = viewChild(FormComponent);
 
     private readonly bsModalReference: BsModalRef<ModalFormDialogComponent> = inject(BsModalRef);
     private readonly modalService = inject(ModalService);
 
-    ngOnInit(): void {
-        this.bindModalActions();
+    close(): void {
+        this.bsModalReference.hide();
     }
 
-    dismiss(): void {
-        this.requestClose();
+    isDirty(): boolean {
+        return this.form()?.handle.isDirty() ?? false;
     }
 
-    getIcon(): IconDefinition {
-        return faPenToSquare;
-    }
-
-    getTitle(): string {
-        return this.config.getTitle();
-    }
-
-    getTypeLabel(): string {
-        return 'angular-components.form.modal.type';
-    }
-
-    private bindModalActions(): void {
-        this.config.closeHandler = () => this.bsModalReference.hide();
-        this.config.closeRequestHandler = () => this.requestClose();
-    }
-
-    private requestClose(): void {
-        if (!this.config.isDirty()) {
-            this.bsModalReference.hide();
+    requestClose(): void {
+        if (!this.isDirty()) {
+            this.close();
 
             return;
         }
@@ -64,7 +55,7 @@ export class ModalFormDialogComponent implements OnInit {
             })
             .subscribe(confirmed => {
                 if (confirmed) {
-                    this.bsModalReference.hide();
+                    this.close();
                 }
             });
     }

@@ -1,0 +1,20 @@
+:host {
+    --bey-style-guide-section-gradient: linear-gradient(180deg, var(--bey-bg-page) 0%, var(--bey-bg-surface) 100%);
+
+    display: block;
+    margin-top: var(--bey-space-2xl);
+}
+
+.bey-style-guide-section-title {
+    color: var(--bey-text-primary);
+    font-size: var(--bey-font-size-2xl);
+    font-weight: var(--bey-font-weight-semibold);
+    margin-bottom: var(--bey-space-sm);
+}
+
+.bey-style-guide-section-card {
+    background: var(--bey-style-guide-section-gradient);
+    border: var(--bey-border-width) solid var(--bey-border-subtle);
+    border-radius: var(--bey-radius-xl);
+    padding: var(--bey-space-xl);
+}

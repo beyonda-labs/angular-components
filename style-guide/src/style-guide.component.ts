@@ -1,0 +1,59 @@
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
+
+import { AppLayoutStyleGuideComponent } from './app-layout/app-layout-style-guide.component';
+import { BadgeStyleGuideComponent } from './badge/badge-style-guide.component';
+import { BreadcrumbStyleGuideComponent } from './breadcrumb/breadcrumb-style-guide.component';
+import { StyleGuideSectionComponent } from './components/section/style-guide-section.component';
+import { FloatingPreferencesStyleGuideComponent } from './floating-preferences/floating-preferences-style-guide.component';
+import { FooterStyleGuideComponent } from './footer/footer-style-guide.component';
+import { FormStyleGuideComponent } from './form/form-style-guide.component';
+import { HeaderStyleGuideComponent } from './header/header-style-guide.component';
+import { LeftMenuStyleGuideComponent } from './left-menu/left-menu-style-guide.component';
+import { ListStyleGuideComponent } from './list/list-style-guide.component';
+import { LoadingStyleGuideComponent } from './loading/loading-style-guide.component';
+import { LoginStyleGuideComponent } from './login/login-style-guide.component';
+import { ModalStyleGuideComponent } from './modal/modal-style-guide.component';
+import { PageStyleGuideComponent } from './page/page-style-guide.component';
+import { PaginationStyleGuideComponent } from './pagination/pagination-style-guide.component';
+import { PdfViewerStyleGuideComponent } from './pdf-viewer/pdf-viewer-style-guide.component';
+import { PropertiesMenuStyleGuideComponent } from './properties-menu/properties-menu-style-guide.component';
+import { SearchStyleGuideComponent } from './search/search-style-guide.component';
+import { TableStyleGuideComponent } from './table/table-style-guide.component';
+import { TabsStyleGuideComponent } from './tabs/tabs-style-guide.component';
+import { ToastStyleGuideComponent } from './toast/toast-style-guide.component';
+import { TreeStyleGuideComponent } from './tree/tree-style-guide.component';
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        TranslateModule,
+        StyleGuideSectionComponent,
+        AppLayoutStyleGuideComponent,
+        BadgeStyleGuideComponent,
+        BreadcrumbStyleGuideComponent,
+        FloatingPreferencesStyleGuideComponent,
+        FooterStyleGuideComponent,
+        HeaderStyleGuideComponent,
+        ModalStyleGuideComponent,
+        LeftMenuStyleGuideComponent,
+        ListStyleGuideComponent,
+        FormStyleGuideComponent,
+        PaginationStyleGuideComponent,
+        PdfViewerStyleGuideComponent,
+        PropertiesMenuStyleGuideComponent,
+        SearchStyleGuideComponent,
+        TableStyleGuideComponent,
+        ToastStyleGuideComponent,
+        LoadingStyleGuideComponent,
+        LoginStyleGuideComponent,
+        PageStyleGuideComponent,
+        TabsStyleGuideComponent,
+        TreeStyleGuideComponent
+    ],
+    selector: 'bey-style-guide',
+    standalone: true,
+    styleUrls: ['./style-guide.component.css'],
+    templateUrl: './style-guide.component.html'
+})
+export class StyleGuideComponent {}

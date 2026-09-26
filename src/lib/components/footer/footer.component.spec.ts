@@ -1,80 +1,91 @@
-import { ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { provideRouter,Router } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, renderComponent, settle } from '@testing/dom';
 
-import { FloatingPreferencesComponent } from '../floating-preferences/floating-preferences.component';
 import { FooterComponent } from './footer.component';
-import { FooterConfig } from './models/footer.model';
-
-const createConfig = (overrides: Partial<ConstructorParameters<typeof FooterConfig>[0]> = {}): FooterConfig =>
-    new FooterConfig({ iconSrc: '/icon.svg', orgName: 'Acme', productName: 'App', ...overrides });
+import { FooterConfig, FooterConfigParameters } from './models/footer.model';
 
 describe('FooterComponent', () => {
-    let component: FooterComponent;
     let fixture: ComponentFixture<FooterComponent>;
-    let cd: ChangeDetectorRef;
+
+    function buildConfig(overrides: Partial<FooterConfigParameters> = {}): FooterConfig {
+        return new FooterConfig({ iconSrc: '/icon.svg', orgName: 'Acme', productName: 'App', ...overrides });
+    }
+
+    async function render(config: FooterConfig = buildConfig()): Promise<void> {
+        fixture = await renderComponent(FooterComponent, { config });
+    }
+
+    function links(): HTMLElement[] {
+        return queryAll(fixture, 'nav button');
+    }
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [FooterComponent, TranslateModule.forRoot()],
             providers: [provideRouter([])]
         }).compileComponents();
-
-        fixture = TestBed.createComponent(FooterComponent);
-        component = fixture.componentInstance;
-        cd = fixture.debugElement.injector.get(ChangeDetectorRef);
-        component.config = createConfig();
-        fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('shows the organisation and the product', async () => {
+        await render();
+
+        expect(fixture.nativeElement.textContent).toContain('Acme');
+        expect(fixture.nativeElement.textContent).toContain('App');
     });
 
-    it('should render orgName and productName', () => {
-        const element: HTMLElement = fixture.nativeElement;
-        expect(element.textContent).toContain('Acme');
-        expect(element.textContent).toContain('App');
+    it('shows the brand icon the config points at', async () => {
+        await render();
+
+        expect(fixture.nativeElement.querySelector('img').getAttribute('src')).toBe('/icon.svg');
     });
 
-    it('should not render links nav when no URLs are provided', () => {
-        const nav = fixture.nativeElement.querySelector('nav');
-        expect(nav).toBeNull();
+    it('offers no legal navigation when neither url is given', async () => {
+        await render();
+
+        expect(fixture.nativeElement.querySelector('nav')).toBeNull();
     });
 
-    it('should render one button when termsUrl is provided', () => {
-        component.config = createConfig({ termsUrl: '/terms' });
-        cd.markForCheck();
-        fixture.detectChanges();
-        const nav = fixture.nativeElement.querySelector('nav');
-        expect(nav).toBeTruthy();
-        const buttons: NodeListOf<Element> = nav.querySelectorAll('bey-button');
-        expect(buttons.length).toBe(1);
+    it('offers one link per url given', async () => {
+        await render(buildConfig({ termsUrl: '/terms' }));
+        expect(links()).toHaveLength(1);
+
+        await render(buildConfig({ privacyUrl: '/privacy', termsUrl: '/terms' }));
+        expect(links()).toHaveLength(2);
     });
 
-    it('should render two buttons when termsUrl and privacyUrl are provided', () => {
-        component.config = createConfig({ termsUrl: '/terms', privacyUrl: '/privacy' });
-        cd.markForCheck();
-        fixture.detectChanges();
-        const buttons: NodeListOf<Element> = fixture.nativeElement.querySelectorAll('bey-button');
-        expect(buttons.length).toBe(2);
+    it('navigates to the terms url when its link is used', async () => {
+        await render(buildConfig({ termsUrl: '/terms' }));
+        const navigate = jest.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+        links()[0].click();
+
+        expect(navigate).toHaveBeenCalledWith(['/terms']);
     });
 
-    it('should navigate to termsUrl on terms button click', () => {
-        component.config = createConfig({ termsUrl: '/terms' });
-        fixture.detectChanges();
-        const router = TestBed.inject(Router);
-        const navigateSpy = jest.spyOn(router, 'navigate');
-        component.termsButton.action();
-        expect(navigateSpy).toHaveBeenCalledWith(['/terms']);
+    it('navigates to the privacy url when its link is used', async () => {
+        await render(buildConfig({ privacyUrl: '/privacy' }));
+        const navigate = jest.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+        links()[0].click();
+
+        expect(navigate).toHaveBeenCalledWith(['/privacy']);
     });
 
-    it('should render floating preferences without the pill style', () => {
-        const floatingPreferences = fixture.debugElement.query(By.directive(FloatingPreferencesComponent));
+    it('embeds the preferences selector without its floating pill', async () => {
+        await render();
 
-        expect(floatingPreferences).toBeTruthy();
-        expect((floatingPreferences.componentInstance as FloatingPreferencesComponent).usePill).toBe(false);
+        expect(fixture.nativeElement.querySelector('bey-floating-preferences')).toBeTruthy();
+        expect(fixture.nativeElement.querySelector('.is-pill')).toBeNull();
+    });
+
+    it('follows a replaced config', async () => {
+        await render();
+
+        fixture.componentRef.setInput('config', buildConfig({ productName: 'Another' }));
+        await settle(fixture);
+
+        expect(fixture.nativeElement.textContent).toContain('Another');
     });
 });

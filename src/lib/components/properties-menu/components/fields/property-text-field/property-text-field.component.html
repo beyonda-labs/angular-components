@@ -1,78 +1,81 @@
+@let current = field();
+
 <div class="bey-property-field-control">
-    <div class="bey-property-field-picker-anchor" #pickerAnchor>
-        @if (isMultiline) {
+    <div #pickerAnchor class="bey-property-field-anchor">
+        @if (current.multiline) {
             <textarea
                 class="bey-property-field-input"
-                [class.bey-property-field-input-with-actions]="field.acceptsVariable && field.actionButton"
                 rows="3"
-                [attr.aria-label]="field.label"
-                [disabled]="field.disabled"
-                [placeholder]="field.placeholder"
-                [readonly]="field.readonly"
-                [required]="field.required"
-                [value]="field.value ?? ''"
-                (blur)="onBlur($event)"
+                [attr.aria-label]="current.label"
+                [class.bey-property-field-input--with-actions]="current.acceptsVariable && current.actionButton"
+                [disabled]="current.disabled"
+                [placeholder]="current.placeholder"
+                [readonly]="current.readonly"
+                [required]="current.required"
+                [value]="current.value ?? ''"
+                (blur)="trackSelection($event)"
                 (input)="onInput($event)"
-                (keyup)="onKeyup($event)"
-                (mouseup)="onSelect($event)"
-                (select)="onSelect($event)"
+                (keyup)="trackSelection($event)"
+                (mouseup)="trackSelection($event)"
+                (select)="trackSelection($event)"
             ></textarea>
         } @else {
             <input
-                type="text"
                 class="bey-property-field-input"
-                [attr.aria-label]="field.label"
-                [disabled]="field.disabled"
-                [placeholder]="field.placeholder"
-                [readOnly]="field.readonly"
-                [required]="field.required"
-                [value]="field.value ?? ''"
-                (blur)="onBlur($event)"
+                type="text"
+                [attr.aria-label]="current.label"
+                [disabled]="current.disabled"
+                [placeholder]="current.placeholder"
+                [readOnly]="current.readonly"
+                [required]="current.required"
+                [value]="current.value ?? ''"
+                (blur)="trackSelection($event)"
                 (input)="onInput($event)"
-                (keyup)="onKeyup($event)"
-                (mouseup)="onSelect($event)"
-                (select)="onSelect($event)"
+                (keyup)="trackSelection($event)"
+                (mouseup)="trackSelection($event)"
+                (select)="trackSelection($event)"
             />
         }
 
-        @if (pickerOpen) {
-            <bey-variable-picker
+        @if (pickerOpen()) {
+            <bey-option-picker
                 [anchor]="pickerAnchor"
-                [variables]="propertyVariableService.variables()"
+                [options]="variableOptions()"
                 (closed)="closePicker()"
                 (selected)="onVariableSelected($event)"
-            ></bey-variable-picker>
+            ></bey-option-picker>
         }
     </div>
 
-    @if (field.acceptsVariable || field.actionButton) {
-        <div class="bey-property-field-button-stack">
-            @if (field.acceptsVariable) {
+    @if (showsActions()) {
+        <div class="bey-property-field-actions">
+            @if (current.acceptsVariable) {
                 <button
-                    type="button"
-                    class="bey-property-field-variable-trigger"
-                    [class.bey-property-field-variable-trigger-active]="pickerOpen"
-                    [attr.aria-label]="'angular-components.properties-menu.textField.insertVariable' | translate"
-                    [disabled]="field.disabled"
-                    [tooltip]="'angular-components.properties-menu.textField.insertVariable' | translate"
+                    class="bey-property-field-action"
                     container="body"
+                    type="button"
+                    [attr.aria-expanded]="pickerOpen()"
+                    [attr.aria-label]="insertLabel | translate"
+                    [class.is-active]="pickerOpen()"
+                    [disabled]="current.disabled"
+                    [tooltip]="insertLabel | translate"
                     (click)="togglePicker()"
                 >
                     <fa-icon [icon]="variableIcon"></fa-icon>
                 </button>
             }
 
-            @if (field.actionButton && hasSelection) {
+            @if (current.actionButton && hasSelection()) {
                 <button
-                    type="button"
-                    class="bey-property-field-variable-trigger"
-                    [attr.aria-label]="(actionButtonTooltipKey ?? '') | translate"
-                    [disabled]="field.disabled"
-                    [tooltip]="(actionButtonTooltipKey ?? '') | translate"
+                    class="bey-property-field-action"
                     container="body"
+                    type="button"
+                    [attr.aria-label]="actionButtonTooltipKey() | translate"
+                    [disabled]="current.disabled"
+                    [tooltip]="actionButtonTooltipKey() | translate"
                     (click)="onActionButtonClick()"
                 >
-                    <fa-icon [icon]="field.actionButton.icon"></fa-icon>
+                    <fa-icon [icon]="current.actionButton.icon"></fa-icon>
                 </button>
             }
         </div>

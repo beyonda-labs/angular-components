@@ -89,6 +89,6 @@ export class DateFormatService {
     }
 
     private escapeRegExp(value: string): string {
-        return value.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
+        return value.replaceAll(/[.*+?^${}()|[\]\\]/gu, '\\$&');
     }
 }

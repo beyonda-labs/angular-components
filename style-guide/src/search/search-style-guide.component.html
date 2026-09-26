@@ -1,0 +1,12 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.search.example' | translate }}
+</p>
+
+<bey-search [config]="config"></bey-search>
+
+@if (appliedFilters().length) {
+    <div class="bey-style-guide-info text-muted mt-2">
+        {{ 'angular-components-style-guide.search.applied' | translate }}:
+        <strong>{{ summary() }}</strong>
+    </div>
+}

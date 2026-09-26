@@ -10,11 +10,6 @@ import {
     ModalFormConfig
 } from '../models/modal-form.model';
 
-interface OpenModalForm {
-    config: ModalFormConfig;
-    reference: BsModalRef<ModalFormDialogComponent>;
-}
-
 @Injectable({
     providedIn: 'root'
 })
@@ -22,10 +17,10 @@ export class ModalFormService {
     private readonly bsModalService = inject(BsModalService);
     private readonly modalService = inject(ModalService);
 
-    private openModalForms: OpenModalForm[] = [];
+    private openDialogs: BsModalRef<ModalFormDialogComponent>[] = [];
 
     canDeactivate(): Observable<boolean> | boolean {
-        if (this.openModalForms.length === 0) {
+        if (this.openDialogs.length === 0) {
             return true;
         }
 
@@ -61,23 +56,22 @@ export class ModalFormService {
         };
 
         const reference = this.bsModalService.show(ModalFormDialogComponent, modalOptions);
-        const openModalForm: OpenModalForm = { config: config as ModalFormConfig, reference };
 
-        this.openModalForms = [...this.openModalForms, openModalForm];
+        this.openDialogs = [...this.openDialogs, reference];
 
         reference.onHidden?.pipe(take(1)).subscribe(() => {
-            this.openModalForms = this.openModalForms.filter(current => current !== openModalForm);
+            this.openDialogs = this.openDialogs.filter(current => current !== reference);
         });
 
         return reference;
     }
 
     private closeAll(): void {
-        this.openModalForms.forEach(current => current.reference.hide());
-        this.openModalForms = [];
+        this.openDialogs.forEach(reference => reference.hide());
+        this.openDialogs = [];
     }
 
     private hasDirtyForm(): boolean {
-        return this.openModalForms.some(current => current.config.isDirty());
+        return this.openDialogs.some(reference => reference.content?.isDirty() ?? false);
     }
 }

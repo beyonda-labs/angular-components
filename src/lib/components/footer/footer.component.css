@@ -1,87 +1,80 @@
 :host {
-    --bey-footer-fg: var(--bey-gray-600);
-    --bey-footer-fg-2: var(--bey-gray-700);
-    --bey-footer-link: var(--bey-gray-700);
-    --bey-footer-link-hover: var(--bey-gray-900);
-    --bey-footer-sep: var(--bey-gray-300);
-    --bey-footer-font: 'Helvetica Neue', 'Helvetica', 'Inter', 'Arial', system-ui, sans-serif;
-    --bey-footer-border: var(--bey-gray-200);
-    --bey-footer-shadow: 0 -2px 4px rgba(var(--bey-white-rgb), 0.9);
+    --bey-footer-fg: var(--bey-text-muted);
+    --bey-footer-fg-2: var(--bey-text-secondary);
+    --bey-footer-link: var(--bey-text-secondary);
+    --bey-footer-link-hover: var(--bey-text-primary);
+    --bey-footer-sep: var(--bey-border-default);
+    --bey-footer-border: var(--bey-border-subtle);
+    --bey-footer-font: 'Helvetica Neue', Helvetica, Inter, Arial, system-ui, sans-serif;
 
     display: block;
     font-family: var(--bey-footer-font);
-    font-size: 12px;
+    font-size: var(--bey-font-size-xs);
 }
 
-:host-context(body.dark) {
-    --bey-footer-fg-2: var(--bey-gray-500);
-    --bey-footer-link: var(--bey-gray-500);
-    --bey-footer-link-hover: var(--bey-gray-50);
-    --bey-footer-sep: var(--bey-gray-800);
-    --bey-footer-border: var(--bey-gray-900);
-    --bey-footer-shadow: 0 -2px 8px rgba(var(--bey-black-rgb), 0.7);
-}
-
-:host-context(body.dark) .bey-footer__icon {
+/* An icon drawn for a light background has to be flipped rather than re-coloured. */
+:host-context(body.dark) .bey-footer-icon {
     filter: invert(1);
 }
 
-.bey-footer__container {
-    height: 32px;
+.bey-footer-container {
     align-items: center;
-    border-top-color: var(--bey-footer-border) !important;
-    font-size: 11px;
+    border-top-color: var(--bey-footer-border);
+    font-size: var(--bey-font-size-2xs);
+    height: 32px;
 }
 
-.bey-footer__preferences {
-    display: flex;
+.bey-footer-preferences {
     align-items: center;
+    display: flex;
     margin-left: auto;
 }
 
-.bey-footer__brand {
-    display: flex;
+.bey-footer-brand {
     align-items: center;
-    gap: 4px;
-    margin-right: 0.75rem;
+    display: flex;
+    gap: var(--bey-space-2xs);
+    margin-right: var(--bey-space-md);
 }
 
-.bey-footer__icon {
-    width: 12px;
-    height: 12px;
+.bey-footer-icon {
     display: block;
     flex-shrink: 0;
+    height: 12px;
+    width: 12px;
 }
 
-.bey-footer__org {
+.bey-footer-org {
     color: var(--bey-footer-fg-2);
-    font-weight: 600;
+    font-weight: var(--bey-font-weight-semibold);
 }
 
-.bey-footer__sep {
+.bey-footer-sep {
     color: var(--bey-footer-sep);
 }
 
-.bey-footer__product {
+.bey-footer-product {
     color: var(--bey-footer-fg);
 }
 
-.bey-footer__links {
-    display: flex;
+.bey-footer-links {
     align-items: center;
+    display: flex;
 }
 
-.bey-footer__links bey-button {
+.bey-footer-links bey-button {
     --bey-button-inline-gap: 0;
 }
 
-:host ::ng-deep .bey-footer__links .bey-button.btn-link {
+/* stylelint-disable selector-class-pattern -- .btn-link is Bootstrap's, restyled inside the footer only. */
+:host ::ng-deep .bey-footer-links .bey-button.btn-link {
     color: var(--bey-footer-link);
     font-size: inherit;
-    transition: color 0.15s ease;
+    transition: color var(--bey-duration-fast) var(--bey-easing-standard);
 }
 
-:host ::ng-deep .bey-footer__links .bey-button.btn-link:hover,
-:host ::ng-deep .bey-footer__links .bey-button.btn-link:focus-visible {
+:host ::ng-deep .bey-footer-links .bey-button.btn-link:hover,
+:host ::ng-deep .bey-footer-links .bey-button.btn-link:focus-visible {
     color: var(--bey-footer-link-hover);
 }
+/* stylelint-enable selector-class-pattern */

@@ -1,0 +1,89 @@
+:host {
+    --bey-badge-bg: var(--bey-bg-surface);
+    --bey-badge-border: transparent;
+    --bey-badge-fg: var(--bey-text-primary);
+    --bey-badge-tint: 15%;
+    --bey-badge-shade: 55%;
+
+    display: inline-flex;
+}
+
+.bey-badge {
+    align-items: center;
+    background-color: var(--bey-badge-bg);
+    border: var(--bey-border-width) solid var(--bey-badge-border);
+    border-radius: var(--bey-radius-pill);
+    color: var(--bey-badge-fg);
+    display: inline-flex;
+    font-size: var(--bey-font-size-xs);
+    font-weight: var(--bey-font-weight-semibold);
+    line-height: var(--bey-line-height-base);
+    padding: var(--bey-space-3xs) var(--bey-space-md);
+    white-space: nowrap;
+}
+
+/* Greyscale emphasis */
+
+.bey-badge--neutral {
+    --bey-badge-bg: color-mix(in srgb, var(--bey-secondary) 10%, var(--bey-bg-page));
+    --bey-badge-border: var(--bey-border-default);
+    --bey-badge-fg: var(--bey-text-secondary);
+}
+
+.bey-badge--outline {
+    --bey-badge-bg: transparent;
+    --bey-badge-border: var(--bey-text-primary);
+}
+
+.bey-badge--strong {
+    --bey-badge-bg: var(--bey-bg-inverse);
+    --bey-badge-fg: var(--bey-text-inverse);
+}
+
+/* Semantic hues: a light tint as background and the hue blended with the text colour, legible in both themes */
+
+.bey-badge--primary {
+    --bey-badge-bg: var(--bey-primary);
+    --bey-badge-border: var(--bey-primary);
+    --bey-badge-fg: var(--bey-primary-fg);
+}
+
+.bey-badge--secondary {
+    --bey-badge-bg: color-mix(in srgb, var(--bey-secondary) var(--bey-badge-tint), var(--bey-bg-page));
+    --bey-badge-fg: color-mix(in srgb, var(--bey-secondary) var(--bey-badge-shade), var(--bey-text-primary));
+}
+
+.bey-badge--success {
+    --bey-badge-bg: color-mix(in srgb, var(--bey-success) var(--bey-badge-tint), var(--bey-bg-page));
+    --bey-badge-fg: color-mix(in srgb, var(--bey-success) var(--bey-badge-shade), var(--bey-text-primary));
+}
+
+.bey-badge--warning {
+    --bey-badge-bg: color-mix(in srgb, var(--bey-warning) var(--bey-badge-tint), var(--bey-bg-page));
+    --bey-badge-fg: color-mix(in srgb, var(--bey-warning) var(--bey-badge-shade), var(--bey-text-primary));
+}
+
+.bey-badge--danger {
+    --bey-badge-bg: color-mix(in srgb, var(--bey-danger) var(--bey-badge-tint), var(--bey-bg-page));
+    --bey-badge-fg: color-mix(in srgb, var(--bey-danger) var(--bey-badge-shade), var(--bey-text-primary));
+}
+
+.bey-badge--info {
+    --bey-badge-bg: color-mix(in srgb, var(--bey-blue) var(--bey-badge-tint), var(--bey-bg-page));
+    --bey-badge-fg: color-mix(in srgb, var(--bey-blue) var(--bey-badge-shade), var(--bey-text-primary));
+}
+
+.bey-badge--purple {
+    --bey-badge-bg: color-mix(in srgb, var(--bey-purple) var(--bey-badge-tint), var(--bey-bg-page));
+    --bey-badge-fg: color-mix(in srgb, var(--bey-purple) var(--bey-badge-shade), var(--bey-text-primary));
+}
+
+.bey-badge--teal {
+    --bey-badge-bg: color-mix(in srgb, var(--bey-teal) var(--bey-badge-tint), var(--bey-bg-page));
+    --bey-badge-fg: color-mix(in srgb, var(--bey-teal) var(--bey-badge-shade), var(--bey-text-primary));
+}
+
+.bey-badge--pink {
+    --bey-badge-bg: color-mix(in srgb, var(--bey-pink) var(--bey-badge-tint), var(--bey-bg-page));
+    --bey-badge-fg: color-mix(in srgb, var(--bey-pink) var(--bey-badge-shade), var(--bey-text-primary));
+}

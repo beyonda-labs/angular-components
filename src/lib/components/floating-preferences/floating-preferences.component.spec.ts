@@ -1,61 +1,93 @@
-import { ChangeDetectorRef } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { queryAll, renderComponent } from '@testing/dom';
 
 import { FloatingPreferencesComponent } from './floating-preferences.component';
 
 describe('FloatingPreferencesComponent', () => {
-    let component: FloatingPreferencesComponent;
     let fixture: ComponentFixture<FloatingPreferencesComponent>;
-    let cd: ChangeDetectorRef;
+
+    async function render(usePill?: boolean): Promise<void> {
+        fixture = await renderComponent(FloatingPreferencesComponent, usePill === undefined ? {} : { usePill });
+    }
+
+    function selects(): HTMLSelectElement[] {
+        return queryAll<HTMLSelectElement>(fixture, 'select');
+    }
+
+    function choose(select: HTMLSelectElement, value: string): void {
+        select.value = value;
+        select.dispatchEvent(new Event('change'));
+        fixture.detectChanges();
+    }
 
     beforeEach(async () => {
+        document.body.classList.remove('dark');
+        localStorage.clear();
+
         await TestBed.configureTestingModule({
             imports: [FloatingPreferencesComponent, TranslateModule.forRoot()]
         }).compileComponents();
+    });
 
-        fixture = TestBed.createComponent(FloatingPreferencesComponent);
-        component = fixture.componentInstance;
-        cd = fixture.debugElement.injector.get(ChangeDetectorRef);
+    it('offers a language and a theme selector', async () => {
+        await render();
+
+        expect(selects()).toHaveLength(2);
+    });
+
+    it('starts on the light theme', async () => {
+        await render();
+
+        expect(document.body.classList).not.toContain('dark');
+        expect(selects()[1].value).toBe('light');
+    });
+
+    it('turns the dark theme on and off from its selector', async () => {
+        await render();
+
+        choose(selects()[1], 'dark');
+        expect(document.body.classList).toContain('dark');
+
+        choose(selects()[1], 'light');
+        expect(document.body.classList).not.toContain('dark');
+    });
+
+    it('switches the application language from its selector', async () => {
+        await render();
+        const translate = TestBed.inject(TranslateService);
+        translate.setDefaultLang('en');
+
+        choose(selects()[0], 'es');
+
+        expect(translate.currentLang).toBe('es');
+    });
+
+    it('follows a language changed from elsewhere', async () => {
+        const translate = TestBed.inject(TranslateService);
+        translate.setDefaultLang('en');
+        await render();
+
+        translate.use('es');
         fixture.detectChanges();
+
+        expect(selects()[0].value).toBe('es');
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('wraps itself in the floating pill unless told not to', async () => {
+        await render();
+        expect(fixture.nativeElement.querySelector('.is-pill')).toBeTruthy();
+
+        await render(false);
+        expect(fixture.nativeElement.querySelector('.is-pill')).toBeNull();
     });
 
-    it('should not add dark class to body by default', () => {
-        expect(document.body.classList.contains('dark')).toBe(false);
-    });
+    it('names both selectors for assistive technology', async () => {
+        await render();
 
-    it('should add dark class to body when theme changes to dark', () => {
-        component.onThemeChange('dark');
-        expect(document.body.classList.contains('dark')).toBe(true);
-    });
-
-    it('should remove dark class from body when theme changes to light', () => {
-        component.onThemeChange('dark');
-        component.onThemeChange('light');
-        expect(document.body.classList.contains('dark')).toBe(false);
-    });
-
-    it('should call translateService.use when language changes', () => {
-        const select: HTMLSelectElement = fixture.nativeElement.querySelectorAll('select')[0];
-        select.value = 'es';
-        select.dispatchEvent(new Event('change'));
-
-        expect(document.body).toBeTruthy();
-    });
-
-    it('should render the pill wrapper by default', () => {
-        expect(fixture.nativeElement.querySelector('.bey-fp-pill')).toBeTruthy();
-    });
-
-    it('should not render the pill wrapper when usePill is false', () => {
-        component.usePill = false;
-        cd.markForCheck();
-        fixture.detectChanges();
-
-        expect(fixture.nativeElement.querySelector('.bey-fp-pill')).toBeNull();
+        expect(selects().map(select => select.getAttribute('aria-label'))).toEqual([
+            'angular-components.floating-preferences.language',
+            'angular-components.floating-preferences.theme'
+        ]);
     });
 });

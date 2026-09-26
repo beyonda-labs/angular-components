@@ -1,196 +1,180 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { buttonByName, queryAll, renderComponent, textsOf } from '@testing/dom';
 
 import { LeftMenuAction } from '../../models/left-menu.model';
 import { ActionListComponent } from './action-list.component';
 
 describe('ActionListComponent', () => {
-    let component: ActionListComponent;
     let fixture: ComponentFixture<ActionListComponent>;
+
+    function action(
+        key: string,
+        overrides: Partial<ConstructorParameters<typeof LeftMenuAction>[0]> = {}
+    ): LeftMenuAction {
+        return new LeftMenuAction({ key, label: key, ...overrides });
+    }
+
+    async function render(actions: LeftMenuAction[], expanded = true): Promise<void> {
+        fixture = await renderComponent(ActionListComponent, { actions, expanded, prefix: 'demo' });
+    }
+
+    function buttons(): HTMLButtonElement[] {
+        return queryAll<HTMLButtonElement>(fixture, 'button');
+    }
+
+    function labels(): string[] {
+        return textsOf(buttons());
+    }
+
+    function buttonOf(name: string): HTMLButtonElement {
+        return buttonByName(fixture, name);
+    }
+
+    function chevronOf(name: string): HTMLElement {
+        return buttonOf(name).querySelector(':scope > span[aria-hidden="true"]') as HTMLElement;
+    }
+
+    function rowOf(name: string): HTMLElement {
+        return buttonOf(name).parentElement as HTMLElement;
+    }
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [ActionListComponent, TranslateModule.forRoot()]
         }).compileComponents();
-
-        fixture = TestBed.createComponent(ActionListComponent);
-        component = fixture.componentInstance;
-        component.prefix = 'test.left-menu';
-        component.groupKey = 'top';
-        component.actions = [
-            new LeftMenuAction({
-                key: 'documents',
-                subActions: [new LeftMenuAction({ key: 'inbox' })]
-            })
-        ];
-        component.expanded = false;
-        fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('renders one row per action', async () => {
+        await render([action('home'), action('settings')]);
+
+        expect(labels()).toEqual(['home', 'settings']);
     });
 
-    it('should open flyout on hover for collapsed actions with subactions', () => {
-        const action = component.actions[0];
-        const actionPath = component.buildPath(component.groupKey, action.key);
+    it('builds the label from the prefix when the action carries none', async () => {
+        await render([new LeftMenuAction({ key: 'home' })]);
 
-        component.onItemMouseEnter(action, actionPath);
-
-        expect(component.shouldShowFlyout(action, actionPath)).toBe(true);
+        expect(labels()).toEqual(['demo.actions.home.label']);
     });
 
-    it('should open flyout for collapsed actions with subactions on first click', () => {
-        const action = component.actions[0];
-        const actionPath = component.buildPath(component.groupKey, action.key);
+    it('runs the action of a leaf and reports it', async () => {
+        const run = jest.fn();
+        const triggered = jest.fn();
+        await render([action('home', { action: run })]);
+        fixture.componentInstance.actionTriggered.subscribe(triggered);
 
-        component.onActionClick(action, actionPath);
+        buttonOf('home').click();
 
-        expect(component.shouldShowFlyout(action, actionPath)).toBe(true);
+        expect(run).toHaveBeenCalled();
+        expect(triggered).toHaveBeenCalled();
     });
 
-    it('should close flyout after leaving the hovered item in collapsed mode', () => {
-        const action = component.actions[0];
-        const actionPath = component.buildPath(component.groupKey, action.key);
+    it('ignores a disabled action', async () => {
+        const run = jest.fn();
+        await render([action('home', { action: run, disabled: true })]);
 
-        component.onActionClick(action, actionPath);
-        component.onItemMouseLeave(actionPath);
+        buttonOf('home').click();
 
-        expect(component.shouldShowFlyout(action, actionPath)).toBe(false);
+        expect(run).not.toHaveBeenCalled();
     });
 
-    it('should seed expanded submenus for actions with active descendants', () => {
-        component.expanded = true;
-        component.actions = [
-            new LeftMenuAction({
-                key: 'documents',
-                subActions: [new LeftMenuAction({ key: 'inbox', active: true })]
-            })
-        ];
+    describe('expanded', () => {
+        it('opens and closes a branch that has no action of its own', async () => {
+            await render([action('reports', { subActions: [action('daily')] })]);
 
-        fixture.detectChanges();
+            expect(labels()).toEqual(['reports']);
 
-        const action = component.actions[0];
-        const actionPath = component.buildPath(component.groupKey, action.key);
+            buttonOf('reports').click();
+            fixture.detectChanges();
+            expect(labels()).toEqual(['reports', 'daily']);
 
-        expect(component.shouldShowSubmenu(action, actionPath)).toBe(true);
-        expect(component.hasSubmenuSelection(action)).toBe(true);
+            buttonOf('reports').click();
+            fixture.detectChanges();
+            expect(labels()).toEqual(['reports']);
+        });
+
+        it('runs the action of a branch that has one, and only opens it from the chevron', async () => {
+            const run = jest.fn();
+            await render([action('reports', { action: run, subActions: [action('daily')] })]);
+
+            buttonOf('reports').click();
+            fixture.detectChanges();
+            expect(run).toHaveBeenCalled();
+            expect(labels()).toEqual(['reports']);
+
+            chevronOf('reports').click();
+            fixture.detectChanges();
+            expect(labels()).toContain('daily');
+        });
+
+        it('opens the branch that holds the active action', async () => {
+            await render([action('reports', { subActions: [action('daily', { active: true })] })]);
+
+            expect(labels()).toEqual(['reports', 'daily']);
+        });
+
+        it('lets an open branch be closed even while a descendant is active', async () => {
+            await render([action('reports', { subActions: [action('daily', { active: true })] })]);
+
+            buttonOf('reports').click();
+            fixture.detectChanges();
+
+            expect(labels()).toEqual(['reports']);
+        });
+
+        it('closes the branch that was open when another one opens', async () => {
+            await render([
+                action('reports', { subActions: [action('daily')] }),
+                action('admin', { subActions: [action('users')] })
+            ]);
+
+            buttonOf('reports').click();
+            fixture.detectChanges();
+            expect(labels()).toContain('daily');
+
+            buttonOf('admin').click();
+            fixture.detectChanges();
+
+            expect(labels()).toContain('users');
+            expect(labels()).not.toContain('daily');
+        });
     });
 
-    it('should allow closing an expanded submenu even when a descendant is active', () => {
-        component.expanded = true;
-        component.actions = [
-            new LeftMenuAction({
-                key: 'documents',
-                subActions: [new LeftMenuAction({ key: 'inbox', active: true })]
-            })
-        ];
+    describe('collapsed', () => {
+        it('opens a flyout on hover and closes it on leave', async () => {
+            await render([action('reports', { subActions: [action('daily')] })], false);
 
-        fixture.detectChanges();
+            buttonOf('reports').dispatchEvent(new MouseEvent('mouseover'));
+            fixture.detectChanges();
+            expect(buttonOf('reports').getAttribute('aria-expanded')).toBe('true');
+            expect(labels()).toContain('daily');
 
-        const action = component.actions[0];
-        const actionPath = component.buildPath(component.groupKey, action.key);
+            rowOf('reports').dispatchEvent(new MouseEvent('mouseleave'));
+            fixture.detectChanges();
+            expect(buttonOf('reports').getAttribute('aria-expanded')).toBe('false');
+            expect(labels()).not.toContain('daily');
+        });
 
-        component.onActionClick(action, actionPath);
+        it('opens the flyout on a click instead of running the action', async () => {
+            const run = jest.fn();
+            await render([action('reports', { action: run, subActions: [action('daily')] })], false);
 
-        expect(component.shouldShowSubmenu(action, actionPath)).toBe(false);
-        expect(component.hasSubmenuSelection(action)).toBe(true);
-    });
+            buttonOf('reports').click();
+            fixture.detectChanges();
 
-    it('should only toggle the submenu when a parent with subActions has no action of its own', () => {
-        component.expanded = true;
-        component.actions = [
-            new LeftMenuAction({
-                key: 'documents',
-                subActions: [new LeftMenuAction({ key: 'inbox' })]
-            })
-        ];
+            expect(run).not.toHaveBeenCalled();
+            expect(buttonOf('reports').getAttribute('aria-expanded')).toBe('true');
+            expect(labels()).toContain('daily');
+        });
 
-        fixture.detectChanges();
+        it('never opens a flyout for an action without children', async () => {
+            await render([action('home')], false);
 
-        const action = component.actions[0];
-        const actionPath = component.buildPath(component.groupKey, action.key);
-        const triggeredSpy = jest.fn();
-        component.actionTriggered.subscribe(triggeredSpy);
+            buttonOf('home').dispatchEvent(new MouseEvent('mouseover'));
+            fixture.detectChanges();
 
-        component.onActionClick(action, actionPath);
-
-        expect(component.shouldShowSubmenu(action, actionPath)).toBe(true);
-        expect(triggeredSpy).not.toHaveBeenCalled();
-    });
-
-    it('should run the action (not toggle) when clicking the label of a parent that has its own action', () => {
-        component.expanded = true;
-        const parentAction = jest.fn();
-        component.actions = [
-            new LeftMenuAction({
-                action: parentAction,
-                key: 'documents',
-                subActions: [new LeftMenuAction({ key: 'inbox' })]
-            })
-        ];
-
-        fixture.detectChanges();
-
-        const action = component.actions[0];
-        const actionPath = component.buildPath(component.groupKey, action.key);
-
-        component.onActionClick(action, actionPath, false, { target: document.createElement('span') } as unknown as MouseEvent);
-
-        expect(parentAction).toHaveBeenCalled();
-        expect(component.shouldShowSubmenu(action, actionPath)).toBe(false);
-    });
-
-    it('should toggle (not run the action) when clicking the chevron of a parent that has its own action', () => {
-        component.expanded = true;
-        const parentAction = jest.fn();
-        component.actions = [
-            new LeftMenuAction({
-                action: parentAction,
-                key: 'documents',
-                subActions: [new LeftMenuAction({ key: 'inbox' })]
-            })
-        ];
-
-        fixture.detectChanges();
-
-        const action = component.actions[0];
-        const actionPath = component.buildPath(component.groupKey, action.key);
-        const chevron = document.createElement('span');
-        chevron.classList.add('bey-left-menu-action-chevron');
-        const child = document.createElement('span');
-        chevron.appendChild(child);
-
-        component.onActionClick(action, actionPath, false, { target: child } as unknown as MouseEvent);
-
-        expect(parentAction).not.toHaveBeenCalled();
-        expect(component.shouldShowSubmenu(action, actionPath)).toBe(true);
-    });
-
-    it('should collapse other expanded branches when opening a new submenu', () => {
-        component.expanded = true;
-        component.actions = [
-            new LeftMenuAction({
-                key: 'documents',
-                subActions: [new LeftMenuAction({ key: 'inbox' })]
-            }),
-            new LeftMenuAction({
-                key: 'settings',
-                subActions: [new LeftMenuAction({ key: 'profile' })]
-            })
-        ];
-
-        fixture.detectChanges();
-
-        const firstAction = component.actions[0];
-        const secondAction = component.actions[1];
-        const firstPath = component.buildPath(component.groupKey, firstAction.key);
-        const secondPath = component.buildPath(component.groupKey, secondAction.key);
-
-        component.onActionClick(firstAction, firstPath);
-        component.onActionClick(secondAction, secondPath);
-
-        expect(component.shouldShowSubmenu(firstAction, firstPath)).toBe(false);
-        expect(component.shouldShowSubmenu(secondAction, secondPath)).toBe(true);
+            expect(buttonOf('home').getAttribute('aria-expanded')).toBeNull();
+            expect(fixture.nativeElement.textContent).not.toContain('home');
+        });
     });
 });

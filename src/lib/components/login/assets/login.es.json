@@ -52,7 +52,7 @@
                     "label": "Contraseña",
                     "placeholder": "Escribe tu contraseña"
                 },
-                "signinWith": "Continuar con"
+                "signin-with": "Continuar con"
             },
             "provider": {
                 "facebook": "Facebook",
@@ -61,8 +61,6 @@
             },
             "register": {
                 "button": {
-                    "back": "Atrás",
-                    "next": "Siguiente",
                     "register": "Crear cuenta"
                 },
                 "email": {

@@ -1,84 +1,46 @@
-# Footer (`bey-footer`)
+# Footer
 
-Barra de pie de página que muestra la identidad de marca del producto (icono, organización y nombre de producto), opcionalmente enlaces legales (Términos y condiciones, Política de privacidad) que navegan mediante Angular Router, y el selector de idioma/tema (`bey-floating-preferences`) integrado a la derecha.
+A one-line bar with the product's brand, optional legal links and the language and theme selector embedded on
+the right. Everything it shows comes from a config model.
 
----
-
-## Quick start
-
-```ts
-import { BeyFooterComponent, FooterConfig } from '@beyonda-labs/angular-components';
-```
-
-```html
-<bey-footer [config]="footerConfig" />
-```
+## Usage
 
 ```ts
-footerConfig = new FooterConfig({
-    iconSrc: '/assets/icon.png',
-    productName: 'my-app.footer.productName',
-    orgName: 'my-app.footer.orgName',   // opcional — por defecto "Beyonda Labs"
-    termsUrl: '/terms',                  // opcional
-    privacyUrl: '/privacy'               // opcional
+const footer = new BeyFooterConfig({
+    iconSrc: 'assets/icon.svg',
+    productName: 'myApp.productName',
+    termsUrl: '/terms',
+    privacyUrl: '/privacy'
 });
 ```
 
----
-
-## `FooterConfig`
-
-| Propiedad      | Tipo     | Requerido | Descripción                                                                          |
-| -------------- | -------- | --------- | ------------------------------------------------------------------------------------ |
-| `iconSrc`      | `string` | Sí        | Ruta de la imagen del icono de marca                                                 |
-| `productName`  | `string` | Sí        | Clave i18n o texto literal del nombre del producto                                   |
-| `orgName`      | `string` | No        | Clave i18n o texto literal del nombre de la organización. Por defecto `"Beyonda Labs"` |
-| `privacyUrl`   | `string` | No        | Ruta Angular para la página de privacidad. Oculta el enlace si no se define          |
-| `termsUrl`     | `string` | No        | Ruta Angular para la página de términos. Oculta el enlace si no se define            |
-
-Los valores de `productName` y `orgName` se pasan directamente al pipe `translate`, por lo que pueden ser claves i18n de la app consumidora o texto literal.
-
----
-
-## i18n
-
-Claves de la librería bajo el prefijo `angular-components.footer`:
-
-| Clave                               | EN                       | ES                          |
-| ----------------------------------- | ------------------------ | --------------------------- |
-| `angular-components.footer.terms`   | Terms & Conditions       | Términos y condiciones      |
-| `angular-components.footer.privacy` | Privacy Policy           | Política de privacidad      |
-| `angular-components.footer.legal`   | Legal                    | Legal                       |
-
-> `angular-components.footer.legal` se usa como `aria-label` del `<nav>` de enlaces legales.
-
----
-
-## CSS custom properties
-
-| Variable                | Light                            | Dark                             | Descripción                        |
-| ----------------------- | -------------------------------- | -------------------------------- | ---------------------------------- |
-| `--bey-footer-fg`       | `--bey-gray-600`                 | `--bey-gray-600`                 | Color del nombre del producto      |
-| `--bey-footer-fg-2`     | `--bey-gray-700`                 | `--bey-gray-500`                 | Color del nombre de la organización|
-| `--bey-footer-link`     | `--bey-gray-700`                 | `--bey-gray-500`                 | Color de los enlaces legales       |
-| `--bey-footer-link-hover`| `--bey-gray-900`                | `--bey-gray-50`                  | Color de los enlaces en hover/focus|
-| `--bey-footer-sep`      | `--bey-gray-300`                 | `--bey-gray-800`                 | Color del separador `—`            |
-| `--bey-footer-border`   | `--bey-gray-200`                 | `--bey-gray-900`                 | Color del borde superior           |
-| `--bey-footer-shadow`   | `0 -2px 4px rgba(white, 0.9)`   | `0 -2px 8px rgba(black, 0.7)`   | Sombra sobre el borde superior     |
-| `--bey-footer-font`     | `'Helvetica Neue', 'Helvetica', 'Inter', 'Arial', system-ui, sans-serif` | — | Familia tipográfica |
-
-El dark mode se activa automáticamente con `:host-context(body.dark)`. El icono de marca recibe `filter: invert(1)` en modo oscuro.
-
----
-
-## Dark mode
-
-```css
-:host {
-    --bey-footer-border: #custom-border;
-}
-
-:host-context(body.dark) {
-    --bey-footer-border: #custom-border-dark;
-}
+```html
+<bey-footer [config]="footer"></bey-footer>
 ```
+
+## BeyFooterConfig
+
+| Field         | Required | Default          | Meaning                                                 |
+| ------------- | -------- | ---------------- | ------------------------------------------------------- |
+| `iconSrc`     | yes      |                  | Path to the brand icon                                   |
+| `productName` | yes      |                  | A literal name or an i18n key                            |
+| `orgName`     | no       | `Beyonda Labs`   | A literal name or an i18n key                            |
+| `termsUrl`    | no       | none             | Router path; the terms link appears only when it is set   |
+| `privacyUrl`  | no       | none             | Router path; the privacy link appears only when it is set |
+
+Links navigate through the Angular router, so the urls are router paths and not hrefs.
+
+## Theming
+
+| Variable                   | Default                |
+| -------------------------- | ---------------------- |
+| `--bey-footer-fg`          | `--bey-text-muted`     |
+| `--bey-footer-fg-2`        | `--bey-text-secondary` |
+| `--bey-footer-link`        | `--bey-text-secondary` |
+| `--bey-footer-link-hover`  | `--bey-text-primary`   |
+| `--bey-footer-sep`         | `--bey-border-default` |
+| `--bey-footer-border`      | `--bey-border-subtle`  |
+| `--bey-footer-font`        | system sans-serif stack |
+
+The brand icon is inverted under `body.dark`, since an icon drawn for a light background cannot be recoloured
+through tokens.

@@ -1,29 +1,32 @@
-<ng-template #renderActions let-actions let-level="level" let-forceExpanded="forceExpanded" let-parentPath="parentPath">
+<ng-template #renderActions let-actions let-forceExpanded="forceExpanded" let-level="level" let-parentPath="parentPath">
     @for (action of actions; track $index) {
         @let actionPath = buildPath(parentPath, action.key);
 
         <div
             class="bey-left-menu-item"
-            [class.bey-left-menu-item-level-child]="level > 0"
+            [class.is-nested]="level > 0"
             (mouseleave)="onItemMouseLeave(actionPath, forceExpanded)"
         >
             <button
-                type="button"
                 class="bey-left-menu-action"
-                [class.bey-left-menu-action-active]="isActionActive(action)"
-                [class.bey-left-menu-action-collapsed]="!isInlineExpanded(forceExpanded)"
-                [class.bey-left-menu-action-descendant-active]="hasSubmenuSelection(action)"
-                [class.bey-left-menu-action-disabled]="action.disabled"
-                [class.bey-left-menu-action-has-children]="hasSubActions(action)"
-                [class.bey-left-menu-action-open]="isSubmenuOpen(actionPath, forceExpanded)"
+                boundariesElement="viewport"
+                container="body"
+                placement="right"
+                type="button"
+                [attr.aria-current]="isActionActive(action) ? 'page' : null"
+                [attr.aria-expanded]="hasSubActions(action) ? isSubmenuOpen(actionPath, forceExpanded) : null"
+                [attr.aria-label]="isInlineExpanded(forceExpanded) ? null : (getLabel(action) | translate)"
+                [class.has-active-descendant]="hasSubmenuSelection(action)"
+                [class.has-children]="hasSubActions(action)"
+                [class.is-active]="isActionActive(action)"
+                [class.is-collapsed]="!isInlineExpanded(forceExpanded)"
+                [class.is-disabled]="action.disabled"
+                [class.is-open]="isSubmenuOpen(actionPath, forceExpanded)"
                 [disabled]="action.disabled"
                 [tooltip]="getButtonTooltip(action, actionPath, forceExpanded) | translate"
-                container="body"
-                boundariesElement="viewport"
-                placement="right"
+                (click)="onActionClick(action, actionPath, forceExpanded, $event)"
                 (focus)="onItemMouseEnter(action, actionPath, forceExpanded)"
                 (mouseover)="onItemMouseEnter(action, actionPath, forceExpanded)"
-                (click)="onActionClick(action, actionPath, forceExpanded, $event)"
             >
                 <span class="bey-left-menu-action-icon">
                     @if (action.icon) {
@@ -37,7 +40,7 @@
 
                 @if (hasSubActions(action)) {
                     @if (isInlineExpanded(forceExpanded)) {
-                        <span class="bey-left-menu-action-chevron">
+                        <span class="bey-left-menu-action-chevron" aria-hidden="true">
                             <fa-icon [icon]="getChevronIcon(actionPath, forceExpanded)"></fa-icon>
                         </span>
                     } @else {
@@ -83,5 +86,5 @@
 
 <ng-container
     [ngTemplateOutlet]="renderActions"
-    [ngTemplateOutletContext]="{ $implicit: actions, level: 0, forceExpanded: false, parentPath: groupKey }"
+    [ngTemplateOutletContext]="{ $implicit: actions(), level: 0, forceExpanded: false, parentPath: groupKey() }"
 ></ng-container>

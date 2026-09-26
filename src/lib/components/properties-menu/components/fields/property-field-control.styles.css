@@ -1,39 +1,39 @@
+/* Shared by every field: the control row, the inputs and the square action buttons beside them. */
+
 :host {
     --bey-property-field-accent: var(--bey-primary);
-    --bey-property-field-border: var(--bey-gray-300);
-    --bey-property-field-border-hover: var(--bey-gray-400);
+    --bey-property-field-border: var(--bey-border-default);
+    --bey-property-field-border-hover: var(--bey-border-strong);
     --bey-property-field-surface: var(--bey-bg-page);
-    --bey-property-field-text: var(--text-primary);
-    --bey-property-field-text-muted: var(--text-muted);
+    --bey-property-field-text: var(--bey-text-primary);
+    --bey-property-field-text-muted: var(--bey-text-muted);
+    --bey-property-field-control-size: 1.9rem;
+    --bey-property-field-focus-ring: 0 0 0 var(--bey-border-width-thick)
+        color-mix(in srgb, var(--bey-property-field-accent) 20%, transparent);
 
     display: block;
 }
 
-:host-context(body.dark) {
-    --bey-property-field-border: var(--bey-gray-700);
-    --bey-property-field-border-hover: var(--bey-gray-600);
-}
-
 .bey-property-field-control {
-    position: relative;
-    display: flex;
     align-items: center;
-    gap: 0.35rem;
+    display: flex;
+    gap: var(--bey-space-xs);
+    position: relative;
 }
 
 .bey-property-field-input,
 .bey-property-field-select {
-    width: 100%;
-    padding: 0.4rem 0.55rem;
-    border: 1px solid var(--bey-property-field-border);
-    border-radius: 0.4rem;
     background: var(--bey-property-field-surface);
+    border: var(--bey-border-width) solid var(--bey-property-field-border);
+    border-radius: var(--bey-radius-sm);
     color: var(--bey-property-field-text);
-    font-size: 0.8rem;
-    line-height: 1.3;
+    font-size: var(--bey-font-size-sm);
+    line-height: var(--bey-line-height-tight);
+    padding: var(--bey-space-xs) var(--bey-space-sm);
     transition:
-        border-color 0.15s ease,
-        box-shadow 0.15s ease;
+        border-color var(--bey-duration-fast) var(--bey-easing-standard),
+        box-shadow var(--bey-duration-fast) var(--bey-easing-standard);
+    width: 100%;
 }
 
 .bey-property-field-input:hover,
@@ -43,69 +43,83 @@
 
 .bey-property-field-input:focus,
 .bey-property-field-select:focus {
-    outline: none;
     border-color: var(--bey-property-field-accent);
-    box-shadow: 0 0 0 2px rgba(var(--bey-black-rgb), 0.06);
+    box-shadow: var(--bey-property-field-focus-ring);
+    outline: none;
 }
 
 .bey-property-field-input:disabled,
 .bey-property-field-select:disabled {
-    color: var(--bey-property-field-text-muted);
     background: var(--bey-bg-muted);
+    color: var(--bey-property-field-text-muted);
     cursor: not-allowed;
 }
 
-.bey-property-field-input-invalid {
+.bey-property-field-input.is-invalid {
     border-color: var(--bey-danger);
 }
 
 .bey-property-field-unit {
     color: var(--bey-property-field-text-muted);
-    font-size: 0.75rem;
+    font-size: var(--bey-font-size-xs);
     white-space: nowrap;
 }
 
-.bey-property-field-input-with-actions {
-    min-height: calc(2 * 1.9rem + 0.35rem);
+.bey-property-field-input--with-actions {
+    min-height: calc(2 * var(--bey-property-field-control-size) + var(--bey-space-xs));
 }
 
-.bey-property-field-button-stack {
+.bey-property-field-actions {
     display: flex;
-    flex-direction: column;
     flex: 0 0 auto;
-    gap: 0.35rem;
+    flex-direction: column;
+    gap: var(--bey-space-xs);
 }
 
-.bey-property-field-variable-trigger {
-    display: inline-flex;
+.bey-property-field-action {
     align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    width: 1.9rem;
-    height: 1.9rem;
-    border: 1px solid var(--bey-property-field-border);
-    border-radius: 0.4rem;
     background: var(--bey-property-field-surface);
+    border: var(--bey-border-width) solid var(--bey-property-field-border);
+    border-radius: var(--bey-radius-sm);
     color: var(--bey-property-field-text-muted);
     cursor: pointer;
+    display: inline-flex;
+    flex: 0 0 auto;
+    height: var(--bey-property-field-control-size);
+    justify-content: center;
+    margin: 0;
     transition:
-        color 0.15s ease,
-        border-color 0.15s ease;
+        color var(--bey-duration-fast) var(--bey-easing-standard),
+        border-color var(--bey-duration-fast) var(--bey-easing-standard);
+    width: var(--bey-property-field-control-size);
 }
 
-.bey-property-field-variable-trigger:hover {
-    color: var(--bey-property-field-text);
+.bey-property-field-action:hover:not(:disabled) {
     border-color: var(--bey-property-field-border-hover);
+    color: var(--bey-property-field-text);
 }
 
-.bey-property-field-variable-trigger-active {
-    color: var(--text-inverse);
+.bey-property-field-action:disabled,
+.bey-property-field-action.is-disabled {
+    cursor: not-allowed;
+    opacity: var(--bey-opacity-disabled);
+}
+
+.bey-property-field-action.is-active {
     background: var(--bey-property-field-accent);
     border-color: var(--bey-property-field-accent);
+    color: var(--bey-primary-fg);
 }
 
-.bey-property-field-picker-anchor {
-    position: relative;
+.bey-property-field-anchor {
     flex: 1 1 auto;
     min-width: 0;
+    position: relative;
+}
+
+.bey-property-field-error {
+    color: var(--bey-danger);
+    font-size: var(--bey-font-size-2xs);
+    margin: var(--bey-space-2xs) 0 0;
+    width: 100%;
 }

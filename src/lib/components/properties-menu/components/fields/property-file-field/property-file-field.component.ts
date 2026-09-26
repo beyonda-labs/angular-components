@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, output, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faUpload, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
@@ -6,7 +6,11 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { PropertyFileField } from '../../../models/fields/property-file-field.model';
 
+const BYTES_PER_MB = 1024 * 1024;
+
+/** Reads the chosen file as base64; the file name is only known after a pick, never from a saved value. */
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, TooltipModule, TranslateModule],
     selector: 'bey-property-file-field',
     standalone: true,
@@ -14,31 +18,37 @@ import { PropertyFileField } from '../../../models/fields/property-file-field.mo
     templateUrl: './property-file-field.component.html'
 })
 export class PropertyFileFieldComponent {
-    @Input({ required: true }) field!: PropertyFileField;
-    @Output() valueChange = new EventEmitter<string>();
+    readonly field = input.required<PropertyFileField>();
+
+    readonly valueChange = output<string>();
+
+    readonly selectedFileName = signal<string | null>(null);
+    readonly sizeErrorMaxSizeMB = signal<number | null>(null);
+
+    readonly hasValue = computed(() => Boolean(this.field().value));
+    readonly showsClear = computed(() => this.hasValue() && !this.field().disabled);
 
     readonly chooseIcon = faUpload;
     readonly clearIcon = faXmark;
 
-    // The persisted field value is just base64 — the original filename isn't stored on the document,
-    // so it's only known for the lifetime of this component after a fresh pick, not when a saved value
-    // is loaded back into the editor.
-    selectedFileName?: string;
-    sizeErrorMaxSizeMB?: number;
+    private isDestroyed = false;
 
-    get hasValue(): boolean {
-        return Boolean(this.field.value);
+    constructor() {
+        inject(DestroyRef).onDestroy(() => {
+            this.isDestroyed = true;
+        });
     }
 
     onClear(): void {
-        this.selectedFileName = undefined;
-        this.sizeErrorMaxSizeMB = undefined;
+        this.selectedFileName.set(null);
+        this.sizeErrorMaxSizeMB.set(null);
         this.valueChange.emit('');
     }
 
     onFileSelected(event: Event): void {
         const input = event.target as HTMLInputElement;
         const file = input.files?.[0];
+        const { maxSizeBytes } = this.field();
 
         input.value = '';
 
@@ -46,29 +56,26 @@ export class PropertyFileFieldComponent {
             return;
         }
 
-        this.sizeErrorMaxSizeMB = undefined;
+        this.sizeErrorMaxSizeMB.set(null);
 
-        // Rejecting an oversized file here — before it's even read into base64 — saves the user from
-        // waiting through a save/preview round-trip only to discover item-problems.service.ts's
-        // MAX_PDF_SOURCE_BYTES check rejected it server-side; that check still runs regardless, this is
-        // purely a faster local echo of the same limit (see `field.maxSizeBytes`).
-        if (this.field.maxSizeBytes !== undefined && file.size > this.field.maxSizeBytes) {
-            this.sizeErrorMaxSizeMB = Math.round(this.field.maxSizeBytes / (1024 * 1024));
+        if (maxSizeBytes !== undefined && file.size > maxSizeBytes) {
+            this.sizeErrorMaxSizeMB.set(Math.round(maxSizeBytes / BYTES_PER_MB));
 
             return;
         }
 
-        this.selectedFileName = file.name;
+        this.selectedFileName.set(file.name);
 
         const reader = new FileReader();
 
         reader.addEventListener('load', () => {
             const result = reader.result as string;
-            const base64 = result.slice(result.indexOf(',') + 1);
 
-            this.valueChange.emit(base64);
+            // The read may finish after the field is gone (a replaced config); an output cannot emit then.
+            if (!this.isDestroyed) {
+                this.valueChange.emit(result.slice(result.indexOf(',') + 1));
+            }
         });
-
         reader.readAsDataURL(file);
     }
 }

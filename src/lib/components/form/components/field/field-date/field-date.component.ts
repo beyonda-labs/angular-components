@@ -1,163 +1,120 @@
-import { Component, DestroyRef, inject, Input, OnInit } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, untracked } from '@angular/core';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { BsDatepickerConfig, BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { map, startWith, switchMap } from 'rxjs';
 
 import { FormDateField } from '../../../models/fields/form-date-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
 import { DateFormatService } from '../../../services/date-format.service';
 import { DatepickerLocaleService } from '../../../services/datepicker-locale.service';
-import { FormService } from '../../../services/form.service';
 
 type FormDatepickerConfig = Partial<BsDatepickerConfig & { locale: string }>;
 
 @Component({
-    imports: [ReactiveFormsModule, TranslateModule, BsDatepickerModule],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [BsDatepickerModule, ReactiveFormsModule, TranslateModule],
     selector: 'bey-form-date-field',
     standalone: true,
     styleUrls: ['../field-control.styles.css'],
     templateUrl: './field-date.component.html'
 })
-export class FormDateFieldComponent implements OnInit {
-    @Input() field: FormDateField;
-    @Input() formConfig: FormConfig;
-    @Input() section: FormSection;
-
-    control?: FormControl<string | null>;
-    readonly datepickerControl = new FormControl<Date | null>(null);
-    datepickerConfig: FormDatepickerConfig = {
-        dateInputFormat: DateFormatService.DEFAULT_FORMAT,
-        returnFocusToInput: true,
-        showWeekNumbers: false
-    };
-
-    sectionGroup?: FormGroup;
+export class FormDateFieldComponent {
+    readonly control = input.required<FormControl<string | null>>();
+    readonly field = input.required<FormDateField>();
+    readonly prefix = input.required<string>();
 
     private readonly datepickerLocaleService = inject(DatepickerLocaleService);
     private readonly dateFormatService = inject(DateFormatService);
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly formService = inject(FormService);
     private readonly translateService = inject(TranslateService);
 
-    ngOnInit(): void {
-        const initialLanguage = this.translateService.currentLang || this.translateService.getDefaultLang();
+    readonly datepickerControl = new FormControl<Date | null>(null);
+    readonly language = toSignal(this.translateService.onLangChange.pipe(map(event => event.lang)), {
+        initialValue: this.translateService.currentLang || this.translateService.getDefaultLang()
+    });
 
-        this.datepickerConfig = this.createDatepickerConfig(this.field.format, initialLanguage);
-        this.syncDatepickerLocale(initialLanguage);
-        this.sectionGroup = this.formService.getSectionGroup(this.formConfig, this.section.key);
+    readonly datepickerConfig = computed<FormDatepickerConfig>(() => ({
+        dateInputFormat: this.field().format,
+        locale: this.datepickerLocaleService.getLocale(this.language()),
+        returnFocusToInput: true,
+        showWeekNumbers: false
+    }));
+    readonly maxDate = computed(() => this.parseDate(this.field().maxDate) ?? undefined);
+    readonly minDate = computed(() => this.parseDate(this.field().minDate) ?? undefined);
+    readonly placeholder = computed(() => this.field().placeholder ?? this.field().format);
 
-        this.translateService.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(event => {
-            this.syncDatepickerLocale(event.lang);
+    constructor() {
+        effect(() => {
+            const language = this.language();
+
+            untracked(() => this.datepickerLocaleService.use(language));
         });
 
-        if (this.sectionGroup) {
-            this.control = this.formService.getFieldControl(this.sectionGroup, this.field) as FormControl<
-                string | null
-            >;
-
-            this.syncDatepickerState();
-            this.syncDatepickerValue(this.control.value);
-
-            this.control.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(value => {
-                this.syncDatepickerValue(value);
+        toObservable(this.control)
+            .pipe(
+                switchMap(control =>
+                    control.events.pipe(
+                        startWith(null),
+                        map(() => control)
+                    )
+                ),
+                takeUntilDestroyed()
+            )
+            .subscribe(control => {
+                this.syncDatepickerState(control);
+                this.syncDatepickerValue(control.value);
             });
 
-            this.control.statusChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-                this.syncDatepickerState();
-            });
-
-            this.datepickerControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(value => {
-                this.onDatepickerValueChange(value);
-            });
-        }
-    }
-
-    getMaxDate(): Date | undefined {
-        return this.parseDate(this.field.maxDate) ?? undefined;
-    }
-
-    getMinDate(): Date | undefined {
-        return this.parseDate(this.field.minDate) ?? undefined;
-    }
-
-    getPlaceholder(): string {
-        return this.field.placeholder ?? this.field.format;
+        this.datepickerControl.valueChanges
+            .pipe(takeUntilDestroyed())
+            .subscribe(value => this.onDatepickerValueChange(value));
     }
 
     isInvalid(): boolean {
-        return (this.control?.invalid && this.control?.touched) ?? false;
+        const control = this.control();
+
+        return control.invalid && control.touched;
     }
 
     markAsTouched(): void {
-        this.control?.markAsTouched();
-    }
-
-    private areDatesEqual(firstDate: Date | null, secondDate: Date | null): boolean {
-        return this.formatDate(firstDate) === this.formatDate(secondDate);
+        this.control().markAsTouched();
     }
 
     private formatDate(value: Date | null): string | null {
-        return this.dateFormatService.formatDate(value, this.field.format);
+        return this.dateFormatService.formatDate(value, this.field().format);
     }
 
     private onDatepickerValueChange(value: Date | null): void {
-        if (!this.control) {
-            return;
-        }
-
+        const control = this.control();
         const formattedValue = this.formatDate(value);
 
-        if (this.control.value !== formattedValue) {
-            this.control.setValue(formattedValue);
+        if (control.value !== formattedValue) {
+            control.setValue(formattedValue);
         }
 
-        this.control.markAsDirty();
-        this.control.markAsTouched();
+        control.markAsDirty();
+        control.markAsTouched();
     }
 
     private parseDate(value?: string | null): Date | null {
-        return this.dateFormatService.parseDate(value, this.field.format);
+        return this.dateFormatService.parseDate(value, this.field().format);
     }
 
-    private createDatepickerConfig(format: string, language?: string | null): FormDatepickerConfig {
-        return {
-            dateInputFormat: format,
-            locale: this.datepickerLocaleService.getLocale(language),
-            returnFocusToInput: true,
-            showWeekNumbers: false
-        };
-    }
-
-    private syncDatepickerLocale(language?: string | null): void {
-        this.datepickerConfig = {
-            ...this.datepickerConfig,
-            locale: this.datepickerLocaleService.getLocale(language)
-        };
-        this.datepickerLocaleService.use(language);
-    }
-
-    private syncDatepickerState(): void {
-        if (!this.control) {
-            return;
+    private syncDatepickerState(control: FormControl<string | null>): void {
+        if (control.disabled !== this.datepickerControl.disabled) {
+            if (control.disabled) {
+                this.datepickerControl.disable({ emitEvent: false });
+            } else {
+                this.datepickerControl.enable({ emitEvent: false });
+            }
         }
-
-        if (this.control.disabled) {
-            this.datepickerControl.disable({ emitEvent: false });
-
-            return;
-        }
-
-        this.datepickerControl.enable({ emitEvent: false });
     }
 
     private syncDatepickerValue(value: string | null): void {
         const parsedValue = this.parseDate(value);
 
-        if (this.areDatesEqual(this.datepickerControl.value, parsedValue)) {
-            return;
+        if (this.formatDate(this.datepickerControl.value) !== this.formatDate(parsedValue)) {
+            this.datepickerControl.setValue(parsedValue, { emitEvent: false });
         }
-
-        this.datepickerControl.setValue(parsedValue, { emitEvent: false });
     }
 }

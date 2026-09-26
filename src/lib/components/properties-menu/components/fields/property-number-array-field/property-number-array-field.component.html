@@ -1,23 +1,25 @@
-<div class="bey-property-number-array-field" role="group" [attr.aria-label]="field.label">
-    @for (entry of entries; track $index) {
+@let current = field();
+
+<div class="bey-property-number-array-field" role="group" [attr.aria-label]="current.label">
+    @for (entry of entries(); track $index) {
         <div class="bey-property-number-array-field-entry">
             <input
-                type="number"
                 class="bey-property-field-input"
-                [attr.step]="field.step ?? 'any'"
-                [attr.min]="field.min"
-                [attr.max]="field.max"
-                [disabled]="field.disabled"
+                type="number"
+                [attr.max]="current.max"
+                [attr.min]="current.min"
+                [attr.step]="current.step ?? 'any'"
+                [disabled]="current.disabled"
                 [value]="entry"
                 (input)="onEntryChange($index, $event)"
             />
 
-            @if (canRemove) {
+            @if (canRemove()) {
                 <button
+                    class="bey-property-field-action"
                     type="button"
-                    class="bey-property-number-array-field-remove"
                     [attr.aria-label]="'angular-components.properties-menu.remove' | translate"
-                    [disabled]="field.disabled"
+                    [disabled]="current.disabled"
                     (click)="onRemove($index)"
                 >
                     <fa-icon [icon]="removeIcon"></fa-icon>
@@ -26,10 +28,15 @@
         </div>
     }
 
-    @if (canAdd) {
-        <button type="button" class="bey-property-number-array-field-add" [disabled]="field.disabled" (click)="onAdd()">
+    @if (canAdd()) {
+        <button
+            class="bey-property-field-action bey-property-number-array-field-add"
+            type="button"
+            [disabled]="current.disabled"
+            (click)="onAdd()"
+        >
             <fa-icon [icon]="addIcon"></fa-icon>
-            <span>{{ 'angular-components.properties-menu.numberArray.add' | translate }}</span>
+            <span>{{ 'angular-components.properties-menu.number-array-field.add' | translate }}</span>
         </button>
     }
 </div>

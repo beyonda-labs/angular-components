@@ -1,0 +1,61 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.pdf-viewer.example' | translate }}
+</p>
+
+<div class="bey-pdf-viewer-style-guide-toolbar">
+    <button
+        class="btn btn-sm btn-outline-secondary"
+        type="button"
+        [disabled]="currentPage() <= 1"
+        (click)="goToPreviousPage()"
+    >
+        <fa-icon [icon]="prevIcon"></fa-icon>
+    </button>
+
+    <span class="bey-pdf-viewer-style-guide-page">{{ currentPage() }} / {{ pageCount() }}</span>
+
+    <button
+        class="btn btn-sm btn-outline-secondary"
+        type="button"
+        [disabled]="currentPage() >= pageCount()"
+        (click)="goToNextPage()"
+    >
+        <fa-icon [icon]="nextIcon"></fa-icon>
+    </button>
+
+    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="zoomOut()">
+        <fa-icon [icon]="zoomOutIcon"></fa-icon>
+    </button>
+
+    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="zoomIn()">
+        <fa-icon [icon]="zoomInIcon"></fa-icon>
+    </button>
+
+    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="rotateLeft()">
+        <fa-icon [icon]="rotateLeftIcon"></fa-icon>
+    </button>
+
+    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="rotateRight()">
+        <fa-icon [icon]="rotateRightIcon"></fa-icon>
+    </button>
+</div>
+
+<div class="bey-pdf-viewer-style-guide-frame">
+    <bey-pdf-viewer [config]="config"></bey-pdf-viewer>
+</div>
+
+@if (pageCount()) {
+    <p class="bey-pdf-viewer-style-guide-log">onLoaded: {{ pageCount() }} pages</p>
+}
+
+@if (lastZoomFactor(); as zoom) {
+    <p class="bey-pdf-viewer-style-guide-log">onZoomChange: {{ zoom | number: '1.2-2' }}</p>
+}
+
+@if (lastRotationChange(); as event) {
+    <p class="bey-pdf-viewer-style-guide-log">onRotationChange: {{ event.rotation }}°</p>
+}
+
+@if (lastLoadingFailed(); as event) {
+    <p class="bey-pdf-viewer-style-guide-log">onLoadingFailed: {{ event.error.message }}</p>
+}

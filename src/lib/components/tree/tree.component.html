@@ -1,32 +1,32 @@
-<ng-template #renderNodes let-nodes let-level="level">
+<ng-template #renderNodes let-level="level" let-nodes>
     @for (node of nodes; track node.key) {
         <div class="bey-tree-item">
             <div
                 class="bey-tree-node"
                 role="treeitem"
                 tabindex="0"
-                [class.bey-tree-node-disabled]="node.isDisabled"
-                [class.bey-tree-node-selected]="isSelected(node)"
-                [style.paddingLeft.rem]="getIndent(level)"
                 [attr.aria-disabled]="node.isDisabled || null"
                 [attr.aria-expanded]="hasChildren(node) ? isExpanded(node) : null"
                 [attr.aria-selected]="isSelected(node)"
+                [class.is-disabled]="node.isDisabled"
+                [class.is-selected]="isSelected(node)"
+                [style.paddingLeft.rem]="getIndent(level)"
                 (click)="onNodeClick(node)"
                 (keydown.enter)="onNodeKeydown($event, node)"
                 (keydown.space)="onNodeKeydown($event, node)"
             >
                 <button
-                    type="button"
                     class="bey-tree-toggle"
-                    [class.bey-tree-toggle-hidden]="!hasChildren(node)"
+                    type="button"
                     [attr.aria-label]="hasChildren(node) ? (getToggleLabel(node) | translate) : null"
+                    [class.is-hidden]="!hasChildren(node)"
                     [tabindex]="hasChildren(node) ? 0 : -1"
                     (click)="onToggleClick($event, node)"
                 >
                     @if (hasChildren(node)) {
                         <fa-icon
                             class="bey-tree-chevron"
-                            [class.bey-tree-chevron-open]="isExpanded(node)"
+                            [class.is-open]="isExpanded(node)"
                             [icon]="toggleIcon"
                         ></fa-icon>
                     }
@@ -38,9 +38,9 @@
 
                 <span
                     class="bey-tree-node-label"
-                    [tooltip]="getLabel(node) | translate"
-                    container="body"
                     boundariesElement="viewport"
+                    container="body"
+                    [tooltip]="getLabel(node) | translate"
                 >
                     {{ getLabel(node) | translate }}
                 </span>
@@ -58,11 +58,9 @@
     }
 </ng-template>
 
-@if (config) {
-    <div class="bey-tree" role="tree">
-        <ng-container
-            [ngTemplateOutlet]="renderNodes"
-            [ngTemplateOutletContext]="{ $implicit: config.nodes, level: 0 }"
-        ></ng-container>
-    </div>
-}
+<div class="bey-tree" role="tree">
+    <ng-container
+        [ngTemplateOutlet]="renderNodes"
+        [ngTemplateOutletContext]="{ $implicit: config().nodes, level: 0 }"
+    ></ng-container>
+</div>

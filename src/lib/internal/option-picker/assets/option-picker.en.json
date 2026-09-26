@@ -1,0 +1,10 @@
+{
+    "angular-components": {
+        "option-picker": {
+            "close": "Close",
+            "empty": "No options found",
+            "label": "Options",
+            "search": "Search"
+        }
+    }
+}

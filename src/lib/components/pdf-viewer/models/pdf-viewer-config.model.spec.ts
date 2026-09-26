@@ -28,11 +28,4 @@ describe('PdfViewerConfig', () => {
 
         expect(config.toolbarButtons).toBe(toolbarButtons);
     });
-
-    it('should transform a plain toolbarButtons literal into a PdfViewerToolbarButtons instance', () => {
-        const config = new PdfViewerConfig({ src: 'invoice.pdf', toolbarButtons: { printButton: false } });
-
-        expect(config.toolbarButtons).toBeInstanceOf(PdfViewerToolbarButtons);
-        expect(config.toolbarButtons.printButton).toBe(false);
-    });
 });

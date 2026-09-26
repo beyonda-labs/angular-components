@@ -2,12 +2,22 @@
     display: block;
 }
 
+.bey-form-section {
+    margin-bottom: var(--bey-space-sm);
+}
+
 .bey-form-section-title {
+    color: var(--bey-text-primary);
     display: inline-block;
-    width: fit-content;
+    font-size: var(--bey-font-size-lg);
+    font-weight: var(--bey-font-weight-semibold);
+    line-height: var(--bey-line-height-tight);
+    margin: 0 0 var(--bey-space-md);
     max-width: 100%;
-    margin: 0;
-    font-size: 0.98rem;
-    line-height: 1.3;
-    font-weight: 600;
+    width: fit-content;
+}
+
+.bey-form-section-row {
+    display: block;
+    margin-bottom: var(--bey-space-sm);
 }

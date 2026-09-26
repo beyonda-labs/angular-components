@@ -1,109 +1,91 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { FormChipsField } from '../../../models/fields/form-chips-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
-import { FormService } from '../../../services/form.service';
+import { trackControl } from '../control-state';
 
 @Component({
-    imports: [FontAwesomeModule, FormsModule, ReactiveFormsModule, TranslateModule],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [FontAwesomeModule, TranslateModule],
     selector: 'bey-form-chips-field',
     standalone: true,
-    styleUrls: ['../field-control.styles.css'],
+    styleUrls: ['../field-control.styles.css', './field-chips.component.css'],
     templateUrl: './field-chips.component.html'
 })
-export class FormChipsFieldComponent implements OnInit {
-    @Input() field: FormChipsField;
-    @Input() formConfig: FormConfig;
-    @Input() section: FormSection;
+export class FormChipsFieldComponent {
+    readonly control = input.required<FormControl<string[] | null>>();
+    readonly field = input.required<FormChipsField>();
+    readonly prefix = input.required<string>();
 
-    control?: FormControl<string[] | null>;
-    sectionGroup?: FormGroup;
-    inputValue = '';
+    readonly controlState = trackControl(this.control);
+    readonly inputValue = signal('');
+
+    readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
 
     readonly removeIcon = faXmark;
 
-    private readonly formService = inject(FormService);
+    addChip(): void {
+        const value = this.inputValue().trim();
+        const chips = this.chips();
 
-    ngOnInit(): void {
-        this.sectionGroup = this.formService.getSectionGroup(this.formConfig, this.section.key);
+        this.inputValue.set('');
 
-        if (this.sectionGroup) {
-            this.control = this.formService.getFieldControl(this.sectionGroup, this.field) as FormControl<
-                string[] | null
-            >;
+        if (!value || this.isMaxItemsReached() || (!this.field().allowDuplicates && chips.includes(value))) {
+            return;
         }
+
+        this.write([...chips, value]);
     }
 
-    getPlaceholder(): string {
-        return (
-            this.field.placeholder ??
-            this.formService.getFieldPrefix(this.formConfig, this.section, this.field) + '.placeholder'
-        );
+    chips(): string[] {
+        return this.controlState.value() ?? [];
+    }
+
+    isDisabled(): boolean {
+        return this.controlState.isDisabled();
     }
 
     isInvalid(): boolean {
-        return (this.control?.invalid && this.control?.touched) ?? false;
+        const control = this.control();
+
+        return control.invalid && control.touched;
     }
 
     isMaxItemsReached(): boolean {
-        if (this.field.maxItems === undefined) {
-            return false;
-        }
+        const { maxItems } = this.field();
 
-        return (this.control?.value?.length ?? 0) >= this.field.maxItems;
+        return maxItems !== undefined && this.chips().length >= maxItems;
+    }
+
+    onInput(event: Event): void {
+        this.inputValue.set((event.target as HTMLInputElement).value);
     }
 
     onKeyDown(event: KeyboardEvent): void {
         if (event.key === 'Enter' || event.key === ',') {
             event.preventDefault();
             this.addChip();
-        } else if (event.key === 'Backspace' && !this.inputValue) {
-            this.removeLastChip();
+        } else if (event.key === 'Backspace' && !this.inputValue()) {
+            this.removeChip(this.chips().length - 1);
         }
-    }
-
-    addChip(): void {
-        const value = this.inputValue.trim();
-
-        if (!value || !this.control || this.isMaxItemsReached()) {
-            return;
-        }
-
-        const currentValue = this.control.value ?? [];
-
-        if (!this.field.allowDuplicates && currentValue.includes(value)) {
-            this.inputValue = '';
-
-            return;
-        }
-
-        this.control.setValue([...currentValue, value]);
-        this.control.markAsDirty();
-        this.control.markAsTouched();
-        this.inputValue = '';
     }
 
     removeChip(index: number): void {
-        if (!this.control || this.field.isDisabled) {
+        if (this.isDisabled() || index < 0) {
             return;
         }
 
-        const currentValue = this.control.value ?? [];
-
-        this.control.setValue(currentValue.filter((_, chipIndex) => chipIndex !== index));
-        this.control.markAsDirty();
-        this.control.markAsTouched();
+        this.write(this.chips().filter((_, current) => current !== index));
     }
 
-    private removeLastChip(): void {
-        const currentValue = this.control?.value ?? [];
+    private write(chips: string[]): void {
+        const control = this.control();
 
-        if (currentValue.length > 0) {
-            this.removeChip(currentValue.length - 1);
-        }
+        control.setValue(chips);
+        control.markAsDirty();
+        control.markAsTouched();
     }
 }

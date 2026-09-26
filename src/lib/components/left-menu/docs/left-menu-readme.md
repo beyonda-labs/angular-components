@@ -1,72 +1,25 @@
-# Left Menu Component (`bey-left-menu`)
+# Left menu
 
-Model-driven side navigation component with branding, nested actions, optional user info, and collapsible behavior.
+The application's side navigation, driven by a config model. It owns whether it is collapsed and which branch
+of the accordion is open; what each action does is the consumer's.
 
-Supported capabilities:
-
--   Expand/collapse state controlled by config and user interaction.
--   Top and bottom action groups.
--   Nested sub-actions with inline expansion or collapsed flyout.
--   Active and disabled action states.
--   Optional brand icon and custom title classes.
--   Optional user footer with generated initials.
-
----
-
-## Quick start
+## Usage
 
 ```ts
-import {
-    BeyLeftMenuAction,
-    BeyLeftMenuConfig,
-    BeyLeftMenuTitle,
-    BeyLeftMenuUserInfo
-} from '@beyonda-labs/angular-components';
-import { faChartLine, faGear, faHouse, faUsers } from '@fortawesome/free-solid-svg-icons';
-
 const menu = new BeyLeftMenuConfig({
-    prefix: 'workspaceMenu',
-    title: new BeyLeftMenuTitle({
-        title: 'workspaceMenu.title',
-        icon: 'assets/logo.svg',
-        styles: 'fw-bold text-uppercase'
-    }),
-    expanded: true,
+    prefix: 'myApp.menu',
+    title: new BeyLeftMenuTitle({ title: 'myApp.name', icon: 'assets/logo.svg' }),
+    expanded: this.menuState.expanded,
+    onExpandedChange: expanded => this.menuState.setExpanded(expanded),
     topActions: [
-        new BeyLeftMenuAction({
-            key: 'home',
-            icon: faHouse,
-            active: true,
-            action: () => console.log('Home')
-        }),
+        new BeyLeftMenuAction({ key: 'home', icon: faHome, active: true, action: () => this.go('/home') }),
         new BeyLeftMenuAction({
             key: 'reports',
             icon: faChartLine,
-            subActions: [
-                new BeyLeftMenuAction({
-                    key: 'sales',
-                    action: () => console.log('Sales report')
-                }),
-                new BeyLeftMenuAction({
-                    key: 'team',
-                    icon: faUsers,
-                    action: () => console.log('Team report')
-                })
-            ]
+            subActions: [new BeyLeftMenuAction({ key: 'daily', action: () => this.go('/reports/daily') })]
         })
     ],
-    bottomActions: [
-        new BeyLeftMenuAction({
-            key: 'settings',
-            icon: faGear,
-            action: () => console.log('Settings')
-        })
-    ],
-    userInfo: new BeyLeftMenuUserInfo({
-        name: 'Ada',
-        surname: 'Lovelace',
-        email: 'ada@example.com'
-    })
+    bottomActions: [new BeyLeftMenuAction({ key: 'logout', icon: faRightFromBracket, action: () => this.logout() })]
 });
 ```
 
@@ -74,101 +27,56 @@ const menu = new BeyLeftMenuConfig({
 <bey-left-menu [config]="menu"></bey-left-menu>
 ```
 
----
+## BeyLeftMenuConfig
 
-## Models
+| Field              | Required | Default | Meaning                                               |
+| ------------------ | -------- | ------- | ----------------------------------------------------- |
+| `prefix`           | yes      |         | i18n prefix the action texts are built from           |
+| `title`            | yes      |         | Brand shown at the top                                |
+| `expanded`         | no       | `true`  | Whether the menu starts open                          |
+| `onExpandedChange` | no       | none    | Run with the new state when the user toggles the menu |
+| `topActions`       | no       | `[]`    | Main navigation                                       |
+| `bottomActions`    | no       | `[]`    | Secondary group, pinned below                         |
+| `userInfo`         | no       | none    | Shows the signed-in user at the foot                  |
 
-### `BeyLeftMenuConfig`
+## BeyLeftMenuAction
 
-The root configuration object passed to `[config]`.
+| Field        | Required | Default         | Meaning                                                  |
+| ------------ | -------- | --------------- | -------------------------------------------------------- |
+| `key`        | yes      |                 | Identifies the action and builds its texts               |
+| `label`      | no       | `<key>.label`   | Resolved against `<prefix>.actions` unless it is literal |
+| `tooltip`    | no       | `<key>.tooltip` | Same resolution; shown as the label while collapsed      |
+| `icon`       | no       | none            | FontAwesome icon, the only thing visible while collapsed |
+| `active`     | no       | `false`         | Marks the current location                               |
+| `disabled`   | no       | `false`         | Neither runs nor opens                                   |
+| `subActions` | no       | `[]`            | Nested actions, to any depth                             |
+| `action`     | no       |                 | Run when the action is used                              |
 
-| Parameter       | Type                  | Required | Default | Description                                            |
-| --------------- | --------------------- | -------- | ------- | ------------------------------------------------------ |
-| `prefix`        | `string`              | yes      | -       | Base prefix used to resolve title and action i18n keys |
-| `title`         | `BeyLeftMenuTitle`    | yes      | -       | Brand/title configuration                              |
-| `topActions`    | `BeyLeftMenuAction[]` | no       | `[]`    | Main navigation actions                                |
-| `bottomActions` | `BeyLeftMenuAction[]` | no       | `[]`    | Secondary actions rendered below the separator         |
-| `expanded`      | `boolean`             | no       | `true`  | Initial expanded state                                 |
-| `userInfo`      | `BeyLeftMenuUserInfo` | no       | -       | Optional user footer information                       |
+## Expanding and collapsing
 
-Behavior notes:
+The menu owns its own state from `expanded` onwards and reports every change through `onExpandedChange`. The
+config is never written to: to persist the state, store what the callback gives you and build the next config
+from it, as `bey-app-layout` does.
 
--   When the user toggles the menu, the component updates both its internal state and `config.expanded`.
--   When expanded, submenus open inline.
--   When collapsed, actions with `subActions` open a flyout panel on hover/focus/click.
+## The accordion
 
----
+Expanded, a branch opens in place and opening one closes the previous, so only one path is ever open. The
+branch holding the active action opens by itself whenever the actions change. A branch that has its own
+`action` runs it when its label is used and opens only from the chevron; one without runs nothing and just
+opens.
 
-### `BeyLeftMenuTitle`
+Collapsed, branches open as a flyout on hover or click instead, and the labels give way to the icons.
 
-| Parameter | Type     | Required | Default | Description                                |
-| --------- | -------- | -------- | ------- | ------------------------------------------ |
-| `title`   | `string` | no       | `title` | Brand title translation key or literal key |
-| `icon`    | `string` | no       | `''`    | Image source used in the brand area        |
-| `styles`  | `string` | no       | `''`    | Extra CSS classes applied to the title     |
+## Theming
 
-If `title` is omitted or left as `title`, the component resolves it as `{prefix}.title`.
-
----
-
-### `BeyLeftMenuAction`
-
-| Parameter    | Type                  | Required | Default          | Description                                    |
-| ------------ | --------------------- | -------- | ---------------- | ---------------------------------------------- |
-| `key`        | `string`              | yes      | -                | Unique action key used for default i18n lookup |
-| `action`     | `() => void`          | no       | -                | Click handler                                  |
-| `icon`       | `IconDefinition`      | no       | -                | Optional Font Awesome icon                     |
-| `active`     | `boolean`             | no       | `false`          | Marks the action as currently selected         |
-| `disabled`   | `boolean`             | no       | `false`          | Disables interaction                           |
-| `label`      | `string`              | no       | `${key}.label`   | Label translation key                          |
-| `tooltip`    | `string`              | no       | `${key}.tooltip` | Tooltip translation key                        |
-| `subActions` | `BeyLeftMenuAction[]` | no       | `[]`             | Nested child actions                           |
-
-Behavior notes:
-
--   If an action has `subActions` but no `action` of its own, clicking it (anywhere) toggles the submenu.
--   If an action has both `subActions` and `action`, the click target decides what happens when the menu is
-    expanded (inline submenus): clicking the label runs `action`, clicking the chevron toggles the submenu.
--   When the menu is collapsed (flyout submenus), clicking a parent action always toggles the flyout, regardless
-    of `action` — there's no label/chevron distinction since only the icon is visible.
--   Parent actions receive a visual selected state when any descendant is active.
-
----
-
-### `BeyLeftMenuUserInfo`
-
-| Parameter  | Type     | Required | Default | Description                                             |
-| ---------- | -------- | -------- | ------- | ------------------------------------------------------- |
-| `name`     | `string` | yes      | -       | User first name                                         |
-| `surname`  | `string` | no       | `''`    | User surname                                            |
-| `email`    | `string` | no       | `''`    | User email shown in the footer                          |
-| `initials` | `string` | no       | derived | Avatar initials; generated from name/surname if omitted |
-
----
-
-## i18n convention
-
-With `prefix = 'workspaceMenu'` and an action with `key = 'settings'`:
-
-| Key pattern                      | Example                                  | Description            |
-| -------------------------------- | ---------------------------------------- | ---------------------- |
-| `{prefix}.title`                 | `workspaceMenu.title`                    | Default brand title    |
-| `{prefix}.actions.{key}.label`   | `workspaceMenu.actions.settings.label`   | Default action label   |
-| `{prefix}.actions.{key}.tooltip` | `workspaceMenu.actions.settings.tooltip` | Default action tooltip |
-
-Behavior notes:
-
--   If `label` or `tooltip` keep their default `${key}.label` / `${key}.tooltip` values, the component expands them with `prefix` automatically.
--   If you provide custom `label` or `tooltip` values, they are used as-is and still passed through `translate`.
--   Section headings and toggle labels are internal library translations and are not part of the consumer-facing i18n contract.
--   When the menu is collapsed, action buttons use the label as tooltip fallback unless a flyout submenu is open.
-
----
-
-## Best practices
-
--   Keep `topActions` for main navigation and reserve `bottomActions` for lower-frequency items such as settings or support.
--   Mark only one branch as active when possible so auto-open submenu behavior stays predictable.
--   Use stable action `key` values because they drive both translations and submenu path tracking.
--   Provide `userInfo.initials` only when business rules require a custom avatar value; otherwise let the model derive it.
--   Prefer icons on first-level actions so the collapsed menu remains understandable.
+| Variable                          | Default               |
+| --------------------------------- | --------------------- |
+| `--bey-left-menu-accent`          | `--bey-primary`       |
+| `--bey-left-menu-surface`         | `--bey-bg-surface`    |
+| `--bey-left-menu-surface-alt`     | `--bey-bg-muted`      |
+| `--bey-left-menu-border`          | `--bey-border-subtle` |
+| `--bey-left-menu-border-strong`   | `--bey-border-strong` |
+| `--bey-left-menu-text`            | `--bey-text-primary`  |
+| `--bey-left-menu-text-muted`      | `--bey-text-muted`    |
+| `--bey-left-menu-height`          | `100%`                |
+| `--bey-left-menu-title-font-size` | `--bey-font-size-2xl` |

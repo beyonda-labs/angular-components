@@ -1,15 +1,11 @@
-import { EventEmitter } from '@angular/core';
-
 import { PageFormConfig } from './page-form.model';
-import { PageItem } from './page-item.model';
 
 export class PageCategoriesConfig {
-    readonly nameField: string;
-    readonly parentField: string;
-    readonly typeField: string;
-    readonly useTrash: boolean;
+    nameField: string;
+    parentField: string;
+    typeField: string;
+    useTrash: boolean;
 
-    $openCategory: EventEmitter<PageItem>;
     formConfig?: PageFormConfig;
 
     constructor({
@@ -19,16 +15,11 @@ export class PageCategoriesConfig {
         typeField = 'type',
         useTrash = false
     }: PageCategoriesConfigParameters) {
-        this.$openCategory = new EventEmitter<PageItem>();
         this.formConfig = formConfig;
         this.nameField = nameField;
         this.parentField = parentField;
         this.typeField = typeField;
         this.useTrash = useTrash;
-    }
-
-    openCategory(item: PageItem): void {
-        this.$openCategory.emit(item);
     }
 }
 

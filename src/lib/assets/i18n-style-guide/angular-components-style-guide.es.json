@@ -1,0 +1,816 @@
+{
+    "angular-components-style-guide": {
+        "app-layout": {
+            "actions": {
+                "dashboard": {
+                    "label": "Panel",
+                    "tooltip": "Ir al panel"
+                },
+                "documents": {
+                    "label": "Documentos",
+                    "tooltip": "Explorar documentos"
+                },
+                "help": {
+                    "label": "Ayuda",
+                    "tooltip": "Obtener ayuda"
+                },
+                "reports": {
+                    "label": "Informes",
+                    "tooltip": "Ver informes"
+                },
+                "reports-annual": {
+                    "label": "Anuales",
+                    "tooltip": "Ver informes anuales"
+                },
+                "reports-monthly": {
+                    "label": "Mensuales",
+                    "tooltip": "Ver informes mensuales"
+                },
+                "settings": {
+                    "label": "Ajustes",
+                    "tooltip": "Abrir ajustes"
+                }
+            },
+            "content": {
+                "title": "Navega para actualizar el breadcrumb"
+            },
+            "example": "Diseño completo de aplicación con menú lateral colapsable, breadcrumb dinámico y área de contenido. Usa los botones o el menú para simular la navegación entre páginas.",
+            "title": "App Demo"
+        },
+        "app-layout-section": "Diseños de aplicación",
+        "badge": {
+            "example": "Todas las variantes de la etiqueta: primero los énfasis en gris y después los tonos semánticos."
+        },
+        "badge-section": "Etiquetas",
+        "breadcrumb": {
+            "basic": {
+                "detail": {
+                    "label": "Detalle del producto"
+                },
+                "home": {
+                    "label": "Inicio"
+                },
+                "products": {
+                    "label": "Productos"
+                }
+            },
+            "clicked": "Breadcrumb pulsado:",
+            "example": "Navegación breadcrumb model-driven con manejo automático de desbordamiento, iconos opcionales y estado deshabilitado. El consumidor maneja la navegación mediante el callback onItemClick.",
+            "examples": {
+                "basic": "Básico",
+                "icons": "Con iconos",
+                "overflow": "Desbordamiento (ancho limitado)"
+            },
+            "icons": {
+                "catalog": {
+                    "label": "Catálogo"
+                },
+                "category": {
+                    "label": "Categoría"
+                },
+                "home": {
+                    "label": "Inicio"
+                },
+                "product": {
+                    "label": "Producto"
+                }
+            },
+            "overflow": {
+                "building": {
+                    "label": "La Giralda"
+                },
+                "city": {
+                    "label": "Sevilla"
+                },
+                "country": {
+                    "label": "España"
+                },
+                "home": {
+                    "label": "Inicio"
+                },
+                "neighborhood": {
+                    "label": "Santa Cruz"
+                },
+                "region": {
+                    "label": "Europa"
+                },
+                "state": {
+                    "label": "Andalucía"
+                },
+                "street": {
+                    "label": "Calle Mateos Gago"
+                }
+            }
+        },
+        "breadcrumbs": "Breadcrumbs",
+        "components": "Componentes",
+        "compound": "Compuestos",
+        "floating-preferences": {
+            "example": "Selectores de idioma y tema autogestionados. Lee y escribe el estado directamente a través de TranslateService y BeyThemeService — no requiere callbacks.",
+            "examples": {
+                "no-pill": "Sin la píldora (usePill = false), para embeberlo en otro contenedor",
+                "pill": "Por defecto (píldora flotante)"
+            }
+        },
+        "floating-preferences-section": "Preferencias flotantes",
+        "footer": {
+            "example": "Barra de pie de página orientada a modelos con identidad de marca (icono, organización y nombre de producto) y enlaces de navegación legal opcionales (Términos y condiciones, Política de privacidad) mediante Angular Router.",
+            "examples": {
+                "minimal": "Mínimo",
+                "with-links": "Con enlaces legales"
+            },
+            "minimal": {
+                "product-name": "Mi Aplicación"
+            },
+            "with-links": {
+                "org-name": "Beyonda Labs",
+                "product-name": "Mi Aplicación"
+            }
+        },
+        "footers": "Pies de página",
+        "form": {
+            "button": {
+                "cancel": "Cancelar",
+                "submit": "Enviar"
+            },
+            "canceled": "El formulario se ha reiniciado",
+            "changed": "Valor del formulario cambiado: ",
+            "example": "Formulario model-driven basado en configuración con validación, campos condicionales y layout responsive.",
+            "modal": {
+                "buttons": {
+                    "cancel": "Cancelar",
+                    "submit": "Guardar"
+                },
+                "contact": {
+                    "email": {
+                        "label": "Email",
+                        "placeholder": "Introduce un email de contacto"
+                    },
+                    "label": "Datos de contacto",
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Introduce un nombre de contacto"
+                    }
+                },
+                "example": "El mismo modelo de formulario también puede abrirse dentro de un modal a través del servicio de formulario modal.",
+                "open": "Abrir formulario modal",
+                "submitted": "El formulario modal ha sido enviado: ",
+                "title": "Nuevo contacto"
+            },
+            "section-autocomplete": {
+                "autocomplete1": {
+                    "label": "Typeahead básico",
+                    "options": {
+                        "option1": "Opción 1",
+                        "option2": "Opción 2",
+                        "option3": "Opción 3",
+                        "option4": "Opción 4"
+                    },
+                    "placeholder": "Busque una opción"
+                },
+                "autocomplete2": {
+                    "label": "Typeahead obligatorio",
+                    "options": {
+                        "option1": "Opción obligatoria 1",
+                        "option2": "Opción obligatoria 2",
+                        "option3": "Opción obligatoria 3",
+                        "option4": "Opción obligatoria 4"
+                    },
+                    "placeholder": "Busque una opción obligatoria"
+                },
+                "autocomplete3": {
+                    "label": "Typeahead deshabilitado",
+                    "options": {
+                        "option1": "Opción deshabilitada 1",
+                        "option2": "Opción deshabilitada 2",
+                        "option3": "Opción deshabilitada 3",
+                        "option4": "Opción deshabilitada 4"
+                    },
+                    "placeholder": "Typeahead deshabilitado"
+                },
+                "label": "Campos con búsqueda",
+                "tooltip": "Variantes de typeahead con comportamiento básico, obligatorio y deshabilitado"
+            },
+            "section-checkbox": {
+                "checkbox1": {
+                    "label": "Aceptar términos"
+                },
+                "checkbox2": {
+                    "label": "Consentimiento obligatorio"
+                },
+                "checkbox3": {
+                    "label": "Checkbox deshabilitado"
+                },
+                "checkbox4": {
+                    "label": "Estilo interruptor"
+                },
+                "label": "Campos de checkbox",
+                "tooltip": "Variantes de checkbox con estado básico, obligatorio, deshabilitado e interruptor"
+            },
+            "section-chips": {
+                "chips1": {
+                    "label": "Chips básico",
+                    "placeholder": "Escriba y pulse Enter"
+                },
+                "chips2": {
+                    "label": "Chips obligatorio (máx. 5)",
+                    "placeholder": "Añada hasta 5 etiquetas"
+                },
+                "chips3": {
+                    "label": "Chips deshabilitado"
+                },
+                "label": "Campos de chips",
+                "tooltip": "Variantes de chips con estado básico, obligatorio con maxItems, y deshabilitado"
+            },
+            "section-date": {
+                "date1": {
+                    "label": "Fecha con rango"
+                },
+                "date2": {
+                    "label": "Fecha obligatoria"
+                },
+                "date3": {
+                    "label": "Fecha deshabilitada"
+                },
+                "label": "Campos de fecha",
+                "tooltip": "Campos de fecha con rango, obligatorio y deshabilitado"
+            },
+            "section-info": {
+                "info1": {
+                    "label": "Versión"
+                },
+                "info2": {
+                    "label": "Creada el"
+                },
+                "label": "Campos de información",
+                "tooltip": "Pares de icono/etiqueta de solo lectura — sin estilo de input, sin FormControl"
+            },
+            "section-number": {
+                "label": "Campos numéricos",
+                "number1": {
+                    "label": "Número con rango",
+                    "placeholder": "Número entre 1 y 100"
+                },
+                "number2": {
+                    "label": "Número obligatorio",
+                    "placeholder": "Ingrese un número"
+                },
+                "number3": {
+                    "label": "Número deshabilitado",
+                    "placeholder": "Valor deshabilitado"
+                },
+                "tooltip": "Campos numéricos con rango, obligatorio y deshabilitado"
+            },
+            "section-password": {
+                "label": "Campos de contraseña",
+                "password1": {
+                    "label": "Contraseña",
+                    "placeholder": "Ingrese su contraseña"
+                },
+                "password2": {
+                    "label": "Contraseña obligatoria",
+                    "placeholder": "Contraseña obligatoria"
+                },
+                "password3": {
+                    "label": "Contraseña deshabilitada",
+                    "placeholder": "Campo deshabilitado"
+                },
+                "password4": {
+                    "label": "Contraseña sin toggle",
+                    "placeholder": "Sin toggle de visibilidad"
+                },
+                "tooltip": "Campos de contraseña con toggle, obligatorio y deshabilitado"
+            },
+            "section-radio": {
+                "label": "Campos de radio",
+                "radio1": {
+                    "label": "Radio básico",
+                    "options": {
+                        "option1": "Opción 1",
+                        "option2": "Opción 2"
+                    }
+                },
+                "radio2": {
+                    "label": "Radio obligatorio",
+                    "options": {
+                        "option1": "Opción obligatoria 1",
+                        "option2": "Opción obligatoria 2",
+                        "option3": "Opción deshabilitada"
+                    }
+                },
+                "tooltip": "Variantes de radio con configuración básica y obligatoria"
+            },
+            "section-select": {
+                "label": "Campos de selección",
+                "select1": {
+                    "label": "Select básico",
+                    "options": {
+                        "option1": "Opción 1",
+                        "option2": "Opción 2"
+                    },
+                    "placeholder": "Seleccione una opción"
+                },
+                "select2": {
+                    "label": "Select obligatorio",
+                    "options": {
+                        "option1": "Opción obligatoria 1",
+                        "option2": "Opción obligatoria 2"
+                    },
+                    "placeholder": "Seleccione una opción obligatoria"
+                },
+                "select3": {
+                    "label": "Select deshabilitado",
+                    "options": {
+                        "option1": "Opción deshabilitada 1",
+                        "option2": "Opción deshabilitada 2"
+                    },
+                    "placeholder": "Select deshabilitado"
+                },
+                "tooltip": "Variantes de select con comportamiento básico, obligatorio y deshabilitado"
+            },
+            "section-text": {
+                "label": "Campos de texto",
+                "text1": {
+                    "label": "Texto obligatorio",
+                    "placeholder": "Escriba un valor",
+                    "tooltip": "Este campo es obligatorio"
+                },
+                "text2": {
+                    "label": "Texto (50%)",
+                    "placeholder": "Texto a media anchura",
+                    "tooltip": "Ejemplo con 6 columnas"
+                },
+                "text3": {
+                    "label": "Solo letras",
+                    "placeholder": "Solo letras (A-Z)"
+                },
+                "text4": {
+                    "label": "Texto deshabilitado",
+                    "placeholder": "Campo deshabilitado"
+                },
+                "text5": {
+                    "label": "Texto",
+                    "placeholder": "Otro campo de texto"
+                },
+                "tooltip": "Diferentes configuraciones de campos de texto"
+            },
+            "section-textarea": {
+                "label": "Campos de texto largo",
+                "textarea1": {
+                    "label": "Textarea con altura máxima",
+                    "placeholder": "Escriba detalles adicionales"
+                },
+                "textarea2": {
+                    "label": "Textarea obligatorio",
+                    "placeholder": "Texto largo obligatorio"
+                },
+                "textarea3": {
+                    "label": "Textarea deshabilitado",
+                    "placeholder": "Texto largo deshabilitado"
+                },
+                "tooltip": "Variantes de textarea con filas, obligatorio y deshabilitado"
+            },
+            "submitted": "El formulario ha sido enviado: "
+        },
+        "forms": "Formularios",
+        "header": {
+            "actions": {
+                "archive": {
+                    "label": "Archivar",
+                    "tooltip": "Archivar objetivo"
+                },
+                "back": {
+                    "label": "Volver",
+                    "tooltip": "Volver a objetivos"
+                },
+                "delete": {
+                    "label": "Eliminar",
+                    "tooltip": "Eliminar objetivo"
+                },
+                "duplicate": {
+                    "label": "Duplicar",
+                    "tooltip": "Duplicar objetivo"
+                },
+                "edit": {
+                    "label": "Editar",
+                    "tooltip": "Editar objetivo"
+                },
+                "export": {
+                    "label": "Exportar",
+                    "tooltip": "Exportar objetivos"
+                },
+                "individual-goal": {
+                    "label": "Objetivo individual",
+                    "tooltip": "Crear un nuevo objetivo individual"
+                },
+                "new-goal": {
+                    "label": "Nuevo objetivo",
+                    "tooltip": "Crear un nuevo objetivo"
+                },
+                "team-goal": {
+                    "label": "Objetivo de equipo",
+                    "tooltip": "Crear un nuevo objetivo de equipo"
+                }
+            },
+            "badge": "Activo",
+            "example": "Cabecera con acciones a ambos lados y un menú de tres puntos (...) para acciones secundarias.",
+            "examples": {
+                "back": "Cabecera con botón de volver y badge de estado",
+                "default": "Cabecera normal, sin botón de volver",
+                "sub-page": "Variante de subpágina, título más pequeño"
+            },
+            "title": "Objetivos"
+        },
+        "headers": "Cabeceras",
+        "left-menu": {
+            "actions": {
+                "calendar": {
+                    "label": "Calendario",
+                    "tooltip": "Abrir calendario"
+                },
+                "chat": {
+                    "label": "Chat",
+                    "tooltip": "Abrir chat"
+                },
+                "dashboard": {
+                    "label": "Panel",
+                    "tooltip": "Ir al panel"
+                },
+                "documents": {
+                    "label": "Documentos",
+                    "tooltip": "Explorar documentos"
+                },
+                "export": {
+                    "label": "Exportados",
+                    "tooltip": "Ver archivos exportados"
+                },
+                "inbox": {
+                    "label": "Bandeja",
+                    "tooltip": "Abrir bandeja"
+                },
+                "incoming": {
+                    "label": "Entrantes",
+                    "tooltip": "Revisar archivos entrantes"
+                },
+                "info": {
+                    "label": "Información",
+                    "tooltip": "Ver información"
+                },
+                "statistics": {
+                    "label": "Estadísticas",
+                    "tooltip": "Abrir estadísticas"
+                },
+                "support": {
+                    "label": "Soporte",
+                    "tooltip": "Obtener soporte"
+                }
+            },
+            "documents-clicked": "La acción \"Documentos\" se ha ejecutado al pulsar su etiqueta.",
+            "documents-hint": "\"Documentos\" tiene acción propia y subacciones: pulsa su etiqueta para ejecutar la acción, pulsa el chevron para desplegar el submenú.",
+            "example": "Menú lateral con acciones agrupadas, navegación anidada y comportamiento colapsado.",
+            "examples": {
+                "collapsed": "Ejemplo colapsado",
+                "expanded": "Ejemplo expandido"
+            },
+            "sections": {
+                "menu": "Menú",
+                "others": "Otros"
+            },
+            "title": "Beyonda Labs"
+        },
+        "left-menu-section": "Menús laterales",
+        "list": {
+            "empty": "No se han encontrado empleados",
+            "empty-example": "Estado vacío (sin elementos):",
+            "example": "Lista vertical de tarjetas con HTML totalmente personalizado por tarjeta, manteniendo una apariencia general consistente (espaciado, borde, hover). Haz clic en una tarjeta para verla en la consola.",
+            "selected": "Empleado seleccionado:"
+        },
+        "lists": "Listas",
+        "loading": {
+            "example": "Spinner inline y overlay puramente visuales que se adaptan a cualquier contexto heredando currentColor y admitiendo tamaños predefinidos o personalizados.",
+            "overlay": {
+                "container": "Contenedor",
+                "container-description": "Cubre el padre posicionado más cercano.",
+                "fullscreen": "Pantalla completa",
+                "fullscreen-description": "Cubre toda la ventana. Haga clic para cerrar."
+            },
+            "sample-content": "Este contenido está detrás del overlay y no se puede interactuar con él mientras la carga esté activa.",
+            "service": {
+                "description": "Usa LoadingService para mostrar y ocultar el overlay a pantalla completa programáticamente. Se oculta automáticamente tras 3 segundos.",
+                "label": "Servicio"
+            },
+            "sizes": {
+                "custom": "Personalizado (3.25 rem)",
+                "lg": "Grande",
+                "md": "Mediano",
+                "sm": "Pequeño",
+                "xs": "Extra pequeño"
+            },
+            "toggle-fullscreen": "Mostrar overlay a pantalla completa",
+            "toggle-service": "Mostrar vía servicio"
+        },
+        "loadings": "Cargando",
+        "login": {
+            "demo": {
+                "product-description": "Genera, firma y comparte PDFs en segundos. Plantillas, marca y firma electrónica — todo desde tu navegador.",
+                "product-name": "PDF Generator"
+            },
+            "example": "Componente de autenticación a pantalla completa con soporte de tema claro/oscuro y proveedores OAuth opcionales obtenidos del backend.",
+            "examples": {
+                "login": "Login"
+            }
+        },
+        "login-section": "Login",
+        "modal": {
+            "buttons": {
+                "confirmation": "Abrir modal de confirmación",
+                "error": "Abrir modal de error",
+                "info": "Abrir modal informativo",
+                "warning": "Abrir modal de advertencia"
+            },
+            "example": "Ejemplos de modales controlados por servicio con ngx-bootstrap y un estilo sobrio alineado con el resto de la librería.",
+            "examples": {
+                "confirmation": {
+                    "message": "Esta acción archivará el registro actual y podrá revertirse más tarde desde el historial.",
+                    "title": "Archivar registro actual"
+                },
+                "error": {
+                    "message": "No fue posible completar la solicitud. Revise la conexión o vuelva a intentarlo en unos segundos.",
+                    "title": "Algo salió mal"
+                },
+                "info": {
+                    "message": "El registro se sincronizó correctamente y la última versión ya está disponible para el equipo.",
+                    "title": "Sincronización completada"
+                },
+                "warning": {
+                    "message": "Hay cambios pendientes en esta sección. Si continúa, se reemplazarán por la última versión guardada.",
+                    "title": "Revise los cambios pendientes"
+                }
+            },
+            "feedback": {
+                "canceled": {
+                    "message": "La acción de archivo fue cancelada y no se aplicaron cambios.",
+                    "title": "Acción cancelada"
+                },
+                "confirmed": {
+                    "message": "El registro fue enviado a archivo y el proceso terminará en segundo plano.",
+                    "title": "Acción confirmada"
+                }
+            }
+        },
+        "modals": "Modales",
+        "page": {
+            "actions": {
+                "create": {
+                    "label": "Nuevo producto",
+                    "tooltip": "Crear un producto"
+                },
+                "delete": {
+                    "label": "Eliminar",
+                    "tooltip": "Eliminar los productos seleccionados"
+                },
+                "edit": {
+                    "label": "Editar",
+                    "tooltip": "Editar el producto seleccionado"
+                }
+            },
+            "example": "Una página autogestionada: acciones de cabecera, búsqueda, tabla y paginación conectadas al backend de demostración, con alta y edición en un formulario modal.",
+            "form": {
+                "create": {
+                    "title": "Nuevo producto"
+                },
+                "edit": {
+                    "title": "Editar producto"
+                },
+                "product": {
+                    "category": {
+                        "label": "Categoría",
+                        "placeholder": "Categoría del producto"
+                    },
+                    "label": "Producto",
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Nombre del producto"
+                    },
+                    "price": {
+                        "label": "Precio (€)",
+                        "placeholder": "0,00"
+                    }
+                }
+            },
+            "modal": {
+                "delete": {
+                    "message": "Se eliminarán {{count}} producto(s). ¿Quieres continuar?",
+                    "title": "Eliminar productos"
+                }
+            },
+            "search": {
+                "fields": {
+                    "category": "Categoría",
+                    "name": "Nombre",
+                    "price": "Precio"
+                }
+            },
+            "table": {
+                "columns": {
+                    "category": "Categoría",
+                    "name": "Nombre",
+                    "price": "Precio"
+                },
+                "empty": "Todavía no hay productos",
+                "tooltips": {
+                    "category": "Dónde está clasificado el producto",
+                    "name": "Cómo se llama el producto",
+                    "price": "Precio unitario"
+                }
+            },
+            "title": "Productos",
+            "toast": {
+                "create-success": "Producto creado",
+                "delete-success": "Producto(s) eliminado(s)",
+                "edit-success": "Producto actualizado"
+            }
+        },
+        "page-section": "Página",
+        "pagination": {
+            "changed": "Paginación cambiada:",
+            "example": "Paginador minimalista con página editable, tooltip de rango y selector de tamaño de página.",
+            "examples": {
+                "compact": "Sin botones de primera y última página",
+                "full": "Con botones de primera y última página"
+            }
+        },
+        "pagination-section": "Paginación",
+        "pdf-viewer": {
+            "example": "Previsualizador de PDF construido sobre ngx-extended-pdf-viewer con su toolbar nativa oculta y una toolbar propia controlada mediante la API imperativa y los eventos del visor."
+        },
+        "pdf-viewer-section": "Visor de PDF",
+        "properties-menu": {
+            "example": "Inspector de propiedades de un bloque seleccionado, con pestañas, grupos plegables e inserción de variables.",
+            "provide-variables": "Aportar variables"
+        },
+        "properties-menu-section": "Menú de propiedades",
+        "search": {
+            "applied": "Filtros aplicados",
+            "example": "Caja de búsqueda rápida más un panel de filtros tipados. Cada cambio se informa por onFiltersChange; la consulta la ejecuta el consumidor.",
+            "fields": {
+                "active": "Activo",
+                "age": "Edad",
+                "name": "Nombre",
+                "role": "Rol"
+            },
+            "roles": {
+                "admin": "Administrador",
+                "editor": "Editor"
+            }
+        },
+        "search-section": "Búsqueda",
+        "simple": "Simples",
+        "table": {
+            "actions": {
+                "open": "Abrir",
+                "opened": "Acción de fila ejecutada"
+            },
+            "columns": {
+                "action": "Acción",
+                "name": "Nombre",
+                "role": "Rol",
+                "skills": "Habilidades",
+                "status": "Estado"
+            },
+            "empty": "No hay filas disponibles para este ejemplo.",
+            "example": "Tabla de datos con ordenamiento, selección de filas y columnas configurables mediante modelo.",
+            "examples": {
+                "empty": "La misma tabla sin filas",
+                "filled": "La misma tabla con filas"
+            },
+            "selection-changed": "Las filas seleccionadas cambiaron",
+            "status": {
+                "active": "Activo",
+                "paused": "Pausado",
+                "review": "En revisión"
+            },
+            "tooltips": {
+                "name": "Columna principal de identidad",
+                "skills": "Las celdas de badge aceptan una lista, mostrando más de un badge por fila",
+                "status": "Las celdas de estado pueden traducirse y mostrar tooltip"
+            }
+        },
+        "tables": "Tablas",
+        "tabs": {
+            "active-tab": "Pestaña activa",
+            "basic": {
+                "tabs": {
+                    "details": {
+                        "label": "Detalles"
+                    },
+                    "history": {
+                        "label": "Historial"
+                    },
+                    "overview": {
+                        "label": "General"
+                    }
+                }
+            },
+            "example": "Barra de pestañas horizontal orientada a modelos con navegación por teclado, iconos opcionales y estado deshabilitado. El consumidor renderiza contenido según la pestaña activa.",
+            "examples": {
+                "basic": "Básico",
+                "icons": "Con iconos y deshabilitado",
+                "overflow": "Overflow (contenedor estrecho)"
+            },
+            "icons": {
+                "tabs": {
+                    "admin": {
+                        "label": "Administración"
+                    },
+                    "analytics": {
+                        "label": "Analíticas"
+                    },
+                    "documents": {
+                        "label": "Documentos"
+                    },
+                    "settings": {
+                        "label": "Configuración"
+                    }
+                }
+            },
+            "overflow": {
+                "tabs": {
+                    "activity": {
+                        "label": "Actividad"
+                    },
+                    "comments": {
+                        "label": "Comentarios"
+                    },
+                    "details": {
+                        "label": "Detalles"
+                    },
+                    "history": {
+                        "label": "Historial"
+                    },
+                    "overview": {
+                        "label": "General"
+                    },
+                    "permissions": {
+                        "label": "Permisos"
+                    },
+                    "settings": {
+                        "label": "Configuración"
+                    }
+                }
+            }
+        },
+        "tabs-section": "Pestañas",
+        "title": "Beyonda Labs - Angular Components - Guía de Estilo",
+        "toast": {
+            "buttons": {
+                "error": "Mostrar toast de error",
+                "info": "Mostrar toast informativo",
+                "success": "Mostrar toast de éxito",
+                "warning": "Mostrar toast de advertencia"
+            },
+            "example": "Notificaciones toast controladas por servicio con ngx-toastr y un estilo sobrio alineado con el resto de la librería.",
+            "examples": {
+                "error": {
+                    "message": "No fue posible completar la solicitud. Inténtelo de nuevo más tarde.",
+                    "title": "Algo salió mal"
+                },
+                "info": {
+                    "message": "El proceso de sincronización se inició y terminará en segundo plano.",
+                    "title": "Sincronización iniciada"
+                },
+                "success": {
+                    "message": "El registro se guardó correctamente y ya está disponible para el equipo.",
+                    "title": "Registro guardado"
+                },
+                "warning": {
+                    "message": "Hay cambios pendientes que aún no se han guardado.",
+                    "title": "Cambios sin guardar"
+                }
+            }
+        },
+        "toasts": "Toasts",
+        "tree": {
+            "example": "Árbol recursivo con expandir/contraer, iconos, selección única y un nodo deshabilitado.",
+            "nodes": {
+                "backend": {
+                    "label": "Backend"
+                },
+                "engineering": {
+                    "label": "Ingeniería"
+                },
+                "frontend": {
+                    "label": "Frontend"
+                },
+                "operations": {
+                    "label": "Operaciones"
+                },
+                "platform": {
+                    "label": "Plataforma (deshabilitado)"
+                }
+            },
+            "selected": "Nodo seleccionado:"
+        },
+        "trees": "Árboles"
+    }
+}

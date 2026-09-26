@@ -1,12 +1,12 @@
 import { PropertyFieldType } from '../../types/property-field-type';
 import { PropertyField, PropertyFieldParameters } from '../property-field.model';
-import { PropertyOption, PropertyOptionParameters } from '../property-option.model';
-import { PropertyVariable, PropertyVariableParameters } from '../property-variable.model';
+import { PropertyOption } from '../property-option.model';
+import { PropertyVariable } from '../property-variable.model';
 
 export interface PropertySelectFieldParameters<T = unknown> extends Omit<PropertyFieldParameters<T>, 'type'> {
-    options?: PropertyOptionParameters<T>[];
+    options?: PropertyOption<T>[];
     searchable?: boolean;
-    variables?: PropertyVariableParameters[];
+    variables?: PropertyVariable[];
 }
 
 export class PropertySelectField<T = unknown> extends PropertyField<T> {
@@ -16,12 +16,9 @@ export class PropertySelectField<T = unknown> extends PropertyField<T> {
 
     constructor({ options = [], searchable = false, variables = [], ...base }: PropertySelectFieldParameters<T>) {
         super({ ...base, type: PropertyFieldType.Select });
-
-        this.options = options.map(option => (option instanceof PropertyOption ? option : new PropertyOption(option)));
+        this.options = options;
         this.searchable = searchable;
-        this.variables = variables.map(variable =>
-            variable instanceof PropertyVariable ? variable : new PropertyVariable(variable)
-        );
+        this.variables = variables;
     }
 
     get holdsVariable(): boolean {

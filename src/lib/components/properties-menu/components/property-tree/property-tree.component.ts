@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, ElementRef, inject, Input, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, inject, input } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,43 +17,92 @@ const DRAG_THRESHOLD_PX = 4;
 const EDGE_ZONE_RATIO = 0.25;
 const ROW_SELECTOR = '.bey-property-tree-row';
 
+interface DragCandidate {
+    node: PropertyTreeNode;
+    x: number;
+    y: number;
+}
+
+/**
+ * Nested rows with pointer-based drag and drop: a press on a draggable row becomes a drag after a few
+ * pixels, the row under the pointer is split in before/inside/after zones, a collapsed target opens after
+ * a pause and the scrollable ancestor scrolls near its edges.
+ */
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, NgTemplateOutlet, TranslateModule],
     selector: 'bey-property-tree',
     standalone: true,
     styleUrls: ['./property-tree.component.css'],
     templateUrl: './property-tree.component.html'
 })
-export class PropertyTreeComponent implements OnDestroy {
-    @Input({ required: true }) groupId!: string;
-    @Input({ required: true }) nodes: PropertyTreeNode[] = [];
-    @Input({ required: true }) tabId!: string;
-    @Input() acceptsRootDrop = false;
-    @Input() addBlockLabel?: string;
+export class PropertyTreeComponent {
+    readonly groupId = input.required<string>();
+    readonly nodes = input.required<PropertyTreeNode[]>();
+    readonly tabId = input.required<string>();
+    readonly acceptsRootDrop = input(false);
+    readonly addBlockLabel = input<string>();
+
+    readonly visibleNodes = computed(() => this.nodes().filter(node => !node.hidden));
 
     readonly addIcon = faPlus;
     readonly chevronIcon = faChevronDown;
 
-    private readonly hostElement = inject(ElementRef<HTMLElement>);
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly hostElement = inject<ElementRef<HTMLElement>>(ElementRef);
     private readonly propertiesMenuService = inject(PropertiesMenuService);
     private readonly propertyTreeDragService = inject(PropertyTreeDragService);
 
     private autoExpandNodeId: string | null = null;
     private autoExpandTimer?: ReturnType<typeof setTimeout>;
-    private dragCandidate?: { node: PropertyTreeNode; x: number; y: number };
+    private dragCandidate?: DragCandidate;
     private draggedRecently = false;
 
-    get visibleNodes(): PropertyTreeNode[] {
-        return this.nodes.filter(node => !node.hidden);
-    }
+    private readonly handleKeyDown = (event: KeyboardEvent): void => {
+        if (event.key === 'Escape') {
+            this.propertyTreeDragService.cancel(this.tabId(), this.groupId());
+            this.detachPointerListeners();
+        }
+    };
 
-    ngOnDestroy(): void {
+    private readonly handlePointerMove = (event: PointerEvent): void => {
+        const candidate = this.dragCandidate;
+
+        if (!candidate) {
+            return;
+        }
+
+        if (!this.propertyTreeDragService.dragging()) {
+            if (Math.hypot(event.clientX - candidate.x, event.clientY - candidate.y) < DRAG_THRESHOLD_PX) {
+                return;
+            }
+
+            this.draggedRecently = true;
+            this.propertyTreeDragService.start(this.tabId(), this.groupId(), candidate.node);
+        }
+
+        event.preventDefault();
+        this.autoScroll(event.clientY);
+        this.updateDropTarget(event, candidate.node);
+    };
+
+    private readonly handlePointerUp = (): void => {
+        if (this.propertyTreeDragService.dragging()) {
+            this.propertyTreeDragService.drop(this.tabId(), this.groupId());
+        }
+
         this.detachPointerListeners();
-        this.clearAutoExpand();
+    };
+
+    constructor() {
+        this.destroyRef.onDestroy(() => {
+            this.detachPointerListeners();
+            this.clearAutoExpand();
+        });
     }
 
-    getLabelKey(node: PropertyTreeNode): string {
-        return resolvePropertyLabelKey(this.propertiesMenuService.config().prefix, 'tree', node.id, node.label);
+    dropPositionFor(node: PropertyTreeNode): PropertyTreeDropPosition | null {
+        return this.propertyTreeDragService.dropPositionFor(node.id);
     }
 
     hasVisibleChildren(node: PropertyTreeNode): boolean {
@@ -72,12 +121,16 @@ export class PropertyTreeComponent implements OnDestroy {
         return this.propertiesMenuService.selectedTreeNodeId() === node.id;
     }
 
-    dropPositionFor(node: PropertyTreeNode): PropertyTreeDropPosition | null {
-        return this.propertyTreeDragService.dropPositionFor(node.id);
+    labelKey(node: PropertyTreeNode): string {
+        return resolvePropertyLabelKey(this.propertiesMenuService.config().prefix, 'tree', node.id, node.label);
     }
 
     visibleChildren(node: PropertyTreeNode): PropertyTreeNode[] {
         return node.children.filter(child => !child.hidden);
+    }
+
+    onAddBlockClick(): void {
+        this.propertiesMenuService.triggerTreeAddBlock(this.tabId(), this.groupId());
     }
 
     onNodeClick(node: PropertyTreeNode): void {
@@ -85,16 +138,7 @@ export class PropertyTreeComponent implements OnDestroy {
             return;
         }
 
-        this.propertiesMenuService.selectTreeNode(this.tabId, this.groupId, node.id);
-    }
-
-    onToggleClick(event: Event, node: PropertyTreeNode): void {
-        event.stopPropagation();
-        this.propertiesMenuService.toggleTreeNode(this.tabId, this.groupId, node.id);
-    }
-
-    onAddBlockClick(): void {
-        this.propertiesMenuService.triggerTreeAddBlock(this.tabId, this.groupId);
+        this.propertiesMenuService.selectTreeNode(this.tabId(), this.groupId(), node.id);
     }
 
     onRowPointerDown(event: PointerEvent, node: PropertyTreeNode): void {
@@ -111,62 +155,46 @@ export class PropertyTreeComponent implements OnDestroy {
         document.addEventListener('keydown', this.handleKeyDown);
     }
 
-    private readonly handlePointerMove = (event: PointerEvent): void => {
-        const candidate = this.dragCandidate;
+    onToggleClick(event: Event, node: PropertyTreeNode): void {
+        event.stopPropagation();
+        this.propertiesMenuService.toggleTreeNode(this.tabId(), this.groupId(), node.id);
+    }
 
-        if (!candidate) {
+    private autoScroll(clientY: number): void {
+        const container = this.scrollableAncestor();
+
+        if (!container) {
             return;
         }
 
-        if (!this.propertyTreeDragService.dragging()) {
-            const travelled = Math.hypot(event.clientX - candidate.x, event.clientY - candidate.y);
+        const rect = container.getBoundingClientRect();
 
-            if (travelled < DRAG_THRESHOLD_PX) {
-                return;
-            }
-
-            this.draggedRecently = true;
-            this.propertyTreeDragService.start(this.tabId, this.groupId, candidate.node);
+        if (clientY - rect.top < AUTO_SCROLL_EDGE_PX) {
+            container.scrollTop -= AUTO_SCROLL_STEP_PX;
+        } else if (rect.bottom - clientY < AUTO_SCROLL_EDGE_PX) {
+            container.scrollTop += AUTO_SCROLL_STEP_PX;
         }
+    }
 
-        event.preventDefault();
-        this.autoScroll(event.clientY);
-        this.updateDropTarget(event, candidate.node);
-    };
+    private clearAutoExpand(): void {
+        clearTimeout(this.autoExpandTimer);
+        this.autoExpandTimer = undefined;
+        this.autoExpandNodeId = null;
+    }
 
-    private readonly handlePointerUp = (): void => {
-        if (this.propertyTreeDragService.dragging()) {
-            this.propertyTreeDragService.drop(this.tabId, this.groupId);
-        }
+    private detachPointerListeners(): void {
+        this.dragCandidate = undefined;
+        this.clearAutoExpand();
 
-        this.detachPointerListeners();
-    };
+        document.removeEventListener('pointermove', this.handlePointerMove);
+        document.removeEventListener('pointerup', this.handlePointerUp);
+        document.removeEventListener('pointercancel', this.handlePointerUp);
+        document.removeEventListener('keydown', this.handleKeyDown);
 
-    private readonly handleKeyDown = (event: KeyboardEvent): void => {
-        if (event.key === 'Escape') {
-            this.propertyTreeDragService.cancel(this.tabId, this.groupId);
-            this.detachPointerListeners();
-        }
-    };
-
-    private updateDropTarget(event: PointerEvent, dragged: PropertyTreeNode): void {
-        const row = document
-            .elementFromPoint(event.clientX, event.clientY)
-            ?.closest(ROW_SELECTOR) as HTMLElement | null;
-        const nodeId = row?.dataset['nodeId'];
-
-        if (!row || !nodeId || !this.hostElement.nativeElement.contains(row)) {
-            this.propertyTreeDragService.setDropTarget(null);
-            this.clearAutoExpand();
-
-            return;
-        }
-
-        const position = this.resolvePosition(row.getBoundingClientRect(), event.clientY);
-        const valid = isDropAllowed(this.nodes, dragged.id, nodeId, position, this.acceptsRootDrop);
-
-        this.propertyTreeDragService.setDropTarget({ nodeId, position, valid });
-        this.scheduleAutoExpand(position === 'inside' && valid ? nodeId : null);
+        // The click that ends a drag must not select the row.
+        setTimeout(() => {
+            this.draggedRecently = false;
+        });
     }
 
     private resolvePosition(rect: DOMRect, clientY: number): PropertyTreeDropPosition {
@@ -192,38 +220,16 @@ export class PropertyTreeComponent implements OnDestroy {
         }
 
         this.autoExpandTimer = setTimeout(() => {
-            const node = findTreeNode(this.nodes, nodeId);
+            const node = findTreeNode(this.nodes(), nodeId);
 
             if (node && !node.expanded && this.hasVisibleChildren(node)) {
-                this.propertiesMenuService.toggleTreeNode(this.tabId, this.groupId, nodeId);
+                this.propertiesMenuService.toggleTreeNode(this.tabId(), this.groupId(), nodeId);
             }
         }, AUTO_EXPAND_DELAY_MS);
     }
 
-    private clearAutoExpand(): void {
-        clearTimeout(this.autoExpandTimer);
-        this.autoExpandTimer = undefined;
-        this.autoExpandNodeId = null;
-    }
-
-    private autoScroll(clientY: number): void {
-        const container = this.scrollableAncestor();
-
-        if (!container) {
-            return;
-        }
-
-        const rect = container.getBoundingClientRect();
-
-        if (clientY - rect.top < AUTO_SCROLL_EDGE_PX) {
-            container.scrollTop -= AUTO_SCROLL_STEP_PX;
-        } else if (rect.bottom - clientY < AUTO_SCROLL_EDGE_PX) {
-            container.scrollTop += AUTO_SCROLL_STEP_PX;
-        }
-    }
-
     private scrollableAncestor(): HTMLElement | null {
-        let current = this.hostElement.nativeElement.parentElement as HTMLElement | null;
+        let current = this.hostElement.nativeElement.parentElement;
 
         while (current) {
             if (current.scrollHeight > current.clientHeight) {
@@ -236,15 +242,21 @@ export class PropertyTreeComponent implements OnDestroy {
         return null;
     }
 
-    private detachPointerListeners(): void {
-        this.dragCandidate = undefined;
-        this.clearAutoExpand();
+    private updateDropTarget(event: PointerEvent, dragged: PropertyTreeNode): void {
+        const row = document.elementFromPoint(event.clientX, event.clientY)?.closest<HTMLElement>(ROW_SELECTOR);
+        const nodeId = row?.dataset['nodeId'];
 
-        document.removeEventListener('pointermove', this.handlePointerMove);
-        document.removeEventListener('pointerup', this.handlePointerUp);
-        document.removeEventListener('pointercancel', this.handlePointerUp);
-        document.removeEventListener('keydown', this.handleKeyDown);
+        if (!row || !nodeId || !this.hostElement.nativeElement.contains(row)) {
+            this.propertyTreeDragService.setDropTarget(null);
+            this.clearAutoExpand();
 
-        setTimeout(() => (this.draggedRecently = false));
+            return;
+        }
+
+        const position = this.resolvePosition(row.getBoundingClientRect(), event.clientY);
+        const valid = isDropAllowed(this.nodes(), dragged.id, nodeId, position, this.acceptsRootDrop());
+
+        this.propertyTreeDragService.setDropTarget({ nodeId, position, valid });
+        this.scheduleAutoExpand(position === 'inside' && valid ? nodeId : null);
     }
 }

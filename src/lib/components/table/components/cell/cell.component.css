@@ -4,50 +4,48 @@
 }
 
 .bey-table-cell {
-    display: flex;
     align-items: center;
-    min-height: 2.45rem;
-    padding: 0.4rem 0.8rem;
-    min-width: 0;
     color: var(--bey-table-text);
+    display: flex;
+    min-height: var(--bey-table-row-min-height);
+    min-width: 0;
+    padding: var(--bey-space-xs) var(--bey-space-md);
 }
 
-.bey-table-cell-header {
+.bey-table-cell--header {
     min-height: 0;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
+    padding-bottom: var(--bey-space-md);
+    padding-top: var(--bey-space-md);
 }
 
 .bey-table-cell-content {
     display: block;
-    width: 100%;
+    font-size: var(--bey-font-size-md);
+    font-weight: var(--bey-font-weight-medium);
+    line-height: var(--bey-line-height-base);
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 0.84rem;
-    line-height: 1.35;
-    font-weight: 500;
+    width: 100%;
 }
 
-.bey-table-cell-header .bey-table-cell-content {
-    font-size: 0.73rem;
-    font-weight: 600;
-    letter-spacing: 0;
-    text-transform: none;
+.bey-table-cell--header .bey-table-cell-content {
     color: var(--bey-table-text-muted);
+    font-size: var(--bey-font-size-xs);
+    font-weight: var(--bey-font-weight-semibold);
 }
 
 .bey-table-cell-link {
-    width: 100%;
-    padding: 0;
-    border: 0;
     background: transparent;
+    border: 0;
     color: var(--bey-table-text);
     font-family: inherit;
+    padding: 0;
     text-align: left;
     text-decoration: underline;
     text-decoration-color: var(--bey-table-link-underline);
+    width: 100%;
 }
 
 .bey-table-cell-link:hover {
@@ -55,16 +53,10 @@
 }
 
 .bey-table-cell-badges {
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 0.35rem;
+    gap: var(--bey-space-xs);
     overflow: visible;
     white-space: normal;
-}
-
-.bey-table-cell-badge {
-    font-size: 0.75rem;
-    font-weight: 500;
-    vertical-align: baseline;
 }

@@ -1,6 +1,4 @@
-import { Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, untracked } from '@angular/core';
 
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { HeaderComponent } from '../header/header.component';
@@ -13,6 +11,7 @@ import { PageConfig } from './models/page.model';
 import { PageService } from './services/page.service';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         BreadcrumbComponent,
         HeaderComponent,
@@ -20,8 +19,7 @@ import { PageService } from './services/page.service';
         PaginationComponent,
         SearchComponent,
         TableComponent,
-        TabsComponent,
-        TranslateModule
+        TabsComponent
     ],
     providers: [PageService],
     selector: 'bey-page',
@@ -29,23 +27,18 @@ import { PageService } from './services/page.service';
     styleUrls: ['./page.component.css'],
     templateUrl: './page.component.html'
 })
-export class PageComponent implements OnInit, OnDestroy {
-    @Input({ required: true }) config!: PageConfig;
+export class PageComponent {
+    readonly config = input.required<PageConfig>();
 
     readonly service = inject(PageService);
 
-    private readonly destroy$ = new Subject<void>();
+    readonly hasToolbar = computed(() => Boolean(this.service.viewToggleConfig() || this.service.searchConfig()));
 
-    ngOnInit(): void {
-        this.service.init(this.config);
-    }
+    constructor() {
+        effect(() => {
+            const config = this.config();
 
-    ngOnDestroy(): void {
-        this.destroy$.next();
-        this.destroy$.complete();
-    }
-
-    get showPagination(): boolean {
-        return this.config.tableConfig?.showPagination ?? false;
+            untracked(() => this.service.setConfig(config));
+        });
     }
 }

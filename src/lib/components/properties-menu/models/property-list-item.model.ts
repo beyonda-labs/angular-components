@@ -1,6 +1,7 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
-import { PropertyBadge, PropertyBadgeParameters, PropertySummaryRow } from './property-summary-row.model';
+import { BadgeConfig } from '../../badge/models/badge.model';
+import { PropertySummaryRow } from './property-summary-row.model';
 
 export interface PropertyListItemActionParameters {
     icon: IconDefinition;
@@ -25,8 +26,8 @@ export class PropertyListItemAction {
 export interface PropertyListItemParameters {
     id: string;
 
-    actions?: PropertyListItemActionParameters[];
-    badges?: PropertyBadgeParameters[];
+    actions?: PropertyListItemAction[];
+    badges?: BadgeConfig[];
     body?: PropertySummaryRow[];
     copyValue?: string;
     description?: string;
@@ -43,7 +44,7 @@ export interface PropertyListItemParameters {
 
 export class PropertyListItem {
     actions: PropertyListItemAction[];
-    badges: PropertyBadge[];
+    badges: BadgeConfig[];
     disabled: boolean;
     expanded: boolean;
     hidden: boolean;
@@ -76,10 +77,8 @@ export class PropertyListItem {
         metadata = {},
         removable = false
     }: PropertyListItemParameters) {
-        this.actions = actions.map(action =>
-            action instanceof PropertyListItemAction ? action : new PropertyListItemAction(action)
-        );
-        this.badges = badges.map(badge => (badge instanceof PropertyBadge ? badge : new PropertyBadge(badge)));
+        this.actions = actions;
+        this.badges = badges;
         this.body = body;
         this.copyValue = copyValue;
         this.description = description;

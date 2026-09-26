@@ -1,40 +1,43 @@
+@let current = field();
+
 <div class="bey-property-field-control">
     <button
-        type="button"
         class="bey-property-file-field-choose"
-        [disabled]="field.disabled"
+        type="button"
+        [disabled]="current.disabled"
         (click)="fileInput.click()"
     >
         <fa-icon [icon]="chooseIcon"></fa-icon>
-        {{ 'angular-components.properties-menu.fileField.choose' | translate }}
+        {{ 'angular-components.properties-menu.file-field.choose' | translate }}
     </button>
 
     <input
         #fileInput
-        type="file"
         hidden
-        [accept]="field.accept ?? ''"
-        [disabled]="field.disabled"
+        type="file"
+        [accept]="current.accept ?? ''"
+        [disabled]="current.disabled"
         (change)="onFileSelected($event)"
     />
 
-    <span class="bey-property-file-field-name" [class.bey-property-file-field-name-empty]="!hasValue">
-        {{
-            selectedFileName ||
-                (hasValue
-                    ? ('angular-components.properties-menu.fileField.fileSelected' | translate)
-                    : ('angular-components.properties-menu.fileField.noFileSelected' | translate))
-        }}
+    <span class="bey-property-file-field-name" [class.is-empty]="!hasValue()">
+        @if (selectedFileName(); as name) {
+            {{ name }}
+        } @else if (hasValue()) {
+            {{ 'angular-components.properties-menu.file-field.file-selected' | translate }}
+        } @else {
+            {{ 'angular-components.properties-menu.file-field.no-file-selected' | translate }}
+        }
     </span>
 
-    @if (hasValue && !field.disabled) {
-        <div class="bey-property-field-button-stack">
+    @if (showsClear()) {
+        <div class="bey-property-field-actions">
             <button
-                type="button"
-                class="bey-property-field-variable-trigger"
-                [attr.aria-label]="'angular-components.properties-menu.fileField.clear' | translate"
-                [tooltip]="'angular-components.properties-menu.fileField.clear' | translate"
+                class="bey-property-field-action"
                 container="body"
+                type="button"
+                [attr.aria-label]="'angular-components.properties-menu.file-field.clear' | translate"
+                [tooltip]="'angular-components.properties-menu.file-field.clear' | translate"
                 (click)="onClear()"
             >
                 <fa-icon [icon]="clearIcon"></fa-icon>
@@ -43,8 +46,8 @@
     }
 </div>
 
-@if (sizeErrorMaxSizeMB !== undefined) {
-    <p class="bey-property-file-field-size-error">
-        {{ 'angular-components.properties-menu.fileField.tooLarge' | translate: { maxSizeMB: sizeErrorMaxSizeMB } }}
+@if (sizeErrorMaxSizeMB() !== null) {
+    <p class="bey-property-field-error">
+        {{ 'angular-components.properties-menu.file-field.too-large' | translate: { maxSizeMB: sizeErrorMaxSizeMB() } }}
     </p>
 }

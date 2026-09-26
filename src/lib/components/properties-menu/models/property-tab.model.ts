@@ -23,7 +23,15 @@ export class PropertyTab {
     addLabel?: string;
     icon?: IconDefinition;
 
-    constructor({ addLabel, disabled = false, groups = [], hidden = false, icon, id, label = `${id}.label` }: PropertyTabParameters) {
+    constructor({
+        addLabel,
+        disabled = false,
+        groups = [],
+        hidden = false,
+        icon,
+        id,
+        label = `${id}.label`
+    }: PropertyTabParameters) {
         this.addLabel = addLabel;
         this.disabled = disabled;
         this.groups = groups.sort((first, second) => first.order - second.order);

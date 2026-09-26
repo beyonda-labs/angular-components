@@ -1,0 +1,31 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.left-menu.example' | translate }}
+</p>
+
+<div class="bey-left-menu-style-guide-grid">
+    <div class="bey-left-menu-style-guide-item">
+        <span class="bey-style-guide-example-label">
+            {{ 'angular-components-style-guide.left-menu.examples.expanded' | translate }}
+        </span>
+        <div class="bey-style-guide-info text-muted mb-2">
+            {{ 'angular-components-style-guide.left-menu.documents-hint' | translate }}
+        </div>
+        <div class="bey-left-menu-style-guide-frame">
+            <bey-left-menu [config]="expandedConfig"></bey-left-menu>
+        </div>
+        @if (lastDocumentsClick) {
+            <div class="bey-style-guide-info text-muted mt-2">
+                {{ 'angular-components-style-guide.left-menu.documents-clicked' | translate }}
+            </div>
+        }
+    </div>
+
+    <div class="bey-left-menu-style-guide-item">
+        <span class="bey-style-guide-example-label">
+            {{ 'angular-components-style-guide.left-menu.examples.collapsed' | translate }}
+        </span>
+        <div class="bey-left-menu-style-guide-frame bey-left-menu-style-guide-frame-collapsed">
+            <bey-left-menu [config]="collapsedConfig"></bey-left-menu>
+        </div>
+    </div>
+</div>

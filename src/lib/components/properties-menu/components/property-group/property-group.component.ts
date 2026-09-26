@@ -1,17 +1,11 @@
-import { Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { PropertyGroup } from '../../models/property-group.model';
-import {
-    PropertyFieldsContent,
-    PropertyGroupContentType,
-    PropertyGroupTab,
-    PropertyListContent,
-    PropertyTabsContent,
-    PropertyTreeContent
-} from '../../models/property-group-content.model';
+import { PropertyField } from '../../models/property-field.model';
+import { PropertyGroup, PropertyGroupVariant } from '../../models/property-group.model';
+import { PropertyGroupContentType, PropertyGroupTab } from '../../models/property-group-content.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { resolvePropertyLabelKey } from '../../utils/property-i18n.util';
 import { PropertyFieldComponent } from '../property-field/property-field.component';
@@ -19,6 +13,7 @@ import { PropertyListComponent } from '../property-list/property-list.component'
 import { PropertyTreeComponent } from '../property-tree/property-tree.component';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, PropertyFieldComponent, PropertyListComponent, PropertyTreeComponent, TranslateModule],
     selector: 'bey-property-group',
     standalone: true,
@@ -26,82 +21,88 @@ import { PropertyTreeComponent } from '../property-tree/property-tree.component'
     templateUrl: './property-group.component.html'
 })
 export class PropertyGroupComponent {
-    @Input({ required: true }) group!: PropertyGroup;
-    @Input({ required: true }) tabId!: string;
+    readonly group = input.required<PropertyGroup>();
+    readonly tabId = input.required<string>();
+
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
+
+    readonly content = computed(() => this.group().content);
+    readonly fieldsContent = computed(() => {
+        const content = this.content();
+
+        return content.type === PropertyGroupContentType.FIELDS ? content : undefined;
+    });
+    readonly isSecondary = computed(() => this.group().variant === PropertyGroupVariant.SECONDARY);
+    readonly labelKey = computed(() =>
+        resolvePropertyLabelKey(
+            this.propertiesMenuService.config().prefix,
+            'groups',
+            this.group().id,
+            this.group().label
+        )
+    );
+    readonly listContent = computed(() => {
+        const content = this.content();
+
+        return content.type === PropertyGroupContentType.LIST ? content : undefined;
+    });
+    readonly tabsContent = computed(() => {
+        const content = this.content();
+
+        return content.type === PropertyGroupContentType.TABS ? content : undefined;
+    });
+    readonly treeContent = computed(() => {
+        const content = this.content();
+
+        return content.type === PropertyGroupContentType.TREE ? content : undefined;
+    });
+    readonly activeTabFields = computed<PropertyField[]>(() => {
+        const content = this.tabsContent();
+        const active = content?.tabs.find(tab => tab.id === content.activeTabId);
+
+        return active?.fields.filter(field => !field.hidden) ?? [];
+    });
+    readonly visibleFields = computed<PropertyField[]>(
+        () => this.fieldsContent()?.fields.filter(field => !field.hidden) ?? []
+    );
 
     readonly addIcon = faPlus;
     readonly chevronIcon = faChevronDown;
     readonly removeIcon = faTrash;
 
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
-
-    get labelKey(): string {
-        return resolvePropertyLabelKey(
-            this.propertiesMenuService.config().prefix,
-            'groups',
-            this.group.id,
-            this.group.label
-        );
-    }
-
-    get fieldsContent(): PropertyFieldsContent | undefined {
-        return this.group.content.type === PropertyGroupContentType.FIELDS ? this.group.content : undefined;
-    }
-
-    get listContent(): PropertyListContent | undefined {
-        return this.group.content.type === PropertyGroupContentType.LIST ? this.group.content : undefined;
-    }
-
-    get tabsContent(): PropertyTabsContent | undefined {
-        return this.group.content.type === PropertyGroupContentType.TABS ? this.group.content : undefined;
-    }
-
-    get treeContent(): PropertyTreeContent | undefined {
-        return this.group.content.type === PropertyGroupContentType.TREE ? this.group.content : undefined;
-    }
-
-    get visibleFields(): PropertyFieldsContent['fields'] {
-        return this.fieldsContent?.fields.filter(field => !field.hidden) ?? [];
-    }
-
-    get activeTabFields(): PropertyFieldsContent['fields'] {
-        const content = this.tabsContent;
-        const active = content?.tabs.find(tab => tab.id === content.activeTabId);
-
-        return active?.fields.filter(field => !field.hidden) ?? [];
-    }
-
-    getContentTabLabelKey(tab: PropertyGroupTab): string {
+    contentTabLabelKey(tab: PropertyGroupTab): string {
         return resolvePropertyLabelKey(this.propertiesMenuService.config().prefix, 'groups', tab.id, tab.label);
     }
 
-    selectContentTab(contentTabId: string): void {
-        if (this.group.disabled) {
-            return;
-        }
-
-        this.propertiesMenuService.selectGroupTab(this.tabId, this.group.id, contentTabId);
-    }
-
-    toggle(): void {
-        if (this.group.disabled || !this.group.showHeader) {
-            return;
-        }
-
-        this.propertiesMenuService.toggleGroup(this.tabId, this.group.id);
+    onEmptyAddBlockClick(): void {
+        this.propertiesMenuService.triggerTreeAddBlock(this.tabId(), this.group().id);
     }
 
     remove(event: Event): void {
         event.stopPropagation();
 
-        if (this.group.disabled) {
+        if (this.group().disabled) {
             return;
         }
 
-        this.propertiesMenuService.removeGroup(this.tabId, this.group.id);
+        this.propertiesMenuService.removeGroup(this.tabId(), this.group().id);
     }
 
-    onEmptyAddBlockClick(): void {
-        this.propertiesMenuService.triggerTreeAddBlock(this.tabId, this.group.id);
+    selectContentTab(contentTabId: string): void {
+        if (this.group().disabled) {
+            return;
+        }
+
+        this.propertiesMenuService.selectGroupTab(this.tabId(), this.group().id, contentTabId);
+    }
+
+    toggle(): void {
+        const group = this.group();
+
+        if (group.disabled || !group.showHeader) {
+            return;
+        }
+
+        this.propertiesMenuService.toggleGroup(this.tabId(), group.id);
     }
 }

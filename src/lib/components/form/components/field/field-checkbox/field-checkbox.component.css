@@ -1,0 +1,62 @@
+:host {
+    --bey-form-checkbox-switch-track: var(--bey-bg-muted);
+    --bey-form-checkbox-switch-track-on: var(--bey-primary);
+    --bey-form-checkbox-switch-border: var(--bey-secondary);
+    --bey-form-checkbox-switch-knob: var(--bey-bg-page);
+    --bey-form-checkbox-switch-width: 2.125rem;
+    --bey-form-checkbox-switch-height: 1.125rem;
+}
+
+.bey-form-checkbox-switch {
+    display: inline-flex;
+    flex-shrink: 0;
+    height: var(--bey-form-checkbox-switch-height);
+    position: relative;
+    width: var(--bey-form-checkbox-switch-width);
+}
+
+.bey-form-checkbox-switch-input {
+    appearance: none;
+    background-color: var(--bey-form-checkbox-switch-track);
+    border: var(--bey-border-width) solid var(--bey-form-checkbox-switch-border);
+    border-radius: var(--bey-radius-pill);
+    cursor: pointer;
+    inset: 0;
+    margin: 0;
+    position: absolute;
+    transition:
+        background-color var(--bey-duration-base) var(--bey-easing-standard),
+        border-color var(--bey-duration-base) var(--bey-easing-standard);
+}
+
+.bey-form-checkbox-switch-knob {
+    background-color: var(--bey-form-checkbox-switch-knob);
+    border-radius: var(--bey-radius-circle);
+    box-shadow: var(--bey-shadow-sm);
+    height: calc(var(--bey-form-checkbox-switch-height) - 2 * var(--bey-space-3xs));
+    left: var(--bey-space-3xs);
+    pointer-events: none;
+    position: absolute;
+    top: var(--bey-space-3xs);
+    transition: transform var(--bey-duration-base) var(--bey-easing-standard);
+    width: calc(var(--bey-form-checkbox-switch-height) - 2 * var(--bey-space-3xs));
+}
+
+.bey-form-checkbox-switch-input:checked {
+    background-color: var(--bey-form-checkbox-switch-track-on);
+    border-color: var(--bey-form-checkbox-switch-track-on);
+}
+
+.bey-form-checkbox-switch-input:checked ~ .bey-form-checkbox-switch-knob {
+    transform: translateX(calc(var(--bey-form-checkbox-switch-width) - var(--bey-form-checkbox-switch-height)));
+}
+
+.bey-form-checkbox-switch-input:disabled {
+    cursor: default;
+    opacity: var(--bey-opacity-disabled);
+}
+
+.bey-form-checkbox-switch-input:focus-visible {
+    outline: var(--bey-border-width-thick) solid var(--bey-primary);
+    outline-offset: var(--bey-space-3xs);
+}

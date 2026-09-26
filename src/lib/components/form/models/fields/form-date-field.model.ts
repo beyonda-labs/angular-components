@@ -1,40 +1,14 @@
 import { DateFormatService } from '../../services/date-format.service';
-import { FormField, FormFieldColumn, FormFieldType } from '../form-field.model';
-import { FormFieldAsyncValidator, FormFieldValidator } from '../form-field-validator.model';
+import { FormField, FormFieldBaseParameters, FormFieldType } from '../form-field.model';
 
 export class FormDateField extends FormField {
     format: string;
+
     maxDate?: string;
     minDate?: string;
 
-    constructor({
-        key,
-        asyncValidators,
-        columns,
-        format = DateFormatService.DEFAULT_FORMAT,
-        isDisabled,
-        isHidden,
-        isLabelTooltipVisible,
-        isLabelVisible,
-        isRequired,
-        maxDate,
-        minDate,
-        placeholder,
-        validators
-    }: FormDateFieldParameters) {
-        super({
-            asyncValidators,
-            columns,
-            isDisabled,
-            isHidden,
-            isLabelTooltipVisible,
-            isLabelVisible,
-            isRequired,
-            key,
-            placeholder,
-            type: FormFieldType.Date,
-            validators
-        });
+    constructor({ format = DateFormatService.DEFAULT_FORMAT, maxDate, minDate, ...base }: FormDateFieldParameters) {
+        super({ ...base, type: FormFieldType.Date });
 
         this.format = format;
         this.maxDate = maxDate;
@@ -42,19 +16,8 @@ export class FormDateField extends FormField {
     }
 }
 
-interface FormDateFieldParameters {
-    key: string;
-
-    asyncValidators?: FormFieldAsyncValidator[];
-    columns?: FormFieldColumn;
+export interface FormDateFieldParameters extends FormFieldBaseParameters {
     format?: string;
-    isDisabled?: boolean;
-    isHidden?: boolean;
-    isLabelTooltipVisible?: boolean;
-    isLabelVisible?: boolean;
-    isRequired?: boolean;
     maxDate?: string;
     minDate?: string;
-    placeholder?: string;
-    validators?: FormFieldValidator[];
 }

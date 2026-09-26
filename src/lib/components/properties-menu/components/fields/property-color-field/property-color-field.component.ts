@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
@@ -9,6 +9,7 @@ import { PropertyColorField } from '../../../models/fields/property-color-field.
 const DEFAULT_COLOR = '#000000';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, TooltipModule, TranslateModule],
     selector: 'bey-property-color-field',
     standalone: true,
@@ -16,32 +17,26 @@ const DEFAULT_COLOR = '#000000';
     templateUrl: './property-color-field.component.html'
 })
 export class PropertyColorFieldComponent {
-    @Input({ required: true }) field!: PropertyColorField;
+    readonly field = input.required<PropertyColorField>();
 
-    @Output() valueChange = new EventEmitter<string>();
+    readonly valueChange = output<string>();
+
+    readonly hasValue = computed(() => Boolean(this.field().value));
+    /** The native colour input always needs a hex value for its own swatch; this fallback is never emitted. */
+    readonly pickerValue = computed(() => this.field().value || DEFAULT_COLOR);
+    readonly showsClear = computed(() => {
+        const field = this.field();
+
+        return this.hasValue() && !field.disabled && !field.readonly;
+    });
 
     readonly clearIcon = faXmark;
-
-    get hasValue(): boolean {
-        return Boolean(this.field.value);
-    }
-
-    // The native `<input type="color">` can't represent "no color" — it always needs a concrete hex
-    // value to render its own swatch — so this fallback only feeds that picker's internal display, and
-    // is never written back as the field's actual value.
-    get pickerValue(): string {
-        return this.field.value || DEFAULT_COLOR;
-    }
 
     onClear(): void {
         this.valueChange.emit('');
     }
 
-    onSwatchChange(event: Event): void {
-        this.valueChange.emit((event.target as HTMLInputElement).value);
-    }
-
-    onTextChange(event: Event): void {
+    onInputChange(event: Event): void {
         this.valueChange.emit((event.target as HTMLInputElement).value);
     }
 }

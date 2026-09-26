@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-import { FormGroup } from '@angular/forms';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Observable, of } from 'rxjs';
 
@@ -12,9 +11,28 @@ import { ModalFormService } from './modal-form.service';
 
 describe('ModalFormService', () => {
     let service: ModalFormService;
-
     const show = jest.fn();
     const openConfirmation = jest.fn();
+
+    function buildConfig(size?: ModalFormSize): ModalFormConfig {
+        return new ModalFormConfig({
+            prefix: 'demo.modal-form',
+            sections: [
+                new FormSection({
+                    key: 'contact',
+                    rows: [new FormRow({ fields: [new FormTextField({ key: 'name' })] })]
+                })
+            ],
+            size
+        });
+    }
+
+    function buildReference(isDirty = false): BsModalRef<ModalFormDialogComponent> {
+        return {
+            content: { isDirty: () => isDirty },
+            hide: jest.fn()
+        } as unknown as BsModalRef<ModalFormDialogComponent>;
+    }
 
     beforeEach(() => {
         show.mockReset();
@@ -22,128 +40,57 @@ describe('ModalFormService', () => {
 
         TestBed.configureTestingModule({
             providers: [
-                ModalFormService,
-                {
-                    provide: BsModalService,
-                    useValue: { show }
-                },
-                {
-                    provide: ModalService,
-                    useValue: { openConfirmation }
-                }
+                { provide: BsModalService, useValue: { show } },
+                { provide: ModalService, useValue: { openConfirmation } }
             ]
         });
 
         service = TestBed.inject(ModalFormService);
     });
 
-    it('should create', () => {
-        expect(service).toBeTruthy();
+    it('opens the dialog centred, sized by the config and immune to the backdrop and Escape', () => {
+        const reference = buildReference();
+        show.mockReturnValue(reference);
+        const config = buildConfig(ModalFormSize.Small);
+
+        expect(service.open(config)).toBe(reference);
+        expect(show).toHaveBeenCalledWith(ModalFormDialogComponent, {
+            animated: true,
+            class: 'modal-dialog-centered modal-sm',
+            ignoreBackdropClick: true,
+            initialState: { config },
+            keyboard: false
+        });
     });
 
-    it('should open the modal form dialog with the provided config', () => {
-        const modalReference = buildModalReference();
-        show.mockReturnValue(modalReference);
+    it('lets navigation through, closing the open forms, while none of them has changes', () => {
+        const reference = buildReference();
+        show.mockReturnValue(reference);
 
-        const config = buildConfig();
-        const result = service.open(config);
-
-        expect(result).toBe(modalReference);
-        expect(show).toHaveBeenCalledWith(
-            ModalFormDialogComponent,
-            expect.objectContaining({
-                class: 'modal-dialog-centered modal-lg',
-                ignoreBackdropClick: true,
-                initialState: { config },
-                keyboard: false
-            })
-        );
-    });
-
-    it('should apply the configured size to the modal class', () => {
-        show.mockReturnValue(buildModalReference());
-
-        service.open(buildConfig(ModalFormSize.Small));
-
-        expect(show).toHaveBeenCalledWith(
-            ModalFormDialogComponent,
-            expect.objectContaining({ class: 'modal-dialog-centered modal-sm' })
-        );
-    });
-
-    it('should allow deactivation when there is no open modal form', () => {
         expect(service.canDeactivate()).toBe(true);
-    });
-
-    it('should close pristine modal forms and allow deactivation', () => {
-        const modalReference = buildModalReference();
-        show.mockReturnValue(modalReference);
 
         service.open(buildConfig());
 
         expect(service.canDeactivate()).toBe(true);
-        expect(modalReference.hide).toHaveBeenCalled();
+        expect(reference.hide).toHaveBeenCalled();
         expect(openConfirmation).not.toHaveBeenCalled();
     });
 
-    it('should ask for confirmation and close dirty modal forms when confirmed', done => {
-        openConfirmation.mockReturnValue(of(true));
-        const modalReference = buildModalReference();
-        show.mockReturnValue(modalReference);
+    it('asks before navigating away from a changed form, and only closes it when confirmed', done => {
+        const reference = buildReference(true);
+        show.mockReturnValue(reference);
+        openConfirmation.mockReturnValueOnce(of(false)).mockReturnValueOnce(of(true));
+        service.open(buildConfig());
 
-        const config = buildConfig();
-        service.open(config);
-        markAsDirty(config);
+        (service.canDeactivate() as Observable<boolean>).subscribe(rejected => {
+            expect(rejected).toBe(false);
+            expect(reference.hide).not.toHaveBeenCalled();
 
-        const result = service.canDeactivate() as Observable<boolean>;
-
-        result.subscribe(allowed => {
-            expect(allowed).toBe(true);
-            expect(openConfirmation).toHaveBeenCalled();
-            expect(modalReference.hide).toHaveBeenCalled();
-            done();
-        });
-    });
-
-    it('should block deactivation and keep dirty modal forms open when rejected', done => {
-        openConfirmation.mockReturnValue(of(false));
-        const modalReference = buildModalReference();
-        show.mockReturnValue(modalReference);
-
-        const config = buildConfig();
-        service.open(config);
-        markAsDirty(config);
-
-        const result = service.canDeactivate() as Observable<boolean>;
-
-        result.subscribe(allowed => {
-            expect(allowed).toBe(false);
-            expect(modalReference.hide).not.toHaveBeenCalled();
-            done();
+            (service.canDeactivate() as Observable<boolean>).subscribe(confirmed => {
+                expect(confirmed).toBe(true);
+                expect(reference.hide).toHaveBeenCalled();
+                done();
+            });
         });
     });
 });
-
-function buildConfig(size?: ModalFormSize): ModalFormConfig {
-    return new ModalFormConfig({
-        i18nPrefix: 'test.modal-form',
-        sections: [
-            new FormSection({
-                key: 'section1',
-                rows: [new FormRow({ fields: [new FormTextField({ key: 'text1' })] })]
-            })
-        ],
-        size
-    });
-}
-
-function buildModalReference(): BsModalRef<ModalFormDialogComponent> {
-    return { hide: jest.fn() } as unknown as BsModalRef<ModalFormDialogComponent>;
-}
-
-function markAsDirty(config: ModalFormConfig): void {
-    const formGroup = new FormGroup({});
-
-    formGroup.markAsDirty();
-    config.formGroup = formGroup;
-}

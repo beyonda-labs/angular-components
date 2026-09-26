@@ -1,0 +1,55 @@
+<div class="bey-option-picker" role="listbox" [attr.aria-label]="'angular-components.option-picker.label' | translate">
+    @if (searchable()) {
+        <div class="bey-option-picker-header">
+            <div class="bey-option-picker-search">
+                <fa-icon class="bey-option-picker-search-icon" [icon]="searchIcon"></fa-icon>
+                <input
+                    class="bey-option-picker-search-input"
+                    autocomplete="off"
+                    type="text"
+                    [attr.aria-label]="'angular-components.option-picker.search' | translate"
+                    [value]="searchTerm()"
+                    (input)="onSearchTermChange($event)"
+                />
+            </div>
+
+            <button
+                class="bey-option-picker-close"
+                type="button"
+                [attr.aria-label]="'angular-components.option-picker.close' | translate"
+                (click)="closed.emit()"
+            >
+                <fa-icon [icon]="closeIcon"></fa-icon>
+            </button>
+        </div>
+    }
+
+    <div class="bey-option-picker-list">
+        @for (option of visibleOptions(); track option.value; let index = $index) {
+            <button
+                class="bey-option-picker-row"
+                role="option"
+                type="button"
+                [attr.aria-disabled]="option.isDisabled || null"
+                [attr.aria-selected]="index === activeIndex()"
+                [class.is-active]="index === activeIndex()"
+                [class.is-disabled]="option.isDisabled"
+                [style.--bey-option-picker-row-depth]="indent(option)"
+                (click)="selectOption(option)"
+                (mouseenter)="activeIndex.set(index)"
+            >
+                <span class="bey-option-picker-row-label" container="body" placement="top" [tooltip]="option.label">
+                    {{ option.label }}
+                </span>
+                @if (option.description) {
+                    <span class="bey-option-picker-row-description">{{ option.description }}</span>
+                }
+                @if (option.badge) {
+                    <span class="bey-option-picker-row-badge">{{ option.badge | translate }}</span>
+                }
+            </button>
+        } @empty {
+            <div class="bey-option-picker-empty">{{ 'angular-components.option-picker.empty' | translate }}</div>
+        }
+    </div>
+</div>

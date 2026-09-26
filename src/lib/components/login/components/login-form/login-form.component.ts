@@ -1,8 +1,6 @@
-import { ChangeDetectorRef, Component, inject, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { SessionService } from '../../../../services/session/session.service';
 import { FormComponent } from '../../../form/form.component';
 import { FormPasswordField } from '../../../form/models/fields/form-password-field.model';
 import { FormTextField } from '../../../form/models/fields/form-text-field.model';
@@ -10,6 +8,7 @@ import { FormButton, FormButtonType, FormConfig, FormRow, FormSection } from '..
 import { FormFieldEmailValidator } from '../../../form/models/form-field-validator.model';
 import { LoginConfig, LoginProviderConfig } from '../../models/login.model';
 import { LoginHttpService } from '../../services/login-http.service';
+import { LoginSessionService } from '../../services/login-session.service';
 import { LoginProvidersComponent } from '../login-providers/login-providers.component';
 
 interface LoginFormValue {
@@ -17,29 +16,30 @@ interface LoginFormValue {
 }
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FormComponent, LoginProvidersComponent, TranslateModule],
     selector: 'bey-login-form',
     standalone: true,
     templateUrl: './login-form.component.html'
 })
-export class LoginFormComponent implements OnInit {
-    @Input({ required: true }) config!: LoginConfig;
-    @Input({ required: true }) providers!: LoginProviderConfig[];
+export class LoginFormComponent {
+    readonly config = input.required<LoginConfig>();
+    readonly providers = input.required<LoginProviderConfig[]>();
 
-    formConfig!: FormConfig;
+    readonly formConfig = computed(() => this.buildForm(this.prefix()));
+    readonly prefix = computed(() => this.config().prefix);
 
-    private readonly cdr = inject(ChangeDetectorRef);
     private readonly loginHttpService = inject(LoginHttpService);
-    private readonly router = inject(Router);
-    private readonly sessionService = inject(SessionService);
+    private readonly loginSessionService = inject(LoginSessionService);
 
-    get prefix(): string {
-        return this.config.translatePrefix;
+    onProvider(provider: LoginProviderConfig): void {
+        window.location.href = provider.authUrl;
     }
 
-    ngOnInit(): void {
-        this.formConfig = new FormConfig({
-            i18nPrefix: this.config.translatePrefix,
+    private buildForm(prefix: string): FormConfig {
+        return new FormConfig({
+            buttonLayout: 'stretch',
+            prefix,
             sections: [
                 new FormSection({
                     key: 'login',
@@ -54,41 +54,18 @@ export class LoginFormComponent implements OnInit {
                                 })
                             ]
                         }),
-                        new FormRow({
-                            fields: [
-                                new FormPasswordField({
-                                    key: 'password',
-                                    isRequired: true
-                                })
-                            ]
-                        })
+                        new FormRow({ fields: [new FormPasswordField({ key: 'password', isRequired: true })] })
                     ]
                 })
             ],
-            buttons: [
-                new FormButton({
-                    label: `${this.config.translatePrefix}.login.button.login`,
-                    type: FormButtonType.Submit,
-                    customClass: 'w-100 d-block ms-0 justify-content-center',
-                    customStyles: 'width: 100%'
-                })
-            ],
-            onSubmit: (value: unknown) => {
-                const { login } = value as LoginFormValue;
-
-                this.loginHttpService.login(login.email ?? '', login.password ?? '').subscribe(response => {
-                    this.sessionService.setToken(response.accessToken);
-                    this.sessionService.setRefreshToken(response.refreshToken);
-                    const redirectPath = this.sessionService.user()?.redirectPath;
-                    if (redirectPath) {
-                        this.router.navigate([redirectPath]);
-                    }
-                });
-            }
+            buttons: [new FormButton({ label: `${prefix}.login.button.login`, type: FormButtonType.Submit })],
+            onSubmit: value => this.signIn((value as LoginFormValue).login)
         });
     }
 
-    onProvider(provider: LoginProviderConfig): void {
-        window.location.href = provider.authUrl;
+    private signIn({ email, password }: LoginFormValue['login']): void {
+        this.loginHttpService
+            .login({ email: email ?? '', password: password ?? '' })
+            .subscribe(response => this.loginSessionService.open(response));
     }
 }

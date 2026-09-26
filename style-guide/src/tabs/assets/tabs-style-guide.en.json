@@ -1,0 +1,67 @@
+{
+    "angular-components-style-guide": {
+        "tabs": {
+            "active-tab": "Active tab",
+            "basic": {
+                "tabs": {
+                    "details": {
+                        "label": "Details"
+                    },
+                    "history": {
+                        "label": "History"
+                    },
+                    "overview": {
+                        "label": "Overview"
+                    }
+                }
+            },
+            "example": "Model-driven horizontal tab bar with keyboard navigation, optional icons and disabled state. The consumer renders content based on the active tab key.",
+            "examples": {
+                "basic": "Basic",
+                "icons": "With icons & disabled",
+                "overflow": "Overflow (narrow container)"
+            },
+            "icons": {
+                "tabs": {
+                    "admin": {
+                        "label": "Admin"
+                    },
+                    "analytics": {
+                        "label": "Analytics"
+                    },
+                    "documents": {
+                        "label": "Documents"
+                    },
+                    "settings": {
+                        "label": "Settings"
+                    }
+                }
+            },
+            "overflow": {
+                "tabs": {
+                    "activity": {
+                        "label": "Activity"
+                    },
+                    "comments": {
+                        "label": "Comments"
+                    },
+                    "details": {
+                        "label": "Details"
+                    },
+                    "history": {
+                        "label": "History"
+                    },
+                    "overview": {
+                        "label": "Overview"
+                    },
+                    "permissions": {
+                        "label": "Permissions"
+                    },
+                    "settings": {
+                        "label": "Settings"
+                    }
+                }
+            }
+        }
+    }
+}

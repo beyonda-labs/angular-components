@@ -6,7 +6,6 @@ import { computed, Injectable, signal } from '@angular/core';
 export class LoadingService {
     private readonly count = signal(0);
 
-    // eslint-disable-next-line unicorn/consistent-function-scoping
     readonly isLoading = computed(() => this.count() > 0);
 
     show(): void {

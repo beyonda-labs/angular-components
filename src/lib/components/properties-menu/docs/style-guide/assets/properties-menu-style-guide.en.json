@@ -1,8 +1,0 @@
-{
-    "angular-components-style-guide": {
-        "propertiesMenu": {
-            "example": "Property inspector for a selected editor block, with tabs, collapsible groups and variable insertion.",
-            "provideVariables": "Provide variables"
-        }
-    }
-}

@@ -1,37 +1,39 @@
+@let current = field();
+
 <div class="bey-property-field-control">
     <label
         class="bey-property-color-field-swatch"
-        [class.bey-property-color-field-swatch-empty]="!hasValue"
-        [style.backgroundColor]="hasValue ? pickerValue : null"
+        [class.is-empty]="!hasValue()"
+        [style.backgroundColor]="hasValue() ? pickerValue() : null"
     >
         <input
-            type="color"
             class="bey-property-color-field-swatch-input"
-            [attr.aria-label]="field.label"
-            [disabled]="field.disabled"
-            [value]="pickerValue"
-            (input)="onSwatchChange($event)"
+            type="color"
+            [attr.aria-label]="current.label"
+            [disabled]="current.disabled"
+            [value]="pickerValue()"
+            (input)="onInputChange($event)"
         />
     </label>
 
     <input
-        type="text"
         class="bey-property-field-input"
-        [attr.aria-label]="field.label + ' hex value'"
-        [disabled]="field.disabled"
-        [readOnly]="field.readonly"
-        [value]="field.value ?? ''"
-        (change)="onTextChange($event)"
+        type="text"
+        [attr.aria-label]="current.label + ' hex value'"
+        [disabled]="current.disabled"
+        [readOnly]="current.readonly"
+        [value]="current.value ?? ''"
+        (change)="onInputChange($event)"
     />
 
-    @if (hasValue && !field.disabled && !field.readonly) {
-        <div class="bey-property-field-button-stack">
+    @if (showsClear()) {
+        <div class="bey-property-field-actions">
             <button
-                type="button"
-                class="bey-property-field-variable-trigger"
-                [attr.aria-label]="'angular-components.properties-menu.colorField.clear' | translate"
-                [tooltip]="'angular-components.properties-menu.colorField.clear' | translate"
+                class="bey-property-field-action"
                 container="body"
+                type="button"
+                [attr.aria-label]="'angular-components.properties-menu.color-field.clear' | translate"
+                [tooltip]="'angular-components.properties-menu.color-field.clear' | translate"
                 (click)="onClear()"
             >
                 <fa-icon [icon]="clearIcon"></fa-icon>

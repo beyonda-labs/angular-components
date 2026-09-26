@@ -1,46 +1,39 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { mock, MockProxy } from 'jest-mock-extended';
+import { queryAll, renderComponent } from '@testing/dom';
 
 import { FormRadioField } from '../../../models/fields/form-radio-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
-import { FormService } from '../../../services/form.service';
 import { FormRadioFieldComponent } from './field-radio.component';
 
 describe('FormRadioFieldComponent', () => {
-    let component: FormRadioFieldComponent;
     let fixture: ComponentFixture<FormRadioFieldComponent>;
-    let formServiceMock: MockProxy<FormService>;
+    let control: FormControl<string | null>;
 
     beforeEach(async () => {
-        formServiceMock = mock<FormService>();
-        formServiceMock.getSectionGroup.mockReturnValue(new FormGroup({}));
-        formServiceMock.getFieldControl.mockReturnValue(new FormControl(''));
-
         await TestBed.configureTestingModule({
-            imports: [FormRadioFieldComponent, TranslateModule.forRoot()],
-            providers: [{ provide: FormService, useValue: formServiceMock }]
+            imports: [FormRadioFieldComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(FormRadioFieldComponent);
-        component = fixture.componentInstance;
-
-        component.formConfig = {} as FormConfig;
-        component.section = { key: 'section1' } as FormSection;
-        component.field = new FormRadioField({
-            key: 'radio1',
-            options: []
+        control = new FormControl<string | null>('');
+        fixture = await renderComponent(FormRadioFieldComponent, {
+            control,
+            field: new FormRadioField({ key: 'size' }),
+            options: [
+                { label: 'Small', value: 's' },
+                { label: 'Large', value: 'l' }
+            ]
         });
-
-        fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+    it('offers one radio per option and writes the chosen one', () => {
+        const radios = queryAll<HTMLInputElement>(fixture, 'input[type="radio"]');
 
-    it('isInvalid should return false if control untouched', () => {
-        expect(component.isInvalid()).toBe(false);
+        expect(fixture.nativeElement.textContent).toContain('Small');
+        expect(radios).toHaveLength(2);
+
+        radios[1].click();
+
+        expect(control.value).toBe('l');
     });
 });

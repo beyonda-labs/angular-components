@@ -1,0 +1,8 @@
+:host {
+    display: block;
+}
+
+.bey-login-style-guide-frame {
+    height: 37.5rem;
+    overflow: auto;
+}

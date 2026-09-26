@@ -1,0 +1,26 @@
+{
+    "angular-components-style-guide": {
+        "app-layout-section": "App Layouts",
+        "badge-section": "Badges",
+        "breadcrumbs": "Breadcrumbs",
+        "components": "Components",
+        "compound": "Compound",
+        "floating-preferences-section": "Floating Preferences",
+        "footers": "Footers",
+        "forms": "Forms",
+        "headers": "Headers",
+        "left-menu-section": "Left Menus",
+        "loadings": "Loading",
+        "login-section": "Login",
+        "modals": "Modals",
+        "page-section": "Page",
+        "pdf-viewer-section": "PDF Viewer",
+        "properties-menu-section": "Properties Menu",
+        "search-section": "Search",
+        "simple": "Simple",
+        "tables": "Tables",
+        "tabs-section": "Tabs",
+        "title": "Beyonda Labs - Angular Components - Style Guide",
+        "toasts": "Toasts"
+    }
+}

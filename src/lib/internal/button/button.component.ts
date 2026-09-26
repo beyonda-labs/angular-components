@@ -1,11 +1,21 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { ButtonConfig, ButtonType } from './models/button-config.model';
 
+const BASE_CLASSES = 'bey-button btn btn-sm d-flex align-items-center fw-semibold rounded';
+const TYPE_CLASSES: Record<ButtonType, string> = {
+    [ButtonType.LinkSecondary]: 'btn-link btn-link-secondary',
+    [ButtonType.Primary]: 'btn-dark',
+    [ButtonType.Secondary]: 'btn-outline-dark',
+    [ButtonType.Tertiary]: 'btn-link'
+};
+
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    host: { '[class]': 'hostClass()' },
     imports: [FontAwesomeModule, TooltipModule, TranslateModule],
     selector: 'bey-button',
     standalone: true,
@@ -13,51 +23,20 @@ import { ButtonConfig, ButtonType } from './models/button-config.model';
     templateUrl: './button.component.html'
 })
 export class ButtonComponent {
-    @Input() button: ButtonConfig;
+    readonly button = input.required<ButtonConfig>();
 
-    @HostBinding('class')
-    get hostClass(): string {
-        return this.button?.customClass ?? '';
-    }
+    readonly classes = computed(() => {
+        const { customClass, type } = this.button();
 
-    getClasses(): string {
-        if (!this.button) {
-            return '';
-        }
-
-        const common = 'bey-button btn btn-sm d-flex align-items-center fw-semibold rounded';
-
-        let classes: string;
-
-        switch (this.button.type) {
-            case ButtonType.Primary:
-                classes = `${common} btn-dark`;
-                break;
-
-            case ButtonType.Secondary:
-                classes = `${common} btn-outline-dark`;
-                break;
-
-            case ButtonType.Tertiary:
-                classes = `${common} btn-link`;
-                break;
-
-            case ButtonType.LinkSecondary:
-                classes = `${common} btn-link btn-link-secondary`;
-                break;
-
-            default:
-                return '';
-        }
-
-        return this.button.customClass
-            ? `${classes} ${this.button.customClass}`
-            : classes;
-    }
+        return [BASE_CLASSES, TYPE_CLASSES[type], customClass].filter(Boolean).join(' ');
+    });
+    readonly hostClass = computed(() => this.button().customClass ?? '');
 
     onClick(): void {
-        if (this.button && !this.button.isDisabled) {
-            this.button.action();
+        const button = this.button();
+
+        if (!button.isDisabled) {
+            button.action();
         }
     }
 }

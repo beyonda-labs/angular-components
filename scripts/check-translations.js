@@ -1,19 +1,30 @@
 /*
- * Verify that every `.en.json` translation file has a corresponding `.es.json`
- * and that both files share the same key structure.
+ * Verify the translation files against the rules in `rules/angular/i18n.md`.
  *
  * Aborts on:
  *   - Missing `.es.json` file
  *   - Missing keys in `.es.json`
+ *   - The same key defined by two files, which the merge would silently collapse
+ *   - Keys deeper than the agreed shape
+ *
+ * Warns on:
+ *   - Key segments that are not kebab-case (a pending migration, not yet a failure)
  */
 
 const fs = require('fs');
 const path = require('path');
 
-const sourceDirs = [path.resolve(__dirname, '../src/lib/components'), path.resolve(__dirname, '../src/lib/internal')];
+const sourceDirs = [
+    path.resolve(__dirname, '../src/lib/components'),
+    path.resolve(__dirname, '../src/lib/internal'),
+    path.resolve(__dirname, '../src/lib/services'),
+    path.resolve(__dirname, '../style-guide/src')
+];
 
 const BASE_LANG = 'en';
 const TARGET_LANG = 'es';
+const MAX_DEPTH = 6;
+const KEBAB_CASE = /^[a-z0-9]+(-[a-z0-9]+)*$/u;
 
 // ────────────────────────────────────────────────────────────────────────────
 // Helpers
@@ -40,6 +51,16 @@ function collectKeys(obj, prefix = '') {
     });
 }
 
+/** Read and parse a JSON file, or record the failure. */
+function readJson(file, errors) {
+    try {
+        return JSON.parse(fs.readFileSync(file, 'utf8'));
+    } catch (err) {
+        errors.push(`Invalid JSON in ${file}\n  ${err.message}`);
+        return undefined;
+    }
+}
+
 // ────────────────────────────────────────────────────────────────────────────
 // Main
 // ────────────────────────────────────────────────────────────────────────────
@@ -48,43 +69,59 @@ function checkTranslations() {
     const enExtension = `.${BASE_LANG}.json`;
     const enFiles = sourceDirs.flatMap(dir => findFilesRecursively(dir, enExtension));
 
-    let hasErrors = false;
+    const errors = [];
+    const warnings = [];
+    const owners = new Map();
 
     enFiles.forEach(enFile => {
         const esFile = enFile.replace(enExtension, `.${TARGET_LANG}.json`);
 
-        // Check existence
         if (!fs.existsSync(esFile)) {
-            console.error(`✖ Missing translation file: ${esFile}`);
-            hasErrors = true;
+            errors.push(`Missing translation file: ${esFile}`);
             return;
         }
 
-        // Parse JSON files
-        let enJson, esJson;
-        try {
-            enJson = JSON.parse(fs.readFileSync(enFile, 'utf8'));
-            esJson = JSON.parse(fs.readFileSync(esFile, 'utf8'));
-        } catch (err) {
-            console.error(`✖ Invalid JSON:\n  ${err.message}`);
-            hasErrors = true;
-            return;
-        }
+        const enJson = readJson(enFile, errors);
+        const esJson = readJson(esFile, errors);
 
-        // Compare keys
+        if (!enJson || !esJson) return;
+
         const enKeys = collectKeys(enJson);
         const esKeys = new Set(collectKeys(esJson));
 
-        const missingKeys = enKeys.filter(key => !esKeys.has(key));
+        enKeys
+            .filter(key => !esKeys.has(key))
+            .forEach(key => errors.push(`Missing key in ${path.basename(esFile)}: ${key}`));
 
-        if (missingKeys.length > 0) {
-            console.error(`✖ Missing keys in ${path.basename(esFile)}:`);
-            missingKeys.forEach(k => console.error(`  - ${k}`));
-            hasErrors = true;
-        }
+        enKeys.forEach(key => {
+            const segments = key.split('.');
+
+            if (segments.length > MAX_DEPTH) {
+                errors.push(`Key deeper than ${MAX_DEPTH} levels in ${path.basename(enFile)}: ${key}`);
+            }
+
+            segments
+                .filter(segment => !KEBAB_CASE.test(segment))
+                .forEach(segment => warnings.push(`Key segment is not kebab-case: ${key} (\`${segment}\`)`));
+
+            const owner = owners.get(key);
+
+            if (owner && owner !== enFile) {
+                errors.push(`Key defined twice, the merge would keep only one: ${key}`);
+                errors.push(`  ${path.relative(process.cwd(), owner)}`);
+                errors.push(`  ${path.relative(process.cwd(), enFile)}`);
+            }
+
+            owners.set(key, enFile);
+        });
     });
 
-    if (hasErrors) {
+    if (warnings.length > 0) {
+        console.warn(`⚠ ${warnings.length} key(s) still to migrate to kebab-case`);
+    }
+
+    if (errors.length > 0) {
+        errors.forEach(error => console.error(`✖ ${error}`));
         throw new Error('i18n check failed');
     }
 

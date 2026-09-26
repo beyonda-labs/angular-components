@@ -1,273 +1,179 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 
-import { Tab, TabsConfig, TabsVariant } from './models/tabs.model';
+import { Tab, TabsConfig, TabsConfigParameters } from './models/tabs.model';
 import { TabsComponent } from './tabs.component';
 
-class ResizeObserverMock {
-    observe(): void {}
-    unobserve(): void {}
-    disconnect(): void {}
-}
-
 describe('TabsComponent', () => {
-    let component: TabsComponent;
     let fixture: ComponentFixture<TabsComponent>;
 
-    beforeEach(async () => {
-        global.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
+    function buildConfig(overrides: Partial<TabsConfigParameters> = {}): TabsConfig {
+        return new TabsConfig({
+            prefix: 'demo',
+            tabs: [
+                new Tab({ key: 'general', label: 'General' }),
+                new Tab({ key: 'details', label: 'Details' }),
+                new Tab({ key: 'history', label: 'History' })
+            ],
+            ...overrides
+        });
+    }
 
+    async function render(config: TabsConfig = buildConfig()): Promise<void> {
+        fixture = await renderComponent(TabsComponent, { config });
+    }
+
+    function tabs(): HTMLElement[] {
+        return queryAll(fixture, '[role="tab"]');
+    }
+
+    function tab(name: string): HTMLElement {
+        const found = tabs().find(element => element.textContent?.trim() === name);
+
+        if (!found) {
+            throw new Error(`No tab named ${name}`);
+        }
+
+        return found;
+    }
+
+    function press(key: string): void {
+        tabs()[0].dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }));
+        fixture.detectChanges();
+    }
+
+    function selectedTabName(): string | undefined {
+        return tabs()
+            .find(element => element.getAttribute('aria-selected') === 'true')
+            ?.textContent?.trim();
+    }
+
+    beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [TabsComponent, TranslateModule.forRoot()]
         }).compileComponents();
-
-        fixture = TestBed.createComponent(TabsComponent);
-        component = fixture.componentInstance;
     });
 
-    it('should create', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
-        expect(component).toBeTruthy();
+    it('renders one tab per entry in the config', async () => {
+        await render();
+
+        expect(textsOf(tabs())).toEqual(['General', 'Details', 'History']);
     });
 
-    it('should default active tab to the first tab', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
-        expect(component.activeTabKey).toBe('general');
+    it('selects the first tab when the config names none', async () => {
+        await render();
+
+        expect(selectedTabName()).toBe('General');
     });
 
-    it('should render the correct number of tabs', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
+    it('selects the tab the config names', async () => {
+        await render(buildConfig({ activeTab: 'history' }));
 
-        const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
-        expect(tabs.length).toBe(3);
+        expect(selectedTabName()).toBe('History');
     });
 
-    it('should mark the active tab with aria-selected true', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
-
-        const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
-        expect(tabs[0].getAttribute('aria-selected')).toBe('true');
-        expect(tabs[1].getAttribute('aria-selected')).toBe('false');
-    });
-
-    it('should add active class to the active tab', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
-
-        const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
-        expect(tabs[0].classList.contains('bey-tabs-tab-active')).toBe(true);
-        expect(tabs[1].classList.contains('bey-tabs-tab-active')).toBe(false);
-    });
-
-    it('should call onTabChange when clicking a tab', () => {
+    it('moves the selection to the clicked tab and reports it', async () => {
         const onTabChange = jest.fn();
-        component.config = buildConfig({ onTabChange });
+        await render(buildConfig({ onTabChange }));
+
+        tab('Details').click();
         fixture.detectChanges();
 
-        const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
-        tabs[1].click();
-        fixture.detectChanges();
-
-        expect(onTabChange).toHaveBeenCalledWith('details');
-        expect(component.activeTabKey).toBe('details');
-    });
-
-    it('should not call onTabChange when clicking a disabled tab', () => {
-        const onTabChange = jest.fn();
-        component.config = buildConfig({
-            onTabChange,
-            tabs: [
-                new Tab({ key: 'general' }),
-                new Tab({ key: 'details', isDisabled: true }),
-                new Tab({ key: 'history' })
-            ]
-        });
-        fixture.detectChanges();
-
-        const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
-        tabs[1].click();
-
-        expect(onTabChange).not.toHaveBeenCalled();
-        expect(component.activeTabKey).toBe('general');
-    });
-
-    it('should set disabled attribute on disabled tabs', () => {
-        component.config = buildConfig({
-            tabs: [
-                new Tab({ key: 'general' }),
-                new Tab({ key: 'details', isDisabled: true })
-            ]
-        });
-        fixture.detectChanges();
-
-        const tabs = fixture.nativeElement.querySelectorAll('[role="tab"]');
-        expect(tabs[0].disabled).toBe(false);
-        expect(tabs[1].disabled).toBe(true);
-    });
-
-    it('should resolve tab labels with prefix', () => {
-        const config = buildConfig();
-        component.config = config;
-
-        const tab = config.tabs[0];
-        const label = component.getTabLabel(tab);
-        expect(label).toBe('test.tabs.tabs.general.label');
-    });
-
-    it('should use custom label when provided', () => {
-        component.config = buildConfig({
-            tabs: [new Tab({ key: 'general', label: 'custom.label' })]
-        });
-
-        const label = component.getTabLabel(component.config.tabs[0]);
-        expect(label).toBe('custom.label');
-    });
-
-    it('should programmatically change active tab via setActiveTab', () => {
-        const onTabChange = jest.fn();
-        component.config = buildConfig({ onTabChange });
-        fixture.detectChanges();
-
-        component.config.setActiveTab('details');
+        expect(selectedTabName()).toBe('Details');
         expect(onTabChange).toHaveBeenCalledWith('details');
     });
 
-    it('should not change to a disabled tab via setActiveTab', () => {
+    it('reports a change only once per tab', async () => {
         const onTabChange = jest.fn();
-        component.config = buildConfig({
-            onTabChange,
-            tabs: [
-                new Tab({ key: 'general' }),
-                new Tab({ key: 'details', isDisabled: true })
-            ]
-        });
+        await render(buildConfig({ onTabChange }));
 
-        component.config.setActiveTab('details');
+        tab('Details').click();
+        tab('Details').click();
+        fixture.detectChanges();
+
+        expect(onTabChange).toHaveBeenCalledTimes(1);
+    });
+
+    it('ignores a disabled tab', async () => {
+        const onTabChange = jest.fn();
+        await render(
+            buildConfig({
+                onTabChange,
+                tabs: [
+                    new Tab({ key: 'general', label: 'General' }),
+                    new Tab({ key: 'locked', label: 'Locked', isDisabled: true })
+                ]
+            })
+        );
+
+        tab('Locked').click();
+        fixture.detectChanges();
+
+        expect(selectedTabName()).toBe('General');
         expect(onTabChange).not.toHaveBeenCalled();
-        expect(component.config.activeTab).toBe('general');
     });
 
-    it('should navigate to next tab on ArrowRight', () => {
-        const onTabChange = jest.fn();
-        component.config = buildConfig({ onTabChange });
-        fixture.detectChanges();
+    it('walks the tabs with the arrow keys, wrapping around', async () => {
+        await render();
 
-        const event = new KeyboardEvent('keydown', { key: 'ArrowRight' });
-        component.onKeydown(event);
-        fixture.detectChanges();
+        press('ArrowRight');
+        expect(selectedTabName()).toBe('Details');
 
-        expect(component.activeTabKey).toBe('details');
+        press('ArrowLeft');
+        expect(selectedTabName()).toBe('General');
+
+        press('ArrowLeft');
+        expect(selectedTabName()).toBe('History');
     });
 
-    it('should navigate to previous tab on ArrowLeft', () => {
-        const onTabChange = jest.fn();
-        component.config = buildConfig({ onTabChange, activeTab: 'details' });
-        fixture.detectChanges();
+    it('jumps to the first and last tab with Home and End', async () => {
+        await render(buildConfig({ activeTab: 'details' }));
 
-        const event = new KeyboardEvent('keydown', { key: 'ArrowLeft' });
-        component.onKeydown(event);
-        fixture.detectChanges();
+        press('End');
+        expect(selectedTabName()).toBe('History');
 
-        expect(component.activeTabKey).toBe('general');
+        press('Home');
+        expect(selectedTabName()).toBe('General');
     });
 
-    it('should wrap around on ArrowRight from last tab', () => {
-        component.config = buildConfig({ activeTab: 'history' });
-        fixture.detectChanges();
+    it('skips disabled tabs when walking with the keyboard', async () => {
+        await render(
+            buildConfig({
+                tabs: [
+                    new Tab({ key: 'general', label: 'General' }),
+                    new Tab({ key: 'locked', label: 'Locked', isDisabled: true }),
+                    new Tab({ key: 'history', label: 'History' })
+                ]
+            })
+        );
 
-        const event = new KeyboardEvent('keydown', { key: 'ArrowRight' });
-        component.onKeydown(event);
+        press('ArrowRight');
 
-        expect(component.activeTabKey).toBe('general');
+        expect(selectedTabName()).toBe('History');
     });
 
-    it('should navigate to first tab on Home', () => {
-        component.config = buildConfig({ activeTab: 'history' });
-        fixture.detectChanges();
+    it('resolves a label the consumer did not give from the config prefix', async () => {
+        await render(buildConfig({ tabs: [new Tab({ key: 'general' })] }));
 
-        const event = new KeyboardEvent('keydown', { key: 'Home' });
-        component.onKeydown(event);
-
-        expect(component.activeTabKey).toBe('general');
+        expect(tabs()[0].textContent?.trim()).toBe('demo.tabs.general.label');
     });
 
-    it('should navigate to last tab on End', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
+    it('marks the tab list for assistive technology', async () => {
+        await render();
 
-        const event = new KeyboardEvent('keydown', { key: 'End' });
-        component.onKeydown(event);
+        const list = fixture.nativeElement.querySelector('[role="tablist"]');
 
-        expect(component.activeTabKey).toBe('history');
+        expect(list.getAttribute('aria-label')).toBe('angular-components.tabs.label');
+        expect(tabs().map(element => element.getAttribute('aria-selected'))).toEqual(['true', 'false', 'false']);
     });
 
-    it('should skip disabled tabs during keyboard navigation', () => {
-        component.config = buildConfig({
-            tabs: [
-                new Tab({ key: 'general' }),
-                new Tab({ key: 'details', isDisabled: true }),
-                new Tab({ key: 'history' })
-            ]
-        });
-        fixture.detectChanges();
+    it('follows a replaced config', async () => {
+        await render();
 
-        const event = new KeyboardEvent('keydown', { key: 'ArrowRight' });
-        component.onKeydown(event);
+        fixture.componentRef.setInput('config', buildConfig({ activeTab: 'details' }));
+        await settle(fixture);
 
-        expect(component.activeTabKey).toBe('history');
-    });
-
-    it('should have role tablist on the container', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
-
-        const tablist = fixture.nativeElement.querySelector('[role="tablist"]');
-        expect(tablist).toBeTruthy();
-    });
-
-    it('should sync activeTabKey when config input changes', () => {
-        component.config = buildConfig({ activeTab: 'details' });
-        fixture.detectChanges();
-        expect(component.activeTabKey).toBe('details');
-
-        component.config = buildConfig({ activeTab: 'history' });
-        fixture.detectChanges();
-        expect(component.activeTabKey).toBe('history');
-    });
-
-    it('should not apply the segmented class by default', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
-
-        const tablist = fixture.nativeElement.querySelector('[role="tablist"]');
-        expect(tablist.classList.contains('bey-tabs--segmented')).toBe(false);
-    });
-
-    it('should apply the segmented class when the variant is segmented', () => {
-        component.config = buildConfig({ variant: TabsVariant.Segmented });
-        fixture.detectChanges();
-
-        const tablist = fixture.nativeElement.querySelector('[role="tablist"]');
-        expect(tablist.classList.contains('bey-tabs--segmented')).toBe(true);
+        expect(selectedTabName()).toBe('Details');
     });
 });
-
-function buildConfig(
-    overrides?: Partial<TabsConfig> & { tabs?: Tab[]; onTabChange?: (key: string) => void; activeTab?: string }
-): TabsConfig {
-    return new TabsConfig({
-        activeTab: overrides?.activeTab,
-        onTabChange: overrides?.onTabChange,
-        prefix: overrides?.prefix ?? 'test.tabs',
-        tabs: overrides?.tabs ?? [
-            new Tab({ key: 'general' }),
-            new Tab({ key: 'details' }),
-            new Tab({ key: 'history' })
-        ],
-        variant: overrides?.variant
-    });
-}

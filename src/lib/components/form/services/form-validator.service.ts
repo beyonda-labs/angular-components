@@ -2,7 +2,11 @@ import { Injectable } from '@angular/core';
 import { AsyncValidatorFn, ValidatorFn, Validators } from '@angular/forms';
 
 import { FormField, FormFieldType } from '../models/form-field.model';
-import { FormFieldCustomValidator, FormFieldValidator, FormFieldValidatorType } from '../models/form-field-validator.model';
+import {
+    FormFieldCustomValidator,
+    FormFieldValidator,
+    FormFieldValidatorType
+} from '../models/form-field-validator.model';
 
 @Injectable({
     providedIn: 'root'
@@ -37,7 +41,9 @@ export class FormValidatorService {
                 case FormFieldValidatorType.MinLength: {
                     const length = Number(fieldValidator.args as number);
 
-                    if (!Number.isFinite(length)) {break;}
+                    if (!Number.isFinite(length)) {
+                        break;
+                    }
 
                     validators.push(
                         fieldValidator.type === FormFieldValidatorType.MaxLength

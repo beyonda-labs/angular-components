@@ -4,11 +4,11 @@ import { PropertyAttachmentField, PropertyAttachmentOption } from './property-at
 const buildField = (value?: string): PropertyAttachmentField =>
     new PropertyAttachmentField({
         id: 'logo',
-        value,
         options: [
-            { id: 'attachment-1', label: 'logo.png' },
-            { id: 'attachment-2', label: 'signature.png' }
-        ]
+            new PropertyAttachmentOption({ id: 'attachment-1', label: 'logo.png' }),
+            new PropertyAttachmentOption({ id: 'attachment-2', label: 'signature.png' })
+        ],
+        value
     });
 
 describe('PropertyAttachmentField', () => {
@@ -16,19 +16,23 @@ describe('PropertyAttachmentField', () => {
         expect(buildField().type).toBe(PropertyFieldType.Attachment);
     });
 
-    it('should transform option configs into PropertyAttachmentOption instances', () => {
-        expect(buildField().options[0]).toBeInstanceOf(PropertyAttachmentOption);
-    });
-
     it('should resolve the selected option from the value', () => {
-        expect(buildField('attachment-2')?.selectedOption?.label).toBe('signature.png');
+        expect(buildField('attachment-2').selectedOption?.label).toBe('signature.png');
     });
 
     it('should return no selected option for a value the catalog does not carry', () => {
         expect(buildField('attachment-missing').selectedOption).toBeUndefined();
     });
 
-    it('should default to an empty catalog', () => {
-        expect(new PropertyAttachmentField({ id: 'logo' }).options).toEqual([]);
+    it('should default to an empty catalog and no variables', () => {
+        const field = new PropertyAttachmentField({ id: 'logo' });
+
+        expect(field.options).toEqual([]);
+        expect(field.variables).toEqual([]);
+    });
+
+    it('should tell a variable reference apart from an attachment id', () => {
+        expect(buildField('{{ logo }}').holdsVariable).toBe(true);
+        expect(buildField('attachment-1').holdsVariable).toBe(false);
     });
 });

@@ -1,368 +1,161 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { BreadcrumbComponent } from './breadcrumb.component';
-import { BreadcrumbConfig, BreadcrumbItem } from './models/breadcrumb.model';
-
-class ResizeObserverMock {
-    observe(): void {}
-    unobserve(): void {}
-    disconnect(): void {}
-}
+import { BreadcrumbConfig, BreadcrumbConfigParameters, BreadcrumbItem } from './models/breadcrumb.model';
 
 describe('BreadcrumbComponent', () => {
-    let component: BreadcrumbComponent;
     let fixture: ComponentFixture<BreadcrumbComponent>;
 
-    beforeEach(async () => {
-        global.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
+    function buildConfig(overrides: Partial<BreadcrumbConfigParameters> = {}): BreadcrumbConfig {
+        return new BreadcrumbConfig({
+            translate: false,
+            items: [
+                new BreadcrumbItem({ id: 1, label: 'Home' }),
+                new BreadcrumbItem({ id: 2, label: 'Templates' }),
+                new BreadcrumbItem({ id: 3, label: 'Editor' })
+            ],
+            ...overrides
+        });
+    }
 
+    async function render(config: BreadcrumbConfig = buildConfig()): Promise<void> {
+        fixture = await renderComponent(BreadcrumbComponent, { config });
+    }
+
+    function items(): HTMLElement[] {
+        return queryAll(fixture, 'li:not([aria-hidden])');
+    }
+
+    function labels(): string[] {
+        return textsOf(items());
+    }
+
+    function link(name: string): HTMLButtonElement | null {
+        return queryButton(fixture, name);
+    }
+
+    beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [BreadcrumbComponent, TranslateModule.forRoot()]
         }).compileComponents();
-
-        fixture = TestBed.createComponent(BreadcrumbComponent);
-        component = fixture.componentInstance;
     });
 
-    it('should create', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
-        expect(component).toBeTruthy();
+    it('renders one entry per item in the config', async () => {
+        await render();
+
+        expect(labels()).toEqual(['Home', 'Templates', 'Editor']);
     });
 
-    it('should render all items', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
+    it('renders every item but the last as a link', async () => {
+        await render();
 
-        const items = fixture.nativeElement.querySelectorAll('.bey-breadcrumb-item');
-        expect(items.length).toBe(3);
+        expect(link('Home')).not.toBeNull();
+        expect(link('Templates')).not.toBeNull();
+        expect(link('Editor')).toBeNull();
     });
 
-    it('should mark the last item with aria-current page', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
+    it('marks the last item as the current page', async () => {
+        await render();
 
-        const items = fixture.nativeElement.querySelectorAll('.bey-breadcrumb-item');
-        const lastItem = items[items.length - 1];
-        expect(lastItem.getAttribute('aria-current')).toBe('page');
+        const current = items().filter(item => item.getAttribute('aria-current') === 'page');
+
+        expect(textsOf(current)).toEqual(['Editor']);
     });
 
-    it('should not set aria-current on non-last items', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
-
-        const items = fixture.nativeElement.querySelectorAll('.bey-breadcrumb-item');
-        expect(items[0].getAttribute('aria-current')).toBeNull();
-        expect(items[1].getAttribute('aria-current')).toBeNull();
-    });
-
-    it('should render the last item without a button', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
-
-        const items = fixture.nativeElement.querySelectorAll('.bey-breadcrumb-item');
-        const lastItem = items[items.length - 1];
-        expect(lastItem.querySelector('button')).toBeNull();
-    });
-
-    it('should render non-last items with a button', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
-
-        const items = fixture.nativeElement.querySelectorAll('.bey-breadcrumb-item');
-        expect(items[0].querySelector('button')).toBeTruthy();
-        expect(items[1].querySelector('button')).toBeTruthy();
-    });
-
-    it('should call onItemClick when clicking a non-last item', () => {
+    it('reports the id of a clicked item', async () => {
         const onItemClick = jest.fn();
-        component.config = buildConfig({ onItemClick });
-        fixture.detectChanges();
+        await render(buildConfig({ onItemClick }));
 
-        const button = fixture.nativeElement.querySelector('.bey-breadcrumb-item-button');
-        button.click();
+        link('Templates')?.click();
 
-        expect(onItemClick).toHaveBeenCalledWith(1);
+        expect(onItemClick).toHaveBeenCalledWith(2);
     });
 
-    it('should not call onItemClick when clicking a disabled item', () => {
+    it('ignores a click on a disabled item', async () => {
         const onItemClick = jest.fn();
-        component.config = buildConfig({
-            items: [
-                new BreadcrumbItem({ id: 1, label: 'Home', isDisabled: true }),
-                new BreadcrumbItem({ id: 2, label: 'Products' }),
-                new BreadcrumbItem({ id: 3, label: 'Detail' })
-            ],
-            onItemClick
-        });
-        fixture.detectChanges();
+        await render(
+            buildConfig({
+                onItemClick,
+                items: [
+                    new BreadcrumbItem({ id: 1, label: 'Home', isDisabled: true }),
+                    new BreadcrumbItem({ id: 2, label: 'Editor' })
+                ]
+            })
+        );
 
-        component.onItemClick(component.config.items[0]);
+        link('Home')?.click();
+
         expect(onItemClick).not.toHaveBeenCalled();
     });
 
-    it('should not call onItemClick for the last item', () => {
-        const onItemClick = jest.fn();
-        component.config = buildConfig({ onItemClick });
+    it('separates the items with the configured separator', async () => {
+        await render(buildConfig({ separator: '>' }));
+
+        const separators = queryAll(fixture, 'li[aria-hidden="true"]');
+
+        expect(textsOf(separators)).toEqual(['>', '>']);
+    });
+
+    it('resolves labels against the prefix when translation is on', async () => {
+        TestBed.inject(TranslateService).setTranslation('en', { nav: { home: 'Inicio' } });
+        TestBed.inject(TranslateService).use('en');
+
+        await render(
+            buildConfig({ translate: true, prefix: 'nav', items: [new BreadcrumbItem({ id: 1, label: 'home' })] })
+        );
+
+        expect(labels()).toEqual(['Inicio']);
+    });
+
+    it('takes a label that is already a key without the prefix', async () => {
+        TestBed.inject(TranslateService).setTranslation('en', { 'shared.back': 'Back' });
+        TestBed.inject(TranslateService).use('en');
+
+        await render(
+            buildConfig({
+                translate: true,
+                prefix: 'nav',
+                items: [new BreadcrumbItem({ id: 1, label: 'shared.back', isTranslationKey: true })]
+            })
+        );
+
+        expect(labels()).toEqual(['Back']);
+    });
+
+    it('follows a language change', async () => {
+        const translate = TestBed.inject(TranslateService);
+        translate.setTranslation('en', { nav: { home: 'Home' } });
+        translate.setTranslation('es', { nav: { home: 'Inicio' } });
+        translate.use('en');
+
+        await render(
+            buildConfig({ translate: true, prefix: 'nav', items: [new BreadcrumbItem({ id: 1, label: 'home' })] })
+        );
+
+        expect(labels()).toEqual(['Home']);
+
+        translate.use('es');
         fixture.detectChanges();
 
-        const lastItem = component.config.items[component.config.items.length - 1];
-        component.onItemClick(lastItem);
-        expect(onItemClick).not.toHaveBeenCalled();
+        expect(labels()).toEqual(['Inicio']);
     });
 
-    it('should render separators between items but not after last', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
+    it('names the navigation for assistive technology', async () => {
+        await render();
 
-        const separators = fixture.nativeElement.querySelectorAll('.bey-breadcrumb-separator');
-        expect(separators.length).toBe(2);
+        expect(fixture.nativeElement.querySelector('nav').getAttribute('aria-label')).toBe(
+            'angular-components.breadcrumb.label'
+        );
     });
 
-    it('should use custom separator text', () => {
-        component.config = buildConfig({ separator: '>' });
-        fixture.detectChanges();
+    it('follows a replaced config', async () => {
+        await render();
 
-        const separator = fixture.nativeElement.querySelector('.bey-breadcrumb-separator');
-        expect(separator.textContent.trim()).toBe('>');
-    });
+        fixture.componentRef.setInput('config', buildConfig({ items: [new BreadcrumbItem({ id: 9, label: 'Only' })] }));
+        await settle(fixture);
 
-    it('should resolve item labels with prefix', () => {
-        const config = buildConfig();
-        component.config = config;
-
-        const label = component.getItemLabel(config.items[0]);
-        expect(label).toBe('test.Home');
-    });
-
-    it('should use custom label when provided', () => {
-        component.config = buildConfig({
-            items: [
-                new BreadcrumbItem({ id: 1, label: 'custom.home.label' }),
-                new BreadcrumbItem({ id: 2, label: 'custom.detail.label' })
-            ]
-        });
-
-        const label = component.getItemLabel(component.config.items[0]);
-        expect(label).toBe('test.custom.home.label');
-    });
-
-    it('should add disabled attribute on disabled item buttons', () => {
-        component.config = buildConfig({
-            items: [
-                new BreadcrumbItem({ id: 1, label: 'Home', isDisabled: true }),
-                new BreadcrumbItem({ id: 2, label: 'Products' }),
-                new BreadcrumbItem({ id: 3, label: 'Detail' })
-            ]
-        });
-        fixture.detectChanges();
-
-        const buttons = fixture.nativeElement.querySelectorAll('.bey-breadcrumb-item-button');
-        expect(buttons[0].disabled).toBe(true);
-        expect(buttons[1].disabled).toBe(false);
-    });
-
-    it('should add current class to the last item', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
-
-        const items = fixture.nativeElement.querySelectorAll('.bey-breadcrumb-item');
-        const lastItem = items[items.length - 1];
-        expect(lastItem.classList.contains('bey-breadcrumb-item-current')).toBe(true);
-    });
-
-    it('should have a nav element with aria-label', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
-
-        const nav = fixture.nativeElement.querySelector('nav');
-        expect(nav).toBeTruthy();
-        expect(nav.getAttribute('aria-label')).toBeTruthy();
-    });
-
-    it('should identify last item correctly via isLast', () => {
-        component.config = buildConfig();
-
-        const { items } = component.config;
-        expect(component.isLast(items[0])).toBe(false);
-        expect(component.isLast(items[1])).toBe(false);
-        expect(component.isLast(items[2])).toBe(true);
-    });
-
-    it('should set itemMaxWidth as CSS custom property', () => {
-        component.config = buildConfig({ itemMaxWidth: '8rem' });
-        fixture.detectChanges();
-
-        const ol = fixture.nativeElement.querySelector('.bey-breadcrumb');
-        expect(ol.style.getPropertyValue('--bey-breadcrumb-item-max-width')).toBe('8rem');
-    });
-
-    it('should show all items when container is wide enough', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
-
-        expect(component.visibleStartIndex).toBe(0);
-        expect(component.hasCollapsedItems).toBe(false);
-        expect(component.visibleItems.length).toBe(3);
-    });
-
-    it('should return raw label when no prefix is set', () => {
-        component.config = buildConfig({
-            prefix: '',
-            items: [new BreadcrumbItem({ id: 1, label: 'Home' }), new BreadcrumbItem({ id: 2, label: 'Detail' })]
-        });
-
-        const label = component.getItemLabel(component.config.items[0]);
-        expect(label).toBe('Home');
-    });
-
-    it('should render raw labels when translate is false', () => {
-        component.config = buildConfig({
-            translate: false,
-            items: [new BreadcrumbItem({ id: 1, label: 'Home' }), new BreadcrumbItem({ id: 2, label: 'Detail' })]
-        });
-        fixture.detectChanges();
-
-        const labels = fixture.nativeElement.querySelectorAll('.bey-breadcrumb-item-label');
-        expect(labels[0].textContent.trim()).toBe('Home');
-        expect(labels[1].textContent.trim()).toBe('Detail');
-    });
-
-    it('should resolve label with translation when translate is true', () => {
-        component.config = buildConfig();
-
-        const label = component.resolveLabel(component.config.items[0]);
-        expect(label).toBe('test.Home');
-    });
-
-    it('should resolve label without translation when translate is false', () => {
-        component.config = buildConfig({
-            translate: false,
-            items: [new BreadcrumbItem({ id: 1, label: 'Home' }), new BreadcrumbItem({ id: 2, label: 'Detail' })]
-        });
-
-        const label = component.resolveLabel(component.config.items[0]);
-        expect(label).toBe('Home');
-    });
-
-    it('should resolve label via translation instant when the item is a translation key, ignoring the prefix', () => {
-        component.config = buildConfig({
-            prefix: 'test',
-            items: [new BreadcrumbItem({ id: 1, isTranslationKey: true, label: 'raw.i18n.key' })]
-        });
-
-        const label = component.resolveLabel(component.config.items[0]);
-        expect(label).toBe('raw.i18n.key');
-    });
-
-    describe('recalculation after DOM updates', () => {
-        let rafCallbacks: FrameRequestCallback[];
-        let offsetWidthDescriptor: PropertyDescriptor | undefined;
-        let scrollWidthDescriptor: PropertyDescriptor | undefined;
-
-        beforeEach(() => {
-            rafCallbacks = [];
-            jest.spyOn(window, 'requestAnimationFrame').mockImplementation(callback => {
-                rafCallbacks.push(callback);
-
-                return rafCallbacks.length;
-            });
-
-            offsetWidthDescriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetWidth');
-            scrollWidthDescriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'scrollWidth');
-            Object.defineProperty(HTMLElement.prototype, 'offsetWidth', { configurable: true, value: 150 });
-            Object.defineProperty(HTMLElement.prototype, 'scrollWidth', { configurable: true, value: 80 });
-        });
-
-        afterEach(() => {
-            jest.restoreAllMocks();
-
-            if (offsetWidthDescriptor) {
-                Object.defineProperty(HTMLElement.prototype, 'offsetWidth', offsetWidthDescriptor);
-            }
-
-            if (scrollWidthDescriptor) {
-                Object.defineProperty(HTMLElement.prototype, 'scrollWidth', scrollWidthDescriptor);
-            }
-        });
-
-        function flushRaf(): void {
-            const callbacks = rafCallbacks;
-            rafCallbacks = [];
-            callbacks.forEach(callback => callback(0));
-        }
-
-        it('should measure against the updated items, not the stale DOM, once the new items have painted', () => {
-            component.config = buildConfig({
-                items: [
-                    new BreadcrumbItem({ id: 1, label: 'Home' }),
-                    new BreadcrumbItem({ id: 2, label: 'Products' }),
-                    new BreadcrumbItem({ id: 3, label: 'Detail' })
-                ]
-            });
-            fixture.detectChanges(false);
-            fixture.detectChanges();
-            flushRaf();
-            fixture.detectChanges();
-
-            component.config = buildConfig({
-                items: [
-                    new BreadcrumbItem({ id: 1, label: 'Home' }),
-                    new BreadcrumbItem({ id: 2, label: 'Products' }),
-                    new BreadcrumbItem({ id: 3, label: 'Category' }),
-                    new BreadcrumbItem({ id: 4, label: 'Subcategory' }),
-                    new BreadcrumbItem({ id: 5, label: 'Detail' })
-                ]
-            });
-
-            fixture.detectChanges();
-            flushRaf();
-            fixture.detectChanges();
-
-            expect(component.hasCollapsedItems).toBe(true);
-        });
-
-        it('should reset to showing all items immediately when config changes, before the deferred recalculation runs', () => {
-            component.config = buildConfig({
-                items: [
-                    new BreadcrumbItem({ id: 1, label: 'Home' }),
-                    new BreadcrumbItem({ id: 2, label: 'Products' }),
-                    new BreadcrumbItem({ id: 3, label: 'Category' }),
-                    new BreadcrumbItem({ id: 4, label: 'Subcategory' }),
-                    new BreadcrumbItem({ id: 5, label: 'Detail' })
-                ]
-            });
-            fixture.detectChanges(false);
-            fixture.detectChanges();
-            flushRaf();
-            fixture.detectChanges();
-            expect(component.hasCollapsedItems).toBe(true);
-
-            component.config = buildConfig();
-
-            expect(component.visibleStartIndex).toBe(0);
-            expect(component.hasCollapsedItems).toBe(false);
-        });
+        expect(labels()).toEqual(['Only']);
     });
 });
-
-function buildConfig(
-    overrides?: Partial<BreadcrumbConfig> & {
-        items?: BreadcrumbItem[];
-        onItemClick?: (id: number) => void;
-    }
-): BreadcrumbConfig {
-    return new BreadcrumbConfig({
-        itemMaxWidth: overrides?.itemMaxWidth,
-        onItemClick: overrides?.onItemClick,
-        prefix: overrides?.prefix ?? 'test',
-        separator: overrides?.separator,
-        translate: overrides?.translate,
-        items: overrides?.items ?? [
-            new BreadcrumbItem({ id: 1, label: 'Home' }),
-            new BreadcrumbItem({ id: 2, label: 'Products' }),
-            new BreadcrumbItem({ id: 3, label: 'Detail' })
-        ]
-    });
-}

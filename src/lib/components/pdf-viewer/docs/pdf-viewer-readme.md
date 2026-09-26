@@ -1,123 +1,62 @@
-# PDF Viewer Component (`bey-pdf-viewer`)
+# Pdf viewer
 
-Thin wrapper around [`ngx-extended-pdf-viewer`](https://www.npmjs.com/package/ngx-extended-pdf-viewer) (built on PDF.js).
-Its native toolbar is hidden by default so the consumer builds their own UI, while the wrapper exposes an imperative
-API (`goToPage`, `setZoom`, `rotate`) and a curated set of `@Output()`s (page, zoom, rotation, load, click) so any
-custom toolbar has everything it needs without touching the underlying library directly.
+A thin wrapper around `ngx-extended-pdf-viewer` with its toolbar hidden by default, so the consumer can build
+its own. The config drives the viewer and reports what happens in it; the handle from `onReady` moves it.
 
-`ngx-extended-pdf-viewer` wraps PDF.js's full viewer engine, so even with every native UI element hidden, its
-internal engine still fires real events (`pageChange`, `currentZoomFactor`, `rotationChange`, etc.) that a custom
-toolbar can rely on.
-
----
-
-## Installation
-
-`ngx-extended-pdf-viewer` is a **peer dependency** (like `monaco-editor`/`ngx-monaco-editor-v2`) — install it in the
-consuming app:
-
-```bash
-npm install ngx-extended-pdf-viewer@28.1.0
-```
-
-PDF.js needs its worker, cmaps and standard fonts served as static assets. Add this to the consuming app's
-`angular.json` (`build.options.assets`):
-
-```json
-{
-    "glob": "**/*",
-    "input": "node_modules/ngx-extended-pdf-viewer/assets/",
-    "output": "/assets/"
-}
-```
-
-Without this step the viewer fails to load PDFs (missing worker/cmaps at runtime).
-
----
-
-## Quick start
+## Usage
 
 ```ts
-import { BeyPdfViewerConfig } from '@beyonda-labs/angular-components';
-
-readonly config = new BeyPdfViewerConfig({ src: 'invoice.pdf' });
+readonly viewer = new BeyPdfViewerConfig({
+    src: 'invoice.pdf',
+    zoom: 'page-width',
+    onLoaded: ({ pagesCount }) => this.pageCount.set(pagesCount),
+    onPageChange: page => this.page.set(page),
+    onReady: handle => (this.pdf = handle)
+});
 ```
 
 ```html
-<bey-pdf-viewer [config]="config" (pageChange)="onPageChange($event)" (loaded)="onLoaded($event)"></bey-pdf-viewer>
+<bey-pdf-viewer [config]="viewer" />
+
+<button (click)="pdf.goToPage(page() + 1)">Next</button>
 ```
 
-Because the native toolbar is hidden by default (`showToolbar: false`), build your own controls against the
-component's imperative API:
+## BeyPdfViewerConfig
 
-```ts
-@ViewChild(BeyPdfViewerComponent) pdfViewer!: BeyPdfViewerComponent;
+| Field                 | Required | Default | Meaning                                                    |
+| --------------------- | -------- | ------- | ---------------------------------------------------------- |
+| `src`                 | yes      |         | Url, blob or bytes of the document                         |
+| `page`                | no       | `1`     | Page shown on load                                         |
+| `zoom`                | no       | `auto`  | A fraction, or a keyword such as `page-fit`                |
+| `rotation`            | no       | `0`     | `0`, `90`, `180` or `270`                                  |
+| `showToolbar`         | no       | `false` | The viewer's own toolbar                                   |
+| `toolbarButtons`      | no       | all on  | A `BeyPdfViewerToolbarButtons` naming the buttons it shows |
+| `backgroundColor`     | no       | surface | Colour behind the pages, a token by default                |
+| `height`              | no       | `100%`  | Height of the viewer                                       |
+| `minZoom` / `maxZoom` | no       |         | Bounds for zooming                                         |
+| `password`            | no       |         | Password for a protected document                          |
+| `filenameForDownload` | no       |         | Name suggested when downloading                            |
 
-nextPage(): void {
-    this.pdfViewer.goToPage(this.pdfViewer.currentPage + 1);
-}
+### Callbacks
 
-zoomIn(): void {
-    this.pdfViewer.setZoom(this.pdfViewer.currentZoom === 'auto' ? 1.25 : (this.pdfViewer.currentZoom as number) + 0.25);
-}
-```
+| Callback           | Receives                    | When                                    |
+| ------------------ | --------------------------- | --------------------------------------- |
+| `onReady`          | The handle                  | The viewer exists, and again per config |
+| `onLoaded`         | `{ pagesCount }`            | The document opens                      |
+| `onLoadingFailed`  | `{ error }`                 | It cannot be opened                     |
+| `onPageChange`     | The page                    | The reader moves to another page        |
+| `onPageRendered`   | `{ pageNumber }`            | A page paints                           |
+| `onRotationChange` | `{ rotation }`              | The reader rotates                      |
+| `onZoomChange`     | The zoom factor, a fraction | The viewer settles on a zoom            |
+| `onClick`          | The mouse event             | A click anywhere on the viewer          |
 
----
+## The handle
 
-## `BeyPdfViewerConfig`
+`goToPage`, `setZoom` and `rotate` change what is shown without reporting a change, since the caller
+already knows; `currentPage()`, `currentRotation()` and `currentZoom()` read the live state. A new config
+resets the three to its own values.
 
-| Parameter             | Type                          | Required | Default  | Description                                                        |
-| ---------------------- | ------------------------------ | -------- | -------- | -------------------------------------------------------------------- |
-| `src`                  | `string \| ArrayBuffer \| Blob \| Uint8Array` | yes | —   | PDF source: URL, base64-decoded buffer, or blob                     |
-| `page`                 | `number`                       | no       | `1`      | Initial page                                                         |
-| `zoom`                 | `number \| 'auto' \| 'page-actual' \| 'page-fit' \| 'page-width'` | no | `'auto'` | Initial zoom — a numeric value is a **fraction**, `1` = 100%, `1.5` = 150% (matches `zoomChange`'s unit; the wrapper converts to/from the underlying library's percentage-based `zoom` input) |
-| `rotation`             | `0 \| 90 \| 180 \| 270`         | no       | `0`      | Initial rotation                                                      |
-| `minZoom` / `maxZoom`  | `number`                       | no       | `0.1` / `10` | Zoom bounds                                                      |
-| `height`               | `string`                       | no       | `'100%'` | CSS height of the viewer                                             |
-| `backgroundColor`      | `string`                       | no       | —        | Viewer background color                                              |
-| `password`             | `string`                       | no       | —        | Password for protected PDFs                                          |
-| `filenameForDownload`  | `string`                       | no       | —        | Filename used if the native download button is shown                |
-| `showToolbar`          | `boolean`                      | no       | `false`  | Master switch for `ngx-extended-pdf-viewer`'s own toolbar             |
-| `toolbarButtons`       | `BeyPdfViewerToolbarButtons`   | no       | all `true` | Per-button visibility, only relevant when `showToolbar: true`      |
+## Styles
 
-### `BeyPdfViewerToolbarButtons`
-
-Only meaningful when `showToolbar: true` — lets you keep the native toolbar but hide individual buttons instead of
-building your own from scratch: `pagingButtons`, `zoomButtons`, `zoomDropdown`, `findButton`, `printButton`,
-`downloadButton`, `openFileButton`, `presentationModeButton`, `rotateButton`, `handToolButton`, `propertiesButton`,
-`sidebarButton`, `secondaryToolbarButton` — all default to `true`.
-
-This covers the common toolbar surface; for anything else `ngx-extended-pdf-viewer` exposes (annotation/editor
-toolbar buttons, search options, book/spread modes, etc.), use the underlying `ngx-extended-pdf-viewer` component
-directly instead of this wrapper — it's already a peer dependency of the consuming app.
-
----
-
-## Outputs
-
-| Output          | Payload                       | Emitted when                                    |
-| ---------------- | ------------------------------ | -------------------------------------------------- |
-| `loaded`         | `{ pagesCount }`               | The PDF finished loading                            |
-| `loadingFailed`  | `{ error }`                    | The PDF failed to load                              |
-| `pageChange`     | `number`                       | The current page changes (navigation or scroll)     |
-| `pageRendered`   | `{ pageNumber }`               | A page finishes rendering                            |
-| `zoomChange`     | `number`                       | The actual computed zoom factor changes (pinch, Ctrl+scroll, or `setZoom()`) — always numeric, even when `zoom` is a keyword like `'page-fit'` |
-| `rotationChange` | `{ rotation }`                 | The rotation changes                                |
-| `viewerClick`    | `MouseEvent`                   | A click anywhere inside the viewer container        |
-
----
-
-## Imperative API
-
-| Member          | Description                                                          |
-| ---------------- | ---------------------------------------------------------------------- |
-| `currentPage`    | Current page number (also updated by user navigation)                |
-| `currentZoom`    | Current `zoom` value as last set (echoes the model, not the computed factor — use the `zoomChange` output for that) |
-| `currentRotation`| Current rotation                                                      |
-| `goToPage(page)` | Navigate to a page                                                    |
-| `setZoom(zoom)`  | Set the zoom level                                                    |
-| `rotate(rotation)` | Set the rotation                                                    |
-
-`goToPage`/`setZoom`/`rotate` update the local state read by the template's bindings into
-`ngx-extended-pdf-viewer` — they don't themselves emit `pageChange`/`zoomChange`/`rotationChange` (those outputs
-reflect changes reported *back* by the viewer, including ones triggered by these calls).
+The page separator, the borders and the scrollbar are overridden on pdf.js's own classes with `!important`,
+deliberately: the reason is written in `pdf-viewer.component.css`.

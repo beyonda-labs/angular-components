@@ -1,55 +1,19 @@
-import { FormField, FormFieldColumn, FormFieldOption, FormFieldType } from '../form-field.model';
-import { FormFieldAsyncValidator, FormFieldValidator } from '../form-field-validator.model';
+import { FormField, FormFieldBaseParameters, FormFieldOption, FormFieldType, FormRule } from '../form-field.model';
 
 export class FormAutocompleteField extends FormField {
-    options: FormFieldOption[];
+    options: FormRule<FormFieldOption[]>;
 
     emptyKey?: string;
 
-    constructor({
-        key,
-        asyncValidators,
-        columns,
-        emptyKey,
-        isDisabled,
-        isHidden,
-        isLabelTooltipVisible,
-        isLabelVisible,
-        isRequired,
-        options = [],
-        placeholder,
-        validators
-    }: FormAutocompleteFieldParameters) {
-        super({
-            asyncValidators,
-            columns,
-            isDisabled,
-            isHidden,
-            isLabelTooltipVisible,
-            isLabelVisible,
-            isRequired,
-            key,
-            placeholder,
-            type: FormFieldType.Autocomplete,
-            validators
-        });
+    constructor({ emptyKey, options = [], ...base }: FormAutocompleteFieldParameters) {
+        super({ ...base, type: FormFieldType.Autocomplete });
+
         this.emptyKey = emptyKey;
         this.options = options;
     }
 }
 
-interface FormAutocompleteFieldParameters {
-    key: string;
-
-    asyncValidators?: FormFieldAsyncValidator[];
-    columns?: FormFieldColumn;
+export interface FormAutocompleteFieldParameters extends FormFieldBaseParameters {
     emptyKey?: string;
-    isDisabled?: boolean;
-    isHidden?: boolean;
-    isLabelTooltipVisible?: boolean;
-    isLabelVisible?: boolean;
-    isRequired?: boolean;
-    options?: FormFieldOption[];
-    placeholder?: string;
-    validators?: FormFieldValidator[];
+    options?: FormRule<FormFieldOption[]>;
 }

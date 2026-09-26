@@ -1,61 +1,39 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { FormPasswordField } from '../../../models/fields/form-password-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
-import { FormService } from '../../../services/form.service';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, ReactiveFormsModule, TranslateModule],
     selector: 'bey-form-password-field',
     standalone: true,
-    styleUrls: ['../field-control.styles.css'],
+    styleUrls: ['../field-control.styles.css', './field-password.component.css'],
     templateUrl: './field-password.component.html'
 })
-export class FormPasswordFieldComponent implements OnInit {
-    @Input() field: FormPasswordField;
-    @Input() formConfig: FormConfig;
-    @Input() section: FormSection;
+export class FormPasswordFieldComponent {
+    readonly control = input.required<FormControl<string | null>>();
+    readonly field = input.required<FormPasswordField>();
+    readonly prefix = input.required<string>();
 
-    control?: FormControl<string | null>;
-    sectionGroup?: FormGroup;
-    isVisible = false;
+    readonly isVisible = signal(false);
 
-    eyeIcon = faEye;
-    eyeSlashIcon = faEyeSlash;
+    readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
+    readonly toggleIcon = computed(() => (this.isVisible() ? faEyeSlash : faEye));
+    readonly toggleLabel = computed(() =>
+        this.isVisible() ? 'angular-components.form.password-field.hide' : 'angular-components.form.password-field.show'
+    );
 
-    private readonly formService = inject(FormService);
+    isInvalid(): boolean {
+        const control = this.control();
 
-    ngOnInit(): void {
-        this.sectionGroup = this.formService.getSectionGroup(this.formConfig, this.section.key);
-
-        if (this.sectionGroup) {
-            this.control = this.formService.getFieldControl(this.sectionGroup, this.field) as FormControl<
-                string | null
-            >;
-        }
-    }
-
-    getPlaceholder(): string {
-        return this.field.placeholder ?? `${this.getPrefix()}.placeholder`;
+        return control.invalid && control.touched;
     }
 
     toggleVisibility(): void {
-        this.isVisible = !this.isVisible;
-    }
-
-    isInvalid(): boolean {
-        return (this.control?.invalid && this.control?.touched) ?? false;
-    }
-
-    private getPrefix(): string {
-        if (this.formConfig && this.section && this.field) {
-            return this.formService.getFieldPrefix(this.formConfig, this.section, this.field);
-        }
-
-        return '';
+        this.isVisible.update(isVisible => !isVisible);
     }
 }

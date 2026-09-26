@@ -1,0 +1,17 @@
+:host {
+    display: block;
+}
+
+.bey-style-guide {
+    background-color: var(--bey-bg-page);
+}
+
+.bey-style-guide-group-title {
+    color: var(--bey-text-muted);
+    font-size: var(--bey-font-size-2xl);
+    margin-bottom: var(--bey-space-md);
+}
+
+.bey-style-guide-group-title + bey-style-guide-section {
+    margin-top: 0;
+}

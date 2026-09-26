@@ -1,0 +1,100 @@
+:host {
+    --bey-form-autocomplete-panel-bg: var(--bey-bg-surface);
+    --bey-form-autocomplete-panel-border: var(--bey-border-subtle);
+    --bey-form-autocomplete-option-hover: var(--bey-bg-hover);
+    --bey-form-autocomplete-panel-max-height: 13rem;
+}
+
+.bey-form-autocomplete {
+    position: relative;
+}
+
+.bey-form-autocomplete-control {
+    align-items: center;
+    display: flex;
+    position: relative;
+}
+
+.bey-form-autocomplete-input {
+    padding-right: calc(2 * var(--bey-space-xl));
+    text-overflow: ellipsis;
+}
+
+.bey-form-autocomplete-input.is-invalid {
+    border-color: var(--bey-danger);
+}
+
+.bey-form-autocomplete-action {
+    bottom: var(--bey-border-width);
+    font-size: var(--bey-font-size-2xs);
+    position: absolute;
+    top: var(--bey-border-width);
+    width: var(--bey-space-xl);
+}
+
+.bey-form-autocomplete-action:hover:not(:disabled) {
+    background-color: transparent;
+}
+
+.bey-form-autocomplete-clear {
+    right: var(--bey-space-xl);
+}
+
+.bey-form-autocomplete-toggle {
+    border-radius: 0 var(--bey-radius-sm) var(--bey-radius-sm) 0;
+    right: var(--bey-border-width);
+}
+
+.bey-form-autocomplete-toggle.is-open {
+    transform: rotate(180deg);
+}
+
+.bey-form-autocomplete-panel {
+    background: var(--bey-form-autocomplete-panel-bg);
+    border: var(--bey-border-width) solid var(--bey-form-autocomplete-panel-border);
+    border-radius: var(--bey-radius-sm);
+    box-shadow: var(--bey-shadow-md);
+    display: flex;
+    flex-direction: column;
+    max-height: var(--bey-form-autocomplete-panel-max-height);
+    overflow-y: auto;
+    padding: var(--bey-space-3xs);
+    position: fixed;
+    z-index: var(--bey-z-tooltip);
+}
+
+.bey-form-autocomplete-option {
+    background: transparent;
+    border: none;
+    border-radius: var(--bey-radius-xs);
+    color: var(--bey-form-field-fg);
+    cursor: pointer;
+    font-size: var(--bey-font-size-sm);
+    overflow: hidden;
+    padding: var(--bey-space-xs) var(--bey-space-sm);
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.bey-form-autocomplete-option:hover:not(:disabled),
+.bey-form-autocomplete-option.is-active {
+    background-color: var(--bey-form-autocomplete-option-hover);
+}
+
+.bey-form-autocomplete-option.is-selected {
+    font-weight: var(--bey-font-weight-semibold);
+}
+
+.bey-form-autocomplete-option:disabled {
+    cursor: default;
+    opacity: var(--bey-opacity-disabled);
+}
+
+.bey-form-autocomplete-empty {
+    color: var(--bey-secondary);
+    font-size: var(--bey-font-size-sm);
+    margin: 0;
+    padding: var(--bey-space-xs) var(--bey-space-sm);
+}

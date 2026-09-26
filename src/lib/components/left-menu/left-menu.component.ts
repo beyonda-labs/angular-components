@@ -1,13 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faAnglesLeft, faAnglesRight } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { ActionListComponent } from './components/action-list/action-list.component';
-import { LeftMenuAction, LeftMenuConfig } from './models/left-menu.model';
+import { LeftMenuConfig } from './models/left-menu.model';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ActionListComponent, FontAwesomeModule, TooltipModule, TranslateModule],
     selector: 'bey-left-menu',
     standalone: true,
@@ -15,65 +16,35 @@ import { LeftMenuAction, LeftMenuConfig } from './models/left-menu.model';
     templateUrl: './left-menu.component.html'
 })
 export class LeftMenuComponent {
-    @Input({ required: true })
-    set config(value: LeftMenuConfig) {
-        this._config = value;
-        this.expanded = value.expanded;
-    }
+    readonly config = input.required<LeftMenuConfig>();
 
-    get config(): LeftMenuConfig {
-        return this._config;
-    }
+    readonly expanded = linkedSignal(() => this.config().expanded);
 
-    @Output() expandedChange = new EventEmitter<boolean>();
+    readonly bottomActions = computed(() => this.config().bottomActions ?? []);
+    readonly topActions = computed(() => this.config().topActions ?? []);
 
-    expanded = true;
+    readonly titleText = computed(() => {
+        const title = this.config().title?.title ?? 'title';
+
+        return !title || title === 'title' ? `${this.config().prefix}.title` : title;
+    });
+
+    readonly toggleTooltip = computed(() =>
+        this.expanded() ? 'angular-components.left-menu.collapse' : 'angular-components.left-menu.expand'
+    );
+
+    readonly userFullName = computed(() => {
+        const { userInfo } = this.config();
+
+        return `${userInfo?.name ?? ''} ${userInfo?.surname ?? ''}`.trim();
+    });
+    readonly userTooltip = computed(() => this.config().userInfo?.email || this.userFullName());
 
     readonly collapseIcon = faAnglesLeft;
     readonly expandIcon = faAnglesRight;
 
-    private _config!: LeftMenuConfig;
-
-    get bottomActions(): LeftMenuAction[] {
-        return this.config?.bottomActions ?? [];
-    }
-
-    get topActions(): LeftMenuAction[] {
-        return this.config?.topActions ?? [];
-    }
-
-    getTitleClasses(): string {
-        return this.config.title.styles || '';
-    }
-
-    getTitleText(): string {
-        const title = this.config.title?.title ?? 'title';
-
-        if (!title || title === 'title') {
-            return `${this.config.prefix}.title`;
-        }
-
-        return title;
-    }
-
-    getToggleTooltip(): string {
-        return this.expanded ? 'angular-components.left-menu.collapse' : 'angular-components.left-menu.expand';
-    }
-
-    getUserFullName(): string {
-        const name = this.config.userInfo?.name ?? '';
-        const surname = this.config.userInfo?.surname ?? '';
-
-        return `${name} ${surname}`.trim();
-    }
-
-    getUserTooltip(): string {
-        return this.config.userInfo?.email || this.getUserFullName();
-    }
-
     toggleExpanded(): void {
-        this.expanded = !this.expanded;
-        this.config.expanded = this.expanded;
-        this.expandedChange.emit(this.expanded);
+        this.expanded.update(isExpanded => !isExpanded);
+        this.config().onExpandedChange?.(this.expanded());
     }
 }

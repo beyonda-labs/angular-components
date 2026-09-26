@@ -3,7 +3,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Observable } from 'rxjs';
 
 import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
-import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
+import { FormHandle } from '../../form/models/form.model';
 import { HeaderAction } from '../../header/models/header.model';
 import { ModalService } from '../../modal/services/modal.service';
 import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
@@ -289,8 +289,8 @@ export class PageActionsService {
 
         const categoriesForm = categoriesConfig.formConfig;
 
-        this.openEntityForm(context, categoriesForm, categoriesForm?.prefix ?? '', item, (value, form) =>
-            this.saveCategories(context, value, form, item)
+        this.openEntityForm(context, categoriesForm, categoriesForm?.prefix ?? '', item, (value, handle) =>
+            this.saveCategories(context, value, handle, item)
         );
     }
 
@@ -299,7 +299,7 @@ export class PageActionsService {
         formConfig: PageFormConfig | undefined,
         prefix: string,
         item: PageItem | undefined,
-        save: (value: unknown, form: ModalFormConfig) => void
+        save: (value: unknown, handle: FormHandle) => void
     ): void {
         if (!formConfig) {
             return;
@@ -311,8 +311,8 @@ export class PageActionsService {
     }
 
     private openForm(context: PageActionsContext, item?: PageItem): void {
-        this.openEntityForm(context, context.config.formConfig, context.config.prefix, item, (value, form) =>
-            this.save(context, value, form, item)
+        this.openEntityForm(context, context.config.formConfig, context.config.prefix, item, (value, handle) =>
+            this.save(context, value, handle, item)
         );
     }
 
@@ -326,10 +326,8 @@ export class PageActionsService {
         const childrenByParent = new Map<string | number | null, PageItem[]>();
 
         for (const category of categories) {
-            const parentId = ((category as unknown as Record<string, unknown>)[parentField] as
-                | string
-                | number
-                | null) ?? null;
+            const parentId =
+                ((category as unknown as Record<string, unknown>)[parentField] as string | number | null) ?? null;
             const siblings = childrenByParent.get(parentId) ?? [];
 
             siblings.push(category);
@@ -391,8 +389,8 @@ export class PageActionsService {
         };
     }
 
-    private save(context: PageActionsContext, value: unknown, form: ModalFormConfig, original?: PageItem): void {
-        this.saveEntity(context, this.mergeParentField(context, value, original), form, original, {
+    private save(context: PageActionsContext, value: unknown, handle: FormHandle, original?: PageItem): void {
+        this.saveEntity(context, this.mergeParentField(context, value, original), handle, original, {
             afterCreate: created => context.config.formConfig?.afterCreate?.(created),
             create: (baseUrl, entityValue, successToast) =>
                 this.pageHttpService.create(baseUrl, entityValue, successToast),
@@ -403,13 +401,8 @@ export class PageActionsService {
         });
     }
 
-    private saveCategories(
-        context: PageActionsContext,
-        value: unknown,
-        form: ModalFormConfig,
-        original?: PageItem
-    ): void {
-        this.saveEntity(context, this.mergeParentField(context, value, original), form, original, {
+    private saveCategories(context: PageActionsContext, value: unknown, handle: FormHandle, original?: PageItem): void {
+        this.saveEntity(context, this.mergeParentField(context, value, original), handle, original, {
             create: (baseUrl, entityValue, successToast) =>
                 this.pageHttpService.createCategory(baseUrl, entityValue, successToast),
             edit: (baseUrl, id, entityValue, successToast) =>
@@ -422,14 +415,14 @@ export class PageActionsService {
     private saveEntity(
         context: PageActionsContext,
         value: unknown,
-        form: ModalFormConfig,
+        handle: FormHandle,
         original: PageItem | undefined,
         options: SaveEntityOptions
     ): void {
         const { baseUrl, prefix } = context.config;
 
         if (!baseUrl) {
-            form.close();
+            handle.close();
 
             return;
         }
@@ -443,17 +436,17 @@ export class PageActionsService {
             const followUp = original ? undefined : options.afterCreate?.(created as PageItem);
 
             if (!followUp) {
-                this.completeSave(form, options);
+                this.completeSave(handle, options);
 
                 return;
             }
 
-            followUp.subscribe(() => this.completeSave(form, options));
+            followUp.subscribe(() => this.completeSave(handle, options));
         });
     }
 
-    private completeSave(form: ModalFormConfig, options: SaveEntityOptions): void {
-        form.close();
+    private completeSave(handle: FormHandle, options: SaveEntityOptions): void {
+        handle.close();
         options.onSaved();
     }
 }

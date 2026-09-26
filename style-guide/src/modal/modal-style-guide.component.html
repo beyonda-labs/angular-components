@@ -1,0 +1,53 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.modal.example' | translate }}
+</p>
+
+<div class="d-flex flex-wrap gap-2 mt-3 bey-style-guide-actions">
+    <span class="bey-style-guide-action-slot">
+        <button
+            class="btn btn-sm"
+            type="button"
+            [class.btn-dark]="infoButton.isPrimary"
+            [class.btn-outline-dark]="!infoButton.isPrimary"
+            (click)="infoButton.action()"
+        >
+            {{ infoButton.label | translate }}
+        </button>
+    </span>
+
+    <span class="bey-style-guide-action-slot">
+        <button
+            class="btn btn-sm"
+            type="button"
+            [class.btn-dark]="warningButton.isPrimary"
+            [class.btn-outline-dark]="!warningButton.isPrimary"
+            (click)="warningButton.action()"
+        >
+            {{ warningButton.label | translate }}
+        </button>
+    </span>
+
+    <span class="bey-style-guide-action-slot">
+        <button
+            class="btn btn-sm"
+            type="button"
+            [class.btn-dark]="errorButton.isPrimary"
+            [class.btn-outline-dark]="!errorButton.isPrimary"
+            (click)="errorButton.action()"
+        >
+            {{ errorButton.label | translate }}
+        </button>
+    </span>
+
+    <span class="bey-style-guide-action-slot">
+        <button
+            class="btn btn-sm"
+            type="button"
+            [class.btn-dark]="confirmationButton.isPrimary"
+            [class.btn-outline-dark]="!confirmationButton.isPrimary"
+            (click)="confirmationButton.action()"
+        >
+            {{ confirmationButton.label | translate }}
+        </button>
+    </span>
+</div>

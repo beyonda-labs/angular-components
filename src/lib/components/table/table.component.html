@@ -1,32 +1,28 @@
-@if (config) {
-    <div class="bey-table">
-        <div class="bey-table-scroll" #scrollContainer [style.height]="config.height">
-            <div class="bey-table-header">
-                <bey-table-row
-                    [config]="config"
-                    [gridTemplateColumns]="gridTemplateColumns"
-                    [isHeader]="true"
-                    [row]="headerRow"
-                    [selectionIndeterminate]="hasSomeRowsSelected()"
-                    [selectionLabel]="getSelectAllLabel()"
-                    (selectionChange)="onAllSelectionChange($event)"
-                ></bey-table-row>
-            </div>
+<div class="bey-table">
+    <div #scrollContainer class="bey-table-scroll" role="table" [style.height]="config().height">
+        <div class="bey-table-header" role="rowgroup">
+            <bey-table-row
+                selectionLabel="angular-components.table.select-all"
+                [gridTemplateColumns]="gridTemplateColumns()"
+                [isHeader]="true"
+                [row]="headerRow()"
+                [selectable]="config().selectable"
+                [selectionIndeterminate]="someSelected()"
+                (selectionChange)="onAllSelectionChange($event)"
+            ></bey-table-row>
+        </div>
 
-            <div class="bey-table-body">
-                @if (rows.length) {
-                    @for (row of rows; track $index) {
-                        <bey-table-row
-                            [config]="config"
-                            [gridTemplateColumns]="gridTemplateColumns"
-                            [row]="row"
-                            (selectionChange)="onRowSelectionChange($index, $event)"
-                        ></bey-table-row>
-                    }
-                } @else {
-                    <div class="bey-table-empty">{{ getEmptyLabel() | translate }}</div>
-                }
-            </div>
+        <div class="bey-table-body" role="rowgroup">
+            @for (row of rows(); track $index) {
+                <bey-table-row
+                    [gridTemplateColumns]="gridTemplateColumns()"
+                    [row]="row"
+                    [selectable]="config().selectable"
+                    (selectionChange)="onRowSelectionChange($index, $event)"
+                ></bey-table-row>
+            } @empty {
+                <div class="bey-table-empty">{{ emptyLabel() | translate }}</div>
+            }
         </div>
     </div>
-}
+</div>

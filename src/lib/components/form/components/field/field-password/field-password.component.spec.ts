@@ -1,56 +1,45 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { mock, MockProxy } from 'jest-mock-extended';
+import { renderComponent } from '@testing/dom';
 
 import { FormPasswordField } from '../../../models/fields/form-password-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
-import { FormService } from '../../../services/form.service';
 import { FormPasswordFieldComponent } from './field-password.component';
 
 describe('FormPasswordFieldComponent', () => {
-    let component: FormPasswordFieldComponent;
     let fixture: ComponentFixture<FormPasswordFieldComponent>;
-    let formServiceMock: MockProxy<FormService>;
+
+    async function render(field: FormPasswordField = new FormPasswordField({ key: 'password' })): Promise<void> {
+        fixture = await renderComponent(FormPasswordFieldComponent, {
+            control: new FormControl(''),
+            field,
+            prefix: 'demo.login.password'
+        });
+    }
+
+    function input(): HTMLInputElement {
+        return fixture.nativeElement.querySelector('input');
+    }
 
     beforeEach(async () => {
-        formServiceMock = mock<FormService>();
-        formServiceMock.getSectionGroup.mockReturnValue(new FormGroup({}));
-        formServiceMock.getFieldControl.mockReturnValue(new FormControl(''));
-        formServiceMock.getFieldPrefix.mockReturnValue('prefix');
-
         await TestBed.configureTestingModule({
-            imports: [FormPasswordFieldComponent, TranslateModule.forRoot()],
-            providers: [{ provide: FormService, useValue: formServiceMock }]
+            imports: [FormPasswordFieldComponent, TranslateModule.forRoot()]
         }).compileComponents();
+    });
 
-        fixture = TestBed.createComponent(FormPasswordFieldComponent);
-        component = fixture.componentInstance;
+    it('hides the password until the toggle reveals it', async () => {
+        await render();
+        expect(input().type).toBe('password');
 
-        component.formConfig = {} as FormConfig;
-        component.section = { key: 'section1' } as FormSection;
-        component.field = new FormPasswordField({ key: 'password1' });
-
+        (fixture.nativeElement.querySelector('button') as HTMLButtonElement).click();
         fixture.detectChanges();
+
+        expect(input().type).toBe('text');
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+    it('offers no toggle when the field opts out', async () => {
+        await render(new FormPasswordField({ key: 'password', showToggle: false }));
 
-    it('getPlaceholder should return translated key', () => {
-        expect(component.getPlaceholder()).toBe('prefix.placeholder');
-    });
-
-    it('should start with password hidden', () => {
-        expect(component.isVisible).toBe(false);
-    });
-
-    it('toggleVisibility should switch isVisible', () => {
-        component.toggleVisibility();
-        expect(component.isVisible).toBe(true);
-
-        component.toggleVisibility();
-        expect(component.isVisible).toBe(false);
+        expect(fixture.nativeElement.querySelector('button')).toBeNull();
     });
 });

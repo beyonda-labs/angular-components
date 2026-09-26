@@ -1,53 +1,225 @@
 # Roadmap
 
-## Phase 0 - Quality foundation
+## Standardisation, shipped as 1.2.0
 
-- [x] Real library README
-- [x] DX scripts (`lint:fix`, `format`, `test:report`)
-- [ ] CI pipeline (lint + test + build) _(pending)_
-- [ ] Pre-commit hooks (husky + lint-staged) _(pending)_
+Closing a consistent version before adding anything else. The rules themselves live in `rules/`; this list only
+tracks what is left to do in this repo.
 
-## Phase 1 - Complete Form module
+### S0 - Decisions _(done)_
 
-- [x] Field types: `select`, `checkbox`, `radio`, `textarea`, `date`, `text`, `number`
-- [x] Advanced validators (`email`, `url`, `custom sync`, `async`)
-- [x] Accessibility (`aria-required`, `aria-invalid`, `aria-label`) across all fields
+-   [x] Product-specific modules (`page`, `properties-menu`, `pdf-viewer`) stay in the library, declared as a
+        `product` layer
+-   [x] Signals + `OnPush` as the standard, configs immutable
+-   [x] Flat kebab classes with `is-*` / `has-*` for state
+-   [x] Bootstrap as the base, fed one-way by `--bey-*` tokens
+-   [x] 1.0 may break the public API
 
-## Phase 2 - Core UI
+### S1 - Token foundation _(done)_
 
-- [ ] Layout: `card`, `panel`
-- [x] Feedback: `toast`, `loading spinner` (inline + overlay + service)
-- [ ] Feedback: `alert`, `progress bar`
-- [x] Modals (info, warning, error, confirmation via service)
-- [ ] Drawers
+-   [x] `tokens.css` implementing [tokens.md](./tokens.md): colour, spacing, radius, typography, borders,
+        elevation, motion, stacking — 36 font sizes into 7 steps, 20 radii into 7, 20 spacings into 8
+-   [x] Duplicate grey scale (`--bey-color-dark-*`, `--bey-color-neutral-*`) dropped, along with two shadow
+        tokens nothing used; `color-palette.css` replaced by `tokens.css`
+-   [x] `--text-*` renamed to `--bey-text-*` across 35 files, so nothing unprefixed can collide with a consumer
+-   [x] `--bs-*` is now one-way: no CSS in the library reads one, and the bridge in `overrides.css` feeds them
+        all from tokens
+-   [x] `check-tokens.js`: a `var(--bey-*)` with no definition and no fallback now fails. It found two shadows
+        that have never painted (`--bey-left-menu-shadow`, `--bey-login-shadow-card`), both fixed
 
-## Phase 3 - Data and navigation
+Dark mode is now expressible in one place — every semantic token flips under `body.dark` — but 35
+`:host-context(body.dark)` blocks across 30 components still carry their own palettes. Removing them means
+re-pointing each component's variables at semantic tokens, which is per-module work and belongs in S6.
 
-- [x] Table / grid (configurable columns, sorting, row selection)
-- [ ] Table / grid: filters
-- [x] Pagination
-- [x] Tabs
-- [x] Breadcrumb
-- [x] Sidebar (`left-menu` with grouped actions, sub-actions and collapse)
-- [x] Header (configurable left / right actions)
+### S2 - Gates _(done)_
 
-## Phase 4 - Rich interactions
+Strict rules run on the files a commit touches, through husky + lint-staged, and `pnpm run verify` runs every
+gate over the whole repo. It passes with zero findings and no baseline since the end of S6.
 
-- [ ] Text editor
-- [ ] Drag & drop and reorderable lists
-- [ ] File board / manager
+-   [x] stylelint encoding `rules/angular/styles.md`: `bey-` prefixes, `is-*`/`has-*` states, no `!important`,
+        no `--bs-*` read, no literal design value outside the token layer
+-   [x] `typecheck` in `lint`: jest transpiles each spec in isolation and never checks types, so 35 type errors had
+        built up in the specs unseen; `tsc -p tsconfig.spec.json --noEmit` now fails the Lint stage instead
+-   [x] `prettier-plugin-organize-attributes`: template attributes grouped (structural, `#ref`, `id`, `class`, static,
+        inputs, two-way, outputs) and alphabetical within each group; 58 templates reordered
+-   [x] `stylelint-order`: custom properties first, then declarations in alphabetical order (shorthand before its
+        longhands); 565 declarations moved by `stylelint --fix`, none across a shorthand boundary
+-   [x] Prettier on save, `format` and `format:check` over `{ts,html,css,json}`, plus the one-off pass that
+        brought 523 files into line. ESLint's `quotes` rule now allows the double quotes Prettier uses around
+        an apostrophe, and `merge-translations` ends its bundles with a newline, so a generated file no
+        longer fights the formatter
+-   [x] husky + lint-staged: eslint + stylelint + prettier on staged files, verified to block a bad commit
+-   [x] Jest coverage thresholds set just under today's numbers (82.2 / 69.7 / 76.1 / 82.2), so coverage can
+        only go up
+-   [x] `@angular-eslint/prefer-on-push-component-change-detection` and `prefer-standalone`
+-   [x] `check-translations.js`: duplicate keys across files, maximum depth, kebab-case
+-   [x] `check-style-guides.js`: every module has a style-guide, is registered, and has a README
+-   [x] Broken `ng test` target removed from `angular.json` — `pnpm test` is the entry point
+-   [x] ESLint 9 with a flat `eslint.config.js`: the same 228 rules as before, checked by diffing `--print-config`
+        before and after; the formatting rules moved to `@stylistic/js`, as ESLint deprecates its own
+-   [x] `complexity` 28 → 15, `max-lines` 500 → 400 lines of code (600 in a spec), `max-len` 300 → 120, the
+        prettier width. Calibrated on the migrated code: one method and two style-guide files had to be split
 
-## Phase 5 - Delivery
+While the migration ran, every gate warned instead of failing and flipped to an error once its migration
+landed: literal values outside the token layer (549 warnings at the start), `OnPush` (85), kebab-case
+translation keys (232), stylelint (190 errors) and `check-style-guides` (6 modules). All of them are errors now.
 
-- [x] Demo component (`style-guide` with simple / composite sections)
-- [ ] Storybook
-- [ ] API docs (TypeDoc)
+The flat config landed after the migration, once the rules it enforces were met everywhere: rewriting it earlier
+would have risked dropping rules silently, so the effective rule set was diffed before and after.
+
+### S3 - Package hygiene _(done)_
+
+-   [x] `sideEffects` limited to the CSS files — the library has no module-level side effects, so consumers can
+        now tree-shake what they do not import
+-   [x] Everything public carries the `Bey` prefix: `BeyFooterConfig`, `BeyFooterConfigParameters`,
+        `BEY_ENVIRONMENT_CONFIG`, `BeyEnvironmentConfig` (285 exports, 4 renamed, none lost)
+-   [x] Root `public-api.ts` grouped by layer (primitives / composites / product / services / demo)
+-   [x] `angular.json` prefix aligned with ESLint (`by` → `bey`)
+-   [x] Style-guide demo text out of the product's translation bundle: `merge-translations` now writes two
+        bundles. The library one drops from 45 KB to 17.5 KB, and the product's own bundle from 52 KB to 35.6 KB
+-   [x] `sass` devDependency dropped — no `.scss` is left in the workspace, and `@angular-devkit/build-angular`
+        carries its own copy
+-   [x] The style-guide is a secondary entry point, `@beyonda-labs/angular-components/style-guide`, with its
+        sources under `style-guide/src/<module>/`; the primary bundle no longer carries it (907 KB, from 1.1 MB)
+
+Before the entry point, the demo was 14% of the library bundle (206 KB of 1.43 MB in a development build) and
+every user of a product that imported `BeyStyleGuideComponent` downloaded it, because the bundler kept it in the
+shared chunk that `main` loads eagerly.
+
+### S4 - Style-guide infrastructure _(done)_
+
+-   [x] `bey-style-guide-section` (title + card) replaces the 19 hand-written repetitions in the global
+        style-guide. First component written to the new rules: signals, `OnPush`, tokens only
+-   [x] Shared utilities moved out of `style-guide.component.css` into `style-guide-shared.css`, reading from
+        tokens. A module style-guide no longer imports another module's component stylesheet, which the rules
+        forbid
+-   [x] `bey-sg-*` renamed to `bey-style-guide-*`, so the shared classes read like everything else
+
+Eight modules used those shared classes without importing the stylesheet, so the styles never applied to them:
+`floating-preferences`, `footer`, `form`, `list`, `login`, `pagination`, `table` and `tree`. All wired up now.
+
+### S5 - Pilot module _(done: tabs)_
+
+-   [x] `tabs` migrated end to end: tokens, class naming, signals, tests, i18n, exports, README, and its own
+        style-guide. It passes every gate with zero findings
+-   [x] `@testing-library/angular`: not adopted. The test rules already ask for what it enforces (queries by role
+        and text, behaviour over markup) and every suite follows them with three local helpers, so it would add a
+        second style and a dependency without a new guarantee; `userEvent` is the only thing missed, and the
+        `click` + `detectChanges` + `whenStable` pair covers the interactions the components have
+-   [x] No spec asserts a CSS class any more: the tests that only checked a modifier or state class are gone,
+        and the ones that checked a state now read `aria-current` / `aria-expanded`, added to `left-menu` for it
+-   [x] Shared test helpers in `testing/dom.ts` (`renderComponent`, `settle`, `queryAll`, `textsOf`, `buttonByName`,
+        `queryButton`), imported as `@testing/dom` by 68 specs; the copies each spec kept, and the five per-spec
+        `ResizeObserver` mocks, are gone (300 lines less)
+-   [x] No spec locates an element by class any more: every locator is a role, an `aria-*` attribute or visible
+        text, and the templates gained the ARIA they lacked (`table` / `row` / `cell`, `list` / `listitem`, `tree` /
+        `treeitem`, `searchbox`, `aria-expanded` on submenus and groups)
+-   [ ] The submenu chevron of `left-menu` and the toggle of the property tree are spans with a click handler inside
+        the row button, so they are decorative for assistive technology; each should become a sibling button
+
+What the pilot cost, and what it changed beyond the plan:
+
+-   **The config was mutable.** `TabsConfig.setActiveTab` wrote into the config the component received, exactly
+    what the rules forbid. The component now owns the active tab and reports through `onTabChange`; the config
+    carries the initial value only. Nothing outside the module called it, so the break is cheap here — other
+    modules may not be so lucky.
+-   **`linkedSignal` is the tool for input-derived writable state.** It resets when the config instance is
+    replaced, which is precisely the old setter's behaviour.
+-   **`unicorn/consistent-function-scoping` had to go.** It flags every `computed()` and `linkedSignal()` class
+    field as hoistable, so it is incompatible with the standard we adopted.
+-   **stylelint needed keyword allowances** (`solid`, `ease`, …) before a properly migrated file could come out
+    clean: `border: var(--x) solid var(--y)` was being reported as a literal.
+-   **A style-guide has to migrate with its module.** Under `OnPush`, plain fields written from a callback never
+    repaint, so its demo state has to become signals too.
+-   **Tests: 23 to 15**, covering the same behaviour through the rendered output instead of internal state.
+-   **README: 145 lines to 75**, with the overflow strategy moved out of a code comment into it.
+
+Rough cost per module, from this one: a primitive like `breadcrumb` or `pagination` is smaller; `form`,
+`table`, `page` and `properties-menu` are several times larger and will each surface their own version of the
+mutable-config question.
+
+### S6 - Migration _(done)_
+
+A scan for the pattern the pilot uncovered says the API breaks are contained: only `pagination`
+(`setPage`, `setPageSize`, `setTotalItems`) and `form` (`setInitialValue`) have a model that writes into
+itself. What looked like the same thing in `properties-menu`, `table` and `tree` is a service's own signal,
+a callback field and dialog callbacks.
+
+-   [x] The remaining modules, one at a time; the internal `button` was the last one on `@Input`
+-   [x] `properties-menu`: callbacks on the config, a shared `internal/option-picker`, signals and tokens across
+        the root, groups, list, tree and the eleven fields, one README
+-   [x] `badge` is a component with a `BadgeConfig`; `header`, `table` and `properties-menu` render theirs through it
+-   [x] Translation keys to kebab-case
+-   [x] Trim module READMEs to the agreed shape: title, usage, config table, behaviour sections, texts or theming
+-   [x] `:host-context(body.dark)` only survives for non-token swaps: the inverted icons of `footer` and `login`, the
+        `color-scheme` of the tree dialog
+
+### S7 - Release
+
+The next version is 1.2.0: the public API breaks (callbacks instead of outputs, `BeyBadgeConfig`, kebab-case
+translation keys, the style-guide entry point) go out under a minor because nothing is at 1.0 for real yet, and
+the change-log lists every break.
+
+-   [x] Scripts matched to the Jenkins stages (Lint → `lint`, Test → `test:ci`, Build → `build`): `lint` runs
+        ESLint, stylelint, `check-tokens` and `check-style-guides`; `build` stops running the tests, which the
+        Test stage already runs; `verify` stays as the local shortcut
+-   [x] Change-log: `[Unreleased]` completed with every S6 break and renamed to `[1.2.0]`; `[1.1.0]` dated
+-   [x] Coverage thresholds raised to just under today's numbers (90 / 77 / 85 / 90), as S2 intended
+-   [ ] `release/1.2.0`, version bump, merge to `main` and `develop`, tag `v1.2.0` (the repo has no tags today)
+-   [x] Consumers adapted: `document-builder-front` and `angular-components-demo` build and pass their tests
+        against 1.2.0; `page` gained `onValueChange` and `left-menu` a title size variable for what they needed
+
+Publishing already runs on Jenkins, configured on the server — there is no `Jenkinsfile` in the repo by design.
+Snapshots per branch, `latest` from `main`, as described in the README.
 
 ---
 
-## Components outside the original roadmap
+## Features
 
-- [x] `app-layout` (full layout with integrated left-menu, breadcrumb and footer)
-- [x] `login` (authentication with light/dark theme and optional OAuth providers)
-- [x] `footer`
-- [x] `floating-preferences` (theme and language selector)
+### Form
+
+-   [x] Field types: `select`, `checkbox`, `radio`, `textarea`, `date`, `text`, `number`
+-   [x] Advanced validators (`email`, `url`, `custom sync`, `async`)
+-   [x] Accessibility (`aria-required`, `aria-invalid`, `aria-label`) across all fields
+
+### Core UI
+
+-   [ ] Layout: `card`, `panel`
+-   [x] Feedback: `toast`, `loading spinner` (inline + overlay + service)
+-   [ ] Feedback: `alert`, `progress bar`
+-   [x] Modals (info, warning, error, confirmation via service)
+-   [ ] Drawers
+
+### Data and navigation
+
+-   [ ] `page`: remember the search and the selection when the user comes back to a page (the old
+        registry was removed unfinished)
+
+-   [x] Table / grid (configurable columns, sorting, row selection)
+-   [ ] Table / grid: filters
+-   [x] Pagination
+-   [x] Tabs
+-   [x] Breadcrumb
+-   [x] Sidebar (`left-menu` with grouped actions, sub-actions and collapse)
+-   [x] Header (configurable left / right actions)
+
+### Rich interactions
+
+-   [ ] Text editor
+-   [ ] Drag & drop and reorderable lists
+-   [ ] File board / manager
+
+### Delivery
+
+-   [x] Demo component (`style-guide` with simple / composite sections)
+-   ~~Storybook~~ — decided against. It would solve the packaging boundary for free and give visual
+    regression, but its main draw, controls generated from the component inputs, does not work with a
+    single `config` object input, so it changes the tool without changing the guarantee. Revisit only if
+    automated visual diffing becomes something we would actually run.
+-   [ ] API docs (TypeDoc)
+
+### Outside the original roadmap
+
+-   [x] `app-layout` (full layout with integrated left-menu, breadcrumb and footer)
+-   [x] `login` (authentication with light/dark theme and optional OAuth providers)
+-   [x] `footer`
+-   [x] `floating-preferences` (theme and language selector)

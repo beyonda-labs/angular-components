@@ -1,8 +1,3 @@
-<div
-    class="bey-loading-overlay"
-    [class.bey-loading-overlay-fullscreen]="fullscreen"
-    role="alert"
-    aria-busy="true"
->
-    <bey-loading [size]="size"></bey-loading>
+<div class="bey-loading-overlay" aria-busy="true" role="alert" [class.is-fullscreen]="fullscreen()">
+    <bey-loading [size]="size()"></bey-loading>
 </div>

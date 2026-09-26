@@ -2,7 +2,9 @@
     "angular-components": {
         "floating-preferences": {
             "dark": "Dark",
-            "light": "Light"
+            "light": "Light",
+            "language": "Language",
+            "theme": "Theme"
         }
     }
 }

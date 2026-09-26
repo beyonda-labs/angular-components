@@ -1,14 +1,12 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { AbstractControl, FormControl } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { FormDateField } from '../../models/fields/form-date-field.model';
-import { FormConfig, FormSection } from '../../models/form.model';
-import { FormField } from '../../models/form-field.model';
-import { FormService } from '../../services/form.service';
+import { FormFieldState } from '../../form.component';
+import { FormField, FormFieldType } from '../../models/form-field.model';
 import { FormAutocompleteFieldComponent } from './field-autocomplete/field-autocomplete.component';
 import { FormCheckboxFieldComponent } from './field-checkbox/field-checkbox.component';
 import { FormChipsFieldComponent } from './field-chips/field-chips.component';
@@ -24,8 +22,8 @@ import { FormTextVariableFieldComponent } from './field-text-variable/field-text
 import { FormTextareaFieldComponent } from './field-textarea/field-textarea.component';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
-        CommonModule,
         FontAwesomeModule,
         FormAutocompleteFieldComponent,
         FormCheckboxFieldComponent,
@@ -49,45 +47,18 @@ import { FormTextareaFieldComponent } from './field-textarea/field-textarea.comp
     templateUrl: './field.component.html'
 })
 export class FormFieldComponent {
-    @Input() field: FormField;
-    @Input() formConfig: FormConfig;
-    @Input() section: FormSection;
+    readonly control = input.required<AbstractControl | null>();
+    readonly field = input.required<FormField>();
+    readonly prefix = input.required<string>();
+    readonly state = input.required<FormFieldState>();
 
-    infoIcon = faInfoCircle;
+    readonly fieldPrefix = computed(() => `${this.prefix()}.${this.field().key}`);
+    readonly formControl = computed(() => this.control() as FormControl | null);
+    readonly hasLabel = computed(() => this.field().isLabelVisible && this.field().type !== FormFieldType.Checkbox);
+    readonly label = computed(() => `${this.fieldPrefix()}.label`);
+    readonly tooltip = computed(() => `${this.fieldPrefix()}.tooltip`);
+    readonly type = computed(() => this.field().type);
 
-    private readonly formService = inject(FormService);
-
-    getFieldLabel(): string {
-        return `${this.getPrefix()}.label`;
-    }
-
-    getFieldTooltip(): string {
-        return `${this.getPrefix()}.tooltip`;
-    }
-
-    getDateField(): FormDateField {
-        return this.field as FormDateField;
-    }
-
-    isFieldValid(): boolean {
-        if (this.field && this.formConfig && this.section) {
-            const sectionGroup = this.formService.getSectionGroup(this.formConfig, this.section.key);
-
-            if (sectionGroup) {
-                const control = this.formService.getFieldControl(sectionGroup, this.field);
-
-                return control?.valid ?? false;
-            }
-        }
-
-        return false;
-    }
-
-    private getPrefix(): string {
-        if (this.field && this.formConfig && this.section) {
-            return this.formService.getFieldPrefix(this.formConfig, this.section, this.field);
-        }
-
-        return '';
-    }
+    readonly fieldType = FormFieldType;
+    readonly infoIcon = faInfoCircle;
 }

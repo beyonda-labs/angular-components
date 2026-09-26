@@ -1,40 +1,54 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { Injectable, signal } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 
 import { AppLayoutBreadcrumbItem } from '../models/app-layout.model';
 
 const STORAGE_KEY = 'bey-left-menu-expanded';
 
+function loadExpanded(): boolean {
+    try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+
+        return stored === null ? true : stored === 'true';
+    } catch {
+        return true;
+    }
+}
+
+function saveExpanded(value: boolean): void {
+    try {
+        localStorage.setItem(STORAGE_KEY, String(value));
+    } catch {
+        /* storage unavailable: the state still lives in the signal */
+    }
+}
+
 @Injectable({
     providedIn: 'root'
 })
 export class AppLayoutService {
-    readonly onBreadcrumbClick$: Observable<number>;
-    readonly onMenuClick$: Observable<string>;
-    readonly activeAction$: Observable<string>;
-
-    expanded: boolean;
-
-    private readonly activeActionSubject = new Subject<string>();
-    private readonly breadcrumbItemsSubject = new BehaviorSubject<AppLayoutBreadcrumbItem[]>([]);
+    private readonly _activeActionKey = signal<string | null>(null);
+    private readonly _breadcrumb = signal<AppLayoutBreadcrumbItem[]>([]);
+    private readonly _expanded = signal(loadExpanded());
     private readonly breadcrumbClickSubject = new Subject<number>();
     private readonly menuClickSubject = new Subject<string>();
 
-    readonly breadcrumbItems$ = this.breadcrumbItemsSubject.asObservable();
+    readonly activeActionKey = this._activeActionKey.asReadonly();
+    readonly breadcrumb = this._breadcrumb.asReadonly();
+    readonly expanded = this._expanded.asReadonly();
+    readonly onBreadcrumbClick$: Observable<number> = this.breadcrumbClickSubject.asObservable();
+    readonly onMenuClick$: Observable<string> = this.menuClickSubject.asObservable();
 
-    constructor() {
-        this.onBreadcrumbClick$ = this.breadcrumbClickSubject.asObservable();
-        this.activeAction$ = this.activeActionSubject.asObservable();
-        this.onMenuClick$ = this.menuClickSubject.asObservable();
-        this.expanded = this.loadExpanded();
+    activeMenuAction(key: string): void {
+        this._activeActionKey.set(key);
     }
 
-    setBreadcrumb(items: AppLayoutBreadcrumbItem[]): void {
-        this.breadcrumbItemsSubject.next(items);
+    clearActiveAction(): void {
+        this._activeActionKey.set(null);
     }
 
     clearBreadcrumb(): void {
-        this.breadcrumbItemsSubject.next([]);
+        this._breadcrumb.set([]);
     }
 
     emitBreadcrumbClick(id: number): void {
@@ -45,28 +59,12 @@ export class AppLayoutService {
         this.menuClickSubject.next(key);
     }
 
-    activeMenuAction(actionKey: string): void {
-        this.activeActionSubject.next(actionKey);
+    setBreadcrumb(items: AppLayoutBreadcrumbItem[]): void {
+        this._breadcrumb.set(items);
     }
 
     setExpanded(value: boolean): void {
-        this.expanded = value;
-        this.saveExpanded(value);
-    }
-
-    private loadExpanded(): boolean {
-        try {
-            const stored = localStorage.getItem(STORAGE_KEY);
-
-            return stored === null ? true : stored === 'true';
-        } catch {
-            return true;
-        }
-    }
-
-    private saveExpanded(value: boolean): void {
-        try {
-            localStorage.setItem(STORAGE_KEY, String(value));
-        } catch { /* SSR o modo privado */ }
+        this._expanded.set(value);
+        saveExpanded(value);
     }
 }

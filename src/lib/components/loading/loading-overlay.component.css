@@ -1,34 +1,30 @@
 :host {
-    --bey-loading-overlay-rgb: var(--bey-white-rgb);
     display: contents;
 }
 
-:host-context(body.dark) {
-    --bey-loading-overlay-rgb: var(--bey-black-rgb);
-}
-
 .bey-loading-overlay {
-    --bey-loading-overlay-bg: rgba(var(--bey-loading-overlay-rgb), 0.7);
+    --bey-loading-overlay-bg: color-mix(in srgb, var(--bey-bg-page) 70%, transparent);
+    align-items: center;
+    animation: bey-loading-overlay-in var(--bey-duration-base) ease-out;
+    background: var(--bey-loading-overlay-bg);
+    display: flex;
+    inset: 0;
+    justify-content: center;
 
     position: absolute;
-    inset: 0;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--bey-loading-overlay-bg);
-    animation: bey-loading-overlay-in 0.2s ease-out;
+    z-index: var(--bey-z-raised);
 }
 
-.bey-loading-overlay-fullscreen {
+.bey-loading-overlay.is-fullscreen {
     position: fixed;
-    z-index: 1050;
+    z-index: var(--bey-z-modal);
 }
 
 @keyframes bey-loading-overlay-in {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }

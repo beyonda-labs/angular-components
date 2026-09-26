@@ -1,0 +1,65 @@
+:host {
+    --bey-form-chips-chip-bg: var(--bey-bg-active);
+    --bey-form-chips-input-min-width: 6rem;
+}
+
+.bey-form-chips {
+    align-items: center;
+    cursor: text;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--bey-space-xs);
+    height: auto;
+    padding: var(--bey-space-2xs) var(--bey-space-sm);
+}
+
+.bey-form-chips.is-disabled {
+    background-color: var(--bey-bg-muted);
+    cursor: default;
+}
+
+.bey-form-chips-chip {
+    align-items: center;
+    background-color: var(--bey-form-chips-chip-bg);
+    border-radius: var(--bey-radius-pill);
+    display: inline-flex;
+    font-size: var(--bey-font-size-sm);
+    gap: var(--bey-space-2xs);
+    line-height: var(--bey-line-height-base);
+    max-width: 100%;
+    padding: var(--bey-space-3xs) var(--bey-space-3xs) var(--bey-space-3xs) var(--bey-space-sm);
+}
+
+.bey-form-chips.is-disabled .bey-form-chips-chip {
+    padding-right: var(--bey-space-sm);
+}
+
+.bey-form-chips-chip-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.bey-form-chips-chip-remove {
+    border-radius: var(--bey-radius-circle);
+    flex-shrink: 0;
+    font-size: var(--bey-font-size-2xs);
+    height: var(--bey-space-lg);
+    width: var(--bey-space-lg);
+}
+
+.bey-form-chips-input {
+    background: transparent;
+    border: none;
+    color: var(--bey-form-field-fg);
+    flex: 1 1 var(--bey-form-chips-input-min-width);
+    font-size: var(--bey-font-size-md);
+    min-width: var(--bey-form-chips-input-min-width);
+    outline: none;
+    padding: var(--bey-space-3xs) 0;
+}
+
+.bey-form-chips-input::placeholder {
+    color: var(--bey-form-field-placeholder);
+    font-size: var(--bey-font-size-sm);
+}

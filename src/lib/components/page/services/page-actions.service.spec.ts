@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 
-import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
-import { FormSection } from '../../form/models/form.model';
+import { FormHandle, FormSection } from '../../form/models/form.model';
 import { ModalService } from '../../modal/services/modal.service';
 import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
 import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
@@ -100,7 +99,9 @@ describe('PageActionsService', () => {
     });
 
     it('should do nothing for an unrecognized standard action key', () => {
-        expect(() => service.executeAction(buildAction('not-a-real-action', PageActionScope.Global), buildContext())).not.toThrow();
+        expect(() =>
+            service.executeAction(buildAction('not-a-real-action', PageActionScope.Global), buildContext())
+        ).not.toThrow();
 
         expect(openForm).not.toHaveBeenCalled();
         expect(openConfirmation).not.toHaveBeenCalled();
@@ -112,12 +113,17 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.Create, PageActionScope.Global), context);
 
-            expect(openForm).toHaveBeenCalledWith(context.config.formConfig, undefined, 'testPage', expect.any(Function));
+            expect(openForm).toHaveBeenCalledWith(
+                context.config.formConfig,
+                undefined,
+                'testPage',
+                expect.any(Function)
+            );
             expect(context.onFormModalOpened).toHaveBeenCalled();
         });
 
         it('should not open the create modal form without a form config', () => {
-            const context = buildContext({ config: new PageConfig({ page: 'testPage', baseUrl: '/items' }) });
+            const context = buildContext({ config: new PageConfig({ prefix: 'testPage', baseUrl: '/items' }) });
 
             service.executeAction(buildAction(PageStandardAction.Create, PageActionScope.Global), context);
 
@@ -148,9 +154,9 @@ describe('PageActionsService', () => {
             service.executeAction(buildAction(PageStandardAction.Create, PageActionScope.Global), context);
 
             const close = jest.fn();
-            const onSave = openForm.mock.calls[0][3] as (value: unknown, form: ModalFormConfig) => void;
+            const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'New' }, { close } as unknown as ModalFormConfig);
+            onSave({ name: 'New' }, { close } as unknown as FormHandle);
 
             expect(create).toHaveBeenCalledWith('/items', { name: 'New' }, 'testPage.toast.create-success');
             expect(close).toHaveBeenCalled();
@@ -164,9 +170,9 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.Edit, PageActionScope.Item), context);
 
-            const onSave = openForm.mock.calls[0][3] as (value: unknown, form: ModalFormConfig) => void;
+            const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'Edited' }, { close: jest.fn() } as unknown as ModalFormConfig);
+            onSave({ name: 'Edited' }, { close: jest.fn() } as unknown as FormHandle);
 
             expect(edit).toHaveBeenCalledWith('/items', 7, { name: 'Edited' }, 'testPage.toast.edit-success');
         });
@@ -177,9 +183,9 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.Create, PageActionScope.Global), context);
 
-            const onSave = openForm.mock.calls[0][3] as (value: unknown, form: ModalFormConfig) => void;
+            const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'New' }, { close: jest.fn() } as unknown as ModalFormConfig);
+            onSave({ name: 'New' }, { close: jest.fn() } as unknown as FormHandle);
 
             expect(create).toHaveBeenCalledWith(
                 '/items',
@@ -195,9 +201,9 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.Edit, PageActionScope.Item), context);
 
-            const onSave = openForm.mock.calls[0][3] as (value: unknown, form: ModalFormConfig) => void;
+            const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'Edited' }, { close: jest.fn() } as unknown as ModalFormConfig);
+            onSave({ name: 'Edited' }, { close: jest.fn() } as unknown as FormHandle);
 
             expect(edit).toHaveBeenCalledWith('/items', 7, { name: 'Edited' }, 'testPage.toast.edit-success');
         });
@@ -271,7 +277,7 @@ describe('PageActionsService', () => {
             const context = buildCategoryContext({
                 config: new PageConfig({
                     baseUrl: '/items',
-                    page: 'testPage',
+                    prefix: 'testPage',
                     tableConfig: new PageTableConfig({
                         columns: [],
                         categoriesConfig: new PageCategoriesConfig({}),
@@ -314,9 +320,9 @@ describe('PageActionsService', () => {
             service.executeAction(buildAction(PageStandardAction.CreateCategory, PageActionScope.Global), context);
 
             const close = jest.fn();
-            const onSave = openForm.mock.calls[0][3] as (value: unknown, form: ModalFormConfig) => void;
+            const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'New category' }, { close } as unknown as ModalFormConfig);
+            onSave({ name: 'New category' }, { close } as unknown as FormHandle);
 
             expect(createCategory).toHaveBeenCalledWith(
                 '/items',
@@ -333,9 +339,9 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.CreateCategory, PageActionScope.Global), context);
 
-            const onSave = openForm.mock.calls[0][3] as (value: unknown, form: ModalFormConfig) => void;
+            const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'Root category' }, { close: jest.fn() } as unknown as ModalFormConfig);
+            onSave({ name: 'Root category' }, { close: jest.fn() } as unknown as FormHandle);
 
             expect(createCategory).toHaveBeenCalledWith(
                 '/items',
@@ -351,11 +357,16 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.EditCategory, PageActionScope.Item), context);
 
-            const onSave = openForm.mock.calls[0][3] as (value: unknown, form: ModalFormConfig) => void;
+            const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'Edited category' }, { close: jest.fn() } as unknown as ModalFormConfig);
+            onSave({ name: 'Edited category' }, { close: jest.fn() } as unknown as FormHandle);
 
-            expect(editCategory).toHaveBeenCalledWith('/items', 9, { name: 'Edited category' }, 'testPage.toast.edit-category-success');
+            expect(editCategory).toHaveBeenCalledWith(
+                '/items',
+                9,
+                { name: 'Edited category' },
+                'testPage.toast.edit-category-success'
+            );
             expect(context.onCategorySaved).toHaveBeenCalled();
         });
     });
@@ -516,12 +527,19 @@ describe('PageActionsService', () => {
             service.executeAction(buildAction(PageStandardAction.RestoreTrashItem, PageActionScope.Item), context);
 
             expect(openConfirmation).not.toHaveBeenCalled();
-            expect(restoreTrashItems).toHaveBeenCalledWith('/items', items, 'testPage.toast.restore-trash-item-success');
+            expect(restoreTrashItems).toHaveBeenCalledWith(
+                '/items',
+                items,
+                'testPage.toast.restore-trash-item-success'
+            );
             expect(context.onSaved).toHaveBeenCalled();
         });
 
         it('should not restore trash items without selected items', () => {
-            service.executeAction(buildAction(PageStandardAction.RestoreTrashItem, PageActionScope.Item), buildContext());
+            service.executeAction(
+                buildAction(PageStandardAction.RestoreTrashItem, PageActionScope.Item),
+                buildContext()
+            );
 
             expect(restoreTrashItems).not.toHaveBeenCalled();
         });
@@ -547,7 +565,11 @@ describe('PageActionsService', () => {
 
         it('should build nested header actions for sub-actions', () => {
             const execute = jest.fn();
-            const subAction = new PageAction({ key: 'sub-action', scope: PageActionScope.Global, zone: PageActionZone.Left });
+            const subAction = new PageAction({
+                key: 'sub-action',
+                scope: PageActionScope.Global,
+                zone: PageActionZone.Left
+            });
             const action = new PageAction({
                 key: 'parent-action',
                 scope: PageActionScope.Global,
@@ -656,7 +678,7 @@ function buildContext(overrides?: Partial<PageActionsContext>): PageActionsConte
                 buildSections: () => [new FormSection({ key: 'section1', rows: [] })],
                 prefix: 'testPage.form'
             }),
-            page: 'testPage'
+            prefix: 'testPage'
         }),
         getCurrentCategoryId: () => null,
         onCategoryDeleted: jest.fn(),
@@ -680,7 +702,7 @@ function buildCategoryContext(overrides?: Partial<PageActionsContext>): PageActi
                 buildSections: () => [new FormSection({ key: 'section1', rows: [] })],
                 prefix: 'testPage.form'
             }),
-            page: 'testPage',
+            prefix: 'testPage',
             tableConfig: new PageTableConfig({
                 columns: [],
                 loadRow: () => [],

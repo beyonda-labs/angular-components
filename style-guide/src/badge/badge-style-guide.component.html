@@ -1,0 +1,9 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.badge.example' | translate }}
+</p>
+
+<div class="d-flex flex-wrap gap-2">
+    @for (badge of badges; track badge.variant) {
+        <bey-badge [config]="badge"></bey-badge>
+    }
+</div>

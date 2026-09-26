@@ -1,66 +1,64 @@
-@if (config) {
-    <div
-        #tabsRow
-        class="bey-tabs"
-        role="tablist"
-        [class.bey-tabs--segmented]="isSegmented"
-        [attr.aria-label]="'angular-components.tabs.label' | translate"
-    >
-        @for (tab of visibleTabs; track tab.key) {
+<div
+    #tabsRow
+    class="bey-tabs"
+    role="tablist"
+    [attr.aria-label]="'angular-components.tabs.label' | translate"
+    [class.bey-tabs--segmented]="isSegmented()"
+>
+    @for (tab of visibleTabs(); track tab.key) {
+        <button
+            class="bey-tabs-tab"
+            role="tab"
+            type="button"
+            [attr.aria-selected]="isActive(tab)"
+            [attr.tabindex]="isActive(tab) ? 0 : -1"
+            [class.is-active]="isActive(tab)"
+            [class.is-disabled]="tab.isDisabled"
+            [disabled]="tab.isDisabled"
+            [tooltip]="getTabTooltip(tab) | translate"
+            (click)="onTabClick(tab)"
+            (keydown)="onKeydown($event)"
+        >
+            @if (tab.icon) {
+                <fa-icon class="bey-tabs-tab-icon" [icon]="tab.icon"></fa-icon>
+            }
+            {{ getTabLabel(tab) | translate }}
+        </button>
+    }
+
+    @if (overflowTabs().length > 0) {
+        <div class="bey-tabs-overflow">
             <button
-                class="bey-tabs-tab"
-                role="tab"
+                class="bey-tabs-tab bey-tabs-overflow-trigger"
                 type="button"
-                [attr.aria-selected]="isActive(tab)"
-                [attr.tabindex]="isActive(tab) ? 0 : -1"
-                [class.bey-tabs-tab-active]="isActive(tab)"
-                [class.bey-tabs-tab-disabled]="tab.isDisabled"
-                [disabled]="tab.isDisabled"
-                [tooltip]="getTabTooltip(tab) | translate"
-                (click)="onTabClick(tab)"
-                (keydown)="onKeydown($event)"
+                [attr.aria-expanded]="isOverflowMenuOpen()"
+                [attr.aria-label]="'angular-components.tabs.more' | translate"
+                [class.is-active]="isActiveInOverflow()"
+                (click)="toggleOverflowMenu()"
             >
-                @if (tab.icon) {
-                    <fa-icon class="bey-tabs-tab-icon" [icon]="tab.icon"></fa-icon>
-                }
-                {{ getTabLabel(tab) | translate }}
+                <fa-icon [icon]="overflowIcon"></fa-icon>
             </button>
-        }
 
-        @if (overflowTabs.length > 0) {
-            <div class="bey-tabs-overflow">
-                <button
-                    type="button"
-                    class="bey-tabs-tab bey-tabs-overflow-trigger"
-                    [attr.aria-expanded]="overflowMenuOpen"
-                    [attr.aria-label]="'angular-components.tabs.more' | translate"
-                    [class.bey-tabs-tab-active]="isActiveInOverflow()"
-                    (click)="toggleOverflowMenu()"
-                >
-                    <fa-icon [icon]="overflowIcon"></fa-icon>
-                </button>
-
-                @if (overflowMenuOpen) {
-                    <div class="bey-tabs-overflow-menu" role="menu">
-                        @for (tab of overflowTabs; track tab.key) {
-                            <button
-                                type="button"
-                                class="bey-tabs-overflow-menu-item"
-                                role="menuitemradio"
-                                [attr.aria-checked]="isActive(tab)"
-                                [class.bey-tabs-overflow-menu-item-active]="isActive(tab)"
-                                [disabled]="tab.isDisabled"
-                                (click)="onOverflowTabClick(tab)"
-                            >
-                                @if (tab.icon) {
-                                    <fa-icon [icon]="tab.icon"></fa-icon>
-                                }
-                                {{ getTabLabel(tab) | translate }}
-                            </button>
-                        }
-                    </div>
-                }
-            </div>
-        }
-    </div>
-}
+            @if (isOverflowMenuOpen()) {
+                <div class="bey-tabs-overflow-menu" role="menu">
+                    @for (tab of overflowTabs(); track tab.key) {
+                        <button
+                            class="bey-tabs-overflow-menu-item"
+                            role="menuitemradio"
+                            type="button"
+                            [attr.aria-checked]="isActive(tab)"
+                            [class.is-active]="isActive(tab)"
+                            [disabled]="tab.isDisabled"
+                            (click)="onOverflowTabClick(tab)"
+                        >
+                            @if (tab.icon) {
+                                <fa-icon [icon]="tab.icon"></fa-icon>
+                            }
+                            {{ getTabLabel(tab) | translate }}
+                        </button>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>

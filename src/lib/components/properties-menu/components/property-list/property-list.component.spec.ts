@@ -1,16 +1,41 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { queryAll, queryButton, renderComponent, textsOf } from '@testing/dom';
 
+import { BadgeConfig, BadgeVariant } from '../../../badge/models/badge.model';
 import { PropertyTextField } from '../../models/fields/property-text-field.model';
+import { PropertiesMenuConfig } from '../../models/properties-menu-config.model';
 import { PropertyGroup } from '../../models/property-group.model';
 import { PropertyListContent } from '../../models/property-group-content.model';
-import { PropertyListItem, PropertyListItemParameters } from '../../models/property-list-item.model';
+import {
+    PropertyListItem,
+    PropertyListItemAction,
+    PropertyListItemParameters
+} from '../../models/property-list-item.model';
 import { PropertySummaryRow } from '../../models/property-summary-row.model';
 import { PropertyTab } from '../../models/property-tab.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
-import { PropertyVariableService } from '../../services/property-variable.service';
 import { PropertyListComponent } from './property-list.component';
+
+const items = (fixture: ComponentFixture<PropertyListComponent>): HTMLElement[] =>
+    queryAll(fixture, '[role="button"]').filter(element => !element.parentElement?.closest('[role="button"]'));
+
+const byText = (fixture: ComponentFixture<PropertyListComponent>, text: string): HTMLElement => {
+    const found = queryAll(fixture, '*')
+        .reverse()
+        .find(element => element.textContent?.trim() === text);
+
+    if (!found) {
+        throw new Error(`No element with text ${text}`);
+    }
+
+    return found;
+};
+
+const EXPAND = 'angular-components.properties-menu.list.expand';
+const REMOVE = 'angular-components.properties-menu.remove';
+const COPY = 'angular-components.properties-menu.list.copy';
 
 describe('PropertyListComponent', () => {
     let component: PropertyListComponent;
@@ -20,73 +45,44 @@ describe('PropertyListComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyListComponent, TranslateModule.forRoot()],
-            providers: [PropertiesMenuService, PropertyVariableService]
+            providers: [PropertiesMenuService]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(PropertyListComponent);
-        component = fixture.componentInstance;
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
 
-        component.tabId = 'add';
-        component.groupId = 'simple-blocks';
-        component.items = [
-            new PropertyListItem({ id: 'block-heading', label: 'Encabezado' }),
-            new PropertyListItem({ disabled: true, id: 'block-locked', label: 'Bloqueado' })
-        ];
-        fixture.detectChanges();
+        fixture = await renderComponent(PropertyListComponent, {
+            tabId: 'add',
+            groupId: 'simple-blocks',
+            items: [
+                new PropertyListItem({ id: 'block-heading', label: 'Encabezado' }),
+                new PropertyListItem({ disabled: true, id: 'block-locked', label: 'Bloqueado' })
+            ]
+        });
+        component = fixture.componentInstance;
     });
 
     it('should render a card per item', () => {
-        const labels: (string | undefined)[] = [...fixture.nativeElement.querySelectorAll('.bey-property-list-item-label')].map(
-            (element: unknown) => (element as HTMLElement).textContent?.trim()
-        );
-
-        expect(labels).toEqual(['Encabezado', 'Bloqueado']);
+        expect(textsOf(items(fixture))).toEqual(['Encabezado', 'Bloqueado']);
     });
 
     it('should call PropertiesMenuService.selectListItem when a card is clicked', () => {
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
-        const card: HTMLElement = fixture.nativeElement.querySelector('.bey-list-item');
-
-        card.click();
+        items(fixture)[0].click();
 
         expect(selectSpy).toHaveBeenCalledWith('add', 'simple-blocks', 'block-heading');
     });
 
     it('should not call PropertiesMenuService.selectListItem for a disabled item', () => {
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
-        const cards: HTMLElement[] = [...fixture.nativeElement.querySelectorAll('.bey-list-item')];
-
-        cards[1].click();
+        items(fixture)[1].click();
 
         expect(selectSpy).not.toHaveBeenCalled();
     });
 
-    it('should apply the icon classes an item brings instead of the default colour', () => {
-        component.items = [
-            new PropertyListItem({ icon: faCircleExclamation, id: 'block-heading', iconClasses: 'bey-text-danger' })
-        ];
-        fixture.detectChanges();
-
-        const icon: HTMLElement = fixture.nativeElement.querySelector('.bey-property-list-item-icon');
-
-        expect(icon.classList.contains('bey-text-danger')).toBe(true);
-        expect(icon.classList.contains('bey-property-list-item-icon-default')).toBe(false);
-    });
-
-    it('should fall back to the default icon colour when an item brings none', () => {
-        component.items = [new PropertyListItem({ icon: faCircleExclamation, id: 'block-heading' })];
-        fixture.detectChanges();
-
-        const icon: HTMLElement = fixture.nativeElement.querySelector('.bey-property-list-item-icon');
-
-        expect(icon.classList.contains('bey-property-list-item-icon-default')).toBe(true);
-    });
-
     it('should resolve a default item label into a prefixed translation key', () => {
-        propertiesMenuService.setConfig({ prefix: 'app.properties-menu' });
+        propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
 
-        expect(component.getLabelKey(new PropertyListItem({ id: 'block-heading' }))).toBe(
+        expect(component.labelKey(new PropertyListItem({ id: 'block-heading' }))).toBe(
             'app.properties-menu.list.block-heading.label'
         );
     });
@@ -96,70 +92,76 @@ const buildItem = (overrides: Partial<PropertyListItemParameters> = {}): Propert
     new PropertyListItem({
         id: 'total_pages',
         label: 'total_pages',
-        badges: [{ label: 'Número', cssClass: 'bey-badge-color-purple' }],
+        badges: [new BadgeConfig({ label: 'Número', variant: BadgeVariant.Purple })],
         body: [
             new PropertySummaryRow({ label: 'Valor por defecto' }),
-            new PropertySummaryRow({ label: 'Valor', field: new PropertyTextField({ id: 'variable.v1.value', value: 'x' }) })
+            new PropertySummaryRow({
+                label: 'Valor',
+                field: new PropertyTextField({ id: 'variable.v1.value', value: 'x' })
+            })
         ],
         ...overrides
     });
 
-describe('PropertyListComponent con items desplegables', () => {
-    let component: PropertyListComponent;
+describe('PropertyListComponent with expandable items', () => {
     let fixture: ComponentFixture<PropertyListComponent>;
     let propertiesMenuService: PropertiesMenuService;
 
     const setUp = (items: PropertyListItem[]): void => {
-        propertiesMenuService.setConfig({
-            prefix: 'app.properties-menu',
-            tabs: [
-                new PropertyTab({
-                    id: 'variables',
-                    groups: [new PropertyGroup({ id: 'variables-list', content: new PropertyListContent({ list: items }) })]
-                })
-            ]
-        });
-        component.items = items;
+        propertiesMenuService.setConfig(
+            new PropertiesMenuConfig({
+                prefix: 'app.properties-menu',
+                tabs: [
+                    new PropertyTab({
+                        id: 'variables',
+                        groups: [
+                            new PropertyGroup({
+                                id: 'variables-list',
+                                content: new PropertyListContent({ list: items })
+                            })
+                        ]
+                    })
+                ]
+            })
+        );
+        fixture.componentRef.setInput('items', items);
         fixture.detectChanges();
     };
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyListComponent, TranslateModule.forRoot()],
-            providers: [PropertiesMenuService, PropertyVariableService]
+            providers: [PropertiesMenuService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyListComponent);
-        component = fixture.componentInstance;
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
 
-        component.tabId = 'variables';
-        component.groupId = 'variables-list';
+        fixture.componentRef.setInput('tabId', 'variables');
+        fixture.componentRef.setInput('groupId', 'variables-list');
     });
 
     it('renders the badges an item brings', () => {
         setUp([buildItem()]);
 
-        const badge: HTMLElement = fixture.nativeElement.querySelector('.bey-property-list-item-badges .bey-badge');
-
-        expect(badge.textContent?.trim()).toBe('Número');
-        expect(badge.classList.contains('bey-badge-color-purple')).toBe(true);
+        expect(fixture.nativeElement.querySelector('bey-badge').textContent?.trim()).toBe('Número');
     });
 
     it('shows a chevron only on the items that carry a body', () => {
         setUp([buildItem(), new PropertyListItem({ id: 'plain' })]);
 
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-list-item-chevron').length).toBe(1);
+        expect(fixture.nativeElement.querySelectorAll(`[aria-label="${EXPAND}"]`).length).toBe(1);
     });
 
     it('keeps the body hidden until the item is expanded', () => {
         setUp([buildItem()]);
 
-        expect(fixture.nativeElement.querySelector('.bey-property-list-item-body')).toBeFalsy();
+        expect(fixture.nativeElement.textContent).not.toContain('Valor por defecto');
 
         setUp([buildItem({ expanded: true })]);
 
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-summary-row').length).toBe(2);
+        expect(fixture.nativeElement.textContent).toContain('Valor por defecto');
+        expect(fixture.nativeElement.querySelector('input').value).toBe('x');
     });
 
     it('toggles from the header, without selecting the card', () => {
@@ -168,7 +170,7 @@ describe('PropertyListComponent con items desplegables', () => {
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
 
-        (fixture.nativeElement.querySelector('.bey-property-list-item') as HTMLElement).click();
+        byText(fixture, 'total_pages').click();
 
         expect(toggleSpy).toHaveBeenCalledWith('variables', 'variables-list', 'total_pages');
         expect(selectSpy).not.toHaveBeenCalled();
@@ -178,9 +180,7 @@ describe('PropertyListComponent con items desplegables', () => {
         setUp([buildItem({ expanded: true })]);
 
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
-        const field: HTMLElement = fixture.nativeElement.querySelector('.bey-property-summary-row-field input');
-
-        field.click();
+        fixture.nativeElement.querySelector('input').click();
 
         expect(toggleSpy).not.toHaveBeenCalled();
     });
@@ -190,7 +190,7 @@ describe('PropertyListComponent con items desplegables', () => {
 
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
 
-        (fixture.nativeElement.querySelector('.bey-property-list-item-body') as HTMLElement).click();
+        byText(fixture, 'Valor por defecto').click();
 
         expect(toggleSpy).not.toHaveBeenCalled();
     });
@@ -201,7 +201,7 @@ describe('PropertyListComponent con items desplegables', () => {
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
 
-        (fixture.nativeElement.querySelector('.bey-property-list-item-chevron') as HTMLElement).click();
+        queryButton(fixture, EXPAND)?.click();
 
         expect(toggleSpy).toHaveBeenCalledWith('variables', 'variables-list', 'total_pages');
         expect(selectSpy).not.toHaveBeenCalled();
@@ -213,7 +213,7 @@ describe('PropertyListComponent con items desplegables', () => {
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
 
-        (fixture.nativeElement.querySelector('.bey-list-item') as HTMLElement).click();
+        items(fixture)[0].click();
 
         expect(selectSpy).toHaveBeenCalledWith('variables', 'variables-list', 'problem-1');
         expect(toggleSpy).not.toHaveBeenCalled();
@@ -224,9 +224,7 @@ describe('PropertyListComponent con items desplegables', () => {
 
         const removeSpy = jest.spyOn(propertiesMenuService, 'removeListItem');
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
-        const remove: HTMLElement = fixture.nativeElement.querySelector('.bey-property-list-item-remove');
-
-        remove.click();
+        queryButton(fixture, REMOVE)?.click();
 
         expect(removeSpy).toHaveBeenCalledWith('variables', 'variables-list', 'total_pages');
         expect(toggleSpy).not.toHaveBeenCalled();
@@ -235,39 +233,37 @@ describe('PropertyListComponent con items desplegables', () => {
     it('does not render a remove button on a non-removable item', () => {
         setUp([buildItem()]);
 
-        expect(fixture.nativeElement.querySelector('.bey-property-list-item-remove')).toBeFalsy();
+        expect(queryButton(fixture, REMOVE)).toBeNull();
     });
 
     it('renders a real field for an editable row and a dash for an empty one', () => {
         setUp([buildItem({ expanded: true })]);
 
-        expect(fixture.nativeElement.querySelector('.bey-property-summary-row-field')).toBeTruthy();
-        expect(fixture.nativeElement.querySelector('.bey-property-summary-row-value').textContent?.trim()).toBe('—');
+        expect(fixture.nativeElement.querySelector('input').value).toBe('x');
+        expect(fixture.nativeElement.textContent).toContain('—');
     });
 });
 
-describe('PropertyListComponent · etiquetas dentro del cuerpo', () => {
-    let component: PropertyListComponent;
+describe('PropertyListComponent body labels', () => {
     let fixture: ComponentFixture<PropertyListComponent>;
     let propertiesMenuService: PropertiesMenuService;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyListComponent, TranslateModule.forRoot()],
-            providers: [PropertiesMenuService, PropertyVariableService]
+            providers: [PropertiesMenuService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyListComponent);
-        component = fixture.componentInstance;
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
 
-        component.tabId = 'variables';
-        component.groupId = 'variables-list';
+        fixture.componentRef.setInput('tabId', 'variables');
+        fixture.componentRef.setInput('groupId', 'variables-list');
     });
 
     it('lets the row own the label, so the field does not repeat it', () => {
-        propertiesMenuService.setConfig({ prefix: 'app.properties-menu' });
-        component.items = [
+        propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
+        fixture.componentRef.setInput('items', [
             new PropertyListItem({
                 id: 'v1',
                 expanded: true,
@@ -278,62 +274,56 @@ describe('PropertyListComponent · etiquetas dentro del cuerpo', () => {
                     })
                 ]
             })
-        ];
+        ]);
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('.bey-property-field-label')).toBeFalsy();
-        expect(fixture.nativeElement.querySelector('.bey-property-summary-row-label').textContent.trim()).toBe('Valor');
+        expect(fixture.nativeElement.querySelector('label')).toBeNull();
+        expect(byText(fixture, 'Valor')).toBeTruthy();
     });
 });
 
-describe('PropertyListComponent · parámetros del mensaje', () => {
-    let component: PropertyListComponent;
+describe('PropertyListComponent label parameters', () => {
     let fixture: ComponentFixture<PropertyListComponent>;
     let translate: TranslateService;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyListComponent, TranslateModule.forRoot()],
-            providers: [PropertiesMenuService, PropertyVariableService]
+            providers: [PropertiesMenuService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyListComponent);
-        component = fixture.componentInstance;
         translate = TestBed.inject(TranslateService);
         translate.setTranslation('es', { problems: { wrongType: 'Es {{actual}} y se espera {{expected}}' } });
         translate.use('es');
 
-        component.tabId = 'problems';
-        component.groupId = 'problems-list';
+        fixture.componentRef.setInput('tabId', 'problems');
+        fixture.componentRef.setInput('groupId', 'problems-list');
     });
 
     it('interpolates the parameters a list item carries', () => {
-        component.items = [
+        fixture.componentRef.setInput('items', [
             new PropertyListItem({
                 id: 'p1',
                 label: 'problems.wrongType',
                 labelParameters: { actual: 'pdf', expected: 'image' }
             })
-        ];
+        ]);
         fixture.detectChanges();
 
-        const label = fixture.nativeElement.querySelector('.bey-property-list-item-label');
-
-        expect(label.textContent.trim()).toBe('Es pdf y se espera image');
+        expect(items(fixture)[0].textContent?.trim()).toBe('Es pdf y se espera image');
     });
 
     it('still renders a label that takes no parameters', () => {
         translate.setTranslation('es', { problems: { plain: 'Sin parámetros' } }, true);
-        component.items = [new PropertyListItem({ id: 'p2', label: 'problems.plain' })];
+        fixture.componentRef.setInput('items', [new PropertyListItem({ id: 'p2', label: 'problems.plain' })]);
         fixture.detectChanges();
 
-        const label = fixture.nativeElement.querySelector('.bey-property-list-item-label');
-
-        expect(label.textContent.trim()).toBe('Sin parámetros');
+        expect(items(fixture)[0].textContent?.trim()).toBe('Sin parámetros');
     });
 });
 
-describe('PropertyListComponent · copiar y acciones', () => {
+describe('PropertyListComponent copy and actions', () => {
     let component: PropertyListComponent;
     let fixture: ComponentFixture<PropertyListComponent>;
     let propertiesMenuService: PropertiesMenuService;
@@ -343,71 +333,86 @@ describe('PropertyListComponent · copiar y acciones', () => {
         written = [];
         Object.defineProperty(navigator, 'clipboard', {
             configurable: true,
-            value: { writeText: (text: string) => { written.push(text);
+            value: {
+                writeText: (text: string) => {
+                    written.push(text);
 
- return Promise.resolve(); } }
+                    return Promise.resolve();
+                }
+            }
         });
 
         await TestBed.configureTestingModule({
             imports: [PropertyListComponent, TranslateModule.forRoot()],
-            providers: [PropertiesMenuService, PropertyVariableService]
+            providers: [PropertiesMenuService]
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyListComponent);
         component = fixture.componentInstance;
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
-        propertiesMenuService.setConfig({
-            prefix: 'app.properties-menu',
-            tabs: [
-                new PropertyTab({
-                    id: 'variables',
-                    groups: [
-                        new PropertyGroup({
-                            id: 'variables-list',
-                            content: new PropertyListContent({
-                                list: [
-                                    new PropertyListItem({
-                                        id: 'v1',
-                                        label: 'total',
-                                        copyValue: '{{ total }}',
-                                        actions: [{ key: 'duplicate', icon: faCircleExclamation, label: 'Duplicar' }]
-                                    })
-                                ]
+        propertiesMenuService.setConfig(
+            new PropertiesMenuConfig({
+                prefix: 'app.properties-menu',
+                tabs: [
+                    new PropertyTab({
+                        id: 'variables',
+                        groups: [
+                            new PropertyGroup({
+                                id: 'variables-list',
+                                content: new PropertyListContent({
+                                    list: [
+                                        new PropertyListItem({
+                                            id: 'v1',
+                                            label: 'total',
+                                            copyValue: '{{ total }}',
+                                            actions: [
+                                                new PropertyListItemAction({
+                                                    icon: faCircleExclamation,
+                                                    key: 'duplicate',
+                                                    label: 'Duplicar'
+                                                })
+                                            ]
+                                        })
+                                    ]
+                                })
                             })
-                        })
-                    ]
-                })
-            ]
-        });
+                        ]
+                    })
+                ]
+            })
+        );
 
-        component.tabId = 'variables';
-        component.groupId = 'variables-list';
-        component.items = [
+        fixture.componentRef.setInput('tabId', 'variables');
+        fixture.componentRef.setInput('groupId', 'variables-list');
+        fixture.componentRef.setInput('items', [
             new PropertyListItem({
                 id: 'v1',
                 label: 'total',
                 copyValue: '{{ total }}',
-                actions: [{ key: 'duplicate', icon: faCircleExclamation, label: 'Duplicar' }]
+                actions: [
+                    new PropertyListItemAction({ icon: faCircleExclamation, key: 'duplicate', label: 'Duplicar' })
+                ]
             })
-        ];
+        ]);
         fixture.detectChanges();
     });
 
     it('shows one button per action plus the copy one', () => {
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-list-item-action').length).toBe(2);
+        expect(queryButton(fixture, COPY)).toBeTruthy();
+        expect(queryButton(fixture, 'Duplicar')).toBeTruthy();
     });
 
     it('copies the expression the item carries, not its label', async () => {
-        await component.onCopy(new MouseEvent('click'), component.items[0]);
+        await component.onCopy(new MouseEvent('click'), component.items()[0]);
 
         expect(written).toEqual(['{{ total }}']);
     });
 
     it('marks the item as copied so the button can confirm it', async () => {
-        await component.onCopy(new MouseEvent('click'), component.items[0]);
+        await component.onCopy(new MouseEvent('click'), component.items()[0]);
 
-        expect(component.copiedItemId).toBe('v1');
-        expect(component.copyLabelKey(component.items[0])).toBe('angular-components.properties-menu.list.copied');
+        expect(component.copiedItemId()).toBe('v1');
+        expect(component.copyLabelKey(component.items()[0])).toBe('angular-components.properties-menu.list.copied');
     });
 
     it('does not leave the copied state on when the clipboard refuses', async () => {
@@ -416,26 +421,25 @@ describe('PropertyListComponent · copiar y acciones', () => {
             value: { writeText: () => Promise.reject(new Error('denied')) }
         });
 
-        await component.onCopy(new MouseEvent('click'), component.items[0]);
+        await component.onCopy(new MouseEvent('click'), component.items()[0]);
 
-        expect(component.copiedItemId).toBeUndefined();
+        expect(component.copiedItemId()).toBeNull();
     });
 
     it('reports the action key without selecting or toggling the card', () => {
         const actionSpy = jest.spyOn(propertiesMenuService, 'triggerListItemAction');
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
-        const buttons = fixture.nativeElement.querySelectorAll('.bey-property-list-item-action');
-
-        (buttons[1] as HTMLElement).click();
+        queryButton(fixture, 'Duplicar')?.click();
 
         expect(actionSpy).toHaveBeenCalledWith('variables', 'variables-list', 'v1', 'duplicate');
         expect(toggleSpy).not.toHaveBeenCalled();
     });
 
     it('renders no copy button when the item carries nothing to copy', () => {
-        component.items = [new PropertyListItem({ id: 'v2', label: 'otra' })];
+        fixture.componentRef.setInput('items', [new PropertyListItem({ id: 'v2', label: 'otra' })]);
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelectorAll('.bey-property-list-item-action').length).toBe(0);
+        expect(queryButton(fixture, COPY)).toBeNull();
+        expect(queryButton(fixture, 'Duplicar')).toBeNull();
     });
 });

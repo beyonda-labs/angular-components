@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -16,23 +16,24 @@ import { FooterConfig } from './models/footer.model';
     templateUrl: './footer.component.html'
 })
 export class FooterComponent {
+    readonly config = input.required<FooterConfig>();
+
+    readonly privacyButton = computed(
+        () =>
+            new ButtonConfig({
+                label: 'angular-components.footer.privacy',
+                type: ButtonType.LinkSecondary,
+                action: () => this.router.navigate([this.config().privacyUrl])
+            })
+    );
+    readonly termsButton = computed(
+        () =>
+            new ButtonConfig({
+                label: 'angular-components.footer.terms',
+                type: ButtonType.LinkSecondary,
+                action: () => this.router.navigate([this.config().termsUrl])
+            })
+    );
+
     private readonly router = inject(Router);
-
-    @Input({ required: true }) config!: FooterConfig;
-
-    get termsButton(): ButtonConfig {
-        return new ButtonConfig({
-            label: 'angular-components.footer.terms',
-            type: ButtonType.LinkSecondary,
-            action: () => this.router.navigate([this.config.termsUrl])
-        });
-    }
-
-    get privacyButton(): ButtonConfig {
-        return new ButtonConfig({
-            label: 'angular-components.footer.privacy',
-            type: ButtonType.LinkSecondary,
-            action: () => this.router.navigate([this.config.privacyUrl])
-        });
-    }
 }

@@ -1,58 +1,56 @@
-@if (config) {
-    <nav [attr.aria-label]="'angular-components.breadcrumb.label' | translate">
-        <ol #listElement class="bey-breadcrumb" [style.--bey-breadcrumb-item-max-width]="config.itemMaxWidth">
-            @if (hasCollapsedItems) {
-                <li
-                    class="bey-breadcrumb-item bey-breadcrumb-ellipsis"
-                    [tooltip]="collapsedItemsTooltip"
-                    container="body"
-                    boundariesElement="viewport"
-                >
-                    &hellip;
-                </li>
-                <li aria-hidden="true" class="bey-breadcrumb-separator">{{ config.separator }}</li>
-            }
-            @for (item of visibleItems; track item.id; let last = $last; let first = $first) {
-                <li
-                    class="bey-breadcrumb-item"
-                    [class.bey-breadcrumb-item-current]="isLast(item)"
-                    [attr.aria-current]="isLast(item) ? 'page' : null"
-                >
-                    @if (isLast(item)) {
-                        @if (item.icon) {
-                            <fa-icon class="bey-breadcrumb-item-icon" [icon]="item.icon"></fa-icon>
-                        }
-                        <span
-                            class="bey-breadcrumb-item-label"
-                            [tooltip]="resolveLabel(item)"
-                            container="body"
-                            boundariesElement="viewport"
-                        >
-                            {{ resolveLabel(item) }}
-                        </span>
-                    } @else {
-                        <button
-                            class="bey-breadcrumb-item-button"
-                            type="button"
-                            [disabled]="item.isDisabled"
-                            [tooltip]="resolveLabel(item)"
-                            container="body"
-                            boundariesElement="viewport"
-                            (click)="onItemClick(item)"
-                        >
-                            @if (item.icon) {
-                                <fa-icon class="bey-breadcrumb-item-icon" [icon]="item.icon"></fa-icon>
-                            }
-                            <span class="bey-breadcrumb-item-label">
-                                {{ resolveLabel(item) }}
-                            </span>
-                        </button>
+<nav [attr.aria-label]="'angular-components.breadcrumb.label' | translate">
+    <ol #listElement class="bey-breadcrumb" [style.--bey-breadcrumb-item-max-width]="config().itemMaxWidth">
+        @if (hasCollapsedItems()) {
+            <li
+                class="bey-breadcrumb-item bey-breadcrumb-ellipsis"
+                boundariesElement="viewport"
+                container="body"
+                [tooltip]="collapsedItemsTooltip()"
+            >
+                &hellip;
+            </li>
+            <li class="bey-breadcrumb-separator" aria-hidden="true">{{ config().separator }}</li>
+        }
+
+        @for (entry of visibleItems(); track entry.item.id; let last = $last) {
+            <li
+                class="bey-breadcrumb-item"
+                [attr.aria-current]="isLast(entry.item) ? 'page' : null"
+                [class.is-current]="isLast(entry.item)"
+            >
+                @if (isLast(entry.item)) {
+                    @if (entry.item.icon) {
+                        <fa-icon class="bey-breadcrumb-item-icon" [icon]="entry.item.icon"></fa-icon>
                     }
-                </li>
-                @if (!last) {
-                    <li aria-hidden="true" class="bey-breadcrumb-separator">{{ config.separator }}</li>
+                    <span
+                        class="bey-breadcrumb-item-label"
+                        boundariesElement="viewport"
+                        container="body"
+                        [tooltip]="entry.label"
+                    >
+                        {{ entry.label }}
+                    </span>
+                } @else {
+                    <button
+                        class="bey-breadcrumb-item-button"
+                        boundariesElement="viewport"
+                        container="body"
+                        type="button"
+                        [disabled]="entry.item.isDisabled"
+                        [tooltip]="entry.label"
+                        (click)="onItemClick(entry.item)"
+                    >
+                        @if (entry.item.icon) {
+                            <fa-icon class="bey-breadcrumb-item-icon" [icon]="entry.item.icon"></fa-icon>
+                        }
+                        <span class="bey-breadcrumb-item-label">{{ entry.label }}</span>
+                    </button>
                 }
+            </li>
+
+            @if (!last) {
+                <li class="bey-breadcrumb-separator" aria-hidden="true">{{ config().separator }}</li>
             }
-        </ol>
-    </nav>
-}
+        }
+    </ol>
+</nav>

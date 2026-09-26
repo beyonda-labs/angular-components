@@ -1,0 +1,171 @@
+/* ─── Design tokens ───────────────────────────────────────────────────────
+   The single source of every design value in the library. Documented in
+   docs/tokens.md. Nothing else holds a literal.
+*/
+
+:root {
+    /* Primitives — colour */
+    --bey-white: #fff;
+    --bey-white-rgb: 255, 255, 255;
+    --bey-black: #000;
+    --bey-black-rgb: 0, 0, 0;
+
+    --bey-gray-50: #f5f5f5;
+    --bey-gray-100: #f0f0f0;
+    --bey-gray-200: #e9ecef;
+    --bey-gray-300: #ced4da;
+    --bey-gray-400: #adb5bd;
+    --bey-gray-500: #80868b;
+    --bey-gray-600: #575757;
+    --bey-gray-700: #454749;
+    --bey-gray-800: #2c2d2e;
+    --bey-gray-900: #252525;
+
+    --bey-red: #b31914;
+    --bey-red-rgb: 179, 25, 20;
+    --bey-orange: #ffa624;
+    --bey-orange-rgb: 255, 167, 36;
+    --bey-teal: #20c997;
+    --bey-teal-rgb: 32, 201, 151;
+    --bey-blue: #3b5b8c;
+    --bey-purple: #7c5cbf;
+    --bey-pink: #c9536f;
+
+    /* Surfaces */
+    --bey-bg-page: var(--bey-white);
+    --bey-bg-surface: var(--bey-gray-50);
+    --bey-bg-muted: var(--bey-gray-100);
+    --bey-bg-subtle: var(--bey-gray-50);
+    --bey-bg-hover: var(--bey-gray-100);
+    --bey-bg-active: var(--bey-gray-200);
+    --bey-bg-inverse: var(--bey-gray-900);
+
+    /* Text */
+    --bey-text-primary: var(--bey-gray-900);
+    --bey-text-secondary: var(--bey-gray-700);
+    --bey-text-muted: var(--bey-gray-500);
+    --bey-text-disabled: var(--bey-gray-400);
+    --bey-text-inverse: var(--bey-white);
+
+    /* Borders */
+    --bey-border-subtle: var(--bey-gray-200);
+    --bey-border-default: var(--bey-gray-300);
+    --bey-border-strong: var(--bey-gray-400);
+    --bey-border-width: 1px;
+    --bey-border-width-thick: 2px;
+
+    /* Intent */
+    --bey-primary: var(--bey-black);
+    --bey-primary-fg: var(--bey-white);
+    --bey-secondary: #949b98;
+    --bey-success: var(--bey-teal);
+    --bey-danger: var(--bey-red);
+    --bey-warning: var(--bey-orange);
+
+    /* Spacing */
+    --bey-space-3xs: 0.125rem;
+    --bey-space-2xs: 0.25rem;
+    --bey-space-xs: 0.375rem;
+    --bey-space-sm: 0.5rem;
+    --bey-space-md: 0.75rem;
+    --bey-space-lg: 1rem;
+    --bey-space-xl: 1.5rem;
+    --bey-space-2xl: 2rem;
+
+    /* Radius */
+    --bey-radius-xs: 0.25rem;
+    --bey-radius-sm: 0.375rem;
+    --bey-radius-md: 0.5rem;
+    --bey-radius-lg: 0.75rem;
+    --bey-radius-xl: 1rem;
+    --bey-radius-pill: 999px;
+    --bey-radius-circle: 50%;
+
+    /* Typography */
+    --bey-font-size-2xs: 0.6875rem;
+    --bey-font-size-xs: 0.75rem;
+    --bey-font-size-sm: 0.8125rem;
+    --bey-font-size-md: 0.875rem;
+    --bey-font-size-lg: 1rem;
+    --bey-font-size-xl: 1.125rem;
+    --bey-font-size-2xl: 1.25rem;
+    --bey-font-size-3xl: 1.75rem;
+    --bey-font-size-4xl: 2.25rem;
+
+    --bey-font-weight-regular: 400;
+    --bey-font-weight-medium: 500;
+    --bey-font-weight-semibold: 600;
+    --bey-font-weight-bold: 700;
+
+    --bey-line-height-none: 1;
+    --bey-line-height-tight: 1.2;
+    --bey-line-height-base: 1.35;
+    --bey-line-height-loose: 1.6;
+
+    /* Elevation */
+    --bey-shadow-rgb: var(--bey-black-rgb);
+    --bey-shadow-sm: 0 1px 2px rgba(var(--bey-shadow-rgb), 0.25);
+    --bey-shadow-md: 0 16px 48px rgba(var(--bey-shadow-rgb), 0.14);
+    --bey-shadow-lg: 0 24px 64px rgba(var(--bey-shadow-rgb), 0.16);
+
+    /* Motion */
+    --bey-duration-fast: 150ms;
+    --bey-duration-base: 200ms;
+    --bey-duration-slow: 300ms;
+    --bey-easing-standard: ease;
+
+    /* Opacity */
+    --bey-opacity-disabled: 0.5;
+    --bey-opacity-muted: 0.9;
+
+    /* Stacking */
+    --bey-z-base: 1;
+    --bey-z-raised: 10;
+    --bey-z-sticky: 20;
+    --bey-z-dropdown: 1000;
+    --bey-z-modal: 1050;
+    --bey-z-tooltip: 1080;
+}
+
+body.dark {
+    /* Primitives — colour */
+    --bey-red: #c96b68;
+    --bey-red-rgb: 201, 107, 104;
+    --bey-orange: #d49a2e;
+    --bey-orange-rgb: 212, 154, 46;
+    --bey-teal: #2db896;
+    --bey-teal-rgb: 45, 184, 150;
+    --bey-blue: #6f93c9;
+    --bey-purple: #a58ddb;
+    --bey-pink: #d98aa0;
+
+    /* Surfaces */
+    --bey-bg-page: var(--bey-black);
+    --bey-bg-surface: var(--bey-gray-900);
+    --bey-bg-muted: var(--bey-gray-700);
+    --bey-bg-subtle: var(--bey-gray-800);
+    --bey-bg-hover: var(--bey-gray-700);
+    --bey-bg-active: var(--bey-gray-600);
+    --bey-bg-inverse: var(--bey-white);
+
+    /* Text */
+    --bey-text-primary: var(--bey-gray-50);
+    --bey-text-secondary: var(--bey-gray-400);
+    --bey-text-muted: var(--bey-gray-500);
+    --bey-text-disabled: var(--bey-gray-600);
+    --bey-text-inverse: var(--bey-gray-900);
+
+    /* Borders */
+    --bey-border-subtle: var(--bey-gray-800);
+    --bey-border-default: var(--bey-gray-700);
+    --bey-border-strong: var(--bey-gray-600);
+
+    /* Intent */
+    --bey-primary: var(--bey-white);
+    --bey-primary-fg: var(--bey-black);
+    --bey-secondary: #7a8380;
+
+    /* Elevation */
+    --bey-shadow-md: 0 16px 48px rgba(var(--bey-shadow-rgb), 0.4);
+    --bey-shadow-lg: 0 24px 64px rgba(var(--bey-shadow-rgb), 0.5);
+}

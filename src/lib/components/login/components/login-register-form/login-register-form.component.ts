@@ -1,160 +1,106 @@
-import { ChangeDetectorRef, Component, inject, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 
-import { SessionService } from '../../../../services/session/session.service';
 import { FormComponent } from '../../../form/form.component';
 import { FormDateField } from '../../../form/models/fields/form-date-field.model';
 import { FormNumberField } from '../../../form/models/fields/form-number-field.model';
 import { FormPasswordField } from '../../../form/models/fields/form-password-field.model';
 import { FormTextField } from '../../../form/models/fields/form-text-field.model';
-import { FormButton, FormButtonType, FormConfig, FormRow, FormSection } from '../../../form/models/form.model';
-import { FormField } from '../../../form/models/form-field.model';
+import {
+    FormButton,
+    FormButtonType,
+    FormConfig,
+    FormRow,
+    FormSection,
+    FormStep
+} from '../../../form/models/form.model';
+import { FormField, FormValue } from '../../../form/models/form-field.model';
 import { FormFieldEmailValidator } from '../../../form/models/form-field-validator.model';
 import { LoginConfig, RegisterField } from '../../models/login.model';
 import { LoginHttpService } from '../../services/login-http.service';
+import { LoginSessionService } from '../../services/login-session.service';
 
-type RegisterFormValue = { register: Record<string, unknown> };
+const SECTION_PREFIX = 'register';
+
+function buildField(field: RegisterField): FormField {
+    const base = { key: field.name, isRequired: field.required };
+
+    switch (field.type) {
+        case 'email':
+            return new FormTextField({ ...base, validators: [new FormFieldEmailValidator()] });
+        case 'password':
+            return new FormPasswordField(base);
+        case 'number':
+            return new FormNumberField(base);
+        case 'date':
+            return new FormDateField(base);
+        default:
+            return new FormTextField(base);
+    }
+}
+
+function groupByStep(fields: RegisterField[]): RegisterField[][] {
+    const steps = new Map<number, RegisterField[]>();
+
+    for (const field of fields) {
+        const step = field.step ?? 1;
+
+        steps.set(step, [...(steps.get(step) ?? []), field]);
+    }
+
+    return [...steps.keys()].sort((a, b) => a - b).map(step => steps.get(step) ?? []);
+}
+
+function sectionKey(index: number): string {
+    return `${SECTION_PREFIX}-${index + 1}`;
+}
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FormComponent],
     selector: 'bey-login-register-form',
     standalone: true,
     templateUrl: './login-register-form.component.html'
 })
-export class LoginRegisterFormComponent implements OnInit {
-    @Input({ required: true }) config!: LoginConfig;
-    @Input({ required: true }) registerFields!: RegisterField[];
+export class LoginRegisterFormComponent {
+    readonly config = input.required<LoginConfig>();
+    readonly registerFields = input.required<RegisterField[]>();
 
-    formConfig!: FormConfig;
-    currentStep = 0;
+    readonly formConfig = computed(() => this.buildForm(groupByStep(this.registerFields())));
 
-    private steps: RegisterField[][] = [];
-    private accumulatedValues: Record<string, unknown> = {};
-
-    private readonly cdr = inject(ChangeDetectorRef);
     private readonly loginHttpService = inject(LoginHttpService);
-    private readonly router = inject(Router);
-    private readonly sessionService = inject(SessionService);
+    private readonly loginSessionService = inject(LoginSessionService);
 
-    ngOnInit(): void {
-        this.steps = this.groupByStep(this.registerFields);
-        if (this.steps.length > 0) {
-            this.buildStepForm();
-        }
-    }
-
-    private groupByStep(fields: RegisterField[]): RegisterField[][] {
-        const map = fields.reduce<Record<number, RegisterField[]>>((accumulator, field) => {
-            const step = field.step ?? 1;
-            if (!accumulator[step]) {
-                accumulator[step] = [];
-            }
-
-            accumulator[step].push(field);
-
-            return accumulator;
-        }, {});
-
-        return Object.keys(map)
-            .map(Number)
-            .sort((a, b) => a - b)
-            .map(k => map[k]);
-    }
-
-    private buildStepForm(): void {
-        const isFirst = this.currentStep === 0;
-        const isLast = this.currentStep === this.steps.length - 1;
-        const stepFields = this.steps[this.currentStep];
-
-        const buttons: FormButton[] = [];
-
-        if (!isFirst) {
-            buttons.push(
-                new FormButton({
-                    label: `${this.config.translatePrefix}.register.button.back`,
-                    type: FormButtonType.Previous,
-                    action: () => this.prevStep(),
-                    customClass: 'ms-0'
-                })
-            );
+    private buildForm(steps: RegisterField[][]): FormConfig | null {
+        if (steps.length === 0) {
+            return null;
         }
 
-        buttons.push(
-            new FormButton({
-                label: `${this.config.translatePrefix}.register.button.${isLast ? 'register' : 'next'}`,
-                type: FormButtonType.Submit,
-                customClass: 'w-100 d-block ms-0 justify-content-center',
-                customStyles: 'width: 100%'
-            })
-        );
+        const { prefix } = this.config();
 
-        this.formConfig = new FormConfig({
-            i18nPrefix: this.config.translatePrefix,
-            sections: [
-                new FormSection({
-                    key: 'register',
-                    isTitleVisible: false,
-                    rows: stepFields.map(
-                        field =>
-                            new FormRow({
-                                fields: [this.buildFormField(field)]
-                            })
-                    )
-                })
-            ],
-            buttons,
-            onFormGroupAdded: formGroup => {
-                const stepValues = Object.fromEntries(
-                    stepFields.map(f => [f.name, this.accumulatedValues[f.name] ?? null])
-                );
-                formGroup.patchValue({ register: stepValues }, { emitEvent: false });
-            },
-            onSubmit: (value: unknown) => {
-                const { register } = value as RegisterFormValue;
-                this.accumulatedValues = { ...this.accumulatedValues, ...register };
-
-                if (isLast) {
-                    this.submitRegistration();
-                } else {
-                    this.currentStep++;
-                    this.buildStepForm();
-                    this.cdr.markForCheck();
-                }
-            }
+        return new FormConfig({
+            buttonLayout: 'stretch',
+            buttons: [new FormButton({ label: `${prefix}.register.button.register`, type: FormButtonType.Submit })],
+            onSubmit: value => this.register(value as FormValue),
+            prefix,
+            sections: steps.map(
+                (fields, index) =>
+                    new FormSection({
+                        isTitleVisible: false,
+                        key: sectionKey(index),
+                        prefix: SECTION_PREFIX,
+                        rows: fields.map(field => new FormRow({ fields: [buildField(field)] }))
+                    })
+            ),
+            steps:
+                steps.length > 1
+                    ? steps.map((_, index) => new FormStep({ key: String(index + 1), sections: [sectionKey(index)] }))
+                    : []
         });
     }
 
-    private buildFormField(field: RegisterField): FormField {
-        const base = { key: field.name, isRequired: field.required };
+    private register(value: FormValue): void {
+        const values = Object.assign({}, ...Object.values(value)) as Record<string, unknown>;
 
-        switch (field.type) {
-            case 'email':
-                return new FormTextField({ ...base, validators: [new FormFieldEmailValidator()] });
-            case 'password':
-                return new FormPasswordField(base);
-            case 'number':
-                return new FormNumberField(base);
-            case 'date':
-                return new FormDateField(base);
-            default:
-                return new FormTextField(base);
-        }
-    }
-
-    private prevStep(): void {
-        this.currentStep--;
-        this.buildStepForm();
-        this.cdr.markForCheck();
-    }
-
-    private submitRegistration(): void {
-        this.loginHttpService.register(this.accumulatedValues).subscribe(response => {
-            this.sessionService.setToken(response.accessToken);
-            this.sessionService.setRefreshToken(response.refreshToken);
-            const redirectPath = this.sessionService.user()?.redirectPath;
-            if (redirectPath) {
-                this.router.navigate([redirectPath]);
-            }
-        });
+        this.loginHttpService.register(values).subscribe(response => this.loginSessionService.open(response));
     }
 }

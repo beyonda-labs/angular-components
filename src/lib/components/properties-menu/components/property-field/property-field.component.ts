@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertyAttachmentField } from '../../models/fields/property-attachment-field.model';
@@ -32,7 +32,9 @@ import {
 } from '../fields/property-text-field/property-text-field.component';
 import { PropertyToggleFieldComponent } from '../fields/property-toggle-field/property-toggle-field.component';
 
+/** Renders the component that matches the field type and forwards its changes to the menu service. */
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         PropertyAttachmentFieldComponent,
         PropertyColorFieldComponent,
@@ -53,78 +55,87 @@ import { PropertyToggleFieldComponent } from '../fields/property-toggle-field/pr
     templateUrl: './property-field.component.html'
 })
 export class PropertyFieldComponent {
-    @Input({ required: true }) field!: PropertyField;
-    @Input() hideLabel = false;
-
-    readonly fieldType = PropertyFieldType;
+    readonly field = input.required<PropertyField>();
+    readonly hideLabel = input(false);
 
     private readonly propertiesMenuService = inject(PropertiesMenuService);
 
-    get actionButtonTooltipKey(): string {
-        return `${this.propertiesMenuService.config().prefix}.fields.${this.field.id}.actionButton.tooltip`;
-    }
+    readonly actionButtonTooltipKey = computed(
+        () => `${this.propertiesMenuService.config().prefix}.fields.${this.field().id}.actionButton.tooltip`
+    );
+    readonly labelKey = computed(() =>
+        resolvePropertyLabelKey(
+            this.propertiesMenuService.config().prefix,
+            'fields',
+            this.field().id,
+            this.field().label
+        )
+    );
+    readonly showsLabel = computed(() => {
+        const field = this.field();
 
-    get labelKey(): string {
-        return resolvePropertyLabelKey(this.propertiesMenuService.config().prefix, 'fields', this.field.id, this.field.label);
-    }
+        return Boolean(field.label) && !this.hideLabel() && field.type !== PropertyFieldType.Toggle;
+    });
+
+    readonly fieldType = PropertyFieldType;
 
     asAttachmentField(): PropertyAttachmentField {
-        return this.field as PropertyAttachmentField;
+        return this.field() as PropertyAttachmentField;
     }
 
     asColorField(): PropertyColorField {
-        return this.field as PropertyColorField;
+        return this.field() as PropertyColorField;
     }
 
     asFileField(): PropertyFileField {
-        return this.field as PropertyFileField;
+        return this.field() as PropertyFileField;
     }
 
     asInfoField(): PropertyInfoField {
-        return this.field as PropertyInfoField;
+        return this.field() as PropertyInfoField;
     }
 
     asNumberArrayField(): PropertyNumberArrayField {
-        return this.field as PropertyNumberArrayField;
+        return this.field() as PropertyNumberArrayField;
     }
 
     asNumberField(): PropertyNumberField {
-        return this.field as PropertyNumberField;
+        return this.field() as PropertyNumberField;
     }
 
     asSegmentedField(): PropertySegmentedField {
-        return this.field as PropertySegmentedField;
+        return this.field() as PropertySegmentedField;
     }
 
     asSelectField(): PropertySelectField {
-        return this.field as PropertySelectField;
+        return this.field() as PropertySelectField;
     }
 
     asSpacingField(): PropertySpacingField {
-        return this.field as PropertySpacingField;
+        return this.field() as PropertySpacingField;
     }
 
     asTextField(): PropertyTextField {
-        return this.field as PropertyTextField;
+        return this.field() as PropertyTextField;
     }
 
     asToggleField(): PropertyToggleField {
-        return this.field as PropertyToggleField;
+        return this.field() as PropertyToggleField;
     }
 
-    onValueChange(value: unknown): void {
-        this.propertiesMenuService.updateFieldValue(this.field.id, value);
+    onActionTriggered({ key, selectionEnd, selectionStart }: PropertyTextFieldActionTrigger): void {
+        this.propertiesMenuService.triggerFieldAction(this.field().id, key, selectionStart, selectionEnd);
     }
 
     onUploadRequested(file: File): void {
-        this.propertiesMenuService.requestAttachmentUpload(this.field.id, file);
+        this.propertiesMenuService.requestAttachmentUpload(this.field().id, file);
     }
 
-    onActionTriggered(event: PropertyTextFieldActionTrigger): void {
-        this.propertiesMenuService.triggerFieldAction(this.field.id, event.key, event.selectionStart, event.selectionEnd);
+    onValueChange(value: unknown): void {
+        this.propertiesMenuService.updateFieldValue(this.field().id, value);
     }
 
-    onVariableInserted(event: PropertyTextFieldVariableInsertion): void {
-        this.propertiesMenuService.applyVariableSelection(this.field.id, event.variable, event.value);
+    onVariableInserted({ value, variable }: PropertyTextFieldVariableInsertion): void {
+        this.propertiesMenuService.applyVariableSelection(this.field().id, variable, value);
     }
 }

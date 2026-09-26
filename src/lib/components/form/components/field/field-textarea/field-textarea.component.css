@@ -1,0 +1,8 @@
+:host {
+    --bey-form-textarea-min-height: 5.25rem;
+}
+
+.bey-form-textarea {
+    min-height: var(--bey-form-textarea-min-height);
+    overflow-y: auto;
+}

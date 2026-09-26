@@ -1,34 +1,17 @@
-# Pagination Component (`bey-pagination`)
+# Pagination
 
-Model-driven pagination component with editable page input, page-size selector, and range tooltip.
+A pager driven by a config model. It owns which page and page size are selected and reports every change; the
+consumer fetches the matching slice and hands back a new config with the resulting total.
 
-Supported capabilities:
-
--   Page navigation with first, previous, next, and last buttons.
--   Editable page number input with automatic clamping.
--   Page-size selector (25, 50, 100).
--   Results-range tooltip showing the visible slice.
--   Separate callbacks for page and page-size changes.
--   Refresh support via `config.refresh()`.
--   i18n-ready labels through `ngx-translate`.
-
----
-
-## Quick start
+## Usage
 
 ```ts
-import { BeyPaginationComponent, BeyPaginationConfig } from '@beyonda-labs/angular-components';
-
 const pagination = new BeyPaginationConfig({
     page: 1,
     pageSize: 25,
-    totalItems: 250,
-    onPageChange: config => {
-        console.log('Page changed:', config.page);
-    },
-    onPageSizeChange: config => {
-        console.log('Page size changed:', config.pageSize);
-    }
+    totalItems: this.total(),
+    onPageChange: page => this.load({ page }),
+    onPageSizeChange: pageSize => this.load({ page: 1, pageSize })
 });
 ```
 
@@ -36,48 +19,38 @@ const pagination = new BeyPaginationConfig({
 <bey-pagination [config]="pagination"></bey-pagination>
 ```
 
----
+## BeyPaginationConfig
 
-## Models
+| Field              | Required | Default | Meaning                                                    |
+| ------------------ | -------- | ------- | ---------------------------------------------------------- |
+| `page`             | no       | `1`     | Page selected on load, clamped to the available range       |
+| `pageSize`         | no       | `25`    | One of `BEY_PAGINATION_SIZE_OPTIONS`, otherwise the default |
+| `totalItems`       | no       | `0`     | Total across all pages; drives how many pages there are     |
+| `onPageChange`     | no       |         | Called with the new page number                             |
+| `onPageSizeChange` | no       |         | Called with the new page size                               |
 
-### `BeyPaginationConfig`
+`totalPages` is derived at construction and is read-only.
 
-The root configuration object passed to `[config]`.
+## Replacing the config
 
-| Parameter          | Type                                    | Required | Default | Description                                |
-| ------------------ | --------------------------------------- | -------- | ------- | ------------------------------------------ |
-| `page`             | `number`                                | no       | `1`     | Initial page number                        |
-| `pageSize`         | `number`                                | no       | `25`    | Initial page size (must be 25, 50, or 100) |
-| `totalItems`       | `number`                                | no       | `0`     | Total number of items                      |
-| `onPageChange`     | `(config: BeyPaginationConfig) => void` | no       | —       | Called when the current page changes       |
-| `onPageSizeChange` | `(config: BeyPaginationConfig) => void` | no       | —       | Called when the page size changes          |
+The config is read as the initial state and never written to. After a fetch, build a new
+`BeyPaginationConfig` with the new `totalItems` and bind it — building it inside a `computed()` is the usual
+way. Mutating the instance you passed in has no effect.
 
-**Properties:**
+## Behaviour
 
-| Property     | Type     | Description                    |
-| ------------ | -------- | ------------------------------ |
-| `page`       | `number` | Current page number            |
-| `pageSize`   | `number` | Current page size              |
-| `totalItems` | `number` | Total number of items          |
-| `totalPages` | `number` | Computed total number of pages |
+The page is always kept within range: raising the page size moves the selection back if it would fall past
+the last page, and a page typed beyond the end is clamped. The first and last page buttons appear only from
+six pages onwards.
 
-**Methods:**
+## Theming
 
-| Method          | Signature                    | Description                                |
-| --------------- | ---------------------------- | ------------------------------------------ |
-| `setPage`       | `(page: number) => void`     | Navigates to a page (clamped to bounds)    |
-| `setPageSize`   | `(pageSize: number) => void` | Updates the page size and recalculates     |
-| `setTotalItems` | `(total: number) => void`    | Updates total items and recalculates pages |
-| `refresh`       | `() => void`                 | Triggers a UI refresh                      |
-
----
-
-### `BEY_PAGINATION_SIZE_OPTIONS`
-
-Available page-size values: `[25, 50, 100]`.
-
-### `BEY_PAGINATION_SIZE_DEFAULT`
-
-Default page size: `25`.
-
----
+| Variable                          | Default                |
+| --------------------------------- | ---------------------- |
+| `--bey-pagination-accent`         | `--bey-primary`        |
+| `--bey-pagination-text`           | `--bey-text-primary`   |
+| `--bey-pagination-muted`          | `--bey-text-muted`     |
+| `--bey-pagination-surface`        | `--bey-bg-surface`     |
+| `--bey-pagination-surface-alt`    | `--bey-bg-hover`       |
+| `--bey-pagination-border`         | `--bey-border-subtle`  |
+| `--bey-pagination-outline-focus`  | `--bey-border-strong`  |

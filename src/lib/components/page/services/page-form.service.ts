@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { ModalFormService } from '../../form/components/modal/services/modal-form.service';
+import { FormHandle } from '../../form/models/form.model';
 import { PageFormConfig, PageSaveMode } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
 
@@ -16,16 +17,11 @@ const SUBMIT_LABEL_KEY = 'angular-components.page.form.submit';
 export class PageFormService {
     private readonly modalFormService = inject(ModalFormService);
 
-    /**
-     * Opens the create/edit modal form. The page form config decides how the form is initialized
-     * (sections, steps, initial value and extra controls); `onSave` receives the submitted value
-     * already mapped through `toItem` and is responsible for closing the modal on success.
-     */
     open<TValue>(
         pageForm: PageFormConfig<TValue>,
         item: PageItem | undefined,
         pagePrefix: string,
-        onSave: (value: unknown, form: ModalFormConfig<TValue>) => void
+        onSave: (value: unknown, handle: FormHandle<TValue>) => void
     ): BsModalRef<ModalFormDialogComponent> {
         const mode: PageSaveMode = item ? 'edit' : 'create';
 
@@ -33,17 +29,17 @@ export class PageFormService {
             new ModalFormConfig<TValue>({
                 allowSubmitWithoutChanges: pageForm.allowSubmitWithoutChanges,
                 cancelLabel: CANCEL_LABEL_KEY,
-                i18nPrefix: pageForm.prefix,
                 initialValue: pageForm.toFormValue(item),
-                onFormGroupAdded: (formGroup, form) => pageForm.onFormGroupAdded?.(formGroup, form),
-                onSubmit: (currentValue, form) => {
+                onReady: handle => pageForm.onReady?.(handle),
+                onSubmit: (value, handle) => {
                     const callback = item ? pageForm.onEdit : pageForm.onCreate;
 
-                    callback?.(currentValue, form);
-                    onSave(pageForm.toItem(currentValue), form);
+                    callback?.(value, handle);
+                    onSave(pageForm.toItem(value), handle);
                 },
+                onValueChange: (value, handle) => pageForm.onValueChange?.(value, handle),
+                prefix: pageForm.prefix,
                 sections: pageForm.buildSections(item),
-                steps: pageForm.steps,
                 submitLabel: SUBMIT_LABEL_KEY,
                 title: `${pagePrefix}.form.${mode}.title`
             })

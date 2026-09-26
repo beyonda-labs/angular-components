@@ -1,35 +1,49 @@
 import type { Config } from 'jest';
 
 const config: Config = {
-  preset: 'jest-preset-angular',
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
+    preset: 'jest-preset-angular',
+    testEnvironment: 'jsdom',
+    setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
 
-  // Ajusta si tu lib vive en /src o en /projects/...
-  roots: ['<rootDir>/src'],
-  testMatch: ['**/?(*.)+(spec).ts'],
+    roots: ['<rootDir>/src', '<rootDir>/style-guide', '<rootDir>/testing'],
+    testMatch: ['**/?(*.)+(spec).ts'],
 
-  transform: {
-    '^.+\\.(ts|mjs|js|html)$': [
-      'jest-preset-angular',
-      {
-        tsconfig: '<rootDir>/tsconfig.spec.json',
-        stringifyContentPathRegex: '\\.(html|svg)$'
-      }
-    ]
-  },
+    transform: {
+        '^.+\\.(ts|mjs|js|html)$': [
+            'jest-preset-angular',
+            {
+                tsconfig: '<rootDir>/tsconfig.spec.json',
+                stringifyContentPathRegex: '\\.(html|svg)$'
+            }
+        ]
+    },
 
-  moduleFileExtensions: ['ts', 'html', 'js', 'json', 'mjs'],
+    moduleFileExtensions: ['ts', 'html', 'js', 'json', 'mjs'],
 
-  // Opcional: ignora build output
-  testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],
+    moduleNameMapper: {
+        '^@beyonda-labs/angular-components$': '<rootDir>/src/public-api.ts',
+        '^@beyonda-labs/angular-components/style-guide$': '<rootDir>/style-guide/src/public-api.ts',
+        '^@testing/(.*)$': '<rootDir>/testing/$1'
+    },
 
-  collectCoverageFrom: [
-    'src/**/*.ts',
-    '!src/**/*.spec.ts',
-    '!src/**/public-api.ts',
-    '!src/**/*.module.ts'
-  ]
+    testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],
+
+    collectCoverageFrom: [
+        'src/**/*.ts',
+        'style-guide/src/**/*.ts',
+        '!**/*.spec.ts',
+        '!**/public-api.ts',
+        '!**/*.module.ts'
+    ],
+
+    coverageThreshold: {
+        global: {
+            statements: 90,
+            branches: 77,
+            functions: 85,
+            lines: 90
+        }
+    }
 };
 
 export default config;

@@ -1,5 +1,4 @@
-import { EventEmitter } from '@angular/core';
-
+import { PageViewMode } from './page-categories.model';
 import { PageFormConfig } from './page-form.model';
 import { PageHeaderConfig } from './page-header.model';
 import { PageItem } from './page-item.model';
@@ -13,49 +12,49 @@ export interface PageBackendResponse {
     search?: PageSearch;
 }
 
+export interface PageHandle {
+    openCategory(item: PageItem): void;
+    refresh(): void;
+    selected(): PageItem[];
+    viewMode(): PageViewMode;
+}
+
 export class PageConfig {
-    $refresh: EventEmitter<void>;
-    page: string;
     prefix: string;
 
     baseUrl?: string;
     formConfig?: PageFormConfig;
     headerConfig?: PageHeaderConfig;
     onDataLoaded?: (response: PageBackendResponse) => void;
+    onReady?: (handle: PageHandle) => void;
     tableConfig?: PageTableConfig;
 
     constructor({
-        page,
-        prefix = page,
-
+        prefix,
         baseUrl,
         formConfig,
         headerConfig,
         onDataLoaded,
+        onReady,
         tableConfig
     }: PageConfigParameters) {
-        this.$refresh = new EventEmitter<void>();
         this.baseUrl = baseUrl;
         this.formConfig = formConfig;
         this.headerConfig = headerConfig;
         this.onDataLoaded = onDataLoaded;
-        this.page = page;
+        this.onReady = onReady;
         this.prefix = prefix;
         this.tableConfig = tableConfig;
-    }
-
-    refresh(): void {
-        this.$refresh.emit();
     }
 }
 
 export interface PageConfigParameters {
-    page: string;
+    prefix: string;
 
     baseUrl?: string;
     formConfig?: PageFormConfig;
     headerConfig?: PageHeaderConfig;
     onDataLoaded?: (response: PageBackendResponse) => void;
-    prefix?: string;
+    onReady?: (handle: PageHandle) => void;
     tableConfig?: PageTableConfig;
 }

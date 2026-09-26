@@ -1,0 +1,52 @@
+{
+    "angular-components-style-guide": {
+        "header": {
+            "actions": {
+                "archive": {
+                    "label": "Archivar",
+                    "tooltip": "Archivar objetivo"
+                },
+                "back": {
+                    "label": "Volver",
+                    "tooltip": "Volver a objetivos"
+                },
+                "delete": {
+                    "label": "Eliminar",
+                    "tooltip": "Eliminar objetivo"
+                },
+                "duplicate": {
+                    "label": "Duplicar",
+                    "tooltip": "Duplicar objetivo"
+                },
+                "edit": {
+                    "label": "Editar",
+                    "tooltip": "Editar objetivo"
+                },
+                "export": {
+                    "label": "Exportar",
+                    "tooltip": "Exportar objetivos"
+                },
+                "individual-goal": {
+                    "label": "Objetivo individual",
+                    "tooltip": "Crear un nuevo objetivo individual"
+                },
+                "new-goal": {
+                    "label": "Nuevo objetivo",
+                    "tooltip": "Crear un nuevo objetivo"
+                },
+                "team-goal": {
+                    "label": "Objetivo de equipo",
+                    "tooltip": "Crear un nuevo objetivo de equipo"
+                }
+            },
+            "badge": "Activo",
+            "example": "Cabecera con acciones a ambos lados y un menú de tres puntos (...) para acciones secundarias.",
+            "examples": {
+                "back": "Cabecera con botón de volver y badge de estado",
+                "default": "Cabecera normal, sin botón de volver",
+                "sub-page": "Variante de subpágina, título más pequeño"
+            },
+            "title": "Objetivos"
+        }
+    }
+}

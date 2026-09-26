@@ -1,16 +1,14 @@
-@if (field && control) {
-    <select
-        class="form-select form-select-sm"
-        [id]="field.key"
-        [formControl]="control"
-        [attr.aria-required]="field.isRequired || null"
-        [attr.aria-invalid]="isInvalid() || null"
-    >
-        <option value="" disabled>{{ getPlaceholder() | translate }}</option>
-        @for (option of field.options; track option.value) {
-            <option [value]="option.value" [disabled]="option.isDisabled ?? false">
-                {{ option.label | translate }}
-            </option>
-        }
-    </select>
-}
+<select
+    class="form-select form-select-sm bey-form-field-control"
+    [attr.aria-invalid]="isInvalid() || null"
+    [attr.aria-required]="field().isRequired || null"
+    [formControl]="control()"
+    [id]="field().key"
+>
+    <option disabled value="">{{ placeholder() | translate }}</option>
+    @for (option of options(); track option.value) {
+        <option [disabled]="option.isDisabled ?? false" [value]="option.value">
+            {{ option.label | translate }}
+        </option>
+    }
+</select>

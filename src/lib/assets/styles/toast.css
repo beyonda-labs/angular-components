@@ -1,17 +1,17 @@
 .toast-container .bey-toast {
     --bey-toast-accent: var(--bey-primary);
-    --bey-toast-accent-soft: rgba(var(--bey-black-rgb), 0.08);
+    --bey-toast-accent-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);
+    animation: bey-toast-in 0.3s ease-out;
+    background: var(--bey-bg-surface);
+    border: var(--bey-border-width) solid var(--bey-border-subtle);
+    border-left: 3px solid var(--bey-toast-accent);
+    border-radius: var(--bey-radius-md);
+    box-shadow: var(--bey-shadow-md);
+    color: var(--bey-text-primary);
+    padding: var(--bey-space-md) var(--bey-space-lg);
+    pointer-events: auto;
 
     width: min(100%, 24rem);
-    padding: 0.85rem 1rem;
-    border: 1px solid var(--bey-gray-200);
-    border-left: 3px solid var(--bey-toast-accent);
-    border-radius: 0.5rem;
-    background: var(--bey-bg-surface);
-    box-shadow: 0 8px 24px rgba(var(--bey-black-rgb), 0.1);
-    color: var(--text-primary);
-    pointer-events: auto;
-    animation: bey-toast-in 0.3s ease-out;
 }
 
 @keyframes bey-toast-in {
@@ -33,7 +33,7 @@
 }
 
 .toast-container .bey-toast .toast-message {
-    color: var(--text-secondary);
+    color: var(--bey-text-secondary);
     font-size: 0.84rem;
     line-height: 1.5;
     margin-top: 0.15rem;
@@ -53,7 +53,7 @@
 
 .toast-container .bey-toast.toast-info {
     --bey-toast-accent: var(--bey-primary);
-    --bey-toast-accent-soft: rgba(var(--bey-black-rgb), 0.08);
+    --bey-toast-accent-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);
 }
 
 .toast-container .bey-toast.toast-success {
@@ -63,10 +63,10 @@
 
 .toast-container .bey-toast.toast-warning {
     --bey-toast-accent: var(--bey-warning);
-    --bey-toast-accent-soft: rgba(var(--bey-orange-rgb), 0.12);
+    --bey-toast-accent-soft: color-mix(in srgb, var(--bey-warning) 12%, transparent);
 }
 
 .toast-container .bey-toast.toast-error {
     --bey-toast-accent: var(--bey-danger);
-    --bey-toast-accent-soft: rgba(var(--bey-red-rgb), 0.1);
+    --bey-toast-accent-soft: color-mix(in srgb, var(--bey-danger) 10%, transparent);
 }

@@ -1,0 +1,7 @@
+{
+    "angular-components-style-guide": {
+        "badge": {
+            "example": "Every variant of the badge, greyscale emphasis first and the semantic hues after."
+        }
+    }
+}

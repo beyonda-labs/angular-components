@@ -5,25 +5,32 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-const sourceDir = path.join(__dirname, '../src/lib/assets/i18n');
-const destDir = path.join(__dirname, '../dist/assets/i18n');
+const bundles = [
+    { source: path.join(__dirname, '../src/lib/assets/i18n'), dest: path.join(__dirname, '../dist/assets/i18n') },
+    {
+        source: path.join(__dirname, '../src/lib/assets/i18n-style-guide'),
+        dest: path.join(__dirname, '../dist/assets/i18n-style-guide')
+    }
+];
 
 // ────────────────────────────────────────────────────────────────────────────
 // Main
 // ────────────────────────────────────────────────────────────────────────────
 
 async function copyI18nFiles() {
-    try {
-        // Ensure destination directory exists and copy recursively
-        await fs.copy(sourceDir, destDir);
+    for (const { source, dest } of bundles) {
+        try {
+            // Ensure destination directory exists and copy recursively
+            await fs.copy(source, dest);
 
-        console.log(`✔ i18n files copied → ${destDir}`);
-    } catch (error) {
-        // Print a readable error and fail the process (important for CI)
-        console.error(`✖ Error copying i18n files from ${sourceDir} to ${destDir}`);
-        console.error(error);
+            console.log(`✔ i18n files copied → ${dest}`);
+        } catch (error) {
+            // Print a readable error and fail the process (important for CI)
+            console.error(`✖ Error copying i18n files from ${source} to ${dest}`);
+            console.error(error);
 
-        process.exitCode = 1;
+            process.exitCode = 1;
+        }
     }
 }
 

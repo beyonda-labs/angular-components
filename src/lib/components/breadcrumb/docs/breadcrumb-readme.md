@@ -1,153 +1,66 @@
-# Breadcrumb Component (`bey-breadcrumb`)
+# Breadcrumb
 
-Model-driven breadcrumb navigation with automatic overflow handling, optional icons, and disabled state. The consumer handles navigation via the `onItemClick` callback.
+A trail of the path to the current page, driven by a config model. The last item is the current page and is
+never a link; clicking any other reports its id through `onItemClick`. Items that do not fit collapse into a
+leading ellipsis whose tooltip lists what was hidden.
 
-Supported capabilities:
-
--   Horizontal breadcrumb trail with configurable separator.
--   Automatic overflow: collapses leading items into `"..."` when the container is too narrow.
--   Tooltip on collapsed indicator showing hidden item labels.
--   Tooltip on each item for truncated text (controlled by `itemMaxWidth`).
--   Optional FontAwesome icon per item.
--   Disabled state per item.
--   Prefix-based i18n label resolution through `ngx-translate`.
--   Optional `translate` flag to disable i18n and use raw labels directly.
--   Callback on item click (except the last item, which represents the current page).
--   ARIA `nav` landmark with `aria-current="page"` on the last item.
--   Themeable via CSS custom properties.
-
----
-
-## Quick start
+## Usage
 
 ```ts
-import { BeyBreadcrumbComponent, BeyBreadcrumbConfig, BeyBreadcrumbItem } from '@beyonda-labs/angular-components';
-
-const breadcrumbConfig = new BeyBreadcrumbConfig({
-    prefix: 'myPage',
+const breadcrumb = new BeyBreadcrumbConfig({
+    prefix: 'myPage.breadcrumb',
     items: [
-        new BeyBreadcrumbItem({ key: 'home' }),
-        new BeyBreadcrumbItem({ key: 'products' }),
-        new BeyBreadcrumbItem({ key: 'detail' })
+        new BeyBreadcrumbItem({ id: 1, label: 'home', icon: faHome }),
+        new BeyBreadcrumbItem({ id: 2, label: 'detail' })
     ],
-    onItemClick: key => {
-        console.log('Navigate to:', key);
-    }
+    onItemClick: id => this.navigate(id)
 });
 ```
 
 ```html
-<bey-breadcrumb [config]="breadcrumbConfig"></bey-breadcrumb>
+<bey-breadcrumb [config]="breadcrumb"></bey-breadcrumb>
 ```
 
-i18n keys follow the prefix convention:
+## BeyBreadcrumbConfig
 
-```json
-{
-    "myPage": {
-        "breadcrumb": {
-            "home": { "label": "Home" },
-            "products": { "label": "Products" },
-            "detail": { "label": "Product detail" }
-        }
-    }
-}
-```
+| Field          | Required | Default  | Meaning                                                     |
+| -------------- | -------- | -------- | ----------------------------------------------------------- |
+| `items`        | yes      |          | The trail, from the root to the current page                 |
+| `prefix`       | no       | none     | i18n prefix prepended to each label                          |
+| `translate`    | no       | `true`   | Whether labels are translated at all                         |
+| `separator`    | no       | `/`      | Character drawn between items                                |
+| `itemMaxWidth` | no       | `12rem`  | Width at which a label is truncated with an ellipsis         |
+| `onItemClick`  | no       |          | Called with the id of a clicked item, never for the last one |
 
-### Without translations
+## BeyBreadcrumbItem
 
-Set `translate: false` to use raw labels directly without i18n:
+| Field              | Required | Default | Meaning                                                       |
+| ------------------ | -------- | ------- | ------------------------------------------------------------- |
+| `id`               | yes      |         | What `onItemClick` reports                                     |
+| `label`            | yes      |         | A literal label, or a key resolved against `prefix`            |
+| `icon`             | no       | none    | FontAwesome icon shown before the label                        |
+| `isDisabled`       | no       | `false` | Rendered dimmed and not clickable                              |
+| `isTranslationKey` | no       | `false` | Treat the label as a full key and ignore `prefix`              |
 
-```ts
-const breadcrumbConfig = new BeyBreadcrumbConfig({
-    translate: false,
-    items: [
-        new BeyBreadcrumbItem({ key: 'home', label: 'Home' }),
-        new BeyBreadcrumbItem({ key: 'products', label: 'Products' }),
-        new BeyBreadcrumbItem({ key: 'detail', label: 'Product detail' })
-    ],
-    onItemClick: key => {
-        console.log('Navigate to:', key);
-    }
-});
-```
+## Replacing the config
 
----
+The config is read as the initial state and never written to. To change the trail, build a new
+`BeyBreadcrumbConfig` and bind it; the component measures again from scratch. Mutating the instance you passed
+in has no effect.
 
-## Models
+## Collapsing
 
-### `BeyBreadcrumbConfig`
+Item widths are measured only while the whole trail is rendered, then cached, so a measurement is never taken
+from an already-collapsed trail. A container width of zero means layout has not happened yet, and everything
+stays visible rather than being guessed into the ellipsis. At least one item always remains visible, and
+collapsing always eats from the start, so the current page is never hidden.
 
-The root configuration object passed to `[config]`.
+## Theming
 
-| Parameter      | Type                    | Required | Default   | Description                                            |
-| -------------- | ----------------------- | -------- | --------- | ------------------------------------------------------ |
-| `prefix`       | `string`                | no       | `''`      | i18n prefix for label resolution                       |
-| `items`        | `BeyBreadcrumbItem[]`   | yes      | —         | Array of breadcrumb item definitions                   |
-| `separator`    | `string`                | no       | `'/'`     | Text displayed between items                           |
-| `itemMaxWidth` | `string`                | no       | `'12rem'` | CSS max-width for each item label (enables truncation) |
-| `translate`    | `boolean`               | no       | `true`    | Whether to translate labels via `ngx-translate`        |
-| `onItemClick`  | `(key: string) => void` | no       | —         | Called when a non-last item is clicked                 |
-
-**Properties:**
-
-| Property       | Type                  | Description              |
-| -------------- | --------------------- | ------------------------ |
-| `items`        | `BeyBreadcrumbItem[]` | Configured items         |
-| `itemMaxWidth` | `string`              | Max width for item label |
-| `prefix`       | `string`              | i18n prefix              |
-| `separator`    | `string`              | Separator text           |
-| `translate`    | `boolean`             | Whether labels are translated |
-
----
-
-### `BeyBreadcrumbItem`
-
-Defines a single breadcrumb node.
-
-| Parameter          | Type             | Required | Default        | Description                                                          |
-| ------------------ | ---------------- | -------- | -------------- | --------------------------------------------------------------------- |
-| `key`              | `string`         | yes      | —              | Unique identifier for the item                                       |
-| `icon`             | `IconDefinition` | no       | —              | FontAwesome icon displayed before the label                          |
-| `isDisabled`       | `boolean`        | no       | `false`        | Whether the item is disabled (non-clickable)                         |
-| `isTranslationKey` | `boolean`        | no       | `false`        | Resolve `label` as a raw i18n key via `ngx-translate`, ignoring both `prefix` and the config's `translate` flag |
-| `label`            | `string`         | no       | `${key}.label` | Custom label or i18n key (auto-resolved with prefix)                 |
-
-`isTranslationKey` is meant for items whose label is itself an already-fully-qualified i18n key
-(e.g. a library key or one shared across pages), as opposed to `label`'s normal `{prefix}.{label}`
-resolution.
-
----
-
-## CSS custom properties
-
-| Variable                           | Default   | Description                     |
-| ---------------------------------- | --------- | ------------------------------- |
-| `--bey-breadcrumb-text`            | `#6b6b6b` | Non-active item text color      |
-| `--bey-breadcrumb-active`          | `#111111` | Current (last) item text color  |
-| `--bey-breadcrumb-separator-color` | `#c0c0c0` | Separator and ellipsis color    |
-| `--bey-breadcrumb-hover`           | `#2f2f2f` | Hover text color                |
-| `--bey-breadcrumb-item-max-width`  | `12rem`   | Max width per item (truncation) |
-
----
-
-## Overflow behavior
-
-When the breadcrumb trail exceeds the container width, the component automatically collapses leading items:
-
--   A `"..."` indicator replaces the hidden items.
--   Hovering over `"..."` shows a tooltip listing the collapsed item labels.
--   The calculation uses a `ResizeObserver` and recalculates on container resize.
--   The last visible items are always preserved (stack from the right).
-
----
-
-## Accessibility
-
--   The component renders a `<nav>` element with a translated `aria-label`.
--   The last item has `aria-current="page"` and is not interactive.
--   Separator elements have `aria-hidden="true"`.
--   Clickable items are `<button>` elements with `disabled` attribute when applicable.
--   Focus is indicated with a visible outline via `:focus-visible`.
-
----
+| Variable                            | Default                |
+| ----------------------------------- | ---------------------- |
+| `--bey-breadcrumb-text`             | `--bey-text-muted`     |
+| `--bey-breadcrumb-active`           | `--bey-text-primary`   |
+| `--bey-breadcrumb-hover`            | `--bey-text-secondary` |
+| `--bey-breadcrumb-separator-color`  | `--bey-border-strong`  |
+| `--bey-breadcrumb-item-max-width`   | `12rem`                |

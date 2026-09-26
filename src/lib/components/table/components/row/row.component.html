@@ -1,27 +1,27 @@
 <div
     class="bey-table-row"
-    [class.bey-table-row-header]="isHeader"
-    [class.bey-table-row-selectable]="config.selectable && !isHeader"
-    [class.bey-table-row-selected]="row.selected"
-    [style.grid-template-columns]="gridTemplateColumns"
+    role="row"
+    [class.bey-table-row--header]="isHeader()"
+    [class.bey-table-row--selectable]="selectable() && !isHeader()"
+    [class.is-selected]="row().selected"
+    [style.grid-template-columns]="gridTemplateColumns()"
     (click)="onRowClick()"
 >
-    @if (config.selectable) {
+    @if (selectable()) {
         <label class="bey-table-row-selection" (click)="$event.stopPropagation()">
-            <span class="visually-hidden">{{ getSelectRowLabel() | translate }}</span>
+            <span class="visually-hidden">{{ selectionLabel() | translate }}</span>
             <input
                 class="bey-table-row-checkbox"
                 type="checkbox"
-                [checked]="row.selected"
-                [indeterminate]="selectionIndeterminate"
-                [attr.aria-label]="getSelectRowLabel() | translate"
-                (click)="onCheckboxClick($event)"
+                [attr.aria-label]="selectionLabel() | translate"
+                [checked]="row().selected"
+                [indeterminate]="selectionIndeterminate()"
                 (change)="onCheckboxChange($event)"
             />
         </label>
     }
 
-    @for (cell of row.cells; track $index) {
-        <bey-table-cell [cell]="cell" [isHeader]="isHeader"></bey-table-cell>
+    @for (cell of row().cells; track $index) {
+        <bey-table-cell [cell]="cell" [isHeader]="isHeader()"></bey-table-cell>
     }
 </div>

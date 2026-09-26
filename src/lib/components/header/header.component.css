@@ -1,58 +1,54 @@
 :host {
-    --bey-header-fg: var(--text-primary);
-    --bey-header-badge-bg: var(--bey-primary);
-    --bey-header-badge-fg: var(--text-inverse);
+    --bey-header-fg: var(--bey-text-primary);
 
     display: block;
     width: 100%;
 }
 
 .bey-header {
-    display: flex;
     align-items: center;
+    display: flex;
+    gap: var(--bey-space-lg) var(--bey-space-xl);
     justify-content: space-between;
-    gap: 1rem 1.5rem;
+    padding: var(--bey-space-2xs) 0;
     width: 100%;
-    padding: 0.25rem 0;
 }
 
 .bey-header-start {
-    display: flex;
     align-items: center;
-    gap: 0.75rem;
+    display: flex;
+    gap: var(--bey-space-md);
     min-width: 0;
 }
 
 .bey-header-title {
-    overflow: hidden;
+    color: var(--bey-header-fg);
+    font-size: var(--bey-font-size-2xl);
+    font-weight: var(--bey-font-weight-bold);
+    letter-spacing: -0.03em;
+    line-height: var(--bey-line-height-tight);
+    margin: 0;
     max-width: 500px;
     min-width: 0;
-    margin: 0;
-    color: var(--bey-header-fg);
-    font-weight: 700;
-    line-height: 1.25;
-    letter-spacing: -0.03em;
+    overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.bey-header-badge {
-    padding: 0.15rem 0.6rem;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 600;
+.bey-header-title.is-subpage {
+    font-size: var(--bey-font-size-xl);
 }
 
-.bey-header-badge-default {
-    background: var(--bey-header-badge-bg);
-    color: var(--bey-header-badge-fg);
+.bey-header-badge {
+    --bey-badge-bg: var(--bey-primary);
+    --bey-badge-fg: var(--bey-primary-fg);
 }
 
 .bey-header-actions {
-    display: flex;
     align-items: center;
+    display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: var(--bey-space-sm);
 }
 
 .bey-header-actions bey-button {
@@ -64,37 +60,38 @@
 }
 
 .bey-header-menu {
-    position: relative;
     display: inline-flex;
+    position: relative;
     width: 25px;
 }
 
 .bey-header-action-menu {
-    position: relative;
     display: inline-flex;
+    position: relative;
 }
 
 bey-button.bey-header-menu-toggle {
-    --bey-button-icon-size: 0.8rem;
-    --bey-button-padding-inline: 4px 4px 0px 4px;
-    padding: 4px 4px 0px 4px;
+    --bey-button-icon-size: var(--bey-font-size-sm);
+    --bey-button-padding-inline: var(--bey-space-2xs) var(--bey-space-2xs) 0;
+
+    padding: var(--bey-space-2xs) var(--bey-space-2xs) 0;
 }
 
 .bey-header-menu-panel {
-    position: absolute;
-    top: calc(100% + 0.35rem);
-    left: 0;
-    z-index: 1000;
+    align-items: stretch;
+    background-color: var(--bey-bg-surface);
+    border: var(--bey-border-width) solid var(--bey-border-subtle);
+    border-radius: var(--bey-radius-md);
+    box-shadow: var(--bey-shadow-md);
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    gap: 0.25rem;
+    gap: var(--bey-space-2xs);
+    left: 0;
+    padding: var(--bey-space-xs);
+    position: absolute;
+    top: calc(100% + var(--bey-space-xs));
     width: max-content;
-    padding: 0.35rem;
-    border: 1px solid var(--bey-gray-200);
-    border-radius: 0.6rem;
-    background-color: var(--bey-bg-surface);
-    box-shadow: 0 0.5rem 1.25rem rgba(var(--bey-black-rgb), 0.12);
+    z-index: var(--bey-z-dropdown);
 }
 
 .bey-header-actions-end .bey-header-menu-panel {

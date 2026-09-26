@@ -1,7 +1,3 @@
-<bey-form [config]="formConfig"></bey-form>
+<bey-form [config]="formConfig()" />
 
-<bey-login-providers
-    [prefix]="prefix"
-    [providers]="providers"
-    (providerClick)="onProvider($event)"
-/>
+<bey-login-providers [prefix]="prefix()" [providers]="providers()" (providerClick)="onProvider($event)" />

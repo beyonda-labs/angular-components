@@ -97,33 +97,37 @@ body.dark .btn-link.btn-link-secondary {
 
 /* ─── Texts  ─────────────────────────────────────────────────────────────── */
 
+/* stylelint-disable declaration-no-important -- Bootstrap's text utilities are !important themselves, so the token can only win the same way. */
 .text-dark {
-    color: var(--text-primary) !important;
+    color: var(--bey-text-primary) !important;
 }
 
 .text-muted {
-    color: var(--text-muted) !important;
+    color: var(--bey-text-muted) !important;
 }
+/* stylelint-enable declaration-no-important */
 
 /* ─── Form controls ──────────────────────────────────────────────────────── */
+/* This sheet loads after Bootstrap's, so a rule of the same specificity wins by order and needs no !important. */
 .form-control,
 .form-select,
 .form-check-input {
-    border-color: var(--bey-secondary) !important;
-    background-color: var(--bey-bg-page) !important;
+    background-color: var(--bey-bg-page);
+    border-color: var(--bey-secondary);
 }
 
 .form-control:disabled,
 .form-select:disabled {
-    background-color: var(--bey-bg-muted) !important;
-    color: var(--text-muted) !important;
+    background-color: var(--bey-bg-muted);
+    color: var(--bey-text-muted);
     cursor: not-allowed;
 }
 
 .form-control:focus,
 .form-select:focus,
 .form-check-input:focus {
-    border-color: var(--bey-primary) !important;
+    background-color: var(--bey-bg-page);
+    border-color: var(--bey-primary);
     box-shadow: none;
 }
 
@@ -133,27 +137,27 @@ body.dark .btn-link.btn-link-secondary {
 .form-select.ng-invalid.ng-dirty,
 .form-check-input.ng-invalid.ng-touched,
 .form-check-input.ng-invalid.ng-dirty {
-    border-color: var(--bey-danger) !important;
+    border-color: var(--bey-danger);
 }
 
 input[type='radio'].form-check-input:checked {
-    background-color: var(--bey-primary) !important;
-    border-color: var(--bey-primary) !important;
+    background-color: var(--bey-primary);
+    border-color: var(--bey-primary);
 }
 
 input[type='checkbox'].form-check-input:checked {
-    background-color: var(--bey-primary) !important;
-    border-color: var(--bey-primary) !important;
+    background-color: var(--bey-primary);
+    border-color: var(--bey-primary);
 }
 
 body.dark .form-check-input {
-    background-color: var(--bey-bg-surface) !important;
+    background-color: var(--bey-bg-surface);
 }
 
 body.dark input[type='radio'].form-check-input:checked,
 body.dark input[type='checkbox'].form-check-input:checked {
-    background-color: var(--bey-primary) !important;
-    border-color: var(--bey-primary) !important;
+    background-color: var(--bey-primary);
+    border-color: var(--bey-primary);
 }
 
 body.dark input[type='checkbox'].form-check-input:checked {
@@ -188,7 +192,7 @@ input[type='number']::-webkit-outer-spin-button {
 }
 
 .bs-datepicker .bs-datepicker-head button {
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 .bs-datepicker .bs-datepicker-body table th {
@@ -200,7 +204,7 @@ input[type='number']::-webkit-outer-spin-button {
 
 .bs-datepicker .bs-datepicker-body table td span {
     border-radius: 0.25rem;
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
 }
 
 .bs-datepicker .bs-datepicker-body table td span:hover,
@@ -212,8 +216,8 @@ input[type='number']::-webkit-outer-spin-button {
 .bs-datepicker .bs-datepicker-body table td.selected span,
 .bs-datepicker .bs-datepicker-body table td span[class*='select-'],
 .bs-datepicker .bs-datepicker-body table td[class*='select-'] span {
-    background-color: var(--bey-primary) !important;
-    color: var(--bey-bg-page) !important;
+    background-color: var(--bey-primary);
+    color: var(--bey-bg-page);
 }
 
 .bs-datepicker .bs-datepicker-body table td span.is-highlighted:not(.disabled):not(.selected) {
@@ -222,7 +226,7 @@ input[type='number']::-webkit-outer-spin-button {
 
 .bs-datepicker .bs-datepicker-body table td.disabled span,
 .bs-datepicker .bs-datepicker-body table td.is-other-month span {
-    color: var(--text-disabled);
+    color: var(--bey-text-disabled);
 }
 
 .bs-datepicker .bs-datepicker-body table td.today span {
@@ -236,7 +240,7 @@ input[type='number']::-webkit-outer-spin-button {
 .bs-datepicker .bs-datepicker-buttons .btn {
     background-color: var(--bey-bg-page);
     border: 1px solid var(--bey-secondary);
-    color: var(--text-primary);
+    color: var(--bey-text-primary);
     font-size: 0.75rem;
 }
 

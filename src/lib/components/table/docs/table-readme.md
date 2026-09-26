@@ -1,175 +1,85 @@
-# Table Component (`bey-table`)
+# Table
 
-Model-driven table component built from columns, rows, and cells.
+A grid of rows built from a config: the columns, the items and a function that turns each item into cells.
+Rows can be selected one by one or all at once, and the table reports the selection through a callback.
 
-Supported capabilities:
-
--   Configurable columns with proportional widths.
--   Row rendering driven by `loadRow`.
--   Selectable rows with bulk selection support.
--   Pre-selected rows via `isRowSelected` (e.g. to restore a previous selection).
--   Text, action-link and badge cells.
--   Optional tooltips per cell and per column header, shown whenever defined.
--   Refresh support via `config.refresh()`.
-
----
-
-## Quick start
+## Usage
 
 ```ts
-import {
-    BeyBadgeTableCell,
-    BeyLinkTableCell,
-    BeyTableColumn,
-    BeyTableComponent,
-    BeyTableConfig,
-    BeyTextTableCell
-} from '@beyonda-labs/angular-components';
-
-const table = new BeyTableConfig({
-    prefix: 'teamTable',
+readonly table = new BeyTableConfig<Person>({
+    prefix: 'myApp.team',
     columns: [
         new BeyTableColumn({ key: 'name', width: 3 }),
-        new BeyTableColumn({ key: 'role', width: 2 }),
         new BeyTableColumn({ key: 'status', width: 2 }),
         new BeyTableColumn({ key: 'action', width: 1 })
     ],
-    items: [
-        { id: 1, name: 'Ada Lovelace', role: 'Lead Engineer', status: 'Active' },
-        { id: 2, name: 'Alan Turing', role: 'Researcher', status: 'Paused' }
-    ],
+    items: this.people,
     loadRow: item => [
-        new BeyTextTableCell({ content: String(item['name'] ?? '') }),
-        new BeyTextTableCell({ content: String(item['role'] ?? '') }),
+        new BeyTextTableCell({ content: item.name }),
         new BeyBadgeTableCell({
-            badges: [
-                {
-                    badgeClass: item['status'] === 'Active' ? 'bg-success' : 'bg-secondary',
-                    content: String(item['status'] ?? '')
-                }
-            ]
-        }),
-        new BeyLinkTableCell({
-            action: () => console.log('Open row', item['id']),
-            content: 'teamTable.actions.open',
+            badges: [new BeyBadgeConfig({ label: `myApp.team.status.${item.status}`, variant: BeyBadgeVariant.Success })],
             translate: true
-        })
-    ]
+        }),
+        new BeyLinkTableCell({ action: () => this.open(item), content: 'myApp.team.open', translate: true })
+    ],
+    selectedItemsChange: (items, indexes) => this.selection.set(items)
 });
 ```
 
 ```html
-<bey-table [config]="table"></bey-table>
+<bey-table [config]="table" />
 ```
 
----
+`BeyTableConfig<T>` is generic over the item: `loadRow`, `isRowSelected` and `selectedItemsChange` see `T`,
+so a table is always built from a typed model, never from a loose record.
 
-## Models
+## BeyTableConfig
 
-### `BeyTableConfig`
+| Field                 | Required | Default | Meaning                                                                               |
+| --------------------- | -------- | ------- | ------------------------------------------------------------------------------------- |
+| `prefix`              | yes      |         | i18n prefix: headers are `<prefix>.columns.<key>`, the empty message `<prefix>.empty` |
+| `columns`             | yes      |         | The columns, in order                                                                 |
+| `loadRow`             | yes      |         | Turns an item into one cell per column                                                |
+| `items`               | no       | `[]`    | The rows                                                                              |
+| `height`              | no       | `60vh`  | Height of the scrolling area, any CSS length                                          |
+| `selectable`          | no       | `true`  | Shows the selection column                                                            |
+| `isRowSelected`       | no       |         | Marks the rows that start selected                                                    |
+| `selectedItemsChange` | no       |         | Run with the selected items and their indexes on every change                         |
 
-The root configuration object passed to `[config]`.
+`BeyTableColumn` takes `key`, an optional `tooltip` and a `width`, which is the share of the row the column
+gets: two columns of width 3 and 1 split it 75 / 25.
 
-| Parameter             | Type                                                | Required | Default | Description                                         |
-| --------------------- | --------------------------------------------------- | -------- | ------- | --------------------------------------------------- |
-| `prefix`              | `string`                                            | yes      | —       | Prefix used for column and state translation keys   |
-| `columns`             | `BeyTableColumn[]`                                  | yes      | —       | Column definitions                                  |
-| `loadRow`             | `(item: Record<string, unknown>) => BeyTableCell[]` | yes      | —       | Maps an item into rendered cells                    |
-| `items`               | `Record<string, unknown>[]`                         | no       | `[]`    | Source rows                                         |
-| `height`              | `string`                                            | no       | `60vh`  | Max scroll height                                   |
-| `selectable`          | `boolean`                                           | no       | `true`  | Enables row selection                               |
-| `isRowSelected`       | `(item: Record<string, unknown>) => boolean`        | no       | —       | Marks a row as pre-selected when rows are (re)built |
-| `selectedItemsChange` | `(items, indexes) => void`                          | no       | —       | Called when selected rows change                    |
+## Cells
 
-**Methods:**
+| Cell                | Fields                     | Shows                                               |
+| ------------------- | -------------------------- | --------------------------------------------------- |
+| `BeyTextTableCell`  | `content`                  | The text, one line, cut with an ellipsis            |
+| `BeyLinkTableCell`  | `content`, `action`        | A link that runs `action` without selecting the row |
+| `BeyBadgeTableCell` | `badges: BeyBadgeConfig[]` | One `bey-badge` per entry                           |
 
-| Method      | Signature    | Description                         |
-| ----------- | ------------ | ----------------------------------- |
-| `refresh()` | `() => void` | Rebuilds rendered rows from `items` |
+Every cell takes an optional `tooltip` and `translate`, which runs the content, the badges and the tooltip
+through the translate pipe.
 
----
+## Selection
 
-### `BeyTableColumn`
+Clicking a row toggles it; the header checkbox selects or clears every row and is indeterminate in between.
+The table owns that state from `isRowSelected` onwards and calls `selectedItemsChange` after each change. A
+replaced config starts over: new rows, the selection `isRowSelected` says, and the scroll back at the top.
 
-| Parameter | Type     | Required | Default | Description                                   |
-| --------- | -------- | -------- | ------- | --------------------------------------------- |
-| `key`     | `string` | yes      | —       | Column key, also used for translation lookup  |
-| `width`   | `number` | no       | `10`    | Relative width weight for the CSS grid layout |
-| `tooltip` | `string` | no       | —       | Header tooltip translation key                |
+## Customisation
 
----
-
-### `BeyTableCell`
-
-Base cell model.
-
-| Parameter   | Type          | Required | Default | Description                           |
-| ----------- | ------------- | -------- | ------- | ------------------------------------- |
-| `content`   | `unknown`     | yes      | —       | Value rendered inside the cell        |
-| `type`      | `BeyCellType` | yes      | —       | Cell renderer type                    |
-| `translate` | `boolean`     | no       | `false` | Applies the translate pipe to content |
-| `tooltip`   | `string`      | no       | —       | Tooltip translation key               |
-
-Supported specializations:
-
--   `BeyTextTableCell` renders plain text.
--   `BeyLinkTableCell` renders an inline action button through `action()`.
--   `BeyBadgeTableCell` renders one or more Bootstrap `.badge` elements, each with its own classes.
-
-### `BeyBadgeTableCell`
-
-| Parameter | Type              | Required | Default | Description                     |
-| --------- | ----------------- | -------- | ------- | ------------------------------- |
-| `badges`  | `BeyTableBadge[]` | yes      | —       | Badges rendered inside the cell |
-
-`BeyTableBadge`:
-
-| Attribute    | Type     | Required | Description                                                              |
-| ------------ | -------- | -------- | ------------------------------------------------------------------------ |
-| `content`    | `string` | yes      | Badge label                                                              |
-| `badgeClass` | `string` | yes      | Bootstrap classes applied to that badge (e.g. `'bg-success text-white'`) |
-
-`translate` (from the base cell) applies to every badge's `content` in the cell.
-
-```ts
-// Single badge
-new BeyBadgeTableCell({
-    badges: [{ content: 'Active', badgeClass: 'bg-success' }]
-});
-
-// Multiple badges in the same cell, each with its own color
-new BeyBadgeTableCell({
-    badges: [
-        { content: 'Angular', badgeClass: 'bg-primary' },
-        { content: 'TypeScript', badgeClass: 'bg-info text-dark' },
-        { content: 'RxJS', badgeClass: 'bg-dark' }
-    ]
-});
-```
-
-The color of each badge is entirely up to its `badgeClass`; pick any combination of Bootstrap
-background/text utility classes (`bg-success`, `bg-danger`, `bg-warning text-dark`, `bg-secondary`, ...).
-
----
-
-## i18n convention
-
-With `prefix = 'teamTable'`:
-
-| Key pattern              | Example                  | Description         |
-| ------------------------ | ------------------------ | ------------------- |
-| `{prefix}.columns.{key}` | `teamTable.columns.name` | Column title        |
-| `{prefix}.empty`         | `teamTable.empty`        | Empty state message |
-| any cell content key     | `teamTable.actions.open` | Optional cell label |
-
-Generic selection labels are provided by the library under `angular-components.table`.
-
----
-
-## Best practices
-
--   Keep `loadRow` pure and side-effect free; place navigation or commands only in `BeyLinkTableCell.action`.
--   Use proportional `width` values instead of fixed pixel assumptions.
--   When replacing `items`, call `config.refresh()` so rendered rows stay in sync.
--   `isRowSelected` runs on every row (re)build; match by a stable identifier (e.g. `item.id`) so the selection survives data reloads, and keep it fast.
--   Prefer translated content for repeated labels such as actions and statuses.
+| Variable                           | Default                |
+| ---------------------------------- | ---------------------- |
+| `--bey-table-surface`              | `--bey-bg-page`        |
+| `--bey-table-text`                 | `--bey-text-primary`   |
+| `--bey-table-text-muted`           | `--bey-text-muted`     |
+| `--bey-table-border-subtle`        | `--bey-border-subtle`  |
+| `--bey-table-border-strong`        | `--bey-border-default` |
+| `--bey-table-row-hover`            | `--bey-bg-hover`       |
+| `--bey-table-row-selected`         | `--bey-bg-active`      |
+| `--bey-table-row-min-height`       | `2.5rem`               |
+| `--bey-table-checkbox-accent`      | `--bey-primary`        |
+| `--bey-table-checkbox-border`      | `--bey-border-strong`  |
+| `--bey-table-checkbox-mark`        | `--bey-primary-fg`     |
+| `--bey-table-link-underline`       | `--bey-border-strong`  |
+| `--bey-table-link-underline-hover` | `--bey-primary`        |

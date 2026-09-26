@@ -1,0 +1,14 @@
+:host {
+    display: block;
+}
+
+.bey-app-layout-style-guide-content {
+    height: 44rem;
+    padding: var(--bey-space-xl);
+}
+
+.bey-app-layout-style-guide-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--bey-space-sm);
+}

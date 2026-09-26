@@ -1,370 +1,220 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
+import { faGear, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 
-import { ButtonComponent } from '../../internal/button/button.component';
-import { ButtonType } from '../../internal/button/models/button-config.model';
+import { BadgeConfig } from '../badge/models/badge.model';
 import { HeaderComponent } from './header.component';
-import { HeaderAction, HeaderActionType, HeaderConfig, HeaderVariant } from './models/header.model';
+import { HeaderAction, HeaderActionType, HeaderConfig, HeaderConfigParameters } from './models/header.model';
 
 describe('HeaderComponent', () => {
-    let component: HeaderComponent;
     let fixture: ComponentFixture<HeaderComponent>;
+
+    function buildAction(overrides: Partial<ConstructorParameters<typeof HeaderAction>[0]> = {}): HeaderAction {
+        return new HeaderAction({ key: 'save', type: HeaderActionType.PrimaryButton, ...overrides });
+    }
+
+    function buildConfig(overrides: Partial<HeaderConfigParameters> = {}): HeaderConfig {
+        return new HeaderConfig({ prefix: 'demo', title: 'demo.title', ...overrides });
+    }
+
+    async function render(config: HeaderConfig = buildConfig()): Promise<void> {
+        fixture = await renderComponent(HeaderComponent, { config });
+    }
+
+    function buttons(): HTMLButtonElement[] {
+        return queryAll<HTMLButtonElement>(fixture, 'button');
+    }
+
+    function labels(): string[] {
+        return textsOf(buttons());
+    }
+
+    function panels(): HTMLElement[] {
+        return queryAll(fixture, '[role="group"]');
+    }
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [HeaderComponent, TranslateModule.forRoot()]
         }).compileComponents();
-
-        fixture = TestBed.createComponent(HeaderComponent);
-        component = fixture.componentInstance;
     });
 
-    it('should create', () => {
-        component.config = buildConfig();
-        fixture.detectChanges();
+    it('shows the title and repeats it as a native tooltip, since it truncates', async () => {
+        await render();
 
-        expect(component).toBeTruthy();
+        const title = fixture.nativeElement.querySelector('h1');
+
+        expect(title.textContent.trim()).toBe('demo.title');
+        expect(title.getAttribute('title')).toBe('demo.title');
     });
 
-    it('should render title and both action zones inside a single end-aligned group', () => {
-        component.config = buildConfig({
-            title: 'test.header.title',
-            leftActions: [new HeaderAction({ key: 'back', type: HeaderActionType.Text })],
-            rightActions: [new HeaderAction({ key: 'save', type: HeaderActionType.PrimaryButton })]
-        });
+    it('shows nothing but the title when there is nothing else', async () => {
+        await render();
 
-        fixture.detectChanges();
-
-        const title = fixture.nativeElement.querySelector('.bey-header-title');
-        const actionButtons = fixture.debugElement.queryAll(By.directive(ButtonComponent));
-        const endContainer = fixture.nativeElement.querySelector('.bey-header-actions-end');
-
-        expect(title?.textContent?.trim()).toBe('test.header.title');
-        expect(actionButtons).toHaveLength(2);
-        expect(endContainer).toBeTruthy();
+        expect(buttons()).toHaveLength(0);
+        expect(fixture.nativeElement.querySelector('bey-badge')).toBeNull();
     });
 
-    it('should set the title element native tooltip so long titles remain readable when truncated', () => {
-        component.config = buildConfig({ title: 'test.header.title' });
+    it('drops the title when the config does not give one', async () => {
+        await render(buildConfig({ title: '' }));
 
-        fixture.detectChanges();
-
-        const title = fixture.nativeElement.querySelector('.bey-header-title');
-
-        expect(title?.getAttribute('title')).toBe('test.header.title');
+        expect(fixture.nativeElement.querySelector('h1')).toBeNull();
     });
 
-    it('should hide optional sections when title and actions are missing', () => {
-        component.config = buildConfig({ title: '', leftActions: [], rightActions: [] });
+    it('shows the badge the config gives', async () => {
+        await render(buildConfig({ badge: new BadgeConfig({ label: 'demo.badge' }) }));
 
-        fixture.detectChanges();
+        const badge = fixture.nativeElement.querySelector('bey-badge');
 
-        expect(fixture.nativeElement.querySelector('.bey-header-title')).toBeNull();
-        expect(fixture.nativeElement.querySelector('.bey-header-actions-end')).toBeNull();
+        expect(badge.textContent.trim()).toBe('demo.badge');
     });
 
-    it('should build a button config with mapped type and explicit texts', () => {
-        const action = new HeaderAction({
-            action: jest.fn(),
-            key: 'save',
-            label: 'custom.label',
-            tooltip: 'custom.tooltip',
-            type: HeaderActionType.SecondaryButton
-        });
-        component.config = buildConfig();
+    it('puts the back action before the title', async () => {
+        await render(buildConfig({ backAction: buildAction({ key: 'back', type: HeaderActionType.Icon }) }));
 
-        const button = component.getActionButton(action);
+        const rendered = queryAll(fixture, 'button, h1');
 
-        expect(button.action).toBe(action.action);
-        expect(button.label).toBe('custom.label');
-        expect(button.tooltip).toBe('custom.tooltip');
-        expect(button.type).toBe(ButtonType.Secondary);
+        expect(rendered[0].tagName).toBe('BUTTON');
+        expect(rendered[1].tagName).toBe('H1');
     });
 
-    it('should propagate disabled state onto the button config', () => {
-        const action = new HeaderAction({ key: 'save', type: HeaderActionType.PrimaryButton, disabled: true });
-        component.config = buildConfig();
+    it('renders the left actions, then the overflow toggle, then the right actions', async () => {
+        await render(
+            buildConfig({
+                leftActions: [buildAction({ key: 'left', label: 'Left' })],
+                menuActions: [buildAction({ key: 'menu', label: 'Menu' })],
+                rightActions: [buildAction({ key: 'right', label: 'Right' })]
+            })
+        );
 
-        const button = component.getActionButton(action);
-
-        expect(button.isDisabled).toBe(true);
+        expect(labels()).toEqual(['Left', '', 'Right']);
     });
 
-    it('should default disabled to false', () => {
-        const action = new HeaderAction({ key: 'save', type: HeaderActionType.PrimaryButton });
-        component.config = buildConfig();
+    it('falls back to keys built from the prefix when an action carries no text', async () => {
+        await render(buildConfig({ leftActions: [buildAction({ key: 'save' })] }));
 
-        const button = component.getActionButton(action);
-
-        expect(button.isDisabled).toBe(false);
+        expect(labels()).toEqual(['demo.actions.save.label']);
     });
 
-    it('should resolve default translation keys for action texts', () => {
-        const action = new HeaderAction({ key: 'save', type: HeaderActionType.PrimaryButton });
-        component.config = buildConfig({ prefix: 'demo.header' });
+    it('shows no label for an icon-only action', async () => {
+        await render(
+            buildConfig({ leftActions: [buildAction({ key: 'add', icon: faPlus, type: HeaderActionType.Icon })] })
+        );
 
-        const button = component.getActionButton(action);
-
-        expect(button.label).toBe('demo.header.actions.save.label');
-        expect(button.tooltip).toBe('demo.header.actions.save.tooltip');
-        expect(button.type).toBe(ButtonType.Primary);
+        expect(labels()).toEqual(['']);
     });
 
-    it('should fallback to tertiary button and noop action for text actions without callback', () => {
-        const action = new HeaderAction({ key: 'cancel', type: HeaderActionType.Text });
-        component.config = buildConfig();
+    it('runs the action behind a button', async () => {
+        const action = jest.fn();
+        await render(buildConfig({ leftActions: [buildAction({ key: 'save', label: 'Save', action })] }));
 
-        const button = component.getActionButton(action);
+        buttons()[0].click();
 
-        expect(button.type).toBe(ButtonType.Tertiary);
-        expect(() => button.action()).not.toThrow();
+        expect(action).toHaveBeenCalled();
     });
 
-    it('should render leftActions, then the menu toggle, then rightActions in that order', () => {
-        component.config = buildConfig({
-            leftActions: [new HeaderAction({ key: 'back', type: HeaderActionType.Text })],
-            menuActions: [new HeaderAction({ key: 'export', type: HeaderActionType.Text })],
-            rightActions: [new HeaderAction({ key: 'save', type: HeaderActionType.PrimaryButton })]
-        });
+    it('disables an action that says it is disabled', async () => {
+        await render(buildConfig({ leftActions: [buildAction({ key: 'save', label: 'Save', disabled: true })] }));
 
-        fixture.detectChanges();
-
-        const endContainer = fixture.nativeElement.querySelector('.bey-header-actions-end') as HTMLElement;
-        const menu = endContainer.querySelector('.bey-header-menu');
-
-        expect(menu).toBeTruthy();
-        expect([...endContainer.children].indexOf(menu as Element)).toBe(1);
+        expect(buttons()[0].disabled).toBe(true);
     });
 
-    it('should render the menu toggle as the last element when no right actions are present', () => {
-        component.config = buildConfig({
-            leftActions: [new HeaderAction({ key: 'back', type: HeaderActionType.Text })],
-            menuActions: [new HeaderAction({ key: 'export', type: HeaderActionType.Text })]
-        });
+    it('opens and closes the overflow menu', async () => {
+        await render(buildConfig({ menuActions: [buildAction({ key: 'archive', label: 'Archive' })] }));
 
-        fixture.detectChanges();
+        expect(panels()).toHaveLength(0);
 
-        const endContainer = fixture.nativeElement.querySelector('.bey-header-actions-end') as HTMLElement;
-        const menu = endContainer.querySelector('.bey-header-menu');
+        buttons()[0].click();
+        await settle(fixture);
+        expect(labels()).toContain('Archive');
 
-        expect(menu).toBeTruthy();
-        expect(endContainer.lastElementChild).toBe(menu);
+        buttons()[0].click();
+        await settle(fixture);
+        expect(panels()).toHaveLength(0);
     });
 
-    it('should render the end zone when only menu actions are present', () => {
-        component.config = buildConfig({
-            menuActions: [new HeaderAction({ key: 'export', type: HeaderActionType.Text })]
-        });
+    it('closes the overflow menu once one of its actions runs', async () => {
+        const action = jest.fn();
+        await render(buildConfig({ menuActions: [buildAction({ key: 'archive', label: 'Archive', action })] }));
 
-        fixture.detectChanges();
+        buttons()[0].click();
+        await settle(fixture);
 
-        expect(fixture.nativeElement.querySelector('.bey-header-actions-end .bey-header-menu')).toBeTruthy();
+        queryButton(fixture, 'Archive')?.click();
+        await settle(fixture);
+
+        expect(action).toHaveBeenCalled();
+        expect(panels()).toHaveLength(0);
     });
 
-    it('should return empty title when config title is not defined', () => {
-        component.config = buildConfig();
-        component.config.title = undefined as unknown as string;
+    it('closes an open menu on escape and on a click outside', async () => {
+        await render(buildConfig({ menuActions: [buildAction({ key: 'archive', label: 'Archive' })] }));
 
-        expect(component.getTitle()).toBe('');
+        buttons()[0].click();
+        await settle(fixture);
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+        await settle(fixture);
+        expect(panels()).toHaveLength(0);
+
+        buttons()[0].click();
+        await settle(fixture);
+        document.body.click();
+        await settle(fixture);
+        expect(panels()).toHaveLength(0);
     });
 
-    it('should render the back action before the title', () => {
-        component.config = buildConfig({
-            backAction: new HeaderAction({ key: 'back', type: HeaderActionType.Text })
-        });
-
-        fixture.detectChanges();
-
-        const startContainer = fixture.nativeElement.querySelector('.bey-header-start') as HTMLElement;
-
-        expect(startContainer.querySelector('bey-button')).toBeTruthy();
-        expect([...startContainer.children].indexOf(startContainer.querySelector('bey-button') as Element)).toBe(0);
-    });
-
-    it('should not render a back button when backAction is not set', () => {
-        component.config = buildConfig();
-
-        fixture.detectChanges();
-
-        expect(fixture.nativeElement.querySelector('.bey-header-start bey-button')).toBeNull();
-    });
-
-    it('should render the badge next to the title when set', () => {
-        component.config = buildConfig({ badge: { text: 'test.header.badge' } });
-
-        fixture.detectChanges();
-
-        const badge = fixture.nativeElement.querySelector('.bey-header-badge');
-
-        expect(badge?.textContent?.trim()).toBe('test.header.badge');
-    });
-
-    it('should apply the palette class it is given instead of its own colours', () => {
-        component.config = buildConfig({ badge: { text: 'test.header.badge', cssClass: 'bey-badge-color-success' } });
-
-        fixture.detectChanges();
-
-        const badge = fixture.nativeElement.querySelector('.bey-header-badge');
-
-        expect(badge?.classList.contains('bey-badge-color-success')).toBe(true);
-        expect(badge?.classList.contains('bey-header-badge-default')).toBe(false);
-    });
-
-    it('should fall back to its own colours when no palette class is given', () => {
-        component.config = buildConfig({ badge: { text: 'test.header.badge' } });
-
-        fixture.detectChanges();
-
-        const badge = fixture.nativeElement.querySelector('.bey-header-badge');
-
-        expect(badge?.classList.contains('bey-header-badge-default')).toBe(true);
-    });
-
-    it('should not render a badge when it is not set', () => {
-        component.config = buildConfig();
-
-        fixture.detectChanges();
-
-        expect(fixture.nativeElement.querySelector('.bey-header-badge')).toBeNull();
-    });
-
-    it('should default to the page variant title size', () => {
-        component.config = buildConfig();
-
-        fixture.detectChanges();
-
-        const title = fixture.nativeElement.querySelector('.bey-header-title');
-
-        expect(title?.classList.contains('fs-2')).toBe(true);
-    });
-
-    it('should apply the subpage variant title size', () => {
-        component.config = buildConfig({ variant: HeaderVariant.SubPage });
-
-        fixture.detectChanges();
-
-        const title = fixture.nativeElement.querySelector('.bey-header-title');
-
-        expect(title?.classList.contains('fs-4')).toBe(true);
-    });
-
-    describe('sub-actions dropdown', () => {
-        it('should render a toggle instead of executing the action directly when subActions are present', () => {
-            const subActionExecuted = jest.fn();
-            const parentAction = jest.fn();
-            const action = new HeaderAction({
-                action: parentAction,
-                key: 'create',
-                type: HeaderActionType.PrimaryButton,
-                subActions: [
-                    new HeaderAction({ action: subActionExecuted, key: 'create-item', type: HeaderActionType.Text })
+    it('opens the sub-actions of an action that has them, instead of running it', async () => {
+        const action = jest.fn();
+        await render(
+            buildConfig({
+                leftActions: [
+                    buildAction({
+                        key: 'export',
+                        label: 'Export',
+                        action,
+                        subActions: [buildAction({ key: 'pdf', label: 'PDF', icon: faGear })]
+                    })
                 ]
-            });
+            })
+        );
 
-            component.config = buildConfig({ rightActions: [action] });
-            fixture.detectChanges();
+        buttons()[0].click();
+        await settle(fixture);
 
-            const endContainer = fixture.nativeElement.querySelector('.bey-header-actions-end') as HTMLElement;
+        expect(action).not.toHaveBeenCalled();
+        expect(labels()).toContain('PDF');
+    });
 
-            expect(endContainer.querySelector('.bey-header-action-menu')).toBeTruthy();
-
-            const toggleButton = endContainer.querySelector('button') as HTMLButtonElement;
-            toggleButton.click();
-            fixture.detectChanges();
-
-            expect(parentAction).not.toHaveBeenCalled();
-            expect(endContainer.querySelector('.bey-header-menu-panel')).toBeTruthy();
-        });
-
-        it('should execute the sub-action and close the panel on click', () => {
-            const subActionExecuted = jest.fn();
-            const action = new HeaderAction({
-                key: 'create',
-                type: HeaderActionType.PrimaryButton,
-                subActions: [
-                    new HeaderAction({ action: subActionExecuted, key: 'create-item', type: HeaderActionType.Text })
+    it('closes the sub-actions once one of them runs', async () => {
+        const subAction = jest.fn();
+        await render(
+            buildConfig({
+                leftActions: [
+                    buildAction({
+                        key: 'export',
+                        label: 'Export',
+                        subActions: [buildAction({ key: 'pdf', label: 'PDF', action: subAction })]
+                    })
                 ]
-            });
+            })
+        );
 
-            component.config = buildConfig({ rightActions: [action] });
-            fixture.detectChanges();
+        buttons()[0].click();
+        await settle(fixture);
+        queryButton(fixture, 'PDF')?.click();
+        await settle(fixture);
 
-            component.toggleActionMenu(action);
-            fixture.detectChanges();
+        expect(subAction).toHaveBeenCalled();
+        expect(panels()).toHaveLength(0);
+    });
 
-            const panel = fixture.nativeElement.querySelector('.bey-header-menu-panel') as HTMLElement;
-            const subButton = panel.querySelector('button') as HTMLButtonElement;
+    it('follows a replaced config', async () => {
+        await render();
 
-            subButton.click();
+        fixture.componentRef.setInput('config', buildConfig({ title: 'demo.other' }));
+        await settle(fixture);
 
-            expect(subActionExecuted).toHaveBeenCalled();
-            expect(component.isActionMenuOpen(action)).toBe(false);
-        });
-
-        it('should close the open action menu on outside click', () => {
-            const action = new HeaderAction({
-                key: 'create',
-                type: HeaderActionType.PrimaryButton,
-                subActions: [new HeaderAction({ key: 'create-item', type: HeaderActionType.Text })]
-            });
-
-            component.config = buildConfig({ rightActions: [action] });
-            fixture.detectChanges();
-            component.toggleActionMenu(action);
-
-            component.onDocumentClick({ target: document.body } as unknown as MouseEvent);
-
-            expect(component.isActionMenuOpen(action)).toBe(false);
-        });
-
-        it('should close the open action menu on Escape', () => {
-            const action = new HeaderAction({
-                key: 'create',
-                type: HeaderActionType.PrimaryButton,
-                subActions: [new HeaderAction({ key: 'create-item', type: HeaderActionType.Text })]
-            });
-
-            component.config = buildConfig({ rightActions: [action] });
-            fixture.detectChanges();
-            component.toggleActionMenu(action);
-
-            component.onEscape();
-
-            expect(component.isActionMenuOpen(action)).toBe(false);
-        });
-
-        it('should toggle the menu closed when clicked again', () => {
-            const action = new HeaderAction({
-                key: 'create',
-                type: HeaderActionType.PrimaryButton,
-                subActions: [new HeaderAction({ key: 'create-item', type: HeaderActionType.Text })]
-            });
-
-            component.toggleActionMenu(action);
-            expect(component.isActionMenuOpen(action)).toBe(true);
-
-            component.toggleActionMenu(action);
-            expect(component.isActionMenuOpen(action)).toBe(false);
-        });
-
-        it('hasSubActions should be false for a plain action', () => {
-            const action = new HeaderAction({ key: 'save', type: HeaderActionType.PrimaryButton });
-
-            expect(component.hasSubActions(action)).toBe(false);
-        });
+        expect(fixture.nativeElement.querySelector('h1').textContent.trim()).toBe('demo.other');
     });
 });
-
-function buildConfig(overrides?: Partial<HeaderConfig>): HeaderConfig {
-    return new HeaderConfig({
-        prefix: overrides?.prefix ?? 'test.header',
-        title: overrides?.title ?? 'test.header.title',
-        backAction: overrides?.backAction,
-        badge: overrides?.badge,
-        leftActions: overrides?.leftActions ?? [],
-        menuActions: overrides?.menuActions ?? [],
-        rightActions: overrides?.rightActions ?? [],
-        variant: overrides?.variant
-    });
-}

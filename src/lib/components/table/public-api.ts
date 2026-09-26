@@ -6,9 +6,4 @@ export {
     TableCell as BeyTableCell,
     TextTableCell as BeyTextTableCell
 } from './models/table-cell.model';
-export type { TableBadge as BeyTableBadge } from './models/table-cell.model';
-export {
-    TableColumn as BeyTableColumn,
-    TableConfig as BeyTableConfig,
-    TableRow as BeyTableRow
-} from './models/table.model';
+export { TableColumn as BeyTableColumn, TableConfig as BeyTableConfig } from './models/table.model';

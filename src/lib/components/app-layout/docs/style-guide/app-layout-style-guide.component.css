@@ -1,9 +1,0 @@
-:host {
-    display: block;
-}
-
-.bey-app-layout-style-guide-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}

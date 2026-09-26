@@ -22,7 +22,6 @@ export type { PageHeaderConfigParameters as BeyPageHeaderConfigParameters } from
 export type { PageItem as BeyPageItem } from './models/page-item.model';
 export { SearchSortDirection as BeySearchSortDirection } from './models/page-search.model';
 export type { PageSearch as BeyPageSearch, SearchSort as BeySearchSort } from './models/page-search.model';
-export type { PageStateSnapshot as BeyPageStateSnapshot } from './models/page-state.model';
 export {
     PageTableConfig as BeyPageTableConfig,
     PageTableSearchConfig as BeyPageTableSearchConfig
@@ -34,7 +33,6 @@ export type {
 export { PageConfig as BeyPageConfig } from './models/page.model';
 export type {
     PageBackendResponse as BeyPageBackendResponse,
-    PageConfigParameters as BeyPageConfigParameters
+    PageConfigParameters as BeyPageConfigParameters,
+    PageHandle as BeyPageHandle
 } from './models/page.model';
-export { PageService as BeyPageService } from './services/page.service';
-export { PageStateRegistry as BeyPageStateRegistry } from './services/page-state-registry.service';

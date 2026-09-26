@@ -1,39 +1,27 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { FormRadioField } from '../../../models/fields/form-radio-field.model';
-import { FormConfig, FormSection } from '../../../models/form.model';
-import { FormService } from '../../../services/form.service';
+import { FormFieldOption } from '../../../models/form-field.model';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ReactiveFormsModule, TranslateModule],
     selector: 'bey-form-radio-field',
     standalone: true,
     styleUrls: ['../field-control.styles.css'],
     templateUrl: './field-radio.component.html'
 })
-export class FormRadioFieldComponent implements OnInit {
-    @Input() field: FormRadioField;
-    @Input() formConfig: FormConfig;
-    @Input() section: FormSection;
-
-    control?: FormControl<string | null>;
-    sectionGroup?: FormGroup;
-
-    private readonly formService = inject(FormService);
-
-    ngOnInit(): void {
-        this.sectionGroup = this.formService.getSectionGroup(this.formConfig, this.section.key);
-
-        if (this.sectionGroup) {
-            this.control = this.formService.getFieldControl(this.sectionGroup, this.field) as FormControl<
-                string | null
-            >;
-        }
-    }
+export class FormRadioFieldComponent {
+    readonly control = input.required<FormControl<string | null>>();
+    readonly field = input.required<FormRadioField>();
+    readonly options = input<FormFieldOption[]>([]);
+    readonly prefix = input.required<string>();
 
     isInvalid(): boolean {
-        return (this.control?.invalid && this.control?.touched) ?? false;
+        const control = this.control();
+
+        return control.invalid && control.touched;
     }
 }

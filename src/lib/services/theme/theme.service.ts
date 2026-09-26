@@ -42,6 +42,8 @@ export class ThemeService {
     private saveTheme(theme: Theme): void {
         try {
             localStorage.setItem(STORAGE_KEY, theme);
-        } catch { /* SSR o modo privado */ }
+        } catch {
+            /* SSR o modo privado */
+        }
     }
 }

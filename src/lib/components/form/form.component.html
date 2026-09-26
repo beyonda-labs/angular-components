@@ -1,16 +1,20 @@
-@if (config && config.formGroup) {
-    <div class="bey-form-container">
-        <!-- sections -->
-        <div class="bey-form-sections w-100 overflow-x-hidden">
-            @for (section of config.sections; track $index) {
-                <bey-form-section [section]="section" [formConfig]="config"></bey-form-section>
-            }
-        </div>
-        <!-- buttons -->
-        <div class="w-100 mt-2 d-flex justify-content-end pe-4">
-            @for (button of config.buttons; track $index) {
-                <bey-button [button]="getFormButton(button)"></bey-button>
-            }
-        </div>
+<div class="bey-form">
+    <div class="bey-form-sections bey-thin-scroll">
+        @for (section of visibleSections(); track section.key) {
+            <bey-form-section
+                [fieldStates]="fieldStates()"
+                [group]="sectionGroup(section)"
+                [prefix]="config().prefix"
+                [section]="section"
+            ></bey-form-section>
+        }
     </div>
-}
+
+    @if (buttons().length > 0) {
+        <div class="bey-form-buttons" [class.bey-form-buttons--stretch]="config().buttonLayout === 'stretch'">
+            @for (button of buttons(); track button.label) {
+                <bey-button [button]="button"></bey-button>
+            }
+        </div>
+    }
+</div>

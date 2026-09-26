@@ -1,29 +1,26 @@
 :host {
-    --bey-properties-menu-border: var(--bey-gray-200);
+    --bey-properties-menu-border: var(--bey-border-subtle);
+    --bey-properties-menu-max-width: 22.5rem;
 
     display: block;
     height: 100%;
 }
 
-:host-context(body.dark) {
-    --bey-properties-menu-border: var(--bey-gray-800);
-}
-
 .bey-properties-menu {
+    border: var(--bey-border-width) solid var(--bey-properties-menu-border);
+    border-radius: var(--bey-radius-lg);
     display: flex;
     flex-direction: column;
-    width: 100%;
-    max-width: 22.5rem;
     height: 100%;
-    border: 1px solid var(--bey-properties-menu-border);
-    border-radius: 0.6rem;
+    max-width: var(--bey-properties-menu-max-width);
     overflow: hidden;
+    width: 100%;
 }
 
-.bey-properties-menu-embedded {
-    max-width: none;
+.bey-properties-menu--embedded {
     border: none;
     border-radius: 0;
+    max-width: none;
 }
 
 .bey-properties-menu-body {
@@ -32,4 +29,5 @@
     flex-direction: column;
     min-height: 0;
     overflow-y: auto;
+    padding: var(--bey-space-sm);
 }

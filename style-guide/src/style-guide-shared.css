@@ -1,0 +1,39 @@
+/* ─── Shared style-guide utilities ─────────────────────────────────────────
+   Imported through `styleUrls` by the style-guide of each module. Angular
+   scopes styles per component, so every module that uses these classes has to
+   pull this file in.
+*/
+
+.bey-style-guide-description {
+    line-height: var(--bey-line-height-loose);
+}
+
+.bey-style-guide-info {
+    font-size: var(--bey-font-size-xs);
+}
+
+.bey-style-guide-example-label {
+    color: var(--bey-text-muted);
+    font-size: var(--bey-font-size-sm);
+    font-weight: var(--bey-font-weight-semibold);
+}
+
+.bey-style-guide-action-slot {
+    display: inline-flex;
+}
+
+.bey-style-guide-frame {
+    border: var(--bey-border-width) solid var(--bey-border-subtle);
+    border-radius: var(--bey-radius-md);
+    overflow: hidden;
+}
+
+@media (max-width: 575.98px) {
+    .bey-style-guide-actions {
+        flex-direction: column;
+    }
+
+    .bey-style-guide-action-slot {
+        width: 100%;
+    }
+}

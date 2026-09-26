@@ -1,0 +1,33 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.properties-menu.example' | translate }}
+</p>
+
+<div class="bey-properties-menu-style-guide-actions">
+    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="provideVariables()">
+        {{ 'angular-components-style-guide.properties-menu.provide-variables' | translate }}
+    </button>
+</div>
+
+<div class="bey-properties-menu-style-guide-frame">
+    <bey-properties-menu [config]="config" [variables]="variables()"></bey-properties-menu>
+</div>
+
+@if (lastFieldChange(); as change) {
+    <p class="bey-properties-menu-style-guide-log">onFieldValueChange: {{ change.fieldId }} = {{ change.value }}</p>
+}
+
+@if (lastVariableSelection(); as selection) {
+    <p class="bey-properties-menu-style-guide-log">onVariableSelect: {{ selection.expression }}</p>
+}
+
+@if (lastTreeNodeSelect(); as event) {
+    <p class="bey-properties-menu-style-guide-log">onTreeNodeSelect: {{ event.node.label }}</p>
+}
+
+@if (lastTreeAddBlock(); as event) {
+    <p class="bey-properties-menu-style-guide-log">onTreeAddBlock: {{ event.tabId }}</p>
+}
+
+@if (lastListItemSelect(); as event) {
+    <p class="bey-properties-menu-style-guide-log">onListItemSelect: {{ event.item.label }}</p>
+}

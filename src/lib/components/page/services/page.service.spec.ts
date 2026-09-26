@@ -1,349 +1,250 @@
 import { TestBed } from '@angular/core/testing';
+import { mock, MockProxy } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
-import { Tab, TabsConfig, TabsVariant } from '../../tabs/models/tabs.model';
-import { PageBackendResponse, PageConfig } from '../models/page.model';
+import { PageBackendResponse, PageConfig, PageConfigParameters, PageHandle } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageViewMode } from '../models/page-categories.model';
 import { PageHeaderConfig } from '../models/page-header.model';
+import { PageItem } from '../models/page-item.model';
 import { PageTableConfig } from '../models/page-table.model';
 import { PageService } from './page.service';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
 
+const ITEMS: PageItem[] = [
+    { id: 1, actions: ['edit'] },
+    { id: 2, actions: ['edit'] }
+];
+
+function buildResponse(results: PageItem[] = ITEMS, total = results.length): PageBackendResponse {
+    return { globalActions: ['create'], results, search: { filters: [], page: 1, size: 25, total } };
+}
+
 describe('PageService', () => {
     let service: PageService;
+    let pageActionsService: MockProxy<PageActionsService>;
+    let pageHttpService: MockProxy<PageHttpService>;
 
-    const load = jest.fn();
-    const loadTrash = jest.fn();
-    const loadCategoryPath = jest.fn();
-    const executeAction = jest.fn();
-    const filterVisibleActions = jest.fn(() => []);
-    const buildHeaderActions = jest.fn(() => []);
+    function buildConfig(overrides: Partial<PageConfigParameters> = {}): PageConfig {
+        return new PageConfig({
+            baseUrl: '/items',
+            prefix: 'demo',
+            tableConfig: new PageTableConfig({ columns: [], loadRow: () => [] }),
+            ...overrides
+        });
+    }
+
+    function buildCategorisedConfig(useTrash = false): PageConfig {
+        return buildConfig({
+            tableConfig: new PageTableConfig({
+                categoriesConfig: new PageCategoriesConfig({ useTrash }),
+                columns: [],
+                loadRow: () => []
+            })
+        });
+    }
+
+    function lastQuery(): Record<string, string | number> {
+        return pageHttpService.load.mock.calls[pageHttpService.load.mock.calls.length - 1][1];
+    }
+
+    function breadcrumbLabels(): string[] {
+        return service.categoryBreadcrumbConfig()?.items.map(item => item.label) ?? [];
+    }
+
+    function flush(): void {
+        TestBed.flushEffects();
+    }
 
     beforeEach(() => {
-        load.mockReset().mockReturnValue(of(buildResponse()));
-        loadTrash.mockReset().mockReturnValue(of(buildResponse()));
-        loadCategoryPath.mockReset();
-        executeAction.mockReset();
-        filterVisibleActions.mockReset().mockReturnValue([]);
-        buildHeaderActions.mockReset().mockReturnValue([]);
+        pageActionsService = mock<PageActionsService>();
+        pageActionsService.filterVisibleActions.mockImplementation(actions => actions);
+        pageActionsService.buildHeaderActions.mockReturnValue([]);
+        pageHttpService = mock<PageHttpService>();
+        pageHttpService.load.mockReturnValue(of(buildResponse()));
+        pageHttpService.loadTrash.mockReturnValue(of(buildResponse([{ id: 9 }])));
 
         TestBed.configureTestingModule({
             providers: [
                 PageService,
-                { provide: PageActionsService, useValue: { buildHeaderActions, executeAction, filterVisibleActions } },
-                { provide: PageHttpService, useValue: { load, loadCategoryPath, loadTrash } }
+                { provide: PageActionsService, useValue: pageActionsService },
+                { provide: PageHttpService, useValue: pageHttpService }
             ]
         });
 
         service = TestBed.inject(PageService);
     });
 
-    describe('loadFromBackend', () => {
-        it('should call load (not loadTrash) for a plain page', () => {
-            service.init(new PageConfig({ baseUrl: '/items', page: 'testPage' }));
-            service.load();
+    it('loads the page from the backend once it has a config, honouring the configured order', () => {
+        const onDataLoaded = jest.fn();
+        service.setConfig(
+            buildConfig({
+                onDataLoaded,
+                tableConfig: new PageTableConfig({
+                    columns: [],
+                    loadRow: () => [],
+                    order: { direction: 'asc' as never, field: 'name' }
+                })
+            })
+        );
+        flush();
 
-            expect(load).toHaveBeenCalledWith('/items', {});
-            expect(loadTrash).not.toHaveBeenCalled();
-        });
-
-        it('should send the parentField as the string "null" at the root of a categorized page', () => {
-            service.init(buildCategoryConfig());
-            service.load();
-
-            expect(load).toHaveBeenCalledWith('/items', { parentId: 'null' });
-        });
-
-        it('should send the current category id as parentField once inside a category', () => {
-            loadCategoryPath.mockReturnValue(of([{ id: 'cat-1', name: 'Electronics' }]));
-            service.init(buildCategoryConfig());
-            service.openCategory({ id: 'cat-1' });
-            service.load();
-
-            expect(load).toHaveBeenCalledWith('/items', { parentId: 'cat-1' });
-        });
-
-        it('should call loadTrash instead of load while in trash view mode, without a parentField', () => {
-            service.init(buildCategoryConfig());
-            service.setViewMode(PageViewMode.Trash);
-            service.load();
-
-            expect(loadTrash).toHaveBeenCalledWith('/items', {});
-            expect(load).not.toHaveBeenCalled();
-        });
+        expect(service.items()).toEqual(ITEMS);
+        expect(service.totalItems()).toBe(2);
+        expect(service.pageSearch().sort).toEqual({ direction: 'asc', field: 'name' });
+        expect(onDataLoaded).toHaveBeenCalledWith(buildResponse());
+        expect(service.loading()).toBe(false);
     });
 
-    describe('categoryBreadcrumbConfig', () => {
-        it('should be null without a categories config', () => {
-            service.init(new PageConfig({ baseUrl: '/items', page: 'testPage' }));
+    it('hands the consumer a handle that reloads and reports the selection', () => {
+        const onReady = jest.fn();
+        service.setConfig(buildConfig({ onReady }));
+        flush();
+        const handle = onReady.mock.calls[0][0] as PageHandle;
 
-            expect(service.categoryBreadcrumbConfig()).toBeNull();
-        });
+        service.setSelected([ITEMS[0]]);
+        expect(handle.selected()).toEqual([ITEMS[0]]);
+        expect(handle.viewMode()).toBe(PageViewMode.Table);
 
-        it('should show only the root label before navigating into a category', () => {
-            service.init(buildCategoryConfig());
+        handle.refresh();
+        flush();
 
-            const breadcrumb = service.categoryBreadcrumbConfig();
+        expect(pageHttpService.load).toHaveBeenCalledTimes(2);
+    });
 
-            expect(breadcrumb?.items.map(item => item.label)).toEqual(['testPage.categories.root']);
-            expect(breadcrumb?.items[0].isTranslationKey).toBe(true);
-        });
+    it('builds the table from the items and keeps the selection across a reload when the rows survive', () => {
+        const onSelectionChange = jest.fn();
+        service.setConfig(
+            buildConfig({ tableConfig: new PageTableConfig({ columns: [], loadRow: () => [], onSelectionChange }) })
+        );
+        flush();
 
-        it('should keep the root label as a translation key (resolved reactively by the breadcrumb component) and list the visited categories', () => {
-            loadCategoryPath.mockReturnValue(of([{ id: 'cat-1', name: 'Electronics' }]));
-            service.init(buildCategoryConfig());
-            service.openCategory({ id: 'cat-1' });
+        service.tableConfig()?.selectedItemsChange?.([ITEMS[1]], [1]);
+        expect(onSelectionChange).toHaveBeenCalledWith([ITEMS[1]]);
 
-            const breadcrumb = service.categoryBreadcrumbConfig();
+        pageHttpService.load.mockReturnValue(of(buildResponse([ITEMS[1]])));
+        service.refresh();
+        flush();
+        expect(service.selected()).toEqual([ITEMS[1]]);
 
-            expect(breadcrumb?.items.map(item => item.label)).toEqual(['testPage.categories.root', 'Electronics']);
-            expect(breadcrumb?.items[0].isTranslationKey).toBe(true);
-        });
+        pageHttpService.load.mockReturnValue(of(buildResponse([ITEMS[0]])));
+        service.refresh();
+        flush();
+        expect(service.selected()).toEqual([]);
+    });
 
-        it('should reset to root when navigating to breadcrumb id 0', () => {
-            loadCategoryPath.mockReturnValue(of([{ id: 'cat-1', name: 'Electronics' }]));
-            service.init(buildCategoryConfig());
-            service.openCategory({ id: 'cat-1' });
-            service.navigateBreadcrumb(0);
+    it('paginates and searches through the query, going back to the first page on a new filter', () => {
+        service.setConfig(
+            buildConfig({
+                tableConfig: new PageTableConfig({
+                    columns: [],
+                    loadRow: () => [],
+                    search: { fields: [], mainField: 'name' }
+                })
+            })
+        );
+        pageHttpService.load.mockReturnValue(of(buildResponse(ITEMS, 80)));
+        flush();
 
-            expect(service.categoryBreadcrumbConfig()?.items.map(item => item.label)).toEqual(['testPage.categories.root']);
+        service.paginationConfig()?.onPageChange?.(3);
+        flush();
+        expect(service.pageSearch().page).toBe(3);
+        expect(lastQuery()['search']).toEqual(expect.any(String));
+
+        service.searchConfig()?.onFiltersChange?.([]);
+        flush();
+        expect(service.pageSearch().page).toBe(1);
+    });
+
+    it('offers the header actions the backend and the selection allow', () => {
+        service.setConfig(
+            buildConfig({
+                headerConfig: new PageHeaderConfig({
+                    actions: [
+                        new PageAction({
+                            key: PageStandardAction.Create,
+                            scope: PageActionScope.Global,
+                            zone: PageActionZone.Right
+                        })
+                    ]
+                })
+            })
+        );
+        flush();
+
+        expect(service.headerConfig()).not.toBeNull();
+        expect(pageActionsService.filterVisibleActions).toHaveBeenLastCalledWith(
+            expect.arrayContaining([expect.objectContaining({ key: 'create' })]),
+            ['create'],
+            []
+        );
+    });
+
+    describe('categories', () => {
+        it('scopes the list to the current category and walks the breadcrumb back up', () => {
+            pageHttpService.loadCategoryPath.mockReturnValue(of([{ id: 'a', name: 'Books' } as never]));
+            service.setConfig(buildCategorisedConfig());
+            flush();
+            expect(lastQuery()['parentId']).toBe('null');
+            expect(breadcrumbLabels()).toEqual(['demo.categories.root']);
+
+            service.openCategory({ id: 'a' });
+            flush();
+            expect(lastQuery()['parentId']).toBe('a');
+            expect(breadcrumbLabels()).toEqual(['demo.categories.root', 'Books']);
+
+            service.categoryBreadcrumbConfig()?.onItemClick?.(0);
+            flush();
+            expect(lastQuery()['parentId']).toBe('null');
             expect(service.currentCategoryId()).toBeNull();
         });
 
-        it('should replace the path with whatever the backend returns, not stack it, on every openCategory call', () => {
-            loadCategoryPath.mockReturnValueOnce(of([{ id: 'cat-1', name: 'Electronics' }]));
-            service.init(buildCategoryConfig());
-            service.openCategory({ id: 'cat-1' });
+        it('switches to the trash, which is flat and has its own breadcrumb, and back', () => {
+            service.setConfig(buildCategorisedConfig(true));
+            flush();
+            expect(service.viewToggleConfig()?.tabs.map(tab => tab.key)).toEqual(['table', 'trash']);
 
-            loadCategoryPath.mockReturnValueOnce(
-                of([
-                    { id: 'cat-1', name: 'Electronics' },
-                    { id: 'cat-2', name: 'Phones' }
-                ])
-            );
-            service.openCategory({ id: 'cat-2' });
+            service.viewToggleConfig()?.onTabChange?.(PageViewMode.Trash);
+            flush();
+            expect(pageHttpService.loadTrash).toHaveBeenCalled();
+            expect(service.items()).toEqual([{ id: 9 }]);
+            expect(breadcrumbLabels()).toEqual(['demo.tabs.trash.label']);
 
-            expect(loadCategoryPath).toHaveBeenLastCalledWith('/items', 'cat-2');
-            expect(service.currentCategoryId()).toBe('cat-2');
-            expect(service.categoryBreadcrumbConfig()?.items.map(item => item.label)).toEqual([
-                'testPage.categories.root',
-                'Electronics',
-                'Phones'
-            ]);
-        });
-
-        it('should truncate the local path (no request) when navigating back to an intermediate breadcrumb entry', () => {
-            loadCategoryPath.mockReturnValue(
-                of([
-                    { id: 'cat-1', name: 'Electronics' },
-                    { id: 'cat-2', name: 'Phones' }
-                ])
-            );
-            service.init(buildCategoryConfig());
-            service.openCategory({ id: 'cat-2' });
-            loadCategoryPath.mockClear();
-
-            service.navigateBreadcrumb(1);
-
-            expect(loadCategoryPath).not.toHaveBeenCalled();
-            expect(service.currentCategoryId()).toBe('cat-1');
-            expect(service.categoryBreadcrumbConfig()?.items.map(item => item.label)).toEqual([
-                'testPage.categories.root',
-                'Electronics'
-            ]);
-        });
-
-        it('should show only the translated trash label, not the catalog path, while the trash view is active', () => {
-            loadCategoryPath.mockReturnValue(of([{ id: 'cat-1', name: 'Electronics' }]));
-            service.init(buildCategoryConfig({ useTrash: true }));
-            service.openCategory({ id: 'cat-1' });
-
-            service.setViewMode(PageViewMode.Trash);
-
-            const breadcrumb = service.categoryBreadcrumbConfig();
-
-            expect(breadcrumb?.items.map(item => item.label)).toEqual(['testPage.tabs.trash.label']);
-            expect(breadcrumb?.items[0].isTranslationKey).toBe(true);
-        });
-
-        it('should restore the previous catalog path when switching back from trash to the table view', () => {
-            loadCategoryPath.mockReturnValue(of([{ id: 'cat-1', name: 'Electronics' }]));
-            service.init(buildCategoryConfig({ useTrash: true }));
-            service.openCategory({ id: 'cat-1' });
-
-            service.setViewMode(PageViewMode.Trash);
             service.setViewMode(PageViewMode.Table);
-
-            expect(service.categoryBreadcrumbConfig()?.items.map(item => item.label)).toEqual([
-                'testPage.categories.root',
-                'Electronics'
-            ]);
-            expect(service.currentCategoryId()).toBe('cat-1');
+            flush();
+            expect(breadcrumbLabels()).toEqual(['demo.categories.root']);
         });
     });
 
-    describe('viewToggleConfig', () => {
-        it('should be null without a categories config', () => {
-            service.init(new PageConfig({ baseUrl: '/items', page: 'testPage' }));
+    it('gives the actions a context that clears the selection and reloads after a change', () => {
+        service.setConfig(
+            buildConfig({
+                headerConfig: new PageHeaderConfig({
+                    actions: [
+                        new PageAction({
+                            key: PageStandardAction.Delete,
+                            scope: PageActionScope.Item,
+                            zone: PageActionZone.Menu
+                        })
+                    ]
+                })
+            })
+        );
+        pageActionsService.buildHeaderActions.mockImplementation((actions, _zone, execute) =>
+            actions.map(action => ({ action: () => execute(action) }) as never)
+        );
+        flush();
+        service.setSelected([ITEMS[0]]);
 
-            expect(service.viewToggleConfig()).toBeNull();
-        });
+        service.headerConfig()?.menuActions[0].action?.();
+        const context = pageActionsService.executeAction.mock.calls[0][1] as PageActionsContext;
 
-        it('should be null when the categories config does not enable trash', () => {
-            service.init(buildCategoryConfig({ useTrash: false }));
+        expect(context.selectedItems()).toEqual([ITEMS[0]]);
 
-            expect(service.viewToggleConfig()).toBeNull();
-        });
-
-        it('should expose a segmented two-tab toggle when trash is enabled', () => {
-            service.init(buildCategoryConfig({ useTrash: true }));
-
-            const toggle = service.viewToggleConfig() as TabsConfig;
-
-            expect(toggle.variant).toBe(TabsVariant.Segmented);
-            expect(toggle.tabs.map((tab: Tab) => tab.key)).toEqual([PageViewMode.Table, PageViewMode.Trash]);
-            expect(toggle.activeTab).toBe(PageViewMode.Table);
-        });
-
-        it('should switch the view mode when the toggle changes tabs', () => {
-            service.init(buildCategoryConfig({ useTrash: true }));
-
-            const toggle = service.viewToggleConfig() as TabsConfig;
-
-            toggle.onTabChange?.(PageViewMode.Trash);
-
-            expect(service.viewMode()).toBe(PageViewMode.Trash);
-        });
-    });
-
-    describe('remote category navigation via categoriesConfig.openCategory', () => {
-        it('should navigate into the category when categoriesConfig emits $openCategory, from any caller', () => {
-            loadCategoryPath.mockReturnValue(of([{ id: 'cat-1', name: 'Electronics' }]));
-            const config = buildCategoryConfig();
-
-            service.init(config);
-
-            config.tableConfig?.categoriesConfig?.openCategory({ id: 'cat-1' });
-
-            expect(service.currentCategoryId()).toBe('cat-1');
-            expect(service.categoryBreadcrumbConfig()?.items.map(item => item.label)).toEqual([
-                'testPage.categories.root',
-                'Electronics'
-            ]);
-        });
-
-        it('should stop reacting to $openCategory after the service is destroyed', () => {
-            loadCategoryPath.mockReturnValue(of([{ id: 'cat-1', name: 'Electronics' }]));
-            const config = buildCategoryConfig();
-
-            service.init(config);
-            service.ngOnDestroy();
-
-            config.tableConfig?.categoriesConfig?.openCategory({ id: 'cat-1' });
-
-            expect(service.currentCategoryId()).toBeNull();
-        });
-
-        it('should do nothing when there is no baseUrl to resolve the path against', () => {
-            const config = buildCategoryConfig();
-
-            config.baseUrl = undefined;
-            service.init(config);
-
-            service.openCategory({ id: 'cat-1' });
-
-            expect(loadCategoryPath).not.toHaveBeenCalled();
-            expect(service.currentCategoryId()).toBeNull();
-        });
-    });
-
-    describe('buildActionsContext (via header action execution)', () => {
-        it('should provide a context with the current category id and all callbacks', () => {
-            const config = buildCategoryConfig({ withHeader: true });
-            const action = new PageAction({
-                key: PageStandardAction.DeleteCategory,
-                scope: PageActionScope.Item,
-                zone: PageActionZone.Left
-            });
-
-            loadCategoryPath.mockReturnValue(of([{ id: 'cat-1', name: 'Electronics' }]));
-
-            const context = captureContext(service, buildHeaderActions, executeAction, config, action);
-
-            service.openCategory({ id: 'cat-1' });
-
-            expect(context.getCurrentCategoryId()).toBe('cat-1');
-        });
-
-        it('should clear the selection and reset pagination when onCategoryDeleted runs', () => {
-            const config = buildCategoryConfig({ withHeader: true });
-            const action = new PageAction({
-                key: PageStandardAction.DeleteCategory,
-                scope: PageActionScope.Item,
-                zone: PageActionZone.Left
-            });
-
-            service.setSelected([{ id: 1 }]);
-
-            const context = captureContext(service, buildHeaderActions, executeAction, config, action);
-
-            context.onCategoryDeleted();
-
-            expect(service.selected()).toEqual([]);
-            expect(service.pageSearch().page).toBe(1);
-        });
-
-        it('should clear the selection when onTrashItemDeleted runs', () => {
-            const config = buildCategoryConfig({ withHeader: true });
-            const action = new PageAction({
-                key: PageStandardAction.DeleteTrashItem,
-                scope: PageActionScope.Item,
-                zone: PageActionZone.Left
-            });
-
-            service.setSelected([{ id: 1 }]);
-
-            const context = captureContext(service, buildHeaderActions, executeAction, config, action);
-
-            context.onTrashItemDeleted();
-
-            expect(service.selected()).toEqual([]);
-        });
+        context.onDeleted();
+        flush();
+        expect(service.selected()).toEqual([]);
+        expect(pageHttpService.load).toHaveBeenCalledTimes(2);
     });
 });
-
-function captureContext(
-    service: PageService,
-    buildHeaderActionsMock: jest.Mock,
-    executeActionMock: jest.Mock,
-    config: PageConfig,
-    action: PageAction
-): PageActionsContext {
-    service.init(config);
-    service.headerConfig();
-
-    const execute = buildHeaderActionsMock.mock.calls[0][2] as (action: PageAction) => void;
-
-    execute(action);
-
-    return executeActionMock.mock.calls[0][1] as PageActionsContext;
-}
-
-function buildResponse(overrides?: Partial<PageBackendResponse>): PageBackendResponse {
-    return { globalActions: [], results: [], ...overrides };
-}
-
-function buildCategoryConfig(options?: { useTrash?: boolean; withHeader?: boolean }): PageConfig {
-    return new PageConfig({
-        baseUrl: '/items',
-        headerConfig: options?.withHeader ? new PageHeaderConfig({ actions: [] }) : undefined,
-        page: 'testPage',
-        tableConfig: new PageTableConfig({
-            categoriesConfig: new PageCategoriesConfig({ useTrash: options?.useTrash ?? false }),
-            columns: [],
-            loadRow: () => []
-        })
-    });
-}

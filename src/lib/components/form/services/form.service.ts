@@ -1,17 +1,30 @@
 import { inject, Injectable } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 
-import { FormCheckboxField } from '../models/fields/form-checkbox-field.model';
 import { FormChipsField } from '../models/fields/form-chips-field.model';
 import { FormDateField } from '../models/fields/form-date-field.model';
 import { FormFileField, matchesAcceptPattern } from '../models/fields/form-file-field.model';
 import { FormNumberField } from '../models/fields/form-number-field.model';
-import { FormTextField } from '../models/fields/form-text-field.model';
-import { FormTextareaField } from '../models/fields/form-textarea-field.model';
-import { FormConfig, FormSection } from '../models/form.model';
-import { FormField, FormFieldType } from '../models/form-field.model';
+import { FormConfig } from '../models/form.model';
+import { FormField, FormFieldType, FormValue } from '../models/form-field.model';
 import { DateFormatService } from './date-format.service';
 import { FormValidatorService } from './form-validator.service';
+
+/** What a control holds until the consumer or the user gives it a value; a type missing here has no control. */
+const EMPTY_VALUES: Partial<Record<FormFieldType, unknown>> = {
+    [FormFieldType.Autocomplete]: '',
+    [FormFieldType.Checkbox]: false,
+    [FormFieldType.Chips]: [],
+    [FormFieldType.Date]: '',
+    [FormFieldType.File]: null,
+    [FormFieldType.Number]: null,
+    [FormFieldType.Password]: '',
+    [FormFieldType.Radio]: '',
+    [FormFieldType.Select]: '',
+    [FormFieldType.Text]: '',
+    [FormFieldType.TextVariable]: '',
+    [FormFieldType.Textarea]: ''
+};
 
 @Injectable({
     providedIn: 'root'
@@ -20,176 +33,105 @@ export class FormService {
     private readonly dateFormatService = inject(DateFormatService);
     private readonly formValidatorService = inject(FormValidatorService);
 
-    getFieldControl(sectionGroup: FormGroup, field: FormField): AbstractControl | undefined {
-        const control = sectionGroup?.get(field.key);
+    buildFormGroup<TValue>(config: FormConfig<TValue>): FormGroup {
+        const initialValue = (config.initialValue ?? {}) as FormValue;
+        const formGroup = new FormGroup({});
 
-        if (!control) {
+        for (const section of config.sections) {
+            const sectionGroup = new FormGroup({});
+
+            for (const row of section.rows) {
+                for (const field of row.fields) {
+                    const control = this.initFieldControl(field, initialValue[section.key]?.[field.key]);
+
+                    if (control && !sectionGroup.contains(field.key)) {
+                        sectionGroup.addControl(field.key, control);
+                    }
+                }
+            }
+
+            formGroup.addControl(section.key, sectionGroup);
+        }
+
+        return formGroup;
+    }
+
+    initFieldControl(field: FormField, initialValue?: unknown): FormControl | undefined {
+        if (!(field.type in EMPTY_VALUES)) {
             return undefined;
         }
 
-        switch (field.type) {
-            case FormFieldType.Autocomplete:
-            case FormFieldType.Text:
-            case FormFieldType.TextVariable:
-            case FormFieldType.Password:
-            case FormFieldType.Date:
-            case FormFieldType.Radio:
-            case FormFieldType.Select:
-            case FormFieldType.Textarea:
-                return control as FormControl<string | null>;
-            case FormFieldType.Number:
-                return control as FormControl<number | null>;
-            case FormFieldType.Checkbox:
-                return control as FormControl<boolean | null>;
-            case FormFieldType.Chips:
-                return control as FormControl<string[] | null>;
-            case FormFieldType.File:
-                return control as FormControl<File | null>;
-            default:
-                return undefined;
+        return this.buildControl<unknown>(field, initialValue ?? EMPTY_VALUES[field.type]);
+    }
+
+    private buildControl<T>(field: FormField, value: T): FormControl<T> {
+        return new FormControl<T>(
+            { value, disabled: field.isDisabled === true },
+            {
+                asyncValidators: this.formValidatorService.getFieldAsyncValidators(field),
+                nonNullable: false,
+                validators: this.getValidators(field)
+            }
+        ) as FormControl<T>;
+    }
+
+    private getChipsValidators(field: FormChipsField): ValidatorFn[] {
+        if (field.maxItems === undefined) {
+            return [];
         }
+
+        const { maxItems } = field;
+
+        return [
+            control => {
+                const value = control.value as string[] | null;
+
+                return value && value.length > maxItems ? { maxItems: { maxItems, actual: value.length } } : null;
+            }
+        ];
     }
 
-    getFieldPrefix(formConfig: FormConfig, section: FormSection, field: FormField): string {
-        return `${this.getSectionPrefix(formConfig, section)}.${field.key}`;
-    }
-
-    getSectionGroup(formConfig: FormConfig, sectionKey: string): FormGroup | undefined {
-        const group = formConfig.formGroup?.get(sectionKey);
-
-        return group instanceof FormGroup ? group : undefined;
-    }
-
-    getSectionPrefix(formConfig: FormConfig, section: FormSection): string {
-        return `${formConfig.i18nPrefix}.${section.key}`;
-    }
-
-    initFieldControl(field: FormField): FormControl | undefined {
-        switch (field.type) {
-            case FormFieldType.Text:
-            case FormFieldType.TextVariable:
-            case FormFieldType.Password:
-                return this.initTextFieldControl(field as FormTextField);
-            case FormFieldType.Checkbox:
-                return this.initCheckboxFieldControl(field as FormCheckboxField);
-            case FormFieldType.Date:
-                return this.initDateFieldControl(field as FormDateField);
-            case FormFieldType.Autocomplete:
-            case FormFieldType.Radio:
-            case FormFieldType.Select:
-                return this.initStringFieldControl(field);
-            case FormFieldType.Number:
-                return this.initNumberFieldControl(field as FormNumberField);
-            case FormFieldType.Textarea:
-                return this.initTextareaFieldControl(field as FormTextareaField);
-            case FormFieldType.Chips:
-                return this.initChipsFieldControl(field as FormChipsField);
-            case FormFieldType.File:
-                return this.initFileFieldControl(field as FormFileField);
-            default:
-                return undefined;
-        }
-    }
-
-    private getValidators(field: FormField): ValidatorFn[] {
+    private getDateRangeValidators(field: FormDateField): ValidatorFn[] {
         const validators: ValidatorFn[] = [];
+        const parse = (value?: string | null): Date | null => this.dateFormatService.parseDate(value, field.format);
 
-        if (field.isRequired) {
-            validators.push(Validators.required);
+        if (field.minDate) {
+            validators.push(control => {
+                const value = control.value as string | null;
+                const currentDate = parse(value);
+                const minDate = parse(field.minDate);
+
+                return currentDate && minDate && currentDate < minDate
+                    ? { minDate: { minDate: field.minDate, actual: value } }
+                    : null;
+            });
         }
 
-        const fieldValidators = this.formValidatorService.getFieldValidators(field);
+        if (field.maxDate) {
+            validators.push(control => {
+                const value = control.value as string | null;
+                const currentDate = parse(value);
+                const maxDate = parse(field.maxDate);
 
-        fieldValidators.forEach(validator => validators.push(validator));
+                return currentDate && maxDate && currentDate > maxDate
+                    ? { maxDate: { maxDate: field.maxDate, actual: value } }
+                    : null;
+            });
+        }
 
         return validators;
-    }
-
-    private initTextFieldControl(field: FormTextField): FormControl<string | null> {
-        return new FormControl<string | null>(
-            {
-                value: '',
-                disabled: field.isDisabled
-            },
-            {
-                validators: this.getValidators(field),
-                asyncValidators: this.formValidatorService.getFieldAsyncValidators(field)
-            }
-        );
-    }
-
-    private initStringFieldControl(field: FormField): FormControl<string | null> {
-        return new FormControl<string | null>(
-            { value: '', disabled: field.isDisabled },
-            {
-                validators: this.getValidators(field),
-                asyncValidators: this.formValidatorService.getFieldAsyncValidators(field)
-            }
-        );
-    }
-
-    private initDateFieldControl(field: FormDateField): FormControl<string | null> {
-        return new FormControl<string | null>(
-            { value: '', disabled: field.isDisabled },
-            {
-                validators: [...this.getValidators(field), ...this.getDateRangeValidators(field)],
-                asyncValidators: this.formValidatorService.getFieldAsyncValidators(field)
-            }
-        );
-    }
-
-    private initCheckboxFieldControl(field: FormCheckboxField): FormControl<boolean | null> {
-        return new FormControl<boolean | null>(
-            { value: false, disabled: field.isDisabled },
-            {
-                validators: this.getValidators(field),
-                asyncValidators: this.formValidatorService.getFieldAsyncValidators(field)
-            }
-        );
-    }
-
-    private initTextareaFieldControl(field: FormTextareaField): FormControl<string | null> {
-        return new FormControl<string | null>(
-            { value: '', disabled: field.isDisabled },
-            {
-                validators: this.getValidators(field),
-                asyncValidators: this.formValidatorService.getFieldAsyncValidators(field)
-            }
-        );
-    }
-
-    private initChipsFieldControl(field: FormChipsField): FormControl<string[] | null> {
-        return new FormControl<string[] | null>(
-            { value: [], disabled: field.isDisabled },
-            {
-                validators: [...this.getValidators(field), ...this.getChipsValidators(field)],
-                asyncValidators: this.formValidatorService.getFieldAsyncValidators(field)
-            }
-        );
-    }
-
-    private initFileFieldControl(field: FormFileField): FormControl<File | null> {
-        return new FormControl<File | null>(
-            { value: null, disabled: field.isDisabled },
-            {
-                validators: [...this.getValidators(field), ...this.getFileValidators(field)],
-                asyncValidators: this.formValidatorService.getFieldAsyncValidators(field)
-            }
-        );
     }
 
     private getFileValidators(field: FormFileField): ValidatorFn[] {
         const validators: ValidatorFn[] = [];
 
         if (field.maxSizeBytes !== undefined) {
+            const { maxSizeBytes } = field;
+
             validators.push(control => {
                 const file = control.value as File | null;
 
-                if (!file || file.size <= field.maxSizeBytes!) {
-                    return null;
-                }
-
-                return { maxSizeBytes: { maxSizeBytes: field.maxSizeBytes, actual: file.size } };
+                return file && file.size > maxSizeBytes ? { maxSizeBytes: { maxSizeBytes, actual: file.size } } : null;
             });
         }
 
@@ -197,74 +139,8 @@ export class FormService {
             validators.push(control => {
                 const file = control.value as File | null;
 
-                if (!file || field.accept.some(pattern => matchesAcceptPattern(pattern, file.type))) {
-                    return null;
-                }
-
-                return { accept: { accept: field.accept, actual: file.type } };
-            });
-        }
-
-        return validators;
-    }
-
-    private initNumberFieldControl(field: FormNumberField): FormControl<number | null> {
-        return new FormControl<number | null>(
-            { value: null, disabled: field.isDisabled },
-            {
-                validators: [...this.getValidators(field), ...this.getNumberRangeValidators(field)],
-                asyncValidators: this.formValidatorService.getFieldAsyncValidators(field)
-            }
-        );
-    }
-
-    private getDateRangeValidators(field: FormDateField): ValidatorFn[] {
-        const validators: ValidatorFn[] = [];
-
-        if (field.minDate) {
-            validators.push(control => {
-                const value = control.value as string | null;
-                const currentDate = this.dateFormatService.parseDate(value, field.format);
-                const minDate = this.dateFormatService.parseDate(field.minDate, field.format);
-
-                if (!currentDate || !minDate) {
-                    return null;
-                }
-
-                return currentDate < minDate ? { minDate: { minDate: field.minDate, actual: value } } : null;
-            });
-        }
-
-        if (field.maxDate) {
-            validators.push(control => {
-                const value = control.value as string | null;
-                const currentDate = this.dateFormatService.parseDate(value, field.format);
-                const maxDate = this.dateFormatService.parseDate(field.maxDate, field.format);
-
-                if (!currentDate || !maxDate) {
-                    return null;
-                }
-
-                return currentDate > maxDate ? { maxDate: { maxDate: field.maxDate, actual: value } } : null;
-            });
-        }
-
-        return validators;
-    }
-
-    private getChipsValidators(field: FormChipsField): ValidatorFn[] {
-        const validators: ValidatorFn[] = [];
-
-        if (field.maxItems !== undefined) {
-            validators.push(control => {
-                const value = control.value as string[] | null;
-
-                if (!value) {
-                    return null;
-                }
-
-                return value.length > field.maxItems!
-                    ? { maxItems: { maxItems: field.maxItems, actual: value.length } }
+                return file && !field.accept.some(pattern => matchesAcceptPattern(pattern, file.type))
+                    ? { accept: { accept: field.accept, actual: file.type } }
                     : null;
             });
         }
@@ -276,29 +152,48 @@ export class FormService {
         const validators: ValidatorFn[] = [];
 
         if (field.min !== undefined) {
+            const { min } = field;
+
             validators.push(control => {
                 const value = control.value as number | null;
 
-                if (value === null || value === undefined) {
-                    return null;
-                }
-
-                return value < field.min! ? { min: { min: field.min, actual: value } } : null;
+                return value !== null && value < min ? { min: { min, actual: value } } : null;
             });
         }
 
         if (field.max !== undefined) {
+            const { max } = field;
+
             validators.push(control => {
                 const value = control.value as number | null;
 
-                if (value === null || value === undefined) {
-                    return null;
-                }
-
-                return value > field.max! ? { max: { max: field.max, actual: value } } : null;
+                return value !== null && value > max ? { max: { max, actual: value } } : null;
             });
         }
 
         return validators;
+    }
+
+    private getValidators(field: FormField): ValidatorFn[] {
+        return [
+            ...(field.isRequired ? [Validators.required] : []),
+            ...this.formValidatorService.getFieldValidators(field),
+            ...this.getTypeValidators(field)
+        ];
+    }
+
+    private getTypeValidators(field: FormField): ValidatorFn[] {
+        switch (field.type) {
+            case FormFieldType.Chips:
+                return this.getChipsValidators(field as FormChipsField);
+            case FormFieldType.Date:
+                return this.getDateRangeValidators(field as FormDateField);
+            case FormFieldType.File:
+                return this.getFileValidators(field as FormFileField);
+            case FormFieldType.Number:
+                return this.getNumberRangeValidators(field as FormNumberField);
+            default:
+                return [];
+        }
     }
 }

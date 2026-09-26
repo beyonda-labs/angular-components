@@ -1,28 +1,24 @@
-@if (isSectionVisible()) {
-    <div class="w-100 mb-2">
-        <!-- title -->
-        @if (section.isTitleVisible) {
-            <p
-                class="bey-form-section-title fw-semibold text-dark mb-3"
-                [tooltip]="getSectionTooltip() | translate"
-                placement="right"
-                container="body"
-                boundariesElement="viewport"
-            >
-                {{ getSectionLabel() | translate }}
-            </p>
-        }
-        <!-- rows -->
-        @for (row of section.rows; track $index) {
-            <div class="w-100 d-flex gap-2">
-                <bey-form-row
-                    class="w-100"
-                    [class.mb-2]="hasVisibleField(row)"
-                    [formConfig]="formConfig"
-                    [section]="section"
-                    [row]="row"
-                ></bey-form-row>
-            </div>
-        }
-    </div>
-}
+<div class="bey-form-section">
+    @if (section().isTitleVisible) {
+        <p
+            class="bey-form-section-title"
+            boundariesElement="viewport"
+            container="body"
+            placement="right"
+            [tooltip]="tooltip() | translate"
+        >
+            {{ label() | translate }}
+        </p>
+    }
+
+    @for (row of visibleRows(); track $index) {
+        <bey-form-row
+            class="bey-form-section-row"
+            [fieldStates]="fieldStates()"
+            [group]="group()"
+            [prefix]="sectionPrefix()"
+            [row]="row"
+            [sectionKey]="section().key"
+        ></bey-form-row>
+    }
+</div>

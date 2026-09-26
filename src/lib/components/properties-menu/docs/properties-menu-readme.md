@@ -1,43 +1,16 @@
-# Properties Menu Component (`bey-properties-menu`)
+# Properties menu
 
-Contextual property inspector for a visual editor's selected block. Renders a header, configurable tabs, groups and
-typed fields (text, number, select, toggle, color, segmented, spacing) from a plain configuration object,
-plus an optional variable picker for fields marked `acceptsVariable: true`.
+The property inspector of a visual editor: a header, tabs, collapsible groups and typed fields, all built from
+one config. A group renders one of four contents: fields, a card list, nested tabs of fields, or a tree. The
+menu owns what happens inside it (expanding, picking, typing) and reports every change through the config
+callbacks; the consumer owns the model and rebuilds the config when it changes.
 
-Supported capabilities:
-
--   Fully data-driven tabs, groups and fields — nothing is hardcoded in the template.
--   A single `BeyPropertyTab` holds any number of `BeyPropertyGroup`s; each group renders one kind of content
-    (`properties`, `tree` or `list`) — so a tab can freely mix a properties editor, a structure browser and a card
-    catalog, and can hold several groups of the same content type (e.g. two separate list catalogs).
--   Per-group header visibility (`showHeader`): a group without a header renders no label/chevron and stays always
-    expanded — for content that shouldn't be collapsible, like a document structure tree.
--   Collapsible groups (when `showHeader` is `true`) with `expanded`, `disabled`, `hidden`, `order` and a `secondary`
-    variant for less prominent groups.
--   Seven built-in field types, each its own `PropertyField` subclass carrying only the properties it needs.
--   A tree-content group for navigating a block/document hierarchy — selection, collapsible nodes and an optional
-    "add block" action.
--   A list-content group for a card catalog of selectable items — e.g. block types to insert — built on top of the
-    existing `bey-list` component.
--   Variable insertion (`{{ path }}`) with cursor-aware insertion for text fields.
--   Imperative (`setVariables`/`getVariables`/`clearVariables`) and reactive (`[variables]` input) variable management.
-
----
-
-## Quick start
+## Usage
 
 ```ts
-import {
-    BeyPropertiesMenuConfig,
-    BeyPropertyFieldsContent,
-    BeyPropertyGroup,
-    BeyPropertyTab,
-    BeyPropertyTextField
-} from '@beyonda-labs/angular-components';
-
-const config = new BeyPropertiesMenuConfig({
-    prefix: 'app.properties-menu',
-    subtitle: 'app.properties-menu.subtitle',
+readonly config = new BeyPropertiesMenuConfig({
+    prefix: 'myApp.inspector',
+    subtitle: 'myApp.inspector.block.heading',
     tabs: [
         new BeyPropertyTab({
             id: 'properties',
@@ -46,314 +19,137 @@ const config = new BeyPropertiesMenuConfig({
                     id: 'content',
                     expanded: true,
                     content: new BeyPropertyFieldsContent({
-                        fields: [new BeyPropertyTextField({ id: 'text', value: 'FACTURA', acceptsVariable: true })]
+                        fields: [new BeyPropertyTextField({ id: 'text', acceptsVariable: true, value: 'INVOICE' })]
                     })
                 })
             ]
         })
-    ]
+    ],
+    onFieldValueChange: ({ fieldId, value }) => this.store.update(fieldId, value),
+    onClose: () => this.panel.close()
 });
 ```
 
 ```html
-<bey-properties-menu
-    [config]="config"
-    (fieldValueChange)="onFieldValueChange($event)"
-    (variableSelected)="onVariableSelected($event)"
-></bey-properties-menu>
+<bey-properties-menu [config]="config" [variables]="variables()" />
 ```
 
-```ts
-@ViewChild(BeyPropertiesMenuComponent) propertiesMenu!: BeyPropertiesMenuComponent;
+## BeyPropertiesMenuConfig
 
-this.propertiesMenu.setVariables([{ id: 'customer', path: 'customer', label: 'Customer', type: 'object', children: [...] }]);
-```
+| Field         | Required | Meaning                                                                          |
+| ------------- | -------- | -------------------------------------------------------------------------------- |
+| `prefix`      | yes      | i18n prefix the default labels resolve from                                      |
+| `tabs`        | no       | `BeyPropertyTab[]`, each with its `groups`; a tab may carry `addLabel`           |
+| `activeTabId` | no       | Open tab, defaults to the first visible one                                      |
+| `title`       | no       | Header title key, defaults to `<prefix>.title`                                   |
+| `subtitle`    | no       | Header subtitle key                                                              |
+| `icon`        | no       | Header icon                                                                      |
+| `embedded`    | no       | Drops the header and the card chrome, for a panel that already sits in a sidebar |
+| `on…`         | no       | The callbacks below                                                              |
 
----
+`[variables]` is the catalogue of `BeyPropertyVariable` the text fields offer when `acceptsVariable` is set.
+The select and attachment fields carry their own `variables`, since which variable fits them is domain knowledge.
 
-## Models
+### Callbacks
 
-`BeyPropertiesMenuConfig` → `BeyPropertyTab[]` → `BeyPropertyGroup[]` → `BeyPropertyGroupContent` (`properties` |
-`tree` | `list`), each following the class + parameters-interface pattern used across the library (required fields
-first, optional fields defaulted in the constructor).
+| Callback                                                                       | Payload                                                          | When                                                       |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------- | ---------------------------------------------------------- |
+| `onActiveTabChange`                                                            | `tabId`                                                          | The active tab changes                                     |
+| `onClose`                                                                      |                                                                  | The header close button; it only shows when set            |
+| `onFieldValueChange`                                                           | `{ fieldId, previousValue, value }`                              | Any field value changes, variables included                |
+| `onVariableSelect`                                                             | `{ fieldId, variable, expression }`                              | A variable is inserted into a field                        |
+| `onFieldAction`                                                                | `{ fieldId, key, selectionStart, selectionEnd }`                 | A text field's `actionButton` with a selection             |
+| `onAttachmentUpload`                                                           | `{ fieldId, file }`                                              | A file is chosen in an attachment field                    |
+| `onGroupToggle`, `onGroupRemove`                                               | `{ tabId, groupId, expanded? }`                                  | A group header or its remove action                        |
+| `onTabAdd`                                                                     | `{ tabId }`                                                      | A tab's `addLabel` button                                  |
+| `onListItemSelect`, `onListItemToggle`, `onListItemAction`, `onListItemRemove` | `{ tabId, groupId, itemId, item? \| expanded? \| key? }`         | A card, its chevron, one of its actions, its remove button |
+| `onTreeNodeSelect`, `onTreeNodeToggle`, `onTreeAddBlock`                       | `{ tabId, groupId, nodeId?, node? \| expanded? }`                | A tree row, its chevron, the add-block button              |
+| `onTreeDragStart`, `onTreeDrop`, `onTreeDragEnd`                               | `{ tabId, groupId, nodeId?, node? \| position?, targetNodeId? }` | The drag and drop cycle, see below                         |
 
-`BeyPropertyTab` is a single concrete class — there's no per-kind tab subclass. A tab is just an id/label plus an
-ordered list of groups; what a group *renders* is decided by its `content`, a discriminated union:
+The menu keeps its own copy of the config for the state it owns (expanded groups and nodes, list cards, field
+values) so the panel reacts at once; a new `[config]` replaces that copy.
 
-| Content class            | Discriminant (`content.type`) | Extra field       | Use case                                  |
-| -------------------------- | -------------------------------- | ------------------- | -------------------------------------------- |
-| `BeyPropertyFieldsContent` | `'fields'`                       | `fields: BeyPropertyField[]` | A property editor group                   |
-| `BeyPropertyTreeContent`   | `'tree'`                         | `tree: BeyPropertyTreeConfig` | A structure/hierarchy browser group      |
-| `BeyPropertyListContent`   | `'list'`                         | `list: BeyPropertyListItem[]` | A selectable card catalog group          |
+## Labels
 
-`PropertiesMenuService` and `PropertyGroupComponent` distinguish which kind of content a group holds by checking
-`group.content.type` — rather than an `instanceof` check on the tab, since a tab no longer carries a single fixed
-shape.
+Every `label` is a translation key. Left out, it defaults to `<id>.label` and resolves at render time to
+`<prefix>.<segment>.<id>.label`, where the segment is `tabs`, `groups`, `fields`, `tree` or `list`. Set
+explicitly, it is used as the key as is. `subtitle`, `description`, `addLabel` and option labels have no
+default and go through the translate pipe only when present, so a literal without a matching key shows as is.
 
-| Model                     | Key fields                                                                                 |
-| -------------------------- | -------------------------------------------------------------------------------------------- |
-| `BeyPropertiesMenuConfig`  | `title`, `subtitle`, `icon`, `tabs`, `activeTabId` (defaults to the first non-hidden tab), `embedded` |
-| `BeyPropertyTab`           | `id`, `label`, `icon`, `disabled`, `hidden`, `addLabel?`, `groups: BeyPropertyGroup[]`       |
-| `BeyPropertyGroup`         | `id`, `label`, `expanded`, `disabled`, `hidden`, `order`, `removable`, `variant` (`PropertyGroupVariant`), `showHeader`, `content` |
-| `BeyPropertyField` (abstract) | `id`, `type`, `label`, `description`, `disabled`, `hidden`, `required`, `acceptsVariable`, `metadata`, `value`, `defaultValue` — common to every field type |
-| `BeyPropertyOption`        | `value`, `label`, `icon`, `disabled`                                                         |
-| `BeyPropertyVariable`      | `id`, `path`, `label`, `type`, `example`, `children` (nested)                                |
-| `BeyPropertyTreeConfig`    | `nodes` (`BeyPropertyTreeNode[]`), `addBlockLabel`, `showEmptyStateAddBlock`                  |
-| `BeyPropertyTreeNode`      | `id`, `label`, `icon`, `disabled`, `hidden`, `expanded`, `active`, `metadata`, `children` (nested) |
-| `BeyPropertyListItem`      | `id`, `label`, `icon`, `description`, `disabled`, `hidden`, `metadata`                        |
+## Groups
 
-### i18n-driven labels
+A `BeyPropertyGroup` has `expanded`, `disabled`, `hidden`, `removable`, `order`, a `variant` (`PRIMARY` or
+`SECONDARY`, muted) and `showHeader`. Without a header the group has no chevron and is always expanded, for a
+structure tree that should never fold. Its `content` decides what it renders:
 
-`BeyPropertiesMenuConfig` requires a `prefix` (the same `prefix`-plus-default-sentinel convention used by `bey-tabs`).
-Every `label` (`title`, tab/group/field/tree-node/list-item `label`) is a **translation key**, not literal text:
+| Content                    | Holds                                                                 |
+| -------------------------- | --------------------------------------------------------------------- |
+| `BeyPropertyFieldsContent` | `fields: BeyPropertyField[]`                                          |
+| `BeyPropertyTabsContent`   | `tabs: BeyPropertyGroupTab[]`, each with `fields`, plus `activeTabId` |
+| `BeyPropertyListContent`   | `list: BeyPropertyListItem[]`                                         |
+| `BeyPropertyTreeContent`   | `tree: BeyPropertyTreeConfig`                                         |
 
--   Omit `label` and it defaults to `${id}.label`, resolved at render time to `${prefix}.<segment>.${id}.label`
-    (`<segment>` is `tabs`, `groups`, `fields`, `tree` or `list`) and passed through `| translate`.
--   Pass an explicit string instead and it's used as the translation key as-is (no prefixing) — handy for reusing a
-    key across several items or pointing at a key outside the default scheme.
--   `title` follows the same rule against `${prefix}.title` (no id, since there's only one per config).
+## Fields
 
-Secondary/optional text — `subtitle`, `field.description`, `list item.description`, `tree.addBlockLabel`,
-`option.label` — has **no default sentinel** (stays `''`/`undefined`, hidden unless provided) and is simply passed
-through `| translate` when present, so it's still translatable but never forces a key onto UI that doesn't need one.
-If ngx-translate finds no matching key for any of these, it falls back to displaying the key text itself — so
-existing consumers who keep passing literal display strings (not real keys) see no visual change.
+Each field extends `BeyPropertyField` (`id`, `label`, `description`, `value`, `defaultValue`, `disabled`,
+`hidden`, `required`, `acceptsVariable`, `actionButton`, `span`, `metadata`) and adds what it needs:
 
-### Embedded mode
+| Field                          | Extra                                                                                                      |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `BeyPropertyTextField`         | `placeholder`, `readonly`, `multiline`                                                                     |
+| `BeyPropertyNumberField`       | `placeholder`, `readonly`, `min`, `max`, `step`, `unit`                                                    |
+| `BeyPropertyNumberArrayField`  | `entryDefaultValue`, `minLength`, `maxLength`, `min`, `max`, `step`                                        |
+| `BeyPropertySelectField<T>`    | `options: BeyPropertyOption<T>[]`, `searchable`, `variables`                                               |
+| `BeyPropertySegmentedField<T>` | `options: BeyPropertyOption<T>[]`                                                                          |
+| `BeyPropertyToggleField`       |                                                                                                            |
+| `BeyPropertyColorField`        | `readonly`                                                                                                 |
+| `BeyPropertySpacingField`      | `readonly`, value is `{ top, right, bottom, left }`                                                        |
+| `BeyPropertyInfoField`         | `items: { label, icon? }[]`, read-only text                                                                |
+| `BeyPropertyFileField`         | `accept`, `maxSizeBytes`; value is the file as base64                                                      |
+| `BeyPropertyAttachmentField`   | `options: BeyPropertyAttachmentOption[]`, `variables`, `accept`, `maxSizeBytes`; value is an attachment id |
 
-`embedded: true` (default `false`) drops the card chrome (header, border, border-radius, max-width) so the
-component fills its container flush — for cases like a fixed sidebar panel where `bey-properties-menu` already
-looks like it belongs there, rather than a floating/dockable inspector. The header (title/subtitle/close button)
-is hidden entirely in this mode; there's no separate flag to hide just the header, since the two are meant to be
-used together.
+`span: 'half'` puts two consecutive fields on one row. A text field with `acceptsVariable` inserts the picked
+variable as `{{ path }}` at the cursor; with an `actionButton` it shows that button while text is selected and
+reports the selection through `onFieldAction`. The attachment field checks the file type and size before
+`onAttachmentUpload`; storing the file and adding it to `options` is the consumer's job.
 
-### Field subclasses
+## Lists
 
-Each concrete field type extends `PropertyField` and only adds the properties it actually needs — mirroring
-`FormField`/`FormTextField` in this library:
+A `BeyPropertyListItem` renders as a card with `icon` (and `iconClasses` to colour it), `label` with
+`labelParameters`, `description`, `badges` (`BeyBadgeConfig[]`), `actions` (one button per `{ key, icon, label? }`), `copyValue` (a
+copy button that writes that text to the clipboard) and `removable`. A plain card reports `onListItemSelect`. A
+card with a `body` of `BeyPropertySummaryRow` (`label` plus a `field`, a `badge` or a `value`) becomes
+expandable instead: its header and chevron toggle it, its body never does, and a row's field is a normal field
+whose value travels through `onFieldValueChange`.
 
-| Subclass                     | Extra properties beyond the base                          |
-| ------------------------------ | ------------------------------------------------------------ |
-| `BeyPropertyTextField`         | `placeholder`, `readonly`, `multiline` (drives `type: 'text' \| 'textarea'`) |
-| `BeyPropertyNumberField`       | `placeholder`, `readonly`, `min`, `max`, `step`, `unit`      |
-| `BeyPropertySelectField<T>`    | `options: PropertyOption<T>[]`                                |
-| `BeyPropertyToggleField`       | *(none — base is enough)*                                     |
-| `BeyPropertyColorField`        | `readonly`                                                    |
-| `BeyPropertySegmentedField<T>` | `options: PropertyOption<T>[]`                                |
-| `BeyPropertySpacingField`      | `readonly` (`value`/`defaultValue` typed as `PropertySpacingValue`) |
-| `BeyPropertyInfoField`         | `items: PropertyInfoItem[]` (read-only text, always `disabled`) |
-| `BeyPropertyAttachmentField`   | `options: PropertyAttachmentOption[]`, `variables`, `accept`, `maxSizeBytes` |
+## Trees
 
-`BeyPropertySelectField` also accepts `searchable: true` to render a filter box above its options.
+A `BeyPropertyTreeNode` has `label`, `icon`, `children`, `expanded`, `disabled`, `hidden`, `active` (selected
+on load) and the drag flags. `addBlockLabel` shows the add-block button under the nodes; with
+`showEmptyStateAddBlock` an empty tree shows it as a centred call to action instead.
 
-Every field accepts `span`: `'full'` (default) takes the whole row, `'half'` takes one column — two consecutive
-half fields share a row.
+A node with `draggable` can be moved with the mouse or a pen (touch is left to scrolling). The library holds
+no nesting rules: a node never drops onto itself or its descendants, and everything else travels in the config:
 
-#### Info fields
+| Flag              | On          | Meaning                                                                       |
+| ----------------- | ----------- | ----------------------------------------------------------------------------- |
+| `acceptsDrop`     | node        | Admits what is being dragged right now inside it                              |
+| `dropDisabled`    | node        | Takes no part: neither admits anything nor serves as a before/after reference |
+| `acceptsRootDrop` | tree config | The root admits what is being dragged right now                               |
 
-`BeyPropertyInfoField` renders plain text instead of a control, for values the user cannot change. Each entry of
-`items` is `{ label, icon? }` and `label` goes through the `translate` pipe, so it may be a literal or an i18n key.
+On `onTreeDragStart` the consumer sets those flags against the dragged node and rebuilds the config; while the
+pointer moves the tree only reads them. The row under the pointer splits into `before`, `inside` and `after`
+zones, a collapsed valid target opens after a pause, and an invalid one is marked in red. `onTreeDrop` fires
+on a valid release; `onTreeDragEnd` always fires, so the flags can be cleared there.
 
-#### Attachment fields
+## Texts
 
-`BeyPropertyAttachmentField` picks an existing attachment by id or uploads a new file. Its `value` is the
-attachment id, never the file contents.
+| Key                                                      | Shown as                       |
+| -------------------------------------------------------- | ------------------------------ |
+| `<prefix>.title`                                         | Header title                   |
+| `<prefix>.tabs.<id>.label`, `<prefix>.groups.<id>.label` | Tab and group labels           |
+| `<prefix>.fields.<id>.label`                             | Field labels                   |
+| `<prefix>.fields.<id>.actionButton.tooltip`              | Text field action button       |
+| `<prefix>.tree.<id>.label`, `<prefix>.list.<id>.label`   | Tree node and list card labels |
 
-The component performs no I/O of its own:
-
--   `options` is the catalog to choose from, already filtered by the consumer to the accepted file type. Each
-    option is `{ id, label, description?, disabled? }`.
--   `accept` is passed to the file input and `maxSizeBytes` rejects an oversized file before any upload starts.
--   Choosing a file emits the menu's `attachmentUpload` output (`{ fieldId, file }`); storing it and adding it to
-    `options` is the consumer's job.
--   `variables` turns on a second button that opens the shared `bey-variable-picker` and writes the chosen
-    variable as a `{{ name }}` expression into the field, so an item can reference a variable instead of naming an
-    attachment. The consumer passes only the variables that item accepts — the field does no filtering of its own,
-    since which variable fits an image or a PDF is domain knowledge the library does not have.
-
-The field shows no image preview: resolving an attachment id into a URL is the consumer's job and no consumer did
-it, so the slot was only ever empty.
-
-Its upload and clear buttons reuse `.bey-property-field-variable-trigger` from `property-field-control.styles.css`,
-the same class the text field's variable button uses, so every property field with side buttons keeps one size and
-one shape. A field that needs its own button must extend that class rather than redefine the size and radius.
-
----
-
-### Groups without a header
-
-Set `showHeader: false` on a `BeyPropertyGroup` to render its content with no label and no collapse chevron; the
-group is then always expanded (the `expanded` input is ignored, forced to `true` in the constructor) since there's
-no affordance left to collapse it. Typical use: a document structure tree that should always be fully visible with
-no surrounding chrome, as opposed to a properties group the user may want to collapse.
-
-### Tree-content groups
-
-Give a group a `BeyPropertyTreeContent` to render a hierarchical, selectable node list — e.g. a document/block
-structure browser — instead of a property editor:
-
-```ts
-new BeyPropertyGroup({
-    id: 'structure-tree',
-    showHeader: false,
-    content: new BeyPropertyTreeContent({
-        tree: new BeyPropertyTreeConfig({
-            addBlockLabel: 'Añadir bloque',
-            nodes: [
-                new BeyPropertyTreeNode({
-                    id: 'page-1',
-                    label: 'Página 1',
-                    icon: faFile,
-                    children: [new BeyPropertyTreeNode({ id: 'header', label: 'Encabezado', icon: faLayerGroup })]
-                })
-            ]
-        })
-    })
-});
-```
-
-Clicking a node calls `selectTreeNode`/emits `treeNodeSelect`; clicking its chevron toggles `expanded` on that node
-only (immutably, deep in the tree). `addBlockLabel` has no default — the "add block" button at the bottom of a
-non-empty tree only renders when it's set, and (like `description`) is passed through `| translate` when present, so
-it accepts either a translation key or a literal string with no matching key. Clicking it emits `treeAddBlock` with
-the tab and group ids; building/inserting the new block is left entirely to the consumer.
-
-**Empty-state add-block button** — when `nodes` is empty, the regular bottom-of-list button has nowhere to attach.
-Set `showEmptyStateAddBlock: true` (default `false`) to render a centered call-to-action inside the group's content
-area instead, using the same `addBlockLabel` and emitting the same `treeAddBlock` event. It's opt-in per group — an
-empty tree renders nothing by default, since not every empty tree should offer to add items from that spot.
-
-**Externally-driven selection** — set `active: true` on a `BeyPropertyTreeNode` to have it start out selected. This
-is read once when the config is set (recursively across every tree-content group), initializing the same internal
-selection state that clicking a node writes to — so a consumer that owns the "currently selected item" externally
-(e.g. after inserting a new block) can rebuild the tree with the right node marked `active` and have it appear
-selected without the user clicking it. Only one node should be marked `active` per config; if several are, the
-first one found wins.
-
----
-
-### List-content groups
-
-Give a group a `BeyPropertyListContent` to render a card catalog — e.g. a block-type picker — on top of the
-existing `bey-list` component, with a fixed card layout (icon, label, optional description) instead of `bey-list`'s
-free-form `ng-template` projection, keeping the same fully data-driven convention as the other content kinds. A tab
-can hold several list-content groups side by side — e.g. one group for simple blocks and another, separately
-headed, group for pre-styled composite blocks:
-
-```ts
-new BeyPropertyGroup({
-    id: 'simple-blocks',
-    showHeader: false,
-    content: new BeyPropertyListContent({
-        list: [
-            new BeyPropertyListItem({ id: 'block-heading', label: 'Encabezado', icon: faHeading, description: '…' }),
-            new BeyPropertyListItem({ id: 'block-image', label: 'Imagen', icon: faImage, description: '…' })
-        ]
-    })
-});
-```
-
-Clicking a card calls `selectListItem`/emits `listItemSelect` with the tab id, the group id and the selected
-`BeyPropertyListItem`; disabled items (`disabled: true`) are dimmed and ignore clicks. As with tree-content groups,
-building/inserting the actual block from the selected item is left entirely to the consumer.
-
-An item may carry `iconClasses` to color its icon per item — a problems list marking errors and warnings, for
-instance. The library ships `bey-text-danger`, `bey-text-warning` and `bey-text-success` for that; without it the
-icon uses the list's muted color.
-
-#### Cards with a body
-
-An item that carries a `body` becomes an expandable card. **Its header toggles the body, its body does not** —
-the body holds real fields, and clicking one of them must not collapse the card under the pointer. The click is
-therefore bound to the header, not to the whole card as `bey-list` does by default; an expandable card emits no
-`listItemSelect` at all, while an item without a body keeps selecting exactly as before, so a plain catalog or a
-problems list is unaffected.
-
-`badges` render next to the label, `removable` adds a remove action, `actions` adds one button per entry that
-reports its `key` through `listItemAction`, and `copyValue` adds a button that writes that exact text to the
-clipboard — the card decides what is worth copying, which is rarely the label it shows. The button confirms with a
-tick for a moment and stays silent if the browser refuses clipboard access. The chevron is a real disclosure button
-(`aria-expanded`, focusable, its own label); both it and the remove action stop the click from reaching the
-header, so neither of them toggles the card twice.
-
-```ts
-new BeyPropertyListItem({
-    id: variable.id,
-    label: variable.name,
-    icon: faHashtag,
-    removable: true,
-    badges: [{ label: 'Número', cssClass: 'bey-badge-color-purple' }],
-    body: [
-        new BeyPropertySummaryRow({ label: 'Ámbito', badge: { label: 'Global' } }),
-        new BeyPropertySummaryRow({ label: 'Valor', field: new BeyPropertyTextField({ id: 'variable.v1.value' }) })
-    ]
-});
-```
-
-A `BeyPropertySummaryRow` shows one of three things, in this order of precedence: a `field`, a `badge`, or a plain
-`value` (an em dash when empty). **A row's `field` is a normal property field**, so its `id` still drives
-`updateFieldValue`/`fieldValueChange` exactly as inside a fields-content group — the card changes how a field is
-presented, never how its value travels.
-
-This is what makes an entity worth modelling as a list item rather than as a group: the group header is then free
-to mean grouping (a section, a category) and can hold several of these cards.
-
-### Tabbed groups
-
-Give a group a `BeyPropertyTabsContent` to split its fields across tabs, for properties that repeat the same shape
-several times over — the four sides of a border, say:
-
-```ts
-new BeyPropertyGroup({
-    id: 'borders',
-    content: new BeyPropertyTabsContent({
-        tabs: [
-            new BeyPropertyGroupTab({ id: 'top', fields: [...] }),
-            new BeyPropertyGroupTab({ id: 'right', fields: [...] })
-        ]
-    })
-});
-```
-
-A tab holds fields, not groups. `activeTabId` selects the open tab and defaults to the first one; each tab's label
-resolves like any other, from `<prefix>.tabs.<id>.label` unless `label` is set explicitly.
-
----
-
-## Outputs
-
-| Output              | Payload                                | Emitted when                                        |
-| -------------------- | ----------------------------------------- | ---------------------------------------------------- |
-| `configChange`       | `BeyPropertiesMenuConfig`                | The `[config]` input is set                          |
-| `activeTabChange`    | `string`                                 | The active tab changes                                |
-| `groupToggle`        | `{ tabId, groupId, expanded }`           | A group is expanded/collapsed                         |
-| `fieldValueChange`   | `{ fieldId, previousValue, value }`      | Any field value changes, including variable inserts |
-| `variableSelected`   | `{ fieldId, variable, expression }`      | A variable is inserted into a field               |
-| `treeNodeSelect`     | `{ tabId, groupId, nodeId, node }`       | A tree node is selected                                |
-| `treeAddBlock`       | `{ tabId, groupId }`                     | A tree group's "add block" action is triggered         |
-| `listItemSelect`     | `{ tabId, groupId, itemId, item }`       | A list card without a body is clicked                  |
-| `listItemToggle`     | `{ tabId, groupId, itemId, expanded }`   | A list card's header or chevron opens/closes its body  |
-| `listItemRemove`     | `{ tabId, groupId, itemId }`             | A removable list card's remove action is triggered     |
-| `tabAddRequested`    | `{ tabId }`                              | A tab's `addLabel` button is clicked                   |
-| `groupRemove`        | `{ tabId, groupId }`                     | A removable group's remove action is triggered         |
-| `attachmentUpload`   | `{ fieldId, file }`                      | A file is chosen in an attachment field               |
-| `closed`             | `void`                                   | The header's close action is triggered                |
-
----
-
-## Variables API
-
-Both an imperative API and a reactive input write to the same underlying signal-based state
-(`PropertyVariableService`):
-
--   `[variables]` input — re-syncs whenever the bound array changes.
--   `setVariables()` / `getVariables()` / `clearVariables()` — callable via `@ViewChild`.
-
-If both are used, the last write wins — there is no separate precedence, they share one state.
-
----
-
-## Extending with new field types
-
-To add a new field type, create a new `PropertyField` subclass carrying only the properties it needs, following the
-pattern of the seven built-in ones, and register its rendering in `PropertyFieldComponent`.
+The button texts of the fields, the list and the variable picker come from the library.

@@ -1,7 +1,7 @@
 {
     "angular-components": {
         "form": {
-            "autocompleteField": {
+            "autocomplete-field": {
                 "clear": "Clear",
                 "empty": "No options found",
                 "toggle": "Show options"
@@ -12,13 +12,13 @@
             "chips": {
                 "remove": "Remove"
             },
-            "fileField": {
+            "file-field": {
                 "choose": "Choose file",
                 "clear": "Remove file",
                 "empty": "No file selected",
-                "maxSize": "Maximum size: {{maxSize}}",
-                "tooLarge": "The file exceeds the maximum size of {{maxSize}}",
-                "unsupportedType": "Unsupported file type. Allowed: {{accept}}"
+                "max-size": "Maximum size: {{maxSize}}",
+                "too-large": "The file exceeds the maximum size of {{maxSize}}",
+                "unsupported-type": "Unsupported file type. Allowed: {{accept}}"
             },
             "modal": {
                 "close-confirmation": {
@@ -27,17 +27,25 @@
                 },
                 "type": "Form"
             },
+            "number-field": {
+                "decrement": "Decrease",
+                "increment": "Increase"
+            },
+            "password-field": {
+                "hide": "Hide password",
+                "show": "Show password"
+            },
             "required": "This field is required",
+            "steps": {
+                "back": "Back",
+                "next": "Next"
+            },
             "submit": {
                 "invalid": "There are errors in the form, please correct or complete the required fields before submitting.",
                 "without-changes": "No changes have been made to the form."
             },
-            "textVariableField": {
-                "close": "Close",
-                "empty": "No options found",
-                "insertVariable": "Insert variable",
-                "label": "Variables",
-                "search": "Search"
+            "text-variable-field": {
+                "insert-variable": "Insert variable"
             }
         }
     }

@@ -1,14 +1,14 @@
-import { Component, inject, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { PropertyGroup } from '../../models/property-group.model';
 import { PropertyTab } from '../../models/property-tab.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { PropertyGroupComponent } from '../property-group/property-group.component';
 
 @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, PropertyGroupComponent, TranslateModule],
     selector: 'bey-property-tab',
     standalone: true,
@@ -16,17 +16,15 @@ import { PropertyGroupComponent } from '../property-group/property-group.compone
     templateUrl: './property-tab.component.html'
 })
 export class PropertyTabComponent {
-    @Input({ required: true }) tab!: PropertyTab;
+    readonly tab = input.required<PropertyTab>();
+
+    readonly visibleGroups = computed(() => this.tab().groups.filter(group => !group.hidden));
 
     readonly addIcon = faPlus;
 
     private readonly propertiesMenuService = inject(PropertiesMenuService);
 
-    get visibleGroups(): PropertyGroup[] {
-        return this.tab.groups.filter(group => !group.hidden);
-    }
-
     onTabAddClick(): void {
-        this.propertiesMenuService.triggerTabAdd(this.tab.id);
+        this.propertiesMenuService.triggerTabAdd(this.tab().id);
     }
 }

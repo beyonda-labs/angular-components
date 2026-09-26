@@ -1,0 +1,13 @@
+.bey-properties-menu-style-guide-actions {
+    margin-bottom: 0.75rem;
+}
+
+.bey-properties-menu-style-guide-frame {
+    max-width: 24rem;
+}
+
+.bey-properties-menu-style-guide-log {
+    color: var(--bey-text-muted);
+    font-size: var(--bey-font-size-sm);
+    margin-top: 0.75rem;
+}

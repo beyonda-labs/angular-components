@@ -1,5 +1,7 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
+import { BadgeConfig } from '../../badge/models/badge.model';
+
 export class HeaderConfig {
     leftActions: HeaderAction[] = [];
     menuActions: HeaderAction[] = [];
@@ -9,7 +11,7 @@ export class HeaderConfig {
     variant: HeaderVariant;
 
     backAction?: HeaderAction;
-    badge?: HeaderBadge;
+    badge?: BadgeConfig;
 
     constructor({
         backAction,
@@ -36,7 +38,7 @@ export interface HeaderConfigParameters {
     prefix: string;
 
     backAction?: HeaderAction;
-    badge?: HeaderBadge;
+    badge?: BadgeConfig;
     leftActions?: HeaderAction[];
     menuActions?: HeaderAction[];
     rightActions?: HeaderAction[];
@@ -98,10 +100,4 @@ export enum HeaderActionType {
 export enum HeaderVariant {
     Page = 'page',
     SubPage = 'subpage'
-}
-
-export interface HeaderBadge {
-    text: string;
-
-    cssClass?: string;
 }

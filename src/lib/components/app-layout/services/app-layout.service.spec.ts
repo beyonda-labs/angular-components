@@ -12,135 +12,61 @@ describe('AppLayoutService', () => {
         service = TestBed.inject(AppLayoutService);
     });
 
-    it('should be created', () => {
-        expect(service).toBeTruthy();
+    it('holds the breadcrumb that was last set, and empties it on clear', () => {
+        const items = [new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' })];
+
+        expect(service.breadcrumb()).toEqual([]);
+
+        service.setBreadcrumb(items);
+        expect(service.breadcrumb()).toBe(items);
+
+        service.clearBreadcrumb();
+        expect(service.breadcrumb()).toEqual([]);
     });
 
-    describe('breadcrumbItems$', () => {
-        it('should emit empty array by default', done => {
-            service.breadcrumbItems$.subscribe(items => {
-                expect(items).toEqual([]);
-                done();
-            });
-        });
+    it('holds the active action, and forgets it on clear', () => {
+        expect(service.activeActionKey()).toBeNull();
 
-        it('should emit items after setBreadcrumb', done => {
-            const items = [
-                new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' }),
-                new AppLayoutBreadcrumbItem({ id: 2, label: 'Products' })
-            ];
+        service.activeMenuAction('settings');
+        expect(service.activeActionKey()).toBe('settings');
 
-            service.setBreadcrumb(items);
-
-            service.breadcrumbItems$.subscribe(result => {
-                expect(result).toEqual(items);
-                done();
-            });
-        });
-
-        it('should emit empty array after clearBreadcrumb', done => {
-            service.setBreadcrumb([new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' })]);
-            service.clearBreadcrumb();
-
-            service.breadcrumbItems$.subscribe(items => {
-                expect(items).toEqual([]);
-                done();
-            });
-        });
-
-        it('should emit latest value on multiple setBreadcrumb calls', done => {
-            const firstItems = [new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' })];
-            const secondItems = [new AppLayoutBreadcrumbItem({ id: 2, label: 'Settings' })];
-
-            service.setBreadcrumb(firstItems);
-            service.setBreadcrumb(secondItems);
-
-            service.breadcrumbItems$.subscribe(items => {
-                expect(items).toEqual(secondItems);
-                done();
-            });
-        });
+        service.clearActiveAction();
+        expect(service.activeActionKey()).toBeNull();
     });
 
-    describe('onBreadcrumbClick$', () => {
-        it('should emit the id when emitBreadcrumbClick is called', done => {
-            service.onBreadcrumbClick$.subscribe(clicked => {
-                expect(clicked).toBe(5);
-                done();
-            });
+    it('relays breadcrumb and menu clicks to whoever listens', () => {
+        const breadcrumbClicks = jest.fn();
+        const menuClicks = jest.fn();
+        service.onBreadcrumbClick$.subscribe(breadcrumbClicks);
+        service.onMenuClick$.subscribe(menuClicks);
 
-            service.emitBreadcrumbClick(5);
-        });
+        service.emitBreadcrumbClick(5);
+        service.emitMenuClick('dashboard');
 
-        it('should not emit before emitBreadcrumbClick is called', () => {
-            const spy = jest.fn();
-            service.onBreadcrumbClick$.subscribe(spy);
-
-            expect(spy).not.toHaveBeenCalled();
-        });
+        expect(breadcrumbClicks).toHaveBeenCalledWith(5);
+        expect(menuClicks).toHaveBeenCalledWith('dashboard');
     });
 
-    describe('onMenuClick$', () => {
-        it('should emit the key when emitMenuClick is called', done => {
-            service.onMenuClick$.subscribe(clicked => {
-                expect(clicked).toBe('dashboard');
-                done();
-            });
-
-            service.emitMenuClick('dashboard');
-        });
-
-        it('should not emit before emitMenuClick is called', () => {
-            const spy = jest.fn();
-            service.onMenuClick$.subscribe(spy);
-
-            expect(spy).not.toHaveBeenCalled();
-        });
+    it('starts expanded when nothing is stored', () => {
+        expect(service.expanded()).toBe(true);
     });
 
-    describe('expanded', () => {
-        it('should default to true when nothing is stored', () => {
-            expect(service.expanded).toBe(true);
-        });
+    it('remembers the expanded state across instances', () => {
+        service.setExpanded(false);
+        expect(service.expanded()).toBe(false);
 
-        it('should update after setExpanded', () => {
-            service.setExpanded(false);
+        TestBed.resetTestingModule();
+        TestBed.configureTestingModule({});
 
-            expect(service.expanded).toBe(false);
-        });
-
-        it('should persist the value to localStorage after setExpanded', () => {
-            service.setExpanded(false);
-
-            expect(localStorage.getItem('bey-left-menu-expanded')).toBe('false');
-        });
-
-        it('should restore a previously persisted value for a new instance', () => {
-            service.setExpanded(false);
-
-            TestBed.resetTestingModule();
-            TestBed.configureTestingModule({});
-            const restored = TestBed.inject(AppLayoutService);
-
-            expect(restored.expanded).toBe(false);
-        });
+        expect(TestBed.inject(AppLayoutService).expanded()).toBe(false);
     });
 
-    describe('activeAction$', () => {
-        it('should emit the action key when activeMenuAction is called', done => {
-            service.activeAction$.subscribe(key => {
-                expect(key).toBe('settings');
-                done();
-            });
-
-            service.activeMenuAction('settings');
+    it('survives a storage that cannot be written', () => {
+        jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+            throw new Error('quota');
         });
 
-        it('should not emit before activeMenuAction is called', () => {
-            const spy = jest.fn();
-            service.activeAction$.subscribe(spy);
-
-            expect(spy).not.toHaveBeenCalled();
-        });
+        expect(() => service.setExpanded(false)).not.toThrow();
+        expect(service.expanded()).toBe(false);
     });
 });

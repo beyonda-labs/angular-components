@@ -1,5 +1,7 @@
 export { PropertiesMenuComponent as BeyPropertiesMenuComponent } from './properties-menu.component';
 export { PropertiesMenuHeaderComponent as BeyPropertiesMenuHeaderComponent } from './components/properties-menu-header/properties-menu-header.component';
+export { PropertiesMenuHeaderConfig as BeyPropertiesMenuHeaderConfig } from './models/properties-menu-header.model';
+export type { PropertiesMenuHeaderConfigParameters as BeyPropertiesMenuHeaderConfigParameters } from './models/properties-menu-header.model';
 export { PropertiesMenuConfig as BeyPropertiesMenuConfig } from './models/properties-menu-config.model';
 export type { PropertiesMenuConfigParameters as BeyPropertiesMenuConfigParameters } from './models/properties-menu-config.model';
 export { PropertyTab as BeyPropertyTab } from './models/property-tab.model';
@@ -81,11 +83,8 @@ export { PropertyListItem as BeyPropertyListItem } from './models/property-list-
 export type { PropertyListItemParameters as BeyPropertyListItemParameters } from './models/property-list-item.model';
 export { PropertyListItemAction as BeyPropertyListItemActionModel } from './models/property-list-item.model';
 export type { PropertyListItemActionParameters as BeyPropertyListItemActionParameters } from './models/property-list-item.model';
-export { PropertyBadge as BeyPropertyBadge, PropertySummaryRow as BeyPropertySummaryRow } from './models/property-summary-row.model';
-export type {
-    PropertyBadgeParameters as BeyPropertyBadgeParameters,
-    PropertySummaryRowParameters as BeyPropertySummaryRowParameters
-} from './models/property-summary-row.model';
+export { PropertySummaryRow as BeyPropertySummaryRow } from './models/property-summary-row.model';
+export type { PropertySummaryRowParameters as BeyPropertySummaryRowParameters } from './models/property-summary-row.model';
 export type { PropertyFieldType as BeyPropertyFieldType } from './types/property-field-type';
 export type {
     PropertyPrimitiveValue as BeyPropertyPrimitiveValue,
@@ -102,7 +101,7 @@ export type {
     PropertyListItemRemove as BeyPropertyListItemRemove,
     PropertyListItemSelect as BeyPropertyListItemSelect,
     PropertyListItemToggle as BeyPropertyListItemToggle,
-    PropertyTabAddRequested as BeyPropertyTabAddRequested,
+    PropertyTabAdd as BeyPropertyTabAdd,
     PropertyTreeAddBlock as BeyPropertyTreeAddBlock,
     PropertyTreeDragEnd as BeyPropertyTreeDragEnd,
     PropertyTreeDragStart as BeyPropertyTreeDragStart,
@@ -112,5 +111,3 @@ export type {
     PropertyVariableSelection as BeyPropertyVariableSelection
 } from './types/properties-menu-events';
 export type { PropertyTreeDropPosition as BeyPropertyTreeDropPosition } from './utils/property-tree-drop.util';
-export { PropertiesMenuService as BeyPropertiesMenuService } from './services/properties-menu.service';
-export { PropertyVariableService as BeyPropertyVariableService } from './services/property-variable.service';
