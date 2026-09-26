@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 import { mock } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
@@ -31,10 +32,7 @@ describe('PageStyleGuideComponent', () => {
             ]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(PageStyleGuideComponent);
-        fixture.detectChanges();
-        await fixture.whenStable();
-        fixture.detectChanges();
+        fixture = await renderComponent(PageStyleGuideComponent);
     });
 
     it('lists the products from the demo backend', () => {

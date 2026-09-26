@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { LeftMenuStyleGuideComponent } from './left-menu-style-guide.component';
 
@@ -12,9 +13,8 @@ describe('LeftMenuStyleGuideComponent', () => {
             imports: [LeftMenuStyleGuideComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(LeftMenuStyleGuideComponent);
+        fixture = await renderComponent(LeftMenuStyleGuideComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     it('should create', () => {

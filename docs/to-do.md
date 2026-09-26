@@ -107,6 +107,9 @@ Eight modules used those shared classes without importing the stylesheet, so the
         `click` + `detectChanges` + `whenStable` pair covers the interactions the components have
 -   [x] No spec asserts a CSS class any more: the tests that only checked a modifier or state class are gone,
         and the ones that checked a state now read `aria-current` / `aria-expanded`, added to `left-menu` for it
+-   [x] Shared test helpers in `testing/dom.ts` (`renderComponent`, `settle`, `queryAll`, `textsOf`, `buttonByName`,
+        `queryButton`), imported as `@testing/dom` by 68 specs; the copies each spec kept, and the five per-spec
+        `ResizeObserver` mocks, are gone (300 lines less)
 -   [x] No spec locates an element by class any more: every locator is a role, an `aria-*` attribute or visible
         text, and the templates gained the ARIA they lacked (`table` / `row` / `cell`, `list` / `listitem`, `tree` /
         `treeitem`, `searchbox`, `aria-expanded` on submenus and groups)

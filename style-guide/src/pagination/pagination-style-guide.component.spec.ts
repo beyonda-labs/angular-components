@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { PaginationStyleGuideComponent } from './pagination-style-guide.component';
 
@@ -12,9 +13,8 @@ describe('PaginationStyleGuideComponent', () => {
             imports: [PaginationStyleGuideComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(PaginationStyleGuideComponent);
+        fixture = await renderComponent(PaginationStyleGuideComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     it('should create', () => {

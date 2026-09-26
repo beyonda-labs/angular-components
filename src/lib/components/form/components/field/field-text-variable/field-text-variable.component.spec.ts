@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { buttonByName, renderComponent, settle } from '@testing/dom';
 
 import { FormTextVariableField } from '../../../models/fields/form-text-variable-field.model';
 import { FormTextVariableFieldComponent } from './field-text-variable.component';
@@ -15,13 +16,12 @@ describe('FormTextVariableFieldComponent', () => {
         }).compileComponents();
 
         control = new FormControl<string | null>('Hello ');
-        fixture = TestBed.createComponent(FormTextVariableFieldComponent);
-        fixture.componentRef.setInput('control', control);
-        fixture.componentRef.setInput('field', new FormTextVariableField({ key: 'greeting' }));
-        fixture.componentRef.setInput('options', [{ label: 'Name', value: 'name' }]);
-        fixture.componentRef.setInput('prefix', 'demo.template.greeting');
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(FormTextVariableFieldComponent, {
+            control,
+            field: new FormTextVariableField({ key: 'greeting' }),
+            options: [{ label: 'Name', value: 'name' }],
+            prefix: 'demo.template.greeting'
+        });
     });
 
     afterEach(() => {
@@ -29,13 +29,8 @@ describe('FormTextVariableFieldComponent', () => {
     });
 
     it('opens the picker from its button and inserts the chosen variable at the end of the text', async () => {
-        (
-            fixture.nativeElement.querySelector(
-                '[aria-label="angular-components.form.text-variable-field.insert-variable"]'
-            ) as HTMLButtonElement
-        ).click();
-        fixture.detectChanges();
-        await fixture.whenStable();
+        buttonByName(fixture, 'angular-components.form.text-variable-field.insert-variable').click();
+        await settle(fixture);
 
         const option = document.body.querySelector('bey-option-picker button[type="button"]:not([aria-label])');
         expect(document.body.textContent).toContain('Name');

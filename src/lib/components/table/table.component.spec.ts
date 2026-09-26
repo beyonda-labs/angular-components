@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, renderComponent, settle } from '@testing/dom';
 
 import { BadgeConfig, BadgeVariant } from '../badge/models/badge.model';
 import { TableColumn, TableConfig, TableConfigParameters } from './models/table.model';
@@ -29,26 +30,15 @@ describe('TableComponent', () => {
     }
 
     async function render(config: TableConfig<Person> = buildConfig()): Promise<void> {
-        fixture = TestBed.createComponent(TableComponent);
-        fixture.componentRef.setInput('config', config);
-        fixture.detectChanges();
-        await fixture.whenStable();
-    }
-
-    async function settle(): Promise<void> {
-        fixture.detectChanges();
-        await fixture.whenStable();
-        fixture.detectChanges();
+        fixture = await renderComponent(TableComponent, { config });
     }
 
     function checkboxes(): HTMLInputElement[] {
-        return [...fixture.nativeElement.querySelectorAll('input[type="checkbox"]')];
+        return queryAll<HTMLInputElement>(fixture, 'input[type="checkbox"]');
     }
 
     function rowOf(name: string): HTMLElement {
-        const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('bey-table-row')].find(
-            row => row.textContent?.includes(name)
-        );
+        const found = queryAll(fixture, 'bey-table-row').find(row => row.textContent?.includes(name));
 
         if (!found) {
             throw new Error(`No row for ${name}`);
@@ -90,7 +80,7 @@ describe('TableComponent', () => {
         await render(buildConfig({ selectedItemsChange }));
 
         rowOf('Linus').querySelector('input')?.click();
-        await settle();
+        await settle(fixture);
 
         expect(selectedItemsChange).toHaveBeenLastCalledWith([LINUS], [1]);
         expect(rowOf('Linus').querySelector('input')?.checked).toBe(true);
@@ -103,7 +93,7 @@ describe('TableComponent', () => {
         rowOf('Ada')
             .querySelector('bey-table-cell')
             ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-        await settle();
+        await settle(fixture);
 
         expect(selectedItemsChange).toHaveBeenLastCalledWith([ADA], [0]);
     });
@@ -114,16 +104,16 @@ describe('TableComponent', () => {
         const [header] = checkboxes();
 
         rowOf('Ada').querySelector('input')?.click();
-        await settle();
+        await settle(fixture);
         expect(header.indeterminate).toBe(true);
 
         header.click();
-        await settle();
+        await settle(fixture);
         expect(selectedItemsChange).toHaveBeenLastCalledWith([ADA, LINUS], [0, 1]);
         expect(header.checked).toBe(true);
 
         header.click();
-        await settle();
+        await settle(fixture);
         expect(selectedItemsChange).toHaveBeenLastCalledWith([], []);
     });
 
@@ -172,12 +162,12 @@ describe('TableComponent', () => {
     it('follows a replaced config and forgets the previous selection and scroll', async () => {
         await render();
         rowOf('Ada').querySelector('input')?.click();
-        await settle();
+        await settle(fixture);
         const scroll = fixture.nativeElement.querySelector('[role="table"]') as HTMLDivElement;
         scroll.scrollTop = 120;
 
         fixture.componentRef.setInput('config', buildConfig({ items: [{ id: 3, name: 'Grace', role: 'Ops' }] }));
-        await settle();
+        await settle(fixture);
 
         expect(fixture.nativeElement.textContent).toContain('Grace');
         expect(fixture.nativeElement.textContent).not.toContain('Ada');

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { buttonByName, queryAll, renderComponent, textsOf } from '@testing/dom';
 
 import { LeftMenuAction } from '../../models/left-menu.model';
 import { ActionListComponent } from './action-list.component';
@@ -15,32 +16,19 @@ describe('ActionListComponent', () => {
     }
 
     async function render(actions: LeftMenuAction[], expanded = true): Promise<void> {
-        fixture = TestBed.createComponent(ActionListComponent);
-        fixture.componentRef.setInput('actions', actions);
-        fixture.componentRef.setInput('expanded', expanded);
-        fixture.componentRef.setInput('prefix', 'demo');
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(ActionListComponent, { actions, expanded, prefix: 'demo' });
     }
 
     function buttons(): HTMLButtonElement[] {
-        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')];
+        return queryAll<HTMLButtonElement>(fixture, 'button');
     }
 
     function labels(): string[] {
-        return buttons().map(button => button.textContent?.trim() ?? '');
+        return textsOf(buttons());
     }
 
     function buttonOf(name: string): HTMLButtonElement {
-        const found = buttons().find(
-            button => button.textContent?.trim() === name || button.getAttribute('aria-label') === name
-        );
-
-        if (!found) {
-            throw new Error(`No button for ${name}`);
-        }
-
-        return found;
+        return buttonByName(fixture, name);
     }
 
     function chevronOf(name: string): HTMLElement {

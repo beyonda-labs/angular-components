@@ -1,14 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { BreadcrumbComponent } from './breadcrumb.component';
 import { BreadcrumbConfig, BreadcrumbConfigParameters, BreadcrumbItem } from './models/breadcrumb.model';
-
-class ResizeObserverMock {
-    observe(): void {}
-    unobserve(): void {}
-    disconnect(): void {}
-}
 
 describe('BreadcrumbComponent', () => {
     let fixture: ComponentFixture<BreadcrumbComponent>;
@@ -26,29 +21,22 @@ describe('BreadcrumbComponent', () => {
     }
 
     async function render(config: BreadcrumbConfig = buildConfig()): Promise<void> {
-        fixture = TestBed.createComponent(BreadcrumbComponent);
-        fixture.componentRef.setInput('config', config);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(BreadcrumbComponent, { config });
     }
 
     function items(): HTMLElement[] {
-        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('li:not([aria-hidden])')];
+        return queryAll(fixture, 'li:not([aria-hidden])');
     }
 
     function labels(): string[] {
-        return items().map(item => item.textContent?.trim() ?? '');
+        return textsOf(items());
     }
 
-    function link(name: string): HTMLButtonElement | undefined {
-        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(
-            button => button.textContent?.trim() === name
-        );
+    function link(name: string): HTMLButtonElement | null {
+        return queryButton(fixture, name);
     }
 
     beforeEach(async () => {
-        global.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
-
         await TestBed.configureTestingModule({
             imports: [BreadcrumbComponent, TranslateModule.forRoot()]
         }).compileComponents();
@@ -63,9 +51,9 @@ describe('BreadcrumbComponent', () => {
     it('renders every item but the last as a link', async () => {
         await render();
 
-        expect(link('Home')).toBeDefined();
-        expect(link('Templates')).toBeDefined();
-        expect(link('Editor')).toBeUndefined();
+        expect(link('Home')).not.toBeNull();
+        expect(link('Templates')).not.toBeNull();
+        expect(link('Editor')).toBeNull();
     });
 
     it('marks the last item as the current page', async () => {
@@ -73,7 +61,7 @@ describe('BreadcrumbComponent', () => {
 
         const current = items().filter(item => item.getAttribute('aria-current') === 'page');
 
-        expect(current.map(item => item.textContent?.trim())).toEqual(['Editor']);
+        expect(textsOf(current)).toEqual(['Editor']);
     });
 
     it('reports the id of a clicked item', async () => {
@@ -105,9 +93,9 @@ describe('BreadcrumbComponent', () => {
     it('separates the items with the configured separator', async () => {
         await render(buildConfig({ separator: '>' }));
 
-        const separators = [...fixture.nativeElement.querySelectorAll('li[aria-hidden="true"]')];
+        const separators = queryAll(fixture, 'li[aria-hidden="true"]');
 
-        expect(separators.map(element => element.textContent?.trim())).toEqual(['>', '>']);
+        expect(textsOf(separators)).toEqual(['>', '>']);
     });
 
     it('resolves labels against the prefix when translation is on', async () => {
@@ -166,8 +154,7 @@ describe('BreadcrumbComponent', () => {
         await render();
 
         fixture.componentRef.setInput('config', buildConfig({ items: [new BreadcrumbItem({ id: 9, label: 'Only' })] }));
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
 
         expect(labels()).toEqual(['Only']);
     });

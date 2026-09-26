@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, renderComponent, settle } from '@testing/dom';
 
 import { FooterComponent } from './footer.component';
 import { FooterConfig, FooterConfigParameters } from './models/footer.model';
@@ -13,14 +14,11 @@ describe('FooterComponent', () => {
     }
 
     async function render(config: FooterConfig = buildConfig()): Promise<void> {
-        fixture = TestBed.createComponent(FooterComponent);
-        fixture.componentRef.setInput('config', config);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(FooterComponent, { config });
     }
 
     function links(): HTMLElement[] {
-        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('nav button')];
+        return queryAll(fixture, 'nav button');
     }
 
     beforeEach(async () => {
@@ -86,8 +84,7 @@ describe('FooterComponent', () => {
         await render();
 
         fixture.componentRef.setInput('config', buildConfig({ productName: 'Another' }));
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
 
         expect(fixture.nativeElement.textContent).toContain('Another');
     });

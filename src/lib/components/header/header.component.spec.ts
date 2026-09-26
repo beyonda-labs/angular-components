@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { faGear, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { BadgeConfig } from '../badge/models/badge.model';
 import { HeaderComponent } from './header.component';
@@ -18,28 +19,19 @@ describe('HeaderComponent', () => {
     }
 
     async function render(config: HeaderConfig = buildConfig()): Promise<void> {
-        fixture = TestBed.createComponent(HeaderComponent);
-        fixture.componentRef.setInput('config', config);
-        fixture.detectChanges();
-        await fixture.whenStable();
-    }
-
-    async function settle(): Promise<void> {
-        fixture.detectChanges();
-        await fixture.whenStable();
-        fixture.detectChanges();
+        fixture = await renderComponent(HeaderComponent, { config });
     }
 
     function buttons(): HTMLButtonElement[] {
-        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')];
+        return queryAll<HTMLButtonElement>(fixture, 'button');
     }
 
     function labels(): string[] {
-        return buttons().map(button => button.textContent?.trim() ?? '');
+        return textsOf(buttons());
     }
 
     function panels(): HTMLElement[] {
-        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('[role="group"]')];
+        return queryAll(fixture, '[role="group"]');
     }
 
     beforeEach(async () => {
@@ -81,7 +73,7 @@ describe('HeaderComponent', () => {
     it('puts the back action before the title', async () => {
         await render(buildConfig({ backAction: buildAction({ key: 'back', type: HeaderActionType.Icon }) }));
 
-        const rendered = [...fixture.nativeElement.querySelectorAll('button, h1')];
+        const rendered = queryAll(fixture, 'button, h1');
 
         expect(rendered[0].tagName).toBe('BUTTON');
         expect(rendered[1].tagName).toBe('H1');
@@ -134,11 +126,11 @@ describe('HeaderComponent', () => {
         expect(panels()).toHaveLength(0);
 
         buttons()[0].click();
-        await settle();
+        await settle(fixture);
         expect(labels()).toContain('Archive');
 
         buttons()[0].click();
-        await settle();
+        await settle(fixture);
         expect(panels()).toHaveLength(0);
     });
 
@@ -147,12 +139,10 @@ describe('HeaderComponent', () => {
         await render(buildConfig({ menuActions: [buildAction({ key: 'archive', label: 'Archive', action })] }));
 
         buttons()[0].click();
-        await settle();
+        await settle(fixture);
 
-        buttons()
-            .find(button => button.textContent?.trim() === 'Archive')
-            ?.click();
-        await settle();
+        queryButton(fixture, 'Archive')?.click();
+        await settle(fixture);
 
         expect(action).toHaveBeenCalled();
         expect(panels()).toHaveLength(0);
@@ -162,15 +152,15 @@ describe('HeaderComponent', () => {
         await render(buildConfig({ menuActions: [buildAction({ key: 'archive', label: 'Archive' })] }));
 
         buttons()[0].click();
-        await settle();
+        await settle(fixture);
         document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
-        await settle();
+        await settle(fixture);
         expect(panels()).toHaveLength(0);
 
         buttons()[0].click();
-        await settle();
+        await settle(fixture);
         document.body.click();
-        await settle();
+        await settle(fixture);
         expect(panels()).toHaveLength(0);
     });
 
@@ -190,7 +180,7 @@ describe('HeaderComponent', () => {
         );
 
         buttons()[0].click();
-        await settle();
+        await settle(fixture);
 
         expect(action).not.toHaveBeenCalled();
         expect(labels()).toContain('PDF');
@@ -211,11 +201,9 @@ describe('HeaderComponent', () => {
         );
 
         buttons()[0].click();
-        await settle();
-        buttons()
-            .find(button => button.textContent?.trim() === 'PDF')
-            ?.click();
-        await settle();
+        await settle(fixture);
+        queryButton(fixture, 'PDF')?.click();
+        await settle(fixture);
 
         expect(subAction).toHaveBeenCalled();
         expect(panels()).toHaveLength(0);
@@ -225,7 +213,7 @@ describe('HeaderComponent', () => {
         await render();
 
         fixture.componentRef.setInput('config', buildConfig({ title: 'demo.other' }));
-        await settle();
+        await settle(fixture);
 
         expect(fixture.nativeElement.querySelector('h1').textContent.trim()).toBe('demo.other');
     });

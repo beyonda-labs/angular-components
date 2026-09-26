@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { LoadingOverlayComponent } from './loading-overlay.component';
 import { LoadingSize } from './models/loading.model';
@@ -8,10 +9,7 @@ describe('LoadingOverlayComponent', () => {
     let fixture: ComponentFixture<LoadingOverlayComponent>;
 
     async function render(inputs: Record<string, unknown> = {}): Promise<void> {
-        fixture = TestBed.createComponent(LoadingOverlayComponent);
-        Object.entries(inputs).forEach(([name, value]) => fixture.componentRef.setInput(name, value));
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(LoadingOverlayComponent, inputs);
     }
 
     function overlay(): HTMLElement {

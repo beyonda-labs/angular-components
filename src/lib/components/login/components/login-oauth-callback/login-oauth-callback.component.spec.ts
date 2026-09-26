@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
+import { renderComponent } from '@testing/dom';
 import { mock, MockProxy } from 'jest-mock-extended';
 
 import { LoginSessionService } from '../../services/login-session.service';
@@ -22,9 +23,7 @@ describe('LoginOAuthCallbackComponent', () => {
         }).compileComponents();
 
         navigate = jest.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
-        const fixture = TestBed.createComponent(LoginOAuthCallbackComponent);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await renderComponent(LoginOAuthCallbackComponent);
     }
 
     it('opens the session with the tokens the provider sent back', async () => {

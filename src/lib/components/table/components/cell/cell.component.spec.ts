@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { BadgeConfig, BadgeVariant } from '../../../badge/models/badge.model';
 import { BadgeTableCell, LinkTableCell, TableCell, TextTableCell } from '../../models/table-cell.model';
@@ -9,10 +10,7 @@ describe('TableCellComponent', () => {
     let fixture: ComponentFixture<TableCellComponent>;
 
     async function render(cell: TableCell): Promise<void> {
-        fixture = TestBed.createComponent(TableCellComponent);
-        fixture.componentRef.setInput('cell', cell);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(TableCellComponent, { cell });
     }
 
     function text(): string {

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { FormTextareaField } from '../../../models/fields/form-textarea-field.model';
 import { FormTextareaFieldComponent } from './field-textarea.component';
@@ -13,12 +14,11 @@ describe('FormTextareaFieldComponent', () => {
             imports: [FormTextareaFieldComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(FormTextareaFieldComponent);
-        fixture.componentRef.setInput('control', new FormControl(''));
-        fixture.componentRef.setInput('field', new FormTextareaField({ key: 'notes', rows: 5, maxHeight: '10rem' }));
-        fixture.componentRef.setInput('prefix', 'demo.contact.notes');
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(FormTextareaFieldComponent, {
+            control: new FormControl(''),
+            field: new FormTextareaField({ key: 'notes', rows: 5, maxHeight: '10rem' }),
+            prefix: 'demo.contact.notes'
+        });
     });
 
     it('renders a textarea with the rows and placeholder of the field', () => {

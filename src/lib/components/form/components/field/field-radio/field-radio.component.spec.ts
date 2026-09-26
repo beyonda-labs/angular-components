@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, renderComponent } from '@testing/dom';
 
 import { FormRadioField } from '../../../models/fields/form-radio-field.model';
 import { FormRadioFieldComponent } from './field-radio.component';
@@ -15,21 +16,18 @@ describe('FormRadioFieldComponent', () => {
         }).compileComponents();
 
         control = new FormControl<string | null>('');
-        fixture = TestBed.createComponent(FormRadioFieldComponent);
-        fixture.componentRef.setInput('control', control);
-        fixture.componentRef.setInput('field', new FormRadioField({ key: 'size' }));
-        fixture.componentRef.setInput('options', [
-            { label: 'Small', value: 's' },
-            { label: 'Large', value: 'l' }
-        ]);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(FormRadioFieldComponent, {
+            control,
+            field: new FormRadioField({ key: 'size' }),
+            options: [
+                { label: 'Small', value: 's' },
+                { label: 'Large', value: 'l' }
+            ]
+        });
     });
 
     it('offers one radio per option and writes the chosen one', () => {
-        const radios = [
-            ...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLInputElement>('input[type="radio"]')
-        ];
+        const radios = queryAll<HTMLInputElement>(fixture, 'input[type="radio"]');
 
         expect(fixture.nativeElement.textContent).toContain('Small');
         expect(radios).toHaveLength(2);

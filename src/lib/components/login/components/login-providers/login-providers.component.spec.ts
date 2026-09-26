@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, renderComponent } from '@testing/dom';
 
 import { LoginProviderConfig } from '../../models/login.model';
 import { LoginProvidersComponent } from './login-providers.component';
@@ -8,15 +9,11 @@ describe('LoginProvidersComponent', () => {
     let fixture: ComponentFixture<LoginProvidersComponent>;
 
     async function render(providers: LoginProviderConfig[]): Promise<void> {
-        fixture = TestBed.createComponent(LoginProvidersComponent);
-        fixture.componentRef.setInput('prefix', 'demo');
-        fixture.componentRef.setInput('providers', providers);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(LoginProvidersComponent, { prefix: 'demo', providers });
     }
 
     function buttons(): HTMLButtonElement[] {
-        return [...fixture.nativeElement.querySelectorAll('button')];
+        return queryAll<HTMLButtonElement>(fixture, 'button');
     }
 
     beforeEach(async () => {

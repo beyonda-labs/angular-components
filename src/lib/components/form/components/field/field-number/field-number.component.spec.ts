@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, renderComponent } from '@testing/dom';
 
 import { FormNumberField } from '../../../models/fields/form-number-field.model';
 import { FormNumberFieldComponent } from './field-number.component';
@@ -10,7 +11,7 @@ describe('FormNumberFieldComponent', () => {
     let control: FormControl<number | null>;
 
     function buttons(): HTMLButtonElement[] {
-        return [...fixture.nativeElement.querySelectorAll('button')];
+        return queryAll<HTMLButtonElement>(fixture, 'button');
     }
 
     beforeEach(async () => {
@@ -19,12 +20,11 @@ describe('FormNumberFieldComponent', () => {
         }).compileComponents();
 
         control = new FormControl<number | null>(null);
-        fixture = TestBed.createComponent(FormNumberFieldComponent);
-        fixture.componentRef.setInput('control', control);
-        fixture.componentRef.setInput('field', new FormNumberField({ key: 'age', min: 0, max: 2 }));
-        fixture.componentRef.setInput('prefix', 'demo.person.age');
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(FormNumberFieldComponent, {
+            control,
+            field: new FormNumberField({ key: 'age', min: 0, max: 2 }),
+            prefix: 'demo.person.age'
+        });
     });
 
     it('steps the value with the spinners, inside the limits of the field', () => {

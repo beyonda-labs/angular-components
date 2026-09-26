@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryButton } from '@testing/dom';
 
 import { PropertyFileField } from '../../../models/fields/property-file-field.model';
 import { PropertyFileFieldComponent } from './property-file-field.component';
@@ -21,7 +22,7 @@ describe('PropertyFileFieldComponent', () => {
     });
 
     function clearButton(): HTMLButtonElement | null {
-        return fixture.nativeElement.querySelector(`[aria-label="${CLEAR_LABEL}"]`);
+        return queryButton(fixture, CLEAR_LABEL);
     }
 
     it('shows no clear button when the value is unset', () => {

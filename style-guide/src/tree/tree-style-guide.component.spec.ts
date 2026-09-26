@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { TreeStyleGuideComponent } from './tree-style-guide.component';
 
@@ -12,9 +13,8 @@ describe('TreeStyleGuideComponent', () => {
             imports: [TreeStyleGuideComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(TreeStyleGuideComponent);
+        fixture = await renderComponent(TreeStyleGuideComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     it('should create', () => {

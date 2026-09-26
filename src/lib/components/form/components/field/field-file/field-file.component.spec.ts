@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { buttonByName, renderComponent, settle } from '@testing/dom';
 
 import { FormFileField } from '../../../models/fields/form-file-field.model';
 import { FormFileFieldComponent } from './field-file.component';
@@ -15,11 +16,10 @@ describe('FormFileFieldComponent', () => {
         }).compileComponents();
 
         control = new FormControl<File | null>(null);
-        fixture = TestBed.createComponent(FormFileFieldComponent);
-        fixture.componentRef.setInput('control', control);
-        fixture.componentRef.setInput('field', new FormFileField({ key: 'attachment', accept: ['.pdf'] }));
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(FormFileFieldComponent, {
+            control,
+            field: new FormFileField({ key: 'attachment', accept: ['.pdf'] })
+        });
     });
 
     it('shows the chosen file and clears it again', async () => {
@@ -31,17 +31,12 @@ describe('FormFileFieldComponent', () => {
 
         Object.defineProperty(input, 'files', { value: [file] });
         input.dispatchEvent(new Event('change'));
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
 
         expect(control.value).toBe(file);
         expect(fixture.nativeElement.textContent).toContain('invoice.pdf');
 
-        (
-            fixture.nativeElement.querySelector(
-                '[aria-label="angular-components.form.file-field.clear"]'
-            ) as HTMLButtonElement
-        ).click();
+        buttonByName(fixture, 'angular-components.form.file-field.clear').click();
 
         expect(control.value).toBeNull();
     });

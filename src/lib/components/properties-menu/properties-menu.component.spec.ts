@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryButton } from '@testing/dom';
 
 import { PropertyTextField } from './models/fields/property-text-field.model';
 import { PropertiesMenuConfig, PropertiesMenuConfigParameters } from './models/properties-menu-config.model';
@@ -90,7 +91,7 @@ describe('PropertiesMenuComponent', () => {
     }
 
     function closeButton(): HTMLButtonElement | null {
-        return element.querySelector('[aria-label="angular-components.properties-menu.close"]');
+        return queryButton(element, 'angular-components.properties-menu.close');
     }
 
     function service(): PropertiesMenuService {

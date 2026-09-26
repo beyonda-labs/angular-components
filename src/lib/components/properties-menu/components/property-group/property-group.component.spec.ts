@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, queryButton, renderComponent } from '@testing/dom';
 
 import { PropertiesMenuConfig } from '../../models/properties-menu-config.model';
 import { PropertyGroup } from '../../models/property-group.model';
@@ -23,9 +24,9 @@ describe('PropertyGroupComponent', () => {
     const header = (): HTMLButtonElement | null => fixture.nativeElement.querySelector('[aria-expanded]');
 
     const buttons = (text: string): HTMLButtonElement[] =>
-        [...fixture.nativeElement.querySelectorAll('button')].filter(element => element.textContent?.trim() === text);
+        queryAll<HTMLButtonElement>(fixture, 'button').filter(element => element.textContent?.trim() === text);
 
-    const button = (text: string): HTMLButtonElement | undefined => buttons(text)[0];
+    const button = (text: string): HTMLButtonElement | null => queryButton(fixture, text);
 
     const listContent = (): PropertyListContent =>
         new PropertyListContent({ list: [new PropertyListItem({ id: 'block-heading', label: 'Encabezado' })] });
@@ -36,21 +37,18 @@ describe('PropertyGroupComponent', () => {
             providers: [PropertiesMenuService, PropertyTreeDragService]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(PropertyGroupComponent);
-        component = fixture.componentInstance;
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
 
-        fixture.componentRef.setInput('tabId', 'properties');
-        fixture.componentRef.setInput(
-            'group',
-            new PropertyGroup({
+        fixture = await renderComponent(PropertyGroupComponent, {
+            tabId: 'properties',
+            group: new PropertyGroup({
                 id: 'content',
                 label: 'Contenido',
                 expanded: true,
                 content: new PropertyFieldsContent({})
             })
-        );
-        fixture.detectChanges();
+        });
+        component = fixture.componentInstance;
     });
 
     it('should reflect the expanded state through aria-expanded', () => {
@@ -192,7 +190,7 @@ describe('PropertyGroupComponent', () => {
         );
         fixture.detectChanges();
 
-        expect(button('add.label')).toBeUndefined();
+        expect(button('add.label')).toBeNull();
     });
 
     it('should render the empty-state add-block button when the tree is empty and opted in', () => {

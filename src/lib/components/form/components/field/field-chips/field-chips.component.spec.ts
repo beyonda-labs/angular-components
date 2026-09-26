@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent, settle } from '@testing/dom';
 
 import { FormChipsField } from '../../../models/fields/form-chips-field.model';
 import { FormChipsFieldComponent } from './field-chips.component';
@@ -11,12 +12,7 @@ describe('FormChipsFieldComponent', () => {
 
     async function render(field: FormChipsField = new FormChipsField({ key: 'tags' })): Promise<void> {
         control = new FormControl<string[] | null>([]);
-        fixture = TestBed.createComponent(FormChipsFieldComponent);
-        fixture.componentRef.setInput('control', control);
-        fixture.componentRef.setInput('field', field);
-        fixture.componentRef.setInput('prefix', 'demo.person.tags');
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(FormChipsFieldComponent, { control, field, prefix: 'demo.person.tags' });
     }
 
     async function typeChip(value: string): Promise<void> {
@@ -24,11 +20,9 @@ describe('FormChipsFieldComponent', () => {
 
         input.value = value;
         input.dispatchEvent(new Event('input'));
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
         input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
     }
 
     beforeEach(async () => {

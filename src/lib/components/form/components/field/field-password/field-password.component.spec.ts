@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { FormPasswordField } from '../../../models/fields/form-password-field.model';
 import { FormPasswordFieldComponent } from './field-password.component';
@@ -9,12 +10,11 @@ describe('FormPasswordFieldComponent', () => {
     let fixture: ComponentFixture<FormPasswordFieldComponent>;
 
     async function render(field: FormPasswordField = new FormPasswordField({ key: 'password' })): Promise<void> {
-        fixture = TestBed.createComponent(FormPasswordFieldComponent);
-        fixture.componentRef.setInput('control', new FormControl(''));
-        fixture.componentRef.setInput('field', field);
-        fixture.componentRef.setInput('prefix', 'demo.login.password');
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(FormPasswordFieldComponent, {
+            control: new FormControl(''),
+            field,
+            prefix: 'demo.login.password'
+        });
     }
 
     function input(): HTMLInputElement {

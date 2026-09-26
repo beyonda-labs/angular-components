@@ -5,7 +5,7 @@ const config: Config = {
     testEnvironment: 'jsdom',
     setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
 
-    roots: ['<rootDir>/src', '<rootDir>/style-guide'],
+    roots: ['<rootDir>/src', '<rootDir>/style-guide', '<rootDir>/testing'],
     testMatch: ['**/?(*.)+(spec).ts'],
 
     transform: {
@@ -22,7 +22,8 @@ const config: Config = {
 
     moduleNameMapper: {
         '^@beyonda-labs/angular-components$': '<rootDir>/src/public-api.ts',
-        '^@beyonda-labs/angular-components/style-guide$': '<rootDir>/style-guide/src/public-api.ts'
+        '^@beyonda-labs/angular-components/style-guide$': '<rootDir>/style-guide/src/public-api.ts',
+        '^@testing/(.*)$': '<rootDir>/testing/$1'
     },
 
     testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],

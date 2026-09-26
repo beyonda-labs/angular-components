@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { queryAll, renderComponent } from '@testing/dom';
 
 import { FloatingPreferencesComponent } from './floating-preferences.component';
 
@@ -7,18 +8,11 @@ describe('FloatingPreferencesComponent', () => {
     let fixture: ComponentFixture<FloatingPreferencesComponent>;
 
     async function render(usePill?: boolean): Promise<void> {
-        fixture = TestBed.createComponent(FloatingPreferencesComponent);
-
-        if (usePill !== undefined) {
-            fixture.componentRef.setInput('usePill', usePill);
-        }
-
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(FloatingPreferencesComponent, usePill === undefined ? {} : { usePill });
     }
 
     function selects(): HTMLSelectElement[] {
-        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLSelectElement>('select')];
+        return queryAll<HTMLSelectElement>(fixture, 'select');
     }
 
     function choose(select: HTMLSelectElement, value: string): void {

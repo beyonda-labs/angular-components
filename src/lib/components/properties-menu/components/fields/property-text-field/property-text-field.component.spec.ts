@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryButton } from '@testing/dom';
 
 import { PropertyTextField } from '../../../models/fields/property-text-field.model';
 import { PropertyVariable } from '../../../models/property-variable.model';
@@ -23,7 +24,7 @@ describe('PropertyTextFieldComponent', () => {
     });
 
     function variableTrigger(): HTMLButtonElement | null {
-        return fixture.nativeElement.querySelector(`button[aria-label="${INSERT_VARIABLE_LABEL}"]`);
+        return queryButton(fixture, INSERT_VARIABLE_LABEL);
     }
 
     it('should not show the variable trigger when acceptsVariable is false', () => {

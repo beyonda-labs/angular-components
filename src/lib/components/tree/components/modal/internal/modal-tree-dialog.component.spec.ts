@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, settle } from '@testing/dom';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
 import { TreeNode } from '../../../models/tree.model';
@@ -29,13 +30,12 @@ describe('ModalTreeDialogComponent', () => {
     async function render(config: ModalTreeConfig = buildConfig()): Promise<void> {
         fixture = TestBed.createComponent(ModalTreeDialogComponent);
         fixture.componentInstance.config = config;
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
     }
 
     function buttonLabelled(label: string): HTMLButtonElement {
-        const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(
-            button => button.textContent?.includes(label)
+        const found = queryAll<HTMLButtonElement>(fixture, 'button').find(button =>
+            button.textContent?.includes(label)
         );
 
         if (!found) {
@@ -46,9 +46,7 @@ describe('ModalTreeDialogComponent', () => {
     }
 
     function treeNode(name: string): HTMLElement {
-        const found = [
-            ...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('[role="treeitem"]')
-        ].find(node => node.textContent?.trim().includes(name));
+        const found = queryAll(fixture, '[role="treeitem"]').find(node => node.textContent?.trim().includes(name));
 
         if (!found) {
             throw new Error(`No node named ${name}`);

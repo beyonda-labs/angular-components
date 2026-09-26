@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 import { ToastrService } from 'ngx-toastr';
 
 import { ToastStyleGuideComponent } from './toast-style-guide.component';
@@ -24,10 +25,8 @@ describe('ToastStyleGuideComponent', () => {
             ]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(ToastStyleGuideComponent);
+        fixture = await renderComponent(ToastStyleGuideComponent);
         component = fixture.componentInstance;
-
-        fixture.detectChanges();
     });
 
     it('should create', () => {

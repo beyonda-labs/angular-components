@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { faGear, faHome } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { buttonByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { LeftMenuTitle, LeftMenuUserInfo } from '../left-menu/models/left-menu.model';
 import { AppLayoutComponent } from './app-layout.component';
@@ -45,28 +46,11 @@ describe('AppLayoutComponent', () => {
     let service: AppLayoutService;
 
     async function render(config: AppLayoutConfig = buildConfig()): Promise<void> {
-        fixture = TestBed.createComponent(AppLayoutComponent);
-        fixture.componentRef.setInput('config', config);
-        fixture.detectChanges();
-        await fixture.whenStable();
-    }
-
-    async function settle(): Promise<void> {
-        fixture.detectChanges();
-        await fixture.whenStable();
-        fixture.detectChanges();
+        fixture = await renderComponent(AppLayoutComponent, { config });
     }
 
     function buttonOf(name: string): HTMLButtonElement {
-        const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(
-            button => button.textContent?.trim() === name
-        );
-
-        if (!found) {
-            throw new Error(`No button for ${name}`);
-        }
-
-        return found;
+        return buttonByName(fixture, name);
     }
 
     function chevronOf(name: string): HTMLElement {
@@ -80,20 +64,11 @@ describe('AppLayoutComponent', () => {
     }
 
     function breadcrumbLabels(): string[] {
-        return [
-            ...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>(
-                'bey-breadcrumb li:not([aria-hidden="true"])'
-            )
-        ].map(item => item.textContent?.trim() ?? '');
+        return textsOf(queryAll(fixture, 'bey-breadcrumb li:not([aria-hidden="true"])'));
     }
 
     beforeEach(async () => {
         localStorage.clear();
-        global.ResizeObserver = class {
-            observe(): void {}
-            unobserve(): void {}
-            disconnect(): void {}
-        } as unknown as typeof ResizeObserver;
 
         await TestBed.configureTestingModule({
             imports: [AppLayoutComponent, HostComponent, TranslateModule.forRoot()],
@@ -138,17 +113,17 @@ describe('AppLayoutComponent', () => {
             expect(fixture.nativeElement.querySelector('bey-breadcrumb')).toBeNull();
 
             service.setBreadcrumb([new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' })]);
-            await settle();
+            await settle(fixture);
             expect(breadcrumbLabels()).toEqual(['Home']);
 
             service.clearBreadcrumb();
-            await settle();
+            await settle(fixture);
             expect(fixture.nativeElement.querySelector('bey-breadcrumb')).toBeNull();
         });
 
         it('starts with the items the config carries', async () => {
             await render(buildConfig({ breadcrumb: [new AppLayoutBreadcrumbItem({ id: 1, label: 'Start' })] }));
-            await settle();
+            await settle(fixture);
 
             expect(breadcrumbLabels()).toEqual(['Start']);
         });
@@ -160,7 +135,7 @@ describe('AppLayoutComponent', () => {
                 new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' }),
                 new AppLayoutBreadcrumbItem({ id: 2, label: 'Current' })
             ]);
-            await settle();
+            await settle(fixture);
 
             buttonOf('Home').click();
             service.emitBreadcrumbClick(42);
@@ -205,7 +180,7 @@ describe('AppLayoutComponent', () => {
             service.onMenuClick$.subscribe(clicked);
 
             chevronOf('demo.actions.reports.label').click();
-            await settle();
+            await settle(fixture);
             buttonOf('demo.actions.daily.label').click();
             buttonOf('demo.actions.settings.label').click();
 
@@ -218,7 +193,7 @@ describe('AppLayoutComponent', () => {
             await render(buildConfig({ topActions: [action] }));
 
             service.activeMenuAction('home');
-            await settle();
+            await settle(fixture);
 
             expect(action.action).toBe(run);
             expect(action.active).toBe(false);
@@ -238,7 +213,7 @@ describe('AppLayoutComponent', () => {
             expect(buttonOf('demo.actions.home.label').getAttribute('aria-current')).toBe('page');
 
             service.activeMenuAction('other');
-            await settle();
+            await settle(fixture);
 
             expect(buttonOf('demo.actions.home.label').getAttribute('aria-current')).toBeNull();
             expect(buttonOf('demo.actions.other.label').getAttribute('aria-current')).toBe('page');
@@ -252,7 +227,7 @@ describe('AppLayoutComponent', () => {
             expect(toggle().getAttribute('aria-expanded')).toBe('false');
 
             toggle().click();
-            await settle();
+            await settle(fixture);
 
             expect(toggle().getAttribute('aria-expanded')).toBe('true');
             expect(service.expanded()).toBe(true);
@@ -276,7 +251,7 @@ describe('AppLayoutComponent', () => {
             await TestBed.inject(Router).navigateByUrl('/reports/daily?tab=1');
 
             await render(buildConfig({ onRouteActivated, topActions: routed() }));
-            await settle();
+            await settle(fixture);
 
             expect(buttonOf('demo.actions.daily.label').getAttribute('aria-current')).toBe('page');
             expect(breadcrumbLabels()).toEqual(['demo.actions.reports.label', 'demo.actions.daily.label']);
@@ -288,12 +263,12 @@ describe('AppLayoutComponent', () => {
             const router = TestBed.inject(Router);
 
             await router.navigateByUrl('/home');
-            await settle();
+            await settle(fixture);
             expect(buttonOf('demo.actions.home.label').getAttribute('aria-current')).toBe('page');
             expect(breadcrumbLabels()).toEqual(['demo.actions.home.label']);
 
             await router.navigateByUrl('/elsewhere');
-            await settle();
+            await settle(fixture);
             expect(service.activeActionKey()).toBeNull();
             expect(fixture.nativeElement.querySelector('bey-breadcrumb')).toBeNull();
         });
@@ -302,7 +277,7 @@ describe('AppLayoutComponent', () => {
             await render(buildConfig({ topActions: routed() }));
 
             buttonOf('demo.actions.home.label').click();
-            await settle();
+            await settle(fixture);
 
             expect(buttonOf('demo.actions.home.label').getAttribute('aria-current')).toBe('page');
             expect(breadcrumbLabels()).toEqual(['demo.actions.home.label']);
@@ -315,7 +290,7 @@ describe('AppLayoutComponent', () => {
 
             translate.setTranslation('es', { demo: { actions: { home: { label: 'Inicio' } } } });
             translate.use('es');
-            await settle();
+            await settle(fixture);
 
             expect(breadcrumbLabels()).toEqual(['Inicio']);
         });
@@ -325,7 +300,7 @@ describe('AppLayoutComponent', () => {
             service.setBreadcrumb([new AppLayoutBreadcrumbItem({ id: 1, label: 'Kept' })]);
 
             await TestBed.inject(Router).navigateByUrl('/anywhere');
-            await settle();
+            await settle(fixture);
 
             expect(breadcrumbLabels()).toEqual(['Kept']);
         });

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { of } from 'rxjs';
 
@@ -26,10 +27,8 @@ describe('FormStyleGuideComponent', () => {
             providers: [{ provide: BsModalService, useValue: { show: jest.fn() } }]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(FormStyleGuideComponent);
+        fixture = await renderComponent(FormStyleGuideComponent);
         component = fixture.componentInstance;
-
-        fixture.detectChanges();
     });
 
     it('should create', () => {

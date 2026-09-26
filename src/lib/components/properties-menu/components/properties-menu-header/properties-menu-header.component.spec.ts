@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { faFont } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryButton } from '@testing/dom';
 
 import { PropertiesMenuHeaderConfig } from '../../models/properties-menu-header.model';
 import { PropertiesMenuHeaderComponent } from './properties-menu-header.component';
@@ -15,7 +16,7 @@ describe('PropertiesMenuHeaderComponent', () => {
     }
 
     function closeButton(): HTMLButtonElement | null {
-        return element.querySelector('[aria-label="angular-components.properties-menu.close"]');
+        return queryButton(element, 'angular-components.properties-menu.close');
     }
 
     beforeEach(async () => {

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { settle } from '@testing/dom';
 
 import { TableRow } from '../../models/table.model';
 import { TextTableCell } from '../../models/table-cell.model';
@@ -26,8 +27,7 @@ describe('TableRowComponent', () => {
         fixture.componentRef.setInput('selectable', overrides.selectable ?? true);
         changes = [];
         fixture.componentInstance.selectionChange.subscribe(value => changes.push(value));
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
     }
 
     function checkbox(): HTMLInputElement | null {

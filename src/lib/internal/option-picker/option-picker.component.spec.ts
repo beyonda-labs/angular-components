@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, renderComponent, textsOf } from '@testing/dom';
 
 import { OptionPickerOption } from './models/option-picker-option.model';
 import { OptionPickerComponent } from './option-picker.component';
@@ -16,7 +17,7 @@ describe('OptionPickerComponent', () => {
     let element: HTMLElement;
 
     function rows(): HTMLButtonElement[] {
-        return [...element.querySelectorAll<HTMLButtonElement>('[role="option"]')];
+        return queryAll<HTMLButtonElement>(element, '[role="option"]');
     }
 
     function search(term: string): void {
@@ -34,12 +35,12 @@ describe('OptionPickerComponent', () => {
             imports: [OptionPickerComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(OptionPickerComponent);
+        fixture = await renderComponent(OptionPickerComponent, {
+            anchor: document.createElement('div'),
+            options: OPTIONS
+        });
         component = fixture.componentInstance;
         element = fixture.nativeElement;
-        fixture.componentRef.setInput('anchor', document.createElement('div'));
-        fixture.componentRef.setInput('options', OPTIONS);
-        fixture.detectChanges();
     });
 
     afterEach(() => {
@@ -47,14 +48,14 @@ describe('OptionPickerComponent', () => {
     });
 
     it('should list every option, indented by depth, without a search term', () => {
-        expect(rows().map(row => row.textContent?.trim())).toEqual(['Customer', 'Name', 'Invoice']);
+        expect(textsOf(rows())).toEqual(['Customer', 'Name', 'Invoice']);
         expect(rows()[1].style.getPropertyValue('--bey-option-picker-row-depth')).toBe('1');
     });
 
     it('should filter by value or label as a flat list', () => {
         search('name');
 
-        expect(rows().map(row => row.textContent?.trim())).toEqual(['Name']);
+        expect(textsOf(rows())).toEqual(['Name']);
         expect(rows()[0].style.getPropertyValue('--bey-option-picker-row-depth')).toBe('0');
     });
 

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { buttonByName, renderComponent, settle } from '@testing/dom';
 
 import { FormComponent } from './form.component';
 import { FormSelectField } from './models/fields/form-select-field.model';
@@ -49,15 +50,7 @@ describe('FormComponent', () => {
     }
 
     async function render(config: FormConfig<DemoValue> = buildConfig()): Promise<void> {
-        fixture = TestBed.createComponent(FormComponent<DemoValue>);
-        fixture.componentRef.setInput('config', config);
-        await settle();
-    }
-
-    async function settle(): Promise<void> {
-        fixture.detectChanges();
-        await fixture.whenStable();
-        fixture.detectChanges();
+        fixture = await renderComponent(FormComponent<DemoValue>, { config });
     }
 
     function input(id: string): HTMLInputElement | null {
@@ -73,19 +66,11 @@ describe('FormComponent', () => {
 
         field.value = value;
         field.dispatchEvent(new Event('input'));
-        await settle();
+        await settle(fixture);
     }
 
     function button(label: string): HTMLButtonElement {
-        const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(
-            element => element.textContent?.includes(label)
-        );
-
-        if (!found) {
-            throw new Error(`No button ${label}`);
-        }
-
-        return found;
+        return buttonByName(fixture, label);
     }
 
     function text(): string {
@@ -166,7 +151,7 @@ describe('FormComponent', () => {
 
         await type('name', 'Grace');
         button('demo.cancel').click();
-        await settle();
+        await settle(fixture);
 
         expect(input('name')?.value).toBe('Ada');
         expect(onCancel).toHaveBeenCalled();
@@ -189,7 +174,7 @@ describe('FormComponent', () => {
         const handle = onReady.mock.calls[0][0] as FormHandle<DemoValue>;
 
         handle.patchValue({ contact: { email: 'ada@example.com', name: 'Ada' } });
-        await settle();
+        await settle(fixture);
         handle.close();
         handle.requestClose();
 
@@ -342,7 +327,7 @@ describe('FormComponent', () => {
 
             await type('name', 'Ada');
             button('angular-components.form.steps.next').click();
-            await settle();
+            await settle(fixture);
 
             expect(input('name')).toBeNull();
             expect(input('email')).not.toBeNull();
@@ -356,16 +341,16 @@ describe('FormComponent', () => {
 
             await type('name', 'Ada');
             button('angular-components.form.steps.next').click();
-            await settle();
+            await settle(fixture);
             await type('email', 'ada@example.com');
             expect(button('demo.submit').disabled).toBe(false);
 
             button('angular-components.form.steps.back').click();
-            await settle();
+            await settle(fixture);
             expect(input('name')?.value).toBe('Ada');
 
             button('angular-components.form.steps.next').click();
-            await settle();
+            await settle(fixture);
             button('demo.submit').click();
 
             expect(onSubmit).toHaveBeenCalledWith(
@@ -379,7 +364,7 @@ describe('FormComponent', () => {
             await render(buildSteppedConfig({ onReady }));
 
             (onReady.mock.calls[0][0] as FormHandle<DemoValue>).goToStep('how');
-            await settle();
+            await settle(fixture);
 
             expect(input('email')).not.toBeNull();
         });
@@ -394,7 +379,7 @@ describe('FormComponent', () => {
             'config',
             buildConfig({ initialValue: { contact: { email: '', name: 'Grace' } }, onReady })
         );
-        await settle();
+        await settle(fixture);
 
         expect(input('name')?.value).toBe('Grace');
         expect(button('demo.submit').disabled).toBe(true);

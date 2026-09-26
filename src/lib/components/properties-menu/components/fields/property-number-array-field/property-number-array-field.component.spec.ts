@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll } from '@testing/dom';
 
 import { PropertyNumberArrayField } from '../../../models/fields/property-number-array-field.model';
 import { PropertyNumberArrayFieldComponent } from './property-number-array-field.component';
@@ -21,13 +22,11 @@ describe('PropertyNumberArrayFieldComponent', () => {
     });
 
     function entryInputs(): HTMLInputElement[] {
-        return [...fixture.nativeElement.querySelectorAll('input[type="number"]')];
+        return queryAll<HTMLInputElement>(fixture, 'input[type="number"]');
     }
 
     function addButton(): HTMLButtonElement | undefined {
-        const buttons: HTMLButtonElement[] = [...fixture.nativeElement.querySelectorAll('button')];
-
-        return buttons.find(element => element.textContent?.includes(ADD_TEXT));
+        return queryAll<HTMLButtonElement>(fixture, 'button').find(element => element.textContent?.includes(ADD_TEXT));
     }
 
     it('renders one input per entry', () => {

@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { FormDateField } from '../../../models/fields/form-date-field.model';
 import { FormDateFieldComponent } from './field-date.component';
@@ -11,12 +12,7 @@ describe('FormDateFieldComponent', () => {
 
     async function render(field: FormDateField): Promise<void> {
         control = new FormControl<string | null>('');
-        fixture = TestBed.createComponent(FormDateFieldComponent);
-        fixture.componentRef.setInput('control', control);
-        fixture.componentRef.setInput('field', field);
-        fixture.componentRef.setInput('prefix', 'demo.person.birthday');
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(FormDateFieldComponent, { control, field, prefix: 'demo.person.birthday' });
     }
 
     beforeEach(async () => {

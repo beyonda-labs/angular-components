@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { TreeConfig, TreeConfigParameters, TreeNode } from './models/tree.model';
 import { TreeComponent } from './tree.component';
@@ -23,18 +24,15 @@ describe('TreeComponent', () => {
     }
 
     async function render(config: TreeConfig = buildConfig()): Promise<void> {
-        fixture = TestBed.createComponent(TreeComponent);
-        fixture.componentRef.setInput('config', config);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(TreeComponent, { config });
     }
 
     function nodes(): HTMLElement[] {
-        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('[role="treeitem"]')];
+        return queryAll(fixture, '[role="treeitem"]');
     }
 
     function labels(): string[] {
-        return nodes().map(node => node.textContent?.trim() ?? '');
+        return textsOf(nodes());
     }
 
     function node(name: string): HTMLElement {
@@ -169,8 +167,7 @@ describe('TreeComponent', () => {
         await render();
 
         fixture.componentRef.setInput('config', buildConfig({ expandedKeys: ['root'] }));
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
 
         expect(labels()).toContain('Child');
     });

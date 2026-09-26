@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { FormFieldState } from '../../form.component';
 import { FormTextField } from '../../models/fields/form-text-field.model';
@@ -17,28 +18,18 @@ describe('FormRowComponent', () => {
             imports: [FormRowComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(FormRowComponent);
-        fixture.componentRef.setInput(
-            'fieldStates',
-            new Map([
+        fixture = await renderComponent(FormRowComponent, {
+            fieldStates: new Map([
                 ['contact.name', VISIBLE],
                 ['contact.email', { ...VISIBLE, isHidden: true }]
-            ])
-        );
-        fixture.componentRef.setInput(
-            'group',
-            new FormGroup({ name: new FormControl(''), email: new FormControl('') })
-        );
-        fixture.componentRef.setInput('prefix', 'demo.contact');
-        fixture.componentRef.setInput(
-            'row',
-            new FormRow({
+            ]),
+            group: new FormGroup({ name: new FormControl(''), email: new FormControl('') }),
+            prefix: 'demo.contact',
+            row: new FormRow({
                 fields: [new FormTextField({ key: 'name', columns: 4 }), new FormTextField({ key: 'email' })]
-            })
-        );
-        fixture.componentRef.setInput('sectionKey', 'contact');
-        fixture.detectChanges();
-        await fixture.whenStable();
+            }),
+            sectionKey: 'contact'
+        });
     });
 
     it('renders the visible fields with the columns they ask for', () => {

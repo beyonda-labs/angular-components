@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { buttonByName, settle } from '@testing/dom';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { of } from 'rxjs';
 
@@ -14,30 +15,12 @@ describe('ModalFormDialogComponent', () => {
     const hide = jest.fn();
     const openConfirmation = jest.fn();
 
-    async function settle(): Promise<void> {
-        fixture.detectChanges();
-        await fixture.whenStable();
-        fixture.detectChanges();
-    }
-
     async function type(value: string): Promise<void> {
         const input = fixture.nativeElement.querySelector('#name') as HTMLInputElement;
 
         input.value = value;
         input.dispatchEvent(new Event('input'));
-        await settle();
-    }
-
-    function button(label: string): HTMLButtonElement {
-        const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(
-            element => element.textContent?.includes(label)
-        );
-
-        if (!found) {
-            throw new Error(`No button ${label}`);
-        }
-
-        return found;
+        await settle(fixture);
     }
 
     beforeEach(async () => {
@@ -63,7 +46,7 @@ describe('ModalFormDialogComponent', () => {
                 })
             ]
         });
-        await settle();
+        await settle(fixture);
     });
 
     it('shows the title and the form', () => {
@@ -72,7 +55,7 @@ describe('ModalFormDialogComponent', () => {
     });
 
     it('closes straight away while the form has no changes', () => {
-        button('demo.modal-form.buttons.cancel').click();
+        buttonByName(fixture, 'demo.modal-form.buttons.cancel').click();
 
         expect(openConfirmation).not.toHaveBeenCalled();
         expect(hide).toHaveBeenCalled();
@@ -82,21 +65,17 @@ describe('ModalFormDialogComponent', () => {
         openConfirmation.mockReturnValueOnce(of(false)).mockReturnValueOnce(of(true));
         await type('Ada');
 
-        button('demo.modal-form.buttons.cancel').click();
+        buttonByName(fixture, 'demo.modal-form.buttons.cancel').click();
         expect(hide).not.toHaveBeenCalled();
 
-        (
-            fixture.nativeElement.querySelector(
-                '[aria-label="angular-components.modal.actions.close"]'
-            ) as HTMLButtonElement
-        ).click();
+        buttonByName(fixture, 'angular-components.modal.actions.close').click();
         expect(hide).toHaveBeenCalled();
     });
 
     it('lets the submit callback close the dialog through the handle', async () => {
         await type('Ada');
 
-        button('demo.modal-form.buttons.submit').click();
+        buttonByName(fixture, 'demo.modal-form.buttons.submit').click();
 
         expect(openConfirmation).not.toHaveBeenCalled();
         expect(hide).toHaveBeenCalled();

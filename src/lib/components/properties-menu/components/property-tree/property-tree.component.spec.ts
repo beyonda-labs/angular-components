@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, queryButton, renderComponent, textsOf } from '@testing/dom';
 
 import { PropertiesMenuConfig } from '../../models/properties-menu-config.model';
 import { PropertyTreeNode } from '../../models/property-tree-node.model';
@@ -12,13 +13,12 @@ describe('PropertyTreeComponent', () => {
     let fixture: ComponentFixture<PropertyTreeComponent>;
     let propertiesMenuService: PropertiesMenuService;
 
-    const treeItems = (): HTMLButtonElement[] => [...fixture.nativeElement.querySelectorAll('[role="treeitem"]')];
+    const treeItems = (): HTMLButtonElement[] => queryAll<HTMLButtonElement>(fixture, '[role="treeitem"]');
 
     const toggle = (index: number): HTMLElement | null =>
         treeItems()[index].querySelector(':scope > span[aria-hidden="true"]');
 
-    const button = (text: string): HTMLButtonElement | undefined =>
-        [...fixture.nativeElement.querySelectorAll('button')].find(element => element.textContent?.trim() === text);
+    const button = (text: string): HTMLButtonElement | null => queryButton(fixture, text);
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -26,24 +26,24 @@ describe('PropertyTreeComponent', () => {
             providers: [PropertiesMenuService, PropertyTreeDragService]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(PropertyTreeComponent);
-        component = fixture.componentInstance;
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
 
-        fixture.componentRef.setInput('tabId', 'structure');
-        fixture.componentRef.setInput('groupId', 'structure-tree');
-        fixture.componentRef.setInput('nodes', [
-            new PropertyTreeNode({
-                id: 'page-1',
-                label: 'Page 1',
-                children: [new PropertyTreeNode({ id: 'header', label: 'Header' })]
-            })
-        ]);
-        fixture.detectChanges();
+        fixture = await renderComponent(PropertyTreeComponent, {
+            tabId: 'structure',
+            groupId: 'structure-tree',
+            nodes: [
+                new PropertyTreeNode({
+                    id: 'page-1',
+                    label: 'Page 1',
+                    children: [new PropertyTreeNode({ id: 'header', label: 'Header' })]
+                })
+            ]
+        });
+        component = fixture.componentInstance;
     });
 
     it('should render root and nested node labels', () => {
-        expect(treeItems().map(element => element.textContent?.trim())).toEqual(['Page 1', 'Header']);
+        expect(textsOf(treeItems())).toEqual(['Page 1', 'Header']);
     });
 
     it('should call PropertiesMenuService.selectTreeNode when a row is clicked', () => {

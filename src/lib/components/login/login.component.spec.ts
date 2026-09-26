@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryButton, renderComponent, settle } from '@testing/dom';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
@@ -26,26 +27,15 @@ describe('LoginComponent', () => {
     }
 
     async function render(config: LoginConfig = buildConfig()): Promise<void> {
-        fixture = TestBed.createComponent(LoginComponent);
-        fixture.componentRef.setInput('config', config);
-        fixture.detectChanges();
-        await fixture.whenStable();
-    }
-
-    async function settle(): Promise<void> {
-        fixture.detectChanges();
-        await fixture.whenStable();
-        fixture.detectChanges();
+        fixture = await renderComponent(LoginComponent, { config });
     }
 
     function text(): string {
         return fixture.nativeElement.textContent;
     }
 
-    function buttonWith(label: string): HTMLButtonElement | undefined {
-        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(button =>
-            button.textContent?.includes(label)
-        );
+    function buttonWith(label: string): HTMLButtonElement | null {
+        return queryButton(fixture, label);
     }
 
     beforeEach(async () => {
@@ -74,23 +64,23 @@ describe('LoginComponent', () => {
         await render(buildConfig({ prefix: 'myApp.login' }));
 
         expect(text()).toContain('myApp.login.title.login');
-        expect(buttonWith('myApp.login.login.button.login')).toBeDefined();
+        expect(buttonWith('myApp.login.login.button.login')).not.toBeNull();
     });
 
     it('offers registration only when the backend defines register fields', async () => {
         await render();
-        expect(buttonWith('register.button.register')).toBeUndefined();
+        expect(buttonWith('angular-components.login.register.button.register')).toBeNull();
 
         loginHttpService.getRegisterFields.mockReturnValue(of(REGISTER_FIELDS));
         await render();
-        buttonWith('register.button.register')?.click();
-        await settle();
+        buttonWith('angular-components.login.register.button.register')?.click();
+        await settle(fixture);
 
         expect(text()).toContain('angular-components.login.title.register');
         expect(fixture.nativeElement.querySelector('#name')).not.toBeNull();
 
-        buttonWith('login.button.login')?.click();
-        await settle();
+        buttonWith('angular-components.login.login.button.login')?.click();
+        await settle(fixture);
 
         expect(text()).toContain('angular-components.login.title.login');
         expect(fixture.nativeElement.querySelector('#email')).not.toBeNull();
@@ -104,7 +94,7 @@ describe('LoginComponent', () => {
         expect(body.style.backgroundImage).toContain('login-bg-light');
 
         themeService.setTheme('dark');
-        await settle();
+        await settle(fixture);
 
         expect(body.style.backgroundImage).toContain('login-bg-dark');
     });

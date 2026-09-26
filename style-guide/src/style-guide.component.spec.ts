@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 import { ToastrService } from 'ngx-toastr';
 import { of } from 'rxjs';
 
@@ -13,12 +14,6 @@ describe('StyleGuideComponent', () => {
     let fixture: ComponentFixture<StyleGuideComponent>;
 
     beforeEach(async () => {
-        global.ResizeObserver = class {
-            observe(): void {}
-            unobserve(): void {}
-            disconnect(): void {}
-        } as unknown as typeof ResizeObserver;
-
         await TestBed.configureTestingModule({
             imports: [StyleGuideComponent, TranslateModule.forRoot()],
             providers: [
@@ -46,9 +41,8 @@ describe('StyleGuideComponent', () => {
             ]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(StyleGuideComponent);
+        fixture = await renderComponent(StyleGuideComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     it('should create', () => {

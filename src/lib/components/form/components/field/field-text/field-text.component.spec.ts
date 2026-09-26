@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { FormTextField } from '../../../models/fields/form-text-field.model';
 import { FormTextFieldComponent } from './field-text.component';
@@ -11,12 +12,7 @@ describe('FormTextFieldComponent', () => {
 
     async function render(field: FormTextField = new FormTextField({ key: 'name' })): Promise<void> {
         control = new FormControl<string | null>('', Validators.required);
-        fixture = TestBed.createComponent(FormTextFieldComponent);
-        fixture.componentRef.setInput('control', control);
-        fixture.componentRef.setInput('field', field);
-        fixture.componentRef.setInput('prefix', 'demo.contact.name');
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(FormTextFieldComponent, { control, field, prefix: 'demo.contact.name' });
     }
 
     function input(): HTMLInputElement {

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { LoadingComponent } from './loading.component';
 import { LoadingSize } from './models/loading.model';
@@ -8,14 +9,7 @@ describe('LoadingComponent', () => {
     let fixture: ComponentFixture<LoadingComponent>;
 
     async function render(size?: LoadingSize | string): Promise<void> {
-        fixture = TestBed.createComponent(LoadingComponent);
-
-        if (size !== undefined) {
-            fixture.componentRef.setInput('size', size);
-        }
-
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(LoadingComponent, size === undefined ? {} : { size });
     }
 
     function spinnerSize(): string {

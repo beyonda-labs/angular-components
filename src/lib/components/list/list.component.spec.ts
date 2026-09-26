@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { queryAll, settle } from '@testing/dom';
 
 import { ListComponent } from './list.component';
 import { ListConfig, ListConfigParameters } from './models/list.model';
@@ -44,16 +45,11 @@ describe('ListComponent', () => {
     async function render(config: ListConfig<Employee> = buildConfig()): Promise<void> {
         fixture = TestBed.createComponent(HostComponent);
         fixture.componentInstance.config.set(config);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
     }
 
     function items(): HTMLElement[] {
-        return [
-            ...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>(
-                '[role="list"] > [role="listitem"], [role="list"] > [role="button"]'
-            )
-        ];
+        return queryAll(fixture, '[role="list"] > [role="listitem"], [role="list"] > [role="button"]');
     }
 
     beforeEach(async () => {
@@ -138,8 +134,7 @@ describe('ListComponent', () => {
                 ]
             })
         );
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
 
         expect(items()[1]).toBe(first);
     });

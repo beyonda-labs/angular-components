@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { FormFieldState } from '../../form.component';
 import { FormCheckboxField } from '../../models/fields/form-checkbox-field.model';
@@ -14,13 +15,12 @@ describe('FormFieldComponent', () => {
     let fixture: ComponentFixture<FormFieldComponent>;
 
     async function render(field: FormField, state: FormFieldState = VALID): Promise<void> {
-        fixture = TestBed.createComponent(FormFieldComponent);
-        fixture.componentRef.setInput('control', new FormControl(''));
-        fixture.componentRef.setInput('field', field);
-        fixture.componentRef.setInput('prefix', 'demo.contact');
-        fixture.componentRef.setInput('state', state);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(FormFieldComponent, {
+            control: new FormControl(''),
+            field,
+            prefix: 'demo.contact',
+            state
+        });
     }
 
     beforeEach(async () => {

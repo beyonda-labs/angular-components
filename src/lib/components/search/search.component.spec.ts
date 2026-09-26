@@ -1,5 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll } from '@testing/dom';
 
 import { SearchConfig, SearchConfigParameters, SearchField, SearchFieldType } from './models/search.model';
 import { BooleanFilter, NumberFilter, SearchFilterOperator, StringFilter } from './models/search-filter.model';
@@ -49,18 +50,18 @@ describe('SearchComponent', () => {
     }
 
     function clickByLabel(label: string): void {
-        [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')]
+        queryAll<HTMLButtonElement>(fixture, 'button')
             .find(button => button.textContent?.includes(label))
             ?.click();
         fixture.detectChanges();
     }
 
     function rows(): HTMLElement[] {
-        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('[role="group"]')];
+        return queryAll(fixture, '[role="group"]');
     }
 
     function selectsOf(row: HTMLElement): HTMLSelectElement[] {
-        return [...row.querySelectorAll<HTMLSelectElement>('select')];
+        return queryAll<HTMLSelectElement>(row, 'select');
     }
 
     function lastFilters(): unknown[] {
@@ -168,13 +169,13 @@ describe('SearchComponent', () => {
         type(field, 'age');
         type(operator, SearchFilterOperator.Between);
 
-        const [from, to] = [...rows()[0].querySelectorAll<HTMLInputElement>('input')];
+        const [from, to] = queryAll<HTMLInputElement>(rows()[0], 'input');
         type(from, '20');
         clickByLabel('apply');
         expect(lastFilters()).toEqual([]);
 
         openPanel();
-        type([...rows()[0].querySelectorAll<HTMLInputElement>('input')][1] ?? to, '40');
+        type(queryAll<HTMLInputElement>(rows()[0], 'input')[1] ?? to, '40');
         clickByLabel('apply');
 
         expect(lastFilters()).toEqual([

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { LeftMenuComponent } from './left-menu.component';
 import {
@@ -24,10 +25,7 @@ describe('LeftMenuComponent', () => {
     }
 
     async function render(config: LeftMenuConfig = buildConfig()): Promise<void> {
-        fixture = TestBed.createComponent(LeftMenuComponent);
-        fixture.componentRef.setInput('config', config);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(LeftMenuComponent, { config });
     }
 
     function toggle(): HTMLButtonElement {
@@ -37,9 +35,7 @@ describe('LeftMenuComponent', () => {
     }
 
     function actionLabels(): string[] {
-        return [
-            ...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('bey-left-menu-action-list button')
-        ].map(button => button.textContent?.trim() ?? '');
+        return textsOf(queryAll(fixture, 'bey-left-menu-action-list button'));
     }
 
     beforeEach(async () => {
@@ -107,8 +103,7 @@ describe('LeftMenuComponent', () => {
             'config',
             buildConfig({ topActions: [new LeftMenuAction({ key: 'other', label: 'Other' })] })
         );
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
 
         expect(actionLabels()).toEqual(['Other', 'Log out']);
     });

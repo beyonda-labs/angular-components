@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { ListStyleGuideComponent } from './list-style-guide.component';
 
@@ -12,9 +13,8 @@ describe('ListStyleGuideComponent', () => {
             imports: [ListStyleGuideComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(ListStyleGuideComponent);
+        fixture = await renderComponent(ListStyleGuideComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     it('should create', () => {

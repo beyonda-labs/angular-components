@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { FormFieldState } from '../../form.component';
 import { FormTextField } from '../../models/fields/form-text-field.model';
@@ -18,16 +19,11 @@ describe('FormSectionComponent', () => {
         overrides: Partial<FormSectionParameters> = {},
         states: Record<string, FormFieldState> = ALL_VISIBLE
     ): Promise<void> {
-        fixture = TestBed.createComponent(FormSectionComponent);
-        fixture.componentRef.setInput('fieldStates', new Map(Object.entries(states)));
-        fixture.componentRef.setInput(
-            'group',
-            new FormGroup({ name: new FormControl(''), email: new FormControl('') })
-        );
-        fixture.componentRef.setInput('prefix', 'demo');
-        fixture.componentRef.setInput(
-            'section',
-            new FormSection({
+        fixture = await renderComponent(FormSectionComponent, {
+            fieldStates: new Map(Object.entries(states)),
+            group: new FormGroup({ name: new FormControl(''), email: new FormControl('') }),
+            prefix: 'demo',
+            section: new FormSection({
                 key: 'contact',
                 rows: [
                     new FormRow({ fields: [new FormTextField({ key: 'name' })] }),
@@ -35,9 +31,7 @@ describe('FormSectionComponent', () => {
                 ],
                 ...overrides
             })
-        );
-        fixture.detectChanges();
-        await fixture.whenStable();
+        });
     }
 
     beforeEach(async () => {

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { buttonByName, renderComponent, settle } from '@testing/dom';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
@@ -14,14 +15,10 @@ describe('LoginFormComponent', () => {
     let loginSessionService: MockProxy<LoginSessionService>;
 
     async function render(providers: LoginProviderConfig[] = []): Promise<void> {
-        fixture = TestBed.createComponent(LoginFormComponent);
-        fixture.componentRef.setInput(
-            'config',
-            new LoginConfig({ iconSrc: '', productDescription: 'Pitch', productName: 'Product' })
-        );
-        fixture.componentRef.setInput('providers', providers);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(LoginFormComponent, {
+            config: new LoginConfig({ iconSrc: '', productDescription: 'Pitch', productName: 'Product' }),
+            providers
+        });
     }
 
     async function type(id: string, value: string): Promise<void> {
@@ -29,20 +26,11 @@ describe('LoginFormComponent', () => {
 
         input.value = value;
         input.dispatchEvent(new Event('input'));
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
     }
 
     function submitButton(): HTMLButtonElement {
-        const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(
-            button => button.textContent?.includes('login.button.login')
-        );
-
-        if (!found) {
-            throw new Error('No sign-in button');
-        }
-
-        return found;
+        return buttonByName(fixture, 'angular-components.login.login.button.login');
     }
 
     beforeEach(async () => {

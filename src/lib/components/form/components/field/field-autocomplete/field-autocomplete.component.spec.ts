@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { buttonByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { FormAutocompleteField } from '../../../models/fields/form-autocomplete-field.model';
 import { FormAutocompleteFieldComponent } from './field-autocomplete.component';
@@ -14,13 +15,7 @@ describe('FormAutocompleteFieldComponent', () => {
     }
 
     function panelOptions(): HTMLButtonElement[] {
-        return [...document.body.querySelectorAll<HTMLButtonElement>('[role="option"]')];
-    }
-
-    async function settle(): Promise<void> {
-        fixture.detectChanges();
-        await fixture.whenStable();
-        fixture.detectChanges();
+        return queryAll<HTMLButtonElement>(document.body, '[role="option"]');
     }
 
     beforeEach(async () => {
@@ -29,16 +24,16 @@ describe('FormAutocompleteFieldComponent', () => {
         }).compileComponents();
 
         control = new FormControl<string | null>('');
-        fixture = TestBed.createComponent(FormAutocompleteFieldComponent);
-        fixture.componentRef.setInput('control', control);
-        fixture.componentRef.setInput('field', new FormAutocompleteField({ key: 'city' }));
-        fixture.componentRef.setInput('options', [
-            { label: 'Madrid', value: 'mad' },
-            { label: 'Malaga', value: 'agp' },
-            { label: 'Bilbao', value: 'bio', isDisabled: true }
-        ]);
-        fixture.componentRef.setInput('prefix', 'demo.trip.city');
-        await settle();
+        fixture = await renderComponent(FormAutocompleteFieldComponent, {
+            control,
+            field: new FormAutocompleteField({ key: 'city' }),
+            options: [
+                { label: 'Madrid', value: 'mad' },
+                { label: 'Malaga', value: 'agp' },
+                { label: 'Bilbao', value: 'bio', isDisabled: true }
+            ],
+            prefix: 'demo.trip.city'
+        });
     });
 
     afterEach(() => {
@@ -47,16 +42,16 @@ describe('FormAutocompleteFieldComponent', () => {
 
     it('filters the options by the typed text and writes the picked one', async () => {
         input().dispatchEvent(new Event('focus'));
-        await settle();
+        await settle(fixture);
         expect(panelOptions()).toHaveLength(3);
 
         input().value = 'ma';
         input().dispatchEvent(new Event('input'));
-        await settle();
-        expect(panelOptions().map(option => option.textContent?.trim())).toEqual(['Madrid', 'Malaga']);
+        await settle(fixture);
+        expect(textsOf(panelOptions())).toEqual(['Madrid', 'Malaga']);
 
         panelOptions()[1].dispatchEvent(new MouseEvent('mousedown'));
-        await settle();
+        await settle(fixture);
 
         expect(control.value).toBe('agp');
         expect(input().value).toBe('Malaga');
@@ -67,32 +62,30 @@ describe('FormAutocompleteFieldComponent', () => {
         input().dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
         input().dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
         input().dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
-        await settle();
+        await settle(fixture);
 
         expect(control.value).toBe('agp');
     });
 
     it('clears the value from the clear button', async () => {
         control.setValue('mad');
-        await settle();
+        await settle(fixture);
 
-        (
-            fixture.nativeElement.querySelector(
-                '[aria-label="angular-components.form.autocomplete-field.clear"]'
-            ) as HTMLButtonElement
-        ).dispatchEvent(new MouseEvent('mousedown'));
-        await settle();
+        buttonByName(fixture, 'angular-components.form.autocomplete-field.clear').dispatchEvent(
+            new MouseEvent('mousedown')
+        );
+        await settle(fixture);
 
         expect(control.value).toBe('');
     });
 
     it('moves the panel to the body while open and takes it away on close', async () => {
         input().dispatchEvent(new Event('focus'));
-        await settle();
+        await settle(fixture);
         expect(document.body.querySelector('[role="listbox"]')).not.toBeNull();
 
         input().dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
-        await settle();
+        await settle(fixture);
 
         expect(document.body.querySelector('[role="listbox"]')).toBeNull();
     });

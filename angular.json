@@ -30,7 +30,8 @@
                             "src/**/*.ts",
                             "src/**/*.html",
                             "style-guide/**/*.ts",
-                            "style-guide/**/*.html"
+                            "style-guide/**/*.html",
+                            "testing/**/*.ts"
                         ]
                     }
                 }

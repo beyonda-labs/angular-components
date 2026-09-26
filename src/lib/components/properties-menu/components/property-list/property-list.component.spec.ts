@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { queryAll, queryButton, renderComponent, textsOf } from '@testing/dom';
 
 import { BadgeConfig, BadgeVariant } from '../../../badge/models/badge.model';
 import { PropertyTextField } from '../../models/fields/property-text-field.model';
@@ -18,15 +19,10 @@ import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { PropertyListComponent } from './property-list.component';
 
 const items = (fixture: ComponentFixture<PropertyListComponent>): HTMLElement[] =>
-    [...fixture.nativeElement.querySelectorAll('[role="button"]')].filter(
-        element => !element.parentElement?.closest('[role="button"]')
-    );
-
-const button = (fixture: ComponentFixture<PropertyListComponent>, name: string): HTMLElement | null =>
-    fixture.nativeElement.querySelector(`[aria-label="${name}"]`);
+    queryAll(fixture, '[role="button"]').filter(element => !element.parentElement?.closest('[role="button"]'));
 
 const byText = (fixture: ComponentFixture<PropertyListComponent>, text: string): HTMLElement => {
-    const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('*')]
+    const found = queryAll(fixture, '*')
         .reverse()
         .find(element => element.textContent?.trim() === text);
 
@@ -52,21 +48,21 @@ describe('PropertyListComponent', () => {
             providers: [PropertiesMenuService]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(PropertyListComponent);
-        component = fixture.componentInstance;
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
 
-        fixture.componentRef.setInput('tabId', 'add');
-        fixture.componentRef.setInput('groupId', 'simple-blocks');
-        fixture.componentRef.setInput('items', [
-            new PropertyListItem({ id: 'block-heading', label: 'Encabezado' }),
-            new PropertyListItem({ disabled: true, id: 'block-locked', label: 'Bloqueado' })
-        ]);
-        fixture.detectChanges();
+        fixture = await renderComponent(PropertyListComponent, {
+            tabId: 'add',
+            groupId: 'simple-blocks',
+            items: [
+                new PropertyListItem({ id: 'block-heading', label: 'Encabezado' }),
+                new PropertyListItem({ disabled: true, id: 'block-locked', label: 'Bloqueado' })
+            ]
+        });
+        component = fixture.componentInstance;
     });
 
     it('should render a card per item', () => {
-        expect(items(fixture).map(element => element.textContent?.trim())).toEqual(['Encabezado', 'Bloqueado']);
+        expect(textsOf(items(fixture))).toEqual(['Encabezado', 'Bloqueado']);
     });
 
     it('should call PropertiesMenuService.selectListItem when a card is clicked', () => {
@@ -205,7 +201,7 @@ describe('PropertyListComponent with expandable items', () => {
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
 
-        button(fixture, EXPAND)?.click();
+        queryButton(fixture, EXPAND)?.click();
 
         expect(toggleSpy).toHaveBeenCalledWith('variables', 'variables-list', 'total_pages');
         expect(selectSpy).not.toHaveBeenCalled();
@@ -228,7 +224,7 @@ describe('PropertyListComponent with expandable items', () => {
 
         const removeSpy = jest.spyOn(propertiesMenuService, 'removeListItem');
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
-        button(fixture, REMOVE)?.click();
+        queryButton(fixture, REMOVE)?.click();
 
         expect(removeSpy).toHaveBeenCalledWith('variables', 'variables-list', 'total_pages');
         expect(toggleSpy).not.toHaveBeenCalled();
@@ -237,7 +233,7 @@ describe('PropertyListComponent with expandable items', () => {
     it('does not render a remove button on a non-removable item', () => {
         setUp([buildItem()]);
 
-        expect(button(fixture, REMOVE)).toBeNull();
+        expect(queryButton(fixture, REMOVE)).toBeNull();
     });
 
     it('renders a real field for an editable row and a dash for an empty one', () => {
@@ -402,8 +398,8 @@ describe('PropertyListComponent copy and actions', () => {
     });
 
     it('shows one button per action plus the copy one', () => {
-        expect(button(fixture, COPY)).toBeTruthy();
-        expect(button(fixture, 'Duplicar')).toBeTruthy();
+        expect(queryButton(fixture, COPY)).toBeTruthy();
+        expect(queryButton(fixture, 'Duplicar')).toBeTruthy();
     });
 
     it('copies the expression the item carries, not its label', async () => {
@@ -433,7 +429,7 @@ describe('PropertyListComponent copy and actions', () => {
     it('reports the action key without selecting or toggling the card', () => {
         const actionSpy = jest.spyOn(propertiesMenuService, 'triggerListItemAction');
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
-        button(fixture, 'Duplicar')?.click();
+        queryButton(fixture, 'Duplicar')?.click();
 
         expect(actionSpy).toHaveBeenCalledWith('variables', 'variables-list', 'v1', 'duplicate');
         expect(toggleSpy).not.toHaveBeenCalled();
@@ -443,7 +439,7 @@ describe('PropertyListComponent copy and actions', () => {
         fixture.componentRef.setInput('items', [new PropertyListItem({ id: 'v2', label: 'otra' })]);
         fixture.detectChanges();
 
-        expect(button(fixture, COPY)).toBeNull();
-        expect(button(fixture, 'Duplicar')).toBeNull();
+        expect(queryButton(fixture, COPY)).toBeNull();
+        expect(queryButton(fixture, 'Duplicar')).toBeNull();
     });
 });

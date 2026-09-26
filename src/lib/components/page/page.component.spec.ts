@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent, settle } from '@testing/dom';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
@@ -42,15 +43,7 @@ describe('PageComponent', () => {
     }
 
     async function render(config: PageConfig = buildConfig()): Promise<void> {
-        fixture = TestBed.createComponent(PageComponent);
-        fixture.componentRef.setInput('config', config);
-        await settle();
-    }
-
-    async function settle(): Promise<void> {
-        fixture.detectChanges();
-        await fixture.whenStable();
-        fixture.detectChanges();
+        fixture = await renderComponent(PageComponent, { config });
     }
 
     function text(): string {
@@ -112,7 +105,7 @@ describe('PageComponent', () => {
 
         pageHttpService.load.mockReturnValue(of(buildResponse([{ id: 3, name: 'Linus' }])));
         onReady.mock.calls[0][0].refresh();
-        await settle();
+        await settle(fixture);
 
         expect(text()).toContain('Linus');
         expect(text()).not.toContain('Ada');

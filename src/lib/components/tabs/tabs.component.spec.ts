@@ -1,14 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { Tab, TabsConfig, TabsConfigParameters } from './models/tabs.model';
 import { TabsComponent } from './tabs.component';
-
-class ResizeObserverMock {
-    observe(): void {}
-    unobserve(): void {}
-    disconnect(): void {}
-}
 
 describe('TabsComponent', () => {
     let fixture: ComponentFixture<TabsComponent>;
@@ -26,14 +21,11 @@ describe('TabsComponent', () => {
     }
 
     async function render(config: TabsConfig = buildConfig()): Promise<void> {
-        fixture = TestBed.createComponent(TabsComponent);
-        fixture.componentRef.setInput('config', config);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(TabsComponent, { config });
     }
 
     function tabs(): HTMLElement[] {
-        return [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('[role="tab"]')];
+        return queryAll(fixture, '[role="tab"]');
     }
 
     function tab(name: string): HTMLElement {
@@ -58,8 +50,6 @@ describe('TabsComponent', () => {
     }
 
     beforeEach(async () => {
-        global.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
-
         await TestBed.configureTestingModule({
             imports: [TabsComponent, TranslateModule.forRoot()]
         }).compileComponents();
@@ -68,7 +58,7 @@ describe('TabsComponent', () => {
     it('renders one tab per entry in the config', async () => {
         await render();
 
-        expect(tabs().map(element => element.textContent?.trim())).toEqual(['General', 'Details', 'History']);
+        expect(textsOf(tabs())).toEqual(['General', 'Details', 'History']);
     });
 
     it('selects the first tab when the config names none', async () => {
@@ -182,8 +172,7 @@ describe('TabsComponent', () => {
         await render();
 
         fixture.componentRef.setInput('config', buildConfig({ activeTab: 'details' }));
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
 
         expect(selectedTabName()).toBe('Details');
     });

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent, settle } from '@testing/dom';
 
 import { TableStyleGuideComponent } from './table-style-guide.component';
 
@@ -11,9 +12,7 @@ describe('TableStyleGuideComponent', () => {
             imports: [TableStyleGuideComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(TableStyleGuideComponent);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(TableStyleGuideComponent);
     });
 
     it('shows the people and reflects what is opened and selected', async () => {
@@ -21,9 +20,7 @@ describe('TableStyleGuideComponent', () => {
 
         (fixture.nativeElement.querySelector('bey-table button') as HTMLButtonElement).click();
         (fixture.nativeElement.querySelectorAll('bey-table input[type="checkbox"]')[1] as HTMLInputElement).click();
-        fixture.detectChanges();
-        await fixture.whenStable();
-        fixture.detectChanges();
+        await settle(fixture);
 
         expect(fixture.componentInstance.opened()).toBe('Ada Lovelace');
         expect(fixture.componentInstance.selected()).toEqual(['Ada Lovelace']);

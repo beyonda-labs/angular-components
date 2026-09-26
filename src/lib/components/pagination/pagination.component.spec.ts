@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent, settle } from '@testing/dom';
 
 import { PaginationConfig, PaginationConfigParameters } from './models/pagination.model';
 import { PaginationComponent } from './pagination.component';
@@ -12,16 +13,7 @@ describe('PaginationComponent', () => {
     }
 
     async function render(config: PaginationConfig = buildConfig()): Promise<void> {
-        fixture = TestBed.createComponent(PaginationComponent);
-        fixture.componentRef.setInput('config', config);
-        fixture.detectChanges();
-        await fixture.whenStable();
-    }
-
-    async function settle(): Promise<void> {
-        fixture.detectChanges();
-        await fixture.whenStable();
-        fixture.detectChanges();
+        fixture = await renderComponent(PaginationComponent, { config });
     }
 
     function button(testId: string): HTMLButtonElement {
@@ -59,7 +51,7 @@ describe('PaginationComponent', () => {
         await render(buildConfig({ onPageChange }));
 
         button('next-page').click();
-        await settle();
+        await settle(fixture);
 
         expect(currentPage()).toBe('2');
         expect(onPageChange).toHaveBeenCalledWith(2);
@@ -69,7 +61,7 @@ describe('PaginationComponent', () => {
         await render(buildConfig({ page: 5 }));
 
         button('previous-page').click();
-        await settle();
+        await settle(fixture);
 
         expect(currentPage()).toBe('4');
     });
@@ -78,11 +70,11 @@ describe('PaginationComponent', () => {
         await render(buildConfig({ page: 5, totalItems: 500, pageSize: 25 }));
 
         button('last-page').click();
-        await settle();
+        await settle(fixture);
         expect(currentPage()).toBe('20');
 
         button('first-page').click();
-        await settle();
+        await settle(fixture);
         expect(currentPage()).toBe('1');
     });
 
@@ -94,7 +86,7 @@ describe('PaginationComponent', () => {
         expect(button('next-page').disabled).toBe(true);
 
         button('next-page').click();
-        await settle();
+        await settle(fixture);
 
         expect(onPageChange).not.toHaveBeenCalled();
     });
@@ -113,7 +105,7 @@ describe('PaginationComponent', () => {
         const select: HTMLSelectElement = fixture.nativeElement.querySelector('[data-testid="page-size-select"]');
         select.value = select.options[2].value;
         select.dispatchEvent(new Event('change'));
-        await settle();
+        await settle(fixture);
 
         expect(onPageSizeChange).toHaveBeenCalledWith(100);
         expect(currentPage()).toBe('5');
@@ -124,7 +116,7 @@ describe('PaginationComponent', () => {
 
         pageInput().value = '99';
         pageInput().dispatchEvent(new Event('input'));
-        await settle();
+        await settle(fixture);
 
         expect(currentPage()).toBe('4');
     });
@@ -136,7 +128,7 @@ describe('PaginationComponent', () => {
         pageInput().value = '';
         pageInput().dispatchEvent(new Event('input'));
         pageInput().dispatchEvent(new Event('blur'));
-        await settle();
+        await settle(fixture);
 
         expect(onPageChange).not.toHaveBeenCalled();
         expect(button('next-page').disabled).toBe(false);
@@ -146,8 +138,7 @@ describe('PaginationComponent', () => {
         await render();
 
         fixture.componentRef.setInput('config', buildConfig({ page: 7 }));
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
 
         expect(currentPage()).toBe('7');
     });

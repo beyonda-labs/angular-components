@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { renderComponent, settle } from '@testing/dom';
 
 import { PdfViewerConfig, PdfViewerConfigParameters, PdfViewerHandle } from './models/pdf-viewer-config.model';
 import { PdfViewerComponent } from './pdf-viewer.component';
@@ -12,10 +13,7 @@ describe('PdfViewerComponent', () => {
     }
 
     async function render(config: PdfViewerConfig = buildConfig()): Promise<void> {
-        fixture = TestBed.createComponent(PdfViewerComponent);
-        fixture.componentRef.setInput('config', config);
-        fixture.detectChanges();
-        await fixture.whenStable();
+        fixture = await renderComponent(PdfViewerComponent, { config });
         component = fixture.componentInstance;
     }
 
@@ -129,8 +127,7 @@ describe('PdfViewerComponent', () => {
         await render();
 
         fixture.componentRef.setInput('config', buildConfig({ page: 9, rotation: 0, zoom: 'auto' }));
-        fixture.detectChanges();
-        await fixture.whenStable();
+        await settle(fixture);
 
         expect(component.currentPage()).toBe(9);
         expect(component.currentZoom()).toBe('auto');

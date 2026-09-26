@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { buttonByName, renderComponent, settle } from '@testing/dom';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
@@ -20,20 +21,10 @@ describe('LoginRegisterFormComponent', () => {
     let loginSessionService: MockProxy<LoginSessionService>;
 
     async function render(fields: RegisterField[] = FIELDS): Promise<void> {
-        fixture = TestBed.createComponent(LoginRegisterFormComponent);
-        fixture.componentRef.setInput(
-            'config',
-            new LoginConfig({ iconSrc: '', productDescription: 'Pitch', productName: 'Product' })
-        );
-        fixture.componentRef.setInput('registerFields', fields);
-        fixture.detectChanges();
-        await fixture.whenStable();
-    }
-
-    async function settle(): Promise<void> {
-        fixture.detectChanges();
-        await fixture.whenStable();
-        fixture.detectChanges();
+        fixture = await renderComponent(LoginRegisterFormComponent, {
+            config: new LoginConfig({ iconSrc: '', productDescription: 'Pitch', productName: 'Product' }),
+            registerFields: fields
+        });
     }
 
     function input(id: string): HTMLInputElement | null {
@@ -49,20 +40,12 @@ describe('LoginRegisterFormComponent', () => {
 
         field.value = value;
         field.dispatchEvent(new Event('input'));
-        await settle();
+        await settle(fixture);
     }
 
     async function press(label: string): Promise<void> {
-        const found = [...(fixture.nativeElement as HTMLElement).querySelectorAll<HTMLButtonElement>('button')].find(
-            button => button.textContent?.includes(label)
-        );
-
-        if (!found) {
-            throw new Error(`No ${label} button`);
-        }
-
-        found.click();
-        await settle();
+        buttonByName(fixture, label).click();
+        await settle(fixture);
     }
 
     beforeEach(async () => {
@@ -92,7 +75,7 @@ describe('LoginRegisterFormComponent', () => {
         expect(input('name')).toBeNull();
         await type('email', 'ada@example.com');
         await type('password', 'secret');
-        await press('register.button.register');
+        await press('angular-components.login.register.button.register');
 
         expect(loginHttpService.register).toHaveBeenCalledWith({
             name: 'Ada',

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryButton } from '@testing/dom';
 
 import {
     PropertyAttachmentField,
@@ -26,10 +27,6 @@ function selectFileOn(component: PropertyAttachmentFieldComponent, file: File): 
     component.onFileSelected({ target: { files: [file], value: 'C:/fake/path' } } as unknown as Event);
 }
 
-function button(fixture: ComponentFixture<PropertyAttachmentFieldComponent>, label: string): HTMLButtonElement | null {
-    return fixture.nativeElement.querySelector(`button[aria-label="${label}"]`);
-}
-
 describe('PropertyAttachmentFieldComponent', () => {
     let component: PropertyAttachmentFieldComponent;
     let fixture: ComponentFixture<PropertyAttachmentFieldComponent>;
@@ -47,12 +44,12 @@ describe('PropertyAttachmentFieldComponent', () => {
         fixture.componentRef.setInput('field', buildField());
         fixture.detectChanges();
 
-        expect(button(fixture, CLEAR_LABEL)).toBeNull();
+        expect(queryButton(fixture, CLEAR_LABEL)).toBeNull();
 
         fixture.componentRef.setInput('field', buildField('a1'));
         fixture.detectChanges();
 
-        expect(button(fixture, CLEAR_LABEL)).not.toBeNull();
+        expect(queryButton(fixture, CLEAR_LABEL)).not.toBeNull();
     });
 
     it('filters the options by the typed query', () => {
@@ -103,7 +100,7 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
         );
         fixture.detectChanges();
 
-        expect(button(fixture, USE_VARIABLE_LABEL)).toBeNull();
+        expect(queryButton(fixture, USE_VARIABLE_LABEL)).toBeNull();
     });
 
     it('offers a variable button when the field carries variables', () => {
@@ -113,7 +110,7 @@ describe('PropertyAttachmentFieldComponent · variables', () => {
         );
         fixture.detectChanges();
 
-        expect(button(fixture, USE_VARIABLE_LABEL)).not.toBeNull();
+        expect(queryButton(fixture, USE_VARIABLE_LABEL)).not.toBeNull();
     });
 
     it('emits the reference expression when a variable is picked', () => {

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { HeaderVariant } from '../../../src/lib/components/header/models/header.model';
 import { HeaderStyleGuideComponent } from './header-style-guide.component';
@@ -13,9 +14,8 @@ describe('HeaderStyleGuideComponent', () => {
             imports: [HeaderStyleGuideComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(HeaderStyleGuideComponent);
+        fixture = await renderComponent(HeaderStyleGuideComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     it('should create', () => {

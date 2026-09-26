@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent } from '@testing/dom';
 
 import { LoadingStyleGuideComponent } from './loading-style-guide.component';
 
@@ -12,10 +13,8 @@ describe('LoadingStyleGuideComponent', () => {
             imports: [LoadingStyleGuideComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(LoadingStyleGuideComponent);
+        fixture = await renderComponent(LoadingStyleGuideComponent);
         component = fixture.componentInstance;
-
-        fixture.detectChanges();
     });
 
     it('should create', () => {

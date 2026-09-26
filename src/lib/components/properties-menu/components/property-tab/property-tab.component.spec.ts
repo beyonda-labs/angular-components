@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { queryButton } from '@testing/dom';
 
 import { PropertiesMenuConfig } from '../../models/properties-menu-config.model';
 import { PropertyGroup } from '../../models/property-group.model';
@@ -11,8 +12,7 @@ describe('PropertyTabComponent', () => {
     let fixture: ComponentFixture<PropertyTabComponent>;
     let service: PropertiesMenuService;
 
-    const button = (text: string): HTMLButtonElement | undefined =>
-        [...fixture.nativeElement.querySelectorAll('button')].find(element => element.textContent?.trim() === text);
+    const button = (text: string): HTMLButtonElement | null => queryButton(fixture, text);
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -41,7 +41,7 @@ describe('PropertyTabComponent', () => {
         fixture.componentRef.setInput('tab', new PropertyTab({ id: 'properties', groups: [] }));
         fixture.detectChanges();
 
-        expect(button('add.label')).toBeUndefined();
+        expect(button('add.label')).toBeNull();
     });
 
     it('should render the add-group button when addLabel is set', () => {
