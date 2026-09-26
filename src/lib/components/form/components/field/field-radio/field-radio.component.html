@@ -1,19 +1,19 @@
 <div
     class="bey-form-radio"
     role="radiogroup"
-    [attr.aria-required]="field().isRequired || null"
     [attr.aria-invalid]="isInvalid() || null"
+    [attr.aria-required]="field().isRequired || null"
 >
     @for (option of options(); track option.value) {
         <div class="form-check bey-form-field-check">
             <input
                 class="form-check-input bey-form-field-check-input"
                 type="radio"
+                [disabled]="option.isDisabled ?? false"
+                [formControl]="control()"
                 [id]="field().key + '_' + option.value"
                 [name]="field().key"
-                [formControl]="control()"
                 [value]="option.value"
-                [disabled]="option.isDisabled ?? false"
             />
             <label class="form-check-label bey-form-field-check-label" [for]="field().key + '_' + option.value">
                 {{ option.label | translate }}

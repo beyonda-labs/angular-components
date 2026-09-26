@@ -3,11 +3,11 @@
 @if (!current.isHidden) {
     <span
         class="d-inline-block"
-        [tooltip]="current.tooltip | translate"
-        [placement]="current.tooltipPlacement ?? 'top'"
-        container="body"
         boundariesElement="viewport"
+        container="body"
+        [placement]="current.tooltipPlacement ?? 'top'"
         [style]="current.customStyles"
+        [tooltip]="current.tooltip | translate"
     >
         <button type="button" [class]="classes()" [disabled]="current.isDisabled" (click)="onClick()">
             @if (current.icon) {

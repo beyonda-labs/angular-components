@@ -4,7 +4,7 @@
     }
 
     @if (tab().addLabel; as label) {
-        <button type="button" class="bey-property-tab-add-group" (click)="onTabAddClick()">
+        <button class="bey-property-tab-add-group" type="button" (click)="onTabAddClick()">
             <fa-icon [icon]="addIcon"></fa-icon>
             <span>{{ label | translate }}</span>
         </button>

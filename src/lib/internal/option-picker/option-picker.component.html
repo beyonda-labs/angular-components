@@ -4,9 +4,9 @@
             <div class="bey-option-picker-search">
                 <fa-icon class="bey-option-picker-search-icon" [icon]="searchIcon"></fa-icon>
                 <input
-                    type="text"
                     class="bey-option-picker-search-input"
                     autocomplete="off"
+                    type="text"
                     [attr.aria-label]="'angular-components.option-picker.search' | translate"
                     [value]="searchTerm()"
                     (input)="onSearchTermChange($event)"
@@ -14,8 +14,8 @@
             </div>
 
             <button
-                type="button"
                 class="bey-option-picker-close"
+                type="button"
                 [attr.aria-label]="'angular-components.option-picker.close' | translate"
                 (click)="closed.emit()"
             >
@@ -27,18 +27,18 @@
     <div class="bey-option-picker-list">
         @for (option of visibleOptions(); track option.value; let index = $index) {
             <button
-                type="button"
-                role="option"
                 class="bey-option-picker-row"
+                role="option"
+                type="button"
+                [attr.aria-disabled]="option.isDisabled || null"
+                [attr.aria-selected]="index === activeIndex()"
                 [class.is-active]="index === activeIndex()"
                 [class.is-disabled]="option.isDisabled"
                 [style.--bey-option-picker-row-depth]="indent(option)"
-                [attr.aria-disabled]="option.isDisabled || null"
-                [attr.aria-selected]="index === activeIndex()"
                 (click)="selectOption(option)"
                 (mouseenter)="activeIndex.set(index)"
             >
-                <span class="bey-option-picker-row-label" [tooltip]="option.label" container="body" placement="top">
+                <span class="bey-option-picker-row-label" container="body" placement="top" [tooltip]="option.label">
                     {{ option.label }}
                 </span>
                 @if (option.description) {

@@ -1,4 +1,4 @@
-<ng-template #renderActions let-actions let-level="level" let-forceExpanded="forceExpanded" let-parentPath="parentPath">
+<ng-template #renderActions let-actions let-forceExpanded="forceExpanded" let-level="level" let-parentPath="parentPath">
     @for (action of actions; track $index) {
         @let actionPath = buildPath(parentPath, action.key);
 
@@ -8,25 +8,25 @@
             (mouseleave)="onItemMouseLeave(actionPath, forceExpanded)"
         >
             <button
-                type="button"
                 class="bey-left-menu-action"
-                [class.is-active]="isActionActive(action)"
-                [class.is-collapsed]="!isInlineExpanded(forceExpanded)"
-                [class.has-active-descendant]="hasSubmenuSelection(action)"
-                [class.is-disabled]="action.disabled"
-                [class.has-children]="hasSubActions(action)"
-                [class.is-open]="isSubmenuOpen(actionPath, forceExpanded)"
+                boundariesElement="viewport"
+                container="body"
+                placement="right"
+                type="button"
                 [attr.aria-current]="isActionActive(action) ? 'page' : null"
                 [attr.aria-expanded]="hasSubActions(action) ? isSubmenuOpen(actionPath, forceExpanded) : null"
                 [attr.aria-label]="isInlineExpanded(forceExpanded) ? null : (getLabel(action) | translate)"
+                [class.has-active-descendant]="hasSubmenuSelection(action)"
+                [class.has-children]="hasSubActions(action)"
+                [class.is-active]="isActionActive(action)"
+                [class.is-collapsed]="!isInlineExpanded(forceExpanded)"
+                [class.is-disabled]="action.disabled"
+                [class.is-open]="isSubmenuOpen(actionPath, forceExpanded)"
                 [disabled]="action.disabled"
                 [tooltip]="getButtonTooltip(action, actionPath, forceExpanded) | translate"
-                container="body"
-                boundariesElement="viewport"
-                placement="right"
+                (click)="onActionClick(action, actionPath, forceExpanded, $event)"
                 (focus)="onItemMouseEnter(action, actionPath, forceExpanded)"
                 (mouseover)="onItemMouseEnter(action, actionPath, forceExpanded)"
-                (click)="onActionClick(action, actionPath, forceExpanded, $event)"
             >
                 <span class="bey-left-menu-action-icon">
                     @if (action.icon) {

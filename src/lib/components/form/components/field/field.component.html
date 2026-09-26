@@ -3,7 +3,7 @@
         <label class="bey-form-field-label" [for]="field().key">{{ label() | translate }}</label>
 
         @if (field().isRequired) {
-            <span class="bey-form-field-required" [class.is-invalid]="!state().isValid" aria-hidden="true">*</span>
+            <span class="bey-form-field-required" aria-hidden="true" [class.is-invalid]="!state().isValid">*</span>
         }
 
         @if (field().isLabelTooltipVisible) {

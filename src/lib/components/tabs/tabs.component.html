@@ -2,8 +2,8 @@
     #tabsRow
     class="bey-tabs"
     role="tablist"
-    [class.bey-tabs--segmented]="isSegmented()"
     [attr.aria-label]="'angular-components.tabs.label' | translate"
+    [class.bey-tabs--segmented]="isSegmented()"
 >
     @for (tab of visibleTabs(); track tab.key) {
         <button
@@ -44,8 +44,8 @@
                     @for (tab of overflowTabs(); track tab.key) {
                         <button
                             class="bey-tabs-overflow-menu-item"
-                            type="button"
                             role="menuitemradio"
+                            type="button"
                             [attr.aria-checked]="isActive(tab)"
                             [class.is-active]="isActive(tab)"
                             [disabled]="tab.isDisabled"

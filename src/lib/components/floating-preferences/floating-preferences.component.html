@@ -2,8 +2,8 @@
     <span class="bey-floating-preferences-select">
         <span class="bey-floating-preferences-control">
             <select
-                [value]="language()"
                 [attr.aria-label]="'angular-components.floating-preferences.language' | translate"
+                [value]="language()"
                 (change)="onLangChange($any($event.target).value)"
             >
                 <option value="es">Español</option>
@@ -18,8 +18,8 @@
     <span class="bey-floating-preferences-select">
         <span class="bey-floating-preferences-control">
             <select
-                [value]="theme()"
                 [attr.aria-label]="'angular-components.floating-preferences.theme' | translate"
+                [value]="theme()"
                 (change)="onThemeChange($any($event.target).value)"
             >
                 <option value="light">{{ 'angular-components.floating-preferences.light' | translate }}</option>

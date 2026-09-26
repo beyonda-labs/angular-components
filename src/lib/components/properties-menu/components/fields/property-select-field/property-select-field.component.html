@@ -1,12 +1,12 @@
 @let current = field();
 
 @if (current.searchable) {
-    <div class="bey-property-field-control bey-property-select-field" #pickerAnchor>
+    <div #pickerAnchor class="bey-property-field-control bey-property-select-field">
         <input
             class="bey-property-field-input"
-            type="text"
-            role="combobox"
             autocomplete="off"
+            role="combobox"
+            type="text"
             [attr.aria-controls]="current.id + '-options'"
             [attr.aria-expanded]="isOpen()"
             [attr.aria-label]="current.label"
@@ -25,8 +25,8 @@
                 @for (option of filteredOptions(); track option.value) {
                     <button
                         class="bey-property-select-field-option"
-                        type="button"
                         role="option"
+                        type="button"
                         [attr.aria-selected]="option.value === current.value"
                         [class.is-selected]="option.value === current.value"
                         [disabled]="option.disabled"
@@ -54,12 +54,12 @@
         @if (current.variables.length > 0) {
             <button
                 class="bey-property-field-action"
+                container="body"
                 type="button"
                 [attr.aria-label]="'angular-components.properties-menu.select-field.use-variable' | translate"
                 [class.is-active]="pickerOpen()"
                 [disabled]="current.disabled"
                 [tooltip]="'angular-components.properties-menu.select-field.use-variable' | translate"
-                container="body"
                 (click)="toggleVariablePicker()"
             >
                 <fa-icon [icon]="variableIcon"></fa-icon>

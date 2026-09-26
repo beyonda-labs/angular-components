@@ -1,11 +1,11 @@
 <div class="bey-search">
     @if (config().mainField) {
         <div class="bey-search-box">
-            <fa-icon class="bey-search-box-icon" [icon]="searchIcon" aria-hidden="true"></fa-icon>
+            <fa-icon class="bey-search-box-icon" aria-hidden="true" [icon]="searchIcon"></fa-icon>
             <input
                 class="form-control form-control-sm bey-search-box-input"
-                type="text"
                 role="searchbox"
+                type="text"
                 [placeholder]="placeholder() | translate"
                 [value]="searchTerm()"
                 (input)="onSearchTermChange($event)"
@@ -15,21 +15,21 @@
 
     <div class="bey-search-filters">
         <button
-            type="button"
             class="btn btn-sm btn-outline-dark rounded fw-semibold d-inline-flex align-items-center bey-search-toggle"
-            (click)="togglePanel()"
+            type="button"
             [attr.aria-expanded]="isPanelOpen()"
+            (click)="togglePanel()"
         >
-            <fa-icon [icon]="filterIcon" aria-hidden="true"></fa-icon>
+            <fa-icon aria-hidden="true" [icon]="filterIcon"></fa-icon>
             <span>{{ 'angular-components.search.filters' | translate }}</span>
             @if (appliedFilters().length) {
                 <span class="bey-search-badge">{{ appliedFilters().length }}</span>
             }
             <fa-icon
                 class="bey-search-chevron"
+                aria-hidden="true"
                 [class.is-open]="isPanelOpen()"
                 [icon]="chevronIcon"
-                aria-hidden="true"
             ></fa-icon>
         </button>
 
@@ -56,11 +56,11 @@
                                     class="form-select form-select-sm bey-search-field"
                                     (change)="onFieldChange($index, $event)"
                                 >
-                                    <option value="" disabled [selected]="!row.fieldKey">
+                                    <option disabled value="" [selected]="!row.fieldKey">
                                         {{ 'angular-components.search.field-placeholder' | translate }}
                                     </option>
                                     @for (field of config().fields; track field.key) {
-                                        <option [value]="field.key" [selected]="field.key === row.fieldKey">
+                                        <option [selected]="field.key === row.fieldKey" [value]="field.key">
                                             {{ getFieldLabel(field) | translate }}
                                         </option>
                                     }
@@ -72,7 +72,7 @@
                                     (change)="onOperatorChange($index, $event)"
                                 >
                                     @for (operator of getOperators(row); track operator) {
-                                        <option [value]="operator" [selected]="operator === row.operator">
+                                        <option [selected]="operator === row.operator" [value]="operator">
                                             {{ getOperatorLabel(operator) | translate }}
                                         </option>
                                     }
@@ -84,7 +84,7 @@
                                             class="form-select form-select-sm bey-search-value"
                                             (change)="onValueChange($index, $event)"
                                         >
-                                            <option value="" disabled [selected]="!row.value">
+                                            <option disabled value="" [selected]="!row.value">
                                                 {{ 'angular-components.search.value-placeholder' | translate }}
                                             </option>
                                             <option value="true" [selected]="row.value === 'true'">
@@ -100,11 +100,11 @@
                                             class="form-select form-select-sm bey-search-value"
                                             (change)="onValueChange($index, $event)"
                                         >
-                                            <option value="" disabled [selected]="!row.value">
+                                            <option disabled value="" [selected]="!row.value">
                                                 {{ 'angular-components.search.value-placeholder' | translate }}
                                             </option>
                                             @for (option of getFieldOptions(row); track option.value) {
-                                                <option [value]="option.value" [selected]="option.value === row.value">
+                                                <option [selected]="option.value === row.value" [value]="option.value">
                                                     {{ option.label | translate }}
                                                 </option>
                                             }
@@ -160,12 +160,12 @@
                                 }
 
                                 <button
-                                    type="button"
                                     class="btn btn-sm bey-search-remove"
-                                    (click)="removeRow($index)"
+                                    type="button"
                                     [attr.aria-label]="'angular-components.search.remove' | translate"
+                                    (click)="removeRow($index)"
                                 >
-                                    <fa-icon [icon]="removeIcon" aria-hidden="true"></fa-icon>
+                                    <fa-icon aria-hidden="true" [icon]="removeIcon"></fa-icon>
                                 </button>
                             </div>
                         }

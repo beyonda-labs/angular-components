@@ -1,12 +1,12 @@
 @let current = field();
 
 <div class="bey-property-field-control bey-property-attachment-field">
-    <div class="bey-property-field-anchor" #pickerAnchor>
+    <div #pickerAnchor class="bey-property-field-anchor">
         <input
             class="bey-property-field-input"
-            type="text"
-            role="combobox"
             autocomplete="off"
+            role="combobox"
+            type="text"
             [attr.aria-controls]="current.id + '-attachments'"
             [attr.aria-expanded]="isOpen()"
             [attr.aria-label]="current.label"
@@ -25,8 +25,8 @@
                 @for (option of filteredOptions(); track option.id) {
                     <button
                         class="bey-property-attachment-field-option"
-                        type="button"
                         role="option"
+                        type="button"
                         [attr.aria-selected]="option.id === current.value"
                         [disabled]="option.disabled"
                         (mousedown)="onOptionPicked(option, $event)"
@@ -61,12 +61,12 @@
         @if (current.variables.length > 0) {
             <button
                 class="bey-property-field-action"
+                container="body"
                 type="button"
                 [attr.aria-label]="'angular-components.properties-menu.attachment-field.use-variable' | translate"
                 [class.is-active]="pickerOpen()"
                 [disabled]="current.disabled"
                 [tooltip]="'angular-components.properties-menu.attachment-field.use-variable' | translate"
-                container="body"
                 (click)="toggleVariablePicker()"
             >
                 <fa-icon [icon]="variableIcon"></fa-icon>
@@ -75,14 +75,14 @@
 
         <label
             class="bey-property-field-action bey-property-attachment-field-upload"
+            container="body"
             [class.is-disabled]="current.disabled"
             [tooltip]="'angular-components.properties-menu.attachment-field.upload' | translate"
-            container="body"
         >
             <fa-icon [icon]="uploadIcon"></fa-icon>
             <input
-                type="file"
                 hidden
+                type="file"
                 [accept]="current.accept ?? '*/*'"
                 [attr.aria-label]="'angular-components.properties-menu.attachment-field.upload' | translate"
                 [disabled]="current.disabled"
@@ -93,11 +93,11 @@
         @if (current.value) {
             <button
                 class="bey-property-field-action"
+                container="body"
                 type="button"
                 [attr.aria-label]="'angular-components.properties-menu.attachment-field.clear' | translate"
                 [disabled]="current.disabled"
                 [tooltip]="'angular-components.properties-menu.attachment-field.clear' | translate"
-                container="body"
                 (click)="onClear()"
             >
                 <fa-icon [icon]="clearIcon"></fa-icon>

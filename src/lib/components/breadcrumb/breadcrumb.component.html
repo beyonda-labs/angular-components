@@ -3,20 +3,20 @@
         @if (hasCollapsedItems()) {
             <li
                 class="bey-breadcrumb-item bey-breadcrumb-ellipsis"
-                [tooltip]="collapsedItemsTooltip()"
-                container="body"
                 boundariesElement="viewport"
+                container="body"
+                [tooltip]="collapsedItemsTooltip()"
             >
                 &hellip;
             </li>
-            <li aria-hidden="true" class="bey-breadcrumb-separator">{{ config().separator }}</li>
+            <li class="bey-breadcrumb-separator" aria-hidden="true">{{ config().separator }}</li>
         }
 
         @for (entry of visibleItems(); track entry.item.id; let last = $last) {
             <li
                 class="bey-breadcrumb-item"
-                [class.is-current]="isLast(entry.item)"
                 [attr.aria-current]="isLast(entry.item) ? 'page' : null"
+                [class.is-current]="isLast(entry.item)"
             >
                 @if (isLast(entry.item)) {
                     @if (entry.item.icon) {
@@ -24,20 +24,20 @@
                     }
                     <span
                         class="bey-breadcrumb-item-label"
-                        [tooltip]="entry.label"
-                        container="body"
                         boundariesElement="viewport"
+                        container="body"
+                        [tooltip]="entry.label"
                     >
                         {{ entry.label }}
                     </span>
                 } @else {
                     <button
                         class="bey-breadcrumb-item-button"
+                        boundariesElement="viewport"
+                        container="body"
                         type="button"
                         [disabled]="entry.item.isDisabled"
                         [tooltip]="entry.label"
-                        container="body"
-                        boundariesElement="viewport"
                         (click)="onItemClick(entry.item)"
                     >
                         @if (entry.item.icon) {
@@ -49,7 +49,7 @@
             </li>
 
             @if (!last) {
-                <li aria-hidden="true" class="bey-breadcrumb-separator">{{ config().separator }}</li>
+                <li class="bey-breadcrumb-separator" aria-hidden="true">{{ config().separator }}</li>
             }
         }
     </ol>

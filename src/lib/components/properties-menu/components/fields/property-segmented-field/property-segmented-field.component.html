@@ -3,9 +3,9 @@
 <div class="bey-property-segmented-field" role="radiogroup" [attr.aria-label]="current.label">
     @for (option of current.options; track option.value) {
         <button
-            type="button"
-            role="radio"
             class="bey-property-segmented-field-option"
+            role="radio"
+            type="button"
             [attr.aria-checked]="isActive(option)"
             [attr.aria-label]="option.label | translate"
             [attr.title]="option.icon ? (option.label | translate) : null"

@@ -2,10 +2,10 @@
     @if (section().isTitleVisible) {
         <p
             class="bey-form-section-title"
-            [tooltip]="tooltip() | translate"
-            placement="right"
-            container="body"
             boundariesElement="viewport"
+            container="body"
+            placement="right"
+            [tooltip]="tooltip() | translate"
         >
             {{ label() | translate }}
         </p>

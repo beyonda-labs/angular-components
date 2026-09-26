@@ -3,16 +3,16 @@
         <input
             #queryInput
             class="form-control form-control-sm bey-form-field-control bey-form-autocomplete-input"
-            type="text"
-            role="combobox"
             autocomplete="off"
-            [id]="field().key"
-            [class.is-invalid]="isInvalid()"
+            role="combobox"
+            type="text"
             [attr.aria-controls]="field().key + '-options'"
             [attr.aria-expanded]="isOpen()"
             [attr.aria-invalid]="isInvalid() || null"
             [attr.aria-required]="field().isRequired || null"
+            [class.is-invalid]="isInvalid()"
             [disabled]="isDisabled()"
+            [id]="field().key"
             [placeholder]="placeholder() | translate"
             [value]="displayValue()"
             (blur)="onBlur()"
@@ -23,25 +23,25 @@
 
         @if (hasValue() && !isDisabled()) {
             <button
-                type="button"
                 class="bey-form-field-action bey-form-autocomplete-action bey-form-autocomplete-clear"
+                type="button"
                 [attr.aria-label]="'angular-components.form.autocomplete-field.clear' | translate"
                 (mousedown)="onClear($event)"
             >
-                <fa-icon [icon]="clearIcon" aria-hidden="true"></fa-icon>
+                <fa-icon aria-hidden="true" [icon]="clearIcon"></fa-icon>
             </button>
         }
 
         <button
-            type="button"
             class="bey-form-field-action bey-form-autocomplete-action bey-form-autocomplete-toggle"
             tabindex="-1"
-            [class.is-open]="isOpen()"
+            type="button"
             [attr.aria-label]="'angular-components.form.autocomplete-field.toggle' | translate"
+            [class.is-open]="isOpen()"
             [disabled]="isDisabled()"
             (mousedown)="onToggle()"
         >
-            <fa-icon [icon]="toggleIcon" aria-hidden="true"></fa-icon>
+            <fa-icon aria-hidden="true" [icon]="toggleIcon"></fa-icon>
         </button>
     </div>
 
@@ -49,9 +49,9 @@
         <div #panel class="bey-form-autocomplete-panel" role="listbox" [id]="field().key + '-options'">
             @for (option of filteredOptions(); track option.value) {
                 <button
-                    type="button"
-                    role="option"
                     class="bey-form-autocomplete-option"
+                    role="option"
+                    type="button"
                     [attr.aria-selected]="isSelected(option)"
                     [class.is-active]="$index === activeIndex()"
                     [class.is-selected]="isSelected(option)"

@@ -10,8 +10,8 @@
             <div class="bey-app-layout-style-guide-actions">
                 @for (button of pageButtons; track button.label) {
                     <button
-                        type="button"
                         class="btn btn-sm"
+                        type="button"
                         [class.btn-dark]="button.isPrimary"
                         [class.btn-outline-dark]="!button.isPrimary"
                         (click)="button.action()"

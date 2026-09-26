@@ -40,12 +40,12 @@
 
             @if (listItem.copyValue) {
                 <button
-                    type="button"
                     class="bey-property-list-item-action"
+                    container="body"
+                    type="button"
                     [attr.aria-label]="copyLabelKey(listItem) | translate"
                     [disabled]="listItem.disabled"
                     [tooltip]="copyLabelKey(listItem) | translate"
-                    container="body"
                     (click)="onCopy($event, listItem)"
                 >
                     <fa-icon [icon]="copiedItemId() === listItem.id ? copiedIcon : copyIcon"></fa-icon>
@@ -54,12 +54,12 @@
 
             @for (action of listItem.actions; track action.key) {
                 <button
-                    type="button"
                     class="bey-property-list-item-action"
+                    container="body"
+                    type="button"
                     [attr.aria-label]="action.label ?? '' | translate"
                     [disabled]="listItem.disabled"
                     [tooltip]="action.label ?? '' | translate"
-                    container="body"
                     (click)="onAction($event, listItem, action.key)"
                 >
                     <fa-icon [icon]="action.icon"></fa-icon>
@@ -69,10 +69,10 @@
             @if (listItem.removable) {
                 <span
                     class="bey-property-list-item-remove"
+                    container="body"
                     role="button"
                     [attr.aria-label]="'angular-components.properties-menu.remove' | translate"
                     [tooltip]="'angular-components.properties-menu.remove' | translate"
-                    container="body"
                     (click)="onRemove($event, listItem)"
                 >
                     <fa-icon [icon]="removeIcon"></fa-icon>
@@ -81,11 +81,11 @@
 
             @if (listItem.isExpandable) {
                 <button
-                    type="button"
                     class="bey-property-list-item-chevron"
-                    [class.is-expanded]="listItem.expanded"
+                    type="button"
                     [attr.aria-expanded]="listItem.expanded"
                     [attr.aria-label]="toggleLabelKey(listItem) | translate"
+                    [class.is-expanded]="listItem.expanded"
                     [disabled]="listItem.disabled"
                     (click)="onToggle($event, listItem)"
                 >

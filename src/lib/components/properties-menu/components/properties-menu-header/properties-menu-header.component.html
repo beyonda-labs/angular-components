@@ -15,8 +15,8 @@
 
     @if (config().onClose; as onClose) {
         <button
-            type="button"
             class="bey-properties-menu-header-close"
+            type="button"
             [attr.aria-label]="'angular-components.properties-menu.close' | translate"
             (click)="onClose()"
         >

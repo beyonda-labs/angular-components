@@ -4,11 +4,11 @@
             {{ 'angular-components.pagination.page-size' | translate }}
 
             <select
-                [id]="pageSizeId"
                 class="form-select bey-pagination-select"
-                data-testid="page-size-select"
-                [ngModel]="pageSize()"
                 aria-label="Page size"
+                data-testid="page-size-select"
+                [id]="pageSizeId"
+                [ngModel]="pageSize()"
                 (ngModelChange)="onPageSizeChange($event)"
             >
                 @for (pageSizeOption of pageSizeOptions; track pageSizeOption) {
@@ -21,11 +21,11 @@
     <div class="d-flex align-items-center flex-wrap gap-1 bey-pagination-content">
         @if (shouldShowFirstLastButtons()) {
             <button
-                type="button"
                 class="btn bey-pagination-icon-button"
                 data-testid="first-page-button"
-                [disabled]="isFirstPage()"
+                type="button"
                 [attr.aria-label]="'angular-components.pagination.first-page' | translate"
+                [disabled]="isFirstPage()"
                 (click)="goToFirstPage()"
             >
                 <fa-icon [icon]="firstPageIcon"></fa-icon>
@@ -34,11 +34,11 @@
         }
 
         <button
-            type="button"
             class="btn bey-pagination-icon-button"
             data-testid="previous-page-button"
-            [disabled]="isFirstPage()"
+            type="button"
             [attr.aria-label]="'angular-components.pagination.previous-page' | translate"
+            [disabled]="isFirstPage()"
             (click)="goToPreviousPage()"
         >
             <fa-icon [icon]="previousPageIcon"></fa-icon>
@@ -51,17 +51,17 @@
             </label>
 
             <input
-                [id]="pageInputId"
-                type="number"
-                min="1"
-                [max]="totalPages()"
-                inputmode="numeric"
                 class="form-control bey-pagination-input"
+                aria-label="Current page"
                 data-testid="page-input"
+                inputmode="numeric"
+                min="1"
+                placeholder="1"
+                type="number"
+                [id]="pageInputId"
+                [max]="totalPages()"
                 [ngModel]="pageInputValue()"
                 [style.width]="pageInputWidth()"
-                aria-label="Current page"
-                placeholder="1"
                 (blur)="onPageInputBlur()"
                 (ngModelChange)="onPageInputChange($event)"
             />
@@ -71,13 +71,13 @@
             </span>
 
             <button
-                type="button"
                 class="btn bey-pagination-icon-button bey-pagination-info-button"
+                boundariesElement="viewport"
+                container="body"
                 data-testid="results-info-button"
+                type="button"
                 [attr.aria-label]="'angular-components.pagination.results-range' | translate: resultsTooltipParams()"
                 [tooltip]="'angular-components.pagination.results-range' | translate: resultsTooltipParams()"
-                container="body"
-                boundariesElement="viewport"
             >
                 <fa-icon [icon]="infoIcon"></fa-icon>
                 <span class="visually-hidden">
@@ -87,11 +87,11 @@
         </div>
 
         <button
-            type="button"
             class="btn bey-pagination-icon-button"
             data-testid="next-page-button"
-            [disabled]="isLastPage()"
+            type="button"
             [attr.aria-label]="'angular-components.pagination.next-page' | translate"
+            [disabled]="isLastPage()"
             (click)="goToNextPage()"
         >
             <fa-icon [icon]="nextPageIcon"></fa-icon>
@@ -100,11 +100,11 @@
 
         @if (shouldShowFirstLastButtons()) {
             <button
-                type="button"
                 class="btn bey-pagination-icon-button"
                 data-testid="last-page-button"
-                [disabled]="isLastPage()"
+                type="button"
                 [attr.aria-label]="'angular-components.pagination.last-page' | translate"
+                [disabled]="isLastPage()"
                 (click)="goToLastPage()"
             >
                 <fa-icon [icon]="lastPageIcon"></fa-icon>

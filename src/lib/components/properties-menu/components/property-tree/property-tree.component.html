@@ -1,23 +1,23 @@
-<ng-template #renderNodes let-nodes let-level="level">
+<ng-template #renderNodes let-level="level" let-nodes>
     @for (node of nodes; track node.id) {
         <div class="bey-property-tree-node">
             <button
-                type="button"
                 class="bey-property-tree-row"
                 role="treeitem"
+                type="button"
                 [attr.aria-expanded]="hasVisibleChildren(node) ? node.expanded : null"
                 [attr.aria-selected]="isSelected(node)"
                 [attr.data-node-id]="node.id"
-                [class.is-selected]="isSelected(node)"
                 [class.is-disabled]="node.disabled"
                 [class.is-draggable]="node.draggable"
                 [class.is-dragged]="isDragged(node)"
-                [class.is-drop-invalid]="isInvalidTarget(node)"
+                [class.is-drop-after]="dropPositionFor(node) === 'after'"
                 [class.is-drop-before]="dropPositionFor(node) === 'before'"
                 [class.is-drop-inside]="dropPositionFor(node) === 'inside'"
-                [class.is-drop-after]="dropPositionFor(node) === 'after'"
-                [style.--bey-property-tree-level]="level"
+                [class.is-drop-invalid]="isInvalidTarget(node)"
+                [class.is-selected]="isSelected(node)"
                 [disabled]="node.disabled"
+                [style.--bey-property-tree-level]="level"
                 (click)="onNodeClick(node)"
                 (pointerdown)="onRowPointerDown($event, node)"
             >
@@ -60,7 +60,7 @@
     ></ng-container>
 
     @if (addBlockLabel(); as label) {
-        <button type="button" class="bey-property-tree-add-block" (click)="onAddBlockClick()">
+        <button class="bey-property-tree-add-block" type="button" (click)="onAddBlockClick()">
             <fa-icon [icon]="addIcon"></fa-icon>
             <span>{{ label | translate }}</span>
         </button>

@@ -1,13 +1,13 @@
 @let current = field();
 
 <div class="bey-property-field-control">
-    <div class="bey-property-field-anchor" #pickerAnchor>
+    <div #pickerAnchor class="bey-property-field-anchor">
         @if (current.multiline) {
             <textarea
                 class="bey-property-field-input"
-                [class.bey-property-field-input--with-actions]="current.acceptsVariable && current.actionButton"
                 rows="3"
                 [attr.aria-label]="current.label"
+                [class.bey-property-field-input--with-actions]="current.acceptsVariable && current.actionButton"
                 [disabled]="current.disabled"
                 [placeholder]="current.placeholder"
                 [readonly]="current.readonly"
@@ -21,8 +21,8 @@
             ></textarea>
         } @else {
             <input
-                type="text"
                 class="bey-property-field-input"
+                type="text"
                 [attr.aria-label]="current.label"
                 [disabled]="current.disabled"
                 [placeholder]="current.placeholder"
@@ -51,14 +51,14 @@
         <div class="bey-property-field-actions">
             @if (current.acceptsVariable) {
                 <button
-                    type="button"
                     class="bey-property-field-action"
-                    [class.is-active]="pickerOpen()"
-                    [attr.aria-label]="insertLabel | translate"
+                    container="body"
+                    type="button"
                     [attr.aria-expanded]="pickerOpen()"
+                    [attr.aria-label]="insertLabel | translate"
+                    [class.is-active]="pickerOpen()"
                     [disabled]="current.disabled"
                     [tooltip]="insertLabel | translate"
-                    container="body"
                     (click)="togglePicker()"
                 >
                     <fa-icon [icon]="variableIcon"></fa-icon>
@@ -67,12 +67,12 @@
 
             @if (current.actionButton && hasSelection()) {
                 <button
-                    type="button"
                     class="bey-property-field-action"
+                    container="body"
+                    type="button"
                     [attr.aria-label]="actionButtonTooltipKey() | translate"
                     [disabled]="current.disabled"
                     [tooltip]="actionButtonTooltipKey() | translate"
-                    container="body"
                     (click)="onActionButtonClick()"
                 >
                     <fa-icon [icon]="current.actionButton.icon"></fa-icon>

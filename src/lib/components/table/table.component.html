@@ -1,13 +1,13 @@
 <div class="bey-table">
-    <div class="bey-table-scroll" #scrollContainer role="table" [style.height]="config().height">
+    <div #scrollContainer class="bey-table-scroll" role="table" [style.height]="config().height">
         <div class="bey-table-header" role="rowgroup">
             <bey-table-row
+                selectionLabel="angular-components.table.select-all"
                 [gridTemplateColumns]="gridTemplateColumns()"
                 [isHeader]="true"
                 [row]="headerRow()"
                 [selectable]="config().selectable"
                 [selectionIndeterminate]="someSelected()"
-                selectionLabel="angular-components.table.select-all"
                 (selectionChange)="onAllSelectionChange($event)"
             ></bey-table-row>
         </div>

@@ -1,11 +1,11 @@
 <div
     class="bey-table-cell"
+    boundariesElement="viewport"
+    container="body"
+    placement="top"
     [attr.role]="isHeader() ? 'columnheader' : 'cell'"
     [class.bey-table-cell--header]="isHeader()"
     [tooltip]="tooltip() | translate"
-    container="body"
-    boundariesElement="viewport"
-    placement="top"
 >
     @if (isLink()) {
         <button class="bey-table-cell-link bey-table-cell-content" type="button" (click)="onLinkClick($event)">

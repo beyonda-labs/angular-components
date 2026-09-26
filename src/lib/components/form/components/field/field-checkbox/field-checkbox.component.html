@@ -3,13 +3,13 @@
         <span class="bey-form-checkbox-switch">
             <input
                 class="bey-form-checkbox-switch-input"
-                type="checkbox"
                 role="switch"
-                [id]="field().key"
-                [formControl]="control()"
-                [attr.aria-required]="field().isRequired || null"
+                type="checkbox"
                 [attr.aria-invalid]="isInvalid() || null"
                 [attr.aria-label]="field().isLabelVisible ? null : (label() | translate)"
+                [attr.aria-required]="field().isRequired || null"
+                [formControl]="control()"
+                [id]="field().key"
             />
             <span class="bey-form-checkbox-switch-knob" aria-hidden="true"></span>
         </span>
@@ -17,11 +17,11 @@
         <input
             class="form-check-input bey-form-field-check-input"
             type="checkbox"
-            [id]="field().key"
-            [formControl]="control()"
-            [attr.aria-required]="field().isRequired || null"
             [attr.aria-invalid]="isInvalid() || null"
             [attr.aria-label]="field().isLabelVisible ? null : (label() | translate)"
+            [attr.aria-required]="field().isRequired || null"
+            [formControl]="control()"
+            [id]="field().key"
         />
     }
 

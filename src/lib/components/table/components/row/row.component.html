@@ -13,9 +13,9 @@
             <input
                 class="bey-table-row-checkbox"
                 type="checkbox"
+                [attr.aria-label]="selectionLabel() | translate"
                 [checked]="row().selected"
                 [indeterminate]="selectionIndeterminate()"
-                [attr.aria-label]="selectionLabel() | translate"
                 (change)="onCheckboxChange($event)"
             />
         </label>

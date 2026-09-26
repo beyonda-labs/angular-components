@@ -7,10 +7,10 @@
 >
     @if (current.showHeader) {
         <button
-            type="button"
             class="bey-property-group-header"
-            [attr.aria-expanded]="current.expanded"
+            type="button"
             [attr.aria-controls]="'property-group-' + current.id"
+            [attr.aria-expanded]="current.expanded"
             [disabled]="current.disabled"
             (click)="toggle()"
         >
@@ -50,9 +50,9 @@
                 <div class="bey-property-group-tabs" role="tablist">
                     @for (tab of content.tabs; track tab.id) {
                         <button
-                            type="button"
                             class="bey-property-group-tab"
                             role="tab"
+                            type="button"
                             [attr.aria-selected]="tab.id === content.activeTabId"
                             [class.is-active]="tab.id === content.activeTabId"
                             [disabled]="current.disabled"
@@ -79,9 +79,9 @@
             @if (listContent(); as content) {
                 @if (content.list.length > 0) {
                     <bey-property-list
+                        [groupId]="current.id"
                         [items]="content.list"
                         [tabId]="tabId()"
-                        [groupId]="current.id"
                     ></bey-property-list>
                 }
             }
@@ -89,15 +89,15 @@
             @if (treeContent(); as content) {
                 @if (content.tree.nodes.length > 0) {
                     <bey-property-tree
+                        [acceptsRootDrop]="content.tree.acceptsRootDrop"
+                        [addBlockLabel]="content.tree.addBlockLabel"
+                        [groupId]="current.id"
                         [nodes]="content.tree.nodes"
                         [tabId]="tabId()"
-                        [groupId]="current.id"
-                        [addBlockLabel]="content.tree.addBlockLabel"
-                        [acceptsRootDrop]="content.tree.acceptsRootDrop"
                     ></bey-property-tree>
                 } @else if (content.tree.showEmptyStateAddBlock && content.tree.addBlockLabel) {
                     <div class="bey-property-group-empty">
-                        <button type="button" class="bey-property-group-empty-add" (click)="onEmptyAddBlockClick()">
+                        <button class="bey-property-group-empty-add" type="button" (click)="onEmptyAddBlockClick()">
                             <fa-icon [icon]="addIcon"></fa-icon>
                             <span>{{ content.tree.addBlockLabel | translate }}</span>
                         </button>

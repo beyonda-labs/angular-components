@@ -2,8 +2,8 @@
 
 <div class="bey-property-field-control">
     <button
-        type="button"
         class="bey-property-file-field-choose"
+        type="button"
         [disabled]="current.disabled"
         (click)="fileInput.click()"
     >
@@ -13,8 +13,8 @@
 
     <input
         #fileInput
-        type="file"
         hidden
+        type="file"
         [accept]="current.accept ?? ''"
         [disabled]="current.disabled"
         (change)="onFileSelected($event)"
@@ -33,11 +33,11 @@
     @if (showsClear()) {
         <div class="bey-property-field-actions">
             <button
-                type="button"
                 class="bey-property-field-action"
+                container="body"
+                type="button"
                 [attr.aria-label]="'angular-components.properties-menu.file-field.clear' | translate"
                 [tooltip]="'angular-components.properties-menu.file-field.clear' | translate"
-                container="body"
                 (click)="onClear()"
             >
                 <fa-icon [icon]="clearIcon"></fa-icon>

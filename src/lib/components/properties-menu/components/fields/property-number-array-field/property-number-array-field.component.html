@@ -4,11 +4,11 @@
     @for (entry of entries(); track $index) {
         <div class="bey-property-number-array-field-entry">
             <input
-                type="number"
                 class="bey-property-field-input"
-                [attr.step]="current.step ?? 'any'"
-                [attr.min]="current.min"
+                type="number"
                 [attr.max]="current.max"
+                [attr.min]="current.min"
+                [attr.step]="current.step ?? 'any'"
                 [disabled]="current.disabled"
                 [value]="entry"
                 (input)="onEntryChange($index, $event)"
@@ -16,8 +16,8 @@
 
             @if (canRemove()) {
                 <button
-                    type="button"
                     class="bey-property-field-action"
+                    type="button"
                     [attr.aria-label]="'angular-components.properties-menu.remove' | translate"
                     [disabled]="current.disabled"
                     (click)="onRemove($index)"
@@ -30,8 +30,8 @@
 
     @if (canAdd()) {
         <button
-            type="button"
             class="bey-property-field-action bey-property-number-array-field-add"
+            type="button"
             [disabled]="current.disabled"
             (click)="onAdd()"
         >

@@ -1,20 +1,20 @@
 <div
     class="form-control form-control-sm bey-form-field-control bey-form-chips"
-    [class.is-disabled]="isDisabled()"
-    [attr.aria-required]="field().isRequired || null"
     [attr.aria-invalid]="isInvalid() || null"
+    [attr.aria-required]="field().isRequired || null"
+    [class.is-disabled]="isDisabled()"
 >
     @for (chip of chips(); track $index) {
         <span class="bey-form-chips-chip">
             <span class="bey-form-chips-chip-label">{{ chip }}</span>
             @if (!isDisabled()) {
                 <button
-                    type="button"
                     class="bey-form-field-action bey-form-chips-chip-remove"
+                    type="button"
                     [attr.aria-label]="'angular-components.form.chips.remove' | translate"
                     (click)="removeChip($index)"
                 >
-                    <fa-icon [icon]="removeIcon" aria-hidden="true"></fa-icon>
+                    <fa-icon aria-hidden="true" [icon]="removeIcon"></fa-icon>
                 </button>
             }
         </span>
@@ -22,12 +22,12 @@
     <input
         class="bey-form-chips-input"
         type="text"
-        [id]="field().key"
         [disabled]="isDisabled() || isMaxItemsReached()"
-        [value]="inputValue()"
+        [id]="field().key"
         [placeholder]="(chips().length ? '' : placeholder()) | translate"
+        [value]="inputValue()"
+        (blur)="addChip()"
         (input)="onInput($event)"
         (keydown)="onKeyDown($event)"
-        (blur)="addChip()"
     />
 </div>

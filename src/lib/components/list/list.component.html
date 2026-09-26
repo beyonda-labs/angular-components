@@ -3,10 +3,10 @@
         @for (item of config().items; track trackByItem($index, item)) {
             <div
                 class="bey-list-item"
-                [class.is-bare]="config().bare"
-                [class.is-clickable]="isClickable()"
                 [attr.role]="isClickable() ? 'button' : 'listitem'"
                 [attr.tabindex]="isClickable() ? 0 : null"
+                [class.is-bare]="config().bare"
+                [class.is-clickable]="isClickable()"
                 (click)="onItemClick(item, $index)"
                 (keydown.enter)="onItemKeydown($event, item, $index)"
                 (keydown.space)="onItemKeydown($event, item, $index)"

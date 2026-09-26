@@ -4,8 +4,8 @@
 
 <div class="bey-pdf-viewer-style-guide-toolbar">
     <button
-        type="button"
         class="btn btn-sm btn-outline-secondary"
+        type="button"
         [disabled]="currentPage() <= 1"
         (click)="goToPreviousPage()"
     >
@@ -15,27 +15,27 @@
     <span class="bey-pdf-viewer-style-guide-page">{{ currentPage() }} / {{ pageCount() }}</span>
 
     <button
-        type="button"
         class="btn btn-sm btn-outline-secondary"
+        type="button"
         [disabled]="currentPage() >= pageCount()"
         (click)="goToNextPage()"
     >
         <fa-icon [icon]="nextIcon"></fa-icon>
     </button>
 
-    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="zoomOut()">
+    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="zoomOut()">
         <fa-icon [icon]="zoomOutIcon"></fa-icon>
     </button>
 
-    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="zoomIn()">
+    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="zoomIn()">
         <fa-icon [icon]="zoomInIcon"></fa-icon>
     </button>
 
-    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="rotateLeft()">
+    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="rotateLeft()">
         <fa-icon [icon]="rotateLeftIcon"></fa-icon>
     </button>
 
-    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="rotateRight()">
+    <button class="btn btn-sm btn-outline-secondary" type="button" (click)="rotateRight()">
         <fa-icon [icon]="rotateRightIcon"></fa-icon>
     </button>
 </div>

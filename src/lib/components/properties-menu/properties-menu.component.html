@@ -1,7 +1,7 @@
 <section
     class="bey-properties-menu"
-    [class.bey-properties-menu--embedded]="config().embedded"
     [attr.aria-label]="titleKey() | translate"
+    [class.bey-properties-menu--embedded]="config().embedded"
 >
     @if (visibleTabs().length > 1) {
         <bey-property-tabs></bey-property-tabs>

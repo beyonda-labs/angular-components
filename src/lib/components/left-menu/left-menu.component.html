@@ -4,12 +4,12 @@
             <div class="bey-left-menu-brand" [class.is-collapsed]="!expanded()">
                 <div
                     class="bey-left-menu-brand-icon"
-                    [tooltip]="!expanded() ? (titleText() | translate) : ''"
-                    container="body"
                     boundariesElement="viewport"
+                    container="body"
+                    [tooltip]="!expanded() ? (titleText() | translate) : ''"
                 >
                     @if (config().title.icon) {
-                        <img [src]="config().title.icon" alt="" aria-hidden="true" />
+                        <img alt="" aria-hidden="true" [src]="config().title.icon" />
                     }
                 </div>
 
@@ -23,13 +23,13 @@
             </div>
 
             <button
-                type="button"
                 class="bey-left-menu-toggle"
+                boundariesElement="viewport"
+                container="body"
+                type="button"
                 [attr.aria-expanded]="expanded()"
                 [attr.aria-label]="toggleTooltip() | translate"
                 [tooltip]="toggleTooltip() | translate"
-                container="body"
-                boundariesElement="viewport"
                 (click)="toggleExpanded()"
             >
                 <fa-icon [icon]="expanded() ? collapseIcon : expandIcon"></fa-icon>
@@ -48,10 +48,10 @@
 
                     <div class="bey-left-menu-section-scroll bey-thin-scroll">
                         <bey-left-menu-action-list
+                            groupKey="top"
                             [actions]="topActions()"
                             [expanded]="expanded()"
                             [prefix]="config().prefix"
-                            groupKey="top"
                         ></bey-left-menu-action-list>
                     </div>
                 </section>
@@ -66,10 +66,10 @@
                     }
 
                     <bey-left-menu-action-list
+                        groupKey="bottom"
                         [actions]="bottomActions()"
                         [expanded]="expanded()"
                         [prefix]="config().prefix"
-                        groupKey="bottom"
                     ></bey-left-menu-action-list>
                 </section>
             }
@@ -79,9 +79,9 @@
             <footer class="bey-left-menu-footer">
                 <div
                     class="bey-left-menu-user"
-                    [tooltip]="!expanded() ? userTooltip() : ''"
-                    container="body"
                     boundariesElement="viewport"
+                    container="body"
+                    [tooltip]="!expanded() ? userTooltip() : ''"
                 >
                     <div class="bey-left-menu-user-avatar">{{ userInfo.initials }}</div>
 
