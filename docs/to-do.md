@@ -162,10 +162,11 @@ the change-log lists every break.
 -   [x] Scripts matched to the Jenkins stages (Lint → `lint`, Test → `test:ci`, Build → `build`): `lint` runs
         ESLint, stylelint, `check-tokens` and `check-style-guides`; `build` stops running the tests, which the
         Test stage already runs; `verify` stays as the local shortcut
--   [ ] Change-log: `[Unreleased]` completed with every S6 break and renamed to `[1.2.0]`; `[1.1.0]` dated
--   [ ] Coverage thresholds raised to just under today's numbers (90.4 / 77.6 / 85.3 / 90.4), as S2 intended
+-   [x] Change-log: `[Unreleased]` completed with every S6 break and renamed to `[1.2.0]`; `[1.1.0]` dated
+-   [x] Coverage thresholds raised to just under today's numbers (90 / 77 / 85 / 90), as S2 intended
 -   [ ] `release/1.2.0`, version bump, merge to `main` and `develop`, tag `v1.2.0` (the repo has no tags today)
--   [ ] Consumers adapted afterwards: `document-builder-front` and `angular-components-demo`
+-   [x] Consumers adapted: `document-builder-front` and `angular-components-demo` build and pass their tests
+        against 1.2.0; `page` gained `onValueChange` and `left-menu` a title size variable for what they needed
 
 Publishing already runs on Jenkins, configured on the server — there is no `Jenkinsfile` in the repo by design.
 Snapshots per branch, `latest` from `main`, as described in the README.
