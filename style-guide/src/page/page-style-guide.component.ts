@@ -46,9 +46,9 @@ interface ProductFormValue {
     templateUrl: './page-style-guide.component.html'
 })
 export class PageStyleGuideComponent {
-    readonly config = new BeyPageConfig({
+    readonly config = new BeyPageConfig<ProductFormValue>({
         baseUrl: '/products',
-        formConfig: new BeyPageFormConfig<unknown>({
+        formConfig: new BeyPageFormConfig<ProductFormValue>({
             buildSections: () => [
                 new BeyFormSection({
                     isTitleVisible: false,
@@ -74,7 +74,7 @@ export class PageStyleGuideComponent {
                     ? { product: { category: product.category, name: product.name, price: product.price } }
                     : undefined;
             },
-            toItem: value => (value as ProductFormValue).product
+            toItem: value => value.product
         }),
         headerConfig: new BeyPageHeaderConfig({
             actions: [

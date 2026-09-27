@@ -178,7 +178,7 @@ Snapshots per branch, `latest` from `main`, as described in the README.
 -   [x] `check-translations`: a key segment that is not kebab-case fails, and the translation scripts are the same
         in every repo: `bey-check-translations`, `bey-sort-translations` and `bey-merge-translations` from
         `@beyonda-labs/base-config`
--   [ ] `BeyPageConfig` generic over the form value, so a typed `BeyPageFormConfig<T>` fits without a cast
+-   [x] `BeyPageConfig` generic over the form value, so a typed `BeyPageFormConfig<T>` fits without a cast
 -   [x] `*.model.ts` holds contracts and definitions only: `resolveRule` and the tree searches of the tree dialog
         moved to function modules with their specs, the default action type of a page zone is a table, the
         `types/` folders of `pdf-viewer` and `properties-menu` became model files, and `**/*.model.ts` is out of the

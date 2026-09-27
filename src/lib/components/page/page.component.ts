@@ -27,8 +27,8 @@ import { PageService } from './services/page.service';
     styleUrls: ['./page.component.css'],
     templateUrl: './page.component.html'
 })
-export class PageComponent {
-    readonly config = input.required<PageConfig>();
+export class PageComponent<TValue = unknown> {
+    readonly config = input.required<PageConfig<TValue>>();
 
     readonly service = inject(PageService);
 

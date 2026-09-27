@@ -19,11 +19,11 @@ export interface PageHandle {
     viewMode(): PageViewMode;
 }
 
-export class PageConfig {
+export class PageConfig<TValue = unknown> {
     prefix: string;
 
     baseUrl?: string;
-    formConfig?: PageFormConfig;
+    formConfig?: PageFormConfig<TValue>;
     headerConfig?: PageHeaderConfig;
     onDataLoaded?: (response: PageBackendResponse) => void;
     onReady?: (handle: PageHandle) => void;
@@ -37,7 +37,7 @@ export class PageConfig {
         onDataLoaded,
         onReady,
         tableConfig
-    }: PageConfigParameters) {
+    }: PageConfigParameters<TValue>) {
         this.baseUrl = baseUrl;
         this.formConfig = formConfig;
         this.headerConfig = headerConfig;
@@ -48,11 +48,11 @@ export class PageConfig {
     }
 }
 
-export interface PageConfigParameters {
+export interface PageConfigParameters<TValue = unknown> {
     prefix: string;
 
     baseUrl?: string;
-    formConfig?: PageFormConfig;
+    formConfig?: PageFormConfig<TValue>;
     headerConfig?: PageHeaderConfig;
     onDataLoaded?: (response: PageBackendResponse) => void;
     onReady?: (handle: PageHandle) => void;
