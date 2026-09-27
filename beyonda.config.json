@@ -31,9 +31,6 @@
                 "lines": 90
             }
         },
-        "lines": {
-            ".gitignore": [".hintrc"]
-        },
         "stylelint": {
             "patterns": ["{src,style-guide}/**/*.css"],
             "overrides": [

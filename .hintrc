@@ -1,15 +1,15 @@
 {
-  "extends": [
-    "development"
-  ],
-  "hints": {
-    "axe/forms": "off",
-    "axe/name-role-value": [
-      "default",
-      {
-        "button-name": "off"
-      }
+    "extends": [
+        "development"
     ],
-    "axe/aria": "off"
-  }
+    "hints": {
+        "axe/aria": "off",
+        "axe/forms": "off",
+        "axe/name-role-value": [
+            "default",
+            {
+                "button-name": "off"
+            }
+        ]
+    }
 }
