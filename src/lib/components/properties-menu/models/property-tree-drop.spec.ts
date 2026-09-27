@@ -1,5 +1,5 @@
-import { PropertyTreeNode } from '../models/property-tree-node.model';
-import { findTreeNode, isDropAllowed } from './property-tree-drop.util';
+import { findTreeNode, isDropAllowed } from './property-tree-drop';
+import { PropertyTreeNode } from './property-tree-node.model';
 
 function buildTree(): PropertyTreeNode[] {
     return [
@@ -22,7 +22,7 @@ function buildTree(): PropertyTreeNode[] {
     ];
 }
 
-describe('property-tree-drop.util', () => {
+describe('property-tree-drop', () => {
     describe('findTreeNode', () => {
         it('should find a nested node', () => {
             expect(findTreeNode(buildTree(), 'nested')?.id).toBe('nested');

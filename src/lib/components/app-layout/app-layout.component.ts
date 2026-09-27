@@ -4,7 +4,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 
-import { toKeySegment } from '../../internal/i18n/key-segment.util';
+import { toKeySegment } from '../../internal/i18n/key-segment';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { BreadcrumbConfig } from '../breadcrumb/models/breadcrumb.model';
 import { FooterComponent } from '../footer/footer.component';

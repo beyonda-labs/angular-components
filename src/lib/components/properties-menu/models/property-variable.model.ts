@@ -1,3 +1,6 @@
+import { IconDefinition } from '@fortawesome/angular-fontawesome';
+import { faDatabase } from '@fortawesome/free-solid-svg-icons';
+
 export enum PropertyVariableType {
     Array = 'array',
     Boolean = 'boolean',
@@ -46,3 +49,5 @@ export interface PropertyVariableParameters {
     label?: string;
     type?: PropertyVariableType;
 }
+
+export const PROPERTY_VARIABLE_ICON: IconDefinition = faDatabase;

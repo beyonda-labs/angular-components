@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { toKeySegment } from '../../../../internal/i18n/key-segment.util';
+import { toKeySegment } from '../../../../internal/i18n/key-segment';
 import { fieldStateKey, FormFieldStates } from '../../form.component';
 import { FormRow, FormSection } from '../../models/form.model';
 import { FormRowComponent } from '../row/row.component';

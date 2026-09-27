@@ -1,4 +1,4 @@
-import { toKeySegment } from '../../../internal/i18n/key-segment.util';
+import { toKeySegment } from '../../../internal/i18n/key-segment';
 export function resolvePropertyLabelKey(prefix: string, segment: string, id: string, label: string): string {
     const defaultValue = `${id}.label`;
 

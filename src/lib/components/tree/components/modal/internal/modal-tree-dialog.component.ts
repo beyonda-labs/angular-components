@@ -7,6 +7,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { ButtonComponent } from '../../../../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../../../../internal/button/models/button-config.model';
 import { TreeConfig } from '../../../models/tree.model';
+import { findNodeByKey } from '../../../models/tree-node-search';
 import { TreeComponent } from '../../../tree.component';
 import { ModalTreeConfig } from '../models/modal-tree.model';
 
@@ -23,15 +24,16 @@ export class ModalTreeDialogComponent implements OnInit {
 
     readonly titleIcon = faFolderTree;
 
-    /* The dialog owns the selection so the tree repaints; the config keeps it for `confirm()`. */
+    readonly expandedKeys = signal<string[]>([]);
     readonly selectedKey = signal<string>('');
 
     readonly treeConfig = computed<TreeConfig>(
         () =>
             new TreeConfig({
-                expandedKeys: this.config.treeConfig.expandedKeys,
+                expandedKeys: this.expandedKeys(),
                 nodes: this.config.treeConfig.nodes,
-                onNodeSelect: node => this.select(node.key),
+                onNodeSelect: node => this.selectedKey.set(node.key),
+                onNodeToggle: (node, expanded) => this.toggle(node.key, expanded),
                 prefix: this.config.treeConfig.prefix,
                 selectedKey: this.selectedKey() || undefined
             })
@@ -46,7 +48,7 @@ export class ModalTreeDialogComponent implements OnInit {
     readonly confirmButton = computed(
         () =>
             new ButtonConfig({
-                action: () => this.config.confirm(),
+                action: () => this.confirm(),
                 isDisabled: !this.selectedKey(),
                 label: 'angular-components.modal.actions.confirm',
                 type: ButtonType.Primary
@@ -56,20 +58,19 @@ export class ModalTreeDialogComponent implements OnInit {
     private readonly bsModalReference: BsModalRef<ModalTreeDialogComponent> = inject(BsModalRef);
 
     ngOnInit(): void {
-        this.config.closeHandler = () => this.bsModalReference.hide();
+        this.expandedKeys.set(this.config.treeConfig.expandedKeys ?? []);
         this.selectedKey.set(this.config.treeConfig.selectedKey ?? '');
     }
 
     dismiss(): void {
-        this.config.close();
+        this.bsModalReference.hide();
     }
 
-    getTitle(): string {
-        return this.config.getTitle();
+    private confirm(): void {
+        this.config.onConfirm?.(findNodeByKey(this.config.treeConfig.nodes, this.selectedKey()));
     }
 
-    private select(key: string): void {
-        this.selectedKey.set(key);
-        this.config.treeConfig.selectedKey = key;
+    private toggle(key: string, expanded: boolean): void {
+        this.expandedKeys.update(keys => (expanded ? [...keys, key] : keys.filter(current => current !== key)));
     }
 }

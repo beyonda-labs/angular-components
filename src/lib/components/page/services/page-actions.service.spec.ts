@@ -454,9 +454,11 @@ describe('PageActionsService', () => {
             expect(books.isDisabled).toBe(false);
         });
 
-        it('should move the selected items to the confirmed category and refresh', () => {
+        it('should move the selected items to the confirmed category, close the picker and refresh', () => {
+            const hide = jest.fn();
             loadCategoryTree.mockReturnValue(of(buildCategories()));
             moveItems.mockReturnValue(of(null));
+            openTree.mockReturnValue({ hide });
             const context = buildCategoryContext({ selectedItems: () => [{ id: 'item-1', type: PageItemType.Item }] });
 
             service.executeAction(buildAction(PageStandardAction.Move, PageActionScope.Item), context);
@@ -464,8 +466,7 @@ describe('PageActionsService', () => {
             const treeConfig = openTree.mock.calls[0][0] as ModalTreeConfig;
             const target = treeConfig.treeConfig.nodes[0].children[0];
 
-            treeConfig.treeConfig.onNodeSelect?.(target);
-            treeConfig.confirm();
+            treeConfig.onConfirm?.(target);
 
             expect(moveItems).toHaveBeenCalledWith(
                 '/items',
@@ -473,12 +474,14 @@ describe('PageActionsService', () => {
                 'cat-1',
                 'testPage.toast.move-success'
             );
+            expect(hide).toHaveBeenCalled();
             expect(context.onMoved).toHaveBeenCalled();
         });
 
         it('should move to the root when the root node is confirmed', () => {
             loadCategoryTree.mockReturnValue(of(buildCategories()));
             moveItems.mockReturnValue(of(null));
+            openTree.mockReturnValue({ hide: jest.fn() });
             const context = buildCategoryContext({ selectedItems: () => [{ id: 'item-1', type: PageItemType.Item }] });
 
             service.executeAction(buildAction(PageStandardAction.Move, PageActionScope.Item), context);
@@ -486,8 +489,7 @@ describe('PageActionsService', () => {
             const treeConfig = openTree.mock.calls[0][0] as ModalTreeConfig;
             const root = treeConfig.treeConfig.nodes[0];
 
-            treeConfig.treeConfig.onNodeSelect?.(root);
-            treeConfig.confirm();
+            treeConfig.onConfirm?.(root);
 
             expect(moveItems).toHaveBeenCalledWith('/items', expect.anything(), null, 'testPage.toast.move-success');
         });

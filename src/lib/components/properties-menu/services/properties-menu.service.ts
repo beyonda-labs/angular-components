@@ -15,7 +15,7 @@ import { PropertyTab } from '../models/property-tab.model';
 import { PropertyTreeConfig } from '../models/property-tree-config.model';
 import { PropertyTreeNode, PropertyTreeNodeParameters } from '../models/property-tree-node.model';
 import { PropertyVariable } from '../models/property-variable.model';
-import { toVariableExpression } from '../utils/property-variable-options.util';
+import { toVariableExpression } from '../models/property-variable-options';
 
 /**
  * Menu state shared by the menu's inner components. The config signal starts from the consumer's config and

@@ -16,7 +16,7 @@ import { debounceTime, Subject } from 'rxjs';
 
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
-import { toKeySegment } from '../../internal/i18n/key-segment.util';
+import { toKeySegment } from '../../internal/i18n/key-segment';
 import { SearchConfig, SearchField, SearchFieldOption, SearchFieldType } from './models/search.model';
 import {
     BooleanFilter,

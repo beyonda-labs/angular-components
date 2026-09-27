@@ -1,6 +1,4 @@
-import { PropertyTreeNode } from '../models/property-tree-node.model';
-
-export type PropertyTreeDropPosition = 'after' | 'before' | 'inside';
+import { PropertyTreeDropPosition, PropertyTreeNode } from './property-tree-node.model';
 
 interface NodeLookup {
     node: PropertyTreeNode;

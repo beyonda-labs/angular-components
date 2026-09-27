@@ -4,15 +4,15 @@ import { faFileArrowUp, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { isAcceptedMimeType } from '../../../../../internal/file/accept-pattern.util';
+import { isAcceptedMimeType } from '../../../../../internal/file/accept-pattern';
 import { OptionPickerOption } from '../../../../../internal/option-picker/models/option-picker-option.model';
 import { OptionPickerComponent } from '../../../../../internal/option-picker/option-picker.component';
 import {
     PropertyAttachmentField,
     PropertyAttachmentOption
 } from '../../../models/fields/property-attachment-field.model';
-import { PROPERTY_VARIABLE_ICON } from '../../../utils/property-variable-icon.util';
-import { toVariableOptions } from '../../../utils/property-variable-options.util';
+import { PROPERTY_VARIABLE_ICON } from '../../../models/property-variable.model';
+import { toVariableOptions } from '../../../models/property-variable-options';
 
 const BYTES_PER_MB = 1024 * 1024;
 

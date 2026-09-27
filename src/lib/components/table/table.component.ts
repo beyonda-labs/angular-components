@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { toKeySegment } from '../../internal/i18n/key-segment.util';
+import { toKeySegment } from '../../internal/i18n/key-segment';
 import { TableRowComponent } from './components/row/row.component';
 import { TableColumn, TableConfig, TableRow } from './models/table.model';
 import { TextTableCell } from './models/table-cell.model';

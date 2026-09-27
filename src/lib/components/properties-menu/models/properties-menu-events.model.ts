@@ -1,6 +1,5 @@
-import { PropertyTreeDropPosition } from '../utils/property-tree-drop.util';
 import { PropertyListItem } from './property-list-item.model';
-import { PropertyTreeNode } from './property-tree-node.model';
+import { PropertyTreeDropPosition, PropertyTreeNode } from './property-tree-node.model';
 import { PropertyVariable } from './property-variable.model';
 
 export interface PropertyAttachmentUpload {
