@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { Tab, TabsConfig, TabsConfigParameters } from './models/tabs.model';
@@ -187,5 +187,89 @@ describe('TabsComponent', () => {
         await settle(fixture);
 
         expect(selectedTabName()).toBe('Details');
+    });
+
+    describe('overflow', () => {
+        const HOST_WIDTH = 300;
+        const originalResizeObserver = globalThis.ResizeObserver;
+        let observers: ResizeObserverFake[];
+
+        class ResizeObserverFake {
+            readonly targets = new Set<Element>();
+
+            constructor(private readonly callback: ResizeObserverCallback) {
+                observers.push(this);
+            }
+
+            disconnect(): void {
+                this.targets.clear();
+            }
+
+            observe(target: Element): void {
+                this.targets.add(target);
+            }
+
+            resize(elements: Element[]): void {
+                const entries = elements
+                    .filter(target => this.targets.has(target))
+                    .map(target => ({ contentRect: { width: (target as HTMLElement).offsetWidth }, target }));
+
+                if (entries.length > 0) {
+                    this.callback(entries as unknown as ResizeObserverEntry[], this as unknown as ResizeObserver);
+                }
+            }
+
+            unobserve(target: Element): void {
+                this.targets.delete(target);
+            }
+        }
+
+        function widthOf(element: HTMLElement): number {
+            if (element.querySelector(':scope > [role="tablist"]')) {
+                return HOST_WIDTH;
+            }
+
+            return element.getAttribute('role') === 'tab' ? 20 + 10 * (element.textContent?.trim().length ?? 0) : 0;
+        }
+
+        async function nextFrame(): Promise<void> {
+            await new Promise<void>(resolve => {
+                requestAnimationFrame(() => resolve());
+            });
+            await settle(fixture);
+        }
+
+        beforeEach(() => {
+            observers = [];
+            globalThis.ResizeObserver = ResizeObserverFake as unknown as typeof ResizeObserver;
+            jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function (this: HTMLElement) {
+                return widthOf(this);
+            });
+        });
+
+        afterEach(() => {
+            globalThis.ResizeObserver = originalResizeObserver;
+            jest.restoreAllMocks();
+        });
+
+        it('moves the tabs that stop fitting into the menu once their labels widen', async () => {
+            const keys = ['a', 'b', 'c', 'd', 'e'];
+            await render(buildConfig({ tabs: keys.map(key => new Tab({ key, label: key })) }));
+            await nextFrame();
+
+            expect(textsOf(tabs())).toEqual(keys);
+
+            TestBed.inject(TranslateService).setTranslation(
+                'en',
+                Object.fromEntries(keys.map(key => [key, `${key} longer label`]))
+            );
+            TestBed.inject(TranslateService).use('en');
+            await settle(fixture);
+            observers.forEach(observer => observer.resize(tabs()));
+            await nextFrame();
+
+            expect(tabs().length).toBeLessThan(keys.length);
+            expect(fixture.nativeElement.querySelector('[aria-label="angular-components.tabs.more"]')).not.toBeNull();
+        });
     });
 });

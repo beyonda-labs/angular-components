@@ -12,7 +12,8 @@ import {
     linkedSignal,
     NgZone,
     signal,
-    viewChild
+    viewChild,
+    viewChildren
 } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
@@ -50,6 +51,7 @@ export class TabsComponent implements AfterViewInit {
     private previousContainerWidth = 0;
     private resizeObserver?: ResizeObserver;
 
+    private readonly tabButtons = viewChildren<ElementRef<HTMLButtonElement>>('tabButton');
     private readonly tabsRow = viewChild<ElementRef<HTMLElement>>('tabsRow');
 
     private readonly destroyRef = inject(DestroyRef);
@@ -63,11 +65,14 @@ export class TabsComponent implements AfterViewInit {
             this.scheduleRecalculate();
         });
 
+        effect(() => this.observeResize(this.tabButtons()));
+
         this.destroyRef.onDestroy(() => this.resizeObserver?.disconnect());
     }
 
     ngAfterViewInit(): void {
-        this.observeResize();
+        this.resizeObserver = new ResizeObserver(entries => this.ngZone.run(() => this.handleResize(entries)));
+        this.observeResize(this.tabButtons());
         this.recalculate();
         this.scheduleRecalculate();
     }
@@ -171,6 +176,32 @@ export class TabsComponent implements AfterViewInit {
         buttons[index]?.focus();
     }
 
+    private handleResize(entries: ResizeObserverEntry[]): void {
+        const host = this.elementReference.nativeElement;
+
+        if (entries.some(entry => entry.target !== host) && this.hasStaleTabWidths()) {
+            this.cachedTabWidths = [];
+            this.visibleCount.set(this.config().tabs.length);
+            this.scheduleRecalculate();
+
+            return;
+        }
+
+        const width = entries.find(entry => entry.target === host)?.contentRect.width;
+
+        if (width !== undefined && Math.abs(width - this.previousContainerWidth) > 1) {
+            this.recalculate();
+        }
+    }
+
+    private hasStaleTabWidths(): boolean {
+        return this.measureTabWidths().some((width, index) => {
+            const cached = this.cachedTabWidths[index];
+
+            return cached !== undefined && Math.abs(width - cached) > 1;
+        });
+    }
+
     private measureTabWidths(): number[] {
         const row = this.tabsRow();
 
@@ -185,15 +216,17 @@ export class TabsComponent implements AfterViewInit {
         return [...buttons].map(button => button.offsetWidth);
     }
 
-    private observeResize(): void {
-        this.resizeObserver = new ResizeObserver(entries => {
-            const width = entries[0]?.contentRect.width ?? 0;
+    private observeResize(buttons: readonly ElementRef<HTMLButtonElement>[]): void {
+        if (!this.resizeObserver) {
+            return;
+        }
 
-            if (Math.abs(width - this.previousContainerWidth) > 1) {
-                this.ngZone.run(() => this.recalculate());
-            }
-        });
+        this.resizeObserver.disconnect();
         this.resizeObserver.observe(this.elementReference.nativeElement);
+
+        for (const button of buttons) {
+            this.resizeObserver.observe(button.nativeElement);
+        }
     }
 
     private recalculate(): void {
