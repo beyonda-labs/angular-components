@@ -52,19 +52,19 @@ The select and attachment fields carry their own `variables`, since which variab
 
 ### Callbacks
 
-| Callback                                                                       | Payload                                                          | When                                                       |
-| ------------------------------------------------------------------------------ | ---------------------------------------------------------------- | ---------------------------------------------------------- |
-| `onActiveTabChange`                                                            | `tabId`                                                          | The active tab changes                                     |
-| `onClose`                                                                      |                                                                  | The header close button; it only shows when set            |
-| `onFieldValueChange`                                                           | `{ fieldId, previousValue, value }`                              | Any field value changes, variables included                |
-| `onVariableSelect`                                                             | `{ fieldId, variable, expression }`                              | A variable is inserted into a field                        |
-| `onFieldAction`                                                                | `{ fieldId, key, selectionStart, selectionEnd }`                 | A text field's `actionButton` with a selection             |
-| `onAttachmentUpload`                                                           | `{ fieldId, file }`                                              | A file is chosen in an attachment field                    |
-| `onGroupToggle`, `onGroupRemove`                                               | `{ tabId, groupId, expanded? }`                                  | A group header or its remove action                        |
-| `onTabAdd`                                                                     | `{ tabId }`                                                      | A tab's `addLabel` button                                  |
-| `onListItemSelect`, `onListItemToggle`, `onListItemAction`, `onListItemRemove` | `{ tabId, groupId, itemId, item? \| expanded? \| key? }`         | A card, its chevron, one of its actions, its remove button |
-| `onTreeNodeSelect`, `onTreeNodeToggle`, `onTreeAddBlock`                       | `{ tabId, groupId, nodeId?, node? \| expanded? }`                | A tree row, its chevron, the add-block button              |
-| `onTreeDragStart`, `onTreeDrop`, `onTreeDragEnd`                               | `{ tabId, groupId, nodeId?, node? \| position?, targetNodeId? }` | The drag and drop cycle, see below                         |
+| Callback                                                                       | Payload                                                          | When                                                                                   |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `onActiveTabChange`                                                            | `tabId`                                                          | The active tab changes                                                                 |
+| `onClose`                                                                      |                                                                  | The header close button; it only shows when set                                        |
+| `onFieldValueChange`                                                           | `{ fieldId, previousValue, value }`                              | Any field value changes, variables included                                            |
+| `onVariableSelect`                                                             | `{ fieldId, variable, expression }`                              | A variable is inserted into a field                                                    |
+| `onFieldAction`                                                                | `{ fieldId, key, selectionStart, selectionEnd }`                 | A text field's `actionButton` with a selection                                         |
+| `onAttachmentUpload`                                                           | `{ fieldId, file }`                                              | A file is chosen in an attachment field                                                |
+| `onGroupToggle`, `onGroupRemove`                                               | `{ tabId, groupId, expanded? }`                                  | A group header or its remove action                                                    |
+| `onTabAdd`                                                                     | `{ tabId }`                                                      | A tab's `addLabel` button                                                              |
+| `onListItemSelect`, `onListItemToggle`, `onListItemAction`, `onListItemRemove` | `{ tabId, groupId, itemId, item? \| expanded? \| key? }`         | A card, its chevron, one of its actions, its remove button                             |
+| `onTreeNodeSelect`, `onTreeNodeToggle`, `onTreeAddBlock`                       | `{ tabId, groupId, nodeId?, node? \| expanded? }`                | A tree row, its chevron or `ArrowRight` / `ArrowLeft` on the row, the add-block button |
+| `onTreeDragStart`, `onTreeDrop`, `onTreeDragEnd`                               | `{ tabId, groupId, nodeId?, node? \| position?, targetNodeId? }` | The drag and drop cycle, see below                                                     |
 
 The menu keeps its own copy of the config for the state it owns (expanded groups and nodes, list cards, field
 values) so the panel reacts at once; a new `[config]` replaces that copy.

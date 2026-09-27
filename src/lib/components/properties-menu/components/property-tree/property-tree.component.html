@@ -19,6 +19,7 @@
                 [disabled]="node.disabled"
                 [style.--bey-property-tree-level]="level"
                 (click)="onNodeClick(node)"
+                (keydown)="onRowKeyDown($event, node)"
                 (pointerdown)="onRowPointerDown($event, node)"
             >
                 <span

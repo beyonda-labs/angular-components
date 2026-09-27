@@ -141,6 +141,18 @@ export class PropertyTreeComponent {
         this.propertiesMenuService.selectTreeNode(this.tabId(), this.groupId(), node.id);
     }
 
+    onRowKeyDown(event: KeyboardEvent, node: PropertyTreeNode): void {
+        const opens = event.key === 'ArrowRight' && !node.expanded;
+        const closes = event.key === 'ArrowLeft' && node.expanded;
+
+        if (!this.hasVisibleChildren(node) || (!opens && !closes)) {
+            return;
+        }
+
+        event.preventDefault();
+        this.propertiesMenuService.toggleTreeNode(this.tabId(), this.groupId(), node.id);
+    }
+
     onRowPointerDown(event: PointerEvent, node: PropertyTreeNode): void {
         if (event.button !== 0 || event.pointerType === 'touch' || !node.draggable || node.disabled) {
             return;

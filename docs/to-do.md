@@ -113,8 +113,10 @@ Eight modules used those shared classes without importing the stylesheet, so the
 -   [x] No spec locates an element by class any more: every locator is a role, an `aria-*` attribute or visible
         text, and the templates gained the ARIA they lacked (`table` / `row` / `cell`, `list` / `listitem`, `tree` /
         `treeitem`, `searchbox`, `aria-expanded` on submenus and groups)
--   [ ] The submenu chevron of `left-menu` and the toggle of the property tree are spans with a click handler inside
-        the row button, so they are decorative for assistive technology; each should become a sibling button
+-   [x] The submenu chevron of `left-menu` and the toggle of the property tree were decorative for assistive
+        technology: a `left-menu` branch with its own action gets a sibling toggle button laid over its chevron,
+        and a tree row expands and collapses with `ArrowRight` / `ArrowLeft`, as the ARIA tree pattern expects (a
+        button beside a `treeitem` would not be a valid child of the `tree`). The look is unchanged
 
 What the pilot cost, and what it changed beyond the plan:
 

@@ -5,6 +5,7 @@
 ### Added
 
 -   Left menu module: a branch with its own `action` gets a submenu toggle over its chevron, reachable from the keyboard and named with `angular-components.left-menu.submenu`.
+-   Properties menu module: tree rows expand with `ArrowRight` and collapse with `ArrowLeft`.
 
 ### Changed
 
