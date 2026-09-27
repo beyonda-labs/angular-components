@@ -3,16 +3,23 @@
     --bey-button-padding-block: var(--bey-space-sm);
     --bey-button-padding-inline: var(--bey-space-md);
     --bey-button-icon-size: var(--bey-font-size-xs);
+    --bey-button-width: auto;
 
     display: inline-block;
+}
+
+.bey-button-wrapper {
+    width: var(--bey-button-width);
 }
 
 .bey-button {
     border-radius: var(--bey-radius-sm);
     font-size: var(--bey-font-size-sm);
+    justify-content: center;
     line-height: var(--bey-line-height-tight);
     margin-inline: var(--bey-button-inline-gap);
     padding: var(--bey-button-padding-block) var(--bey-button-padding-inline);
+    width: var(--bey-button-width);
 }
 
 .bey-button-icon {

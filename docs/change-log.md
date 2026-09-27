@@ -15,6 +15,10 @@
 -   Tabs module: the default keys derived from tab keys are kebab-case (`billingDetails` reads `tabs.billing-details.label`); translation files with camelCase segments must be renamed.
 -   Tree module: the default label keys derived from node keys are kebab-case (`sharedFolder` reads `nodes.shared-folder.label`); translation files with camelCase segments must be renamed.
 
+### Fixed
+
+-   Form module: `stretch` buttons share the full width in a row, and the sections no longer show a horizontal scroll.
+
 ## [1.2.0] - 2026-09-26
 
 ### Added

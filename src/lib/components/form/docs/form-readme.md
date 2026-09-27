@@ -41,7 +41,7 @@ readonly form = new BeyFormConfig<ContactValue>({
 | `prefix`                    | yes      |         | i18n prefix every text of the form resolves from                         |
 | `sections`                  | yes      |         | The sections, in order                                                   |
 | `buttons`                   | no       | `[]`    | Buttons under the form                                                   |
-| `buttonLayout`              | no       | `end`   | `end` lines them up to the right, `stretch` stacks them full width       |
+| `buttonLayout`              | no       | `end`   | `end` lines them up to the right, `stretch` shares the whole width       |
 | `initialValue`              | no       |         | Value the form starts from and cancel goes back to                       |
 | `allowSubmitWithoutChanges` | no       | `false` | Lets a valid but untouched form be submitted                             |
 | `steps`                     | no       | `[]`    | Turns the form into a stepper, see below                                 |
