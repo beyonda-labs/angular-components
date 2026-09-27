@@ -54,6 +54,13 @@ describe('FormSectionComponent', () => {
         expect(fixture.nativeElement.textContent).toContain('demo.person.name.label');
     });
 
+    it('reads the texts of a camelCase section key from its kebab-case segment', async () => {
+        await render({ key: 'contactDetails' }, { 'contactDetails.name': VISIBLE, 'contactDetails.email': VISIBLE });
+
+        expect(fixture.nativeElement.textContent).toContain('demo.contact-details.label');
+        expect(fixture.nativeElement.textContent).toContain('demo.contact-details.name.label');
+    });
+
     it('hides the title when asked, and skips a row with no visible field', async () => {
         await render({ isTitleVisible: false }, { 'contact.name': VISIBLE, 'contact.email': HIDDEN });
 

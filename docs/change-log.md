@@ -1,5 +1,20 @@
 # Change Log
 
+## [Unreleased]
+
+### Changed
+
+-   Form module: the key segments derived from section and field identifiers are kebab-case (`valueString` reads `value-string.label`); translation files with camelCase segments must be renamed.
+-   App layout module: the menu and breadcrumb keys derived from action keys are kebab-case (`monthlyReports` reads `actions.monthly-reports.label`); translation files with camelCase segments must be renamed.
+-   Header module: the default keys derived from action keys are kebab-case (`saveDraft` reads `actions.save-draft.label`); translation files with camelCase segments must be renamed.
+-   Left menu module: the default keys derived from action keys are kebab-case (`userSettings` reads `actions.user-settings.label`); translation files with camelCase segments must be renamed.
+-   Page module: the keys derived from action, column and search field keys are kebab-case (`createdAt` reads `table.tooltips.created-at`); translation files with camelCase segments must be renamed.
+-   Properties menu module: the default keys derived from tab, group, field, tree and list ids are kebab-case (`fontFamily` reads `fields.font-family.label`), and the action button tooltip is `fields.<id>.action-button.tooltip`; translation files with camelCase segments must be renamed.
+-   Search module: the label keys derived from field keys are kebab-case (`createdBy` reads `fields.created-by`); translation files with camelCase segments must be renamed.
+-   Table module: the header keys derived from column keys are kebab-case (`createdAt` reads `columns.created-at`); translation files with camelCase segments must be renamed.
+-   Tabs module: the default keys derived from tab keys are kebab-case (`billingDetails` reads `tabs.billing-details.label`); translation files with camelCase segments must be renamed.
+-   Tree module: the default label keys derived from node keys are kebab-case (`sharedFolder` reads `nodes.shared-folder.label`); translation files with camelCase segments must be renamed.
+
 ## [1.2.0] - 2026-09-26
 
 ### Added

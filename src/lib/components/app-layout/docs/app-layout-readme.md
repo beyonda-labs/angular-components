@@ -56,7 +56,9 @@ readonly config = new BeyAppLayoutConfig({
 
 `BeyAppLayoutTopAction` takes `key`, `icon`, and optionally `action`, `active`, `disabled`, `route` and
 `subActions`. `BeyAppLayoutBottomAction` takes `key`, `icon` and an optional `action`. Both are
-`BeyLeftMenuAction`s, so their texts resolve as `<prefix>.actions.<key>.label` and `.tooltip`.
+`BeyLeftMenuAction`s, so their texts resolve as `<prefix>.actions.<key>.label` and `.tooltip`, with the key
+as a kebab-case segment: `monthlyReports` reads `<prefix>.actions.monthly-reports.label`, in the menu and in
+the breadcrumb alike.
 
 `BeyAppLayoutBreadcrumbItem` takes `id`, `label` and an optional `icon`. The label is shown as it is: translate
 it before building the item.

@@ -38,6 +38,10 @@ const tabs = new BeyTabsConfig({
 | `icon`       | no       | none           | FontAwesome icon shown before the label               |
 | `isDisabled` | no       | `false`        | Cannot be selected, by click or keyboard              |
 
+A default label uses the key as a kebab-case segment: `billingDetails` reads
+`<prefix>.tabs.billing-details.label`, and so does a `tooltip` left as `<key>.tooltip`. `onTabChange` still
+reports `billingDetails`.
+
 ## Replacing the config
 
 The config is read as the initial state, never written to. To move the selection from outside the component,

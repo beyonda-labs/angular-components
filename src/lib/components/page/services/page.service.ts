@@ -1,6 +1,7 @@
 import { computed, DestroyRef, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
+import { toKeySegment } from '../../../internal/i18n/key-segment.util';
 import { BreadcrumbConfig, BreadcrumbItem } from '../../breadcrumb/models/breadcrumb.model';
 import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
 import { HeaderConfig } from '../../header/models/header.model';
@@ -108,7 +109,7 @@ export class PageService {
                 column =>
                     new TableColumn({
                         key: column.key,
-                        tooltip: `${tablePrefix}.tooltips.${column.key}`,
+                        tooltip: `${tablePrefix}.tooltips.${toKeySegment(column.key)}`,
                         width: column.width
                     })
             ),

@@ -97,6 +97,18 @@ describe('HeaderComponent', () => {
         expect(labels()).toEqual(['demo.actions.save.label']);
     });
 
+    it('builds the fallback keys of a camelCase action key from its kebab-case segment', async () => {
+        await render(buildConfig({ leftActions: [buildAction({ key: 'saveDraft' })] }));
+
+        expect(labels()).toEqual(['demo.actions.save-draft.label']);
+    });
+
+    it('keeps a label given in the config as it is', async () => {
+        await render(buildConfig({ leftActions: [buildAction({ key: 'saveDraft', label: 'app.shared.saveNow' })] }));
+
+        expect(labels()).toEqual(['app.shared.saveNow']);
+    });
+
     it('shows no label for an icon-only action', async () => {
         await render(
             buildConfig({ leftActions: [buildAction({ key: 'add', icon: faPlus, type: HeaderActionType.Icon })] })

@@ -125,6 +125,13 @@ With `prefix: 'myApp.contact'`, a section `person` and its field `name`:
 
 A section with `prefix: 'person'` resolves its texts from `myApp.contact.person.*` whatever its key.
 
+The form builds each key as `<prefix>.<section>.<field>.<text>`. The config `prefix` is used as given; the
+section `prefix` (or its `key`) and the field `key` become kebab-case segments, so a field `valueString` in a
+section `mainData` reads `myApp.contact.main-data.value-string.label`. A run of capitals is one word
+(`pdfURL` is `pdf-url`) and a digit stays with the word before it (`line2Height` is `line2-height`). The key
+itself does not change: the control, its `id` and the form value keep `valueString`. Anything the config gives
+as a full translation key, such as `placeholder`, a button `label` or an option `label`, is used as it is.
+
 ## Modal form
 
 `BeyModalFormService.open(config)` shows the same form inside a modal. `BeyModalFormConfig` takes everything

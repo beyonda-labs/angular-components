@@ -50,6 +50,9 @@ const menu = new BeyLeftMenuConfig({
 | `active`     | no       | `false`         | Marks the current location                               |
 | `disabled`   | no       | `false`         | Neither runs nor opens                                   |
 | `subActions` | no       | `[]`            | Nested actions, to any depth                             |
+
+A default text uses the key as a kebab-case segment: `userSettings` reads
+`<prefix>.actions.user-settings.label`. A `label` or `tooltip` given in the config is used as it is.
 | `action`     | no       |                 | Run when the action is used                              |
 
 ## Expanding and collapsing

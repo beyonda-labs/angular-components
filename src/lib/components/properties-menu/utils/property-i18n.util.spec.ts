@@ -7,6 +7,12 @@ describe('resolvePropertyLabelKey', () => {
         );
     });
 
+    it('turns a camelCase id into a kebab-case segment of the default key', () => {
+        expect(resolvePropertyLabelKey('app.properties-menu', 'groups', 'pageLayout', 'pageLayout.label')).toBe(
+            'app.properties-menu.groups.page-layout.label'
+        );
+    });
+
     it('should keep an explicitly provided label as-is', () => {
         expect(resolvePropertyLabelKey('app.properties-menu', 'groups', 'content', 'Contenido')).toBe('Contenido');
     });

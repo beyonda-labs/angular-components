@@ -6,7 +6,7 @@ Every field extends `BeyFormField` and takes the same base parameters; each type
 
 | Parameter               | Default | Meaning                                                            |
 | ----------------------- | ------- | ------------------------------------------------------------------ |
-| `key`                   |         | Name of the control and of its texts                                |
+| `key`                   |         | Name of the control; in kebab-case, the segment of its texts        |
 | `columns`               | `12`    | Width in the twelve-column row                                       |
 | `isRequired`            | `false` | Adds the required validator and the marker next to the label         |
 | `isDisabled`            | `false` | Value or rule, see the form README                                   |

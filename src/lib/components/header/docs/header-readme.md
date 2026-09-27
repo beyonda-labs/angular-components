@@ -47,6 +47,9 @@ const header = new BeyHeaderConfig({
 | `action`     | no       |                 | Run when the button is used                                |
 | `subActions` | no       | none            | Opens a panel instead of running `action`                  |
 
+A default text uses the key as a kebab-case segment: `saveDraft` reads `<prefix>.actions.save-draft.label`.
+A `label` or `tooltip` given in the config is used as it is.
+
 An action with `subActions` never runs its own `action`: using it opens the panel. Picking a sub-action closes
 it, and so does Escape or a click outside.
 

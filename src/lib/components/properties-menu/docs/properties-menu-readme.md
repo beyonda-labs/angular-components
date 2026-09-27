@@ -72,7 +72,8 @@ values) so the panel reacts at once; a new `[config]` replaces that copy.
 ## Labels
 
 Every `label` is a translation key. Left out, it defaults to `<id>.label` and resolves at render time to
-`<prefix>.<segment>.<id>.label`, where the segment is `tabs`, `groups`, `fields`, `tree` or `list`. Set
+`<prefix>.<segment>.<id>.label`, where the segment is `tabs`, `groups`, `fields`, `tree` or `list` and the
+id is a kebab-case segment (`fontFamily` reads `<prefix>.fields.font-family.label`). Set
 explicitly, it is used as the key as is. `subtitle`, `description`, `addLabel` and option labels have no
 default and go through the translate pipe only when present, so a literal without a matching key shows as is.
 
@@ -149,7 +150,7 @@ on a valid release; `onTreeDragEnd` always fires, so the flags can be cleared th
 | `<prefix>.title`                                         | Header title                   |
 | `<prefix>.tabs.<id>.label`, `<prefix>.groups.<id>.label` | Tab and group labels           |
 | `<prefix>.fields.<id>.label`                             | Field labels                   |
-| `<prefix>.fields.<id>.actionButton.tooltip`              | Text field action button       |
+| `<prefix>.fields.<id>.action-button.tooltip`             | Text field action button       |
 | `<prefix>.tree.<id>.label`, `<prefix>.list.<id>.label`   | Tree node and list card labels |
 
 The button texts of the fields, the list and the variable picker come from the library.

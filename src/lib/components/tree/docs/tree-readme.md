@@ -42,6 +42,9 @@ const tree = new BeyTreeConfig({
 | `isDisabled` | no       | `false`       | Neither selectable nor expandable                     |
 | `data`       | no       | none          | Anything the consumer wants to carry; the node is generic |
 
+A default label uses the key as a kebab-case segment: `sharedFolder` reads
+`<prefix>.nodes.shared-folder.label`.
+
 ## Replacing the config
 
 The config is read as the initial state and never written to. Selecting a node does not change

@@ -57,6 +57,12 @@ describe('ActionListComponent', () => {
         expect(labels()).toEqual(['demo.actions.home.label']);
     });
 
+    it('builds the label of a camelCase action key from its kebab-case segment', async () => {
+        await render([new LeftMenuAction({ key: 'userSettings' })]);
+
+        expect(labels()).toEqual(['demo.actions.user-settings.label']);
+    });
+
     it('runs the action of a leaf and reports it', async () => {
         const run = jest.fn();
         const triggered = jest.fn();

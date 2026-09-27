@@ -10,6 +10,7 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { toKeySegment } from '../../internal/i18n/key-segment.util';
 import { TableRowComponent } from './components/row/row.component';
 import { TableColumn, TableConfig, TableRow } from './models/table.model';
 import { TextTableCell } from './models/table-cell.model';
@@ -88,7 +89,7 @@ export class TableComponent<T> {
 
     private buildHeaderCell(column: TableColumn): TextTableCell {
         return new TextTableCell({
-            content: `${this.config().prefix}.columns.${column.key}`,
+            content: `${this.config().prefix}.columns.${toKeySegment(column.key)}`,
             tooltip: column.tooltip,
             translate: true
         });

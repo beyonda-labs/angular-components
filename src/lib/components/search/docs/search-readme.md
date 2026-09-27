@@ -39,6 +39,9 @@ const search = new BeySearchConfig({
 | `type`    | yes      | `Text`, `Number`, `Boolean`, `Select` or `Tags`; decides the operators      |
 | `options` | no       | Required by `Select`: the values offered                                    |
 
+The label of a field uses its key as a kebab-case segment: `createdBy` reads `<prefix>.fields.created-by`,
+while the filter keeps reporting `createdBy` as its `field`.
+
 Each type brings its own operators: text compares and matches, number adds ranges and `Between`, boolean and
 select only equality, and tags match a whole element of an array rather than a substring.
 

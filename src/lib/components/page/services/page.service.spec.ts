@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
+import { TableColumn } from '../../table/models/table.model';
 import { PageBackendResponse, PageConfig, PageConfigParameters, PageHandle } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageViewMode } from '../models/page-categories.model';
@@ -132,6 +133,22 @@ describe('PageService', () => {
         service.refresh();
         flush();
         expect(service.selected()).toEqual([]);
+    });
+
+    it('keeps the column keys and reads their tooltips from kebab-case segments', () => {
+        service.setConfig(
+            buildConfig({
+                tableConfig: new PageTableConfig({
+                    columns: [new TableColumn({ key: 'createdAt' })],
+                    loadRow: () => []
+                })
+            })
+        );
+        flush();
+
+        expect(service.tableConfig()?.columns.map(({ key, tooltip }) => ({ key, tooltip }))).toEqual([
+            { key: 'createdAt', tooltip: 'demo.table.tooltips.created-at' }
+        ]);
     });
 
     it('paginates and searches through the query, going back to the first page on a new filter', () => {

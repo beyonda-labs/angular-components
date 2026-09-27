@@ -16,6 +16,7 @@ import { debounceTime, Subject } from 'rxjs';
 
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
+import { toKeySegment } from '../../internal/i18n/key-segment.util';
 import { SearchConfig, SearchField, SearchFieldOption, SearchFieldType } from './models/search.model';
 import {
     BooleanFilter,
@@ -116,7 +117,7 @@ export class SearchComponent {
     }
 
     getFieldLabel(field: SearchField): string {
-        return `${this.config().prefix}.fields.${field.key}`;
+        return `${this.config().prefix}.fields.${toKeySegment(field.key)}`;
     }
 
     getFieldOptions(row: SearchDraftRow): SearchFieldOption[] {
@@ -124,9 +125,7 @@ export class SearchComponent {
     }
 
     getOperatorLabel(operator: SearchFilterOperator): string {
-        const key = operator.replaceAll(/[A-Z]/gu, letter => `-${letter.toLowerCase()}`);
-
-        return `angular-components.search.operators.${key}`;
+        return `angular-components.search.operators.${toKeySegment(operator)}`;
     }
 
     getOperators(row: SearchDraftRow): SearchFilterOperator[] {

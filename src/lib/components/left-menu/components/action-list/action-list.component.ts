@@ -5,6 +5,7 @@ import { faChevronDown, faChevronRight, IconDefinition } from '@fortawesome/free
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { toKeySegment } from '../../../../internal/i18n/key-segment.util';
 import { LeftMenuAction } from '../../models/left-menu.model';
 
 @Component({
@@ -167,7 +168,7 @@ export class ActionListComponent {
         const defaultValue = `${action.key}.${field}`;
 
         if (!value || value === defaultValue) {
-            return `${this.prefix()}.actions.${defaultValue}`;
+            return `${this.prefix()}.actions.${toKeySegment(action.key)}.${field}`;
         }
 
         return value;

@@ -13,6 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType, TooltipPlacement } from '../../internal/button/models/button-config.model';
+import { toKeySegment } from '../../internal/i18n/key-segment.util';
 import { BadgeComponent } from '../badge/badge.component';
 import { HeaderAction, HeaderActionType, HeaderConfig, HeaderVariant } from './models/header.model';
 
@@ -138,7 +139,7 @@ export class HeaderComponent {
         const defaultValue = `${action.key}.${field}`;
 
         if (!value || value === defaultValue) {
-            return `${this.config().prefix}.actions.${defaultValue}`;
+            return `${this.config().prefix}.actions.${toKeySegment(action.key)}.${field}`;
         }
 
         return value;

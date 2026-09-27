@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { faWandMagicSparkles } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
-import { renderComponent } from '@testing/dom';
+import { queryButton, renderComponent, settle } from '@testing/dom';
 
 import { PropertyColorField } from '../../models/fields/property-color-field.model';
 import { PropertyNumberField } from '../../models/fields/property-number-field.model';
@@ -93,5 +94,22 @@ describe('PropertyFieldComponent', () => {
         await renderField(new PropertyTextField({ id: 'text' }));
 
         expect(component.labelKey()).toBe('app.properties-menu.fields.text.label');
+    });
+
+    it('reads the label and action button texts of a camelCase field id from its kebab-case segment', async () => {
+        propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
+        await renderField(
+            new PropertyTextField({ actionButton: { icon: faWandMagicSparkles }, id: 'pageTitle', value: 'Invoice' })
+        );
+        const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+
+        input.setSelectionRange(0, 3);
+        input.dispatchEvent(new Event('select'));
+        await settle(fixture);
+
+        expect(fixture.nativeElement.querySelector('label').textContent.trim()).toBe(
+            'app.properties-menu.fields.page-title.label'
+        );
+        expect(queryButton(fixture, 'app.properties-menu.fields.page-title.action-button.tooltip')).not.toBeNull();
     });
 });

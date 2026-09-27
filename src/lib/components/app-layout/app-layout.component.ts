@@ -4,6 +4,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 
+import { toKeySegment } from '../../internal/i18n/key-segment.util';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { BreadcrumbConfig } from '../breadcrumb/models/breadcrumb.model';
 import { FooterComponent } from '../footer/footer.component';
@@ -134,7 +135,7 @@ export class AppLayoutComponent implements OnInit {
             (action, index) =>
                 new AppLayoutBreadcrumbItem({
                     id: index + 1,
-                    label: this.translateService.instant(`${prefix}.actions.${action.key}.label`)
+                    label: this.translateService.instant(`${prefix}.actions.${toKeySegment(action.key)}.label`)
                 })
         );
 

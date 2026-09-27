@@ -61,6 +61,18 @@ describe('TabsComponent', () => {
         expect(textsOf(tabs())).toEqual(['General', 'Details', 'History']);
     });
 
+    it('labels a camelCase tab key from its kebab-case segment and reports the key', async () => {
+        const onTabChange = jest.fn();
+        await render(
+            buildConfig({ onTabChange, tabs: [new Tab({ key: 'general' }), new Tab({ key: 'billingDetails' })] })
+        );
+
+        tab('demo.tabs.billing-details.label').click();
+        fixture.detectChanges();
+
+        expect(onTabChange).toHaveBeenCalledWith('billingDetails');
+    });
+
     it('selects the first tab when the config names none', async () => {
         await render();
 

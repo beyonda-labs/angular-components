@@ -5,6 +5,7 @@ import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { toKeySegment } from '../../../../internal/i18n/key-segment.util';
 import { FormFieldState } from '../../form.component';
 import { FormField, FormFieldType } from '../../models/form-field.model';
 import { FormAutocompleteFieldComponent } from './field-autocomplete/field-autocomplete.component';
@@ -52,7 +53,7 @@ export class FormFieldComponent {
     readonly prefix = input.required<string>();
     readonly state = input.required<FormFieldState>();
 
-    readonly fieldPrefix = computed(() => `${this.prefix()}.${this.field().key}`);
+    readonly fieldPrefix = computed(() => `${this.prefix()}.${toKeySegment(this.field().key)}`);
     readonly formControl = computed(() => this.control() as FormControl | null);
     readonly hasLabel = computed(() => this.field().isLabelVisible && this.field().type !== FormFieldType.Checkbox);
     readonly label = computed(() => `${this.fieldPrefix()}.label`);

@@ -47,7 +47,8 @@ so a table is always built from a typed model, never from a loose record.
 | `selectedItemsChange` | no       |         | Run with the selected items and their indexes on every change                         |
 
 `BeyTableColumn` takes `key`, an optional `tooltip` and a `width`, which is the share of the row the column
-gets: two columns of width 3 and 1 split it 75 / 25.
+gets: two columns of width 3 and 1 split it 75 / 25. The header uses the key as a kebab-case segment: a column
+`createdAt` reads `<prefix>.columns.created-at`. A `tooltip` is a full translation key, used as it is.
 
 ## Cells
 

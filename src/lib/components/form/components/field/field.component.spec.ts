@@ -38,6 +38,23 @@ describe('FormFieldComponent', () => {
         expect(fixture.nativeElement.textContent).toContain('*');
     });
 
+    it('reads the texts of a camelCase key from its kebab-case segment and keeps the key as the control id', async () => {
+        await render(new FormTextField({ key: 'valueString', isLabelTooltipVisible: true }));
+        const label = fixture.nativeElement.querySelector('label') as HTMLLabelElement;
+        const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+
+        expect(label.textContent?.trim()).toBe('demo.contact.value-string.label');
+        expect(label.htmlFor).toBe('valueString');
+        expect(input.placeholder).toBe('demo.contact.value-string.placeholder');
+    });
+
+    it('keeps a placeholder given in the config as it is', async () => {
+        await render(new FormTextField({ key: 'valueString', placeholder: 'app.shared.typeHere' }));
+        const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+
+        expect(input.placeholder).toBe('app.shared.typeHere');
+    });
+
     it('leaves the label to the checkbox itself', async () => {
         await render(new FormCheckboxField({ key: 'subscribed' }));
 

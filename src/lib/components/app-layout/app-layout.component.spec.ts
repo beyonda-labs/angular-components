@@ -258,6 +258,23 @@ describe('AppLayoutComponent', () => {
             expect(onRouteActivated).toHaveBeenCalledWith('daily');
         });
 
+        it('reads the breadcrumb and menu texts of a camelCase action key from its kebab-case segment', async () => {
+            const onRouteActivated = jest.fn();
+            await TestBed.inject(Router).navigateByUrl('/daily-reports');
+
+            await render(
+                buildConfig({
+                    onRouteActivated,
+                    topActions: [new AppLayoutTopAction({ icon: faGear, key: 'dailyReports', route: '/daily-reports' })]
+                })
+            );
+            await settle(fixture);
+
+            expect(buttonOf('demo.actions.daily-reports.label').getAttribute('aria-current')).toBe('page');
+            expect(breadcrumbLabels()).toEqual(['demo.actions.daily-reports.label']);
+            expect(onRouteActivated).toHaveBeenCalledWith('dailyReports');
+        });
+
         it('follows navigation, and clears everything on a url no action claims', async () => {
             await render(buildConfig({ topActions: routed() }));
             const router = TestBed.inject(Router);

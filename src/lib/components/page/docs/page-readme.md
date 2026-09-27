@@ -118,3 +118,7 @@ observable the page waits for before closing, for entities that need a second re
 | `<prefix>.modal.<key>.title` / `.message`                                                                   | Confirmation of a destructive action, with `{{count}}` |
 | `<prefix>.toast.<key>-success`                                                                              | Success toast of every standard action                 |
 | `<prefix>.categories.root`, `<prefix>.tabs.table.label`, `<prefix>.tabs.trash.label`, `<prefix>.move.title` | Categories and trash                                   |
+
+Every `<key>` is the action, column or field key as a kebab-case segment: a column `createdAt` reads
+`<prefix>.table.columns.created-at`. The standard action keys are already kebab-case, so `create-category`
+reads `<prefix>.actions.create-category.label` and `<prefix>.toast.create-category-success`.

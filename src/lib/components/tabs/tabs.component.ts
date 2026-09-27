@@ -19,6 +19,7 @@ import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { toKeySegment } from '../../internal/i18n/key-segment.util';
 import { Tab, TabsConfig, TabsVariant } from './models/tabs.model';
 
 const OVERFLOW_TRIGGER_ESTIMATED_WIDTH = 40;
@@ -87,7 +88,7 @@ export class TabsComponent implements AfterViewInit {
         const defaultValue = `${tab.key}.label`;
 
         if (tab.label === defaultValue) {
-            return `${this.config().prefix}.tabs.${defaultValue}`;
+            return `${this.config().prefix}.tabs.${toKeySegment(tab.key)}.label`;
         }
 
         return tab.label;
@@ -101,7 +102,7 @@ export class TabsComponent implements AfterViewInit {
         const defaultValue = `${tab.key}.tooltip`;
 
         if (tab.tooltip === defaultValue) {
-            return `${this.config().prefix}.tabs.${defaultValue}`;
+            return `${this.config().prefix}.tabs.${toKeySegment(tab.key)}.tooltip`;
         }
 
         return tab.tooltip;

@@ -5,6 +5,7 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { toKeySegment } from '../../internal/i18n/key-segment.util';
 import { TreeConfig, TreeNode } from './models/tree.model';
 
 const BASE_INDENT_REM = 0.6;
@@ -34,7 +35,7 @@ export class TreeComponent {
         const defaultValue = `${node.key}.label`;
 
         if (!node.label || node.label === defaultValue) {
-            return `${this.config().prefix}.nodes.${defaultValue}`;
+            return `${this.config().prefix}.nodes.${toKeySegment(node.key)}.label`;
         }
 
         return node.label;

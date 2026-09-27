@@ -63,6 +63,17 @@ describe('TableComponent', () => {
         expect(text).toContain('Linus');
     });
 
+    it('reads the header of a camelCase column key from its kebab-case segment', async () => {
+        await render(
+            buildConfig({
+                columns: [new TableColumn({ key: 'createdAt' })],
+                loadRow: item => [new TextTableCell({ content: item.name })]
+            })
+        );
+
+        expect(fixture.nativeElement.textContent).toContain('demo.table.columns.created-at');
+    });
+
     it('shows the empty message when there are no items', async () => {
         await render(buildConfig({ items: [] }));
 
