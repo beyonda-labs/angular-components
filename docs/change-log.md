@@ -11,6 +11,7 @@
 ### Changed
 
 -   `BeyCellType`, `BeyLoadingSize`, `BeyModalFormSize` and `BeyModalTreeSize` list their members alphabetically, so `Object.values` returns them in that order.
+-   Tree module: `BeyModalTreeConfig` is plain data: `close`, `confirm`, `getSelectedNode`, `getTitle`, `hasSelection` and `closeHandler` are gone, `title` always holds a value (`<prefix>.title` by default), and the dialog closes through the `BsModalRef` that `BeyModalTreeService.open` returns.
 -   Form module: the key segments derived from section and field identifiers are kebab-case (`valueString` reads `value-string.label`); translation files with camelCase segments must be renamed.
 -   App layout module: the menu and breadcrumb keys derived from action keys are kebab-case (`monthlyReports` reads `actions.monthly-reports.label`); translation files with camelCase segments must be renamed.
 -   Header module: the default keys derived from action keys are kebab-case (`saveDraft` reads `actions.save-draft.label`); translation files with camelCase segments must be renamed.
@@ -27,6 +28,7 @@
 -   Form module: `stretch` buttons share the full width in a row, and the sections no longer show a horizontal scroll.
 -   Tabs module: tabs whose labels widen after the first paint (translations that load late, a language switch, a web font) move into the overflow menu instead of spilling out of a narrow bar.
 -   Style guide: the login example scrolls with the library's thin scrollbar.
+-   Tree module: picking a node in the tree dialog no longer reopens the branches the user collapsed.
 
 ## [1.2.0] - 2026-09-26
 

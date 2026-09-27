@@ -217,23 +217,22 @@ export class PageActionsService {
         }
 
         this.pageHttpService.loadCategoryTree(baseUrl).subscribe(categories => {
-            const treeConfig = new ModalTreeConfig<MoveTargetData>({
-                nodes: this.buildMoveTreeNodes(prefix, categories, categoriesConfig, items),
-                prefix: `${prefix}.move`,
-                title: `${prefix}.move.title`,
-                onConfirm: node => {
-                    const targetId = node?.data?.id ?? null;
+            const reference = this.modalTreeService.open(
+                new ModalTreeConfig<MoveTargetData>({
+                    nodes: this.buildMoveTreeNodes(prefix, categories, categoriesConfig, items),
+                    prefix: `${prefix}.move`,
+                    onConfirm: node => {
+                        const targetId = node?.data?.id ?? null;
 
-                    this.pageHttpService
-                        .moveItems(baseUrl, toTrashItems(items), targetId, `${prefix}.toast.move-success`)
-                        .subscribe(() => {
-                            treeConfig.close();
-                            context.onMoved();
-                        });
-                }
-            });
-
-            this.modalTreeService.open(treeConfig);
+                        this.pageHttpService
+                            .moveItems(baseUrl, toTrashItems(items), targetId, `${prefix}.toast.move-success`)
+                            .subscribe(() => {
+                                reference.hide();
+                                context.onMoved();
+                            });
+                    }
+                })
+            );
         });
     }
 

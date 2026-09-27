@@ -1,5 +1,5 @@
 import { TreeConfig, TreeNode } from '../../../models/tree.model';
-import { collectExpandableKeys, findNodeByKey } from '../../../models/tree-node-search';
+import { collectExpandableKeys } from '../../../models/tree-node-search';
 
 export enum ModalTreeSize {
     Large = 'modal-lg',
@@ -8,13 +8,12 @@ export enum ModalTreeSize {
 }
 
 export class ModalTreeConfig<TData = unknown> {
-    readonly prefix: string;
+    prefix: string;
     size: ModalTreeSize;
-    readonly treeConfig: TreeConfig<TData>;
+    title: string;
+    treeConfig: TreeConfig<TData>;
 
-    closeHandler?: () => void;
-    private readonly onConfirm?: (node: TreeNode<TData> | undefined) => void;
-    title?: string;
+    onConfirm?: (node: TreeNode<TData> | undefined) => void;
 
     constructor({
         expandedKeys,
@@ -22,40 +21,19 @@ export class ModalTreeConfig<TData = unknown> {
         onConfirm,
         prefix,
         selectedKey,
-        size,
-        title
+        size = ModalTreeSize.Medium,
+        title = `${prefix}.title`
     }: ModalTreeConfigParameters<TData>) {
         this.onConfirm = onConfirm;
         this.prefix = prefix;
-        this.size = size ?? ModalTreeSize.Medium;
+        this.size = size;
         this.title = title;
         this.treeConfig = new TreeConfig({
+            expandedKeys: expandedKeys ?? collectExpandableKeys(nodes),
             nodes,
             prefix: `${prefix}.nodes`,
-            selectedKey,
-            expandedKeys: expandedKeys ?? collectExpandableKeys(nodes),
-            onNodeSelect: node => (this.treeConfig.selectedKey = node.key)
+            selectedKey
         });
-    }
-
-    close(): void {
-        this.closeHandler?.();
-    }
-
-    confirm(): void {
-        this.onConfirm?.(this.getSelectedNode());
-    }
-
-    getSelectedNode(): TreeNode<TData> | undefined {
-        return findNodeByKey(this.treeConfig.nodes, this.treeConfig.selectedKey);
-    }
-
-    getTitle(): string {
-        return this.title ?? `${this.prefix}.title`;
-    }
-
-    hasSelection(): boolean {
-        return Boolean(this.treeConfig.selectedKey);
     }
 }
 

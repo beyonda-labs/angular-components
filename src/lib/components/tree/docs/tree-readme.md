@@ -54,15 +54,17 @@ open is owned by the component from `expandedKeys` onwards.
 ## Picking a node in a dialog
 
 ```ts
-this.modalTree.open(new BeyModalTreeConfig({
+const dialog = this.modalTree.open(new BeyModalTreeConfig({
     prefix: 'myPage.picker',
     nodes: this.nodes(),
-    onConfirm: node => this.move(node)
+    onConfirm: node => this.move(node).subscribe(() => dialog.hide())
 }));
 ```
 
 The dialog opens with every branch expanded unless `expandedKeys` says otherwise, and its confirm button stays
-disabled until a node is picked.
+disabled until a node is picked. The config is plain data: the dialog owns the selection and which branches are
+open, and confirming does not close it, so close it through the `BsModalRef` that `open` returns once the work
+is done. The title defaults to `<prefix>.title`.
 
 ## Theming
 
