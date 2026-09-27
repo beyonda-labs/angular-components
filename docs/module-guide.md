@@ -86,7 +86,7 @@ What `verify` runs, and what to do when each step fails:
 | `check-tokens`       | Every `var(--bey-*)` read in CSS is defined                         | Create the token in `tokens.css` or fix the name     |
 | `check-style-guides` | Every module has a demo, registered, and a README                   | Add the missing one                                  |
 | `format:check`       | Prettier over `ts`, `html`, `css`, `json`                           | `format`                                             |
-| `test:ci`            | Every spec, with the coverage thresholds of `jest.config.ts`        | Fix the code or the spec; never lower the thresholds |
+| `test:ci`            | Every spec, with the coverage thresholds of `beyonda.config.json`   | Fix the code or the spec; never lower the thresholds |
 
 ## 7. Commit and push
 

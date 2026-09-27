@@ -2,9 +2,13 @@ const { spawn } = require('node:child_process');
 const { existsSync, watch } = require('node:fs');
 const path = require('node:path');
 
-const { checkTranslations, sourceDirs } = require('./check-translations');
-const { mergeTranslations } = require('./merge-translations');
+const { checkTranslations, mergeTranslations, resolveProject } = require('@beyonda-labs/base-config');
+
 const { copyI18nFiles } = require('./update-translations');
+
+const project = resolveProject(path.resolve(__dirname, '..'));
+const translations = project.parameters.translations;
+const sourceDirs = translations.sources.map(source => path.resolve(project.directory, source));
 
 const WATCH_DEBOUNCE_MS = 250;
 const TRANSLATION_FILE_PATTERN = /\.(en|es)\.json$/;
@@ -28,22 +32,27 @@ async function runI18nPipeline(reason) {
     console.log(`[i18n] ${reason}`);
 
     try {
-        checkTranslations();
-        mergeTranslations();
+        const errors = checkTranslations(project.directory, translations);
+
+        if (errors.length > 0) {
+            throw new Error(errors.join('\n'));
+        }
+
+        mergeTranslations(project.directory, translations);
         await copyI18nFiles();
 
-        console.log('[i18n] Bundle actualizado');
+        console.log('[i18n] Bundle updated');
     } catch (error) {
         const message = error instanceof Error ? (error.stack ?? error.message) : String(error);
 
-        console.error('[i18n] Error actualizando traducciones');
+        console.error('[i18n] Could not update the translations');
         console.error(message);
     } finally {
         isPipelineRunning = false;
 
         if (hasPendingRun) {
             hasPendingRun = false;
-            await runI18nPipeline('Reintentando cambios pendientes');
+            await runI18nPipeline('Retrying pending changes');
         }
     }
 }
@@ -55,7 +64,7 @@ function scheduleI18nPipeline(fileName) {
 
     debounceTimer = setTimeout(() => {
         debounceTimer = null;
-        void runI18nPipeline(`Cambio detectado en ${fileName}`);
+        void runI18nPipeline(`Change detected in ${fileName}`);
     }, WATCH_DEBOUNCE_MS);
 }
 
@@ -64,7 +73,7 @@ function createTranslationWatchers() {
         const absoluteSourceDir = path.resolve(sourceDir);
 
         if (!existsSync(absoluteSourceDir)) {
-            console.log(`[watch] Omitiendo ruta inexistente: ${absoluteSourceDir}`);
+            console.log(`[watch] Skipping missing path: ${absoluteSourceDir}`);
             return [];
         }
 
@@ -101,13 +110,13 @@ function startAngularBuildWatch() {
 }
 
 async function main() {
-    await runI18nPipeline('Generando traducciones iniciales');
+    await runI18nPipeline('Generating the initial translations');
 
     const watchers = createTranslationWatchers();
     const buildProcess = startAngularBuildWatch();
 
     const shutdown = signal => {
-        console.log(`[watch] Cerrando por ${signal}`);
+        console.log(`[watch] Closing on ${signal}`);
 
         for (const watcher of watchers) {
             watcher.close();

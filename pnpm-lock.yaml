@@ -93,18 +93,9 @@ importers:
       '@angular-eslint/builder':
         specifier: 19.8.1
         version: 19.8.1(chokidar@4.0.3)(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4)
-      '@angular-eslint/eslint-plugin':
-        specifier: 19.8.1
-        version: 19.8.1(@typescript-eslint/utils@8.70.1(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4))(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4)
-      '@angular-eslint/eslint-plugin-template':
-        specifier: 19.8.1
-        version: 19.8.1(@angular-eslint/template-parser@19.8.1(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4))(@typescript-eslint/types@8.70.1)(@typescript-eslint/utils@8.70.1(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4))(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4)
       '@angular-eslint/schematics':
         specifier: 19.8.1
         version: 19.8.1(@angular-eslint/template-parser@19.8.1(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4))(@typescript-eslint/types@8.70.1)(@typescript-eslint/utils@8.70.1(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4))(chokidar@4.0.3)(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4)
-      '@angular-eslint/template-parser':
-        specifier: 19.8.1
-        version: 19.8.1(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4)
       '@angular/cli':
         specifier: 19.2.19
         version: 19.2.19(@types/node@26.2.0)(chokidar@4.0.3)
@@ -114,47 +105,35 @@ importers:
       '@angular/localize':
         specifier: 19.2.17
         version: 19.2.17(@angular/compiler-cli@19.2.17(@angular/compiler@19.2.17)(typescript@5.5.4))(@angular/compiler@19.2.17)
-      '@eslint/js':
-        specifier: ^10.0.1
-        version: 10.0.1(eslint@9.39.5(jiti@1.21.7))
-      '@stylistic/eslint-plugin-js':
-        specifier: ^2.13.0
-        version: 2.13.0(eslint@9.39.5(jiti@1.21.7))
+      '@beyonda-labs/base-config':
+        specifier: 0.1.0-develop.1.d40cd19
+        version: 0.1.0-develop.1.d40cd19(eslint@9.39.5(jiti@1.21.7))(prettier@3.3.3)(stylelint@17.15.0(typescript@5.5.4))(typescript@5.5.4)
       '@types/jest':
         specifier: 29.5.14
         version: 29.5.14
       '@types/uuid':
         specifier: 10.0.0
         version: 10.0.0
-      angular-eslint:
-        specifier: 19.8.1
-        version: 19.8.1(chokidar@4.0.3)(eslint@9.39.5(jiti@1.21.7))(typescript-eslint@8.70.1(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4))(typescript@5.5.4)
       eslint:
         specifier: 9.39.5
         version: 9.39.5(jiti@1.21.7)
-      eslint-plugin-simple-import-sort:
-        specifier: ^12.1.1
-        version: 12.1.1(eslint@9.39.5(jiti@1.21.7))
-      eslint-plugin-unicorn:
-        specifier: ^56.0.1
-        version: 56.0.1(eslint@9.39.5(jiti@1.21.7))
       fs-extra:
         specifier: 11.3.3
         version: 11.3.3
       husky:
-        specifier: ^9.1.7
+        specifier: 9.1.7
         version: 9.1.7
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@26.2.0)(ts-node@10.9.2(@types/node@26.2.0)(typescript@5.5.4))
       jest-mock-extended:
-        specifier: ^4.0.0
+        specifier: 4.0.1
         version: 4.0.1(@jest/globals@29.7.0)(jest@29.7.0(@types/node@26.2.0)(ts-node@10.9.2(@types/node@26.2.0)(typescript@5.5.4)))(typescript@5.5.4)
       jest-preset-angular:
         specifier: 14.6.2
         version: 14.6.2(@angular/compiler-cli@19.2.17(@angular/compiler@19.2.17)(typescript@5.5.4))(@angular/core@19.2.17(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser-dynamic@19.2.17(@angular/common@19.2.17(@angular/core@19.2.17(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/compiler@19.2.17)(@angular/core@19.2.17(rxjs@7.8.2)(zone.js@0.15.1))(@angular/platform-browser@19.2.17(@angular/animations@19.2.17(@angular/common@19.2.17(@angular/core@19.2.17(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@19.2.17(rxjs@7.8.2)(zone.js@0.15.1)))(@angular/common@19.2.17(@angular/core@19.2.17(rxjs@7.8.2)(zone.js@0.15.1))(rxjs@7.8.2))(@angular/core@19.2.17(rxjs@7.8.2)(zone.js@0.15.1))))(@babel/core@7.29.7)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.7))(jest@29.7.0(@types/node@26.2.0)(ts-node@10.9.2(@types/node@26.2.0)(typescript@5.5.4)))(jsdom@20.0.3)(typescript@5.5.4)
       lint-staged:
-        specifier: ^17.5.1
+        specifier: 17.5.1
         version: 17.5.1
       ng-packagr:
         specifier: 19.2.2
@@ -162,30 +141,15 @@ importers:
       prettier:
         specifier: 3.3.3
         version: 3.3.3
-      prettier-plugin-organize-attributes:
-        specifier: ^1.0.0
-        version: 1.0.0(prettier@3.3.3)
       stylelint:
-        specifier: ^17.15.0
+        specifier: 17.15.0
         version: 17.15.0(typescript@5.5.4)
-      stylelint-config-standard:
-        specifier: ^40.0.0
-        version: 40.0.0(stylelint@17.15.0(typescript@5.5.4))
-      stylelint-declaration-strict-value:
-        specifier: ^1.12.1
-        version: 1.12.1(stylelint@17.15.0(typescript@5.5.4))
-      stylelint-order:
-        specifier: ^8.1.1
-        version: 8.1.1(stylelint@17.15.0(typescript@5.5.4))
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@26.2.0)(typescript@5.5.4)
       typescript:
         specifier: 5.5.4
         version: 5.5.4
-      typescript-eslint:
-        specifier: 8.70.1
-        version: 8.70.1(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4)
 
 packages:
 
@@ -1047,6 +1011,18 @@ packages:
 
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
+
+  '@beyonda-labs/base-config@0.1.0-develop.1.d40cd19':
+    resolution: {integrity: sha512-umSXdR63Gh5kxgbkTQvEeEv3NVikbO7uySlHxh4GkZKX+rDl5JwtK+5sRNVmBHtsRMYgZJSLgZn7eNcsODXv1Q==}
+    hasBin: true
+    peerDependencies:
+      eslint: 9.39.5
+      prettier: 3.3.3
+      stylelint: 17.15.0
+      typescript: 5.5.4
+    peerDependenciesMeta:
+      stylelint:
+        optional: true
 
   '@cacheable/memory@2.2.0':
     resolution: {integrity: sha512-CTLKqLItRCEixEAewD3/j9DB3/o96gpTPD4eJ1v+DGOlxZRZncRQkGYqqnAGCscYd6RNeXfGeiuCphsPtqyIfQ==}
@@ -3699,6 +3675,10 @@ packages:
     resolution: {integrity: sha512-X07nttJQkwkfKfvTPG/KSnE2OMdcUCao6+eXF3wmnIQRn2aPAHH3VxDbDOdegkd6JbPsXqShpvEOHfAT+nCNwQ==}
     engines: {node: '>=0.3.1'}
 
+  diff@9.0.0:
+    resolution: {integrity: sha512-svtcdpS8CgJyqAjEQIXdb3OjhFVVYjzGAPO8WGCmRbrml64SPw/jJD4GoE98aR7r25A0XcgrK3F02yw9R/vhQw==}
+    engines: {node: '>=0.3.1'}
+
   dns-packet@5.6.1:
     resolution: {integrity: sha512-l4gcSouhcgIKRvyy99RNVOgxXiicE+2jZoNmaNmZ6JXiGajBOJAesk1OBlJuM5k2c+eudGdLxDqXuPCKIj6kpw==}
     engines: {node: '>=6'}
@@ -3871,6 +3851,15 @@ packages:
     resolution: {integrity: sha512-2NlIDTwUWJN0mRPQOdtQBzbUHvdGY2P1VXSyU83Q3xKxM7WHX2Ql8dKq782Q9TgQUNOLEzEYu9bzLNj1q88I5w==}
     engines: {node: '>=6.0'}
     hasBin: true
+
+  eslint-plugin-perfectionist@5.12.1:
+    resolution: {integrity: sha512-krdSE7Dz+TCtcVr2+rfNhlOIFFBJcUdoRvjaN7JQnsaVnxJw+BZh9wMkY3MSLCJat+yW+UPTQLKS82Epc7MGZA==}
+    engines: {node: ^20.0.0 || >=22.0.0}
+    peerDependencies:
+      eslint: ^8.45.0 || ^9.0.0 || ^10.0.0
+    peerDependenciesMeta:
+      eslint:
+        optional: true
 
   eslint-plugin-simple-import-sort@12.1.1:
     resolution: {integrity: sha512-6nuzu4xwQtE3332Uz0to+TxDQYRLTKRESSc2hefVT48Zc8JthmN23Gx9lnYhu0FtkRSL1oxny3kJ2aveVhmOVA==}
@@ -5264,6 +5253,10 @@ packages:
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
+
+  natural-orderby@5.0.0:
+    resolution: {integrity: sha512-kKHJhxwpR/Okycz4HhQKKlhWe4ASEfPgkSWNmKFHd7+ezuQlxkA5cM3+XkBPvm1gmHen3w53qsYAv+8GwRrBlg==}
+    engines: {node: '>=18'}
 
   needle@2.9.1:
     resolution: {integrity: sha512-6R9fqJ5Zcmf+uYaFgdIHmLwNldn5HbK8L5ybn7Uz+ylX/rnOsSp1AHcvQSrCaFN+qNM1wpymHqD7mVasEOlHGQ==}
@@ -8199,6 +8192,29 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
+  '@beyonda-labs/base-config@0.1.0-develop.1.d40cd19(eslint@9.39.5(jiti@1.21.7))(prettier@3.3.3)(stylelint@17.15.0(typescript@5.5.4))(typescript@5.5.4)':
+    dependencies:
+      '@eslint/js': 10.0.1(eslint@9.39.5(jiti@1.21.7))
+      '@stylistic/eslint-plugin-js': 2.13.0(eslint@9.39.5(jiti@1.21.7))
+      angular-eslint: 19.8.1(chokidar@4.0.3)(eslint@9.39.5(jiti@1.21.7))(typescript-eslint@8.70.1(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4))(typescript@5.5.4)
+      chokidar: 4.0.3
+      diff: 9.0.0
+      eslint: 9.39.5(jiti@1.21.7)
+      eslint-plugin-perfectionist: 5.12.1(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4)
+      eslint-plugin-simple-import-sort: 12.1.1(eslint@9.39.5(jiti@1.21.7))
+      eslint-plugin-unicorn: 56.0.1(eslint@9.39.5(jiti@1.21.7))
+      prettier: 3.3.3
+      prettier-plugin-organize-attributes: 1.0.0(prettier@3.3.3)
+      stylelint-config-standard: 40.0.0(stylelint@17.15.0(typescript@5.5.4))
+      stylelint-declaration-strict-value: 1.12.1(stylelint@17.15.0(typescript@5.5.4))
+      stylelint-order: 8.1.1(stylelint@17.15.0(typescript@5.5.4))
+      typescript: 5.5.4
+      typescript-eslint: 8.70.1(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4)
+    optionalDependencies:
+      stylelint: 17.15.0(typescript@5.5.4)
+    transitivePeerDependencies:
+      - supports-color
+
   '@cacheable/memory@2.2.0':
     dependencies:
       '@cacheable/utils': 2.5.0
@@ -10663,6 +10679,8 @@ snapshots:
 
   diff@4.0.4: {}
 
+  diff@9.0.0: {}
+
   dns-packet@5.6.1:
     dependencies:
       '@leichtgewicht/ip-codec': 2.0.5
@@ -10942,6 +10960,17 @@ snapshots:
       esutils: 2.0.3
     optionalDependencies:
       source-map: 0.6.1
+
+  eslint-plugin-perfectionist@5.12.1(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4):
+    dependencies:
+      '@typescript-eslint/types': 8.70.1
+      '@typescript-eslint/utils': 8.70.1(eslint@9.39.5(jiti@1.21.7))(typescript@5.5.4)
+      natural-orderby: 5.0.0
+    optionalDependencies:
+      eslint: 9.39.5(jiti@1.21.7)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
 
   eslint-plugin-simple-import-sort@12.1.1(eslint@9.39.5(jiti@1.21.7)):
     dependencies:
@@ -12653,6 +12682,8 @@ snapshots:
   nanoid@3.3.18: {}
 
   natural-compare@1.4.0: {}
+
+  natural-orderby@5.0.0: {}
 
   needle@2.9.1:
     dependencies:

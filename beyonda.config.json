@@ -1,0 +1,75 @@
+{
+    "$schema": "./node_modules/@beyonda-labs/base-config/schema/manifest.schema.json",
+    "project": {
+        "type": "angular-library",
+        "name": "angular-components",
+        "prefix": "bey"
+    },
+    "autoUpdate": true,
+    "params": {
+        "format": {
+            "patterns": ["{src,style-guide,testing}/**/*.{ts,html,css,json}"]
+        },
+        "jest": {
+            "roots": ["<rootDir>/src", "<rootDir>/style-guide", "<rootDir>/testing"],
+            "moduleNameMapper": {
+                "^@beyonda-labs/angular-components$": "<rootDir>/src/public-api.ts",
+                "^@beyonda-labs/angular-components/style-guide$": "<rootDir>/style-guide/src/public-api.ts",
+                "^@testing/(.*)$": "<rootDir>/testing/$1"
+            },
+            "collectCoverageFrom": [
+                "src/**/*.ts",
+                "style-guide/src/**/*.ts",
+                "!**/*.spec.ts",
+                "!**/public-api.ts",
+                "!**/*.module.ts"
+            ],
+            "coverageThreshold": {
+                "statements": 90,
+                "branches": 77,
+                "functions": 85,
+                "lines": 90
+            }
+        },
+        "lines": {
+            ".gitignore": [".hintrc"]
+        },
+        "stylelint": {
+            "patterns": ["{src,style-guide}/**/*.css"],
+            "overrides": [
+                {
+                    "files": ["src/lib/assets/styles/**/*.css"],
+                    "rules": {
+                        "scale-unlimited/declaration-strict-value": null,
+                        "declaration-property-value-disallowed-list": null,
+                        "selector-class-pattern": null,
+                        "custom-property-pattern": null
+                    }
+                },
+                {
+                    "files": ["**/docs/style-guide/**/*.css"],
+                    "rules": {
+                        "selector-class-pattern": null,
+                        "scale-unlimited/declaration-strict-value": null
+                    }
+                }
+            ]
+        },
+        "translations": {
+            "sources": ["src/lib/components", "src/lib/internal", "src/lib/services", "style-guide/src"],
+            "bundles": [
+                {
+                    "sources": ["src/lib/components", "src/lib/internal", "src/lib/services"],
+                    "target": "src/lib/assets/i18n/angular-components.{language}.json"
+                },
+                {
+                    "sources": ["style-guide/src"],
+                    "target": "src/lib/assets/i18n-style-guide/angular-components-style-guide.{language}.json"
+                }
+            ]
+        }
+    },
+    "skip": {
+        "rules": ["eslint.sort-declarations", "eslint.model-files"]
+    }
+}
