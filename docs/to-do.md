@@ -177,6 +177,16 @@ Snapshots per branch, `latest` from `main`, as described in the README.
         demo's copy already does. Keep the translation scripts identical across repos (library, demo, products),
         possibly from a shared scripts repo
 -   [ ] `BeyPageConfig` generic over the form value, so a typed `BeyPageFormConfig<T>` fits without a cast
+-   [ ] `*.model.ts` holds contracts and definitions only, as `rules/model-library/model.md` sets for model libraries
+        and as it will apply to every repo: move the functions of `form/models/form-field.model.ts` to function modules with their specs, forbid
+        function declarations in model files with `no-restricted-syntax`, leave `**/*.model.ts` out of the coverage
+        and set the thresholds again on what remains
+-   [ ] `eslint-plugin-perfectionist`, as `document-builder-models` already uses it for the function order:
+        `sort-classes` for the order inside a component or a service (inputs, outputs, public signals and computed,
+        private state, injected dependencies, constructor, lifecycle hooks, methods alphabetical) and
+        `sort-modules` for enums, interfaces and classes in model files, `sort-interfaces` for required then optional
+        members and `sort-enums` for enum members, with autofix on save. Same config in every repo. Before
+        `sort-enums`, check that no enum has implicit numeric values and that no `Object.values` depends on the order
 
 ---
 
