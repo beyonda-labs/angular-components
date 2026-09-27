@@ -43,7 +43,6 @@ export class BreadcrumbComponent implements AfterViewInit {
 
         return 0;
     });
-
     readonly collapsedItems = computed<RenderedItem[]>(() =>
         this.render(this.config().items.slice(0, this.visibleStartIndex()))
     );
@@ -58,18 +57,17 @@ export class BreadcrumbComponent implements AfterViewInit {
     );
 
     private cachedItemWidths: number[] = [];
+
+    private readonly translateService = inject(TranslateService);
+    /* Label resolution goes through `instant`, so the rendered labels have to follow a language change. */
+    private readonly language = toSignal(this.translateService.onLangChange, { initialValue: undefined });
+    private readonly listElement = viewChild<ElementRef<HTMLOListElement>>('listElement');
     private previousContainerWidth = 0;
     private resizeObserver?: ResizeObserver;
-
-    private readonly listElement = viewChild<ElementRef<HTMLOListElement>>('listElement');
 
     private readonly destroyRef = inject(DestroyRef);
     private readonly elementReference = inject<ElementRef<HTMLElement>>(ElementRef);
     private readonly ngZone = inject(NgZone);
-    private readonly translateService = inject(TranslateService);
-
-    /* Label resolution goes through `instant`, so the rendered labels have to follow a language change. */
-    private readonly language = toSignal(this.translateService.onLangChange, { initialValue: undefined });
 
     constructor() {
         effect(() => {

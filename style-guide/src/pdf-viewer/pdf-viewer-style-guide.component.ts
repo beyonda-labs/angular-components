@@ -33,12 +33,6 @@ const FULL_TURN = 360;
     templateUrl: './pdf-viewer-style-guide.component.html'
 })
 export class PdfViewerStyleGuideComponent {
-    readonly currentPage = signal(1);
-    readonly lastLoadingFailed = signal<BeyPdfViewerLoadingFailed | null>(null);
-    readonly lastRotationChange = signal<BeyPdfViewerRotationChange | null>(null);
-    readonly lastZoomFactor = signal<number | null>(null);
-    readonly pageCount = signal(0);
-
     readonly config = new BeyPdfViewerConfig({
         onLoaded: ({ pagesCount }) => this.pageCount.set(pagesCount),
         onLoadingFailed: event => this.lastLoadingFailed.set(event),
@@ -48,8 +42,12 @@ export class PdfViewerStyleGuideComponent {
         onZoomChange: zoom => this.lastZoomFactor.set(zoom),
         src: SAMPLE_PDF_URL
     });
-
+    readonly currentPage = signal(1);
+    readonly lastLoadingFailed = signal<BeyPdfViewerLoadingFailed | null>(null);
+    readonly lastRotationChange = signal<BeyPdfViewerRotationChange | null>(null);
+    readonly lastZoomFactor = signal<number | null>(null);
     readonly nextIcon = faChevronRight;
+    readonly pageCount = signal(0);
     readonly prevIcon = faChevronLeft;
     readonly rotateLeftIcon = faArrowRotateLeft;
     readonly rotateRightIcon = faArrowRotateRight;

@@ -20,12 +20,12 @@ export class FloatingPreferencesComponent {
 
     readonly chevronIcon = faChevronDown;
 
-    private readonly themeService = inject(ThemeService);
     private readonly translateService = inject(TranslateService);
-
     readonly language = toSignal(this.translateService.onLangChange.pipe(map(event => event.lang)), {
         initialValue: this.translateService.currentLang ?? this.translateService.defaultLang
     });
+
+    private readonly themeService = inject(ThemeService);
     readonly theme = toSignal(this.themeService.theme$, { initialValue: 'light' as const });
 
     onLangChange(value: string): void {

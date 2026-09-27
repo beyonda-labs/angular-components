@@ -37,34 +37,26 @@ interface DragCandidate {
     templateUrl: './property-tree.component.html'
 })
 export class PropertyTreeComponent {
+    readonly acceptsRootDrop = input(false);
+    readonly addBlockLabel = input<string>();
     readonly groupId = input.required<string>();
     readonly nodes = input.required<PropertyTreeNode[]>();
     readonly tabId = input.required<string>();
-    readonly acceptsRootDrop = input(false);
-    readonly addBlockLabel = input<string>();
-
-    readonly visibleNodes = computed(() => this.nodes().filter(node => !node.hidden));
 
     readonly addIcon = faPlus;
     readonly chevronIcon = faChevronDown;
-
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly hostElement = inject<ElementRef<HTMLElement>>(ElementRef);
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
-    private readonly propertyTreeDragService = inject(PropertyTreeDragService);
+    readonly visibleNodes = computed(() => this.nodes().filter(node => !node.hidden));
 
     private autoExpandNodeId: string | null = null;
     private autoExpandTimer?: ReturnType<typeof setTimeout>;
     private dragCandidate?: DragCandidate;
     private draggedRecently = false;
-
     private readonly handleKeyDown = (event: KeyboardEvent): void => {
         if (event.key === 'Escape') {
             this.propertyTreeDragService.cancel(this.tabId(), this.groupId());
             this.detachPointerListeners();
         }
     };
-
     private readonly handlePointerMove = (event: PointerEvent): void => {
         const candidate = this.dragCandidate;
 
@@ -85,7 +77,6 @@ export class PropertyTreeComponent {
         this.autoScroll(event.clientY);
         this.updateDropTarget(event, candidate.node);
     };
-
     private readonly handlePointerUp = (): void => {
         if (this.propertyTreeDragService.dragging()) {
             this.propertyTreeDragService.drop(this.tabId(), this.groupId());
@@ -93,6 +84,11 @@ export class PropertyTreeComponent {
 
         this.detachPointerListeners();
     };
+
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly hostElement = inject<ElementRef<HTMLElement>>(ElementRef);
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
+    private readonly propertyTreeDragService = inject(PropertyTreeDragService);
 
     constructor() {
         this.destroyRef.onDestroy(() => {
@@ -123,10 +119,6 @@ export class PropertyTreeComponent {
 
     labelKey(node: PropertyTreeNode): string {
         return resolvePropertyLabelKey(this.propertiesMenuService.config().prefix, 'tree', node.id, node.label);
-    }
-
-    visibleChildren(node: PropertyTreeNode): PropertyTreeNode[] {
-        return node.children.filter(child => !child.hidden);
     }
 
     onAddBlockClick(): void {
@@ -170,6 +162,10 @@ export class PropertyTreeComponent {
     onToggleClick(event: Event, node: PropertyTreeNode): void {
         event.stopPropagation();
         this.propertiesMenuService.toggleTreeNode(this.tabId(), this.groupId(), node.id);
+    }
+
+    visibleChildren(node: PropertyTreeNode): PropertyTreeNode[] {
+        return node.children.filter(child => !child.hidden);
     }
 
     private autoScroll(clientY: number): void {

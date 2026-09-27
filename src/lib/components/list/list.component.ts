@@ -16,9 +16,9 @@ export class ListComponent<TItem = unknown> {
     readonly config = input.required<ListConfig<TItem>>();
 
     readonly cardTemplate = contentChild(TemplateRef<ListItemContext>);
-
     readonly emptyLabel = computed(() => this.config().emptyLabel ?? `${this.config().prefix}.empty`);
     readonly isClickable = computed(() => Boolean(this.config().onItemClick));
+    trackByItem = (index: number, item: TItem): string | number => this.config().getItemKey?.(item, index) ?? index;
 
     getItemContext(item: TItem, index: number): ListItemContext {
         return { $implicit: item, index };
@@ -36,6 +36,4 @@ export class ListComponent<TItem = unknown> {
         event.preventDefault();
         this.onItemClick(item, index);
     }
-
-    trackByItem = (index: number, item: TItem): string | number => this.config().getItemKey?.(item, index) ?? index;
 }

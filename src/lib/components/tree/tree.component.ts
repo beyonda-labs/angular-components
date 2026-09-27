@@ -24,7 +24,6 @@ export class TreeComponent {
 
     readonly expandedKeys = linkedSignal(() => new Set(this.config().expandedKeys ?? []));
     readonly selectedKey = computed(() => this.config().selectedKey);
-
     readonly toggleIcon = faChevronRight;
 
     getIndent(level: number): number {

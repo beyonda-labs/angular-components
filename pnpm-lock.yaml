@@ -106,8 +106,8 @@ importers:
         specifier: 19.2.17
         version: 19.2.17(@angular/compiler-cli@19.2.17(@angular/compiler@19.2.17)(typescript@5.5.4))(@angular/compiler@19.2.17)
       '@beyonda-labs/base-config':
-        specifier: 0.1.0-develop.3.94b8721
-        version: 0.1.0-develop.3.94b8721(eslint@9.39.5(jiti@1.21.7))(prettier@3.3.3)(stylelint@17.15.0(typescript@5.5.4))(typescript@5.5.4)
+        specifier: develop
+        version: 0.1.0-develop.5.ec94bbd(eslint@9.39.5(jiti@1.21.7))(prettier@3.3.3)(stylelint@17.15.0(typescript@5.5.4))(typescript@5.5.4)
       '@types/jest':
         specifier: 29.5.14
         version: 29.5.14
@@ -1012,8 +1012,8 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
-  '@beyonda-labs/base-config@0.1.0-develop.3.94b8721':
-    resolution: {integrity: sha512-3pSYAJN0IGgMISF3eZmFgos/IGMYb7DQnC9JSFCGsA21V+OpMGughS09PreNsN9pJ5ZBLv7MkyVXdJvLmaRphg==}
+  '@beyonda-labs/base-config@0.1.0-develop.5.ec94bbd':
+    resolution: {integrity: sha512-X+TUF9XDfiGOY3QHgmK6fp7wxiCVCCC7WnEXvwr2DL2w2hHdNZr1O05e6YNcxobsInY3Ktl2q7BRYbvbuvbu4w==}
     hasBin: true
     peerDependencies:
       eslint: 9.39.5
@@ -8106,7 +8106,7 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@beyonda-labs/base-config@0.1.0-develop.3.94b8721(eslint@9.39.5(jiti@1.21.7))(prettier@3.3.3)(stylelint@17.15.0(typescript@5.5.4))(typescript@5.5.4)':
+  '@beyonda-labs/base-config@0.1.0-develop.5.ec94bbd(eslint@9.39.5(jiti@1.21.7))(prettier@3.3.3)(stylelint@17.15.0(typescript@5.5.4))(typescript@5.5.4)':
     dependencies:
       '@eslint/js': 9.39.5
       '@stylistic/eslint-plugin-js': 2.13.0(eslint@9.39.5(jiti@1.21.7))

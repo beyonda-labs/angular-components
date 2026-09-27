@@ -23,18 +23,16 @@ export class FormFileFieldComponent {
     readonly field = input.required<FormFileField>();
     readonly prefix = input.required<string>();
 
-    readonly controlState = trackControl(this.control);
-
     readonly accept = computed(() => (this.field().accept.length > 0 ? this.field().accept.join(',') : null));
     readonly acceptLabel = computed(() => this.field().accept.join(', '));
+    readonly clearIcon = faXmark;
+    readonly controlState = trackControl(this.control);
+    readonly fileIcon = faPaperclip;
     readonly maxSize = computed(() => {
         const { maxSizeBytes } = this.field();
 
         return maxSizeBytes === undefined ? '' : formatBytes(maxSizeBytes);
     });
-
-    readonly clearIcon = faXmark;
-    readonly fileIcon = faPaperclip;
 
     private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
 

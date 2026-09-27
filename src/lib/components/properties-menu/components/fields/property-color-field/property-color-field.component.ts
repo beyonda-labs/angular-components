@@ -21,6 +21,7 @@ export class PropertyColorFieldComponent {
 
     readonly valueChange = output<string>();
 
+    readonly clearIcon = faXmark;
     readonly hasValue = computed(() => Boolean(this.field().value));
     /** The native colour input always needs a hex value for its own swatch; this fallback is never emitted. */
     readonly pickerValue = computed(() => this.field().value || DEFAULT_COLOR);
@@ -29,8 +30,6 @@ export class PropertyColorFieldComponent {
 
         return this.hasValue() && !field.disabled && !field.readonly;
     });
-
-    readonly clearIcon = faXmark;
 
     onClear(): void {
         this.valueChange.emit('');

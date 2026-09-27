@@ -187,9 +187,9 @@ Snapshots per branch, `latest` from `main`, as described in the README.
         skip left): `sort-modules`, `sort-interfaces`, `sort-object-types` and `sort-enums` everywhere and
         `sort-classes` in model files. No enum with implicit values was reordered and no `Object.values` depended
         on the order
--   [ ] `sort-classes` for the order inside a component or a service (inputs, outputs, public signals and computed,
-        private state, injected dependencies, constructor, lifecycle hooks, methods alphabetical): base-config
-        only sorts model classes today
+-   [x] `sort-classes` for the order inside a component, a directive or a service through base-config
+        (`eslint.class-order`): inputs, outputs, public properties, private state, injected dependencies,
+        constructor, lifecycle hooks, public methods, private methods
 -   [x] `ModalTreeConfig` is plain data: the dialog owns the selection and the open branches, and the caller closes
         it through the `BsModalRef` that `open` returns
 -   [x] Function modules have no technical suffix and live next to what they work on, as

@@ -50,22 +50,37 @@ interface SearchDraftRow {
 export class SearchComponent {
     readonly config = input.required<SearchConfig>();
 
-    readonly appliedFilters = signal<SearchFilter[]>([]);
-    readonly isPanelOpen = signal(false);
-    readonly rows = signal<SearchDraftRow[]>([]);
-    readonly searchTerm = signal('');
-
-    readonly placeholder = computed(() => this.config().placeholder ?? DEFAULT_PLACEHOLDER);
-
     readonly addIcon = faPlus;
+    readonly addButton = new ButtonConfig({
+        action: () => this.addRow(),
+        icon: this.addIcon,
+        label: 'angular-components.search.add',
+        type: ButtonType.Secondary
+    });
+    readonly appliedFilters = signal<SearchFilter[]>([]);
+    readonly applyButton = new ButtonConfig({
+        action: () => this.applyFilters(),
+        label: 'angular-components.search.apply',
+        type: ButtonType.Primary
+    });
     readonly chevronIcon = faChevronDown;
+    readonly clearButton = new ButtonConfig({
+        action: () => this.clearFilters(),
+        label: 'angular-components.search.clear',
+        type: ButtonType.Secondary
+    });
     readonly fieldTypes = SearchFieldType;
     readonly filterIcon = faFilter;
+    readonly isPanelOpen = signal(false);
+    readonly placeholder = computed(() => this.config().placeholder ?? DEFAULT_PLACEHOLDER);
     readonly removeIcon = faXmark;
+    readonly rows = signal<SearchDraftRow[]>([]);
     readonly searchIcon = faMagnifyingGlass;
+    readonly searchTerm = signal('');
+
+    private readonly searchTerm$ = new Subject<void>();
 
     private readonly elementRef = inject(ElementRef<HTMLElement>);
-    private readonly searchTerm$ = new Subject<void>();
 
     constructor() {
         this.searchTerm$.pipe(debounceTime(SEARCH_DEBOUNCE_MS), takeUntilDestroyed()).subscribe(() => {
@@ -73,32 +88,6 @@ export class SearchComponent {
             this.applyRows(false);
         });
     }
-
-    @HostListener('document:click', ['$event'])
-    onDocumentClick(event: MouseEvent): void {
-        if (this.isPanelOpen() && !(this.elementRef.nativeElement as HTMLElement).contains(event.target as Node)) {
-            this.isPanelOpen.set(false);
-        }
-    }
-
-    readonly addButton = new ButtonConfig({
-        action: () => this.addRow(),
-        icon: this.addIcon,
-        label: 'angular-components.search.add',
-        type: ButtonType.Secondary
-    });
-
-    readonly applyButton = new ButtonConfig({
-        action: () => this.applyFilters(),
-        label: 'angular-components.search.apply',
-        type: ButtonType.Primary
-    });
-
-    readonly clearButton = new ButtonConfig({
-        action: () => this.clearFilters(),
-        label: 'angular-components.search.clear',
-        type: ButtonType.Secondary
-    });
 
     addRow(): void {
         this.rows.update(rows => [...rows, { fieldKey: '', operator: '', value: '', valueTo: '' }]);
@@ -138,6 +127,13 @@ export class SearchComponent {
 
     isBetween(row: SearchDraftRow): boolean {
         return row.operator === SearchFilterOperator.Between;
+    }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent): void {
+        if (this.isPanelOpen() && !(this.elementRef.nativeElement as HTMLElement).contains(event.target as Node)) {
+            this.isPanelOpen.set(false);
+        }
     }
 
     onFieldChange(index: number, event: Event): void {
@@ -204,10 +200,41 @@ export class SearchComponent {
         this.config().onFiltersChange?.([...this.appliedFilters()]);
     }
 
+    private getField(row: SearchDraftRow): SearchField | undefined {
+        return this.config().fields.find(current => current.key === row.fieldKey);
+    }
+
     private getMainRow(): SearchDraftRow | undefined {
         const { mainField } = this.config();
 
         return mainField ? this.rows().find(row => row.fieldKey === mainField) : undefined;
+    }
+
+    private isNumeric(value: string): boolean {
+        return value.trim().length > 0 && !Number.isNaN(Number(value));
+    }
+
+    private isRowValid(row: SearchDraftRow): boolean {
+        const field = this.getField(row);
+
+        if (!field || !row.operator) {
+            return false;
+        }
+
+        switch (field.type) {
+            case SearchFieldType.Boolean:
+                return row.value === 'true' || row.value === 'false';
+
+            case SearchFieldType.Number:
+                if (this.isBetween(row)) {
+                    return this.isNumeric(row.value) && this.isNumeric(row.valueTo);
+                }
+
+                return this.isNumeric(row.value);
+
+            default:
+                return row.value.trim().length > 0;
+        }
     }
 
     private syncMainRow(): void {
@@ -254,37 +281,6 @@ export class SearchComponent {
         const isDropdownType = rowType === SearchFieldType.Boolean || rowType === SearchFieldType.Select;
 
         this.searchTerm.set(mainRow && !isDropdownType ? mainRow.value : '');
-    }
-
-    private getField(row: SearchDraftRow): SearchField | undefined {
-        return this.config().fields.find(current => current.key === row.fieldKey);
-    }
-
-    private isNumeric(value: string): boolean {
-        return value.trim().length > 0 && !Number.isNaN(Number(value));
-    }
-
-    private isRowValid(row: SearchDraftRow): boolean {
-        const field = this.getField(row);
-
-        if (!field || !row.operator) {
-            return false;
-        }
-
-        switch (field.type) {
-            case SearchFieldType.Boolean:
-                return row.value === 'true' || row.value === 'false';
-
-            case SearchFieldType.Number:
-                if (this.isBetween(row)) {
-                    return this.isNumeric(row.value) && this.isNumeric(row.valueTo);
-                }
-
-                return this.isNumeric(row.value);
-
-            default:
-                return row.value.trim().length > 0;
-        }
     }
 
     private toFilter(row: SearchDraftRow): SearchFilter {

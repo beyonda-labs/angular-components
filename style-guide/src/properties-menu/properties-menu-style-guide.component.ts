@@ -21,13 +21,6 @@ import { buildPropertiesMenuConfig, EXAMPLE_VARIABLES } from './properties-menu-
     templateUrl: './properties-menu-style-guide.component.html'
 })
 export class PropertiesMenuStyleGuideComponent {
-    readonly lastFieldChange = signal<BeyPropertyFieldValueChange | null>(null);
-    readonly lastListItemSelect = signal<BeyPropertyListItemSelect | null>(null);
-    readonly lastTreeAddBlock = signal<BeyPropertyTreeAddBlock | null>(null);
-    readonly lastTreeNodeSelect = signal<BeyPropertyTreeNodeSelect | null>(null);
-    readonly lastVariableSelection = signal<BeyPropertyVariableSelection | null>(null);
-    readonly variables = signal<BeyPropertyVariable[]>([]);
-
     readonly config = buildPropertiesMenuConfig({
         onFieldValueChange: change => this.lastFieldChange.set(change),
         onListItemSelect: event => this.lastListItemSelect.set(event),
@@ -35,6 +28,12 @@ export class PropertiesMenuStyleGuideComponent {
         onTreeNodeSelect: event => this.lastTreeNodeSelect.set(event),
         onVariableSelect: selection => this.lastVariableSelection.set(selection)
     });
+    readonly lastFieldChange = signal<BeyPropertyFieldValueChange | null>(null);
+    readonly lastListItemSelect = signal<BeyPropertyListItemSelect | null>(null);
+    readonly lastTreeAddBlock = signal<BeyPropertyTreeAddBlock | null>(null);
+    readonly lastTreeNodeSelect = signal<BeyPropertyTreeNodeSelect | null>(null);
+    readonly lastVariableSelection = signal<BeyPropertyVariableSelection | null>(null);
+    readonly variables = signal<BeyPropertyVariable[]>([]);
 
     provideVariables(): void {
         this.variables.set(EXAMPLE_VARIABLES);

@@ -18,9 +18,8 @@ import { PropertyGroupComponent } from '../property-group/property-group.compone
 export class PropertyTabComponent {
     readonly tab = input.required<PropertyTab>();
 
-    readonly visibleGroups = computed(() => this.tab().groups.filter(group => !group.hidden));
-
     readonly addIcon = faPlus;
+    readonly visibleGroups = computed(() => this.tab().groups.filter(group => !group.hidden));
 
     private readonly propertiesMenuService = inject(PropertiesMenuService);
 

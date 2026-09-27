@@ -39,18 +39,15 @@ export class TabsComponent implements AfterViewInit {
 
     readonly activeTabKey = linkedSignal(() => this.config().activeTab);
     readonly isOverflowMenuOpen = signal(false);
-    readonly visibleCount = linkedSignal(() => this.config().tabs.length);
-
     readonly isSegmented = computed(() => this.config().variant === TabsVariant.Segmented);
+    readonly overflowIcon = faEllipsis;
+    readonly visibleCount = linkedSignal(() => this.config().tabs.length);
     readonly overflowTabs = computed(() => this.config().tabs.slice(this.visibleCount()));
     readonly visibleTabs = computed(() => this.config().tabs.slice(0, this.visibleCount()));
-
-    readonly overflowIcon = faEllipsis;
 
     private cachedTabWidths: number[] = [];
     private previousContainerWidth = 0;
     private resizeObserver?: ResizeObserver;
-
     private readonly tabButtons = viewChildren<ElementRef<HTMLButtonElement>>('tabButton');
     private readonly tabsRow = viewChild<ElementRef<HTMLElement>>('tabsRow');
 
@@ -75,18 +72,6 @@ export class TabsComponent implements AfterViewInit {
         this.observeResize(this.tabButtons());
         this.recalculate();
         this.scheduleRecalculate();
-    }
-
-    @HostListener('document:click', ['$event'])
-    onDocumentClick(event: MouseEvent): void {
-        if (!this.elementReference.nativeElement.contains(event.target as Node)) {
-            this.isOverflowMenuOpen.set(false);
-        }
-    }
-
-    @HostListener('document:keydown.escape')
-    onEscape(): void {
-        this.isOverflowMenuOpen.set(false);
     }
 
     getTabLabel(tab: Tab): string {
@@ -119,6 +104,18 @@ export class TabsComponent implements AfterViewInit {
 
     isActiveInOverflow(): boolean {
         return this.overflowTabs().some(tab => this.isActive(tab));
+    }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent): void {
+        if (!this.elementReference.nativeElement.contains(event.target as Node)) {
+            this.isOverflowMenuOpen.set(false);
+        }
+    }
+
+    @HostListener('document:keydown.escape')
+    onEscape(): void {
+        this.isOverflowMenuOpen.set(false);
     }
 
     onKeydown(event: KeyboardEvent): void {
@@ -167,6 +164,29 @@ export class TabsComponent implements AfterViewInit {
 
     toggleOverflowMenu(): void {
         this.isOverflowMenuOpen.update(isOpen => !isOpen);
+    }
+
+    private countTabsThatFit(widths: number[], containerWidth: number, tabs: Tab[]): number {
+        const overflowReserve = OVERFLOW_TRIGGER_ESTIMATED_WIDTH + TAB_GAP_ESTIMATED_WIDTH;
+        let budget = containerWidth - overflowReserve;
+        let count = 0;
+
+        for (const width of widths) {
+            const needed = width + (count > 0 ? TAB_GAP_ESTIMATED_WIDTH : 0);
+
+            if (budget - needed < 0) {
+                break;
+            }
+
+            budget -= needed;
+            count++;
+        }
+
+        count = Math.max(count, 1);
+
+        const activeIndex = tabs.findIndex(tab => tab.key === this.activeTabKey());
+
+        return activeIndex >= count ? activeIndex + 1 : count;
     }
 
     private focusTab(key: string): void {
@@ -268,29 +288,6 @@ export class TabsComponent implements AfterViewInit {
         }
 
         this.visibleCount.set(this.countTabsThatFit(widths, containerWidth, tabs));
-    }
-
-    private countTabsThatFit(widths: number[], containerWidth: number, tabs: Tab[]): number {
-        const overflowReserve = OVERFLOW_TRIGGER_ESTIMATED_WIDTH + TAB_GAP_ESTIMATED_WIDTH;
-        let budget = containerWidth - overflowReserve;
-        let count = 0;
-
-        for (const width of widths) {
-            const needed = width + (count > 0 ? TAB_GAP_ESTIMATED_WIDTH : 0);
-
-            if (budget - needed < 0) {
-                break;
-            }
-
-            budget -= needed;
-            count++;
-        }
-
-        count = Math.max(count, 1);
-
-        const activeIndex = tabs.findIndex(tab => tab.key === this.activeTabKey());
-
-        return activeIndex >= count ? activeIndex + 1 : count;
     }
 
     private scheduleRecalculate(): void {

@@ -25,19 +25,29 @@ const MAX_INPUT_DIGITS = 50;
     templateUrl: './pagination.component.html'
 })
 export class PaginationComponent {
-    private static nextInstanceId = 0;
-
     readonly config = input.required<PaginationConfig>();
 
+    readonly firstPageIcon = faAnglesLeft;
+    readonly infoIcon = faCircleInfo;
     readonly page = linkedSignal(() => this.config().page);
-    readonly pageSize = linkedSignal(() => this.config().pageSize);
-    readonly pageInputValue = linkedSignal(() => String(this.config().page));
-
-    readonly totalPages = computed(() => Math.max(Math.ceil(this.config().totalItems / this.pageSize()), 1));
     readonly isFirstPage = computed(() => this.page() <= 1);
+    readonly pageSize = linkedSignal(() => this.config().pageSize);
+    readonly totalPages = computed(() => Math.max(Math.ceil(this.config().totalItems / this.pageSize()), 1));
     readonly isLastPage = computed(() => this.page() >= this.totalPages());
-    readonly shouldShowFirstLastButtons = computed(() => this.totalPages() >= FIRST_LAST_BUTTONS_FROM_PAGES);
+    readonly lastPageIcon = faAnglesRight;
+    readonly nextPageIcon = faChevronRight;
 
+    private static nextInstanceId = 0;
+    readonly pageInputId = `bey-pagination-page-input-${PaginationComponent.nextInstanceId}`;
+    readonly pageInputValue = linkedSignal(() => String(this.config().page));
+    readonly pageInputWidth = computed(() => {
+        const digits = Math.max(this.pageInputValue().length, String(this.totalPages()).length, 1);
+
+        return `calc(${Math.min(digits, MAX_INPUT_DIGITS)}ch + 1.4rem)`;
+    });
+    readonly pageSizeId = `bey-pagination-page-size-${PaginationComponent.nextInstanceId++}`;
+    readonly pageSizeOptions = PAGINATION_SIZE_OPTIONS;
+    readonly previousPageIcon = faChevronLeft;
     readonly resultRangeEnd = computed(() =>
         this.config().totalItems ? Math.min(this.page() * this.pageSize(), this.config().totalItems) : 0
     );
@@ -49,22 +59,7 @@ export class PaginationComponent {
         start: this.resultRangeStart(),
         total: this.config().totalItems
     }));
-
-    readonly pageInputWidth = computed(() => {
-        const digits = Math.max(this.pageInputValue().length, String(this.totalPages()).length, 1);
-
-        return `calc(${Math.min(digits, MAX_INPUT_DIGITS)}ch + 1.4rem)`;
-    });
-
-    readonly pageSizeOptions = PAGINATION_SIZE_OPTIONS;
-
-    readonly firstPageIcon = faAnglesLeft;
-    readonly previousPageIcon = faChevronLeft;
-    readonly nextPageIcon = faChevronRight;
-    readonly lastPageIcon = faAnglesRight;
-    readonly infoIcon = faCircleInfo;
-    readonly pageInputId = `bey-pagination-page-input-${PaginationComponent.nextInstanceId}`;
-    readonly pageSizeId = `bey-pagination-page-size-${PaginationComponent.nextInstanceId++}`;
+    readonly shouldShowFirstLastButtons = computed(() => this.totalPages() >= FIRST_LAST_BUTTONS_FROM_PAGES);
 
     goToFirstPage(): void {
         this.navigateTo(1);

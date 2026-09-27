@@ -1,5 +1,5 @@
 {
-    "version": "0.1.0-develop.3.94b8721",
+    "version": "0.1.0-develop.5.ec94bbd",
     "files": {
         ".editorconfig": "67f2a34801deef7fd67991d9fdb18fd9c382654a0c92c1d9a3074f4fd1b1682c",
         ".gitattributes": "250db083c03f90a62baeb34e4993cab4906efa03c0d7d756ce76c3b9d732f9de",
@@ -14,7 +14,7 @@
         "eslint.config.js": "ef0d9e9b578644ef61f0447047564b9c502c3e48649d8fae253ede15ec3fbb2e",
         "jest.config.js": "1889bef1d4366660560ba612a3d7a97a7ed159d448c95ea09ad1f535128e9fa8",
         "lint-staged.config.js": "09d1274f579414b2514ec18fc5b2048e1a00f8be5a022ffde133b1fac20db14e",
-        "package.json": "40b6d10c63095dde298d54fd9c699fe9dfc4056330124a4bf4318cd200113fda",
+        "package.json": "3f56eacb347137cbee32a69593ea6ef6e1f2928b27e4a8bd658fbdbf14e2e87d",
         "pnpm-workspace.yaml": "a25c6f63ab2e9000d439a8c1418e62e0fb62f3f666ccf3ad78b1f165b087d7db",
         "prettier.config.js": "c22606828d1f13ede8ef2aef7e9c1ac9de780ed86a2c748a96ed2107d642cd96",
         "setup-jest.ts": "7003157cf55fa2b82baa8c74f0ef5c35d86d09d7491e8129b17f07fbc9fe0a83",

@@ -21,14 +21,6 @@ export class PdfViewerComponent {
     readonly currentPage = linkedSignal(() => this.config().page);
     readonly currentRotation = linkedSignal<PdfViewerRotation>(() => this.config().rotation);
     readonly currentZoom = linkedSignal<PdfViewerZoom>(() => this.config().zoom);
-
-    /** The underlying viewer wants a percentage for a fractional zoom and the keywords as they are. */
-    readonly zoomInput = computed<PdfViewerZoom>(() => {
-        const zoom = this.currentZoom();
-
-        return typeof zoom === 'number' ? zoom * PERCENT : zoom;
-    });
-
     readonly handle: PdfViewerHandle = {
         currentPage: () => this.currentPage(),
         currentRotation: () => this.currentRotation(),
@@ -37,6 +29,12 @@ export class PdfViewerComponent {
         rotate: rotation => this.currentRotation.set(rotation),
         setZoom: zoom => this.currentZoom.set(zoom)
     };
+    /** The underlying viewer wants a percentage for a fractional zoom and the keywords as they are. */
+    readonly zoomInput = computed<PdfViewerZoom>(() => {
+        const zoom = this.currentZoom();
+
+        return typeof zoom === 'number' ? zoom * PERCENT : zoom;
+    });
 
     constructor() {
         effect(() => this.config().onReady?.(this.handle));

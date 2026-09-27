@@ -18,30 +18,25 @@ import { LeftMenuConfig } from './models/left-menu.model';
 export class LeftMenuComponent {
     readonly config = input.required<LeftMenuConfig>();
 
-    readonly expanded = linkedSignal(() => this.config().expanded);
-
     readonly bottomActions = computed(() => this.config().bottomActions ?? []);
-    readonly topActions = computed(() => this.config().topActions ?? []);
-
+    readonly collapseIcon = faAnglesLeft;
+    readonly expanded = linkedSignal(() => this.config().expanded);
+    readonly expandIcon = faAnglesRight;
     readonly titleText = computed(() => {
         const title = this.config().title?.title ?? 'title';
 
         return !title || title === 'title' ? `${this.config().prefix}.title` : title;
     });
-
     readonly toggleTooltip = computed(() =>
         this.expanded() ? 'angular-components.left-menu.collapse' : 'angular-components.left-menu.expand'
     );
-
+    readonly topActions = computed(() => this.config().topActions ?? []);
     readonly userFullName = computed(() => {
         const { userInfo } = this.config();
 
         return `${userInfo?.name ?? ''} ${userInfo?.surname ?? ''}`.trim();
     });
     readonly userTooltip = computed(() => this.config().userInfo?.email || this.userFullName());
-
-    readonly collapseIcon = faAnglesLeft;
-    readonly expandIcon = faAnglesRight;
 
     toggleExpanded(): void {
         this.expanded.update(isExpanded => !isExpanded);

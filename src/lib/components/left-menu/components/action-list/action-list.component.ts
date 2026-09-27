@@ -19,22 +19,20 @@ import { LeftMenuAction } from '../../models/left-menu.model';
 export class ActionListComponent {
     readonly actions = input.required<LeftMenuAction[]>();
     readonly expanded = input.required<boolean>();
-    readonly prefix = input.required<string>();
     readonly groupKey = input('group');
+    readonly prefix = input.required<string>();
 
     readonly actionTriggered = output<void>();
 
+    readonly activeFlyoutPath = signal<string | null>(null);
+    readonly chevronDownIcon = faChevronDown;
+    readonly chevronRightIcon = faChevronRight;
     /* Which branches the accordion has open. Reseeded from the active action whenever the inputs change. */
     readonly openPaths = linkedSignal<Set<string>>(() => {
         const activePath = this.expanded() ? this.findFirstActivePath(this.actions(), this.groupKey()) : null;
 
         return new Set(activePath ? this.getPathHierarchy(activePath) : []);
     });
-
-    readonly activeFlyoutPath = signal<string | null>(null);
-
-    readonly chevronDownIcon = faChevronDown;
-    readonly chevronRightIcon = faChevronRight;
 
     buildPath(parentPath: string, key: string): string {
         return parentPath ? `${parentPath}.${key}` : key;

@@ -24,14 +24,12 @@ export class FormDateFieldComponent {
     readonly field = input.required<FormDateField>();
     readonly prefix = input.required<string>();
 
-    private readonly datepickerLocaleService = inject(DatepickerLocaleService);
-    private readonly dateFormatService = inject(DateFormatService);
     private readonly translateService = inject(TranslateService);
-
-    readonly datepickerControl = new FormControl<Date | null>(null);
     readonly language = toSignal(this.translateService.onLangChange.pipe(map(event => event.lang)), {
         initialValue: this.translateService.currentLang || this.translateService.getDefaultLang()
     });
+
+    private readonly datepickerLocaleService = inject(DatepickerLocaleService);
 
     readonly datepickerConfig = computed<FormDatepickerConfig>(() => ({
         dateInputFormat: this.field().format,
@@ -39,9 +37,12 @@ export class FormDateFieldComponent {
         returnFocusToInput: true,
         showWeekNumbers: false
     }));
+    readonly datepickerControl = new FormControl<Date | null>(null);
     readonly maxDate = computed(() => this.parseDate(this.field().maxDate) ?? undefined);
     readonly minDate = computed(() => this.parseDate(this.field().minDate) ?? undefined);
     readonly placeholder = computed(() => this.field().placeholder ?? this.field().format);
+
+    private readonly dateFormatService = inject(DateFormatService);
 
     constructor() {
         effect(() => {

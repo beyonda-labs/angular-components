@@ -44,8 +44,6 @@ export class OptionPickerComponent {
     readonly selected = output<OptionPickerOption>();
 
     readonly searchTerm = signal('');
-
-    readonly isFiltering = computed(() => this.searchTerm().trim().length > 0);
     readonly visibleOptions = computed(() => {
         const term = this.searchTerm().trim().toLowerCase();
 
@@ -56,20 +54,20 @@ export class OptionPickerComponent {
             : this.options();
     });
     readonly activeIndex = linkedSignal({ source: this.visibleOptions, computation: () => 0 });
-
     readonly closeIcon = faXmark;
+    readonly isFiltering = computed(() => this.searchTerm().trim().length > 0);
     readonly searchIcon = faMagnifyingGlass;
 
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
-    private readonly renderer = inject(Renderer2);
-
-    private readonly onWindowResize = (): void => this.position();
     private readonly onAncestorScroll = (event: Event): void => {
         if (!this.elementRef.nativeElement.contains(event.target as Node)) {
             this.closed.emit();
         }
     };
+    private readonly onWindowResize = (): void => this.position();
+
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+    private readonly renderer = inject(Renderer2);
 
     constructor() {
         afterNextRender(() => {
@@ -83,6 +81,11 @@ export class OptionPickerComponent {
             window.removeEventListener('resize', this.onWindowResize);
             document.removeEventListener('scroll', this.onAncestorScroll, { capture: true });
         });
+    }
+
+    /** Nested options are indented while browsing; a search result is a flat list. */
+    indent(option: OptionPickerOption): number {
+        return this.isFiltering() ? 0 : (option.depth ?? 0);
     }
 
     @HostListener('document:click', ['$event'])
@@ -122,11 +125,6 @@ export class OptionPickerComponent {
             default:
                 break;
         }
-    }
-
-    /** Nested options are indented while browsing; a search result is a flat list. */
-    indent(option: OptionPickerOption): number {
-        return this.isFiltering() ? 0 : (option.depth ?? 0);
     }
 
     onSearchTermChange(event: Event): void {

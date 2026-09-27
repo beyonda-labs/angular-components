@@ -20,7 +20,6 @@ const PREFIX = 'angular-components-style-guide.search';
 })
 export class SearchStyleGuideComponent {
     readonly appliedFilters = signal<BeySearchFilter[]>([]);
-
     readonly config = new BeySearchConfig({
         mainField: 'name',
         onFiltersChange: filters => this.appliedFilters.set(filters),
@@ -39,7 +38,6 @@ export class SearchStyleGuideComponent {
             })
         ]
     });
-
     readonly summary = () =>
         this.appliedFilters()
             .map(filter => `${filter.field} ${filter.operator} ${String(filter.value)}`)

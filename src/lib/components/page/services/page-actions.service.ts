@@ -56,11 +56,6 @@ interface SaveEntityOptions {
     providedIn: 'root'
 })
 export class PageActionsService {
-    private readonly modalService = inject(ModalService);
-    private readonly modalTreeService = inject(ModalTreeService);
-    private readonly pageFormService = inject(PageFormService);
-    private readonly pageHttpService = inject(PageHttpService);
-
     private readonly actionHandlers: Record<string, (context: PageActionsContext) => void> = {
         [PageStandardAction.Create]: context => this.executeCreate(context),
         [PageStandardAction.CreateCategory]: context => this.executeCreateCategory(context),
@@ -72,6 +67,11 @@ export class PageActionsService {
         [PageStandardAction.Move]: context => this.executeMove(context),
         [PageStandardAction.RestoreTrashItem]: context => this.executeRestoreTrashItem(context)
     };
+
+    private readonly modalService = inject(ModalService);
+    private readonly modalTreeService = inject(ModalTreeService);
+    private readonly pageFormService = inject(PageFormService);
+    private readonly pageHttpService = inject(PageHttpService);
 
     buildHeaderActions(
         actions: PageAction[],
@@ -136,20 +136,102 @@ export class PageActionsService {
         return visible;
     }
 
-    private isActionVisible(action: PageAction, allowedKeys: string[] | null, selectedItems: PageItem[]): boolean {
-        if (action.scope === PageActionScope.Global) {
-            return allowedKeys?.includes(action.key) ?? false;
+    private buildMoveTreeNodes(
+        prefix: string,
+        categories: PageItem[],
+        categoriesConfig: PageCategoriesConfig,
+        selectedItems: PageItem[]
+    ): TreeNode<MoveTargetData>[] {
+        const { nameField, parentField } = categoriesConfig;
+        const childrenByParent = new Map<string | number | null, PageItem[]>();
+
+        for (const category of categories) {
+            const parentId =
+                ((category as unknown as Record<string, unknown>)[parentField] as string | number | null) ?? null;
+            const siblings = childrenByParent.get(parentId) ?? [];
+
+            siblings.push(category);
+            childrenByParent.set(parentId, siblings);
         }
 
-        if (selectedItems.length === 0) {
-            return false;
+        const blockedIds = new Set<string | number>(
+            selectedItems.filter(item => (item as PageTrashItem).type === PageItemType.Category).map(item => item.id)
+        );
+        let frontier = [...blockedIds];
+
+        while (frontier.length > 0) {
+            const next: (string | number)[] = [];
+
+            for (const id of frontier) {
+                for (const child of childrenByParent.get(id) ?? []) {
+                    if (!blockedIds.has(child.id)) {
+                        blockedIds.add(child.id);
+                        next.push(child.id);
+                    }
+                }
+            }
+
+            frontier = next;
         }
 
-        if (action.key === PageStandardAction.Edit && selectedItems.length !== 1) {
-            return false;
+        const buildLevel = (parentId: string | number | null): TreeNode<MoveTargetData>[] =>
+            (childrenByParent.get(parentId) ?? []).map(
+                category =>
+                    new TreeNode<MoveTargetData>({
+                        key: String(category.id),
+                        label: String((category as unknown as Record<string, unknown>)[nameField] ?? ''),
+                        isDisabled: blockedIds.has(category.id),
+                        data: { id: category.id },
+                        children: buildLevel(category.id)
+                    })
+            );
+
+        return [
+            new TreeNode<MoveTargetData>({
+                key: '__root__',
+                label: `${prefix}.categories.root`,
+                data: { id: null },
+                children: buildLevel(null)
+            })
+        ];
+    }
+
+    private completeSave(handle: FormHandle, options: SaveEntityOptions): void {
+        handle.close();
+        options.onSaved();
+    }
+
+    private executeBulkAction<T>(context: PageActionsContext, options: BulkActionOptions<T>): void {
+        const items = context.selectedItems();
+        const { baseUrl, prefix } = context.config;
+
+        if (items.length === 0 || !baseUrl) {
+            return;
         }
 
-        return selectedItems.every(item => item.actions?.includes(action.key));
+        const run = (): void => {
+            options
+                .request(baseUrl, options.mapPayload(items), `${prefix}.toast.${options.key}-success`)
+                .subscribe(() => options.onComplete());
+        };
+
+        if (!options.confirm) {
+            run();
+
+            return;
+        }
+
+        this.modalService
+            .openConfirmation({
+                message: `${prefix}.modal.${options.key}.message`,
+                messageParameters: { count: items.length },
+                title: `${prefix}.modal.${options.key}.title`
+            })
+            .subscribe(confirmed => {
+                if (confirmed) {
+                    run();
+                }
+            });
     }
 
     private executeCreate(context: PageActionsContext): void {
@@ -247,37 +329,33 @@ export class PageActionsService {
         });
     }
 
-    private executeBulkAction<T>(context: PageActionsContext, options: BulkActionOptions<T>): void {
-        const items = context.selectedItems();
-        const { baseUrl, prefix } = context.config;
-
-        if (items.length === 0 || !baseUrl) {
-            return;
+    private isActionVisible(action: PageAction, allowedKeys: string[] | null, selectedItems: PageItem[]): boolean {
+        if (action.scope === PageActionScope.Global) {
+            return allowedKeys?.includes(action.key) ?? false;
         }
 
-        const run = (): void => {
-            options
-                .request(baseUrl, options.mapPayload(items), `${prefix}.toast.${options.key}-success`)
-                .subscribe(() => options.onComplete());
+        if (selectedItems.length === 0) {
+            return false;
+        }
+
+        if (action.key === PageStandardAction.Edit && selectedItems.length !== 1) {
+            return false;
+        }
+
+        return selectedItems.every(item => item.actions?.includes(action.key));
+    }
+
+    private mergeParentField(context: PageActionsContext, value: unknown, original?: PageItem): unknown {
+        const categoriesConfig = context.config.tableConfig?.categoriesConfig;
+
+        if (original || !categoriesConfig) {
+            return value;
+        }
+
+        return {
+            ...(value as Record<string, unknown>),
+            [categoriesConfig.parentField]: context.getCurrentCategoryId()
         };
-
-        if (!options.confirm) {
-            run();
-
-            return;
-        }
-
-        this.modalService
-            .openConfirmation({
-                message: `${prefix}.modal.${options.key}.message`,
-                messageParameters: { count: items.length },
-                title: `${prefix}.modal.${options.key}.title`
-            })
-            .subscribe(confirmed => {
-                if (confirmed) {
-                    run();
-                }
-            });
     }
 
     private openCategoryForm(context: PageActionsContext, item?: PageItem): void {
@@ -314,79 +392,6 @@ export class PageActionsService {
         this.openEntityForm(context, context.config.formConfig, context.config.prefix, item, (value, handle) =>
             this.save(context, value, handle, item)
         );
-    }
-
-    private buildMoveTreeNodes(
-        prefix: string,
-        categories: PageItem[],
-        categoriesConfig: PageCategoriesConfig,
-        selectedItems: PageItem[]
-    ): TreeNode<MoveTargetData>[] {
-        const { nameField, parentField } = categoriesConfig;
-        const childrenByParent = new Map<string | number | null, PageItem[]>();
-
-        for (const category of categories) {
-            const parentId =
-                ((category as unknown as Record<string, unknown>)[parentField] as string | number | null) ?? null;
-            const siblings = childrenByParent.get(parentId) ?? [];
-
-            siblings.push(category);
-            childrenByParent.set(parentId, siblings);
-        }
-
-        const blockedIds = new Set<string | number>(
-            selectedItems.filter(item => (item as PageTrashItem).type === PageItemType.Category).map(item => item.id)
-        );
-        let frontier = [...blockedIds];
-
-        while (frontier.length > 0) {
-            const next: (string | number)[] = [];
-
-            for (const id of frontier) {
-                for (const child of childrenByParent.get(id) ?? []) {
-                    if (!blockedIds.has(child.id)) {
-                        blockedIds.add(child.id);
-                        next.push(child.id);
-                    }
-                }
-            }
-
-            frontier = next;
-        }
-
-        const buildLevel = (parentId: string | number | null): TreeNode<MoveTargetData>[] =>
-            (childrenByParent.get(parentId) ?? []).map(
-                category =>
-                    new TreeNode<MoveTargetData>({
-                        key: String(category.id),
-                        label: String((category as unknown as Record<string, unknown>)[nameField] ?? ''),
-                        isDisabled: blockedIds.has(category.id),
-                        data: { id: category.id },
-                        children: buildLevel(category.id)
-                    })
-            );
-
-        return [
-            new TreeNode<MoveTargetData>({
-                key: '__root__',
-                label: `${prefix}.categories.root`,
-                data: { id: null },
-                children: buildLevel(null)
-            })
-        ];
-    }
-
-    private mergeParentField(context: PageActionsContext, value: unknown, original?: PageItem): unknown {
-        const categoriesConfig = context.config.tableConfig?.categoriesConfig;
-
-        if (original || !categoriesConfig) {
-            return value;
-        }
-
-        return {
-            ...(value as Record<string, unknown>),
-            [categoriesConfig.parentField]: context.getCurrentCategoryId()
-        };
     }
 
     private save(context: PageActionsContext, value: unknown, handle: FormHandle, original?: PageItem): void {
@@ -443,11 +448,6 @@ export class PageActionsService {
 
             followUp.subscribe(() => this.completeSave(handle, options));
         });
-    }
-
-    private completeSave(handle: FormHandle, options: SaveEntityOptions): void {
-        handle.close();
-        options.onSaved();
     }
 }
 

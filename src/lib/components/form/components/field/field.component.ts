@@ -54,12 +54,11 @@ export class FormFieldComponent {
     readonly state = input.required<FormFieldState>();
 
     readonly fieldPrefix = computed(() => `${this.prefix()}.${toKeySegment(this.field().key)}`);
+    readonly fieldType = FormFieldType;
     readonly formControl = computed(() => this.control() as FormControl | null);
     readonly hasLabel = computed(() => this.field().isLabelVisible && this.field().type !== FormFieldType.Checkbox);
+    readonly infoIcon = faInfoCircle;
     readonly label = computed(() => `${this.fieldPrefix()}.label`);
     readonly tooltip = computed(() => `${this.fieldPrefix()}.tooltip`);
     readonly type = computed(() => this.field().type);
-
-    readonly fieldType = FormFieldType;
-    readonly infoIcon = faInfoCircle;
 }

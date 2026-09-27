@@ -31,29 +31,27 @@ export class PropertyAttachmentFieldComponent {
     readonly uploadRequested = output<File>();
     readonly valueChange = output<string>();
 
-    readonly hasTypeError = signal(false);
-    readonly isOpen = signal(false);
-    readonly pickerOpen = signal(false);
+    readonly clearIcon = faXmark;
     readonly query = signal('');
-    readonly sizeErrorMaxSizeMB = signal<number | null>(null);
-
     readonly filteredOptions = computed(() => {
         const term = this.query().trim().toLowerCase();
         const { options } = this.field();
 
         return term ? options.filter(option => option.label.toLowerCase().includes(term)) : options;
     });
+    readonly hasTypeError = signal(false);
+    readonly isOpen = signal(false);
     readonly selectedLabel = computed(() => {
         const field = this.field();
 
         return field.selectedOption?.label ?? field.value ?? '';
     });
     readonly inputValue = computed(() => (this.isOpen() ? this.query() : this.selectedLabel()));
-    readonly variableOptions = computed(() => toVariableOptions(this.field().variables));
-
-    readonly clearIcon = faXmark;
+    readonly pickerOpen = signal(false);
+    readonly sizeErrorMaxSizeMB = signal<number | null>(null);
     readonly uploadIcon = faFileArrowUp;
     readonly variableIcon = PROPERTY_VARIABLE_ICON;
+    readonly variableOptions = computed(() => toVariableOptions(this.field().variables));
 
     close(): void {
         this.isOpen.set(false);

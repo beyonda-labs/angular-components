@@ -47,11 +47,10 @@ const PEOPLE: Person[] = [
     templateUrl: './table-style-guide.component.html'
 })
 export class TableStyleGuideComponent {
-    readonly opened = signal('');
-    readonly selected = signal<string[]>([]);
-
     readonly config = this.buildConfig(PEOPLE);
     readonly emptyConfig = this.buildConfig([]);
+    readonly opened = signal('');
+    readonly selected = signal<string[]>([]);
 
     private buildConfig(items: Person[]): BeyTableConfig<Person> {
         return new BeyTableConfig<Person>({

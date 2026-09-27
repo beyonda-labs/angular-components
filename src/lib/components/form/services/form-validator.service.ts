@@ -12,6 +12,10 @@ import {
     providedIn: 'root'
 })
 export class FormValidatorService {
+    getFieldAsyncValidators(field: FormField): AsyncValidatorFn[] {
+        return field.asyncValidators.map(v => v.asyncValidatorFn);
+    }
+
     getFieldValidators(field: FormField): ValidatorFn[] {
         switch (field.type) {
             case FormFieldType.Text:
@@ -26,10 +30,6 @@ export class FormValidatorService {
             default:
                 return [];
         }
-    }
-
-    getFieldAsyncValidators(field: FormField): AsyncValidatorFn[] {
-        return field.asyncValidators.map(v => v.asyncValidatorFn);
     }
 
     private getSyncValidators(textFieldValidator: FormFieldValidator[]): ValidatorFn[] {

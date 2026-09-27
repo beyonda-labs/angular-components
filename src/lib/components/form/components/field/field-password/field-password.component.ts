@@ -20,7 +20,6 @@ export class FormPasswordFieldComponent {
     readonly prefix = input.required<string>();
 
     readonly isVisible = signal(false);
-
     readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
     readonly toggleIcon = computed(() => (this.isVisible() ? faEyeSlash : faEye));
     readonly toggleLabel = computed(() =>

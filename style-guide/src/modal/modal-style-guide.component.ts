@@ -37,13 +37,6 @@ export class ModalStyleGuideComponent {
         };
     }
 
-    get warningButton(): StyleGuideButton {
-        return {
-            action: () => this.openWarning(),
-            label: 'angular-components-style-guide.modal.buttons.warning'
-        };
-    }
-
     openConfirmation(): void {
         this.modalService
             .openConfirmation({
@@ -86,5 +79,12 @@ export class ModalStyleGuideComponent {
             message: 'angular-components-style-guide.modal.examples.warning.message',
             title: 'angular-components-style-guide.modal.examples.warning.title'
         });
+    }
+
+    get warningButton(): StyleGuideButton {
+        return {
+            action: () => this.openWarning(),
+            label: 'angular-components-style-guide.modal.buttons.warning'
+        };
     }
 }

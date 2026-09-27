@@ -29,7 +29,6 @@ export class TableComponent<T> {
     readonly config = input.required<TableConfig<T>>();
 
     readonly rows = linkedSignal(() => buildRows(this.config()));
-
     readonly allSelected = computed(() => this.rows().length > 0 && this.rows().every(row => row.selected));
     readonly emptyLabel = computed(() => `${this.config().prefix}.empty`);
     readonly gridTemplateColumns = computed(() => {

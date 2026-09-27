@@ -24,7 +24,6 @@ import {
 })
 export class ModalFormDialogComponent implements FormHost {
     config!: ModalFormConfig;
-
     readonly icon = faPenToSquare;
     readonly typeLabel = 'angular-components.form.modal.type';
 

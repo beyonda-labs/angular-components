@@ -10,9 +10,9 @@ const ignoreError = (): void => undefined;
 @Injectable({ providedIn: 'root' })
 export class LoginHttpService {
     private readonly envConfig = inject(ENVIRONMENT_CONFIG);
-    private readonly httpService = inject(HttpService);
-
     private readonly baseUrl = this.envConfig.accessControlUrl;
+
+    private readonly httpService = inject(HttpService);
 
     getProviders(): Observable<LoginProviderConfig[]> {
         return this.httpService.get<LoginProviderConfig[]>(`${this.baseUrl}/providers`, { handleError: ignoreError });

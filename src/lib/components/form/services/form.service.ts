@@ -174,14 +174,6 @@ export class FormService {
         return validators;
     }
 
-    private getValidators(field: FormField): ValidatorFn[] {
-        return [
-            ...(field.isRequired ? [Validators.required] : []),
-            ...this.formValidatorService.getFieldValidators(field),
-            ...this.getTypeValidators(field)
-        ];
-    }
-
     private getTypeValidators(field: FormField): ValidatorFn[] {
         switch (field.type) {
             case FormFieldType.Chips:
@@ -195,5 +187,13 @@ export class FormService {
             default:
                 return [];
         }
+    }
+
+    private getValidators(field: FormField): ValidatorFn[] {
+        return [
+            ...(field.isRequired ? [Validators.required] : []),
+            ...this.formValidatorService.getFieldValidators(field),
+            ...this.getTypeValidators(field)
+        ];
     }
 }

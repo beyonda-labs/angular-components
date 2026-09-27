@@ -23,11 +23,9 @@ export class FormTextVariableFieldComponent {
     readonly options = input<FormFieldOption[]>([]);
     readonly prefix = input.required<string>();
 
-    readonly isPickerOpen = signal(false);
-
-    readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
-
     readonly insertLabel = 'angular-components.form.text-variable-field.insert-variable';
+    readonly isPickerOpen = signal(false);
+    readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
     readonly variableIcon = faDatabase;
 
     private selectionStart: number | null = null;

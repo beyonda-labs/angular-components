@@ -28,31 +28,47 @@ const INITIAL_SEARCH: PageSearch = { filters: [], page: 1, size: PAGINATION_SIZE
 
 @Injectable()
 export class PageService {
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly pageActionsService = inject(PageActionsService);
-    private readonly pageHttpService = inject(PageHttpService);
-    private readonly pageSearchService = inject(PageSearchService);
-
-    private readonly config = signal<PageConfig | null>(null);
-    private readonly globalActions = signal<string[] | null>(null);
-    private formModalReference?: BsModalRef<ModalFormDialogComponent>;
-
     readonly categoryPath = signal<CategoryPathEntry[]>([]);
-    readonly currentCategoryId = signal<string | number | null>(null);
-    readonly items = signal<PageItem[]>([]);
-    readonly loading = signal(false);
-    readonly pageSearch = signal<PageSearch>(INITIAL_SEARCH);
-    readonly selected = signal<PageItem[]>([]);
-    readonly totalItems = signal(0);
     readonly viewMode = signal<PageViewMode>(PageViewMode.Table);
 
+    private readonly config = signal<PageConfig | null>(null);
+    readonly categoryBreadcrumbConfig = computed<BreadcrumbConfig | null>(() => {
+        const config = this.config();
+
+        if (!config?.tableConfig?.categoriesConfig) {
+            return null;
+        }
+
+        if (this.viewMode() === PageViewMode.Trash) {
+            return new BreadcrumbConfig({
+                items: [
+                    new BreadcrumbItem({ id: 0, label: `${config.prefix}.tabs.trash.label`, isTranslationKey: true })
+                ],
+                translate: false
+            });
+        }
+
+        return new BreadcrumbConfig({
+            items: [
+                new BreadcrumbItem({ id: 0, label: `${config.prefix}.categories.root`, isTranslationKey: true }),
+                ...this.categoryPath().map((entry, index) => new BreadcrumbItem({ id: index + 1, label: entry.label }))
+            ],
+            onItemClick: id => this.navigateBreadcrumb(id),
+            translate: false
+        });
+    });
+    readonly currentCategoryId = signal<string | number | null>(null);
     readonly handle: PageHandle = {
         openCategory: item => this.openCategory(item),
         refresh: () => this.refresh(),
         selected: () => this.selected(),
         viewMode: () => this.viewMode()
     };
+    readonly selected = signal<PageItem[]>([]);
 
+    private readonly globalActions = signal<string[] | null>(null);
+
+    private readonly pageActionsService = inject(PageActionsService);
     readonly visibleActions = computed<PageAction[]>(() =>
         this.pageActionsService.filterVisibleActions(
             this.config()?.headerConfig?.actions ?? [],
@@ -77,6 +93,27 @@ export class PageService {
             prefix: config.prefix,
             rightActions: this.pageActionsService.buildHeaderActions(visible, PageActionZone.Right, execute),
             title: config.headerConfig.title
+        });
+    });
+    readonly items = signal<PageItem[]>([]);
+    readonly loading = signal(false);
+    readonly pageSearch = signal<PageSearch>(INITIAL_SEARCH);
+    readonly totalItems = signal(0);
+    readonly paginationConfig = computed<PaginationConfig | null>(() => {
+        const config = this.config();
+
+        if (!config?.tableConfig?.showPagination || this.totalItems() === 0) {
+            return null;
+        }
+
+        const search = this.pageSearch();
+
+        return new PaginationConfig({
+            onPageChange: page => this.setPage(page),
+            onPageSizeChange: pageSize => this.setPageSize(pageSize),
+            page: search.page,
+            pageSize: search.size,
+            totalItems: this.totalItems()
         });
     });
     readonly searchConfig = computed<SearchConfig | null>(() => {
@@ -122,48 +159,6 @@ export class PageService {
             selectedItemsChange: items => this.setSelected(items)
         });
     });
-    readonly paginationConfig = computed<PaginationConfig | null>(() => {
-        const config = this.config();
-
-        if (!config?.tableConfig?.showPagination || this.totalItems() === 0) {
-            return null;
-        }
-
-        const search = this.pageSearch();
-
-        return new PaginationConfig({
-            onPageChange: page => this.setPage(page),
-            onPageSizeChange: pageSize => this.setPageSize(pageSize),
-            page: search.page,
-            pageSize: search.size,
-            totalItems: this.totalItems()
-        });
-    });
-    readonly categoryBreadcrumbConfig = computed<BreadcrumbConfig | null>(() => {
-        const config = this.config();
-
-        if (!config?.tableConfig?.categoriesConfig) {
-            return null;
-        }
-
-        if (this.viewMode() === PageViewMode.Trash) {
-            return new BreadcrumbConfig({
-                items: [
-                    new BreadcrumbItem({ id: 0, label: `${config.prefix}.tabs.trash.label`, isTranslationKey: true })
-                ],
-                translate: false
-            });
-        }
-
-        return new BreadcrumbConfig({
-            items: [
-                new BreadcrumbItem({ id: 0, label: `${config.prefix}.categories.root`, isTranslationKey: true }),
-                ...this.categoryPath().map((entry, index) => new BreadcrumbItem({ id: index + 1, label: entry.label }))
-            ],
-            onItemClick: id => this.navigateBreadcrumb(id),
-            translate: false
-        });
-    });
     readonly viewToggleConfig = computed<TabsConfig | null>(() => {
         const config = this.config();
 
@@ -179,6 +174,12 @@ export class PageService {
             variant: TabsVariant.Segmented
         });
     });
+
+    private formModalReference?: BsModalRef<ModalFormDialogComponent>;
+
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly pageHttpService = inject(PageHttpService);
+    private readonly pageSearchService = inject(PageSearchService);
 
     constructor() {
         effect(() => {
