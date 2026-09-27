@@ -26,6 +26,7 @@
 
 -   Form module: `stretch` buttons share the full width in a row, and the sections no longer show a horizontal scroll.
 -   Tabs module: tabs whose labels widen after the first paint (translations that load late, a language switch, a web font) move into the overflow menu instead of spilling out of a narrow bar.
+-   Style guide: the login example scrolls with the library's thin scrollbar.
 
 ## [1.2.0] - 2026-09-26
 
