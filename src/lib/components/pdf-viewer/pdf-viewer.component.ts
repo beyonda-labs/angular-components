@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, linkedSign
 import { NgxExtendedPdfViewerModule, PageRenderedEvent, PdfLoadedEvent } from 'ngx-extended-pdf-viewer';
 
 import { PdfViewerConfig, PdfViewerHandle } from './models/pdf-viewer-config.model';
-import { PdfViewerRotation, PdfViewerZoom } from './types/pdf-viewer-value';
+import { PdfViewerRotation, PdfViewerZoom } from './models/pdf-viewer-value.model';
 
 const PERCENT = 100;
 

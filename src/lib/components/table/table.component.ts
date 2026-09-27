@@ -17,21 +17,6 @@ import { TextTableCell } from './models/table-cell.model';
 
 const SELECTION_COLUMN_WIDTH = '3.25rem';
 
-function buildRows<T>(config: TableConfig<T>): TableRow<T>[] {
-    return config.items.map(
-        item =>
-            new TableRow({
-                cells: config.loadRow(item),
-                content: item,
-                selected: config.isRowSelected?.(item) ?? false
-            })
-    );
-}
-
-function withSelection<T>(row: TableRow<T>, selected: boolean): TableRow<T> {
-    return new TableRow({ cells: row.cells, content: row.content, selected });
-}
-
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [TableRowComponent, TranslateModule],
@@ -103,4 +88,19 @@ export class TableComponent<T> {
             indexes
         );
     }
+}
+
+function buildRows<T>(config: TableConfig<T>): TableRow<T>[] {
+    return config.items.map(
+        item =>
+            new TableRow({
+                cells: config.loadRow(item),
+                content: item,
+                selected: config.isRowSelected?.(item) ?? false
+            })
+    );
+}
+
+function withSelection<T>(row: TableRow<T>, selected: boolean): TableRow<T> {
+    return new TableRow({ cells: row.cells, content: row.content, selected });
 }

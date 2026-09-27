@@ -227,7 +227,9 @@ export class PageService {
         this.pageSearch.update(search => ({ ...search, page: 1 }));
     }
 
-    setConfig(config: PageConfig): void {
+    setConfig<TValue>(typedConfig: PageConfig<TValue>): void {
+        const config = typedConfig as PageConfig;
+
         this.config.set(config);
 
         if (config.tableConfig?.order) {

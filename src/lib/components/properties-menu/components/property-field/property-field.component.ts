@@ -14,8 +14,8 @@ import { PropertySpacingField } from '../../models/fields/property-spacing-field
 import { PropertyTextField } from '../../models/fields/property-text-field.model';
 import { PropertyToggleField } from '../../models/fields/property-toggle-field.model';
 import { PropertyField } from '../../models/property-field.model';
+import { PropertyFieldType } from '../../models/property-field-type.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
-import { PropertyFieldType } from '../../types/property-field-type';
 import { resolvePropertyLabelKey } from '../../utils/property-i18n.util';
 import { PropertyAttachmentFieldComponent } from '../fields/property-attachment-field/property-attachment-field.component';
 import { PropertyColorFieldComponent } from '../fields/property-color-field/property-color-field.component';

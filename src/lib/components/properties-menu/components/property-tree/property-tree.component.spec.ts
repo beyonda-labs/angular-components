@@ -60,6 +60,33 @@ describe('PropertyTreeComponent', () => {
         expect(toggleSpy).toHaveBeenCalledWith('structure', 'structure-tree', 'page-1');
     });
 
+    it('collapses an expanded row with ArrowLeft and ignores ArrowRight on it', () => {
+        const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleTreeNode');
+
+        treeItems()[0].dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'ArrowRight' }));
+        expect(toggleSpy).not.toHaveBeenCalled();
+
+        treeItems()[0].dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'ArrowLeft' }));
+        expect(toggleSpy).toHaveBeenCalledWith('structure', 'structure-tree', 'page-1');
+    });
+
+    it('expands a collapsed row with ArrowRight', () => {
+        fixture.componentRef.setInput('nodes', [
+            new PropertyTreeNode({
+                id: 'page-1',
+                label: 'Page 1',
+                expanded: false,
+                children: [new PropertyTreeNode({ id: 'header', label: 'Header' })]
+            })
+        ]);
+        fixture.detectChanges();
+        const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleTreeNode');
+
+        treeItems()[0].dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'ArrowRight' }));
+
+        expect(toggleSpy).toHaveBeenCalledWith('structure', 'structure-tree', 'page-1');
+    });
+
     it('should not render the add-block button without a label', () => {
         expect(fixture.nativeElement.textContent).not.toContain('Add block');
     });

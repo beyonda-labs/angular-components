@@ -1,6 +1,6 @@
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 
-import { PropertyFieldType } from '../../types/property-field-type';
+import { PropertyFieldType } from '../property-field-type.model';
 import { PropertyInfoField } from './property-info-field.model';
 
 describe('PropertyInfoField', () => {

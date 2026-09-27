@@ -36,31 +36,6 @@ export interface SearchFieldOption {
     value: string;
 }
 
-export class SearchField {
-    key: string;
-    type: SearchFieldType;
-
-    options?: SearchFieldOption[];
-
-    constructor({ key, type, options }: SearchFieldParameters) {
-        this.key = key;
-        this.options = options;
-        this.type = type;
-    }
-
-    getOperators(): SearchFilterOperator[] {
-        return OPERATORS_BY_TYPE[this.type];
-    }
-}
-
-export interface SearchFieldParameters {
-    key: string;
-    type: SearchFieldType;
-
-    /** Only meaningful (and required in practice) for `SearchFieldType.Select` — the bounded set of choices. */
-    options?: SearchFieldOption[];
-}
-
 export class SearchConfig {
     fields: SearchField[];
     prefix: string;
@@ -78,6 +53,23 @@ export class SearchConfig {
     }
 }
 
+export class SearchField {
+    key: string;
+    type: SearchFieldType;
+
+    options?: SearchFieldOption[];
+
+    constructor({ key, type, options }: SearchFieldParameters) {
+        this.key = key;
+        this.options = options;
+        this.type = type;
+    }
+
+    getOperators(): SearchFilterOperator[] {
+        return OPERATORS_BY_TYPE[this.type];
+    }
+}
+
 export interface SearchConfigParameters {
     fields: SearchField[];
     prefix: string;
@@ -85,4 +77,12 @@ export interface SearchConfigParameters {
     mainField?: string;
     onFiltersChange?: (filters: SearchFilter[]) => void;
     placeholder?: string;
+}
+
+export interface SearchFieldParameters {
+    key: string;
+    type: SearchFieldType;
+
+    /** Only meaningful (and required in practice) for `SearchFieldType.Select` — the bounded set of choices. */
+    options?: SearchFieldOption[];
 }

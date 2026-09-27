@@ -1,5 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
 
+export interface CustomErrorResponse {
+    readonly errorCode: string;
+    readonly timestamp: string;
+
+    readonly message?: string;
+    readonly messageParameters?: Record<string, unknown>;
+}
+
 export interface HttpRequestOptions {
     handleError?: (error: HttpErrorResponse) => void;
     headers?: Record<string, string>;
@@ -12,12 +20,4 @@ export interface HttpRequestOptions {
 
 export interface UploadRequestOptions extends HttpRequestOptions {
     onProgress?: (progress: number) => void;
-}
-
-export interface CustomErrorResponse {
-    readonly errorCode: string;
-    readonly timestamp: string;
-
-    readonly message?: string;
-    readonly messageParameters?: Record<string, unknown>;
 }

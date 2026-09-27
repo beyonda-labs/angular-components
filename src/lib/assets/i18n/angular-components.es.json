@@ -191,7 +191,8 @@
             "sections": {
                 "main": "Principales",
                 "others": "Otros"
-            }
+            },
+            "submenu": "Submenú de {{label}}"
         },
         "loading": {
             "label": "Cargando"

@@ -1,14 +1,5 @@
-import { PropertyFieldType } from '../../types/property-field-type';
 import { PropertyField, PropertyFieldParameters } from '../property-field.model';
-
-export interface PropertyNumberArrayFieldParameters extends Omit<PropertyFieldParameters<number[]>, 'type'> {
-    entryDefaultValue?: number;
-    max?: number;
-    maxLength?: number;
-    min?: number;
-    minLength?: number;
-    step?: number;
-}
+import { PropertyFieldType } from '../property-field-type.model';
 
 export class PropertyNumberArrayField extends PropertyField<number[]> {
     entryDefaultValue: number;
@@ -37,4 +28,13 @@ export class PropertyNumberArrayField extends PropertyField<number[]> {
         this.minLength = minLength;
         this.step = step;
     }
+}
+
+export interface PropertyNumberArrayFieldParameters extends Omit<PropertyFieldParameters<number[]>, 'type'> {
+    entryDefaultValue?: number;
+    max?: number;
+    maxLength?: number;
+    min?: number;
+    minLength?: number;
+    step?: number;
 }

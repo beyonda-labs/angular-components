@@ -10,10 +10,10 @@ export type {
     PdfViewerRotation as BeyPdfViewerRotation,
     PdfViewerSource as BeyPdfViewerSource,
     PdfViewerZoom as BeyPdfViewerZoom
-} from './types/pdf-viewer-value';
+} from './models/pdf-viewer-value.model';
 export type {
     PdfViewerLoaded as BeyPdfViewerLoaded,
     PdfViewerLoadingFailed as BeyPdfViewerLoadingFailed,
     PdfViewerPageRendered as BeyPdfViewerPageRendered,
     PdfViewerRotationChange as BeyPdfViewerRotationChange
-} from './types/pdf-viewer-events';
+} from './models/pdf-viewer-events.model';

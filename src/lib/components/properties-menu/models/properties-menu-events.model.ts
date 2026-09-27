@@ -1,7 +1,7 @@
-import { PropertyListItem } from '../models/property-list-item.model';
-import { PropertyTreeNode } from '../models/property-tree-node.model';
-import { PropertyVariable } from '../models/property-variable.model';
 import { PropertyTreeDropPosition } from '../utils/property-tree-drop.util';
+import { PropertyListItem } from './property-list-item.model';
+import { PropertyTreeNode } from './property-tree-node.model';
+import { PropertyVariable } from './property-variable.model';
 
 export interface PropertyAttachmentUpload {
     fieldId: string;
@@ -32,13 +32,6 @@ export interface PropertyGroupToggle {
     tabId: string;
 }
 
-export interface PropertyListItemSelect {
-    groupId: string;
-    item: PropertyListItem;
-    itemId: string;
-    tabId: string;
-}
-
 export interface PropertyListItemAction {
     groupId: string;
     itemId: string;
@@ -48,6 +41,13 @@ export interface PropertyListItemAction {
 
 export interface PropertyListItemRemove {
     groupId: string;
+    itemId: string;
+    tabId: string;
+}
+
+export interface PropertyListItemSelect {
+    groupId: string;
+    item: PropertyListItem;
     itemId: string;
     tabId: string;
 }
@@ -68,15 +68,15 @@ export interface PropertyTreeAddBlock {
     tabId: string;
 }
 
+export interface PropertyTreeDragEnd {
+    groupId: string;
+    tabId: string;
+}
+
 export interface PropertyTreeDragStart {
     groupId: string;
     node: PropertyTreeNode;
     nodeId: string;
-    tabId: string;
-}
-
-export interface PropertyTreeDragEnd {
-    groupId: string;
     tabId: string;
 }
 

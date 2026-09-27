@@ -24,9 +24,9 @@ interface MoveTargetData {
 export interface PageActionsContext {
     config: PageConfig;
     getCurrentCategoryId: () => string | number | null;
+    onCategoryDeleted: () => void;
     onCategoryFormModalOpened: (reference: BsModalRef<ModalFormDialogComponent>) => void;
     onCategorySaved: () => void;
-    onCategoryDeleted: () => void;
     onDeleted: () => void;
     onFormModalOpened: (reference: BsModalRef<ModalFormDialogComponent>) => void;
     onMoved: () => void;
@@ -44,11 +44,12 @@ interface BulkActionOptions<T> {
 }
 
 interface SaveEntityOptions {
-    afterCreate?: (created: PageItem) => Observable<unknown> | undefined;
     create: (baseUrl: string, value: unknown, successToast: string) => Observable<unknown>;
     edit: (baseUrl: string, id: string | number, value: unknown, successToast: string) => Observable<unknown>;
     entitySuffix: string;
     onSaved: () => void;
+
+    afterCreate?: (created: PageItem) => Observable<unknown> | undefined;
 }
 
 @Injectable({

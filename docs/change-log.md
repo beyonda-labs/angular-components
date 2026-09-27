@@ -2,8 +2,15 @@
 
 ## [Unreleased]
 
+### Added
+
+-   Left menu module: a branch with its own `action` gets a submenu toggle over its chevron, reachable from the keyboard and named with `angular-components.left-menu.submenu`.
+-   Page module: `BeyPageConfig` and `BeyPageConfigParameters` take the form value type, so a typed `BeyPageFormConfig<T>` fits without `<unknown>`.
+-   Properties menu module: tree rows expand with `ArrowRight` and collapse with `ArrowLeft`.
+
 ### Changed
 
+-   `BeyCellType`, `BeyLoadingSize`, `BeyModalFormSize` and `BeyModalTreeSize` list their members alphabetically, so `Object.values` returns them in that order.
 -   Form module: the key segments derived from section and field identifiers are kebab-case (`valueString` reads `value-string.label`); translation files with camelCase segments must be renamed.
 -   App layout module: the menu and breadcrumb keys derived from action keys are kebab-case (`monthlyReports` reads `actions.monthly-reports.label`); translation files with camelCase segments must be renamed.
 -   Header module: the default keys derived from action keys are kebab-case (`saveDraft` reads `actions.save-draft.label`); translation files with camelCase segments must be renamed.

@@ -1,5 +1,22 @@
 import { AsyncValidatorFn, ValidatorFn } from '@angular/forms';
 
+export enum FormFieldValidatorType {
+    Custom,
+    Email,
+    MaxLength,
+    MinLength,
+    Pattern,
+    Url
+}
+
+export class FormFieldAsyncValidator {
+    asyncValidatorFn: AsyncValidatorFn;
+
+    constructor(asyncValidatorFunction: AsyncValidatorFn) {
+        this.asyncValidatorFn = asyncValidatorFunction;
+    }
+}
+
 export abstract class FormFieldValidator {
     type: FormFieldValidatorType;
 
@@ -11,19 +28,19 @@ export abstract class FormFieldValidator {
     }
 }
 
-interface FormFieldValidatorParameters {
-    type: FormFieldValidatorType;
+export class FormFieldCustomValidator extends FormFieldValidator {
+    validatorFn: ValidatorFn;
 
-    args?: number | RegExp | ValidatorFn;
+    constructor(validatorFunction: ValidatorFn) {
+        super({ type: FormFieldValidatorType.Custom, args: validatorFunction });
+        this.validatorFn = validatorFunction;
+    }
 }
 
-export enum FormFieldValidatorType {
-    Custom,
-    Email,
-    MaxLength,
-    MinLength,
-    Pattern,
-    Url
+export class FormFieldEmailValidator extends FormFieldValidator {
+    constructor() {
+        super({ type: FormFieldValidatorType.Email });
+    }
 }
 
 export class FormFieldLengthValidator extends FormFieldValidator {
@@ -38,31 +55,14 @@ export class FormFieldPatternValidator extends FormFieldValidator {
     }
 }
 
-export class FormFieldEmailValidator extends FormFieldValidator {
-    constructor() {
-        super({ type: FormFieldValidatorType.Email });
-    }
-}
-
 export class FormFieldUrlValidator extends FormFieldValidator {
     constructor() {
         super({ type: FormFieldValidatorType.Url });
     }
 }
 
-export class FormFieldCustomValidator extends FormFieldValidator {
-    validatorFn: ValidatorFn;
+interface FormFieldValidatorParameters {
+    type: FormFieldValidatorType;
 
-    constructor(validatorFunction: ValidatorFn) {
-        super({ type: FormFieldValidatorType.Custom, args: validatorFunction });
-        this.validatorFn = validatorFunction;
-    }
-}
-
-export class FormFieldAsyncValidator {
-    asyncValidatorFn: AsyncValidatorFn;
-
-    constructor(asyncValidatorFunction: AsyncValidatorFn) {
-        this.asyncValidatorFn = asyncValidatorFunction;
-    }
+    args?: number | RegExp | ValidatorFn;
 }

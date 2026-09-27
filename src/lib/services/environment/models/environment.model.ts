@@ -5,7 +5,7 @@ export const ENVIRONMENT_CONFIG = new InjectionToken<EnvironmentConfig>('ENVIRON
 export interface EnvironmentConfig {
     accessControlUrl: string;
     appName: string;
+    baseUrl: string;
     cookieName: string;
     webApiPath: string;
-    baseUrl: string;
 }

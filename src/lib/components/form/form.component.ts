@@ -16,8 +16,9 @@ import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
 import { FormSectionComponent } from './components/section/section.component';
 import { FormButton, FormButtonType, FormConfig, FormHandle, FormSection } from './models/form.model';
-import { FormFieldOption, FormValue, resolveRule } from './models/form-field.model';
+import { FormFieldOption, FormValue } from './models/form-field.model';
 import { FORM_HOST } from './models/form-host.model';
+import { resolveRule } from './models/form-rule-resolution';
 import { FormService } from './services/form.service';
 
 const NEXT_LABEL = 'angular-components.form.steps.next';
@@ -39,16 +40,6 @@ interface FormState {
     isDirty: boolean;
     isValid: boolean;
     value: FormValue;
-}
-
-export function fieldStateKey(sectionKey: string, fieldKey: string): string {
-    return `${sectionKey}.${fieldKey}`;
-}
-
-function noop(): void {}
-
-function readState(formGroup: FormGroup): FormState {
-    return { isDirty: formGroup.dirty, isValid: formGroup.valid, value: formGroup.getRawValue() as FormValue };
 }
 
 @Component({
@@ -282,4 +273,14 @@ export class FormComponent<TValue = unknown> {
             }
         }
     }
+}
+
+export function fieldStateKey(sectionKey: string, fieldKey: string): string {
+    return `${sectionKey}.${fieldKey}`;
+}
+
+function noop(): void {}
+
+function readState(formGroup: FormGroup): FormState {
+    return { isDirty: formGroup.dirty, isValid: formGroup.valid, value: formGroup.getRawValue() as FormValue };
 }

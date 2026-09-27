@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertySpacingField } from '../../../models/fields/property-spacing-field.model';
-import { PropertySpacingValue } from '../../../types/property-value';
+import { PropertySpacingValue } from '../../../models/property-value.model';
 
 const EMPTY_SPACING: PropertySpacingValue = { bottom: 0, left: 0, right: 0, top: 0 };
 const SIDES: (keyof PropertySpacingValue)[] = ['top', 'right', 'bottom', 'left'];

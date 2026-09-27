@@ -1,5 +1,10 @@
 import { SearchFilter } from '../../search/models/search-filter.model';
 
+export enum SearchSortDirection {
+    Asc = 'asc',
+    Desc = 'desc'
+}
+
 export interface PageSearch {
     filters: SearchFilter[];
     page: number;
@@ -8,11 +13,6 @@ export interface PageSearch {
     sort?: SearchSort;
     text?: string;
     total?: number;
-}
-
-export enum SearchSortDirection {
-    Asc = 'asc',
-    Desc = 'desc'
 }
 
 export interface SearchSort {

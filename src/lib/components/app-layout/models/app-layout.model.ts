@@ -4,6 +4,18 @@ import { BreadcrumbItem } from '../../breadcrumb/models/breadcrumb.model';
 import { FooterConfig } from '../../footer/models/footer.model';
 import { LeftMenuAction, LeftMenuTitle, LeftMenuUserInfo } from '../../left-menu/models/left-menu.model';
 
+export class AppLayoutBottomAction extends LeftMenuAction {
+    constructor({ action, icon, key }: AppLayoutBottomActionParameters) {
+        super({ action, key, icon });
+    }
+}
+
+export class AppLayoutBreadcrumbItem extends BreadcrumbItem {
+    constructor({ icon, id, label }: AppLayoutBreadcrumbItemParameters) {
+        super({ icon, id, label });
+    }
+}
+
 export class AppLayoutConfig {
     bottomActions: AppLayoutBottomAction[];
     breadcrumb: AppLayoutBreadcrumbItem[];
@@ -58,6 +70,34 @@ export class AppLayoutConfig {
     }
 }
 
+export class AppLayoutTopAction extends LeftMenuAction {
+    constructor({
+        action,
+        active = false,
+        disabled = false,
+        icon,
+        key,
+        route,
+        subActions = []
+    }: AppLayoutTopActionParameters) {
+        super({ action, active, disabled, icon, key, route, subActions });
+    }
+}
+
+export interface AppLayoutBottomActionParameters {
+    icon: IconDefinition;
+    key: string;
+
+    action?: () => void;
+}
+
+export interface AppLayoutBreadcrumbItemParameters {
+    id: number;
+    label: string;
+
+    icon?: IconDefinition;
+}
+
 export interface AppLayoutConfigParameters {
     iconSrc: string;
     productName: string;
@@ -78,53 +118,13 @@ export interface AppLayoutConfigParameters {
     userInfo?: LeftMenuUserInfo;
 }
 
-export class AppLayoutTopAction extends LeftMenuAction {
-    constructor({
-        action,
-        active = false,
-        disabled = false,
-        icon,
-        key,
-        route,
-        subActions = []
-    }: AppLayoutTopActionParameters) {
-        super({ action, active, disabled, icon, key, route, subActions });
-    }
-}
-
 export interface AppLayoutTopActionParameters {
-    key: string;
     icon: IconDefinition;
+    key: string;
 
     action?: () => void;
     active?: boolean;
     disabled?: boolean;
     route?: string;
     subActions?: AppLayoutTopAction[];
-}
-
-export class AppLayoutBottomAction extends LeftMenuAction {
-    constructor({ action, icon, key }: AppLayoutBottomActionParameters) {
-        super({ action, key, icon });
-    }
-}
-
-export interface AppLayoutBottomActionParameters {
-    icon: IconDefinition;
-    key: string;
-
-    action?: () => void;
-}
-
-export class AppLayoutBreadcrumbItem extends BreadcrumbItem {
-    constructor({ icon, id, label }: AppLayoutBreadcrumbItemParameters) {
-        super({ icon, id, label });
-    }
-}
-
-export interface AppLayoutBreadcrumbItemParameters {
-    id: number;
-    label: string;
-
-    icon?: IconDefinition;
 }

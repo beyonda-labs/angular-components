@@ -5,20 +5,6 @@ export enum PropertyGroupVariant {
     SECONDARY = 'secondary'
 }
 
-export interface PropertyGroupParameters {
-    id: string;
-
-    content?: PropertyGroupContent;
-    disabled?: boolean;
-    expanded?: boolean;
-    hidden?: boolean;
-    label?: string;
-    order?: number;
-    removable?: boolean;
-    showHeader?: boolean;
-    variant?: PropertyGroupVariant;
-}
-
 export class PropertyGroup {
     content: PropertyGroupContent;
     disabled: boolean;
@@ -54,4 +40,18 @@ export class PropertyGroup {
         this.showHeader = showHeader;
         this.variant = variant;
     }
+}
+
+export interface PropertyGroupParameters {
+    id: string;
+
+    content?: PropertyGroupContent;
+    disabled?: boolean;
+    expanded?: boolean;
+    hidden?: boolean;
+    label?: string;
+    order?: number;
+    removable?: boolean;
+    showHeader?: boolean;
+    variant?: PropertyGroupVariant;
 }

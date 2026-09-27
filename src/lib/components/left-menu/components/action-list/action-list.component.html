@@ -14,7 +14,7 @@
                 placement="right"
                 type="button"
                 [attr.aria-current]="isActionActive(action) ? 'page' : null"
-                [attr.aria-expanded]="hasSubActions(action) ? isSubmenuOpen(actionPath, forceExpanded) : null"
+                [attr.aria-expanded]="getExpandedState(action, actionPath, forceExpanded)"
                 [attr.aria-label]="isInlineExpanded(forceExpanded) ? null : (getLabel(action) | translate)"
                 [class.has-active-descendant]="hasSubmenuSelection(action)"
                 [class.has-children]="hasSubActions(action)"
@@ -48,6 +48,18 @@
                     }
                 }
             </button>
+
+            @if (hasSubmenuToggle(action, forceExpanded)) {
+                <button
+                    class="bey-left-menu-action-toggle"
+                    type="button"
+                    [attr.aria-expanded]="isSubmenuOpen(actionPath, forceExpanded)"
+                    [attr.aria-label]="
+                        'angular-components.left-menu.submenu' | translate: { label: (getLabel(action) | translate) }
+                    "
+                    (click)="onSubmenuToggleClick(actionPath, forceExpanded)"
+                ></button>
+            }
 
             @if (shouldShowSubmenu(action, actionPath, forceExpanded)) {
                 <div class="bey-left-menu-subactions">

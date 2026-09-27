@@ -1,4 +1,4 @@
-import { PropertyFieldType } from '../../types/property-field-type';
+import { PropertyFieldType } from '../property-field-type.model';
 import { PropertyOption } from '../property-option.model';
 import { PropertySelectField } from './property-select-field.model';
 

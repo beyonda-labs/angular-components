@@ -1,4 +1,4 @@
-import { PropertyFieldType } from '../../types/property-field-type';
+import { PropertyFieldType } from '../property-field-type.model';
 import { PropertyAttachmentField, PropertyAttachmentOption } from './property-attachment-field.model';
 
 const buildField = (value?: string): PropertyAttachmentField =>

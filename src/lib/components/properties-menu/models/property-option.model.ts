@@ -1,13 +1,5 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
-export interface PropertyOptionParameters<T = unknown> {
-    value: T;
-
-    disabled?: boolean;
-    icon?: IconDefinition;
-    label?: string;
-}
-
 export class PropertyOption<T = unknown> {
     disabled: boolean;
     label: string;
@@ -21,4 +13,12 @@ export class PropertyOption<T = unknown> {
         this.label = label;
         this.value = value;
     }
+}
+
+export interface PropertyOptionParameters<T = unknown> {
+    value: T;
+
+    disabled?: boolean;
+    icon?: IconDefinition;
+    label?: string;
 }
