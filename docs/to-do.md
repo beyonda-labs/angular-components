@@ -173,9 +173,9 @@ Snapshots per branch, `latest` from `main`, as described in the README.
 
 ### After 1.2.0
 
--   [ ] `check-translations`: a key segment that is not kebab-case is still only a warning; make it an error, as the
-        demo's copy already does. Keep the translation scripts identical across repos (library, demo, products),
-        possibly from a shared scripts repo
+-   [x] `check-translations`: a key segment that is not kebab-case fails, and the translation scripts are the same
+        in every repo: `bey-check-translations`, `bey-sort-translations` and `bey-merge-translations` from
+        `@beyonda-labs/base-config`
 -   [ ] `BeyPageConfig` generic over the form value, so a typed `BeyPageFormConfig<T>` fits without a cast
 -   [ ] `*.model.ts` holds contracts and definitions only, as `rules/model-library/model.md` sets for model libraries
         and as it will apply to every repo: move the functions of `form/models/form-field.model.ts` to function modules with their specs, forbid
@@ -186,7 +186,9 @@ Snapshots per branch, `latest` from `main`, as described in the README.
         private state, injected dependencies, constructor, lifecycle hooks, methods alphabetical) and
         `sort-modules` for enums, interfaces and classes in model files, `sort-interfaces` for required then optional
         members and `sort-enums` for enum members, with autofix on save. Same config in every repo. Before
-        `sort-enums`, check that no enum has implicit numeric values and that no `Object.values` depends on the order
+        `sort-enums`, check that no enum has implicit numeric values and that no `Object.values` depends on the order.
+        base-config already ships both blocks: adopting them is removing `eslint.sort-declarations` and
+        `eslint.model-files` from `skip.rules` in `beyonda.config.json` and fixing what they report
 
 ---
 
