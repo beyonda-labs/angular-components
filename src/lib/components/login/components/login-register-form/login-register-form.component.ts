@@ -21,39 +21,6 @@ import { LoginSessionService } from '../../services/login-session.service';
 
 const SECTION_PREFIX = 'register';
 
-function buildField(field: RegisterField): FormField {
-    const base = { key: field.name, isRequired: field.required };
-
-    switch (field.type) {
-        case 'email':
-            return new FormTextField({ ...base, validators: [new FormFieldEmailValidator()] });
-        case 'password':
-            return new FormPasswordField(base);
-        case 'number':
-            return new FormNumberField(base);
-        case 'date':
-            return new FormDateField(base);
-        default:
-            return new FormTextField(base);
-    }
-}
-
-function groupByStep(fields: RegisterField[]): RegisterField[][] {
-    const steps = new Map<number, RegisterField[]>();
-
-    for (const field of fields) {
-        const step = field.step ?? 1;
-
-        steps.set(step, [...(steps.get(step) ?? []), field]);
-    }
-
-    return [...steps.keys()].sort((a, b) => a - b).map(step => steps.get(step) ?? []);
-}
-
-function sectionKey(index: number): string {
-    return `${SECTION_PREFIX}-${index + 1}`;
-}
-
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FormComponent],
@@ -103,4 +70,37 @@ export class LoginRegisterFormComponent {
 
         this.loginHttpService.register(values).subscribe(response => this.loginSessionService.open(response));
     }
+}
+
+function buildField(field: RegisterField): FormField {
+    const base = { key: field.name, isRequired: field.required };
+
+    switch (field.type) {
+        case 'email':
+            return new FormTextField({ ...base, validators: [new FormFieldEmailValidator()] });
+        case 'password':
+            return new FormPasswordField(base);
+        case 'number':
+            return new FormNumberField(base);
+        case 'date':
+            return new FormDateField(base);
+        default:
+            return new FormTextField(base);
+    }
+}
+
+function groupByStep(fields: RegisterField[]): RegisterField[][] {
+    const steps = new Map<number, RegisterField[]>();
+
+    for (const field of fields) {
+        const step = field.step ?? 1;
+
+        steps.set(step, [...(steps.get(step) ?? []), field]);
+    }
+
+    return [...steps.keys()].sort((a, b) => a - b).map(step => steps.get(step) ?? []);
+}
+
+function sectionKey(index: number): string {
+    return `${SECTION_PREFIX}-${index + 1}`;
 }

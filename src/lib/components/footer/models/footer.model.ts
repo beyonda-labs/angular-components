@@ -1,12 +1,3 @@
-export interface FooterConfigParameters {
-    iconSrc: string;
-    productName: string;
-
-    orgName?: string;
-    privacyUrl?: string;
-    termsUrl?: string;
-}
-
 export class FooterConfig {
     iconSrc: string;
     orgName: string;
@@ -22,4 +13,13 @@ export class FooterConfig {
         this.productName = productName;
         this.termsUrl = termsUrl;
     }
+}
+
+export interface FooterConfigParameters {
+    iconSrc: string;
+    productName: string;
+
+    orgName?: string;
+    privacyUrl?: string;
+    termsUrl?: string;
 }

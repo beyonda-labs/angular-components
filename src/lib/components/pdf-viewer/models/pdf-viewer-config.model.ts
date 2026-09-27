@@ -3,9 +3,9 @@ import {
     PdfViewerLoadingFailed,
     PdfViewerPageRendered,
     PdfViewerRotationChange
-} from '../types/pdf-viewer-events';
-import { PdfViewerRotation, PdfViewerSource, PdfViewerZoom } from '../types/pdf-viewer-value';
+} from './pdf-viewer-events.model';
 import { PdfViewerToolbarButtons } from './pdf-viewer-toolbar-buttons.model';
+import { PdfViewerRotation, PdfViewerSource, PdfViewerZoom } from './pdf-viewer-value.model';
 
 /** What the consumer can do to the live viewer, delivered through `onReady`. */
 export interface PdfViewerHandle {

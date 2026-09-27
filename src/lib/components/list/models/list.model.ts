@@ -1,9 +1,14 @@
+export interface ListItemContext<TItem = unknown> {
+    $implicit: TItem;
+    index: number;
+}
+
 export class ListConfig<TItem = unknown> {
+    bare: boolean;
     gap: string;
     items: TItem[];
     prefix: string;
 
-    bare: boolean;
     emptyLabel?: string;
     getItemKey?: (item: TItem, index: number) => string | number;
     onItemClick?: (item: TItem, index: number) => void;
@@ -36,9 +41,4 @@ export interface ListConfigParameters<TItem = unknown> {
     gap?: string;
     getItemKey?: (item: TItem, index: number) => string | number;
     onItemClick?: (item: TItem, index: number) => void;
-}
-
-export interface ListItemContext<TItem = unknown> {
-    $implicit: TItem;
-    index: number;
 }

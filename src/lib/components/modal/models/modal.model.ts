@@ -5,15 +5,6 @@ export enum ModalType {
     Warning = 'warning'
 }
 
-export interface NotificationModalConfig {
-    message: string;
-    title: string;
-
-    closeLabel?: string;
-    closeOnBackdrop?: boolean;
-    messageParameters?: Record<string, unknown>;
-}
-
 export interface ConfirmationModalConfig {
     message: string;
     title: string;
@@ -33,4 +24,13 @@ export interface InternalModalConfig {
     closeOnBackdrop?: boolean;
     messageParameters?: Record<string, unknown>;
     secondaryActionLabel?: string;
+}
+
+export interface NotificationModalConfig {
+    message: string;
+    title: string;
+
+    closeLabel?: string;
+    closeOnBackdrop?: boolean;
+    messageParameters?: Record<string, unknown>;
 }

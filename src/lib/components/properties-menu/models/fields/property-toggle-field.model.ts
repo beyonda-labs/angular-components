@@ -1,5 +1,5 @@
-import { PropertyFieldType } from '../../types/property-field-type';
 import { PropertyField, PropertyFieldParameters } from '../property-field.model';
+import { PropertyFieldType } from '../property-field-type.model';
 
 export type PropertyToggleFieldParameters = Omit<PropertyFieldParameters<boolean>, 'type'>;
 

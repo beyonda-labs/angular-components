@@ -40,6 +40,17 @@ export class PageTableConfig {
     }
 }
 
+export class PageTableSearchConfig {
+    fields: SearchField[];
+
+    mainField?: string;
+
+    constructor({ fields, mainField }: PageTableSearchConfigParameters) {
+        this.fields = fields;
+        this.mainField = mainField;
+    }
+}
+
 export interface PageTableConfigParameters {
     columns: TableColumn[];
     loadRow: (item: PageItem, viewMode: PageViewMode) => TableCell[];
@@ -51,17 +62,6 @@ export interface PageTableConfigParameters {
     order?: SearchSort;
     search?: PageTableSearchConfig;
     showPagination?: boolean;
-}
-
-export class PageTableSearchConfig {
-    fields: SearchField[];
-
-    mainField?: string;
-
-    constructor({ fields, mainField }: PageTableSearchConfigParameters) {
-        this.fields = fields;
-        this.mainField = mainField;
-    }
 }
 
 export interface PageTableSearchConfigParameters {

@@ -1,9 +1,5 @@
-import { PropertyFieldType } from '../../types/property-field-type';
 import { PropertyField, PropertyFieldParameters } from '../property-field.model';
-
-export interface PropertyColorFieldParameters extends Omit<PropertyFieldParameters<string>, 'type'> {
-    readonly?: boolean;
-}
+import { PropertyFieldType } from '../property-field-type.model';
 
 export class PropertyColorField extends PropertyField<string> {
     readonly: boolean;
@@ -13,4 +9,8 @@ export class PropertyColorField extends PropertyField<string> {
 
         this.readonly = readonly;
     }
+}
+
+export interface PropertyColorFieldParameters extends Omit<PropertyFieldParameters<string>, 'type'> {
+    readonly?: boolean;
 }

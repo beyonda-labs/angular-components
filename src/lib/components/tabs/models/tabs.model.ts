@@ -5,6 +5,23 @@ export enum TabsVariant {
     Underline = 'underline'
 }
 
+export class Tab {
+    isDisabled: boolean;
+    key: string;
+    label: string;
+    tooltip: string;
+
+    icon?: IconDefinition;
+
+    constructor({ key, icon, isDisabled = false, label = `${key}.label`, tooltip = '' }: TabParameters) {
+        this.icon = icon;
+        this.isDisabled = isDisabled;
+        this.key = key;
+        this.label = label;
+        this.tooltip = tooltip;
+    }
+}
+
 export class TabsConfig {
     activeTab: string;
     prefix: string;
@@ -22,32 +39,6 @@ export class TabsConfig {
     }
 }
 
-export interface TabsConfigParameters {
-    prefix: string;
-    tabs: Tab[];
-
-    activeTab?: string;
-    onTabChange?: (key: string) => void;
-    variant?: TabsVariant;
-}
-
-export class Tab {
-    key: string;
-    label: string;
-    tooltip: string;
-    isDisabled: boolean;
-
-    icon?: IconDefinition;
-
-    constructor({ key, icon, isDisabled = false, label = `${key}.label`, tooltip = '' }: TabParameters) {
-        this.icon = icon;
-        this.isDisabled = isDisabled;
-        this.key = key;
-        this.label = label;
-        this.tooltip = tooltip;
-    }
-}
-
 export interface TabParameters {
     key: string;
 
@@ -55,4 +46,13 @@ export interface TabParameters {
     isDisabled?: boolean;
     label?: string;
     tooltip?: string;
+}
+
+export interface TabsConfigParameters {
+    prefix: string;
+    tabs: Tab[];
+
+    activeTab?: string;
+    onTabChange?: (key: string) => void;
+    variant?: TabsVariant;
 }

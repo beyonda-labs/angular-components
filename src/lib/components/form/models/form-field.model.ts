@@ -1,14 +1,26 @@
 import { FormFieldAsyncValidator, FormFieldValidator } from './form-field-validator.model';
 
-export type FormFieldColumn = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+export enum FormFieldType {
+    Autocomplete = 'autocomplete',
+    Checkbox = 'checkbox',
+    Chips = 'chips',
+    Date = 'date',
+    File = 'file',
+    Info = 'info',
+    Number = 'number',
+    Password = 'password',
+    Radio = 'radio',
+    Select = 'select',
+    Text = 'text',
+    Textarea = 'textarea',
+    TextVariable = 'textVariable'
+}
 
-export type FormValue = Record<string, Record<string, unknown>>;
+export type FormFieldColumn = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 
 export type FormRule<T> = T | ((value: FormValue) => T);
 
-export function resolveRule<T>(rule: FormRule<T>, value: FormValue): T {
-    return typeof rule === 'function' ? (rule as (current: FormValue) => T)(value) : rule;
-}
+export type FormValue = Record<string, Record<string, unknown>>;
 
 export interface FormFieldOption {
     label: string;
@@ -76,20 +88,4 @@ export interface FormFieldBaseParameters {
 
 export interface FormFieldParameters extends FormFieldBaseParameters {
     type: FormFieldType;
-}
-
-export enum FormFieldType {
-    Autocomplete = 'autocomplete',
-    Checkbox = 'checkbox',
-    Chips = 'chips',
-    Date = 'date',
-    File = 'file',
-    Info = 'info',
-    Number = 'number',
-    Password = 'password',
-    Radio = 'radio',
-    Select = 'select',
-    Text = 'text',
-    Textarea = 'textarea',
-    TextVariable = 'textVariable'
 }

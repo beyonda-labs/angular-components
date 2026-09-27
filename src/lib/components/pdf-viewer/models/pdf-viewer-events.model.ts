@@ -1,4 +1,4 @@
-import { PdfViewerRotation } from './pdf-viewer-value';
+import { PdfViewerRotation } from './pdf-viewer-value.model';
 
 export interface PdfViewerLoaded {
     pagesCount: number;

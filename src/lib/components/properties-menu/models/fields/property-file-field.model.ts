@@ -1,11 +1,5 @@
-import { PropertyFieldType } from '../../types/property-field-type';
 import { PropertyField, PropertyFieldParameters } from '../property-field.model';
-
-export interface PropertyFileFieldParameters extends Omit<PropertyFieldParameters<string>, 'type'> {
-    accept?: string;
-    fileName?: string;
-    maxSizeBytes?: number;
-}
+import { PropertyFieldType } from '../property-field-type.model';
 
 export class PropertyFileField extends PropertyField<string> {
     accept?: string;
@@ -19,4 +13,10 @@ export class PropertyFileField extends PropertyField<string> {
         this.fileName = fileName;
         this.maxSizeBytes = maxSizeBytes;
     }
+}
+
+export interface PropertyFileFieldParameters extends Omit<PropertyFieldParameters<string>, 'type'> {
+    accept?: string;
+    fileName?: string;
+    maxSizeBytes?: number;
 }

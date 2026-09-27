@@ -3,18 +3,6 @@ import { IconDefinition } from '@fortawesome/angular-fontawesome';
 import { HeaderActionType } from '../../header/models/header.model';
 import { PageItem } from './page-item.model';
 
-export enum PageStandardAction {
-    Create = 'create',
-    CreateCategory = 'create-category',
-    Delete = 'delete',
-    DeleteCategory = 'delete-category',
-    DeleteTrashItem = 'delete-trash-item',
-    Edit = 'edit',
-    EditCategory = 'edit-category',
-    Move = 'move',
-    RestoreTrashItem = 'restore-trash-item'
-}
-
 export enum PageActionScope {
     Global = 'global',
     Group = 'group',
@@ -25,6 +13,18 @@ export enum PageActionZone {
     Left = 'left',
     Menu = 'menu',
     Right = 'right'
+}
+
+export enum PageStandardAction {
+    Create = 'create',
+    CreateCategory = 'create-category',
+    Delete = 'delete',
+    DeleteCategory = 'delete-category',
+    DeleteTrashItem = 'delete-trash-item',
+    Edit = 'edit',
+    EditCategory = 'edit-category',
+    Move = 'move',
+    RestoreTrashItem = 'restore-trash-item'
 }
 
 export class PageAction {
@@ -47,7 +47,7 @@ export class PageAction {
         this.scope = scope;
         this.subActions = subActions;
         this.tooltip = tooltip;
-        this.type = type ?? getTypeByZone(zone);
+        this.type = type ?? DEFAULT_ACTION_TYPES[zone];
         this.zone = zone;
     }
 }
@@ -65,10 +65,8 @@ export interface PageActionParameters {
     type?: HeaderActionType;
 }
 
-function getTypeByZone(zone: PageActionZone): HeaderActionType {
-    if (zone === PageActionZone.Right) {
-        return HeaderActionType.SecondaryButton;
-    }
-
-    return HeaderActionType.Text;
-}
+const DEFAULT_ACTION_TYPES: Record<PageActionZone, HeaderActionType> = {
+    [PageActionZone.Left]: HeaderActionType.Text,
+    [PageActionZone.Menu]: HeaderActionType.Text,
+    [PageActionZone.Right]: HeaderActionType.SecondaryButton
+};

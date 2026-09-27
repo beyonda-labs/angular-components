@@ -1,5 +1,11 @@
 import { FormField, FormRule } from './form-field.model';
 
+export enum FormButtonType {
+    Cancel = 'cancel',
+    Secondary = 'secondary',
+    Submit = 'submit'
+}
+
 export type FormButtonLayout = 'end' | 'stretch';
 
 export interface FormHandle<TValue = unknown> {
@@ -10,6 +16,23 @@ export interface FormHandle<TValue = unknown> {
     requestClose(): void;
     reset(): void;
     value(): TValue;
+}
+
+export class FormButton {
+    isHidden: boolean;
+    label: string;
+    tooltip: string;
+    type: FormButtonType;
+
+    action?: (handle: FormHandle) => void;
+
+    constructor({ label, type, action, isHidden = false, tooltip = '' }: FormButtonParameters) {
+        this.action = action;
+        this.isHidden = isHidden;
+        this.label = label;
+        this.tooltip = tooltip;
+        this.type = type;
+    }
 }
 
 export class FormConfig<TValue = unknown> {
@@ -57,20 +80,14 @@ export class FormConfig<TValue = unknown> {
     }
 }
 
-export interface FormConfigParameters<TValue = unknown> {
-    prefix: string;
-    sections: FormSection[];
+export class FormRow {
+    alignment: 'start' | 'end';
+    fields: FormField[];
 
-    allowSubmitWithoutChanges?: boolean;
-    buttonLayout?: FormButtonLayout;
-    buttons?: FormButton[];
-    initialValue?: TValue;
-    onCancel?: () => void;
-    onReady?: (handle: FormHandle<TValue>) => void;
-    onStepChange?: (key: string) => void;
-    onSubmit?: (value: TValue, handle: FormHandle<TValue>) => void;
-    onValueChange?: (value: TValue, handle: FormHandle<TValue>) => void;
-    steps?: FormStep[];
+    constructor({ fields, alignment = 'start' }: FormRowParameters) {
+        this.alignment = alignment;
+        this.fields = fields;
+    }
 }
 
 export class FormSection {
@@ -99,32 +116,6 @@ export class FormSection {
     }
 }
 
-export interface FormSectionParameters {
-    key: string;
-    rows: FormRow[];
-
-    isHidden?: FormRule<boolean>;
-    isTitleVisible?: boolean;
-    isTooltipVisible?: boolean;
-    prefix?: string;
-}
-
-export class FormRow {
-    alignment: 'start' | 'end';
-    fields: FormField[];
-
-    constructor({ fields, alignment = 'start' }: FormRowParameters) {
-        this.alignment = alignment;
-        this.fields = fields;
-    }
-}
-
-export interface FormRowParameters {
-    fields: FormField[];
-
-    alignment?: 'start' | 'end';
-}
-
 export class FormStep {
     key: string;
     sections: string[];
@@ -132,28 +123,6 @@ export class FormStep {
     constructor({ key, sections }: FormStepParameters) {
         this.key = key;
         this.sections = sections;
-    }
-}
-
-export interface FormStepParameters {
-    key: string;
-    sections: string[];
-}
-
-export class FormButton {
-    isHidden: boolean;
-    label: string;
-    tooltip: string;
-    type: FormButtonType;
-
-    action?: (handle: FormHandle) => void;
-
-    constructor({ label, type, action, isHidden = false, tooltip = '' }: FormButtonParameters) {
-        this.action = action;
-        this.isHidden = isHidden;
-        this.label = label;
-        this.tooltip = tooltip;
-        this.type = type;
     }
 }
 
@@ -166,8 +135,39 @@ export interface FormButtonParameters {
     tooltip?: string;
 }
 
-export enum FormButtonType {
-    Cancel = 'cancel',
-    Secondary = 'secondary',
-    Submit = 'submit'
+export interface FormConfigParameters<TValue = unknown> {
+    prefix: string;
+    sections: FormSection[];
+
+    allowSubmitWithoutChanges?: boolean;
+    buttonLayout?: FormButtonLayout;
+    buttons?: FormButton[];
+    initialValue?: TValue;
+    onCancel?: () => void;
+    onReady?: (handle: FormHandle<TValue>) => void;
+    onStepChange?: (key: string) => void;
+    onSubmit?: (value: TValue, handle: FormHandle<TValue>) => void;
+    onValueChange?: (value: TValue, handle: FormHandle<TValue>) => void;
+    steps?: FormStep[];
+}
+
+export interface FormRowParameters {
+    fields: FormField[];
+
+    alignment?: 'start' | 'end';
+}
+
+export interface FormSectionParameters {
+    key: string;
+    rows: FormRow[];
+
+    isHidden?: FormRule<boolean>;
+    isTitleVisible?: boolean;
+    isTooltipVisible?: boolean;
+    prefix?: string;
+}
+
+export interface FormStepParameters {
+    key: string;
+    sections: string[];
 }

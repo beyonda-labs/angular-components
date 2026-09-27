@@ -3,26 +3,6 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { SESSION_CONFIG, SessionUser } from './models/session.model';
 import { StorageService } from './storage.service';
 
-function decodeJwtUser(token: string): SessionUser | null {
-    try {
-        const base64 = token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/');
-        const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-        const payload = JSON.parse(new TextDecoder().decode(bytes)) as Record<string, unknown>;
-        const allowedPaths = (payload['allowedPaths'] as string[] | undefined) ?? [];
-
-        return {
-            email: payload['email'] as string,
-            allowedPaths,
-            redirectPath: allowedPaths[0] ?? '',
-            roles: (payload['roles'] as string[] | undefined) ?? [],
-            name: payload['name'] as string | undefined,
-            surname: payload['surname'] as string | undefined
-        };
-    } catch {
-        return null;
-    }
-}
-
 @Injectable({
     providedIn: 'root'
 })
@@ -75,5 +55,25 @@ export class SessionService {
     setUser(user: SessionUser): void {
         this.storageService.set(this.config.userKey, user);
         this._user.set(user);
+    }
+}
+
+function decodeJwtUser(token: string): SessionUser | null {
+    try {
+        const base64 = token.split('.')[1].replaceAll('-', '+').replaceAll('_', '/');
+        const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+        const payload = JSON.parse(new TextDecoder().decode(bytes)) as Record<string, unknown>;
+        const allowedPaths = (payload['allowedPaths'] as string[] | undefined) ?? [];
+
+        return {
+            email: payload['email'] as string,
+            allowedPaths,
+            redirectPath: allowedPaths[0] ?? '',
+            roles: (payload['roles'] as string[] | undefined) ?? [],
+            name: payload['name'] as string | undefined,
+            surname: payload['surname'] as string | undefined
+        };
+    } catch {
+        return null;
     }
 }

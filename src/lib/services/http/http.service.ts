@@ -106,6 +106,7 @@ export class HttpService {
     private resolveErrorMessage(error: HttpErrorResponse): {
         message: string;
         title: string;
+
         messageParameters?: Record<string, unknown>;
     } {
         const body = error.error as CustomErrorResponse | null,

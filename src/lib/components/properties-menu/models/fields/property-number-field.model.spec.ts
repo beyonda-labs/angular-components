@@ -1,4 +1,4 @@
-import { PropertyFieldType } from '../../types/property-field-type';
+import { PropertyFieldType } from '../property-field-type.model';
 import { PropertyNumberField } from './property-number-field.model';
 
 describe('PropertyNumberField', () => {

@@ -1,11 +1,5 @@
-import { PropertyFieldType } from '../../types/property-field-type';
 import { PropertyField, PropertyFieldParameters } from '../property-field.model';
-
-export interface PropertyTextFieldParameters extends Omit<PropertyFieldParameters<string>, 'type'> {
-    multiline?: boolean;
-    placeholder?: string;
-    readonly?: boolean;
-}
+import { PropertyFieldType } from '../property-field-type.model';
 
 export class PropertyTextField extends PropertyField<string> {
     multiline: boolean;
@@ -19,4 +13,10 @@ export class PropertyTextField extends PropertyField<string> {
         this.placeholder = placeholder;
         this.readonly = readonly;
     }
+}
+
+export interface PropertyTextFieldParameters extends Omit<PropertyFieldParameters<string>, 'type'> {
+    multiline?: boolean;
+    placeholder?: string;
+    readonly?: boolean;
 }

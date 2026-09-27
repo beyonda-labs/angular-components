@@ -1,21 +1,5 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
-export interface PropertyTreeNodeParameters {
-    id: string;
-
-    acceptsDrop?: boolean;
-    active?: boolean;
-    children?: PropertyTreeNode[];
-    disabled?: boolean;
-    draggable?: boolean;
-    dropDisabled?: boolean;
-    expanded?: boolean;
-    hidden?: boolean;
-    icon?: IconDefinition;
-    label?: string;
-    metadata?: Record<string, unknown>;
-}
-
 export class PropertyTreeNode {
     acceptsDrop: boolean;
     active: boolean;
@@ -58,4 +42,20 @@ export class PropertyTreeNode {
         this.label = label;
         this.metadata = metadata;
     }
+}
+
+export interface PropertyTreeNodeParameters {
+    id: string;
+
+    acceptsDrop?: boolean;
+    active?: boolean;
+    children?: PropertyTreeNode[];
+    disabled?: boolean;
+    draggable?: boolean;
+    dropDisabled?: boolean;
+    expanded?: boolean;
+    hidden?: boolean;
+    icon?: IconDefinition;
+    label?: string;
+    metadata?: Record<string, unknown>;
 }

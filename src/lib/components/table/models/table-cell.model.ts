@@ -1,9 +1,15 @@
 import { BadgeConfig } from '../../badge/models/badge.model';
 
+export enum CellType {
+    Badge = 'badge',
+    Link = 'link',
+    Text = 'text'
+}
+
 export abstract class TableCell {
     content: unknown;
-    type: CellType;
     translate: boolean;
+    type: CellType;
 
     tooltip?: string;
 
@@ -15,33 +21,6 @@ export abstract class TableCell {
     }
 }
 
-export interface TableCellParameters {
-    content: unknown;
-    type: CellType;
-
-    tooltip?: string;
-    translate?: boolean;
-}
-
-export enum CellType {
-    Badge = 'badge',
-    Text = 'text',
-    Link = 'link'
-}
-
-export class TextTableCell extends TableCell {
-    constructor({ content, translate, tooltip }: TextTableCellParameters) {
-        super({ content, type: CellType.Text, translate, tooltip });
-    }
-}
-
-export interface TextTableCellParameters {
-    content: string;
-
-    tooltip?: string;
-    translate?: boolean;
-}
-
 export class BadgeTableCell extends TableCell {
     badges: BadgeConfig[];
 
@@ -49,13 +28,6 @@ export class BadgeTableCell extends TableCell {
         super({ content: badges, type: CellType.Badge, translate, tooltip });
         this.badges = badges;
     }
-}
-
-export interface BadgeTableCellParameters {
-    badges: BadgeConfig[];
-
-    tooltip?: string;
-    translate?: boolean;
 }
 
 export class LinkTableCell extends TableCell {
@@ -67,8 +39,36 @@ export class LinkTableCell extends TableCell {
     }
 }
 
+export class TextTableCell extends TableCell {
+    constructor({ content, translate, tooltip }: TextTableCellParameters) {
+        super({ content, type: CellType.Text, translate, tooltip });
+    }
+}
+
+export interface BadgeTableCellParameters {
+    badges: BadgeConfig[];
+
+    tooltip?: string;
+    translate?: boolean;
+}
+
 export interface LinkTableCellParameters {
     action: () => void;
+    content: string;
+
+    tooltip?: string;
+    translate?: boolean;
+}
+
+export interface TableCellParameters {
+    content: unknown;
+    type: CellType;
+
+    tooltip?: string;
+    translate?: boolean;
+}
+
+export interface TextTableCellParameters {
     content: string;
 
     tooltip?: string;

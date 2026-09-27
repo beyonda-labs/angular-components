@@ -1,5 +1,14 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
+export enum ButtonType {
+    LinkSecondary = 'link-secondary',
+    Primary = 'primary',
+    Secondary = 'secondary',
+    Tertiary = 'tertiary'
+}
+
+export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
+
 export class ButtonConfig {
     action: () => void;
     isDisabled: boolean;
@@ -41,23 +50,14 @@ export class ButtonConfig {
 
 export interface ButtonParameters {
     action: () => void;
-    label?: string;
 
     customClass?: string;
     customStyles?: string;
     icon?: IconDefinition;
     isDisabled?: boolean;
     isHidden?: boolean;
+    label?: string;
     tooltip?: string;
     tooltipPlacement?: TooltipPlacement;
     type?: ButtonType;
-}
-
-export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
-
-export enum ButtonType {
-    Primary = 'primary',
-    Secondary = 'secondary',
-    Tertiary = 'tertiary',
-    LinkSecondary = 'link-secondary'
 }

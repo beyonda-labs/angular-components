@@ -1,14 +1,5 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
-export interface PropertiesMenuHeaderConfigParameters {
-    title: string;
-
-    icon?: IconDefinition;
-    /** When set, the header shows a close button that calls it. */
-    onClose?: () => void;
-    subtitle?: string;
-}
-
 export class PropertiesMenuHeaderConfig {
     subtitle: string;
     title: string;
@@ -22,4 +13,13 @@ export class PropertiesMenuHeaderConfig {
         this.subtitle = subtitle;
         this.title = title;
     }
+}
+
+export interface PropertiesMenuHeaderConfigParameters {
+    title: string;
+
+    icon?: IconDefinition;
+    /** When set, the header shows a close button that calls it. */
+    onClose?: () => void;
+    subtitle?: string;
 }

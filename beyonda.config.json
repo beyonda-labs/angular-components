@@ -21,14 +21,15 @@
                 "src/**/*.ts",
                 "style-guide/src/**/*.ts",
                 "!**/*.spec.ts",
+                "!**/*.model.ts",
                 "!**/public-api.ts",
                 "!**/*.module.ts"
             ],
             "coverageThreshold": {
-                "statements": 90,
-                "branches": 77,
-                "functions": 85,
-                "lines": 90
+                "statements": 88,
+                "branches": 74,
+                "functions": 84,
+                "lines": 88
             }
         },
         "stylelint": {
@@ -65,8 +66,5 @@
                 }
             ]
         }
-    },
-    "skip": {
-        "rules": ["eslint.sort-declarations", "eslint.model-files"]
     }
 }

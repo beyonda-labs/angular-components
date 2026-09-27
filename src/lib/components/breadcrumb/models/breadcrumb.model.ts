@@ -1,8 +1,8 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
 export class BreadcrumbConfig {
-    items: BreadcrumbItem[];
     itemMaxWidth: string;
+    items: BreadcrumbItem[];
     prefix: string;
     separator: string;
     translate: boolean;
@@ -26,16 +26,6 @@ export class BreadcrumbConfig {
     }
 }
 
-export interface BreadcrumbConfigParameters {
-    items: BreadcrumbItem[];
-
-    itemMaxWidth?: string;
-    onItemClick?: (id: number) => void;
-    prefix?: string;
-    separator?: string;
-    translate?: boolean;
-}
-
 export class BreadcrumbItem {
     id: number;
     isDisabled: boolean;
@@ -51,6 +41,16 @@ export class BreadcrumbItem {
         this.isTranslationKey = isTranslationKey;
         this.label = label;
     }
+}
+
+export interface BreadcrumbConfigParameters {
+    items: BreadcrumbItem[];
+
+    itemMaxWidth?: string;
+    onItemClick?: (id: number) => void;
+    prefix?: string;
+    separator?: string;
+    translate?: boolean;
 }
 
 export interface BreadcrumbItemParameters {

@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
 import { PropertiesMenuConfig, PropertiesMenuConfigParameters } from '../models/properties-menu-config.model';
+import { PropertyTreeDrop } from '../models/properties-menu-events.model';
 import { PropertyTreeNode } from '../models/property-tree-node.model';
-import { PropertyTreeDrop } from '../types/properties-menu-events';
 import { PropertiesMenuService } from './properties-menu.service';
 import { PropertyTreeDragService } from './property-tree-drag.service';
 

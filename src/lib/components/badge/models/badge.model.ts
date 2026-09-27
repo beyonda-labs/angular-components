@@ -13,14 +13,6 @@ export enum BadgeVariant {
     Warning = 'warning'
 }
 
-export interface BadgeConfigParameters {
-    label: string;
-
-    /** Run the label through the translate pipe; on by default. */
-    translate?: boolean;
-    variant?: BadgeVariant;
-}
-
 export class BadgeConfig {
     label: string;
     translate: boolean;
@@ -31,4 +23,12 @@ export class BadgeConfig {
         this.translate = translate;
         this.variant = variant;
     }
+}
+
+export interface BadgeConfigParameters {
+    label: string;
+
+    /** Run the label through the translate pipe; on by default. */
+    translate?: boolean;
+    variant?: BadgeVariant;
 }

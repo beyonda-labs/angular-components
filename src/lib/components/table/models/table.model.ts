@@ -1,5 +1,18 @@
 import { TableCell } from './table-cell.model';
 
+export class TableColumn {
+    key: string;
+    width: number;
+
+    tooltip?: string;
+
+    constructor({ key, tooltip, width = 10 }: TableColumnParameters) {
+        this.key = key;
+        this.tooltip = tooltip;
+        this.width = width;
+    }
+}
+
 export class TableConfig<T> {
     columns: TableColumn[];
     height: string;
@@ -32,38 +45,6 @@ export class TableConfig<T> {
     }
 }
 
-export interface TableConfigParameters<T> {
-    columns: TableColumn[];
-    loadRow: (item: T) => TableCell[];
-    prefix: string;
-
-    height?: string;
-    isRowSelected?: (item: T) => boolean;
-    items?: T[];
-    selectable?: boolean;
-    selectedItemsChange?: (items: T[], indexes: number[]) => void;
-}
-
-export class TableColumn {
-    key: string;
-    width: number;
-
-    tooltip?: string;
-
-    constructor({ key, tooltip, width = 10 }: TableColumnParameters) {
-        this.key = key;
-        this.tooltip = tooltip;
-        this.width = width;
-    }
-}
-
-export interface TableColumnParameters {
-    key: string;
-
-    tooltip?: string;
-    width?: number;
-}
-
 export class TableRow<T> {
     cells: TableCell[];
     content: T;
@@ -74,6 +55,25 @@ export class TableRow<T> {
         this.content = content;
         this.selected = selected;
     }
+}
+
+export interface TableColumnParameters {
+    key: string;
+
+    tooltip?: string;
+    width?: number;
+}
+
+export interface TableConfigParameters<T> {
+    columns: TableColumn[];
+    loadRow: (item: T) => TableCell[];
+    prefix: string;
+
+    height?: string;
+    isRowSelected?: (item: T) => boolean;
+    items?: T[];
+    selectable?: boolean;
+    selectedItemsChange?: (items: T[], indexes: number[]) => void;
 }
 
 export interface TableRowParameters<T> {

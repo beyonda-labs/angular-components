@@ -164,7 +164,7 @@ the change-log lists every break.
         Test stage already runs; `verify` stays as the local shortcut
 -   [x] Change-log: `[Unreleased]` completed with every S6 break and renamed to `[1.2.0]`; `[1.1.0]` dated
 -   [x] Coverage thresholds raised to just under today's numbers (90 / 77 / 85 / 90), as S2 intended
--   [ ] `release/1.2.0`, version bump, merge to `main` and `develop`, tag `v1.2.0` (the repo has no tags today)
+-   [x] `release/1.2.0`, version bump, merge to `main` and `develop`, tag `v1.2.0`
 -   [x] Consumers adapted: `document-builder-front` and `angular-components-demo` build and pass their tests
         against 1.2.0; `page` gained `onValueChange` and `left-menu` a title size variable for what they needed
 
@@ -177,18 +177,22 @@ Snapshots per branch, `latest` from `main`, as described in the README.
         in every repo: `bey-check-translations`, `bey-sort-translations` and `bey-merge-translations` from
         `@beyonda-labs/base-config`
 -   [ ] `BeyPageConfig` generic over the form value, so a typed `BeyPageFormConfig<T>` fits without a cast
--   [ ] `*.model.ts` holds contracts and definitions only, as `rules/model-library/model.md` sets for model libraries
-        and as it will apply to every repo: move the functions of `form/models/form-field.model.ts` to function modules with their specs, forbid
-        function declarations in model files with `no-restricted-syntax`, leave `**/*.model.ts` out of the coverage
-        and set the thresholds again on what remains
--   [ ] `eslint-plugin-perfectionist`, as `document-builder-models` already uses it for the function order:
-        `sort-classes` for the order inside a component or a service (inputs, outputs, public signals and computed,
-        private state, injected dependencies, constructor, lifecycle hooks, methods alphabetical) and
-        `sort-modules` for enums, interfaces and classes in model files, `sort-interfaces` for required then optional
-        members and `sort-enums` for enum members, with autofix on save. Same config in every repo. Before
-        `sort-enums`, check that no enum has implicit numeric values and that no `Object.values` depends on the order.
-        base-config already ships both blocks: adopting them is removing `eslint.sort-declarations` and
-        `eslint.model-files` from `skip.rules` in `beyonda.config.json` and fixing what they report
+-   [x] `*.model.ts` holds contracts and definitions only: `resolveRule` and the tree searches of the tree dialog
+        moved to function modules with their specs, the default action type of a page zone is a table, the
+        `types/` folders of `pdf-viewer` and `properties-menu` became model files, and `**/*.model.ts` is out of the
+        coverage, with the thresholds set again on what remains (88 / 74 / 84 / 88)
+-   [x] `eslint-plugin-perfectionist` through base-config (`eslint.sort-declarations` and `eslint.model-files`, no
+        skip left): `sort-modules`, `sort-interfaces`, `sort-object-types` and `sort-enums` everywhere and
+        `sort-classes` in model files. No enum with implicit values was reordered and no `Object.values` depended
+        on the order
+-   [ ] `sort-classes` for the order inside a component or a service (inputs, outputs, public signals and computed,
+        private state, injected dependencies, constructor, lifecycle hooks, methods alphabetical): base-config
+        only sorts model classes today
+-   [ ] `ModalTreeConfig` still has behaviour (`close`, `confirm`, `getSelectedNode`, `getTitle`, `hasSelection`)
+        and writes the selected key into its tree config, against `rules/angular/class-model.md`
+-   [ ] `properties-menu/utils`, `internal/file` and `internal/i18n` hold function modules with a `.util.ts`
+        suffix, while the new ones live next to their models without a suffix, as
+        `rules/model-library/function-module.md` names them: pick one convention for the library
 
 ---
 
