@@ -22,14 +22,12 @@ export class PropertyFileFieldComponent {
 
     readonly valueChange = output<string>();
 
-    readonly selectedFileName = signal<string | null>(null);
-    readonly sizeErrorMaxSizeMB = signal<number | null>(null);
-
-    readonly hasValue = computed(() => Boolean(this.field().value));
-    readonly showsClear = computed(() => this.hasValue() && !this.field().disabled);
-
     readonly chooseIcon = faUpload;
     readonly clearIcon = faXmark;
+    readonly hasValue = computed(() => Boolean(this.field().value));
+    readonly selectedFileName = signal<string | null>(null);
+    readonly showsClear = computed(() => this.hasValue() && !this.field().disabled);
+    readonly sizeErrorMaxSizeMB = signal<number | null>(null);
 
     private isDestroyed = false;
 

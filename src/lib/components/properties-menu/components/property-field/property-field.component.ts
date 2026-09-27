@@ -65,6 +65,7 @@ export class PropertyFieldComponent {
         () =>
             `${this.propertiesMenuService.config().prefix}.fields.${toKeySegment(this.field().id)}.action-button.tooltip`
     );
+    readonly fieldType = PropertyFieldType;
     readonly labelKey = computed(() =>
         resolvePropertyLabelKey(
             this.propertiesMenuService.config().prefix,
@@ -78,8 +79,6 @@ export class PropertyFieldComponent {
 
         return Boolean(field.label) && !this.hideLabel() && field.type !== PropertyFieldType.Toggle;
     });
-
-    readonly fieldType = PropertyFieldType;
 
     asAttachmentField(): PropertyAttachmentField {
         return this.field() as PropertyAttachmentField;

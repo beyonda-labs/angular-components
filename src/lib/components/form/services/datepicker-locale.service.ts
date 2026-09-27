@@ -16,10 +16,6 @@ export class DatepickerLocaleService {
         this.defineSupportedLocales();
     }
 
-    use(language?: string | null): void {
-        this.bsLocaleService.use(this.getLocale(language));
-    }
-
     getLocale(language?: string | null): string {
         const normalizedLanguage = language?.toLowerCase() ?? DatepickerLocaleService.ENGLISH_LOCALE;
 
@@ -28,6 +24,10 @@ export class DatepickerLocaleService {
         }
 
         return DatepickerLocaleService.ENGLISH_LOCALE;
+    }
+
+    use(language?: string | null): void {
+        this.bsLocaleService.use(this.getLocale(language));
     }
 
     private defineSupportedLocales(): void {

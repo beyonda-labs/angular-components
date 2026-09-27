@@ -40,6 +40,11 @@ export class PropertiesMenuComponent {
 
         return this.propertiesMenuService.config().tabs.find(tab => tab.id === activeTabId);
     });
+    readonly titleKey = computed(() => {
+        const { prefix, title } = this.config();
+
+        return title === 'title' ? `${prefix}.title` : title;
+    });
     readonly headerConfig = computed(
         () =>
             new PropertiesMenuHeaderConfig({
@@ -49,11 +54,6 @@ export class PropertiesMenuComponent {
                 title: this.titleKey()
             })
     );
-    readonly titleKey = computed(() => {
-        const { prefix, title } = this.config();
-
-        return title === 'title' ? `${prefix}.title` : title;
-    });
     readonly visibleTabs = computed(() => this.config().tabs.filter(tab => !tab.hidden));
 
     private readonly menuBody = viewChild<ElementRef<HTMLElement>>('menuBody');

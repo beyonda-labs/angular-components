@@ -53,44 +53,7 @@ interface FormState {
 export class FormComponent<TValue = unknown> {
     readonly config = input.required<FormConfig<TValue>>();
 
-    readonly formGroup = computed(() => this.formService.buildFormGroup(this.config()));
-    readonly state = linkedSignal(() => readState(this.formGroup()));
     readonly currentStepKey = linkedSignal<string | null>(() => this.config().steps[0]?.key ?? null);
-
-    readonly fieldStates = computed<FormFieldStates>(() => {
-        const { value } = this.state();
-        const formGroup = this.formGroup();
-        const states = new Map<string, FormFieldState>();
-
-        for (const section of this.config().sections) {
-            for (const field of section.rows.flatMap(row => row.fields)) {
-                const control = formGroup.get([section.key, field.key]);
-                const options = 'options' in field ? (field as { options: unknown }).options : [];
-
-                states.set(fieldStateKey(section.key, field.key), {
-                    isDisabled: resolveRule(field.isDisabled, value),
-                    isHidden: resolveRule(field.isHidden, value),
-                    isValid: control?.valid ?? true,
-                    options: resolveRule(options as FormFieldOption[], value)
-                });
-            }
-        }
-
-        return states;
-    });
-    readonly visibleSections = computed(() => {
-        const { sections, steps } = this.config();
-        const step = steps.find(current => current.key === this.currentStepKey());
-        const { value } = this.state();
-        const fieldStates = this.fieldStates();
-
-        return sections.filter(
-            section =>
-                (!step || step.sections.includes(section.key)) &&
-                !resolveRule(section.isHidden, value) &&
-                this.hasVisibleField(section, fieldStates)
-        );
-    });
     readonly buttons = computed<ButtonConfig[]>(() => {
         const { buttons, steps } = this.config();
         const index = steps.findIndex(step => step.key === this.currentStepKey());
@@ -126,6 +89,31 @@ export class FormComponent<TValue = unknown> {
         return [...stepButtons, ...buttons.filter(button => !button.isHidden).map(button => this.buildButton(button))];
     });
 
+    private readonly formService = inject(FormService);
+
+    readonly formGroup = computed(() => this.formService.buildFormGroup(this.config()));
+    readonly state = linkedSignal(() => readState(this.formGroup()));
+    readonly fieldStates = computed<FormFieldStates>(() => {
+        const { value } = this.state();
+        const formGroup = this.formGroup();
+        const states = new Map<string, FormFieldState>();
+
+        for (const section of this.config().sections) {
+            for (const field of section.rows.flatMap(row => row.fields)) {
+                const control = formGroup.get([section.key, field.key]);
+                const options = 'options' in field ? (field as { options: unknown }).options : [];
+
+                states.set(fieldStateKey(section.key, field.key), {
+                    isDisabled: resolveRule(field.isDisabled, value),
+                    isHidden: resolveRule(field.isHidden, value),
+                    isValid: control?.valid ?? true,
+                    options: resolveRule(options as FormFieldOption[], value)
+                });
+            }
+        }
+
+        return states;
+    });
     readonly handle: FormHandle<TValue> = {
         close: () => this.formHost?.close(),
         goToStep: key => this.goToStep(key),
@@ -135,9 +123,21 @@ export class FormComponent<TValue = unknown> {
         reset: () => this.reset(),
         value: () => this.formGroup().getRawValue() as TValue
     };
+    readonly visibleSections = computed(() => {
+        const { sections, steps } = this.config();
+        const step = steps.find(current => current.key === this.currentStepKey());
+        const { value } = this.state();
+        const fieldStates = this.fieldStates();
+
+        return sections.filter(
+            section =>
+                (!step || step.sections.includes(section.key)) &&
+                !resolveRule(section.isHidden, value) &&
+                this.hasVisibleField(section, fieldStates)
+        );
+    });
 
     private readonly formHost = inject(FORM_HOST, { optional: true });
-    private readonly formService = inject(FormService);
 
     constructor() {
         const formGroup$ = toObservable(this.formGroup);

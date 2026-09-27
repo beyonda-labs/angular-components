@@ -34,16 +34,12 @@ interface RenderedAction {
 export class HeaderComponent {
     readonly config = input.required<HeaderConfig>();
 
-    readonly isMenuOpen = signal(false);
-    readonly openActionKey = signal<string | null>(null);
-
     readonly backButton = computed(() => {
         const { backAction } = this.config();
 
         return backAction ? this.buildActionButton(backAction) : null;
     });
     readonly leftActions = computed(() => this.render(this.config().leftActions));
-    readonly rightActions = computed(() => this.render(this.config().rightActions));
     readonly menuButtons = computed(() =>
         this.config().menuActions.map(action =>
             this.buildActionButton(action, {
@@ -52,13 +48,12 @@ export class HeaderComponent {
             })
         )
     );
-
+    readonly rightActions = computed(() => this.render(this.config().rightActions));
     readonly hasActions = computed(
         () => this.leftActions().length + this.menuButtons().length + this.rightActions().length > 0
     );
+    readonly isMenuOpen = signal(false);
     readonly isSubpage = computed(() => this.config().variant === HeaderVariant.SubPage);
-    readonly title = computed(() => this.config().title);
-
     readonly menuToggleButton = new ButtonConfig({
         action: () => this.isMenuOpen.update(isOpen => !isOpen),
         customClass: 'bey-header-menu-toggle',
@@ -67,8 +62,14 @@ export class HeaderComponent {
         tooltipPlacement: 'left',
         type: ButtonType.Tertiary
     });
+    readonly openActionKey = signal<string | null>(null);
+    readonly title = computed(() => this.config().title);
 
     private readonly elementRef = inject(ElementRef);
+
+    isActionMenuOpen(action: HeaderAction): boolean {
+        return this.openActionKey() === action.key;
+    }
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent): void {
@@ -80,10 +81,6 @@ export class HeaderComponent {
     @HostListener('document:keydown.escape')
     onEscape(): void {
         this.closeMenus();
-    }
-
-    isActionMenuOpen(action: HeaderAction): boolean {
-        return this.openActionKey() === action.key;
     }
 
     private buildActionButton(

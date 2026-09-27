@@ -20,9 +20,8 @@ export class PropertySpacingFieldComponent {
 
     readonly valueChange = output<PropertySpacingValue>();
 
-    readonly spacing = computed(() => this.field().value ?? EMPTY_SPACING);
-
     readonly sides = SIDES;
+    readonly spacing = computed(() => this.field().value ?? EMPTY_SPACING);
 
     onSideChange(side: keyof PropertySpacingValue, event: Event): void {
         const rawValue = (event.target as HTMLInputElement).value;

@@ -28,8 +28,11 @@ export class PropertyListComponent {
     readonly items = input.required<PropertyListItem[]>();
     readonly tabId = input.required<string>();
 
+    readonly chevronIcon = faChevronDown;
+    readonly copiedIcon = faCheck;
     readonly copiedItemId = signal<string | null>(null);
-
+    readonly copyIcon = faCopy;
+    readonly emptyValue = EMPTY_VALUE;
     readonly listConfig = computed(
         () =>
             new ListConfig<unknown>({
@@ -39,17 +42,12 @@ export class PropertyListComponent {
                 prefix: 'angular-components.properties-menu.list'
             })
     );
-
-    readonly chevronIcon = faChevronDown;
-    readonly copiedIcon = faCheck;
-    readonly copyIcon = faCopy;
-    readonly emptyValue = EMPTY_VALUE;
     readonly removeIcon = faTrash;
+
+    private copiedTimeoutId?: ReturnType<typeof setTimeout>;
 
     private readonly destroyRef = inject(DestroyRef);
     private readonly propertiesMenuService = inject(PropertiesMenuService);
-
-    private copiedTimeoutId?: ReturnType<typeof setTimeout>;
 
     constructor() {
         this.destroyRef.onDestroy(() => clearTimeout(this.copiedTimeoutId));
@@ -67,12 +65,6 @@ export class PropertyListComponent {
 
     labelKey(item: PropertyListItem): string {
         return resolvePropertyLabelKey(this.propertiesMenuService.config().prefix, 'list', item.id, item.label);
-    }
-
-    toggleLabelKey(item: PropertyListItem): string {
-        return item.expanded
-            ? 'angular-components.properties-menu.list.collapse'
-            : 'angular-components.properties-menu.list.expand';
     }
 
     onAction(event: Event, item: PropertyListItem, key: string): void {
@@ -112,6 +104,12 @@ export class PropertyListComponent {
     onToggle(event: Event, item: PropertyListItem): void {
         event.stopPropagation();
         this.propertiesMenuService.toggleListItem(this.tabId(), this.groupId(), item.id);
+    }
+
+    toggleLabelKey(item: PropertyListItem): string {
+        return item.expanded
+            ? 'angular-components.properties-menu.list.collapse'
+            : 'angular-components.properties-menu.list.expand';
     }
 
     private onItemClick(item: PropertyListItem): void {

@@ -11,8 +11,8 @@ import { TranslateModule } from '@ngx-translate/core';
     templateUrl: './footer-style-guide.component.html'
 })
 export class FooterStyleGuideComponent {
-    minimalConfig: BeyFooterConfig;
     fullConfig: BeyFooterConfig;
+    minimalConfig: BeyFooterConfig;
 
     constructor() {
         this.minimalConfig = new BeyFooterConfig({

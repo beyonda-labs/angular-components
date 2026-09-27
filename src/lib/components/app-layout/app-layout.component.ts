@@ -24,6 +24,7 @@ import { AppLayoutService } from './services/app-layout.service';
 export class AppLayoutComponent implements OnInit {
     readonly config = input.required<AppLayoutConfig>();
 
+    private readonly appLayoutService = inject(AppLayoutService);
     readonly breadcrumbConfig = computed(() => {
         const items = this.appLayoutService.breadcrumb();
 
@@ -51,7 +52,6 @@ export class AppLayoutComponent implements OnInit {
     });
     readonly usesRoutes = computed(() => hasRoutes(this.allActions()));
 
-    private readonly appLayoutService = inject(AppLayoutService);
     private readonly router = inject(Router);
     private readonly translateService = inject(TranslateService);
 

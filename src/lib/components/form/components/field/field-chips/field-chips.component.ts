@@ -22,9 +22,7 @@ export class FormChipsFieldComponent {
 
     readonly controlState = trackControl(this.control);
     readonly inputValue = signal('');
-
     readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
-
     readonly removeIcon = faXmark;
 
     addChip(): void {

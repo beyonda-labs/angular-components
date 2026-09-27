@@ -20,13 +20,24 @@ import { ModalTreeConfig } from '../models/modal-tree.model';
     templateUrl: './modal-tree-dialog.component.html'
 })
 export class ModalTreeDialogComponent implements OnInit {
+    readonly cancelButton = new ButtonConfig({
+        action: () => this.dismiss(),
+        label: 'angular-components.modal.actions.cancel',
+        type: ButtonType.Secondary
+    });
     config!: ModalTreeConfig;
-
-    readonly titleIcon = faFolderTree;
-
-    readonly expandedKeys = signal<string[]>([]);
     readonly selectedKey = signal<string>('');
-
+    readonly confirmButton = computed(
+        () =>
+            new ButtonConfig({
+                action: () => this.confirm(),
+                isDisabled: !this.selectedKey(),
+                label: 'angular-components.modal.actions.confirm',
+                type: ButtonType.Primary
+            })
+    );
+    readonly expandedKeys = signal<string[]>([]);
+    readonly titleIcon = faFolderTree;
     readonly treeConfig = computed<TreeConfig>(
         () =>
             new TreeConfig({
@@ -36,22 +47,6 @@ export class ModalTreeDialogComponent implements OnInit {
                 onNodeToggle: (node, expanded) => this.toggle(node.key, expanded),
                 prefix: this.config.treeConfig.prefix,
                 selectedKey: this.selectedKey() || undefined
-            })
-    );
-
-    readonly cancelButton = new ButtonConfig({
-        action: () => this.dismiss(),
-        label: 'angular-components.modal.actions.cancel',
-        type: ButtonType.Secondary
-    });
-
-    readonly confirmButton = computed(
-        () =>
-            new ButtonConfig({
-                action: () => this.confirm(),
-                isDisabled: !this.selectedKey(),
-                label: 'angular-components.modal.actions.confirm',
-                type: ButtonType.Primary
             })
     );
 

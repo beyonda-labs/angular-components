@@ -103,76 +103,6 @@ export class HttpService {
         return result;
     }
 
-    private resolveErrorMessage(error: HttpErrorResponse): {
-        message: string;
-        title: string;
-
-        messageParameters?: Record<string, unknown>;
-    } {
-        const body = error.error as CustomErrorResponse | null,
-            messageParameters = this.resolveErrorParameters(body?.messageParameters);
-
-        if (body?.message) {
-            return {
-                message: `angular-components.http.error.${body.message}`,
-                title: this.resolveErrorTitle(body.message),
-                messageParameters
-            };
-        }
-
-        const errorCode = body?.errorCode ?? 'unknown';
-        const resolvedCode = this.resolveRangeCode(errorCode, body?.messageParameters);
-        const key = `angular-components.http.error.${resolvedCode}`;
-        const translation = this.translateService.instant(key);
-
-        return {
-            message: translation !== key ? key : ERROR_UNKNOWN_KEY,
-            title: this.resolveErrorTitle(resolvedCode),
-            messageParameters
-        };
-    }
-
-    private resolveRangeCode(errorCode: string, parameters?: Record<string, unknown>): string {
-        if (errorCode !== 'invalid-field-range' && errorCode !== 'invalid-field-length') {
-            return errorCode;
-        }
-
-        if (parameters?.['min'] === null) {
-            return `${errorCode}-max`;
-        }
-
-        if (parameters?.['max'] === null) {
-            return `${errorCode}-min`;
-        }
-
-        return errorCode;
-    }
-
-    private resolveErrorTitle(errorKey: string): string {
-        const baseKey = errorKey.replace(/-(min|max)$/u, '');
-        const titleKey = `${TITLE_PREFIX}${baseKey}`;
-        const translated = this.translateService.instant(titleKey);
-
-        return translated !== titleKey ? titleKey : `${TITLE_PREFIX}default`;
-    }
-
-    private resolveErrorParameters(parameters: Record<string, unknown> = {}): Record<string, unknown> {
-        const fieldPrefix = 'angular-components.http.field.';
-
-        return Object.fromEntries(
-            Object.entries(parameters).map(([key, value]) => {
-                if (typeof value !== 'string') {
-                    return [key, String(value)];
-                }
-
-                const translationKey = `${fieldPrefix}${value}`,
-                    translated = this.translateService.instant(translationKey);
-
-                return [key, translated !== translationKey ? translated : value];
-            })
-        );
-    }
-
     private request<T>(source$: Observable<T>, options?: HttpRequestOptions): Observable<T> {
         if (options?.loading) {
             this.loadingService.show();
@@ -213,5 +143,75 @@ export class HttpService {
         request.subscribe();
 
         return request;
+    }
+
+    private resolveErrorMessage(error: HttpErrorResponse): {
+        message: string;
+        title: string;
+
+        messageParameters?: Record<string, unknown>;
+    } {
+        const body = error.error as CustomErrorResponse | null,
+            messageParameters = this.resolveErrorParameters(body?.messageParameters);
+
+        if (body?.message) {
+            return {
+                message: `angular-components.http.error.${body.message}`,
+                title: this.resolveErrorTitle(body.message),
+                messageParameters
+            };
+        }
+
+        const errorCode = body?.errorCode ?? 'unknown';
+        const resolvedCode = this.resolveRangeCode(errorCode, body?.messageParameters);
+        const key = `angular-components.http.error.${resolvedCode}`;
+        const translation = this.translateService.instant(key);
+
+        return {
+            message: translation !== key ? key : ERROR_UNKNOWN_KEY,
+            title: this.resolveErrorTitle(resolvedCode),
+            messageParameters
+        };
+    }
+
+    private resolveErrorParameters(parameters: Record<string, unknown> = {}): Record<string, unknown> {
+        const fieldPrefix = 'angular-components.http.field.';
+
+        return Object.fromEntries(
+            Object.entries(parameters).map(([key, value]) => {
+                if (typeof value !== 'string') {
+                    return [key, String(value)];
+                }
+
+                const translationKey = `${fieldPrefix}${value}`,
+                    translated = this.translateService.instant(translationKey);
+
+                return [key, translated !== translationKey ? translated : value];
+            })
+        );
+    }
+
+    private resolveErrorTitle(errorKey: string): string {
+        const baseKey = errorKey.replace(/-(min|max)$/u, '');
+        const titleKey = `${TITLE_PREFIX}${baseKey}`;
+        const translated = this.translateService.instant(titleKey);
+
+        return translated !== titleKey ? titleKey : `${TITLE_PREFIX}default`;
+    }
+
+    private resolveRangeCode(errorCode: string, parameters?: Record<string, unknown>): string {
+        if (errorCode !== 'invalid-field-range' && errorCode !== 'invalid-field-length') {
+            return errorCode;
+        }
+
+        if (parameters?.['min'] === null) {
+            return `${errorCode}-max`;
+        }
+
+        if (parameters?.['max'] === null) {
+            return `${errorCode}-min`;
+        }
+
+        return errorCode;
     }
 }

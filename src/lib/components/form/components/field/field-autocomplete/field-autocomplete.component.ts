@@ -38,11 +38,10 @@ export class FormAutocompleteFieldComponent {
     readonly prefix = input.required<string>();
 
     readonly activeIndex = signal(-1);
+    readonly clearIcon = faXmark;
     readonly controlState = trackControl(this.control);
-    readonly isOpen = signal(false);
-    readonly query = signal('');
-
     readonly emptyKey = computed(() => this.field().emptyKey ?? EMPTY_KEY);
+    readonly query = signal('');
     readonly filteredOptions = computed(() => {
         const term = this.query().trim().toLowerCase();
 
@@ -50,23 +49,21 @@ export class FormAutocompleteFieldComponent {
             ? this.options().filter(option => this.optionLabel(option).toLowerCase().includes(term))
             : this.options();
     });
+    readonly isOpen = signal(false);
     readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
-
-    readonly clearIcon = faXmark;
     readonly toggleIcon = faChevronDown;
 
-    private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
-    private readonly queryInput = viewChild.required<ElementRef<HTMLInputElement>>('queryInput');
-
-    private readonly renderer = inject(Renderer2);
-    private readonly translateService = inject(TranslateService);
-
-    private readonly onWindowResize = (): void => this.positionPanel();
     private readonly onAncestorScroll = (event: Event): void => {
         if (!this.panel()?.nativeElement.contains(event.target as Node)) {
             this.close();
         }
     };
+    private readonly onWindowResize = (): void => this.positionPanel();
+    private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
+    private readonly queryInput = viewChild.required<ElementRef<HTMLInputElement>>('queryInput');
+
+    private readonly renderer = inject(Renderer2);
+    private readonly translateService = inject(TranslateService);
 
     constructor() {
         effect(onCleanup => {

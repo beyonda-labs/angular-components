@@ -20,7 +20,6 @@ import { TranslateModule } from '@ngx-translate/core';
     templateUrl: './header-style-guide.component.html'
 })
 export class HeaderStyleGuideComponent {
-    readonly config = this.buildConfig();
     backConfig = this.buildConfig({
         backAction: new BeyHeaderAction({
             icon: faArrowLeft,
@@ -33,6 +32,7 @@ export class HeaderStyleGuideComponent {
         }),
         menuActions: []
     });
+    readonly config = this.buildConfig();
     subPageConfig = this.buildConfig({
         menuActions: [],
         variant: BeyHeaderVariant.SubPage

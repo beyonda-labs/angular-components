@@ -15,15 +15,12 @@ const PREFIX = 'angular-components-style-guide.tabs';
 })
 export class TabsStyleGuideComponent {
     readonly basicActiveKey = signal('overview');
-    readonly iconsActiveKey = signal('analytics');
-    readonly overflowActiveKey = signal('overview');
-
     readonly basicConfig = new BeyTabsConfig({
         onTabChange: key => this.basicActiveKey.set(key),
         prefix: `${PREFIX}.basic`,
         tabs: [new BeyTab({ key: 'overview' }), new BeyTab({ key: 'details' }), new BeyTab({ key: 'history' })]
     });
-
+    readonly iconsActiveKey = signal('analytics');
     readonly iconsConfig = new BeyTabsConfig({
         onTabChange: key => this.iconsActiveKey.set(key),
         prefix: `${PREFIX}.icons`,
@@ -34,7 +31,7 @@ export class TabsStyleGuideComponent {
             new BeyTab({ key: 'admin', icon: faLock, isDisabled: true })
         ]
     });
-
+    readonly overflowActiveKey = signal('overview');
     readonly overflowConfig = new BeyTabsConfig({
         onTabChange: key => this.overflowActiveKey.set(key),
         prefix: `${PREFIX}.overflow`,

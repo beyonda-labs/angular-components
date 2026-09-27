@@ -18,6 +18,7 @@ export class PropertyNumberArrayFieldComponent {
 
     readonly valueChange = output<number[]>();
 
+    readonly addIcon = faPlus;
     readonly entries = computed(() => this.field().value ?? []);
     readonly canAdd = computed(() => {
         const { maxLength } = this.field();
@@ -25,8 +26,6 @@ export class PropertyNumberArrayFieldComponent {
         return maxLength === undefined || this.entries().length < maxLength;
     });
     readonly canRemove = computed(() => this.entries().length > this.field().minLength);
-
-    readonly addIcon = faPlus;
     readonly removeIcon = faTrash;
 
     onAdd(): void {

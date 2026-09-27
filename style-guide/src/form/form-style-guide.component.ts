@@ -26,8 +26,6 @@ const PREFIX = 'angular-components-style-guide.form';
     templateUrl: './form-style-guide.component.html'
 })
 export class FormStyleGuideComponent {
-    readonly lastEvent = signal('');
-
     readonly config = new BeyFormConfig({
         buttons: [
             new BeyFormButton({ label: `${PREFIX}.button.cancel`, type: BeyFormButtonType.Cancel }),
@@ -50,6 +48,7 @@ export class FormStyleGuideComponent {
         prefix: PREFIX,
         sections: buildStyleGuideSections()
     });
+    readonly lastEvent = signal('');
     readonly modalFormButton: StyleGuideButton = {
         action: () => this.openModalForm(),
         isPrimary: true,

@@ -11,17 +11,6 @@ import { TranslateModule } from '@ngx-translate/core';
     templateUrl: './pagination-style-guide.component.html'
 })
 export class PaginationStyleGuideComponent {
-    readonly defaultLastChange = signal('');
-    readonly compactLastChange = signal('');
-
-    readonly defaultConfig = new BeyPaginationConfig({
-        onPageChange: page => this.defaultLastChange.set(`page ${page}`),
-        onPageSizeChange: pageSize => this.defaultLastChange.set(`size ${pageSize}`),
-        page: 4,
-        pageSize: 25,
-        totalItems: 240
-    });
-
     readonly compactConfig = new BeyPaginationConfig({
         onPageChange: page => this.compactLastChange.set(`page ${page}`),
         onPageSizeChange: pageSize => this.compactLastChange.set(`size ${pageSize}`),
@@ -29,4 +18,13 @@ export class PaginationStyleGuideComponent {
         pageSize: 25,
         totalItems: 95
     });
+    readonly compactLastChange = signal('');
+    readonly defaultConfig = new BeyPaginationConfig({
+        onPageChange: page => this.defaultLastChange.set(`page ${page}`),
+        onPageSizeChange: pageSize => this.defaultLastChange.set(`size ${pageSize}`),
+        page: 4,
+        pageSize: 25,
+        totalItems: 240
+    });
+    readonly defaultLastChange = signal('');
 }

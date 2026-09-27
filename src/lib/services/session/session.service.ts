@@ -11,10 +11,10 @@ export class SessionService {
     private readonly storageService = inject(StorageService);
 
     private readonly _token = signal<string | null>(this.storageService.get<string>(this.config.tokenKey));
-    private readonly _user = signal<SessionUser | null>(this.storageService.get<SessionUser>(this.config.userKey));
-
     readonly isAuthenticated = computed(() => this._token() !== null);
     readonly token = this._token.asReadonly();
+
+    private readonly _user = signal<SessionUser | null>(this.storageService.get<SessionUser>(this.config.userKey));
     readonly user = this._user.asReadonly();
 
     clear(): void {

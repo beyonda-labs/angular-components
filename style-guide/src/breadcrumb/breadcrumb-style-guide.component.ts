@@ -12,13 +12,12 @@ import { TranslateModule } from '@ngx-translate/core';
     templateUrl: './breadcrumb-style-guide.component.html'
 })
 export class BreadcrumbStyleGuideComponent {
-    readonly basicLastClicked = signal('');
-    readonly iconsLastClicked = signal('');
-    readonly overflowLastClicked = signal('');
-
     basicConfig: BeyBreadcrumbConfig;
+    readonly basicLastClicked = signal('');
     iconsConfig: BeyBreadcrumbConfig;
+    readonly iconsLastClicked = signal('');
     overflowConfig: BeyBreadcrumbConfig;
+    readonly overflowLastClicked = signal('');
 
     constructor() {
         this.basicConfig = new BeyBreadcrumbConfig({

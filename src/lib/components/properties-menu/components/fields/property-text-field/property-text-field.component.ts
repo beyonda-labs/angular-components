@@ -32,28 +32,25 @@ type TextControl = HTMLInputElement | HTMLTextAreaElement;
     templateUrl: './property-text-field.component.html'
 })
 export class PropertyTextFieldComponent {
-    readonly field = input.required<PropertyTextField>();
     readonly actionButtonTooltipKey = input<string>('');
+    readonly field = input.required<PropertyTextField>();
 
     readonly actionTriggered = output<PropertyTextFieldActionTrigger>();
     readonly valueChange = output<string>();
     readonly variableInserted = output<PropertyTextFieldVariableInsertion>();
 
-    readonly pickerOpen = signal(false);
-
+    private readonly selectionEnd = signal<number | null>(null);
+    private readonly selectionStart = signal<number | null>(null);
     readonly hasSelection = computed(
         () => this.selectionStart() !== null && this.selectionStart() !== this.selectionEnd()
     );
-    readonly showsActions = computed(() => this.field().acceptsVariable || Boolean(this.field().actionButton));
-    readonly variableOptions = computed(() => toVariableOptions(this.propertiesMenuService.variables()));
-
     readonly insertLabel = 'angular-components.properties-menu.text-field.insert-variable';
+    readonly pickerOpen = signal(false);
+    readonly showsActions = computed(() => this.field().acceptsVariable || Boolean(this.field().actionButton));
     readonly variableIcon = PROPERTY_VARIABLE_ICON;
 
     private readonly propertiesMenuService = inject(PropertiesMenuService);
-
-    private readonly selectionEnd = signal<number | null>(null);
-    private readonly selectionStart = signal<number | null>(null);
+    readonly variableOptions = computed(() => toVariableOptions(this.propertiesMenuService.variables()));
 
     closePicker(): void {
         this.pickerOpen.set(false);

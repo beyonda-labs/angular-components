@@ -29,25 +29,67 @@ export class PropertiesMenuService {
     readonly selectedTreeNodeId = signal<string | null>(null);
     readonly variables = signal<PropertyVariable[]>([]);
 
-    setConfig(config: PropertiesMenuConfig): void {
-        this.config.set(config);
-        this.activeTabId.set(config.activeTabId || null);
-        this.selectedTreeNodeId.set(this.findActiveTreeNodeId(config));
+    applyVariableSelection(fieldId: string, variable: PropertyVariable, value: unknown): void {
+        this.updateFieldValue(fieldId, value);
+        this.config().onVariableSelect?.({ expression: toVariableExpression(variable), fieldId, variable });
     }
 
-    setVariables(variables: PropertyVariable[]): void {
-        this.variables.set(variables);
+    getField(fieldId: string): PropertyField | undefined {
+        for (const tab of this.config().tabs) {
+            for (const group of tab.groups) {
+                if (group.content.type !== PropertyGroupContentType.FIELDS) {
+                    continue;
+                }
+
+                const field = group.content.fields.find(current => current.id === fieldId);
+
+                if (field) {
+                    return field;
+                }
+            }
+        }
+
+        return undefined;
     }
 
-    setActiveTab(tabId: string): void {
+    getGroup(tabId: string, groupId: string): PropertyGroup | undefined {
         const tab = this.config().tabs.find(current => current.id === tabId);
 
-        if (!tab || tab.disabled || this.activeTabId() === tabId) {
+        return tab?.groups.find(group => group.id === groupId);
+    }
+
+    getListItem(tabId: string, groupId: string, itemId: string): PropertyListItem | undefined {
+        const group = this.getGroup(tabId, groupId);
+
+        return group?.content.type === PropertyGroupContentType.LIST
+            ? group.content.list.find(item => item.id === itemId)
+            : undefined;
+    }
+
+    getTreeNode(tabId: string, groupId: string, nodeId: string): PropertyTreeNode | undefined {
+        const group = this.getGroup(tabId, groupId);
+
+        return group?.content.type === PropertyGroupContentType.TREE
+            ? this.findTreeNode(group.content.tree.nodes, nodeId)
+            : undefined;
+    }
+
+    removeGroup(tabId: string, groupId: string): void {
+        this.config().onGroupRemove?.({ groupId, tabId });
+    }
+
+    removeListItem(tabId: string, groupId: string, itemId: string): void {
+        const item = this.getListItem(tabId, groupId, itemId);
+
+        if (!item || item.disabled || !item.removable) {
             return;
         }
 
-        this.activeTabId.set(tabId);
-        this.config().onActiveTabChange?.(tabId);
+        this.config().onListItemRemove?.({ groupId, itemId, tabId });
+    }
+
+    requestAttachmentUpload(fieldId: string, file: File): void {
+        this.config().onAttachmentUpload?.({ fieldId, file });
     }
 
     selectGroupTab(tabId: string, groupId: string, contentTabId: string): void {
@@ -63,6 +105,48 @@ export class PropertiesMenuService {
                 };
             })
         );
+    }
+
+    selectListItem(tabId: string, groupId: string, itemId: string): void {
+        const item = this.getListItem(tabId, groupId, itemId);
+
+        if (!item || item.disabled) {
+            return;
+        }
+
+        this.config().onListItemSelect?.({ groupId, item, itemId, tabId });
+    }
+
+    selectTreeNode(tabId: string, groupId: string, nodeId: string): void {
+        const node = this.getTreeNode(tabId, groupId, nodeId);
+
+        if (!node || node.disabled) {
+            return;
+        }
+
+        this.selectedTreeNodeId.set(nodeId);
+        this.config().onTreeNodeSelect?.({ groupId, node, nodeId, tabId });
+    }
+
+    setActiveTab(tabId: string): void {
+        const tab = this.config().tabs.find(current => current.id === tabId);
+
+        if (!tab || tab.disabled || this.activeTabId() === tabId) {
+            return;
+        }
+
+        this.activeTabId.set(tabId);
+        this.config().onActiveTabChange?.(tabId);
+    }
+
+    setConfig(config: PropertiesMenuConfig): void {
+        this.config.set(config);
+        this.activeTabId.set(config.activeTabId || null);
+        this.selectedTreeNodeId.set(this.findActiveTreeNodeId(config));
+    }
+
+    setVariables(variables: PropertyVariable[]): void {
+        this.variables.set(variables);
     }
 
     toggleGroup(tabId: string, groupId: string): void {
@@ -85,74 +169,6 @@ export class PropertiesMenuService {
         this.config().onGroupToggle?.({ expanded, groupId, tabId });
     }
 
-    updateFieldValue(fieldId: string, value: unknown): void {
-        const previousValue = this.getField(fieldId)?.value;
-
-        this.config.update(config => this.updateField(config, fieldId, value));
-
-        this.config().onFieldValueChange?.({ fieldId, previousValue, value });
-    }
-
-    triggerFieldAction(fieldId: string, key: string, selectionStart: number, selectionEnd: number): void {
-        this.config().onFieldAction?.({ fieldId, key, selectionEnd, selectionStart });
-    }
-
-    requestAttachmentUpload(fieldId: string, file: File): void {
-        this.config().onAttachmentUpload?.({ fieldId, file });
-    }
-
-    applyVariableSelection(fieldId: string, variable: PropertyVariable, value: unknown): void {
-        this.updateFieldValue(fieldId, value);
-        this.config().onVariableSelect?.({ expression: toVariableExpression(variable), fieldId, variable });
-    }
-
-    selectTreeNode(tabId: string, groupId: string, nodeId: string): void {
-        const node = this.getTreeNode(tabId, groupId, nodeId);
-
-        if (!node || node.disabled) {
-            return;
-        }
-
-        this.selectedTreeNodeId.set(nodeId);
-        this.config().onTreeNodeSelect?.({ groupId, node, nodeId, tabId });
-    }
-
-    toggleTreeNode(tabId: string, groupId: string, nodeId: string): void {
-        let expanded = false;
-
-        this.config.update(config =>
-            this.updateTreeNode(config, tabId, groupId, nodeId, node => {
-                expanded = !node.expanded;
-
-                return { ...node, expanded };
-            })
-        );
-
-        this.config().onTreeNodeToggle?.({ expanded, groupId, nodeId, tabId });
-    }
-
-    triggerTreeAddBlock(tabId: string, groupId: string): void {
-        this.config().onTreeAddBlock?.({ groupId, tabId });
-    }
-
-    triggerTabAdd(tabId: string): void {
-        this.config().onTabAdd?.({ tabId });
-    }
-
-    removeGroup(tabId: string, groupId: string): void {
-        this.config().onGroupRemove?.({ groupId, tabId });
-    }
-
-    selectListItem(tabId: string, groupId: string, itemId: string): void {
-        const item = this.getListItem(tabId, groupId, itemId);
-
-        if (!item || item.disabled) {
-            return;
-        }
-
-        this.config().onListItemSelect?.({ groupId, item, itemId, tabId });
-    }
-
     toggleListItem(tabId: string, groupId: string, itemId: string): void {
         const item = this.getListItem(tabId, groupId, itemId);
 
@@ -169,6 +185,24 @@ export class PropertiesMenuService {
         this.config().onListItemToggle?.({ expanded, groupId, itemId, tabId });
     }
 
+    toggleTreeNode(tabId: string, groupId: string, nodeId: string): void {
+        let expanded = false;
+
+        this.config.update(config =>
+            this.updateTreeNode(config, tabId, groupId, nodeId, node => {
+                expanded = !node.expanded;
+
+                return { ...node, expanded };
+            })
+        );
+
+        this.config().onTreeNodeToggle?.({ expanded, groupId, nodeId, tabId });
+    }
+
+    triggerFieldAction(fieldId: string, key: string, selectionStart: number, selectionEnd: number): void {
+        this.config().onFieldAction?.({ fieldId, key, selectionEnd, selectionStart });
+    }
+
     triggerListItemAction(tabId: string, groupId: string, itemId: string, key: string): void {
         const item = this.getListItem(tabId, groupId, itemId);
 
@@ -179,54 +213,36 @@ export class PropertiesMenuService {
         this.config().onListItemAction?.({ groupId, itemId, key, tabId });
     }
 
-    removeListItem(tabId: string, groupId: string, itemId: string): void {
-        const item = this.getListItem(tabId, groupId, itemId);
-
-        if (!item || item.disabled || !item.removable) {
-            return;
-        }
-
-        this.config().onListItemRemove?.({ groupId, itemId, tabId });
+    triggerTabAdd(tabId: string): void {
+        this.config().onTabAdd?.({ tabId });
     }
 
-    getGroup(tabId: string, groupId: string): PropertyGroup | undefined {
-        const tab = this.config().tabs.find(current => current.id === tabId);
-
-        return tab?.groups.find(group => group.id === groupId);
+    triggerTreeAddBlock(tabId: string, groupId: string): void {
+        this.config().onTreeAddBlock?.({ groupId, tabId });
     }
 
-    getListItem(tabId: string, groupId: string, itemId: string): PropertyListItem | undefined {
-        const group = this.getGroup(tabId, groupId);
+    updateFieldValue(fieldId: string, value: unknown): void {
+        const previousValue = this.getField(fieldId)?.value;
 
-        return group?.content.type === PropertyGroupContentType.LIST
-            ? group.content.list.find(item => item.id === itemId)
-            : undefined;
+        this.config.update(config => this.updateField(config, fieldId, value));
+
+        this.config().onFieldValueChange?.({ fieldId, previousValue, value });
     }
 
-    getField(fieldId: string): PropertyField | undefined {
-        for (const tab of this.config().tabs) {
-            for (const group of tab.groups) {
-                if (group.content.type !== PropertyGroupContentType.FIELDS) {
-                    continue;
-                }
+    private findActiveNode(nodes: PropertyTreeNode[]): string | null {
+        for (const node of nodes) {
+            if (node.active) {
+                return node.id;
+            }
 
-                const field = group.content.fields.find(current => current.id === fieldId);
+            const found = this.findActiveNode(node.children);
 
-                if (field) {
-                    return field;
-                }
+            if (found) {
+                return found;
             }
         }
 
-        return undefined;
-    }
-
-    getTreeNode(tabId: string, groupId: string, nodeId: string): PropertyTreeNode | undefined {
-        const group = this.getGroup(tabId, groupId);
-
-        return group?.content.type === PropertyGroupContentType.TREE
-            ? this.findTreeNode(group.content.tree.nodes, nodeId)
-            : undefined;
+        return null;
     }
 
     private findActiveTreeNodeId(config: PropertiesMenuConfig): string | null {
@@ -241,22 +257,6 @@ export class PropertiesMenuService {
                 if (found) {
                     return found;
                 }
-            }
-        }
-
-        return null;
-    }
-
-    private findActiveNode(nodes: PropertyTreeNode[]): string | null {
-        for (const node of nodes) {
-            if (node.active) {
-                return node.id;
-            }
-
-            const found = this.findActiveNode(node.children);
-
-            if (found) {
-                return found;
             }
         }
 
@@ -279,42 +279,6 @@ export class PropertiesMenuService {
         return undefined;
     }
 
-    private updateTreeNode(
-        config: PropertiesMenuConfig,
-        tabId: string,
-        groupId: string,
-        nodeId: string,
-        updater: (node: PropertyTreeNode) => PropertyTreeNodeParameters
-    ): PropertiesMenuConfig {
-        return new PropertiesMenuConfig({
-            ...config,
-            tabs: config.tabs.map((tab: PropertyTab) => {
-                if (tab.id !== tabId) {
-                    return tab;
-                }
-
-                return new PropertyTab({
-                    ...tab,
-                    groups: tab.groups.map(group => {
-                        if (group.id !== groupId || group.content.type !== PropertyGroupContentType.TREE) {
-                            return group;
-                        }
-
-                        return new PropertyGroup({
-                            ...group,
-                            content: new PropertyTreeContent({
-                                tree: new PropertyTreeConfig({
-                                    ...group.content.tree,
-                                    nodes: this.mapTreeNodes(group.content.tree.nodes, nodeId, updater)
-                                })
-                            })
-                        });
-                    })
-                });
-            })
-        });
-    }
-
     private mapTreeNodes(
         nodes: PropertyTreeNode[],
         nodeId: string,
@@ -330,50 +294,6 @@ export class PropertiesMenuService {
             }
 
             return new PropertyTreeNode({ ...node, children: this.mapTreeNodes(node.children, nodeId, updater) });
-        });
-    }
-
-    private updateListItem(
-        config: PropertiesMenuConfig,
-        tabId: string,
-        groupId: string,
-        itemId: string,
-        updater: (item: PropertyListItem) => PropertyListItemParameters
-    ): PropertiesMenuConfig {
-        return this.updateGroup(config, tabId, groupId, group => {
-            if (group.content.type !== PropertyGroupContentType.LIST) {
-                return group;
-            }
-
-            return {
-                ...group,
-                content: new PropertyListContent({
-                    list: (group.content as PropertyListContent).list.map(item =>
-                        item.id === itemId ? new PropertyListItem(updater(item)) : item
-                    )
-                })
-            };
-        });
-    }
-
-    private updateGroup(
-        config: PropertiesMenuConfig,
-        tabId: string,
-        groupId: string,
-        updater: (group: PropertyGroup) => PropertyGroupParameters
-    ): PropertiesMenuConfig {
-        return new PropertiesMenuConfig({
-            ...config,
-            tabs: config.tabs.map((tab: PropertyTab) => {
-                if (tab.id !== tabId) {
-                    return tab;
-                }
-
-                return new PropertyTab({
-                    ...tab,
-                    groups: tab.groups.map(group => (group.id === groupId ? new PropertyGroup(updater(group)) : group))
-                });
-            })
         });
     }
 
@@ -407,6 +327,86 @@ export class PropertiesMenuService {
                                 fields: group.content.fields.map(field =>
                                     field.id === fieldId ? field.withValue(value) : field
                                 )
+                            })
+                        });
+                    })
+                });
+            })
+        });
+    }
+
+    private updateGroup(
+        config: PropertiesMenuConfig,
+        tabId: string,
+        groupId: string,
+        updater: (group: PropertyGroup) => PropertyGroupParameters
+    ): PropertiesMenuConfig {
+        return new PropertiesMenuConfig({
+            ...config,
+            tabs: config.tabs.map((tab: PropertyTab) => {
+                if (tab.id !== tabId) {
+                    return tab;
+                }
+
+                return new PropertyTab({
+                    ...tab,
+                    groups: tab.groups.map(group => (group.id === groupId ? new PropertyGroup(updater(group)) : group))
+                });
+            })
+        });
+    }
+
+    private updateListItem(
+        config: PropertiesMenuConfig,
+        tabId: string,
+        groupId: string,
+        itemId: string,
+        updater: (item: PropertyListItem) => PropertyListItemParameters
+    ): PropertiesMenuConfig {
+        return this.updateGroup(config, tabId, groupId, group => {
+            if (group.content.type !== PropertyGroupContentType.LIST) {
+                return group;
+            }
+
+            return {
+                ...group,
+                content: new PropertyListContent({
+                    list: (group.content as PropertyListContent).list.map(item =>
+                        item.id === itemId ? new PropertyListItem(updater(item)) : item
+                    )
+                })
+            };
+        });
+    }
+
+    private updateTreeNode(
+        config: PropertiesMenuConfig,
+        tabId: string,
+        groupId: string,
+        nodeId: string,
+        updater: (node: PropertyTreeNode) => PropertyTreeNodeParameters
+    ): PropertiesMenuConfig {
+        return new PropertiesMenuConfig({
+            ...config,
+            tabs: config.tabs.map((tab: PropertyTab) => {
+                if (tab.id !== tabId) {
+                    return tab;
+                }
+
+                return new PropertyTab({
+                    ...tab,
+                    groups: tab.groups.map(group => {
+                        if (group.id !== groupId || group.content.type !== PropertyGroupContentType.TREE) {
+                            return group;
+                        }
+
+                        return new PropertyGroup({
+                            ...group,
+                            content: new PropertyTreeContent({
+                                tree: new PropertyTreeConfig({
+                                    ...group.content.tree,
+                                    nodes: this.mapTreeNodes(group.content.tree.nodes, nodeId, updater)
+                                })
                             })
                         });
                     })
