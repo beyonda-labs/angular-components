@@ -58,7 +58,9 @@ last. Disabled tabs are skipped.
 Tab widths are measured only while every tab is still rendered, then cached, so the measurement is never taken
 from an already-collapsed bar. A container width of zero means layout has not happened yet — during first
 paint, or while hidden — and everything stays visible rather than being guessed into the menu. The active tab
-is never pushed into the overflow menu without remaining visible.
+is never pushed into the overflow menu without remaining visible. When a rendered tab changes width after it was
+measured — translations that arrive after the first paint, a language switch, a web font — the cache is dropped
+and every tab is measured again.
 
 ## Theming
 
