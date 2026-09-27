@@ -18,4 +18,4 @@ export interface FormFileFieldParameters extends FormFieldBaseParameters {
     maxSizeBytes?: number;
 }
 
-export { matchesAcceptPattern } from '../../../../internal/file/accept-pattern.util';
+export { matchesAcceptPattern } from '../../../../internal/file/accept-pattern';

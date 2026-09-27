@@ -1,7 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 
-import { PropertyTreeNode } from '../models/property-tree-node.model';
-import { PropertyTreeDropPosition } from '../utils/property-tree-drop.util';
+import { PropertyTreeDropPosition, PropertyTreeNode } from '../models/property-tree-node.model';
 import { PropertiesMenuService } from './properties-menu.service';
 
 interface DropTarget {

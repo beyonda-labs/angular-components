@@ -5,7 +5,7 @@ import { faChevronDown, faChevronRight, IconDefinition } from '@fortawesome/free
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { toKeySegment } from '../../../../internal/i18n/key-segment.util';
+import { toKeySegment } from '../../../../internal/i18n/key-segment';
 import { LeftMenuAction } from '../../models/left-menu.model';
 
 @Component({

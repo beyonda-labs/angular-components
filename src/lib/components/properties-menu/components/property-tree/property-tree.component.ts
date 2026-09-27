@@ -4,11 +4,11 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { PropertyTreeNode } from '../../models/property-tree-node.model';
+import { resolvePropertyLabelKey } from '../../models/property-i18n';
+import { findTreeNode, isDropAllowed } from '../../models/property-tree-drop';
+import { PropertyTreeDropPosition, PropertyTreeNode } from '../../models/property-tree-node.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { PropertyTreeDragService } from '../../services/property-tree-drag.service';
-import { resolvePropertyLabelKey } from '../../utils/property-i18n.util';
-import { findTreeNode, isDropAllowed, PropertyTreeDropPosition } from '../../utils/property-tree-drop.util';
 
 const AUTO_EXPAND_DELAY_MS = 600;
 const AUTO_SCROLL_EDGE_PX = 24;

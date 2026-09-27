@@ -1,4 +1,4 @@
-import { resolvePropertyLabelKey } from './property-i18n.util';
+import { resolvePropertyLabelKey } from './property-i18n';
 
 describe('resolvePropertyLabelKey', () => {
     it('should prefix the key when the label is still the default sentinel', () => {

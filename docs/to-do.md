@@ -192,9 +192,9 @@ Snapshots per branch, `latest` from `main`, as described in the README.
         only sorts model classes today
 -   [x] `ModalTreeConfig` is plain data: the dialog owns the selection and the open branches, and the caller closes
         it through the `BsModalRef` that `open` returns
--   [ ] `properties-menu/utils`, `internal/file` and `internal/i18n` hold function modules with a `.util.ts`
-        suffix, while the new ones live next to their models without a suffix, as
-        `rules/model-library/function-module.md` names them: pick one convention for the library
+-   [x] Function modules have no technical suffix and live next to what they work on, as
+        `rules/model-library/function-module.md` names them: `properties-menu/utils` moved into its `models/`, the drop
+        position type and the variable icon into model files, and every module has its spec
 
 ---
 

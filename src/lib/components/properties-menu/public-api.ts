@@ -110,4 +110,4 @@ export type {
     PropertyTreeNodeToggle as BeyPropertyTreeNodeToggle,
     PropertyVariableSelection as BeyPropertyVariableSelection
 } from './models/properties-menu-events.model';
-export type { PropertyTreeDropPosition as BeyPropertyTreeDropPosition } from './utils/property-tree-drop.util';
+export type { PropertyTreeDropPosition as BeyPropertyTreeDropPosition } from './models/property-tree-node.model';

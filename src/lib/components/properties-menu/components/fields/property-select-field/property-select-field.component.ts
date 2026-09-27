@@ -7,8 +7,8 @@ import { OptionPickerOption } from '../../../../../internal/option-picker/models
 import { OptionPickerComponent } from '../../../../../internal/option-picker/option-picker.component';
 import { PropertySelectField } from '../../../models/fields/property-select-field.model';
 import { PropertyOption } from '../../../models/property-option.model';
-import { PROPERTY_VARIABLE_ICON } from '../../../utils/property-variable-icon.util';
-import { toVariableOptions } from '../../../utils/property-variable-options.util';
+import { PROPERTY_VARIABLE_ICON } from '../../../models/property-variable.model';
+import { toVariableOptions } from '../../../models/property-variable-options';
 
 /** A native select, or a filter box with its own option panel when the field is searchable. */
 @Component({

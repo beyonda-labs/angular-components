@@ -6,10 +6,9 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { OptionPickerOption } from '../../../../../internal/option-picker/models/option-picker-option.model';
 import { OptionPickerComponent } from '../../../../../internal/option-picker/option-picker.component';
 import { PropertyTextField } from '../../../models/fields/property-text-field.model';
-import { PropertyVariable } from '../../../models/property-variable.model';
+import { PROPERTY_VARIABLE_ICON, PropertyVariable } from '../../../models/property-variable.model';
+import { findVariable, toVariableExpression, toVariableOptions } from '../../../models/property-variable-options';
 import { PropertiesMenuService } from '../../../services/properties-menu.service';
-import { PROPERTY_VARIABLE_ICON } from '../../../utils/property-variable-icon.util';
-import { findVariable, toVariableExpression, toVariableOptions } from '../../../utils/property-variable-options.util';
 
 export interface PropertyTextFieldActionTrigger {
     key: string;

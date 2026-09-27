@@ -1,5 +1,7 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
+export type PropertyTreeDropPosition = 'after' | 'before' | 'inside';
+
 export class PropertyTreeNode {
     acceptsDrop: boolean;
     active: boolean;

@@ -13,7 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType, TooltipPlacement } from '../../internal/button/models/button-config.model';
-import { toKeySegment } from '../../internal/i18n/key-segment.util';
+import { toKeySegment } from '../../internal/i18n/key-segment';
 import { BadgeComponent } from '../badge/badge.component';
 import { HeaderAction, HeaderActionType, HeaderConfig, HeaderVariant } from './models/header.model';
 

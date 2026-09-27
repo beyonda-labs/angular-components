@@ -1,4 +1,4 @@
-import { toKeySegment } from './key-segment.util';
+import { toKeySegment } from './key-segment';
 
 describe('toKeySegment', () => {
     it('turns a camelCase identifier into kebab-case', () => {

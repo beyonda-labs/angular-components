@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { toKeySegment } from '../../../../internal/i18n/key-segment.util';
+import { toKeySegment } from '../../../../internal/i18n/key-segment';
 import { PropertyAttachmentField } from '../../models/fields/property-attachment-field.model';
 import { PropertyColorField } from '../../models/fields/property-color-field.model';
 import { PropertyFileField } from '../../models/fields/property-file-field.model';
@@ -15,8 +15,8 @@ import { PropertyTextField } from '../../models/fields/property-text-field.model
 import { PropertyToggleField } from '../../models/fields/property-toggle-field.model';
 import { PropertyField } from '../../models/property-field.model';
 import { PropertyFieldType } from '../../models/property-field-type.model';
+import { resolvePropertyLabelKey } from '../../models/property-i18n';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
-import { resolvePropertyLabelKey } from '../../utils/property-i18n.util';
 import { PropertyAttachmentFieldComponent } from '../fields/property-attachment-field/property-attachment-field.component';
 import { PropertyColorFieldComponent } from '../fields/property-color-field/property-color-field.component';
 import { PropertyFileFieldComponent } from '../fields/property-file-field/property-file-field.component';
