@@ -54,6 +54,14 @@ export class ActionListComponent {
         return this.isSubmenuOpen(path, forceExpanded) ? this.chevronDownIcon : this.chevronRightIcon;
     }
 
+    getExpandedState(action: LeftMenuAction, path: string, forceExpanded = false): boolean | null {
+        if (!this.hasSubActions(action) || this.hasSubmenuToggle(action, forceExpanded)) {
+            return null;
+        }
+
+        return this.isSubmenuOpen(path, forceExpanded);
+    }
+
     getLabel(action: LeftMenuAction): string {
         return this.resolveActionText(action, 'label');
     }
@@ -68,6 +76,10 @@ export class ActionListComponent {
 
     hasSubmenuSelection(action: LeftMenuAction): boolean {
         return !action.active && this.hasActiveDescendant(action);
+    }
+
+    hasSubmenuToggle(action: LeftMenuAction, forceExpanded = false): boolean {
+        return this.isInlineExpanded(forceExpanded) && this.hasSubActions(action) && Boolean(action.action);
     }
 
     isActionActive(action: LeftMenuAction): boolean {
@@ -123,6 +135,10 @@ export class ActionListComponent {
         if (!this.expanded() && !forceExpanded && this.activeFlyoutPath() === path) {
             this.activeFlyoutPath.set(null);
         }
+    }
+
+    onSubmenuToggleClick(path: string, forceExpanded = false): void {
+        this.toggleSubmenu(path, forceExpanded);
     }
 
     shouldShowFlyout(action: LeftMenuAction, path: string, forceExpanded = false): boolean {

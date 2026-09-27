@@ -3,6 +3,8 @@
 }
 
 .bey-left-menu-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
     position: relative;
 }
 
@@ -20,6 +22,7 @@
     font-size: var(--bey-font-size-md);
     font-weight: var(--bey-font-weight-medium);
     gap: var(--bey-space-md);
+    grid-area: 1 / 1;
     line-height: var(--bey-line-height-tight);
     min-height: 2.75rem;
     padding: var(--bey-space-md) var(--bey-space-md);
@@ -119,6 +122,23 @@
     font-size: var(--bey-font-size-sm);
     justify-content: center;
     width: 1rem;
+}
+
+.bey-left-menu-action-toggle {
+    background: transparent;
+    border: 0;
+    border-radius: var(--bey-radius-lg);
+    grid-area: 1 / 1;
+    padding: 0;
+    place-self: stretch end;
+    pointer-events: none;
+    position: relative;
+    width: calc(1rem + 2 * var(--bey-space-md));
+}
+
+.bey-left-menu-action-toggle:focus-visible {
+    box-shadow: var(--bey-left-menu-focus-ring);
+    outline: 0;
 }
 
 .bey-left-menu-action-marker {

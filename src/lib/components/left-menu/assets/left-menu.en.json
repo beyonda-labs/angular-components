@@ -6,7 +6,8 @@
             "sections": {
                 "main": "Main",
                 "others": "Others"
-            }
+            },
+            "submenu": "{{label}} submenu"
         }
     }
 }
