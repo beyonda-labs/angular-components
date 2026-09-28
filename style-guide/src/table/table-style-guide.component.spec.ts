@@ -25,4 +25,9 @@ describe('TableStyleGuideComponent', () => {
         expect(fixture.componentInstance.opened()).toBe('Ada Lovelace');
         expect(fixture.componentInstance.selected()).toEqual(['Ada Lovelace']);
     });
+
+    it('shows the join dates with the locale of the app and the skills as tags', () => {
+        expect(fixture.nativeElement.textContent).toContain('Mar 14, 2021');
+        expect(fixture.nativeElement.textContent).toContain('TypeScript');
+    });
 });

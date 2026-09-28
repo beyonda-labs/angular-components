@@ -3,16 +3,18 @@ import {
     BeyBadgeConfig,
     BeyBadgeTableCell,
     BeyBadgeVariant,
+    BeyDateTableCell,
     BeyLinkTableCell,
+    BeyTableCell,
     BeyTableColumn,
     BeyTableComponent,
     BeyTableConfig,
+    BeyTagsTableCell,
     BeyTextTableCell
 } from '@beyonda-labs/angular-components';
 import { TranslateModule } from '@ngx-translate/core';
 
 const PREFIX = 'angular-components-style-guide.table';
-const SKILL_BADGE_VARIANTS = [BeyBadgeVariant.Primary, BeyBadgeVariant.Info, BeyBadgeVariant.Purple];
 const STATUS_BADGE_VARIANTS: Record<string, BeyBadgeVariant> = {
     active: BeyBadgeVariant.Success,
     review: BeyBadgeVariant.Warning
@@ -24,17 +26,27 @@ interface Person {
     role: string;
     skills: string[];
     status: string;
+
+    joinedAt?: number;
 }
 
 const PEOPLE: Person[] = [
     {
         id: 1,
+        joinedAt: Date.UTC(2021, 2, 14, 12),
         name: 'Ada Lovelace',
         role: 'Principal Engineer',
         skills: ['Angular', 'TypeScript', 'RxJS'],
         status: 'active'
     },
-    { id: 2, name: 'Grace Hopper', role: 'Platform Architect', skills: ['Node.js', 'Docker'], status: 'review' },
+    {
+        id: 2,
+        joinedAt: Date.UTC(2019, 11, 9, 12),
+        name: 'Grace Hopper',
+        role: 'Platform Architect',
+        skills: ['Node.js', 'Docker'],
+        status: 'review'
+    },
     { id: 3, name: 'Katherine Johnson', role: 'Operations Analyst', skills: ['SQL'], status: 'paused' }
 ];
 
@@ -55,10 +67,11 @@ export class TableStyleGuideComponent {
     private buildConfig(items: Person[]): BeyTableConfig<Person> {
         return new BeyTableConfig<Person>({
             columns: [
-                new BeyTableColumn({ key: 'name', tooltip: `${PREFIX}.tooltips.name`, width: 30 }),
-                new BeyTableColumn({ key: 'role', width: 20 }),
-                new BeyTableColumn({ key: 'status', tooltip: `${PREFIX}.tooltips.status`, width: 15 }),
-                new BeyTableColumn({ key: 'skills', tooltip: `${PREFIX}.tooltips.skills`, width: 25 }),
+                new BeyTableColumn({ key: 'name', tooltip: `${PREFIX}.tooltips.name`, width: 25 }),
+                new BeyTableColumn({ key: 'role', width: 18 }),
+                new BeyTableColumn({ key: 'status', tooltip: `${PREFIX}.tooltips.status`, width: 12 }),
+                new BeyTableColumn({ key: 'joinedAt', tooltip: `${PREFIX}.tooltips.joined-at`, width: 15 }),
+                new BeyTableColumn({ key: 'skills', tooltip: `${PREFIX}.tooltips.skills`, width: 20 }),
                 new BeyTableColumn({ key: 'action', width: 10 })
             ],
             items,
@@ -68,12 +81,7 @@ export class TableStyleGuideComponent {
         });
     }
 
-    private loadRow({
-        name,
-        role,
-        skills,
-        status
-    }: Person): (BeyTextTableCell | BeyBadgeTableCell | BeyLinkTableCell)[] {
+    private loadRow({ joinedAt, name, role, skills, status }: Person): BeyTableCell[] {
         return [
             new BeyTextTableCell({ content: name, tooltip: name }),
             new BeyTextTableCell({ content: role, tooltip: role }),
@@ -87,15 +95,8 @@ export class TableStyleGuideComponent {
                 tooltip: `${PREFIX}.status.${status}`,
                 translate: true
             }),
-            new BeyBadgeTableCell({
-                badges: skills.map(
-                    (skill, index) =>
-                        new BeyBadgeConfig({
-                            label: skill,
-                            variant: SKILL_BADGE_VARIANTS[index % SKILL_BADGE_VARIANTS.length]
-                        })
-                )
-            }),
+            new BeyDateTableCell({ value: joinedAt }),
+            new BeyTagsTableCell({ tags: skills }),
             new BeyLinkTableCell({
                 action: () => this.opened.set(name),
                 content: `${PREFIX}.actions.open`,

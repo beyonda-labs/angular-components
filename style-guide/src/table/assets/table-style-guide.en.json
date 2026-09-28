@@ -7,6 +7,7 @@
             },
             "columns": {
                 "action": "Action",
+                "joined-at": "Joined",
                 "name": "Name",
                 "role": "Role",
                 "skills": "Skills",
@@ -25,8 +26,9 @@
                 "review": "In review"
             },
             "tooltips": {
+                "joined-at": "Date cells format the value with the locale of the app",
                 "name": "Primary identity column",
-                "skills": "Badge cells accept a list, rendering more than one badge per row",
+                "skills": "Tags cells show plain strings as outline badges, never translated",
                 "status": "Status cells can be translated and tooltip-enabled"
             }
         }
