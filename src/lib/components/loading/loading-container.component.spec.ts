@@ -1,76 +1,67 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { renderComponent, settle } from '@testing/dom';
 
 import { LoadingContainerComponent } from './loading-container.component';
 import { LoadingService } from './services/loading.service';
 
 describe('LoadingContainerComponent', () => {
-    let component: LoadingContainerComponent;
     let fixture: ComponentFixture<LoadingContainerComponent>;
     let loadingService: LoadingService;
+
+    function loadingLabel(): string | null {
+        return fixture.nativeElement.querySelector('[role="status"]')?.textContent.trim() ?? null;
+    }
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [LoadingContainerComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(LoadingContainerComponent);
-        component = fixture.componentInstance;
         loadingService = TestBed.inject(LoadingService);
-
-        fixture.detectChanges();
+        fixture = await renderComponent(LoadingContainerComponent);
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('shows no loading indicator while nothing is loading', () => {
+        expect(loadingLabel()).toBeNull();
     });
 
-    it('should not render overlay by default', () => {
-        const overlay = fixture.nativeElement.querySelector('bey-loading-overlay');
-        expect(overlay).toBeNull();
-    });
-
-    it('should render fullscreen overlay after show()', () => {
+    it('shows the loading indicator after show()', async () => {
         loadingService.show();
-        fixture.detectChanges();
+        await settle(fixture);
 
-        const overlay = fixture.nativeElement.querySelector('bey-loading-overlay');
-        expect(overlay).toBeTruthy();
-        expect(overlay.querySelector('[role="alert"]')).toBeTruthy();
+        expect(loadingLabel()).toBe('angular-components.loading.label');
     });
 
-    it('should hide overlay after matching hide()', () => {
+    it('hides the loading indicator after a matching hide()', async () => {
         loadingService.show();
-        fixture.detectChanges();
+        await settle(fixture);
 
         loadingService.hide();
-        fixture.detectChanges();
+        await settle(fixture);
 
-        const overlay = fixture.nativeElement.querySelector('bey-loading-overlay');
-        expect(overlay).toBeNull();
+        expect(loadingLabel()).toBeNull();
     });
 
-    it('should remain visible when multiple show() calls with partial hide()', () => {
+    it('keeps the loading indicator while show() has been called more times than hide()', async () => {
         loadingService.show();
         loadingService.show();
-        fixture.detectChanges();
+        await settle(fixture);
 
         loadingService.hide();
-        fixture.detectChanges();
+        await settle(fixture);
 
-        const overlay = fixture.nativeElement.querySelector('bey-loading-overlay');
-        expect(overlay).toBeTruthy();
+        expect(loadingLabel()).toBe('angular-components.loading.label');
     });
 
-    it('should hide after reset()', () => {
+    it('hides the loading indicator after reset()', async () => {
         loadingService.show();
         loadingService.show();
-        fixture.detectChanges();
+        await settle(fixture);
 
         loadingService.reset();
-        fixture.detectChanges();
+        await settle(fixture);
 
-        const overlay = fixture.nativeElement.querySelector('bey-loading-overlay');
-        expect(overlay).toBeNull();
+        expect(loadingLabel()).toBeNull();
     });
 });

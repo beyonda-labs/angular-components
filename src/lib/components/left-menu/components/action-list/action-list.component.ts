@@ -27,7 +27,6 @@ export class ActionListComponent {
     readonly activeFlyoutPath = signal<string | null>(null);
     readonly chevronDownIcon = faChevronDown;
     readonly chevronRightIcon = faChevronRight;
-    /* Which branches the accordion has open. Reseeded from the active action whenever the inputs change. */
     readonly openPaths = linkedSignal<Set<string>>(() => {
         const activePath = this.expanded() ? this.findFirstActivePath(this.actions(), this.groupKey()) : null;
 

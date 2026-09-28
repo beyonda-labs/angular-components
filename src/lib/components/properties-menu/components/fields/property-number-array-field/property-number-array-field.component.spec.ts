@@ -1,98 +1,87 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
-import { queryAll } from '@testing/dom';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { buttonByName, queryAll, queryButton, renderComponent } from '@testing/dom';
 
-import { PropertyNumberArrayField } from '../../../models/fields/property-number-array-field.model';
+import propertiesMenuEn from '../../../assets/properties-menu.en.json';
+import {
+    PropertyNumberArrayField,
+    PropertyNumberArrayFieldParameters
+} from '../../../models/fields/property-number-array-field.model';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 import { PropertyNumberArrayFieldComponent } from './property-number-array-field.component';
 
-const ADD_TEXT = 'angular-components.properties-menu.number-array-field.add';
-const REMOVE_LABEL = 'angular-components.properties-menu.remove';
+const LABELLING: PropertyFieldLabelling = { controlId: 'widths', labelId: null, labelKey: 'Widths' };
 
 describe('PropertyNumberArrayFieldComponent', () => {
-    let component: PropertyNumberArrayFieldComponent;
     let fixture: ComponentFixture<PropertyNumberArrayFieldComponent>;
+    let emitted: number[][];
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [PropertyNumberArrayFieldComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(PropertyNumberArrayFieldComponent);
-        component = fixture.componentInstance;
+        const translate = TestBed.inject(TranslateService);
+
+        translate.setTranslation('en', propertiesMenuEn);
+        translate.use('en');
     });
 
-    function entryInputs(): HTMLInputElement[] {
-        return queryAll<HTMLInputElement>(fixture, 'input[type="number"]');
+    async function render(parameters: Omit<PropertyNumberArrayFieldParameters, 'id'>): Promise<void> {
+        emitted = [];
+        fixture = await renderComponent(PropertyNumberArrayFieldComponent, {
+            field: new PropertyNumberArrayField({ id: 'widths', ...parameters }),
+            labelling: LABELLING
+        });
+        fixture.componentInstance.valueChange.subscribe(value => emitted.push(value));
     }
 
-    function addButton(): HTMLButtonElement | undefined {
-        return queryAll<HTMLButtonElement>(fixture, 'button').find(element => element.textContent?.includes(ADD_TEXT));
+    function entry(position: number): HTMLInputElement {
+        const [found] = queryAll<HTMLInputElement>(fixture, `[aria-label="Widths, entry ${position}"]`);
+
+        return found;
     }
 
-    it('renders one input per entry', () => {
-        fixture.componentRef.setInput('field', new PropertyNumberArrayField({ id: 'widths', value: [1, 1, 1, 1] }));
-        fixture.detectChanges();
+    it('renders one input per entry, named by its position', async () => {
+        await render({ value: [1, 2, 3, 4] });
 
-        expect(entryInputs()).toHaveLength(4);
+        expect([1, 2, 3, 4].map(position => entry(position).value)).toEqual(['1', '2', '3', '4']);
     });
 
-    it('emits the array with the new entry appended when "add" is clicked', () => {
-        fixture.componentRef.setInput(
-            'field',
-            new PropertyNumberArrayField({ id: 'widths', value: [1, 1], entryDefaultValue: 1 })
-        );
-        fixture.detectChanges();
+    it('emits the array with the new entry appended when "add" is clicked', async () => {
+        await render({ entryDefaultValue: 1, value: [1, 1] });
 
-        const emitSpy = jest.spyOn(component.valueChange, 'emit');
-        component.onAdd();
+        buttonByName(fixture, 'Add').click();
 
-        expect(emitSpy).toHaveBeenCalledWith([1, 1, 1]);
+        expect(emitted).toEqual([[1, 1, 1]]);
     });
 
-    it('emits the array without that entry when "remove" is clicked', () => {
-        fixture.componentRef.setInput('field', new PropertyNumberArrayField({ id: 'widths', value: [1, 2, 3] }));
-        fixture.detectChanges();
+    it('emits the array without that entry when its remove button is clicked', async () => {
+        await render({ value: [1, 2, 3] });
 
-        const emitSpy = jest.spyOn(component.valueChange, 'emit');
-        component.onRemove(1);
+        buttonByName(fixture, 'Remove Widths, entry 2').click();
 
-        expect(emitSpy).toHaveBeenCalledWith([1, 3]);
+        expect(emitted).toEqual([[1, 3]]);
     });
 
-    it('does not allow removing below minLength', () => {
-        fixture.componentRef.setInput(
-            'field',
-            new PropertyNumberArrayField({ id: 'widths', value: [1], minLength: 1 })
-        );
-        fixture.detectChanges();
+    it('offers no remove button at minLength', async () => {
+        await render({ minLength: 1, value: [1] });
 
-        const emitSpy = jest.spyOn(component.valueChange, 'emit');
-        component.onRemove(0);
-
-        expect(emitSpy).not.toHaveBeenCalled();
-        expect(fixture.nativeElement.querySelector(`[aria-label="${REMOVE_LABEL}"]`)).toBeNull();
+        expect(queryButton(fixture, 'Remove Widths, entry 1')).toBeNull();
     });
 
-    it('hides the add button once maxLength is reached', () => {
-        fixture.componentRef.setInput(
-            'field',
-            new PropertyNumberArrayField({ id: 'widths', value: [1, 1], maxLength: 2 })
-        );
-        fixture.detectChanges();
+    it('hides the add button once maxLength is reached', async () => {
+        await render({ maxLength: 2, value: [1, 1] });
 
-        expect(addButton()).toBeUndefined();
+        expect(queryButton(fixture, 'Add')).toBeNull();
     });
 
-    it('emits the updated entry value on input', () => {
-        fixture.componentRef.setInput('field', new PropertyNumberArrayField({ id: 'widths', value: [1, 2] }));
-        fixture.detectChanges();
+    it('emits the updated entry value on input', async () => {
+        await render({ value: [1, 2] });
 
-        const emitSpy = jest.spyOn(component.valueChange, 'emit');
-        const input = entryInputs()[1];
+        entry(2).value = '5';
+        entry(2).dispatchEvent(new Event('input'));
 
-        input.value = '5';
-        input.dispatchEvent(new Event('input'));
-
-        expect(emitSpy).toHaveBeenCalledWith([1, 5]);
+        expect(emitted).toEqual([[1, 5]]);
     });
 });

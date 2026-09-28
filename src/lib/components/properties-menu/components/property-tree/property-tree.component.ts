@@ -23,11 +23,6 @@ interface DragCandidate {
     y: number;
 }
 
-/**
- * Nested rows with pointer-based drag and drop: a press on a draggable row becomes a drag after a few
- * pixels, the row under the pointer is split in before/inside/after zones, a collapsed target opens after
- * a pause and the scrollable ancestor scrolls near its edges.
- */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, NgTemplateOutlet, TranslateModule],
@@ -50,7 +45,6 @@ export class PropertyTreeComponent {
     private autoExpandNodeId: string | null = null;
     private autoExpandTimer?: ReturnType<typeof setTimeout>;
     private dragCandidate?: DragCandidate;
-    private draggedRecently = false;
     private readonly handleKeyDown = (event: KeyboardEvent): void => {
         if (event.key === 'Escape') {
             this.propertyTreeDragService.cancel(this.tabId(), this.groupId());
@@ -69,7 +63,7 @@ export class PropertyTreeComponent {
                 return;
             }
 
-            this.draggedRecently = true;
+            this.ignoresClickEndingDrag = true;
             this.propertyTreeDragService.start(this.tabId(), this.groupId(), candidate.node);
         }
 
@@ -84,6 +78,7 @@ export class PropertyTreeComponent {
 
         this.detachPointerListeners();
     };
+    private ignoresClickEndingDrag = false;
 
     private readonly destroyRef = inject(DestroyRef);
     private readonly hostElement = inject<ElementRef<HTMLElement>>(ElementRef);
@@ -126,7 +121,7 @@ export class PropertyTreeComponent {
     }
 
     onNodeClick(node: PropertyTreeNode): void {
-        if (node.disabled || this.draggedRecently) {
+        if (node.disabled || this.ignoresClickEndingDrag) {
             return;
         }
 
@@ -151,7 +146,7 @@ export class PropertyTreeComponent {
         }
 
         this.dragCandidate = { node, x: event.clientX, y: event.clientY };
-        this.draggedRecently = false;
+        this.ignoresClickEndingDrag = false;
 
         document.addEventListener('pointermove', this.handlePointerMove);
         document.addEventListener('pointerup', this.handlePointerUp);
@@ -199,9 +194,8 @@ export class PropertyTreeComponent {
         document.removeEventListener('pointercancel', this.handlePointerUp);
         document.removeEventListener('keydown', this.handleKeyDown);
 
-        // The click that ends a drag must not select the row.
         setTimeout(() => {
-            this.draggedRecently = false;
+            this.ignoresClickEndingDrag = false;
         });
     }
 

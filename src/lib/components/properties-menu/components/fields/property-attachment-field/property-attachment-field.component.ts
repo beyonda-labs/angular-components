@@ -11,12 +11,12 @@ import {
     PropertyAttachmentField,
     PropertyAttachmentOption
 } from '../../../models/fields/property-attachment-field.model';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 import { PROPERTY_VARIABLE_ICON } from '../../../models/property-variable.model';
 import { toVariableOptions } from '../../../models/property-variable-options';
 
 const BYTES_PER_MB = 1024 * 1024;
 
-/** Picks an existing attachment from a filterable list, uploads a new one, or references a variable. */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, OptionPickerComponent, TooltipModule, TranslateModule],
@@ -27,10 +27,12 @@ const BYTES_PER_MB = 1024 * 1024;
 })
 export class PropertyAttachmentFieldComponent {
     readonly field = input.required<PropertyAttachmentField>();
+    readonly labelling = input.required<PropertyFieldLabelling>();
 
     readonly uploadRequested = output<File>();
     readonly valueChange = output<string>();
 
+    readonly attachmentsId = computed(() => `${this.labelling().controlId}-attachments`);
     readonly clearIcon = faXmark;
     readonly filteredOptions = computed(() => {
         const term = this.query().trim().toLowerCase();

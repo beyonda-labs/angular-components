@@ -17,8 +17,6 @@ interface RefreshResponse {
 let isRefreshing = false;
 const refreshedToken$ = new BehaviorSubject<string | null>(null);
 
-// This state is module-level (shared across every request app-wide, deliberately — see below), which
-// also means it leaks across test cases unless reset. Not used by the interceptor itself.
 export function resetSessionInterceptorStateForTesting(): void {
     isRefreshing = false;
     refreshedToken$.next(null);

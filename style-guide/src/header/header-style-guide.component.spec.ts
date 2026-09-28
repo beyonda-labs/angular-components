@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { renderComponent } from '@testing/dom';
+import { queryButton, renderComponent } from '@testing/dom';
 
-import { HeaderVariant } from '../../../src/lib/components/header/models/header.model';
 import { HeaderStyleGuideComponent } from './header-style-guide.component';
 
+const PREFIX = 'angular-components-style-guide.header';
+
 describe('HeaderStyleGuideComponent', () => {
-    let component: HeaderStyleGuideComponent;
     let fixture: ComponentFixture<HeaderStyleGuideComponent>;
 
     beforeEach(async () => {
@@ -15,22 +15,14 @@ describe('HeaderStyleGuideComponent', () => {
         }).compileComponents();
 
         fixture = await renderComponent(HeaderStyleGuideComponent);
-        component = fixture.componentInstance;
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+    it('shows the default, back and sub-page examples, with a back button', () => {
+        const text = fixture.nativeElement.textContent;
 
-    it('should render three header examples, only the back variant with a back button', () => {
-        const headers = fixture.nativeElement.querySelectorAll('bey-header');
-
-        expect(headers.length).toBe(3);
-        expect(component.config.backAction).toBeUndefined();
-        expect(component.backConfig.backAction).toBeDefined();
-    });
-
-    it('should render the sub-page example with the SubPage variant', () => {
-        expect(component.subPageConfig.variant).toBe(HeaderVariant.SubPage);
+        expect(text).toContain(`${PREFIX}.examples.default`);
+        expect(text).toContain(`${PREFIX}.examples.back`);
+        expect(text).toContain(`${PREFIX}.examples.sub-page`);
+        expect(queryButton(fixture, `${PREFIX}.actions.back.label`)).not.toBeNull();
     });
 });

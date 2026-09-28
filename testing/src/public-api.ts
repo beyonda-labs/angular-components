@@ -1,8 +1,11 @@
 export {
+    accessibleName as beyAccessibleName,
     buttonByName as beyButtonByName,
+    controlByName as beyControlByName,
     hostOf as beyHostOf,
     queryAll as beyQueryAll,
     queryButton as beyQueryButton,
+    queryControl as beyQueryControl,
     renderComponent as beyRenderComponent,
     settle as beySettle,
     textsOf as beyTextsOf

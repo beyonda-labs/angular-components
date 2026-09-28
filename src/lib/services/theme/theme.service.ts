@@ -40,11 +40,13 @@ export class ThemeService {
         }
     }
 
-    private saveTheme(theme: Theme): void {
+    private saveTheme(theme: Theme): boolean {
         try {
             localStorage.setItem(STORAGE_KEY, theme);
+
+            return true;
         } catch {
-            /* SSR o modo privado */
+            return false;
         }
     }
 }

@@ -9,7 +9,7 @@
         <button
             class="bey-property-group-header"
             type="button"
-            [attr.aria-controls]="'property-group-' + current.id"
+            [attr.aria-controls]="bodyId"
             [attr.aria-expanded]="current.expanded"
             [disabled]="current.disabled"
             (click)="toggle()"
@@ -38,7 +38,7 @@
     }
 
     @if (current.expanded) {
-        <div class="bey-property-group-body" [id]="'property-group-' + current.id">
+        <div class="bey-property-group-body" [id]="bodyId">
             @if (fieldsContent()) {
                 @for (field of visibleFields(); track field.id) {
                     <bey-property-field

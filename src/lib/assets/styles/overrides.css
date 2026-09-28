@@ -17,6 +17,12 @@
     --bs-body-color: var(--bey-text-primary);
     --bs-heading-color: var(--bey-text-primary);
 
+    --bs-border-radius-sm: var(--bey-radius-xs);
+    --bs-border-radius: var(--bey-radius-sm);
+    --bs-border-radius-lg: var(--bey-radius-md);
+    --bs-border-radius-xl: var(--bey-radius-xl);
+    --bs-border-radius-pill: var(--bey-radius-pill);
+
     --bey-datepicker-border-color: var(--bey-secondary);
     --bey-datepicker-surface-color: var(--bey-bg-page);
     --bey-datepicker-divider-color: var(--bey-border-subtle);

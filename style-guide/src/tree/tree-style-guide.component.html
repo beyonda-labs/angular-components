@@ -2,4 +2,5 @@
     {{ 'angular-components-style-guide.tree.example' | translate }}
 </p>
 
-<bey-tree [config]="config"></bey-tree>
+<bey-tree class="mb-2" [config]="config()"></bey-tree>
+<p class="text-muted mb-0">{{ 'angular-components-style-guide.tree.selected' | translate }} {{ selectedKey() }}</p>

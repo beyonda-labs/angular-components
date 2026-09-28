@@ -1,7 +1,16 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
-import { buttonByName, hostOf, queryAll, queryButton, renderComponent, textsOf } from './dom';
+import {
+    buttonByName,
+    controlByName,
+    hostOf,
+    queryAll,
+    queryButton,
+    queryControl,
+    renderComponent,
+    textsOf
+} from './dom';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,6 +24,18 @@ import { buttonByName, hostOf, queryAll, queryButton, renderComponent, textsOf }
         <button type="button">Save</button>
         <button aria-label="Close" type="button">x</button>
         <span role="button">Toggle</span>
+        <label for="probe-title">Title</label>
+        <input id="probe-title" type="text" />
+        <label>
+            Size
+            <select>
+                <option>Small</option>
+                <option>Large</option>
+            </select>
+        </label>
+        <input aria-label="Search" type="search" />
+        <span id="probe-widths">Column widths</span>
+        <div aria-labelledby="probe-widths" role="group"></div>
     `
 })
 class DomProbeComponent {
@@ -53,5 +74,21 @@ describe('testing/dom', () => {
 
         expect(textsOf(queryAll(list, 'li'))).toEqual(['Ada']);
         expect(queryButton(list, 'Save')).toBeNull();
+    });
+
+    it('finds a control by its label, its aria-label or the element it is labelled by', async () => {
+        const fixture = await renderComponent(DomProbeComponent);
+
+        expect(controlByName(fixture, 'Title').id).toBe('probe-title');
+        expect(controlByName<HTMLSelectElement>(fixture, 'Size').tagName).toBe('SELECT');
+        expect(controlByName(fixture, 'Search').type).toBe('search');
+        expect(controlByName(fixture, 'Column widths').getAttribute('role')).toBe('group');
+    });
+
+    it('reports a missing control as null, or throws when one is required', async () => {
+        const fixture = await renderComponent(DomProbeComponent);
+
+        expect(queryControl(fixture, 'Notes')).toBeNull();
+        expect(() => controlByName(fixture, 'Notes')).toThrow('No control named Notes');
     });
 });

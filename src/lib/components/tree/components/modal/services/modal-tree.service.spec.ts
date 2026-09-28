@@ -21,11 +21,7 @@ describe('ModalTreeService', () => {
         service = TestBed.inject(ModalTreeService);
     });
 
-    it('should create', () => {
-        expect(service).toBeTruthy();
-    });
-
-    it('should open the modal tree dialog with the provided config', () => {
+    it('opens the modal tree dialog with the provided config', () => {
         const modalReference = buildModalReference();
         show.mockReturnValue(modalReference);
 
@@ -44,7 +40,7 @@ describe('ModalTreeService', () => {
         );
     });
 
-    it('should apply the configured size to the modal class', () => {
+    it('passes the configured size to the modal class', () => {
         show.mockReturnValue(buildModalReference());
 
         service.open(buildConfig(ModalTreeSize.Small));

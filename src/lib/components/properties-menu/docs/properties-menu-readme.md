@@ -144,8 +144,17 @@ Each field extends `BeyPropertyField` (`id`, `label`, `description`, `value`, `d
 
 `span: 'half'` puts two consecutive fields on one row. A text field with `acceptsVariable` inserts the picked
 variable as `{{ path }}` at the cursor; with an `actionButton` it shows that button while text is selected and
-reports the selection through `onFieldAction`. The attachment field checks the file type and size before
-`onAttachmentUpload`; storing the file and adding it to `options` is the consumer's job.
+reports the selection through `onFieldAction`. A `searchable` select filters its options by their translated
+label as the user types, and `Enter` picks the first enabled match. A file field shows the name of a file picked
+in the session; a value it was given shows as *File selected*. The attachment field filters `options` as the
+user types and checks the file type and size before `onAttachmentUpload`; storing the file and adding it to
+`options` is the consumer's job.
+
+The label of a field also names its controls for assistive technology: it is tied to the input, the select, the
+colour picker or the toggle, and it names the group of a number array, a segmented or a spacing field and the
+option list of a searchable select or an attachment field. The controls a field adds are named after the same
+label: `<label> hex value` for the text of a colour, `<label>, entry <n>` and `Remove <label>, entry <n>` for
+the entries of a number array, `Choose file for <label>` for a file field.
 
 ## Lists
 
@@ -154,7 +163,8 @@ A `BeyPropertyListItem` renders as a card with `icon` (and `iconClasses` to colo
 copy button that writes that text to the clipboard) and `removable`. A plain card reports `onListItemSelect`. A
 card with a `body` of `BeyPropertySummaryRow` (`label` plus a `field`, a `badge` or a `value`) becomes
 expandable instead: its header and chevron toggle it, its body never does, and a row's field is a normal field
-whose value travels through `onFieldValueChange`.
+whose value travels through `onFieldValueChange`. That field shows no label of its own: the row's `label` names
+its controls.
 
 ## Trees
 
@@ -163,8 +173,10 @@ A `BeyPropertyTreeNode` has `label` with `labelParameters`, `icon`, `children`, 
 add-block button under the nodes; with `showEmptyStateAddBlock` an empty tree shows it as a centred call to
 action instead.
 
-A node with `draggable` can be moved with the mouse or a pen (touch is left to scrolling). The library holds
-no nesting rules: a node never drops onto itself or its descendants, and everything else travels in the config:
+A node with `draggable` can be moved with the mouse or a pen (touch is left to scrolling): a press becomes a drag
+once the pointer moves a few pixels, and the scrollable container of the tree scrolls while the pointer is near
+its top or bottom edge. The library holds no nesting rules: a node never drops onto itself or its descendants,
+and everything else travels in the config:
 
 | Flag              | On          | Meaning                                                                       |
 | ----------------- | ----------- | ----------------------------------------------------------------------------- |

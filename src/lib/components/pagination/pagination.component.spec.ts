@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { renderComponent, settle } from '@testing/dom';
+import { buttonByName, controlByName, queryButton, renderComponent, settle } from '@testing/dom';
 
 import { PaginationConfig, PaginationConfigParameters } from './models/pagination.model';
 import { PaginationComponent } from './pagination.component';
@@ -16,12 +16,12 @@ describe('PaginationComponent', () => {
         fixture = await renderComponent(PaginationComponent, { config });
     }
 
-    function button(testId: string): HTMLButtonElement {
-        return fixture.nativeElement.querySelector(`[data-testid="${testId}-button"]`);
+    function button(name: string): HTMLButtonElement {
+        return buttonByName(fixture, `angular-components.pagination.${name}`);
     }
 
     function pageInput(): HTMLInputElement {
-        return fixture.nativeElement.querySelector('[data-testid="page-input"]');
+        return controlByName(fixture, 'angular-components.pagination.current-page');
     }
 
     function currentPage(): string {
@@ -94,15 +94,15 @@ describe('PaginationComponent', () => {
     it('hides the first and last buttons when there are few pages', async () => {
         await render(buildConfig({ totalItems: 50, pageSize: 25 }));
 
-        expect(button('first-page')).toBeNull();
-        expect(button('last-page')).toBeNull();
+        expect(queryButton(fixture, 'angular-components.pagination.first-page')).toBeNull();
+        expect(queryButton(fixture, 'angular-components.pagination.last-page')).toBeNull();
     });
 
     it('reports a page size change and brings the page back in range', async () => {
         const onPageSizeChange = jest.fn();
         await render(buildConfig({ page: 20, totalItems: 500, pageSize: 25, onPageSizeChange }));
 
-        const select: HTMLSelectElement = fixture.nativeElement.querySelector('[data-testid="page-size-select"]');
+        const select = controlByName<HTMLSelectElement>(fixture, 'angular-components.pagination.page-size');
         select.value = select.options[2].value;
         select.dispatchEvent(new Event('change'));
         await settle(fixture);

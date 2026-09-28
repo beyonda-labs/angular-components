@@ -83,6 +83,5 @@ export interface SearchFieldParameters {
     key: string;
     type: SearchFieldType;
 
-    /** Only meaningful (and required in practice) for `SearchFieldType.Select` — the bounded set of choices. */
     options?: SearchFieldOption[];
 }

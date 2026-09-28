@@ -37,26 +37,22 @@ describe('SessionService', () => {
         service = TestBed.inject(SessionService);
     });
 
-    it('should create', () => {
-        expect(service).toBeTruthy();
-    });
-
     describe('initial state', () => {
-        it('should not be authenticated initially', () => {
+        it('is not authenticated before a token is set', () => {
             expect(service.isAuthenticated()).toBe(false);
         });
 
-        it('should have null token initially', () => {
+        it('has no token before one is set', () => {
             expect(service.token()).toBeNull();
         });
 
-        it('should have null user initially', () => {
+        it('has no user before one is set', () => {
             expect(service.user()).toBeNull();
         });
     });
 
     describe('hydration from localStorage', () => {
-        it('should hydrate token from localStorage on construction', () => {
+        it('restores the token from storage when it is created', () => {
             storageService.get.mockImplementation((key: string) => {
                 if (key === 'bey_token') {
                     return 'stored-token';
@@ -65,14 +61,15 @@ describe('SessionService', () => {
                 return null;
             });
 
-            const hydratedService = TestBed.inject(SessionService);
+            const hydratedService = TestBed.runInInjectionContext(() => new SessionService());
 
-            expect(hydratedService.getToken()).toBeNull();
+            expect(hydratedService.getToken()).toBe('stored-token');
+            expect(hydratedService.isAuthenticated()).toBe(true);
         });
     });
 
     describe('setToken / getToken', () => {
-        it('should store token in localStorage and update signal', () => {
+        it('stores the token and exposes it', () => {
             service.setToken('my-jwt');
 
             expect(storageService.set).toHaveBeenCalledWith('bey_token', 'my-jwt');
@@ -80,7 +77,7 @@ describe('SessionService', () => {
             expect(service.getToken()).toBe('my-jwt');
         });
 
-        it('should set isAuthenticated to true after setToken', () => {
+        it('is authenticated once a token is set', () => {
             service.setToken('my-jwt');
 
             expect(service.isAuthenticated()).toBe(true);
@@ -88,13 +85,13 @@ describe('SessionService', () => {
     });
 
     describe('setRefreshToken / getRefreshToken', () => {
-        it('should store refresh token in localStorage', () => {
+        it('stores the refresh token', () => {
             service.setRefreshToken('refresh-jwt');
 
             expect(storageService.set).toHaveBeenCalledWith('bey_refresh_token', 'refresh-jwt');
         });
 
-        it('should retrieve refresh token from localStorage', () => {
+        it('reads the refresh token from storage', () => {
             storageService.get.mockImplementation((key: string) => {
                 if (key === 'bey_refresh_token') {
                     return 'refresh-jwt';
@@ -108,7 +105,7 @@ describe('SessionService', () => {
     });
 
     describe('setUser / getUser', () => {
-        it('should store user in localStorage and update signal', () => {
+        it('stores the user and exposes it', () => {
             service.setUser(mockUser);
 
             expect(storageService.set).toHaveBeenCalledWith('bey_user', mockUser);
@@ -118,7 +115,7 @@ describe('SessionService', () => {
     });
 
     describe('clear', () => {
-        it('should remove all session keys from localStorage', () => {
+        it('removes every session key from storage', () => {
             service.setToken('my-jwt');
             service.setUser(mockUser);
 
@@ -129,7 +126,7 @@ describe('SessionService', () => {
             expect(storageService.remove).toHaveBeenCalledWith('bey_user');
         });
 
-        it('should reset signals to null', () => {
+        it('forgets the token and the user and is no longer authenticated', () => {
             service.setToken('my-jwt');
             service.setUser(mockUser);
 
@@ -142,7 +139,7 @@ describe('SessionService', () => {
     });
 
     describe('custom config keys', () => {
-        it('should use custom localStorage keys from config', () => {
+        it('stores under the keys given in the config', () => {
             TestBed.resetTestingModule();
             storageService.get.mockReturnValue(null);
 

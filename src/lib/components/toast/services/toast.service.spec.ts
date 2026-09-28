@@ -41,35 +41,31 @@ describe('ToastService', () => {
         service = TestBed.inject(ToastService);
     });
 
-    it('should create', () => {
-        expect(service).toBeTruthy();
-    });
-
-    it('should call toastr.success with provided title and message', () => {
+    it('shows a success toast with the given title and message', () => {
         service.showSuccess({ message: 'Record saved', title: 'Dashboard' });
 
         expect(toastrService.success).toHaveBeenCalledWith('Record saved', 'Dashboard');
     });
 
-    it('should call toastr.error with provided title and message', () => {
+    it('shows an error toast with the given title and message', () => {
         service.showError({ message: 'Request failed', title: 'Settings' });
 
         expect(toastrService.error).toHaveBeenCalledWith('Request failed', 'Settings');
     });
 
-    it('should call toastr.info with provided title and message', () => {
+    it('shows an info toast with the given title and message', () => {
         service.showInfo({ message: 'Up to date', title: 'Sync' });
 
         expect(toastrService.info).toHaveBeenCalledWith('Up to date', 'Sync');
     });
 
-    it('should call toastr.warning with provided title and message', () => {
+    it('shows a warning toast with the given title and message', () => {
         service.showWarning({ message: 'Unsaved changes', title: 'Editor' });
 
         expect(toastrService.warning).toHaveBeenCalledWith('Unsaved changes', 'Editor');
     });
 
-    it('should remove toast after default duration', fakeAsync(() => {
+    it('removes the toast after the default duration', fakeAsync(() => {
         service.showInfo({ message: 'msg', title: 'page' });
 
         expect(toastrService.remove).not.toHaveBeenCalled();
@@ -79,7 +75,7 @@ describe('ToastService', () => {
         expect(toastrService.remove).toHaveBeenCalledWith(mockActiveToast.toastId);
     }));
 
-    it('should remove toast after custom duration', fakeAsync(() => {
+    it('removes the toast after a custom duration', fakeAsync(() => {
         service.showInfo({ message: 'msg', title: 'page', duration: 8000 });
 
         tick(2000);
@@ -89,7 +85,7 @@ describe('ToastService', () => {
         expect(toastrService.remove).toHaveBeenCalledWith(mockActiveToast.toastId);
     }));
 
-    it('should return ActiveToast from toastr', () => {
+    it('returns the ActiveToast of toastr', () => {
         const result = service.showSuccess({ message: 'msg', title: 'page' });
 
         expect(result).toBe(mockActiveToast);

@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { renderComponent } from '@testing/dom';
+import { buttonByName, renderComponent, settle } from '@testing/dom';
 
 import { LeftMenuStyleGuideComponent } from './left-menu-style-guide.component';
 
+const PREFIX = 'angular-components-style-guide.left-menu';
+
 describe('LeftMenuStyleGuideComponent', () => {
-    let component: LeftMenuStyleGuideComponent;
     let fixture: ComponentFixture<LeftMenuStyleGuideComponent>;
 
     beforeEach(async () => {
@@ -14,18 +15,14 @@ describe('LeftMenuStyleGuideComponent', () => {
         }).compileComponents();
 
         fixture = await renderComponent(LeftMenuStyleGuideComponent);
-        component = fixture.componentInstance;
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
+    it('runs the documents action when its label is clicked', async () => {
+        expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.documents-clicked`);
 
-    it('should run the documents action when its own action callback is invoked', () => {
-        const documentsAction = component.expandedConfig.topActions.find(action => action.key === 'documents');
+        buttonByName(fixture, `${PREFIX}.actions.documents.label`).click();
+        await settle(fixture);
 
-        documentsAction?.action?.();
-
-        expect(component.lastDocumentsClick).toBe('label');
+        expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.documents-clicked`);
     });
 });

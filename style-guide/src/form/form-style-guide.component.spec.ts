@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { renderComponent } from '@testing/dom';
+import { queryButton, renderComponent } from '@testing/dom';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { of } from 'rxjs';
 
@@ -13,7 +13,6 @@ class FakeTranslateLoader implements TranslateLoader {
 }
 
 describe('FormStyleGuideComponent', () => {
-    let component: FormStyleGuideComponent;
     let fixture: ComponentFixture<FormStyleGuideComponent>;
 
     beforeEach(async () => {
@@ -28,10 +27,10 @@ describe('FormStyleGuideComponent', () => {
         }).compileComponents();
 
         fixture = await renderComponent(FormStyleGuideComponent);
-        component = fixture.componentInstance;
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('shows the form example and the button that opens the modal form', () => {
+        expect(fixture.nativeElement.textContent).toContain('angular-components-style-guide.form.example');
+        expect(queryButton(fixture, 'angular-components-style-guide.form.modal.open')).not.toBeNull();
     });
 });

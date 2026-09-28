@@ -1,4 +1,5 @@
 @let current = field();
+@let label = labelling().labelKey | translate;
 
 <div class="bey-property-field-control">
     <label
@@ -9,8 +10,9 @@
         <input
             class="bey-property-color-field-swatch-input"
             type="color"
-            [attr.aria-label]="current.label"
+            [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
             [disabled]="current.disabled"
+            [id]="labelling().controlId"
             [value]="pickerValue()"
             (input)="onInputChange($event)"
         />
@@ -19,7 +21,7 @@
     <input
         class="bey-property-field-input"
         type="text"
-        [attr.aria-label]="current.label + ' hex value'"
+        [attr.aria-label]="'angular-components.properties-menu.color-field.hex-value' | translate: { label: label }"
         [disabled]="current.disabled"
         [readOnly]="current.readonly"
         [value]="current.value ?? ''"

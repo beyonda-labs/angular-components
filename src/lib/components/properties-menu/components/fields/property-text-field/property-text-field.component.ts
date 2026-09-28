@@ -6,6 +6,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { OptionPickerOption } from '../../../../../internal/option-picker/models/option-picker-option.model';
 import { OptionPickerComponent } from '../../../../../internal/option-picker/option-picker.component';
 import { PropertyTextField } from '../../../models/fields/property-text-field.model';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 import { PROPERTY_VARIABLE_ICON, PropertyVariable } from '../../../models/property-variable.model';
 import { findVariable, toVariableExpression, toVariableOptions } from '../../../models/property-variable-options';
 import { PropertiesMenuService } from '../../../services/properties-menu.service';
@@ -34,6 +35,7 @@ type TextControl = HTMLInputElement | HTMLTextAreaElement;
 export class PropertyTextFieldComponent {
     readonly actionButtonTooltipKey = input<string>('');
     readonly field = input.required<PropertyTextField>();
+    readonly labelling = input.required<PropertyFieldLabelling>();
 
     readonly actionTriggered = output<PropertyTextFieldActionTrigger>();
     readonly valueChange = output<string>();

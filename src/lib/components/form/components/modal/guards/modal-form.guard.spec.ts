@@ -15,7 +15,7 @@ describe('modalFormGuard', () => {
         });
     });
 
-    it('should delegate to the modal form service', () => {
+    it('returns what the modal form service answers to canDeactivate', () => {
         canDeactivate.mockReturnValue(true);
 
         const result = TestBed.runInInjectionContext(() =>

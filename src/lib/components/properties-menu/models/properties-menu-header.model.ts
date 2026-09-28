@@ -19,7 +19,6 @@ export interface PropertiesMenuHeaderConfigParameters {
     title: string;
 
     icon?: IconDefinition;
-    /** When set, the header shows a close button that calls it. */
     onClose?: () => void;
     subtitle?: string;
 }

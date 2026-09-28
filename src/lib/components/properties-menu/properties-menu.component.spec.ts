@@ -19,7 +19,6 @@ import { PropertyTreeConfig } from './models/property-tree-config.model';
 import { PropertyTreeNode } from './models/property-tree-node.model';
 import { PropertyVariable } from './models/property-variable.model';
 import { PropertiesMenuComponent } from './properties-menu.component';
-import { PropertiesMenuService } from './services/properties-menu.service';
 
 function buildConfig(overrides: Partial<PropertiesMenuConfigParameters> = {}): PropertiesMenuConfig {
     return new PropertiesMenuConfig({
@@ -101,8 +100,35 @@ describe('PropertiesMenuComponent', () => {
         return queryButton(element, 'angular-components.properties-menu.close');
     }
 
-    function service(): PropertiesMenuService {
-        return fixture.debugElement.injector.get(PropertiesMenuService);
+    async function click(target: HTMLElement): Promise<void> {
+        target.click();
+        await settle(fixture);
+    }
+
+    function byRole(role: string, name: string): HTMLElement {
+        const found = queryAll(fixture, `[role="${role}"]`).find(candidate => candidate.textContent?.trim() === name);
+
+        if (!found) {
+            throw new Error(`No ${role} named ${name}`);
+        }
+
+        return found;
+    }
+
+    function field(name: string): HTMLInputElement {
+        const label = queryAll<HTMLLabelElement>(fixture, 'label').find(
+            candidate => candidate.textContent?.trim() === name
+        );
+
+        if (!label?.control) {
+            throw new Error(`No field named ${name}`);
+        }
+
+        return label.control as HTMLInputElement;
+    }
+
+    function tabNames(): string[] {
+        return textsOf(queryAll(fixture, '[role="tab"]'));
     }
 
     beforeEach(async () => {
@@ -114,27 +140,26 @@ describe('PropertiesMenuComponent', () => {
         element = fixture.nativeElement;
     });
 
-    it('should render the header title and subtitle', () => {
+    it('renders the header title and subtitle', () => {
         render(buildConfig());
 
         expect(element.textContent).toContain('Title');
         expect(element.textContent).toContain('Block: heading');
     });
 
-    it('should resolve the default title from the prefix', () => {
+    it('shows the default title from the prefix', () => {
         render(buildConfig({ title: undefined }));
 
         expect(element.textContent).toContain('app.properties-menu.title');
     });
 
-    it('should hide the header when embedded', () => {
+    it('hides the header when embedded', () => {
         render(buildConfig({ embedded: true }));
 
-        expect(element.querySelector('bey-properties-menu-header')).toBeNull();
         expect(element.textContent).not.toContain('Title');
     });
 
-    it('should show the close button only when onClose is configured', () => {
+    it('shows the close button only when onClose is configured', () => {
         const onClose = jest.fn();
 
         render(buildConfig());
@@ -146,41 +171,44 @@ describe('PropertiesMenuComponent', () => {
         expect(onClose).toHaveBeenCalled();
     });
 
-    it('should render the configured active tab and the tab strip', () => {
+    it('renders the tab strip and the fields of the configured active tab', () => {
         render(buildConfig());
 
-        expect(element.querySelector('bey-property-tabs')).not.toBeNull();
-        expect(element.querySelector('bey-property-field')).not.toBeNull();
+        expect(tabNames()).toEqual(['Properties', 'Page', 'Structure', 'Add']);
+        expect(byRole('tab', 'Properties').getAttribute('aria-selected')).toBe('true');
+        expect(field('Text').value).toBe('INVOICE');
     });
 
-    it('should hide the tab strip with a single visible tab', () => {
+    it('hides the tab strip with a single visible tab', () => {
         render(buildConfig({ tabs: [new PropertyTab({ groups: [], id: 'only' })] }));
 
-        expect(element.querySelector('bey-property-tabs')).toBeNull();
+        expect(tabNames()).toEqual([]);
     });
 
-    it('should follow a replaced config', () => {
+    it('follows a replaced config', () => {
         render(buildConfig());
         render(buildConfig({ activeTabId: 'page', subtitle: 'Block: page' }));
 
         expect(element.textContent).toContain('Block: page');
-        expect(element.querySelector('bey-property-field')).toBeNull();
+        expect(element.textContent).not.toContain('Content');
     });
 
-    it('should call onActiveTabChange when the active tab changes', () => {
+    it('calls onActiveTabChange when another tab is opened', async () => {
         const onActiveTabChange = jest.fn();
 
         render(buildConfig({ onActiveTabChange }));
-        service().setActiveTab('page');
+        await click(byRole('tab', 'Page'));
 
         expect(onActiveTabChange).toHaveBeenCalledWith('page');
     });
 
-    it('should call onFieldValueChange when a field value is updated', () => {
+    it('calls onFieldValueChange when a field is typed into', async () => {
         const onFieldValueChange = jest.fn();
 
         render(buildConfig({ onFieldValueChange }));
-        service().updateFieldValue('text', 'NEW TEXT');
+        field('Text').value = 'NEW TEXT';
+        field('Text').dispatchEvent(new Event('input'));
+        await settle(fixture);
 
         expect(onFieldValueChange).toHaveBeenCalledWith({
             fieldId: 'text',
@@ -189,52 +217,60 @@ describe('PropertiesMenuComponent', () => {
         });
     });
 
-    it('should call onGroupToggle when a group is collapsed', () => {
+    it('calls onGroupToggle when a group is collapsed', async () => {
         const onGroupToggle = jest.fn();
 
         render(buildConfig({ onGroupToggle }));
-        service().toggleGroup('properties', 'content');
+        await click(buttonByName(fixture, 'Content'));
 
         expect(onGroupToggle).toHaveBeenCalledWith({ expanded: false, groupId: 'content', tabId: 'properties' });
     });
 
-    it('should call onTreeNodeSelect when a tree node is selected', () => {
+    it('calls onTreeNodeSelect when a tree node is selected', async () => {
         const onTreeNodeSelect = jest.fn();
 
         render(buildConfig({ onTreeNodeSelect }));
-        service().selectTreeNode('structure', 'structure-tree', 'page-1');
+        await click(byRole('tab', 'Structure'));
+        await click(byRole('treeitem', 'Page 1'));
 
         expect(onTreeNodeSelect).toHaveBeenCalledWith(
             expect.objectContaining({ groupId: 'structure-tree', nodeId: 'page-1', tabId: 'structure' })
         );
     });
 
-    it('should call onListItemSelect when a list item is selected', () => {
+    it('calls onListItemSelect when a list item is selected', async () => {
         const onListItemSelect = jest.fn();
 
         render(buildConfig({ onListItemSelect }));
-        service().selectListItem('add', 'simple-blocks', 'block-heading');
+        await click(byRole('tab', 'Add'));
+        await click(byRole('button', 'Heading'));
 
         expect(onListItemSelect).toHaveBeenCalledWith(
             expect.objectContaining({ groupId: 'simple-blocks', itemId: 'block-heading', tabId: 'add' })
         );
     });
 
-    it('should call onTabAdd when a tab add action is triggered', () => {
+    it('calls onTabAdd when the add button of a tab is clicked', async () => {
         const onTabAdd = jest.fn();
 
-        render(buildConfig({ onTabAdd }));
-        service().triggerTabAdd('properties');
+        render(
+            buildConfig({
+                onTabAdd,
+                tabs: [new PropertyTab({ addLabel: 'Add group', groups: [], id: 'properties' })]
+            })
+        );
+        await click(buttonByName(fixture, 'Add group'));
 
         expect(onTabAdd).toHaveBeenCalledWith({ tabId: 'properties' });
     });
 
-    it('should expose the variables input to the fields', () => {
-        const variables = [new PropertyVariable({ id: 'customer', path: 'customer' })];
+    it('offers the variables input to the fields that accept variables', async () => {
+        render(buildConfig(), [new PropertyVariable({ id: 'customer', label: 'Customer', path: 'customer' })]);
+        await click(buttonByName(fixture, 'angular-components.properties-menu.text-field.insert-variable'));
 
-        render(buildConfig(), variables);
-
-        expect(service().variables()).toBe(variables);
+        expect(
+            queryAll(document.body, '[role="option"]').some(option => option.textContent?.includes('Customer'))
+        ).toBe(true);
     });
 });
 

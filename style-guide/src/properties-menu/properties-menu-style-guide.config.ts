@@ -74,7 +74,6 @@ export const EXAMPLE_VARIABLES: BeyPropertyVariable[] = [
     })
 ];
 
-/** The demo config: a heading block with the properties, structure and add tabs. */
 export function buildPropertiesMenuConfig(
     callbacks: Pick<
         BeyPropertiesMenuConfigParameters,

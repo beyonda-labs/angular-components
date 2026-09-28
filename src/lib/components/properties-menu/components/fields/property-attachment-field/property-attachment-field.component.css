@@ -11,6 +11,22 @@
     flex-direction: row;
 }
 
+.bey-property-attachment-field-upload {
+    position: relative;
+}
+
+.bey-property-attachment-field-upload:has(:focus-visible) {
+    outline: var(--bey-border-width-thick) solid var(--bey-property-field-accent);
+    outline-offset: var(--bey-border-width-thick);
+}
+
+.bey-property-attachment-field-upload-input {
+    height: var(--bey-border-width);
+    opacity: 0;
+    position: absolute;
+    width: var(--bey-border-width);
+}
+
 .bey-property-attachment-field-panel {
     background: var(--bey-bg-surface);
     border: var(--bey-border-width) solid var(--bey-property-field-border);

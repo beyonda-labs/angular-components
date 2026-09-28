@@ -114,7 +114,6 @@ export interface LeftMenuConfigParameters {
 
     bottomActions?: LeftMenuAction[];
     expanded?: boolean;
-    /** Run when the user expands or collapses the menu. */
     onExpandedChange?: (expanded: boolean) => void;
     topActions?: LeftMenuAction[];
     userInfo?: LeftMenuUserInfo;

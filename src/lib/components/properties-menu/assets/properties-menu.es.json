@@ -12,10 +12,12 @@
             },
             "close": "Cerrar",
             "color-field": {
-                "clear": "Vaciar"
+                "clear": "Vaciar",
+                "hex-value": "Valor hexadecimal de {{label}}"
             },
             "file-field": {
                 "choose": "Elegir archivo",
+                "choose-for": "Elegir archivo para {{label}}",
                 "clear": "Vaciar",
                 "file-selected": "Archivo seleccionado",
                 "no-file-selected": "Ningún archivo seleccionado",
@@ -29,7 +31,9 @@
                 "expand": "Desplegar"
             },
             "number-array-field": {
-                "add": "Añadir"
+                "add": "Añadir",
+                "entry": "{{label}}, entrada {{position}}",
+                "remove-entry": "Eliminar {{label}}, entrada {{position}}"
             },
             "remove": "Eliminar",
             "select-field": {

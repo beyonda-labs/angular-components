@@ -2,7 +2,7 @@ import { PropertyFieldType } from '../property-field-type.model';
 import { PropertyNumberField } from './property-number-field.model';
 
 describe('PropertyNumberField', () => {
-    it('should apply default values for optional properties', () => {
+    it('applies the defaults of the optional properties', () => {
         const field = new PropertyNumberField({ id: 'fontSize' });
 
         expect(field.placeholder).toBe('');
@@ -13,7 +13,7 @@ describe('PropertyNumberField', () => {
         expect(field.unit).toBeUndefined();
     });
 
-    it('should keep the provided numeric constraints', () => {
+    it('keeps the numeric constraints it is given', () => {
         const field = new PropertyNumberField({ id: 'fontSize', max: 200, min: 1, step: 1, unit: 'px', value: 32 });
 
         expect(field.max).toBe(200);
@@ -23,7 +23,7 @@ describe('PropertyNumberField', () => {
         expect(field.value).toBe(32);
     });
 
-    it('should fix the field type to "number"', () => {
+    it('fixes the field type to "number"', () => {
         const field = new PropertyNumberField({ id: 'fontSize' });
 
         expect(field.type).toBe(PropertyFieldType.Number);

@@ -83,24 +83,24 @@ describe('PropertiesMenuService', () => {
         service = new PropertiesMenuService();
     });
 
-    it('should default to an empty config', () => {
+    it('starts from an empty config', () => {
         expect(service.config().tabs).toEqual([]);
     });
 
-    it('should set the config and the active tab from it', () => {
+    it('takes the config and the active tab from it', () => {
         service.setConfig(buildConfig());
 
         expect(service.activeTabId()).toBe('properties');
         expect(service.config().tabs).toHaveLength(4);
     });
 
-    it('should default selectedTreeNodeId to null when no tree node is marked active', () => {
+    it('selects no tree node when none is marked active', () => {
         service.setConfig(buildConfig());
 
         expect(service.selectedTreeNodeId()).toBeNull();
     });
 
-    it('should initialize selectedTreeNodeId from a node marked active in the config', () => {
+    it('selects the tree node the config marks active', () => {
         service.setConfig(
             new PropertiesMenuConfig({
                 prefix: 'app.properties-menu',
@@ -132,7 +132,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('setActiveTab', () => {
-        it('should change the active tab and notify the hook', () => {
+        it('changes the active tab and calls the hook', () => {
             service.setConfig(buildConfig());
 
             const onActiveTabChange = jest.fn();
@@ -144,7 +144,7 @@ describe('PropertiesMenuService', () => {
             expect(onActiveTabChange).toHaveBeenCalledWith('page');
         });
 
-        it('should ignore unknown tab ids', () => {
+        it('ignores an unknown tab id', () => {
             service.setConfig(buildConfig());
 
             service.setActiveTab('unknown');
@@ -154,7 +154,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('toggleGroup', () => {
-        it('should flip the expanded state and notify the hook', () => {
+        it('flips the expanded state and calls the hook', () => {
             service.setConfig(buildConfig());
 
             const onGroupToggle = jest.fn();
@@ -168,7 +168,7 @@ describe('PropertiesMenuService', () => {
             expect(onGroupToggle).toHaveBeenCalledWith({ expanded: false, groupId: 'content', tabId: 'properties' });
         });
 
-        it('should ignore groups without a header', () => {
+        it('ignores a group without a header', () => {
             service.setConfig(buildConfig());
 
             const onGroupToggle = jest.fn();
@@ -181,7 +181,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('updateFieldValue', () => {
-        it('should update the field value immutably and notify the hook', () => {
+        it('updates the field value in a new config and calls the hook', () => {
             service.setConfig(buildConfig());
 
             const onFieldValueChange = jest.fn();
@@ -202,7 +202,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('applyVariableSelection', () => {
-        it('should update the field value and notify both hooks', () => {
+        it('updates the field value and calls both hooks', () => {
             service.setConfig(buildConfig());
 
             const onFieldValueChange = jest.fn();
@@ -225,7 +225,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('getField', () => {
-        it('should return undefined for an unknown field', () => {
+        it('returns undefined for an unknown field', () => {
             service.setConfig(buildConfig());
 
             expect(service.getField('missing')).toBeUndefined();
@@ -233,7 +233,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('selectTreeNode', () => {
-        it('should select the node and notify the hook', () => {
+        it('selects the node and calls the hook', () => {
             service.setConfig(buildConfig());
 
             const onTreeNodeSelect = jest.fn();
@@ -250,7 +250,7 @@ describe('PropertiesMenuService', () => {
             });
         });
 
-        it('should ignore unknown node ids', () => {
+        it('ignores an unknown node id', () => {
             service.setConfig(buildConfig());
 
             service.selectTreeNode('structure', 'structure-tree', 'missing');
@@ -260,7 +260,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('toggleTreeNode', () => {
-        it('should flip the expanded state of a nested node immutably', () => {
+        it('flips the expanded state of a nested node in a new config', () => {
             service.setConfig(buildConfig());
 
             const previousConfig = service.config();
@@ -271,7 +271,7 @@ describe('PropertiesMenuService', () => {
             expect(service.getTreeNode('structure', 'structure-tree', 'header')?.expanded).toBe(false);
         });
 
-        it('should notify the hook with the resulting expanded state', () => {
+        it('calls the hook with the resulting expanded state', () => {
             service.setConfig(buildConfig());
 
             const onTreeNodeToggle = jest.fn();
@@ -289,7 +289,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('triggerTreeAddBlock', () => {
-        it('should notify the hook with the tab and group ids', () => {
+        it('calls the hook with the tab and group ids', () => {
             service.setConfig(buildConfig());
 
             const onTreeAddBlock = jest.fn();
@@ -302,13 +302,13 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('getTreeNode', () => {
-        it('should find a nested node by id', () => {
+        it('finds a nested node by id', () => {
             service.setConfig(buildConfig());
 
             expect(service.getTreeNode('structure', 'structure-tree', 'header')?.label).toBe('Encabezado');
         });
 
-        it('should return undefined for an unknown node', () => {
+        it('returns undefined for an unknown node', () => {
             service.setConfig(buildConfig());
 
             expect(service.getTreeNode('structure', 'structure-tree', 'missing')).toBeUndefined();
@@ -316,7 +316,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('selectListItem', () => {
-        it('should notify the hook with the selected item', () => {
+        it('calls the hook with the selected item', () => {
             service.setConfig(buildConfig());
 
             const onListItemSelect = jest.fn();
@@ -332,7 +332,7 @@ describe('PropertiesMenuService', () => {
             });
         });
 
-        it('should ignore disabled items', () => {
+        it('ignores a disabled item', () => {
             service.setConfig(buildConfig());
 
             const onListItemSelect = jest.fn();
@@ -343,7 +343,7 @@ describe('PropertiesMenuService', () => {
             expect(onListItemSelect).not.toHaveBeenCalled();
         });
 
-        it('should ignore unknown item ids', () => {
+        it('ignores an unknown item id', () => {
             service.setConfig(buildConfig());
 
             const onListItemSelect = jest.fn();
@@ -356,13 +356,13 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('getListItem', () => {
-        it('should find an item by id', () => {
+        it('finds an item by id', () => {
             service.setConfig(buildConfig());
 
             expect(service.getListItem('add', 'simple-blocks', 'block-heading')?.label).toBe('Encabezado');
         });
 
-        it('should return undefined for an unknown item', () => {
+        it('returns undefined for an unknown item', () => {
             service.setConfig(buildConfig());
 
             expect(service.getListItem('add', 'simple-blocks', 'missing')).toBeUndefined();
@@ -370,7 +370,7 @@ describe('PropertiesMenuService', () => {
     });
 });
 
-describe('PropertiesMenuService · items de lista desplegables', () => {
+describe('PropertiesMenuService · expandable list items', () => {
     let service: PropertiesMenuService;
 
     const EXPANDABLE_ITEM = { body: [new PropertySummaryRow({ label: 'Valor' })], id: 'total_pages' };

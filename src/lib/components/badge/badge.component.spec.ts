@@ -29,19 +29,19 @@ describe('BadgeComponent', () => {
         element = fixture.nativeElement;
     });
 
-    it('should translate the label by default', () => {
+    it('translates the label by default', () => {
         const badge = render(new BadgeConfig({ label: 'demo.active' }));
 
         expect(badge.textContent?.trim()).toBe('Active');
     });
 
-    it('should show the label as is when translate is off', () => {
+    it('shows the label as is when translate is off', () => {
         const badge = render(new BadgeConfig({ label: 'demo.active', translate: false }));
 
         expect(badge.textContent?.trim()).toBe('demo.active');
     });
 
-    it('should follow a replaced config', () => {
+    it('follows a replaced config', () => {
         render(new BadgeConfig({ label: 'demo.active' }));
         const badge = render(new BadgeConfig({ label: 'demo.active', translate: false }));
 

@@ -2,7 +2,7 @@ import { PropertiesMenuConfig } from './properties-menu-config.model';
 import { PropertyTab } from './property-tab.model';
 
 describe('PropertiesMenuConfig', () => {
-    it('should apply default values when no optional config is provided', () => {
+    it('applies the defaults when no optional config is given', () => {
         const config = new PropertiesMenuConfig({ prefix: 'app.properties-menu' });
 
         expect(config.title).toBe('title');
@@ -12,7 +12,7 @@ describe('PropertiesMenuConfig', () => {
         expect(config.embedded).toBe(false);
     });
 
-    it('should default activeTabId to the first non-hidden tab', () => {
+    it('opens the first visible tab by default', () => {
         const config = new PropertiesMenuConfig({
             prefix: 'app.properties-menu',
             tabs: [
@@ -25,7 +25,7 @@ describe('PropertiesMenuConfig', () => {
         expect(config.activeTabId).toBe('properties');
     });
 
-    it('should keep an explicit activeTabId', () => {
+    it('keeps an explicit activeTabId', () => {
         const config = new PropertiesMenuConfig({
             prefix: 'app.properties-menu',
             activeTabId: 'page',

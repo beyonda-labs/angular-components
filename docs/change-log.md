@@ -31,6 +31,7 @@
 -   Properties menu module: `labelParameters` on `BeyPropertyTab`, passed on to its tab in the menu's tab bar.
 -   Testing: secondary entry point `@beyonda-labs/angular-components/testing` for the specs of a consuming app; `provideBeyTesting(config?)`, typed by `BeyTestingConfig`, registers the HTTP client backed by `HttpTestingController`, a test environment, the session over in-memory storage (signed in with `user`), ngx-translate without a loader or with `translations` per language, the ngx-bootstrap modals, and the fakes in place of the real services.
 -   Testing: `BeyFakeModalService`, `BeyFakeToastService`, `BeyFakeModalFormService`, `BeyFakeFilePreviewService` and `BeyFakeStorageService` record what they are asked for in signals, `setConfirmationAnswer` sets what a confirmation emits, and the DOM helpers `beyRenderComponent`, `beySettle`, `beyButtonByName`, `beyQueryButton`, `beyQueryAll`, `beyTextsOf` and `beyHostOf` are public.
+-   Testing: `beyControlByName`, `beyQueryControl` and `beyAccessibleName` find a form control by the name a user hears: its `aria-labelledby`, its `aria-label` or its `<label>`.
 
 ### Changed
 
@@ -57,6 +58,7 @@
 -   App layout module: `icon` is optional on `BeyAppLayoutTopAction` and `BeyAppLayoutBottomAction`.
 -   Form module: the number, checkbox, chips and file fields type `validators` as `BeyFormFieldCustomValidator[]`, so a length, pattern, email or url validator on them no longer compiles.
 -   Pdf viewer module: the zoom buttons of the compact toolbar are `bey-button`s with a bordered icon-square variant and keep their look; their name shows as the library tooltip instead of the browser's `title`, also while disabled.
+-   Style guide: the list and tree demos show the selected item on the page instead of logging it, and the tree demo highlights the node the user picks.
 
 ### Fixed
 
@@ -71,6 +73,9 @@
 -   Header module: icon-only actions are named by the label key a text action would show, and the overflow toggle by `angular-components.header.menu`, so screen readers announce them.
 -   Login module: the provider buttons are named after their provider (`angular-components.login.provider.<id>`).
 -   Form module: the autocomplete, chips, file and password fields apply their `validators`, which were silently ignored; the file field runs them together with `accept` and `maxSizeBytes`, and the chips field shows its invalid state once its input is left.
+-   Properties menu module: every field control is named by its translated label, through a `<label for>` tied to a unique id or an `aria-label` where no label shows, instead of the raw key; the extra controls of a field (hex value, array entries and their remove buttons, the file button) get their own names, and the attachment upload is reachable from the keyboard.
+-   Pagination module: the page size select and the page input are named by their translated labels instead of fixed English `aria-label`s.
+-   Styles: every `bey-button` type and the Bootstrap radius utilities follow the `--bey-radius-*` tokens; the primary, secondary, tertiary and link-secondary buttons ignored `--bey-radius-sm`.
 
 ## [1.2.0] - 2026-09-26
 

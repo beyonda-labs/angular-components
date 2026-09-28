@@ -23,10 +23,6 @@ import { OptionPickerOption } from './models/option-picker-option.model';
 const PANEL_MAX_HEIGHT_PX = 256;
 const PANEL_GAP_PX = 4;
 
-/**
- * Floating list of options anchored to an element. The host node is moved to `<body>` and positioned
- * with fixed coordinates so it escapes any scrollable ancestor (a modal body, a side panel).
- */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, TooltipModule, TranslateModule],
@@ -83,7 +79,6 @@ export class OptionPickerComponent {
         });
     }
 
-    /** Nested options are indented while browsing; a search result is a flat list. */
     indent(option: OptionPickerOption): number {
         return this.isFiltering() ? 0 : (option.depth ?? 0);
     }

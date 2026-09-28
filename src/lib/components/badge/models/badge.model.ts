@@ -28,7 +28,6 @@ export class BadgeConfig {
 export interface BadgeConfigParameters {
     label: string;
 
-    /** Run the label through the translate pipe; on by default. */
     translate?: boolean;
     variant?: BadgeVariant;
 }

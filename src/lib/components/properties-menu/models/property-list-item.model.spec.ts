@@ -1,7 +1,7 @@
 import { PropertyListItem } from './property-list-item.model';
 
 describe('PropertyListItem', () => {
-    it('should apply default values', () => {
+    it('applies the defaults', () => {
         const item = new PropertyListItem({ id: 'block-heading', label: 'Encabezado' });
 
         expect(item.disabled).toBe(false);
@@ -11,13 +11,13 @@ describe('PropertyListItem', () => {
         expect(item.icon).toBeUndefined();
     });
 
-    it('should default the label to a translation key sentinel based on the id', () => {
+    it('defaults the label to the key sentinel of its id', () => {
         const item = new PropertyListItem({ id: 'block-heading' });
 
         expect(item.label).toBe('block-heading.label');
     });
 
-    it('should keep the provided description', () => {
+    it('keeps the description it is given', () => {
         const item = new PropertyListItem({
             id: 'block-heading',
             label: 'Encabezado',

@@ -7,10 +7,11 @@
             autocomplete="off"
             role="combobox"
             type="text"
-            [attr.aria-controls]="current.id + '-options'"
+            [attr.aria-controls]="optionsId()"
             [attr.aria-expanded]="isOpen()"
-            [attr.aria-label]="current.label"
+            [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
             [disabled]="current.disabled"
+            [id]="labelling().controlId"
             [placeholder]="'angular-components.properties-menu.select-field.search' | translate"
             [required]="current.required"
             [value]="inputValue()"
@@ -21,7 +22,13 @@
         />
 
         @if (isOpen()) {
-            <div class="bey-property-select-field-panel" role="listbox" [id]="current.id + '-options'">
+            <div
+                class="bey-property-select-field-panel"
+                role="listbox"
+                [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
+                [attr.aria-labelledby]="labelling().labelId"
+                [id]="optionsId()"
+            >
                 @for (option of filteredOptions(); track option.value) {
                     <button
                         class="bey-property-select-field-option"
@@ -56,6 +63,7 @@
                 class="bey-property-field-action"
                 container="body"
                 type="button"
+                [attr.aria-expanded]="pickerOpen()"
                 [attr.aria-label]="'angular-components.properties-menu.select-field.use-variable' | translate"
                 [class.is-active]="pickerOpen()"
                 [disabled]="current.disabled"
@@ -70,13 +78,13 @@
     <div class="bey-property-field-control">
         <select
             class="bey-property-field-select"
-            [attr.aria-label]="current.label"
+            [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
             [disabled]="current.disabled"
+            [id]="labelling().controlId"
             [required]="current.required"
             (change)="onChange($event)"
         >
             @for (option of current.options; track option.value) {
-                <!-- `[selected]` per option: the select's own `[value]` runs before the options exist. -->
                 <option [disabled]="option.disabled" [selected]="option.value === current.value" [value]="option.value">
                     {{ option.label | translate }}
                 </option>

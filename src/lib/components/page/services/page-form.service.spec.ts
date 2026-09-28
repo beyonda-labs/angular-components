@@ -36,11 +36,7 @@ describe('PageFormService', () => {
         service = TestBed.inject(PageFormService);
     });
 
-    it('should create', () => {
-        expect(service).toBeTruthy();
-    });
-
-    it('should open a create modal form initialized from the page form config', () => {
+    it('opens a create modal form built from the page form config', () => {
         service.open(buildPageForm(), undefined, 'testPage', jest.fn());
 
         const config = getOpenedConfig();
@@ -54,7 +50,7 @@ describe('PageFormService', () => {
         expect(config.initialValue).toBeUndefined();
     });
 
-    it('should open an edit modal form with the item mapped through toFormValue', () => {
+    it('opens an edit modal form with the item mapped through toFormValue', () => {
         const item: PageItem = { id: 7 };
 
         service.open(buildPageForm(), item, 'testPage', jest.fn());
@@ -65,7 +61,7 @@ describe('PageFormService', () => {
         expect(config.initialValue).toEqual({ section1: { text1: '7' } });
     });
 
-    it('should allow a create-mode initial value through toFormValue without an item', () => {
+    it('takes a create-mode initial value from toFormValue without an item', () => {
         const pageForm = buildPageForm();
 
         pageForm.toFormValue = item => ({ section1: { text1: item ? String(item.id) : 'default' } });
@@ -75,7 +71,7 @@ describe('PageFormService', () => {
         expect(getOpenedConfig().initialValue).toEqual({ section1: { text1: 'default' } });
     });
 
-    it('should forward every value change of the modal form with its handle', () => {
+    it('forwards every value change of the modal form with its handle', () => {
         const onValueChange = jest.fn();
         const pageForm = buildPageForm();
         const handle = {} as FormHandle<TestFormValue>;
@@ -88,7 +84,7 @@ describe('PageFormService', () => {
         expect(onValueChange).toHaveBeenCalledWith(value, handle);
     });
 
-    it('should map the submitted value through toItem and delegate saving', () => {
+    it('calls onCreate and saves the value mapped through toItem', () => {
         const onCreate = jest.fn();
         const onSave = jest.fn();
 
@@ -104,7 +100,7 @@ describe('PageFormService', () => {
         expect(onSave).toHaveBeenCalledWith({ mapped: currentValue }, handle);
     });
 
-    it('should call the edit callback when submitting with an item', () => {
+    it('calls onEdit when submitting with an item', () => {
         const onEdit = jest.fn();
         const item: PageItem = { id: 7 };
 

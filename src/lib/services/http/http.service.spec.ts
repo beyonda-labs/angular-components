@@ -3,6 +3,11 @@ import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, throwError } from 'rxjs';
 
+import { LoadingService } from '../../components/loading/services/loading.service';
+import { ModalService } from '../../components/modal/services/modal.service';
+import { ToastService } from '../../components/toast/services/toast.service';
+import { HttpService } from './http.service';
+
 function makeRangeError(errorCode: string, min: number | null, max: number | null) {
     return throwError(
         () =>
@@ -12,11 +17,6 @@ function makeRangeError(errorCode: string, min: number | null, max: number | nul
             })
     );
 }
-
-import { LoadingService } from '../../components/loading/services/loading.service';
-import { ModalService } from '../../components/modal/services/modal.service';
-import { ToastService } from '../../components/toast/services/toast.service';
-import { HttpService } from './http.service';
 
 describe('HttpService', () => {
     let service: HttpService;
@@ -71,12 +71,8 @@ describe('HttpService', () => {
         service = TestBed.inject(HttpService);
     });
 
-    it('should create', () => {
-        expect(service).toBeTruthy();
-    });
-
     describe('HTTP methods', () => {
-        it('should delegate GET to HttpClient', () => {
+        it('sends a GET through HttpClient and emits its result', () => {
             httpClient.get.mockReturnValue(of({ id: 1 }));
 
             service.get('/api/items').subscribe(result => {
@@ -86,7 +82,7 @@ describe('HttpService', () => {
             expect(httpClient.get).toHaveBeenCalledWith('/api/items', {});
         });
 
-        it('should delegate POST to HttpClient with body', () => {
+        it('sends a POST with its body through HttpClient', () => {
             const body = { name: 'test' };
             httpClient.post.mockReturnValue(of({ id: 1 }));
 
@@ -95,7 +91,7 @@ describe('HttpService', () => {
             expect(httpClient.post).toHaveBeenCalledWith('/api/items', body, {});
         });
 
-        it('should delegate PUT to HttpClient with body', () => {
+        it('sends a PUT with its body through HttpClient', () => {
             const body = { name: 'updated' };
             httpClient.put.mockReturnValue(of({ id: 1 }));
 
@@ -104,7 +100,7 @@ describe('HttpService', () => {
             expect(httpClient.put).toHaveBeenCalledWith('/api/items/1', body, {});
         });
 
-        it('should delegate PATCH to HttpClient with body', () => {
+        it('sends a PATCH with its body through HttpClient', () => {
             const body = { name: 'patched' };
             httpClient.patch.mockReturnValue(of({ id: 1 }));
 
@@ -113,7 +109,7 @@ describe('HttpService', () => {
             expect(httpClient.patch).toHaveBeenCalledWith('/api/items/1', body, {});
         });
 
-        it('should delegate DELETE to HttpClient', () => {
+        it('sends a DELETE with its body through HttpClient', () => {
             httpClient.delete.mockReturnValue(of(null));
 
             service.delete('/api/items/1', null).subscribe();
@@ -123,7 +119,7 @@ describe('HttpService', () => {
     });
 
     describe('query params', () => {
-        it('should pass query params as HttpParams', () => {
+        it('passes the query params as HttpParams', () => {
             httpClient.get.mockReturnValue(of(null));
 
             service.get('/api/items', { queryParams: { page: 1, active: true } }).subscribe();
@@ -135,7 +131,7 @@ describe('HttpService', () => {
             expect(callArguments.params.get('active')).toBe('true');
         });
 
-        it('should handle array query params', () => {
+        it('repeats a query param once per value of an array', () => {
             httpClient.get.mockReturnValue(of(null));
 
             service.get('/api/items', { queryParams: { ids: ['1', '2', '3'] } }).subscribe();
@@ -147,7 +143,7 @@ describe('HttpService', () => {
     });
 
     describe('headers', () => {
-        it('should pass custom headers as HttpHeaders', () => {
+        it('passes custom headers as HttpHeaders', () => {
             httpClient.get.mockReturnValue(of(null));
 
             service.get('/api/items', { headers: { 'X-Custom': 'value' } }).subscribe();
@@ -160,7 +156,7 @@ describe('HttpService', () => {
     });
 
     describe('loading', () => {
-        it('should show loading before request and hide after success', () => {
+        it('shows the loading during the request and hides it after success', () => {
             httpClient.get.mockReturnValue(of({ id: 1 }));
 
             service.get('/api/items', { loading: true });
@@ -169,7 +165,7 @@ describe('HttpService', () => {
             expect(loadingService.hide).toHaveBeenCalledTimes(1);
         });
 
-        it('should hide loading after error', () => {
+        it('hides the loading after an error', () => {
             httpClient.get.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
 
             service.get('/api/items', { loading: true });
@@ -178,7 +174,7 @@ describe('HttpService', () => {
             expect(loadingService.hide).toHaveBeenCalledTimes(1);
         });
 
-        it('should not show loading when option is not set', () => {
+        it('does not show the loading when the option is not set', () => {
             httpClient.get.mockReturnValue(of(null));
 
             service.get('/api/items').subscribe();
@@ -187,7 +183,7 @@ describe('HttpService', () => {
             expect(loadingService.hide).not.toHaveBeenCalled();
         });
 
-        it('should not show loading when option is false', () => {
+        it('does not show the loading when the option is false', () => {
             httpClient.get.mockReturnValue(of(null));
 
             service.get('/api/items', { loading: false }).subscribe();
@@ -198,7 +194,7 @@ describe('HttpService', () => {
     });
 
     describe('success toast', () => {
-        it('should show success toast with translation key', () => {
+        it('shows the success toast with its translation key', () => {
             httpClient.post.mockReturnValue(of({ id: 1 }));
 
             service.post('/api/items', {}, { successToast: 'items.created' }).subscribe();
@@ -206,7 +202,7 @@ describe('HttpService', () => {
             expect(toastService.showSuccess).toHaveBeenCalledWith({ message: 'items.created' });
         });
 
-        it('should not show toast when successToast is not set', () => {
+        it('does not show a toast when successToast is not set', () => {
             httpClient.post.mockReturnValue(of({ id: 1 }));
 
             service.post('/api/items', {}).subscribe();
@@ -216,7 +212,7 @@ describe('HttpService', () => {
     });
 
     describe('error handling', () => {
-        it('should open error modal by default', () => {
+        it('opens the error modal by default', () => {
             httpClient.get.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
 
             service.get('/api/items').subscribe();
@@ -228,7 +224,7 @@ describe('HttpService', () => {
             });
         });
 
-        it('should use unknown error key when errorCode has no translation', () => {
+        it('uses the unknown error key when the errorCode has no translation', () => {
             httpClient.get.mockReturnValue(
                 throwError(
                     () =>
@@ -248,7 +244,7 @@ describe('HttpService', () => {
             });
         });
 
-        it('should call handleError and skip modal when handleError is provided', () => {
+        it('calls handleError instead of opening the error modal', () => {
             const handleError = jest.fn();
             httpClient.get.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 404 })));
 
@@ -258,7 +254,7 @@ describe('HttpService', () => {
             expect(modalService.openError).not.toHaveBeenCalled();
         });
 
-        it('should call onError regardless of modal', () => {
+        it('calls onError and still opens the error modal', () => {
             const onError = jest.fn();
             httpClient.get.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
 
@@ -268,7 +264,7 @@ describe('HttpService', () => {
             expect(modalService.openError).toHaveBeenCalled();
         });
 
-        it('should call both handleError and onError when both are provided', () => {
+        it('calls both handleError and onError without opening the modal', () => {
             const handleError = jest.fn();
             const onError = jest.fn();
             httpClient.get.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 403 })));
@@ -280,7 +276,7 @@ describe('HttpService', () => {
             expect(modalService.openError).not.toHaveBeenCalled();
         });
 
-        it('should complete the observable after error (return EMPTY)', () => {
+        it('completes without emitting or erroring after an error', () => {
             httpClient.get.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
 
             const next = jest.fn();
@@ -296,7 +292,7 @@ describe('HttpService', () => {
     });
 
     describe('onSuccess callback', () => {
-        it('should call onSuccess with result', () => {
+        it('calls onSuccess with the result', () => {
             const onSuccess = jest.fn();
             httpClient.get.mockReturnValue(of({ id: 1 }));
 
@@ -305,7 +301,7 @@ describe('HttpService', () => {
             expect(onSuccess).toHaveBeenCalledWith({ id: 1 });
         });
 
-        it('should not fail when onSuccess is not set', () => {
+        it('does not throw when onSuccess is not set', () => {
             httpClient.get.mockReturnValue(of({ id: 1 }));
 
             expect(() => service.get('/api/items').subscribe()).not.toThrow();
@@ -323,7 +319,7 @@ describe('HttpService', () => {
             });
         });
 
-        it('should use invalid-field-range when both min and max are present', () => {
+        it('uses invalid-field-range when both min and max are present', () => {
             httpClient.get.mockReturnValue(makeRangeError('invalid-field-range', 0, 100));
             service.get('/api').subscribe();
             expect(modalService.openError).toHaveBeenCalledWith(
@@ -333,7 +329,7 @@ describe('HttpService', () => {
             );
         });
 
-        it('should use invalid-field-range-min when max is null', () => {
+        it('uses invalid-field-range-min when max is null', () => {
             httpClient.get.mockReturnValue(makeRangeError('invalid-field-range', 5, null));
             service.get('/api').subscribe();
             expect(modalService.openError).toHaveBeenCalledWith(
@@ -343,7 +339,7 @@ describe('HttpService', () => {
             );
         });
 
-        it('should use invalid-field-range-max when min is null', () => {
+        it('uses invalid-field-range-max when min is null', () => {
             httpClient.get.mockReturnValue(makeRangeError('invalid-field-range', null, 100));
             service.get('/api').subscribe();
             expect(modalService.openError).toHaveBeenCalledWith(
@@ -353,7 +349,7 @@ describe('HttpService', () => {
             );
         });
 
-        it('should use invalid-field-length when both min and max are present', () => {
+        it('uses invalid-field-length when both min and max are present', () => {
             httpClient.get.mockReturnValue(makeRangeError('invalid-field-length', 3, 50));
             service.get('/api').subscribe();
             expect(modalService.openError).toHaveBeenCalledWith(
@@ -363,7 +359,7 @@ describe('HttpService', () => {
             );
         });
 
-        it('should use invalid-field-length-min when max is null', () => {
+        it('uses invalid-field-length-min when max is null', () => {
             httpClient.get.mockReturnValue(makeRangeError('invalid-field-length', 3, null));
             service.get('/api').subscribe();
             expect(modalService.openError).toHaveBeenCalledWith(
@@ -373,7 +369,7 @@ describe('HttpService', () => {
             );
         });
 
-        it('should use invalid-field-length-max when min is null', () => {
+        it('uses invalid-field-length-max when min is null', () => {
             httpClient.get.mockReturnValue(makeRangeError('invalid-field-length', null, 50));
             service.get('/api').subscribe();
             expect(modalService.openError).toHaveBeenCalledWith(
@@ -383,7 +379,7 @@ describe('HttpService', () => {
             );
         });
 
-        it('should resolve title using base key when errorCode has -min suffix', () => {
+        it('takes the title from the base error code when the message falls back to -min', () => {
             translateService.instant.mockImplementation((key: string) => {
                 if (key === 'angular-components.http.title.invalid-field-range') {
                     return 'Value out of range';
@@ -406,7 +402,7 @@ describe('HttpService', () => {
             );
         });
 
-        it('should resolve title using base key when errorCode has -max suffix', () => {
+        it('takes the title from the base error code when the message falls back to -max', () => {
             translateService.instant.mockImplementation((key: string) => {
                 if (key === 'angular-components.http.title.invalid-field-length') {
                     return 'Invalid length';
@@ -431,7 +427,7 @@ describe('HttpService', () => {
     });
 
     describe('combined options', () => {
-        it('should handle loading + successToast + onSuccess together', () => {
+        it('combines the loading, the success toast and onSuccess on a successful request', () => {
             const onSuccess = jest.fn();
             httpClient.post.mockReturnValue(of({ id: 1 }));
 
@@ -451,7 +447,7 @@ describe('HttpService', () => {
             expect(loadingService.hide).toHaveBeenCalledTimes(1);
         });
 
-        it('should handle loading + error + onError together', () => {
+        it('combines the loading, the error modal and onError on a failed request', () => {
             const onError = jest.fn();
             httpClient.get.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 500 })));
 
@@ -465,7 +461,7 @@ describe('HttpService', () => {
     });
 
     describe('subscription sharing', () => {
-        it('should only trigger a single underlying HTTP call when the caller also subscribes to the returned observable', () => {
+        it('triggers a single underlying HTTP call when the caller also subscribes to the returned observable', () => {
             let executionCount = 0;
             const cold$ = new Observable(subscriber => {
                 executionCount++;
@@ -475,8 +471,6 @@ describe('HttpService', () => {
 
             httpClient.put.mockReturnValue(cold$);
 
-            // request() already subscribes internally to drive loading/toast side effects; the caller
-            // subscribing again (the normal usage pattern) must not re-trigger the underlying HTTP call.
             service.put('/api/items/1', { name: 'updated' }).subscribe();
 
             expect(executionCount).toBe(1);

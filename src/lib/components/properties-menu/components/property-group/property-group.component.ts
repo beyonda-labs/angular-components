@@ -31,6 +31,9 @@ export class PropertyGroupComponent {
         return active?.fields.filter(field => !field.hidden) ?? [];
     });
     readonly addIcon = faPlus;
+
+    private static nextInstanceId = 0;
+    readonly bodyId = `bey-property-group-${PropertyGroupComponent.nextInstanceId++}`;
     readonly chevronIcon = faChevronDown;
     readonly content = computed(() => this.group().content);
     readonly fieldsContent = computed(() => {

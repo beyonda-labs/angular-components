@@ -3,11 +3,60 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 export type QueryScope = ComponentFixture<unknown> | Element;
 
+const CONTROL_SELECTOR = [
+    'input',
+    'select',
+    'textarea',
+    '[role="combobox"]',
+    '[role="group"]',
+    '[role="listbox"]',
+    '[role="radiogroup"]',
+    '[role="switch"]',
+    '[role="textbox"]'
+].join(', ');
+const LABELLED_CONTROLS = 'input, select, textarea';
+
+export function accessibleName(element: HTMLElement): string {
+    const labelledBy = element.getAttribute('aria-labelledby');
+
+    if (labelledBy) {
+        return labelledBy
+            .split(' ')
+            .map(id => document.querySelector(`[id="${id}"]`)?.textContent?.trim() ?? '')
+            .join(' ');
+    }
+
+    const labels =
+        element instanceof HTMLInputElement ||
+        element instanceof HTMLSelectElement ||
+        element instanceof HTMLTextAreaElement
+            ? [...(element.labels ?? [])]
+            : [];
+
+    return (
+        element.getAttribute('aria-label') ??
+        labels
+            .map(label => labelTextOf(label))
+            .filter(Boolean)
+            .join(' ')
+    );
+}
+
 export function buttonByName(scope: QueryScope, name: string): HTMLButtonElement {
     const found = queryButton(scope, name);
 
     if (!found) {
         throw new Error(`No button named ${name}`);
+    }
+
+    return found;
+}
+
+export function controlByName<E extends HTMLElement = HTMLInputElement>(scope: QueryScope, name: string): E {
+    const found = queryControl<E>(scope, name);
+
+    if (!found) {
+        throw new Error(`No control named ${name}`);
     }
 
     return found;
@@ -27,6 +76,10 @@ export function queryButton(scope: QueryScope, name: string): HTMLButtonElement 
             button => button.getAttribute('aria-label') === name || button.textContent?.trim() === name
         ) ?? null
     );
+}
+
+export function queryControl<E extends HTMLElement = HTMLInputElement>(scope: QueryScope, name: string): E | null {
+    return queryAll<E>(scope, CONTROL_SELECTOR).find(control => accessibleName(control) === name) ?? null;
 }
 
 export async function renderComponent<T>(
@@ -52,4 +105,14 @@ export async function settle(fixture: ComponentFixture<unknown>): Promise<void> 
 
 export function textsOf(elements: Element[]): string[] {
     return elements.map(element => element.textContent?.trim() ?? '');
+}
+
+function labelTextOf(label: HTMLLabelElement): string {
+    const copy = label.cloneNode(true) as HTMLLabelElement;
+
+    for (const control of copy.querySelectorAll(LABELLED_CONTROLS)) {
+        control.remove();
+    }
+
+    return copy.textContent?.trim() ?? '';
 }

@@ -1,12 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { renderComponent } from '@testing/dom';
+import { queryAll, renderComponent, textsOf } from '@testing/dom';
 import { ToastrService } from 'ngx-toastr';
 
 import { ToastStyleGuideComponent } from './toast-style-guide.component';
 
 describe('ToastStyleGuideComponent', () => {
-    let component: ToastStyleGuideComponent;
     let fixture: ComponentFixture<ToastStyleGuideComponent>;
 
     beforeEach(async () => {
@@ -26,10 +25,14 @@ describe('ToastStyleGuideComponent', () => {
         }).compileComponents();
 
         fixture = await renderComponent(ToastStyleGuideComponent);
-        component = fixture.componentInstance;
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('offers one button per kind of toast', () => {
+        expect(textsOf(queryAll(fixture, 'button'))).toEqual([
+            'angular-components-style-guide.toast.buttons.success',
+            'angular-components-style-guide.toast.buttons.info',
+            'angular-components-style-guide.toast.buttons.warning',
+            'angular-components-style-guide.toast.buttons.error'
+        ]);
     });
 });

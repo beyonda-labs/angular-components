@@ -7,10 +7,11 @@
             autocomplete="off"
             role="combobox"
             type="text"
-            [attr.aria-controls]="current.id + '-attachments'"
+            [attr.aria-controls]="attachmentsId()"
             [attr.aria-expanded]="isOpen()"
-            [attr.aria-label]="current.label"
+            [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
             [disabled]="current.disabled"
+            [id]="labelling().controlId"
             [placeholder]="'angular-components.properties-menu.attachment-field.search' | translate"
             [readonly]="current.holdsVariable"
             [value]="inputValue()"
@@ -21,7 +22,13 @@
         />
 
         @if (isOpen()) {
-            <div class="bey-property-attachment-field-panel" role="listbox" [id]="current.id + '-attachments'">
+            <div
+                class="bey-property-attachment-field-panel"
+                role="listbox"
+                [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
+                [attr.aria-labelledby]="labelling().labelId"
+                [id]="attachmentsId()"
+            >
                 @for (option of filteredOptions(); track option.id) {
                     <button
                         class="bey-property-attachment-field-option"
@@ -63,6 +70,7 @@
                 class="bey-property-field-action"
                 container="body"
                 type="button"
+                [attr.aria-expanded]="pickerOpen()"
                 [attr.aria-label]="'angular-components.properties-menu.attachment-field.use-variable' | translate"
                 [class.is-active]="pickerOpen()"
                 [disabled]="current.disabled"
@@ -81,7 +89,7 @@
         >
             <fa-icon [icon]="uploadIcon"></fa-icon>
             <input
-                hidden
+                class="bey-property-attachment-field-upload-input"
                 type="file"
                 [accept]="current.accept ?? '*/*'"
                 [attr.aria-label]="'angular-components.properties-menu.attachment-field.upload' | translate"
