@@ -29,13 +29,11 @@ export class PaginationComponent {
 
     readonly firstPageIcon = faAnglesLeft;
     readonly infoIcon = faCircleInfo;
-    readonly page = linkedSignal(() => this.config().page);
     readonly isFirstPage = computed(() => this.page() <= 1);
-    readonly pageSize = linkedSignal(() => this.config().pageSize);
-    readonly totalPages = computed(() => Math.max(Math.ceil(this.config().totalItems / this.pageSize()), 1));
     readonly isLastPage = computed(() => this.page() >= this.totalPages());
     readonly lastPageIcon = faAnglesRight;
     readonly nextPageIcon = faChevronRight;
+    readonly page = linkedSignal(() => this.config().page);
 
     private static nextInstanceId = 0;
     readonly pageInputId = `bey-pagination-page-input-${PaginationComponent.nextInstanceId}`;
@@ -45,6 +43,7 @@ export class PaginationComponent {
 
         return `calc(${Math.min(digits, MAX_INPUT_DIGITS)}ch + 1.4rem)`;
     });
+    readonly pageSize = linkedSignal(() => this.config().pageSize);
     readonly pageSizeId = `bey-pagination-page-size-${PaginationComponent.nextInstanceId++}`;
     readonly pageSizeOptions = PAGINATION_SIZE_OPTIONS;
     readonly previousPageIcon = faChevronLeft;
@@ -60,6 +59,7 @@ export class PaginationComponent {
         total: this.config().totalItems
     }));
     readonly shouldShowFirstLastButtons = computed(() => this.totalPages() >= FIRST_LAST_BUTTONS_FROM_PAGES);
+    readonly totalPages = computed(() => Math.max(Math.ceil(this.config().totalItems / this.pageSize()), 1));
 
     goToFirstPage(): void {
         this.navigateTo(1);

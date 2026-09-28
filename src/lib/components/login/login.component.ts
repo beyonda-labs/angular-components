@@ -28,18 +28,17 @@ export class LoginComponent {
     readonly config = input.required<LoginConfig>();
 
     readonly activeView = signal<LoginView>('login');
-
-    private readonly themeService = inject(ThemeService);
-
-    readonly theme = toSignal(this.themeService.theme$, { requireSync: true });
     readonly backgroundImage = computed(() => `url(${this.theme() === 'dark' ? BG_IMAGE_DARK : BG_IMAGE_LIGHT})`);
-
-    private readonly loginHttpService = inject(LoginHttpService);
-    readonly registerFields = toSignal(this.loginHttpService.getRegisterFields(), { initialValue: [] });
     readonly canRegister = computed(() => this.registerFields().length > 0);
     readonly isRegistering = computed(() => this.canRegister() && this.activeView() === 'register');
     readonly prefix = computed(() => this.config().prefix);
+
+    private readonly loginHttpService = inject(LoginHttpService);
     readonly providers = toSignal(this.loginHttpService.getProviders(), { initialValue: [] });
+    readonly registerFields = toSignal(this.loginHttpService.getRegisterFields(), { initialValue: [] });
+
+    private readonly themeService = inject(ThemeService);
+    readonly theme = toSignal(this.themeService.theme$, { requireSync: true });
     readonly title = computed(() => `${this.prefix()}.title.${this.isRegistering() ? 'register' : 'login'}`);
     readonly viewButton = computed(() => {
         const view: LoginView = this.isRegistering() ? 'login' : 'register';

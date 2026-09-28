@@ -8,10 +8,11 @@ const STORAGE_KEY = 'bey-theme';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
-    private readonly themeSubject = new BehaviorSubject<Theme>(this.loadTheme());
-    readonly theme$ = this.themeSubject.asObservable();
-
     private readonly document = inject(DOCUMENT);
+
+    private readonly themeSubject = new BehaviorSubject<Theme>(this.loadTheme());
+
+    readonly theme$ = this.themeSubject.asObservable();
 
     constructor() {
         this.applyToBody(this.themeSubject.value);
