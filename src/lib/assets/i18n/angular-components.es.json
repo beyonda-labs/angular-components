@@ -6,6 +6,9 @@
         "breadcrumb": {
             "label": "Migas de pan"
         },
+        "file-preview": {
+            "close": "Cerrar vista previa"
+        },
         "floating-preferences": {
             "dark": "Oscuro",
             "language": "Idioma",
@@ -259,6 +262,12 @@
                 "error": "Error",
                 "info": "Información",
                 "warning": "Advertencia"
+            },
+            "unsaved-changes": {
+                "leave": "Salir sin guardar",
+                "message": "Tienes cambios sin guardar. Si sales ahora, se perderán.",
+                "stay": "Seguir editando",
+                "title": "Cambios sin guardar"
             }
         },
         "option-picker": {
@@ -282,6 +291,13 @@
             "page-size": "Tamaño de página",
             "previous-page": "Ir a la página anterior",
             "results-range": "Mostrando {{ start }}-{{ end }} de {{ total }} resultados"
+        },
+        "pdf-viewer": {
+            "toolbar": {
+                "page": "Página",
+                "zoom-in": "Ampliar",
+                "zoom-out": "Reducir"
+            }
         },
         "properties-menu": {
             "attachment-field": {

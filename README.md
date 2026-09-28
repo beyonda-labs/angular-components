@@ -16,6 +16,22 @@ Make sure all peer dependencies are installed in the consuming app:
 
 ## Quick start
 
+One provider registers what every app needs: the HTTP client with the session interceptor (extra `interceptors` run
+after it), the environment, the session, the modal, the toast and ngx-translate loading `<translationsPath><lang>.json`
+(`./assets/i18n/` by default). `provideRouter`, `provideAnimationsAsync` and `provideZoneChangeDetection` stay in the
+app.
+
+```ts
+export const appConfig: ApplicationConfig = {
+    providers: [
+        provideZoneChangeDetection({ eventCoalescing: true }),
+        provideRouter(routes),
+        provideAnimationsAsync(),
+        provideBeyApp({ environment, session: { loginRoute: '/login' } })
+    ]
+};
+```
+
 ```ts
 import {
     BeyFormConfig,
@@ -67,7 +83,13 @@ const form = new BeyFormConfig({
 
 The interactive style guide ships as `@beyonda-labs/angular-components/style-guide`, a secondary entry point:
 `import { BeyStyleGuideComponent } from '@beyonda-labs/angular-components/style-guide'`. Importing a component
-never pulls the demo in. Its sources live in `style-guide/src/<module>/`, one folder per module.
+never pulls the demo in. Its sources live in `style-guide/src/<module>/`, one folder per module. `bey-style-guide`
+loads its own texts from `assets/angular-components/i18n-style-guide/` for the current language and every change:
+copy that folder in `angular.json` (`input: node_modules/@beyonda-labs/angular-components/assets/i18n-style-guide`,
+`output: assets/angular-components/i18n-style-guide`) and render the component.
+
+Two plain functions are public so an app builds the same texts and keys as the library: `beyFormatBytes` and
+`beyToKeySegment`.
 
 Component documentation:
 

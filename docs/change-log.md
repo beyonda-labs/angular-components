@@ -7,6 +7,22 @@
 -   Left menu module: a branch with its own `action` gets a submenu toggle over its chevron, reachable from the keyboard and named with `angular-components.left-menu.submenu`.
 -   Page module: `BeyPageConfig` and `BeyPageConfigParameters` take the form value type, so a typed `BeyPageFormConfig<T>` fits without `<unknown>`.
 -   Properties menu module: tree rows expand with `ArrowRight` and collapse with `ArrowLeft`.
+-   App layout module: `BeyAppLayoutBottomAction` takes an optional `route`.
+-   File preview module: `BeyFilePreviewService.open(config)` shows a PDF or an image from a `Blob` or a URL in a dialog, driven by `BeyFilePreviewConfig` and `BeyFilePreviewType`, and releases the object URL it creates.
+-   Form module: `isRequired` takes a rule, like `isHidden` and `isDisabled`; the required validator, the marker and `aria-required` follow it as the form value changes.
+-   Form module: a rule can be a signal, and a custom validator runs again when a signal it reads or the form value changes, so data that arrives after the config is built reaches options and validators without mutable references.
+-   Modal module: `beyUnsavedChangesGuard` and `BeyUnsavedChangesService.track(hasChanges, config?)` ask before leaving a route with unsaved changes and warn on `beforeunload`, with default texts overridable through `BeyUnsavedChangesConfig`.
+-   Page module: `BeyPageConfig<TValue, TItem, TCategory>` types its rows, so `loadRow`, `onSelectionChange`, action handlers, `buildSections`, `toFormValue`, `afterCreate`, `onDataLoaded` and `BeyPageHandle` see the real entity without casts.
+-   Page module: `BeyPageActionScope.Single`, shown while exactly one selected row lists the key; its handler receives that row.
+-   Page module: `loadRow(category, viewMode)` on `BeyPageCategoriesConfig` draws the category rows; without it a category row shows its name as a link that opens it.
+-   Pdf viewer module: `toolbar: BeyPdfViewerToolbar.Compact` shows a compact toolbar with zoom within `minZoom`–`maxZoom` by the new `zoomStep`, the current page, and a `bey-pdf-viewer-status` slot, its controls named by translated labels.
+-   Properties menu module: `labelParameters` on `BeyPropertyGroup`, `BeyPropertyGroupTab` and `BeyPropertyTreeNode`, passed to the translate pipe with the label key.
+-   Table module: `BeyDateTableCell`, formatted in the `LOCALE_ID` locale (`mediumDate` unless `format` says otherwise), and `BeyTagsTableCell`, plain strings as untranslated outline badges.
+-   Table module: a row with fewer cells than columns is completed with empty cells.
+-   Table module: `BeyTableColumnParameters`, `BeyTableConfigParameters` and the `Bey*TableCellParameters` types are exported.
+-   Services: `provideBeyApp` registers the HTTP client with the session interceptor, the environment, the session, the modal, the toast and the translations loader in one provider, typed by `BeyAppConfig`.
+-   Utilities: `beyFormatBytes` formats a size in bytes as the file field shows it (`1.5 KB`), and `beyToKeySegment` turns an identifier into the kebab-case segment the library builds its translation keys from.
+-   Style guide: `bey-style-guide` loads its own translations from `assets/angular-components/i18n-style-guide/` for the current language and every language change.
 
 ### Changed
 
@@ -22,6 +38,14 @@
 -   Table module: the header keys derived from column keys are kebab-case (`createdAt` reads `columns.created-at`); translation files with camelCase segments must be renamed.
 -   Tabs module: the default keys derived from tab keys are kebab-case (`billingDetails` reads `tabs.billing-details.label`); translation files with camelCase segments must be renamed.
 -   Tree module: the default label keys derived from node keys are kebab-case (`sharedFolder` reads `nodes.shared-folder.label`); translation files with camelCase segments must be renamed.
+-   App layout module: an action with a `route` navigates to it when used from the menu; an action with its own `action` runs it instead, and its `route` only marks it active.
+-   Form module: a select, radio or autocomplete clears its value when its options change and no longer list it.
+-   Form module: `BeyFormField.isRequired` is typed `BeyFormRule<boolean>` instead of `boolean`.
+-   Page module: an action `handler` always receives an array, `[]` for `Global` and `Group` instead of `undefined`; on a page with categories it receives only the selected rows that are not categories, and it is hidden while only categories are selected.
+-   Page module: rows whose `typeField` says `category` no longer go through the table's `loadRow` but through `categoriesConfig.loadRow`, or the default name link.
+-   Pdf viewer module: `showToolbar` is replaced by `toolbar`, a `BeyPdfViewerToolbar` (`None` by default, `Full` for the toolbar of pdf.js).
+-   Properties menu module: a new config keeps what the user expanded, the open tabs and the selected tree node, matched by id, unless the config changes that value; a node the config selects opens its ancestors.
+-   `BeyCellType` gains `Date` and `Tags`, and `BeyPageActionScope` gains `Single`.
 
 ### Fixed
 
@@ -29,6 +53,10 @@
 -   Tabs module: tabs whose labels widen after the first paint (translations that load late, a language switch, a web font) move into the overflow menu instead of spilling out of a narrow bar.
 -   Style guide: the login example scrolls with the library's thin scrollbar.
 -   Tree module: picking a node in the tree dialog no longer reopens the branches the user collapsed.
+-   App layout module: a navigation that a guard cancels, or that fails, no longer leaves the menu and the breadcrumb on the page that was not reached.
+-   Form module: a custom validator that reads a signal no longer rebuilds the form, and loses what was typed, when that signal changes.
+-   Page module: `edit-category` is offered only with exactly one row selected, as `edit` already was.
+-   Page module: `move` recognises the selected categories through `typeField` instead of a hard-coded `type`.
 
 ## [1.2.0] - 2026-09-26
 

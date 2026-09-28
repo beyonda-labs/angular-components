@@ -105,6 +105,21 @@
         "breadcrumbs": "Breadcrumbs",
         "components": "Componentes",
         "compound": "Compuestos",
+        "file-preview": {
+            "buttons": {
+                "image": "Previsualizar una imagen",
+                "pdf": "Previsualizar un PDF"
+            },
+            "example": "Un diálogo que previsualiza un PDF o una imagen a partir de un blob o una URL, abierto con una sola llamada al servicio. La URL de objeto que crea para un blob se libera al cerrarse el diálogo.",
+            "image": {
+                "alt": "Un círculo oscuro sobre un fondo gris claro",
+                "title": "Imagen de ejemplo"
+            },
+            "pdf": {
+                "title": "Documento de ejemplo"
+            }
+        },
+        "file-preview-section": "Vista previa de archivos",
         "floating-preferences": {
             "example": "Selectores de idioma y tema autogestionados. Lee y escribe el estado directamente a través de TranslateService y BeyThemeService — no requiere callbacks.",
             "examples": {
@@ -234,6 +249,32 @@
                 },
                 "label": "Campos de fecha",
                 "tooltip": "Campos de fecha con rango, obligatorio y deshabilitado"
+            },
+            "section-dependent": {
+                "label": "Campos dependientes",
+                "load-regions": "Cargar las regiones",
+                "plan": {
+                    "label": "Plan",
+                    "options": {
+                        "free": "Gratuito",
+                        "pro": "Pro"
+                    },
+                    "placeholder": "Elige un plan"
+                },
+                "region": {
+                    "label": "Región",
+                    "options": {
+                        "asia": "Asia",
+                        "eu": "Europa",
+                        "us": "Estados Unidos"
+                    },
+                    "placeholder": "Carga las regiones y elige una"
+                },
+                "seats": {
+                    "label": "Puestos",
+                    "placeholder": "Obligatorio en el plan Pro"
+                },
+                "tooltip": "Los puestos solo son obligatorios en el plan Pro; las regiones llegan después de construir el formulario y se borra la región que el nuevo plan no ofrece"
             },
             "section-info": {
                 "info1": {
@@ -556,6 +597,19 @@
                     "message": "El registro fue enviado a archivo y el proceso terminará en segundo plano.",
                     "title": "Acción confirmada"
                 }
+            },
+            "unsaved-changes": {
+                "example": "Un guard de ruta sobre señales registradas: marca la casilla para simular cambios sin guardar e intenta salir. Mientras está marcada, cerrar o recargar la pestaña también pregunta.",
+                "leave": "Salir de esta página",
+                "left": {
+                    "message": "Nada ha detenido la navegación.",
+                    "title": "Página abandonada"
+                },
+                "stayed": {
+                    "message": "Los cambios siguen aquí.",
+                    "title": "Sigues en la página"
+                },
+                "toggle": "Hay cambios sin guardar"
             }
         },
         "modals": "Modales",
@@ -642,12 +696,17 @@
         },
         "pagination-section": "Paginación",
         "pdf-viewer": {
-            "example": "Previsualizador de PDF construido sobre ngx-extended-pdf-viewer con su toolbar nativa oculta y una toolbar propia controlada mediante la API imperativa y los eventos del visor."
+            "compact-example": "El mismo visor con la toolbar compacta de la librería: zoom dentro de los límites configurados, la página actual y un hueco a la izquierda para el estado del consumidor.",
+            "example": "Previsualizador de PDF construido sobre ngx-extended-pdf-viewer con su toolbar nativa oculta y una toolbar propia controlada mediante la API imperativa y los eventos del visor.",
+            "status": "Actualizado"
         },
         "pdf-viewer-section": "Visor de PDF",
         "properties-menu": {
             "example": "Inspector de propiedades de un bloque seleccionado, con pestañas, grupos plegables e inserción de variables.",
-            "provide-variables": "Aportar variables"
+            "provide-variables": "Aportar variables",
+            "tree": {
+                "page": "Página {{number}}"
+            }
         },
         "properties-menu-section": "Menú de propiedades",
         "search": {
@@ -673,6 +732,7 @@
             },
             "columns": {
                 "action": "Acción",
+                "joined-at": "Alta",
                 "name": "Nombre",
                 "role": "Rol",
                 "skills": "Habilidades",
@@ -691,8 +751,9 @@
                 "review": "En revisión"
             },
             "tooltips": {
+                "joined-at": "Las celdas de fecha formatean el valor con el idioma de la aplicación",
                 "name": "Columna principal de identidad",
-                "skills": "Las celdas de badge aceptan una lista, mostrando más de un badge por fila",
+                "skills": "Las celdas de etiquetas muestran textos sin traducir como badges de contorno",
                 "status": "Las celdas de estado pueden traducirse y mostrar tooltip"
             }
         },
