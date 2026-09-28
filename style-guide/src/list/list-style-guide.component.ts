@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { BeyListComponent, BeyListConfig } from '@beyonda-labs/angular-components';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 interface Employee {
     id: number;
@@ -19,8 +19,7 @@ interface Employee {
 export class ListStyleGuideComponent {
     readonly config: BeyListConfig;
     readonly emptyConfig: BeyListConfig;
-
-    private readonly translateService = inject(TranslateService);
+    readonly selectedEmployee = signal('');
 
     constructor() {
         this.config = new BeyListConfig<unknown>({
@@ -57,9 +56,6 @@ export class ListStyleGuideComponent {
     }
 
     private onEmployeeClick(employee: Employee): void {
-        const message = this.translateService.instant('angular-components-style-guide.list.selected');
-
-        // eslint-disable-next-line no-console
-        console.log(message, employee);
+        this.selectedEmployee.set(employee.name);
     }
 }
