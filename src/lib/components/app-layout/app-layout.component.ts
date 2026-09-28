@@ -66,7 +66,7 @@ export class AppLayoutComponent implements OnInit {
         this.router.events
             .pipe(filter(isNavigationOutcome), takeUntilDestroyed())
             .subscribe(() => this.activateByUrl(this.router.url));
-        this.translateService.onLangChange.pipe(takeUntilDestroyed()).subscribe(() => this.refreshActiveAction());
+        this.translateService.onLangChange.pipe(takeUntilDestroyed()).subscribe(() => this.refreshBreadcrumb());
     }
 
     ngOnInit(): void {
@@ -82,17 +82,14 @@ export class AppLayoutComponent implements OnInit {
 
     private activate(path: LeftMenuAction[]): void {
         const leaf = path[path.length - 1];
-        const { onRouteActivated, prefix } = this.config();
-        const items = path.map(
-            (action, index) =>
-                new AppLayoutBreadcrumbItem({
-                    id: index + 1,
-                    label: this.translateService.instant(`${prefix}.actions.${toKeySegment(action.key)}.label`)
-                })
-        );
+        const { isRouteBreadcrumbEnabled, onRouteActivated } = this.config();
 
         this.appLayoutService.activeMenuAction(leaf.key);
-        this.appLayoutService.setBreadcrumb(items);
+
+        if (isRouteBreadcrumbEnabled) {
+            this.appLayoutService.setBreadcrumb(this.buildBreadcrumb(path));
+        }
+
         onRouteActivated?.(leaf.key);
     }
 
@@ -118,13 +115,28 @@ export class AppLayoutComponent implements OnInit {
         }
 
         this.appLayoutService.clearActiveAction();
-        this.appLayoutService.clearBreadcrumb();
+
+        if (this.config().isRouteBreadcrumbEnabled) {
+            this.appLayoutService.clearBreadcrumb();
+        }
     }
 
     private allActions(): LeftMenuAction[] {
         const { bottomActions, topActions } = this.config();
 
         return [...topActions, ...bottomActions];
+    }
+
+    private buildBreadcrumb(path: LeftMenuAction[]): AppLayoutBreadcrumbItem[] {
+        const { prefix } = this.config();
+
+        return path.map(
+            (action, index) =>
+                new AppLayoutBreadcrumbItem({
+                    id: index + 1,
+                    label: this.translateService.instant(`${prefix}.actions.${toKeySegment(action.key)}.label`)
+                })
+        );
     }
 
     private prepareActions(actions: LeftMenuAction[], activeKey: string | null): LeftMenuAction[] {
@@ -139,10 +151,10 @@ export class AppLayoutComponent implements OnInit {
         );
     }
 
-    private refreshActiveAction(): void {
+    private refreshBreadcrumb(): void {
         const key = this.appLayoutService.activeActionKey();
 
-        if (key !== null) {
+        if (this.config().isRouteBreadcrumbEnabled && key !== null) {
             this.activateByKey(key);
         }
     }

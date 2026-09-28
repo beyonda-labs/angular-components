@@ -61,10 +61,12 @@ function loadExpanded(): boolean {
     }
 }
 
-function saveExpanded(value: boolean): void {
+function saveExpanded(value: boolean): boolean {
     try {
         localStorage.setItem(STORAGE_KEY, String(value));
+
+        return true;
     } catch {
-        /* storage unavailable: the state still lives in the signal */
+        return false;
     }
 }
