@@ -3,6 +3,7 @@
     --bey-button-padding-block: var(--bey-space-sm);
     --bey-button-padding-inline: var(--bey-space-md);
     --bey-button-icon-size: var(--bey-font-size-xs);
+    --bey-button-square-size: var(--bey-space-2xl);
     --bey-button-width: auto;
 
     display: inline-block;
@@ -22,6 +23,34 @@
     width: var(--bey-button-width);
 }
 
+.bey-button--icon-outline {
+    border: var(--bey-border-width) solid var(--bey-border-default);
+    color: var(--bey-text-secondary);
+    height: var(--bey-button-square-size);
+    line-height: inherit;
+    margin-inline: 0;
+    padding: 0;
+    transition:
+        background-color var(--bey-duration-fast) var(--bey-easing-standard),
+        color var(--bey-duration-fast) var(--bey-easing-standard);
+    width: var(--bey-button-square-size);
+}
+
+.bey-button--icon-outline:hover:not(:disabled) {
+    background-color: var(--bey-bg-hover);
+    color: var(--bey-text-primary);
+}
+
+.bey-button--icon-outline:disabled {
+    border-color: var(--bey-border-subtle);
+    color: var(--bey-text-disabled);
+    opacity: var(--bey-opacity-disabled);
+}
+
 .bey-button-icon {
     font-size: var(--bey-button-icon-size);
+}
+
+.bey-button--icon-outline .bey-button-icon {
+    font-size: var(--bey-font-size-sm);
 }

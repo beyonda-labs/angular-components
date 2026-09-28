@@ -23,7 +23,7 @@
             @if (tab.icon) {
                 <fa-icon class="bey-tabs-tab-icon" [icon]="tab.icon"></fa-icon>
             }
-            {{ getTabLabel(tab) | translate }}
+            {{ getTabLabel(tab) | translate: tab.labelParameters }}
         </button>
     }
 
@@ -55,7 +55,7 @@
                             @if (tab.icon) {
                                 <fa-icon [icon]="tab.icon"></fa-icon>
                             }
-                            {{ getTabLabel(tab) | translate }}
+                            {{ getTabLabel(tab) | translate: tab.labelParameters }}
                         </button>
                     }
                 </div>

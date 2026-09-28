@@ -5,12 +5,14 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { ButtonConfig, ButtonType } from './models/button-config.model';
 
-const BASE_CLASSES = 'bey-button btn btn-sm d-flex align-items-center fw-semibold rounded';
+const BASE_CLASSES = 'bey-button btn d-flex align-items-center';
+const SMALL_BUTTON_CLASSES = 'btn-sm fw-semibold rounded';
 const TYPE_CLASSES: Record<ButtonType, string> = {
-    [ButtonType.LinkSecondary]: 'btn-link btn-link-secondary',
-    [ButtonType.Primary]: 'btn-dark',
-    [ButtonType.Secondary]: 'btn-outline-dark',
-    [ButtonType.Tertiary]: 'btn-link'
+    [ButtonType.IconOutline]: 'bey-button--icon-outline',
+    [ButtonType.LinkSecondary]: `${SMALL_BUTTON_CLASSES} btn-link btn-link-secondary`,
+    [ButtonType.Primary]: `${SMALL_BUTTON_CLASSES} btn-dark`,
+    [ButtonType.Secondary]: `${SMALL_BUTTON_CLASSES} btn-outline-dark`,
+    [ButtonType.Tertiary]: `${SMALL_BUTTON_CLASSES} btn-link`
 };
 
 @Component({

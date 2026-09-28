@@ -88,6 +88,13 @@ loads its own texts from `assets/angular-components/i18n-style-guide/` for the c
 copy that folder in `angular.json` (`input: node_modules/@beyonda-labs/angular-components/assets/i18n-style-guide`,
 `output: assets/angular-components/i18n-style-guide`) and render the component.
 
+The specs of a consuming app take their helpers from `@beyonda-labs/angular-components/testing`, a second
+secondary entry point that only specs import: `provideBeyTesting(config?)`, the test counterpart of
+`provideBeyApp` (`HttpTestingController`, in-memory session, translations without a loader), the fakes that stand
+for `BeyModalService`, `BeyToastService`, `BeyModalFormService`, `BeyFilePreviewService` and `BeyStorageService`,
+and the DOM helpers the library's own specs use (`beyRenderComponent`, `beySettle`, `beyButtonByName`, …). Its
+sources live in `testing/src/`; see the [testing README](testing/docs/testing-readme.md).
+
 Two plain functions are public so an app builds the same texts and keys as the library: `beyFormatBytes` and
 `beyToKeySegment`.
 

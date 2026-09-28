@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { PropertyTextField } from './models/fields/property-text-field.model';
@@ -461,5 +461,51 @@ describe('PropertiesMenuComponent · replacing the config', () => {
 
         expect(treeItemNames()).toEqual(['Page 1', 'Section', 'Totals']);
         expect(byRole('treeitem', 'Totals').getAttribute('aria-selected')).toBe('true');
+    });
+});
+
+describe('PropertiesMenuComponent · tab label parameters', () => {
+    let fixture: ComponentFixture<PropertiesMenuComponent>;
+
+    function buildConfig(count: number): PropertiesMenuConfig {
+        return new PropertiesMenuConfig({
+            prefix: 'app.properties-menu',
+            tabs: [
+                new PropertyTab({ id: 'properties', label: 'Properties' }),
+                new PropertyTab({ id: 'variables', label: 'inspector.variables', labelParameters: { count } })
+            ]
+        });
+    }
+
+    function tab(name: string): HTMLElement {
+        const found = queryAll(fixture, '[role="tab"]').find(element => element.textContent?.trim() === name);
+
+        if (!found) {
+            throw new Error(`No tab named ${name}`);
+        }
+
+        return found;
+    }
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [PropertiesMenuComponent, TranslateModule.forRoot()]
+        }).compileComponents();
+
+        const translate = TestBed.inject(TranslateService);
+        translate.setTranslation('en', { inspector: { variables: 'Variables ({{count}})' } });
+        translate.use('en');
+    });
+
+    it('updates a tab label when only its parameters change, keeping the tab the user opened', async () => {
+        fixture = await renderComponent(PropertiesMenuComponent, { config: buildConfig(2) });
+        tab('Variables (2)').click();
+        await settle(fixture);
+
+        fixture.componentRef.setInput('config', buildConfig(3));
+        await settle(fixture);
+
+        expect(textsOf(queryAll(fixture, '[role="tab"]'))).toEqual(['Properties', 'Variables (3)']);
+        expect(tab('Variables (3)').getAttribute('aria-selected')).toBe('true');
     });
 });

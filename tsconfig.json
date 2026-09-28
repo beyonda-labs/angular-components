@@ -26,7 +26,8 @@
         "paths": {
             "@beyonda-labs/angular-components": ["./src/public-api.ts"],
             "@beyonda-labs/angular-components/style-guide": ["./style-guide/src/public-api.ts"],
-            "@testing/*": ["./testing/*"]
+            "@beyonda-labs/angular-components/testing": ["./testing/src/public-api.ts"],
+            "@testing/*": ["./testing/src/*"]
         }
     },
     "angularCompilerOptions": {

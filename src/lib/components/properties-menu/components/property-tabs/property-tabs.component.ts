@@ -14,7 +14,6 @@ import { PropertiesMenuService } from '../../services/properties-menu.service';
     templateUrl: './property-tabs.component.html'
 })
 export class PropertyTabsComponent {
-    /** A computed, not a getter: a new TabsConfig per change-detection cycle made bey-tabs re-measure forever. */
     readonly tabsConfig = computed(() => {
         const config = this.propertiesMenuService.config();
 
@@ -30,7 +29,8 @@ export class PropertyTabsComponent {
                             icon: tab.icon,
                             isDisabled: tab.disabled,
                             key: tab.id,
-                            label: resolvePropertyLabelKey(config.prefix, 'tabs', tab.id, tab.label)
+                            label: resolvePropertyLabelKey(config.prefix, 'tabs', tab.id, tab.label),
+                            labelParameters: tab.labelParameters
                         })
                 )
         });

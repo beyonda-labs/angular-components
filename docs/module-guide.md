@@ -21,15 +21,16 @@ what to touch; the rules themselves live in `c:\Dev\Personal\beyonda-labs\rules\
 
 ## 2. Where everything goes
 
-| What                 | Where                                                                                         |
-| -------------------- | --------------------------------------------------------------------------------------------- |
-| The module           | `src/lib/components/<module>/`: component, `models/`, `services/`, `components/` for children |
-| Its texts            | `src/lib/components/<module>/assets/<module>.en.json` and `.es.json`                          |
-| Its README           | `src/lib/components/<module>/docs/<module>-readme.md`                                         |
-| Its exports          | `src/lib/components/<module>/public-api.ts`                                                   |
-| Its demo             | `style-guide/src/<module>/`, with its own `assets/` for the demo texts                        |
-| A new design value   | `src/lib/assets/styles/tokens.css`, documented in `docs/tokens.md`                            |
-| A shared test helper | `testing/dom.ts`, only when it is generic; otherwise it stays in the spec                     |
+| What                 | Where                                                                                          |
+| -------------------- | ---------------------------------------------------------------------------------------------- |
+| The module           | `src/lib/components/<module>/`: component, `models/`, `services/`, `components/` for children  |
+| Its texts            | `src/lib/components/<module>/assets/<module>.en.json` and `.es.json`                           |
+| Its README           | `src/lib/components/<module>/docs/<module>-readme.md`                                          |
+| Its exports          | `src/lib/components/<module>/public-api.ts`                                                    |
+| Its demo             | `style-guide/src/<module>/`, with its own `assets/` for the demo texts                         |
+| A new design value   | `src/lib/assets/styles/tokens.css`, documented in `docs/tokens.md`                             |
+| A shared test helper | `testing/src/dom.ts`, only when it is generic; otherwise it stays in the spec                  |
+| A test double        | `testing/src/services/fake-<service>.service.ts`, for a public service a consumer's spec stubs |
 
 ## 3. While writing
 
@@ -47,6 +48,9 @@ what to touch; the rules themselves live in `c:\Dev\Personal\beyonda-labs\rules\
     `export type`), services, providers and guards, every name with the `Bey` prefix.
 -   **The root `src/public-api.ts`** re-exports it under its layer: `primitives`, `composites` or `product`.
 -   **Nothing else is exported**: not the children, not `internal/`, not the demo.
+-   **A public service that opens a dialog or a toast gets its fake** in the `testing` entry point: exported from
+    `testing/src/public-api.ts` as `BeyFake<Service>` and registered by `provideBeyTesting` in place of the real
+    one, with its README row in `testing/docs/testing-readme.md`.
 
 ## 5. Documentation
 
@@ -72,7 +76,7 @@ pnpm run lint:fix             # ESLint autofix
 pnpm run stylelint:fix        # declaration order and the rest of the CSS autofixes
 pnpm run format               # Prettier, including the order of template attributes
 pnpm run verify               # everything Jenkins checks, plus the format
-pnpm run build                # both entry points, the library and the style-guide
+pnpm run build                # every entry point: the library, testing and the style-guide
 ```
 
 What `verify` runs, and what to do when each step fails:

@@ -15,11 +15,13 @@
             "moduleNameMapper": {
                 "^@beyonda-labs/angular-components$": "<rootDir>/src/public-api.ts",
                 "^@beyonda-labs/angular-components/style-guide$": "<rootDir>/style-guide/src/public-api.ts",
-                "^@testing/(.*)$": "<rootDir>/testing/$1"
+                "^@beyonda-labs/angular-components/testing$": "<rootDir>/testing/src/public-api.ts",
+                "^@testing/(.*)$": "<rootDir>/testing/src/$1"
             },
             "collectCoverageFrom": [
                 "src/**/*.ts",
                 "style-guide/src/**/*.ts",
+                "testing/src/**/*.ts",
                 "!**/*.spec.ts",
                 "!**/*.model.ts",
                 "!**/public-api.ts",

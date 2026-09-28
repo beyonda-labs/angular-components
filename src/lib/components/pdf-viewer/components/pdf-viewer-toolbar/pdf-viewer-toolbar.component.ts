@@ -1,15 +1,18 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faMagnifyingGlassMinus, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { ButtonComponent } from '../../../../internal/button/button.component';
+import { ButtonConfig, ButtonType } from '../../../../internal/button/models/button-config.model';
 import { PdfViewerConfig } from '../../models/pdf-viewer-config.model';
 
 const PERCENT = 100;
+const ZOOM_IN = 'angular-components.pdf-viewer.toolbar.zoom-in';
+const ZOOM_OUT = 'angular-components.pdf-viewer.toolbar.zoom-out';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [FontAwesomeModule, TranslateModule],
+    imports: [ButtonComponent, TranslateModule],
     selector: 'bey-pdf-viewer-toolbar',
     standalone: true,
     styleUrls: ['./pdf-viewer-toolbar.component.css'],
@@ -24,11 +27,31 @@ export class PdfViewerToolbarComponent {
     readonly pageChange = output<number>();
     readonly zoomChange = output<number>();
 
-    readonly canZoomIn = computed(() => this.zoom() < this.config().maxZoom);
-    readonly canZoomOut = computed(() => this.zoom() > this.config().minZoom);
     readonly hasPages = computed(() => this.pagesCount() > 0);
-    readonly zoomInIcon = faMagnifyingGlassPlus;
-    readonly zoomOutIcon = faMagnifyingGlassMinus;
+    readonly zoomInButton = computed(
+        () =>
+            new ButtonConfig({
+                action: () => this.zoomBy(this.config().zoomStep),
+                ariaLabel: ZOOM_IN,
+                icon: faMagnifyingGlassPlus,
+                isDisabled: this.zoom() >= this.config().maxZoom,
+                tooltip: ZOOM_IN,
+                tooltipPlacement: 'bottom',
+                type: ButtonType.IconOutline
+            })
+    );
+    readonly zoomOutButton = computed(
+        () =>
+            new ButtonConfig({
+                action: () => this.zoomBy(-this.config().zoomStep),
+                ariaLabel: ZOOM_OUT,
+                icon: faMagnifyingGlassMinus,
+                isDisabled: this.zoom() <= this.config().minZoom,
+                tooltip: ZOOM_OUT,
+                tooltipPlacement: 'bottom',
+                type: ButtonType.IconOutline
+            })
+    );
     readonly zoomPercent = computed(() => Math.round(this.zoom() * PERCENT));
 
     onPageInput(field: HTMLInputElement): void {
@@ -47,14 +70,6 @@ export class PdfViewerToolbarComponent {
         if (page !== this.page()) {
             this.pageChange.emit(page);
         }
-    }
-
-    zoomIn(): void {
-        this.zoomBy(this.config().zoomStep);
-    }
-
-    zoomOut(): void {
-        this.zoomBy(-this.config().zoomStep);
     }
 
     private zoomBy(step: number): void {

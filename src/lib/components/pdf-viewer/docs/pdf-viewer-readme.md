@@ -78,7 +78,8 @@ readonly viewer = new BeyPdfViewerConfig({
 ```
 
 Its buttons and the page field are named by `angular-components.pdf-viewer.toolbar.zoom-out`, `zoom-in` and
-`page`.
+`page`. The two zoom buttons are the library's bordered icon squares and show their name as a tooltip, also
+while disabled at `minZoom` or `maxZoom`.
 
 ## The handle
 

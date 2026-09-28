@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { queryAll, renderComponent, settle, textsOf } from '@testing/dom';
+import { buttonByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { Tab, TabsConfig, TabsConfigParameters } from './models/tabs.model';
 import { TabsComponent } from './tabs.component';
@@ -17,6 +17,14 @@ describe('TabsComponent', () => {
                 new Tab({ key: 'history', label: 'History' })
             ],
             ...overrides
+        });
+    }
+
+    function buildSteps(numbers: number[]): TabsConfig {
+        return buildConfig({
+            tabs: numbers.map(
+                (number, index) => new Tab({ key: `step-${index}`, label: 'demo.step', labelParameters: { number } })
+            )
         });
     }
 
@@ -53,6 +61,10 @@ describe('TabsComponent', () => {
         await TestBed.configureTestingModule({
             imports: [TabsComponent, TranslateModule.forRoot()]
         }).compileComponents();
+
+        const translate = TestBed.inject(TranslateService);
+        translate.setTranslation('en', { demo: { step: 'Step {{number}}' } });
+        translate.use('en');
     });
 
     it('renders one tab per entry in the config', async () => {
@@ -171,6 +183,12 @@ describe('TabsComponent', () => {
         expect(tabs()[0].textContent?.trim()).toBe('demo.tabs.general.label');
     });
 
+    it('renders the label with its parameters', async () => {
+        await render(buildSteps([1, 2]));
+
+        expect(textsOf(tabs())).toEqual(['Step 1', 'Step 2']);
+    });
+
     it('marks the tab list for assistive technology', async () => {
         await render();
 
@@ -270,6 +288,22 @@ describe('TabsComponent', () => {
 
             expect(tabs().length).toBeLessThan(keys.length);
             expect(fixture.nativeElement.querySelector('[aria-label="angular-components.tabs.more"]')).not.toBeNull();
+        });
+
+        it('moves the tabs that stop fitting into the menu once new label parameters widen them', async () => {
+            await render(buildSteps([1, 2, 3]));
+            await nextFrame();
+
+            expect(textsOf(tabs())).toEqual(['Step 1', 'Step 2', 'Step 3']);
+
+            fixture.componentRef.setInput('config', buildSteps([1001, 1002, 1003]));
+            await settle(fixture);
+            await nextFrame();
+            buttonByName(fixture, 'angular-components.tabs.more').click();
+            await settle(fixture);
+
+            expect(textsOf(tabs())).toEqual(['Step 1001', 'Step 1002']);
+            expect(textsOf(queryAll(fixture, '[role="menuitemradio"]'))).toEqual(['Step 1003']);
         });
     });
 });

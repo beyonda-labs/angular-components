@@ -4,29 +4,11 @@
     </div>
 
     <div class="bey-pdf-viewer-toolbar-controls">
-        <button
-            class="bey-pdf-viewer-toolbar-button btn"
-            type="button"
-            [attr.aria-label]="'angular-components.pdf-viewer.toolbar.zoom-out' | translate"
-            [disabled]="!canZoomOut()"
-            [title]="'angular-components.pdf-viewer.toolbar.zoom-out' | translate"
-            (click)="zoomOut()"
-        >
-            <fa-icon aria-hidden="true" [icon]="zoomOutIcon"></fa-icon>
-        </button>
+        <bey-button [button]="zoomOutButton()"></bey-button>
 
         <span class="bey-pdf-viewer-toolbar-zoom" aria-live="polite">{{ zoomPercent() }}%</span>
 
-        <button
-            class="bey-pdf-viewer-toolbar-button btn"
-            type="button"
-            [attr.aria-label]="'angular-components.pdf-viewer.toolbar.zoom-in' | translate"
-            [disabled]="!canZoomIn()"
-            [title]="'angular-components.pdf-viewer.toolbar.zoom-in' | translate"
-            (click)="zoomIn()"
-        >
-            <fa-icon aria-hidden="true" [icon]="zoomInIcon"></fa-icon>
-        </button>
+        <bey-button [button]="zoomInButton()"></bey-button>
 
         @if (hasPages()) {
             <input

@@ -27,6 +27,10 @@
 -   App layout module: `isRouteBreadcrumbEnabled` on `BeyAppLayoutConfig` (`true` by default); `false` leaves the breadcrumb to the consumer on navigation and on language changes, while the menu still follows the route and `onRouteActivated` still runs.
 -   App layout module: `BeyAppLayoutConfig` keeps `iconSrc`, `productName`, `orgName`, `privacyUrl` and `termsUrl` as fields next to `footerConfig`, so a config spread into a new one is a full copy.
 -   App layout module: `BeyAppLayoutConfigParameters`, `BeyAppLayoutTopActionParameters`, `BeyAppLayoutBottomActionParameters` and `BeyAppLayoutBreadcrumbItemParameters` are exported.
+-   Tabs module: `labelParameters` on `BeyTab`, passed to the translate pipe with the label key in the tab bar and in the overflow menu.
+-   Properties menu module: `labelParameters` on `BeyPropertyTab`, passed on to its tab in the menu's tab bar.
+-   Testing: secondary entry point `@beyonda-labs/angular-components/testing` for the specs of a consuming app; `provideBeyTesting(config?)`, typed by `BeyTestingConfig`, registers the HTTP client backed by `HttpTestingController`, a test environment, the session over in-memory storage (signed in with `user`), ngx-translate without a loader or with `translations` per language, the ngx-bootstrap modals, and the fakes in place of the real services.
+-   Testing: `BeyFakeModalService`, `BeyFakeToastService`, `BeyFakeModalFormService`, `BeyFakeFilePreviewService` and `BeyFakeStorageService` record what they are asked for in signals, `setConfirmationAnswer` sets what a confirmation emits, and the DOM helpers `beyRenderComponent`, `beySettle`, `beyButtonByName`, `beyQueryButton`, `beyQueryAll`, `beyTextsOf` and `beyHostOf` are public.
 
 ### Changed
 
@@ -52,6 +56,7 @@
 -   `BeyCellType` gains `Date` and `Tags`, and `BeyPageActionScope` gains `Single`.
 -   App layout module: `icon` is optional on `BeyAppLayoutTopAction` and `BeyAppLayoutBottomAction`.
 -   Form module: the number, checkbox, chips and file fields type `validators` as `BeyFormFieldCustomValidator[]`, so a length, pattern, email or url validator on them no longer compiles.
+-   Pdf viewer module: the zoom buttons of the compact toolbar are `bey-button`s with a bordered icon-square variant and keep their look; their name shows as the library tooltip instead of the browser's `title`, also while disabled.
 
 ### Fixed
 
