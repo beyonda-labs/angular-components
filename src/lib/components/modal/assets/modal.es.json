@@ -11,6 +11,12 @@
                 "error": "Error",
                 "info": "Información",
                 "warning": "Advertencia"
+            },
+            "unsaved-changes": {
+                "leave": "Salir sin guardar",
+                "message": "Tienes cambios sin guardar. Si sales ahora, se perderán.",
+                "stay": "Seguir editando",
+                "title": "Cambios sin guardar"
             }
         }
     }

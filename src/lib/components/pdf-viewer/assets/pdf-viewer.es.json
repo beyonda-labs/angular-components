@@ -1,0 +1,11 @@
+{
+    "angular-components": {
+        "pdf-viewer": {
+            "toolbar": {
+                "page": "Página",
+                "zoom-in": "Ampliar",
+                "zoom-out": "Reducir"
+            }
+        }
+    }
+}

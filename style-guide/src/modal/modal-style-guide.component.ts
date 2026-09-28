@@ -1,8 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { BeyModalService } from '@beyonda-labs/angular-components';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { BeyModalService, BeyUnsavedChangesService } from '@beyonda-labs/angular-components';
 import { TranslateModule } from '@ngx-translate/core';
+import { isObservable, of } from 'rxjs';
 
 import { StyleGuideButton } from '../models/style-guide-button.model';
+
+const UNSAVED_CHANGES = 'angular-components-style-guide.modal.unsaved-changes';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -13,7 +16,14 @@ import { StyleGuideButton } from '../models/style-guide-button.model';
     templateUrl: './modal-style-guide.component.html'
 })
 export class ModalStyleGuideComponent {
+    readonly hasChanges = signal(false);
+
     private readonly modalService = inject(BeyModalService);
+    private readonly unsavedChangesService = inject(BeyUnsavedChangesService);
+
+    constructor() {
+        this.unsavedChangesService.track(this.hasChanges);
+    }
 
     get confirmationButton(): StyleGuideButton {
         return {
@@ -35,6 +45,19 @@ export class ModalStyleGuideComponent {
             isPrimary: true,
             label: 'angular-components-style-guide.modal.buttons.info'
         };
+    }
+
+    leave(): void {
+        const answer = this.unsavedChangesService.canDeactivate();
+
+        (isObservable(answer) ? answer : of(answer)).subscribe(hasLeft => {
+            const outcome = hasLeft ? 'left' : 'stayed';
+
+            this.modalService.openInfo({
+                message: `${UNSAVED_CHANGES}.${outcome}.message`,
+                title: `${UNSAVED_CHANGES}.${outcome}.title`
+            });
+        });
     }
 
     openConfirmation(): void {
@@ -79,6 +102,10 @@ export class ModalStyleGuideComponent {
             message: 'angular-components-style-guide.modal.examples.warning.message',
             title: 'angular-components-style-guide.modal.examples.warning.title'
         });
+    }
+
+    toggleChanges(): void {
+        this.hasChanges.update(hasChanges => !hasChanges);
     }
 
     get warningButton(): StyleGuideButton {

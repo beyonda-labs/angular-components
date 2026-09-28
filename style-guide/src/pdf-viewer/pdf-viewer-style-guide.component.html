@@ -59,3 +59,13 @@
 @if (lastLoadingFailed(); as event) {
     <p class="bey-pdf-viewer-style-guide-log">onLoadingFailed: {{ event.error.message }}</p>
 }
+
+<p class="bey-style-guide-description text-muted mt-4 mb-3">
+    {{ 'angular-components-style-guide.pdf-viewer.compact-example' | translate }}
+</p>
+
+<div class="bey-pdf-viewer-style-guide-frame">
+    <bey-pdf-viewer [config]="compactConfig">
+        <bey-badge bey-pdf-viewer-status [config]="statusBadge"></bey-badge>
+    </bey-pdf-viewer>
+</div>

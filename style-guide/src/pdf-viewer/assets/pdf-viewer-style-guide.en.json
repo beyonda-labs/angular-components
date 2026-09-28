@@ -1,7 +1,9 @@
 {
     "angular-components-style-guide": {
         "pdf-viewer": {
-            "example": "PDF preview built on ngx-extended-pdf-viewer with its native toolbar hidden and a fully custom toolbar driven through the viewer's imperative API and events."
+            "compact-example": "The same viewer with the compact toolbar of the library: zoom within the configured limits, the current page and a slot on the left for the consumer's status.",
+            "example": "PDF preview built on ngx-extended-pdf-viewer with its native toolbar hidden and a fully custom toolbar driven through the viewer's imperative API and events.",
+            "status": "Up to date"
         }
     }
 }

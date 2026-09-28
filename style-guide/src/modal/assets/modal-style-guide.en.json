@@ -35,6 +35,19 @@
                     "message": "The record was queued for archive and the process will finish in the background.",
                     "title": "Action confirmed"
                 }
+            },
+            "unsaved-changes": {
+                "example": "A route guard over tracked signals: tick the box to pretend there are unsaved changes, then try to leave. While it is ticked, closing or reloading the tab asks as well.",
+                "leave": "Leave this page",
+                "left": {
+                    "message": "Nothing held the navigation back.",
+                    "title": "Page left"
+                },
+                "stayed": {
+                    "message": "The changes are still here.",
+                    "title": "Still on the page"
+                },
+                "toggle": "There are unsaved changes"
             }
         }
     }

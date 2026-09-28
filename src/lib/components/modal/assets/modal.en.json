@@ -11,6 +11,12 @@
                 "error": "Error",
                 "info": "Information",
                 "warning": "Warning"
+            },
+            "unsaved-changes": {
+                "leave": "Leave without saving",
+                "message": "You have unsaved changes. If you leave now, they will be lost.",
+                "stay": "Keep editing",
+                "title": "Unsaved changes"
             }
         }
     }

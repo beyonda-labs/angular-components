@@ -1,3 +1,9 @@
+export enum PdfViewerToolbar {
+    Compact = 'compact',
+    Full = 'full',
+    None = 'none'
+}
+
 export type PdfViewerRotation = 0 | 90 | 180 | 270;
 
 export type PdfViewerSource = string | ArrayBuffer | Blob | Uint8Array;

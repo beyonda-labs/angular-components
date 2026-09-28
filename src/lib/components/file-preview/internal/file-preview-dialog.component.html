@@ -1,0 +1,30 @@
+<div class="bey-file-preview" [class.bey-file-preview--pdf]="isPdf()">
+    <div class="bey-file-preview-header">
+        <div class="bey-file-preview-heading">
+            <h2 class="bey-file-preview-title" [id]="titleId" [title]="config.title | translate">
+                {{ config.title | translate }}
+            </h2>
+
+            @if (config.fileName) {
+                <span class="bey-file-preview-file-name" [title]="config.fileName">{{ config.fileName }}</span>
+            }
+        </div>
+
+        <button
+            class="bey-file-preview-close btn btn-sm"
+            type="button"
+            [attr.aria-label]="'angular-components.file-preview.close' | translate"
+            (click)="close()"
+        >
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="bey-file-preview-body">
+        @if (viewerConfig(); as viewerConfig) {
+            <bey-pdf-viewer class="bey-file-preview-viewer" [config]="viewerConfig"></bey-pdf-viewer>
+        } @else if (imageSource) {
+            <img class="bey-file-preview-image" [alt]="alt() | translate" [src]="imageSource" />
+        }
+    </div>
+</div>

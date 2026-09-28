@@ -1,7 +1,9 @@
 {
     "angular-components-style-guide": {
         "pdf-viewer": {
-            "example": "Previsualizador de PDF construido sobre ngx-extended-pdf-viewer con su toolbar nativa oculta y una toolbar propia controlada mediante la API imperativa y los eventos del visor."
+            "compact-example": "El mismo visor con la toolbar compacta de la librería: zoom dentro de los límites configurados, la página actual y un hueco a la izquierda para el estado del consumidor.",
+            "example": "Previsualizador de PDF construido sobre ngx-extended-pdf-viewer con su toolbar nativa oculta y una toolbar propia controlada mediante la API imperativa y los eventos del visor.",
+            "status": "Actualizado"
         }
     }
 }

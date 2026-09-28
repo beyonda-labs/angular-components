@@ -1,16 +1,38 @@
+import { ChangeDetectionStrategy, Component, CUSTOM_ELEMENTS_SCHEMA, DebugElement, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { renderComponent, settle } from '@testing/dom';
+import { By } from '@angular/platform-browser';
+import { TranslateModule } from '@ngx-translate/core';
+import { buttonByName, queryButton, renderComponent, settle } from '@testing/dom';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 
 import { PdfViewerConfig, PdfViewerConfigParameters, PdfViewerHandle } from './models/pdf-viewer-config.model';
+import { PdfViewerToolbar } from './models/pdf-viewer-value.model';
 import { PdfViewerComponent } from './pdf-viewer.component';
+
+const PAGE = 'angular-components.pdf-viewer.toolbar.page';
+const ZOOM_IN = 'angular-components.pdf-viewer.toolbar.zoom-in';
+
+function buildConfig(overrides: Partial<PdfViewerConfigParameters> = {}): PdfViewerConfig {
+    return new PdfViewerConfig({ page: 3, rotation: 90, src: 'invoice.pdf', zoom: 1.5, ...overrides });
+}
+
+@Component({
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [PdfViewerComponent],
+    standalone: true,
+    template: `
+        <bey-pdf-viewer [config]="config()">
+            <span bey-pdf-viewer-status>Out of date</span>
+        </bey-pdf-viewer>
+    `
+})
+class HostComponent {
+    readonly config = signal(buildConfig({ toolbar: PdfViewerToolbar.Compact, zoom: 1 }));
+}
 
 describe('PdfViewerComponent', () => {
     let fixture: ComponentFixture<PdfViewerComponent>;
     let component: PdfViewerComponent;
-
-    function buildConfig(overrides: Partial<PdfViewerConfigParameters> = {}): PdfViewerConfig {
-        return new PdfViewerConfig({ page: 3, rotation: 90, src: 'invoice.pdf', zoom: 1.5, ...overrides });
-    }
 
     async function render(config: PdfViewerConfig = buildConfig()): Promise<void> {
         fixture = await renderComponent(PdfViewerComponent, { config });
@@ -26,7 +48,6 @@ describe('PdfViewerComponent', () => {
     }
 
     beforeEach(async () => {
-        /* The wrapped viewer is a heavy third-party component; this suite is about the wrapper. */
         await TestBed.configureTestingModule({ imports: [PdfViewerComponent] })
             .overrideComponent(PdfViewerComponent, { set: { template: '' } })
             .compileComponents();
@@ -131,5 +152,84 @@ describe('PdfViewerComponent', () => {
 
         expect(component.currentPage()).toBe(9);
         expect(component.currentZoom()).toBe('auto');
+    });
+});
+
+describe('PdfViewerComponent toolbar', () => {
+    let fixture: ComponentFixture<HostComponent>;
+    let handle: PdfViewerHandle;
+
+    async function render(overrides: Partial<PdfViewerConfigParameters> = {}): Promise<void> {
+        fixture = TestBed.createComponent(HostComponent);
+        fixture.componentInstance.config.set(
+            buildConfig({
+                onReady: ready => (handle = ready),
+                toolbar: PdfViewerToolbar.Compact,
+                zoom: 1,
+                ...overrides
+            })
+        );
+        await settle(fixture);
+    }
+
+    function pdfViewer(): DebugElement {
+        return fixture.debugElement.query(By.css('ngx-extended-pdf-viewer'));
+    }
+
+    function text(): string {
+        return fixture.nativeElement.textContent ?? '';
+    }
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({ imports: [HostComponent, TranslateModule.forRoot()] })
+            .overrideComponent(PdfViewerComponent, {
+                add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] },
+                remove: { imports: [NgxExtendedPdfViewerModule] }
+            })
+            .compileComponents();
+    });
+
+    it('shows the compact toolbar with the status the consumer projects, and hides the one of pdf.js', async () => {
+        await render();
+
+        expect(text()).toContain('Out of date');
+        expect(text()).toContain('100%');
+        expect(pdfViewer().properties['showToolbar']).toBe(false);
+    });
+
+    it('zooms the document from the compact toolbar', async () => {
+        await render();
+
+        buttonByName(fixture, ZOOM_IN).click();
+        await settle(fixture);
+
+        expect(handle.currentZoom()).toBe(1.1);
+        expect(text()).toContain('110%');
+    });
+
+    it('offers the page field once the document loads, and moves to the typed page', async () => {
+        await render();
+
+        pdfViewer().triggerEventHandler('pdfLoaded', { pagesCount: 4 });
+        await settle(fixture);
+
+        const field = fixture.nativeElement.querySelector(`input[aria-label="${PAGE}"]`) as HTMLInputElement;
+        field.value = '2';
+        field.dispatchEvent(new Event('change'));
+
+        expect(text()).toContain('/ 4');
+        expect(handle.currentPage()).toBe(2);
+    });
+
+    it('shows the toolbar of pdf.js for the full variant, and neither for none', async () => {
+        await render({ toolbar: PdfViewerToolbar.Full });
+
+        expect(pdfViewer().properties['showToolbar']).toBe(true);
+        expect(queryButton(fixture, ZOOM_IN)).toBeNull();
+
+        await render({ toolbar: PdfViewerToolbar.None });
+
+        expect(pdfViewer().properties['showToolbar']).toBe(false);
+        expect(text()).not.toContain('Out of date');
     });
 });
