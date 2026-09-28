@@ -11,6 +11,8 @@ readonly table = new BeyTableConfig<Person>({
     columns: [
         new BeyTableColumn({ key: 'name', width: 3 }),
         new BeyTableColumn({ key: 'status', width: 2 }),
+        new BeyTableColumn({ key: 'joinedAt', width: 2 }),
+        new BeyTableColumn({ key: 'skills', width: 3 }),
         new BeyTableColumn({ key: 'action', width: 1 })
     ],
     items: this.people,
@@ -20,6 +22,8 @@ readonly table = new BeyTableConfig<Person>({
             badges: [new BeyBadgeConfig({ label: `myApp.team.status.${item.status}`, variant: BeyBadgeVariant.Success })],
             translate: true
         }),
+        new BeyDateTableCell({ value: item.joinedAt }),
+        new BeyTagsTableCell({ tags: item.skills }),
         new BeyLinkTableCell({ action: () => this.open(item), content: 'myApp.team.open', translate: true })
     ],
     selectedItemsChange: (items, indexes) => this.selection.set(items)
@@ -39,7 +43,7 @@ so a table is always built from a typed model, never from a loose record.
 | --------------------- | -------- | ------- | ------------------------------------------------------------------------------------- |
 | `prefix`              | yes      |         | i18n prefix: headers are `<prefix>.columns.<key>`, the empty message `<prefix>.empty` |
 | `columns`             | yes      |         | The columns, in order                                                                 |
-| `loadRow`             | yes      |         | Turns an item into one cell per column                                                |
+| `loadRow`             | yes      |         | Turns an item into one cell per column; the missing trailing cells are drawn empty    |
 | `items`               | no       | `[]`    | The rows                                                                              |
 | `height`              | no       | `60vh`  | Height of the scrolling area, any CSS length                                          |
 | `selectable`          | no       | `true`  | Shows the selection column                                                            |
@@ -52,14 +56,20 @@ gets: two columns of width 3 and 1 split it 75 / 25. The header uses the key as 
 
 ## Cells
 
-| Cell                | Fields                     | Shows                                               |
-| ------------------- | -------------------------- | --------------------------------------------------- |
-| `BeyTextTableCell`  | `content`                  | The text, one line, cut with an ellipsis            |
-| `BeyLinkTableCell`  | `content`, `action`        | A link that runs `action` without selecting the row |
-| `BeyBadgeTableCell` | `badges: BeyBadgeConfig[]` | One `bey-badge` per entry                           |
+| Cell                | Fields                     | Shows                                                        |
+| ------------------- | -------------------------- | ------------------------------------------------------------ |
+| `BeyTextTableCell`  | `content`                  | The text, one line, cut with an ellipsis                     |
+| `BeyLinkTableCell`  | `content`, `action`        | A link that runs `action` without selecting the row          |
+| `BeyBadgeTableCell` | `badges: BeyBadgeConfig[]` | One `bey-badge` per entry                                    |
+| `BeyTagsTableCell`  | `tags: string[]`           | One outline `bey-badge` per tag, never translated            |
+| `BeyDateTableCell`  | `value`, `format`          | The date in the app locale, nothing when there is no `value` |
 
-Every cell takes an optional `tooltip` and `translate`, which runs the content, the badges and the tooltip
-through the translate pipe.
+Every cell takes an optional `tooltip`, which always goes through the translate pipe. The text, link and badge
+cells also take `translate`, which runs the content and the badges through it too.
+
+`BeyDateTableCell` takes a timestamp, an ISO string or a `Date`, and formats it with Angular's `formatDate` in
+the locale of `LOCALE_ID`. `format` is any `formatDate` format and defaults to `mediumDate` (`Sep 28, 2026`,
+`28 sept 2026`). A locale other than `en-US` needs its data registered by the app, as for the `date` pipe.
 
 ## Selection
 

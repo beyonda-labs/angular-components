@@ -10,10 +10,10 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { toKeySegment } from '../../internal/i18n/key-segment';
+import { toKeySegment } from '../../utilities/key-segment';
 import { TableRowComponent } from './components/row/row.component';
 import { TableColumn, TableConfig, TableRow } from './models/table.model';
-import { TextTableCell } from './models/table-cell.model';
+import { TableCell, TextTableCell } from './models/table-cell.model';
 
 const SELECTION_COLUMN_WIDTH = '3.25rem';
 
@@ -28,7 +28,6 @@ const SELECTION_COLUMN_WIDTH = '3.25rem';
 export class TableComponent<T> {
     readonly config = input.required<TableConfig<T>>();
 
-    readonly rows = linkedSignal(() => buildRows(this.config()));
     readonly allSelected = computed(() => this.rows().length > 0 && this.rows().every(row => row.selected));
     readonly emptyLabel = computed(() => `${this.config().prefix}.empty`);
     readonly gridTemplateColumns = computed(() => {
@@ -45,6 +44,7 @@ export class TableComponent<T> {
                 selected: this.allSelected()
             })
     );
+    readonly rows = linkedSignal(() => buildRows(this.config()));
     readonly someSelected = computed(() => !this.allSelected() && this.rows().some(row => row.selected));
 
     private readonly scrollContainer = viewChild<ElementRef<HTMLDivElement>>('scrollContainer');
@@ -93,11 +93,17 @@ function buildRows<T>(config: TableConfig<T>): TableRow<T>[] {
     return config.items.map(
         item =>
             new TableRow({
-                cells: config.loadRow(item),
+                cells: fillCells(config.loadRow(item), config.columns.length),
                 content: item,
                 selected: config.isRowSelected?.(item) ?? false
             })
     );
+}
+
+function fillCells(cells: TableCell[], count: number): TableCell[] {
+    const missing = Math.max(count - cells.length, 0);
+
+    return [...cells, ...Array.from({ length: missing }, () => new TextTableCell({ content: '' }))];
 }
 
 function withSelection<T>(row: TableRow<T>, selected: boolean): TableRow<T> {

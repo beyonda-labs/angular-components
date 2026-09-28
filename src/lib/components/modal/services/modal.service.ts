@@ -14,11 +14,11 @@ import {
     providedIn: 'root'
 })
 export class ModalService {
+    private readonly bsModalService = inject(BsModalService);
+
     static readonly CANCEL_LABEL = 'angular-components.modal.actions.cancel';
     static readonly CLOSE_LABEL = 'angular-components.modal.actions.close';
     static readonly CONFIRM_LABEL = 'angular-components.modal.actions.confirm';
-
-    private readonly bsModalService = inject(BsModalService);
 
     openConfirmation(config: ConfirmationModalConfig): Observable<boolean> {
         const modalReference = this.open({

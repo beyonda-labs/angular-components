@@ -86,16 +86,49 @@ The config never changes once built. Whatever has to happen to the live form goe
 
 ## Rules
 
-A field's `isHidden`, `isDisabled` and `options`, and a section's `isHidden`, take either a value or a
-function of the current form value. The form evaluates them on every change:
+A field's `isHidden`, `isDisabled`, `isRequired` and `options`, and a section's `isHidden`, take a value, a
+signal or a function of the current form value. The form evaluates them on every change:
 
 ```ts
-new BeyFormSelectField({ key: 'fileType', isHidden: value => value['main']['type'] !== 'file' })
+new BeyFormSelectField({ key: 'fileType', isHidden: value => value['main']['type'] !== 'file' }),
+new BeyFormTextField({ key: 'vatNumber', isRequired: value => value['main']['customer'] === 'company' })
 ```
 
 A hidden field is also disabled, so its validators no longer hold the form back, and its value still comes
-back in `value()` and `onSubmit`. A rule may read a signal of its own: the form re-evaluates it when that
-signal changes too.
+back in `value()` and `onSubmit`. A required rule adds and removes the required validator, and the marker next
+to the label, as its result changes.
+
+## Data that arrives later
+
+Whatever a field needs that is not there when the config is built, such as a catalogue still loading or the
+names already taken, reaches the form through a signal, never through a mutable object or a field written
+after construction. A rule may be the signal itself or a function that reads it, and a
+`BeyFormFieldCustomValidator` may read it too: the form evaluates the rule, or runs the validator, again as
+soon as the signal changes.
+
+```ts
+readonly cities = signal<City[]>([]);
+readonly takenNames = signal(new Set<string>());
+
+new BeyFormTextField({
+    key: 'name',
+    validators: [new BeyFormFieldCustomValidator(control => (this.takenNames().has(control.value) ? { taken: true } : null))]
+}),
+new BeyFormAutocompleteField({
+    key: 'city',
+    options: value => this.cities().filter(city => city.country === value['trip']['country']).map(toOption)
+})
+```
+
+A custom validator is also run again whenever the form value changes, so one that reads another field through
+`control.parent` stays current when that field changes.
+
+## Options that change
+
+When the options of a select, a radio or an autocomplete change and no longer list the value of the field, the
+form clears it, and `value()`, `onValueChange` and `onSubmit` see it cleared. Only a change of the options
+drops a value: an initial value is kept while its options are still loading, and cleared only if they arrive
+without it.
 
 ## Steps
 

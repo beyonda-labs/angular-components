@@ -8,7 +8,7 @@ import { FormTextField } from '../../models/fields/form-text-field.model';
 import { FormRow } from '../../models/form.model';
 import { FormRowComponent } from './row.component';
 
-const VISIBLE: FormFieldState = { isDisabled: false, isHidden: false, isValid: true, options: [] };
+const VISIBLE: FormFieldState = { isDisabled: false, isHidden: false, isRequired: false, isValid: true, options: [] };
 
 describe('FormRowComponent', () => {
     let fixture: ComponentFixture<FormRowComponent>;

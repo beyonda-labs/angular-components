@@ -13,6 +13,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 
 import { StyleGuideButton } from '../models/style-guide-button.model';
+import { STYLE_GUIDE_REGIONS, StyleGuideRegion } from './form-style-guide.dependent-sections';
 import { buildStyleGuideSections } from './form-style-guide.sections';
 
 const PREFIX = 'angular-components-style-guide.form';
@@ -26,6 +27,7 @@ const PREFIX = 'angular-components-style-guide.form';
     templateUrl: './form-style-guide.component.html'
 })
 export class FormStyleGuideComponent {
+    readonly regions = signal<StyleGuideRegion[]>([]);
     readonly config = new BeyFormConfig({
         buttons: [
             new BeyFormButton({ label: `${PREFIX}.button.cancel`, type: BeyFormButtonType.Cancel }),
@@ -40,15 +42,21 @@ export class FormStyleGuideComponent {
             'section-radio': { radio1: '', radio2: '' },
             'section-textarea': { textarea1: '', textarea2: '', textarea3: 'Disabled long text' },
             'section-checkbox': { checkbox1: false, checkbox2: false, checkbox3: true, checkbox4: false },
-            'section-chips': { chips1: [], chips2: [], chips3: ['Angular', 'TypeScript'] }
+            'section-chips': { chips1: [], chips2: [], chips3: ['Angular', 'TypeScript'] },
+            'section-dependent': { plan: '', region: '', seats: null }
         },
         onCancel: () => this.lastEvent.set(`${PREFIX}.canceled`),
         onSubmit: () => this.lastEvent.set(`${PREFIX}.submitted`),
         onValueChange: () => this.lastEvent.set(`${PREFIX}.changed`),
         prefix: PREFIX,
-        sections: buildStyleGuideSections()
+        sections: buildStyleGuideSections(this.regions)
     });
     readonly lastEvent = signal('');
+    readonly loadRegionsButton: StyleGuideButton = {
+        action: () => this.regions.set(STYLE_GUIDE_REGIONS),
+        isPrimary: false,
+        label: `${PREFIX}.section-dependent.load-regions`
+    };
     readonly modalFormButton: StyleGuideButton = {
         action: () => this.openModalForm(),
         isPrimary: true,

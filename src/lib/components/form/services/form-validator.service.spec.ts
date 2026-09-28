@@ -67,6 +67,18 @@ describe('FormValidatorService', () => {
         expect(result?.['required']).toBe(true);
     });
 
+    it('returns only the custom validators of a field', () => {
+        const unique = (): null => null;
+        const validators = service.getCustomValidators(
+            new FormTextField({
+                key: 'text5',
+                validators: [new FormFieldEmailValidator(), new FormFieldCustomValidator(unique)]
+            })
+        );
+
+        expect(validators).toEqual([unique]);
+    });
+
     it('should return async validators', () => {
         const asyncValidators = service.getFieldAsyncValidators(
             new FormTextField({

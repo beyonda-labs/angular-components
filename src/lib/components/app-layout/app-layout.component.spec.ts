@@ -290,13 +290,62 @@ describe('AppLayoutComponent', () => {
             expect(fixture.nativeElement.querySelector('bey-breadcrumb')).toBeNull();
         });
 
-        it('activates a routed action when it is used from the menu', async () => {
-            await render(buildConfig({ topActions: routed() }));
+        it('navigates to the route of a top or bottom action used from the menu, and activates it', async () => {
+            const router = TestBed.inject(Router);
+            await render(
+                buildConfig({
+                    bottomActions: [new AppLayoutBottomAction({ icon: faGear, key: 'settings', route: '/settings' })],
+                    topActions: routed()
+                })
+            );
+
+            buttonOf('demo.actions.home.label').click();
+            await settle(fixture);
+            expect(router.url).toBe('/home');
+            expect(buttonOf('demo.actions.home.label').getAttribute('aria-current')).toBe('page');
+            expect(breadcrumbLabels()).toEqual(['demo.actions.home.label']);
+
+            buttonOf('demo.actions.settings.label').click();
+            await settle(fixture);
+            expect(router.url).toBe('/settings');
+            expect(buttonOf('demo.actions.settings.label').getAttribute('aria-current')).toBe('page');
+        });
+
+        it('runs the action of the consumer instead of navigating when an action has both', async () => {
+            const router = TestBed.inject(Router);
+            const run = jest.fn();
+            const onMenuActionClick = jest.fn();
+            await router.navigateByUrl('/start');
+            await render(
+                buildConfig({
+                    onMenuActionClick,
+                    topActions: [new AppLayoutTopAction({ action: run, icon: faHome, key: 'home', route: '/home' })]
+                })
+            );
 
             buttonOf('demo.actions.home.label').click();
             await settle(fixture);
 
+            expect(run).toHaveBeenCalled();
+            expect(onMenuActionClick).toHaveBeenCalledWith('home');
+            expect(router.url).toBe('/start');
+        });
+
+        it('keeps the current page active when a guard cancels the navigation', async () => {
+            const router = TestBed.inject(Router);
+            router.resetConfig([
+                { canActivate: [() => false], component: EmptyPageComponent, path: 'reports' },
+                { component: EmptyPageComponent, path: '**' }
+            ]);
+            await router.navigateByUrl('/home');
+            await render(buildConfig({ topActions: routed() }));
+
+            buttonOf('demo.actions.reports.label').click();
+            await settle(fixture);
+
+            expect(router.url).toBe('/home');
             expect(buttonOf('demo.actions.home.label').getAttribute('aria-current')).toBe('page');
+            expect(buttonOf('demo.actions.reports.label').getAttribute('aria-current')).toBeNull();
             expect(breadcrumbLabels()).toEqual(['demo.actions.home.label']);
         });
 

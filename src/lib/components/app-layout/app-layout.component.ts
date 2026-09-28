@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationCancel, NavigationEnd, NavigationError, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 
-import { toKeySegment } from '../../internal/i18n/key-segment';
+import { toKeySegment } from '../../utilities/key-segment';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
 import { BreadcrumbConfig } from '../breadcrumb/models/breadcrumb.model';
 import { FooterComponent } from '../footer/footer.component';
@@ -24,7 +24,6 @@ import { AppLayoutService } from './services/app-layout.service';
 export class AppLayoutComponent implements OnInit {
     readonly config = input.required<AppLayoutConfig>();
 
-    private readonly appLayoutService = inject(AppLayoutService);
     readonly breadcrumbConfig = computed(() => {
         const items = this.appLayoutService.breadcrumb();
 
@@ -52,6 +51,7 @@ export class AppLayoutComponent implements OnInit {
     });
     readonly usesRoutes = computed(() => hasRoutes(this.allActions()));
 
+    private readonly appLayoutService = inject(AppLayoutService);
     private readonly router = inject(Router);
     private readonly translateService = inject(TranslateService);
 
@@ -64,11 +64,8 @@ export class AppLayoutComponent implements OnInit {
             this.config().onMenuActionClick?.(key);
         });
         this.router.events
-            .pipe(
-                filter(event => event instanceof NavigationEnd),
-                takeUntilDestroyed()
-            )
-            .subscribe(event => this.activateByUrl((event as NavigationEnd).urlAfterRedirects));
+            .pipe(filter(isNavigationOutcome), takeUntilDestroyed())
+            .subscribe(() => this.activateByUrl(this.router.url));
         this.translateService.onLangChange.pipe(takeUntilDestroyed()).subscribe(() => this.refreshActiveAction());
     }
 
@@ -135,10 +132,7 @@ export class AppLayoutComponent implements OnInit {
             action =>
                 new LeftMenuAction({
                     ...action,
-                    action: () => {
-                        action.action?.();
-                        this.appLayoutService.emitMenuClick(action.key);
-                    },
+                    action: () => this.runAction(action),
                     active: activeKey === null ? action.active : action.key === activeKey,
                     subActions: this.prepareActions(action.subActions, activeKey)
                 })
@@ -151,6 +145,16 @@ export class AppLayoutComponent implements OnInit {
         if (key !== null) {
             this.activateByKey(key);
         }
+    }
+
+    private runAction({ action, key, route }: LeftMenuAction): void {
+        if (action) {
+            action();
+        } else if (route) {
+            this.router.navigateByUrl(route);
+        }
+
+        this.appLayoutService.emitMenuClick(key);
     }
 }
 
@@ -197,4 +201,8 @@ function findPathByUrl(
 
 function hasRoutes(actions: LeftMenuAction[]): boolean {
     return actions.some(action => Boolean(action.route) || hasRoutes(action.subActions));
+}
+
+function isNavigationOutcome(event: unknown): boolean {
+    return event instanceof NavigationCancel || event instanceof NavigationEnd || event instanceof NavigationError;
 }

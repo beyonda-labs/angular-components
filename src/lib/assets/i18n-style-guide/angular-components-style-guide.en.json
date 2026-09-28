@@ -105,6 +105,21 @@
         "breadcrumbs": "Breadcrumbs",
         "components": "Components",
         "compound": "Compound",
+        "file-preview": {
+            "buttons": {
+                "image": "Preview an image",
+                "pdf": "Preview a PDF"
+            },
+            "example": "A dialog that previews a PDF or an image from a blob or a URL, opened with one call to the service. An object URL it creates for a blob is released when the dialog closes.",
+            "image": {
+                "alt": "A dark circle on a light grey background",
+                "title": "Sample image"
+            },
+            "pdf": {
+                "title": "Sample document"
+            }
+        },
+        "file-preview-section": "File Preview",
         "floating-preferences": {
             "example": "Self-contained language and theme selectors. Reads and writes state directly via TranslateService and BeyThemeService — no callbacks required.",
             "examples": {
@@ -234,6 +249,32 @@
                 },
                 "label": "Date Fields",
                 "tooltip": "Date fields with range, required and disabled states"
+            },
+            "section-dependent": {
+                "label": "Dependent Fields",
+                "load-regions": "Load the regions",
+                "plan": {
+                    "label": "Plan",
+                    "options": {
+                        "free": "Free",
+                        "pro": "Pro"
+                    },
+                    "placeholder": "Choose a plan"
+                },
+                "region": {
+                    "label": "Region",
+                    "options": {
+                        "asia": "Asia",
+                        "eu": "Europe",
+                        "us": "United States"
+                    },
+                    "placeholder": "Load the regions, then pick one"
+                },
+                "seats": {
+                    "label": "Seats",
+                    "placeholder": "Required on the Pro plan"
+                },
+                "tooltip": "Seats are required on the Pro plan only; the regions arrive after the form is built, and a region the new plan does not offer is cleared"
             },
             "section-info": {
                 "info1": {
@@ -556,6 +597,19 @@
                     "message": "The record was queued for archive and the process will finish in the background.",
                     "title": "Action confirmed"
                 }
+            },
+            "unsaved-changes": {
+                "example": "A route guard over tracked signals: tick the box to pretend there are unsaved changes, then try to leave. While it is ticked, closing or reloading the tab asks as well.",
+                "leave": "Leave this page",
+                "left": {
+                    "message": "Nothing held the navigation back.",
+                    "title": "Page left"
+                },
+                "stayed": {
+                    "message": "The changes are still here.",
+                    "title": "Still on the page"
+                },
+                "toggle": "There are unsaved changes"
             }
         },
         "modals": "Modals",
@@ -642,12 +696,17 @@
         },
         "pagination-section": "Pagination",
         "pdf-viewer": {
-            "example": "PDF preview built on ngx-extended-pdf-viewer with its native toolbar hidden and a fully custom toolbar driven through the viewer's imperative API and events."
+            "compact-example": "The same viewer with the compact toolbar of the library: zoom within the configured limits, the current page and a slot on the left for the consumer's status.",
+            "example": "PDF preview built on ngx-extended-pdf-viewer with its native toolbar hidden and a fully custom toolbar driven through the viewer's imperative API and events.",
+            "status": "Up to date"
         },
         "pdf-viewer-section": "PDF Viewer",
         "properties-menu": {
             "example": "Property inspector for a selected editor block, with tabs, collapsible groups and variable insertion.",
-            "provide-variables": "Provide variables"
+            "provide-variables": "Provide variables",
+            "tree": {
+                "page": "Page {{number}}"
+            }
         },
         "properties-menu-section": "Properties Menu",
         "search": {
@@ -673,6 +732,7 @@
             },
             "columns": {
                 "action": "Action",
+                "joined-at": "Joined",
                 "name": "Name",
                 "role": "Role",
                 "skills": "Skills",
@@ -691,8 +751,9 @@
                 "review": "In review"
             },
             "tooltips": {
+                "joined-at": "Date cells format the value with the locale of the app",
                 "name": "Primary identity column",
-                "skills": "Badge cells accept a list, rendering more than one badge per row",
+                "skills": "Tags cells show plain strings as outline badges, never translated",
                 "status": "Status cells can be translated and tooltip-enabled"
             }
         },

@@ -21,9 +21,11 @@ readonly config = new BeyAppLayoutConfig({
             subActions: [new BeyAppLayoutTopAction({ key: 'reports-monthly', icon: faCalendar, route: '/reports/monthly' })]
         })
     ],
-    bottomActions: [new BeyAppLayoutBottomAction({ key: 'logout', icon: faRightFromBracket })],
-    userInfo: new BeyLeftMenuUserInfo({ name: 'Ada', surname: 'Lovelace', email: 'ada@example.com' }),
-    onMenuActionClick: key => this.router.navigate([`/${key}`])
+    bottomActions: [
+        new BeyAppLayoutBottomAction({ key: 'settings', icon: faGear, route: '/settings' }),
+        new BeyAppLayoutBottomAction({ key: 'logout', icon: faRightFromBracket, action: () => this.logout() })
+    ],
+    userInfo: new BeyLeftMenuUserInfo({ name: 'Ada', surname: 'Lovelace', email: 'ada@example.com' })
 });
 ```
 
@@ -55,7 +57,7 @@ readonly config = new BeyAppLayoutConfig({
 | `onRouteActivated`    | no       |                  | Run with the key of the action a route activated          |
 
 `BeyAppLayoutTopAction` takes `key`, `icon`, and optionally `action`, `active`, `disabled`, `route` and
-`subActions`. `BeyAppLayoutBottomAction` takes `key`, `icon` and an optional `action`. Both are
+`subActions`. `BeyAppLayoutBottomAction` takes `key`, `icon`, and optionally `action` and `route`. Both are
 `BeyLeftMenuAction`s, so their texts resolve as `<prefix>.actions.<key>.label` and `.tooltip`, with the key
 as a kebab-case segment: `monthlyReports` reads `<prefix>.actions.monthly-reports.label`, in the menu and in
 the breadcrumb alike.
@@ -65,18 +67,25 @@ it before building the item.
 
 ## The actions are yours
 
-The layout never writes into the actions it receives. It builds the menu from copies, wrapping each `action`
-so that using it also reports the key through the service and `onMenuActionClick`, and marking as active
-whichever action the service names. The `active` flag of the config is only honoured until the service names
-one.
+The layout never writes into the actions it receives. It builds the menu from copies, wrapping each one so
+that using it runs its `action` or follows its `route`, and then reports the key through the service and
+`onMenuActionClick`. It marks as active whichever action the service names; the `active` flag of the config
+is only honoured until the service names one.
 
 ## Routes
+
+An action with a `route` navigates to it when it is used from the menu, so a routed action needs no `action`
+and no `onMenuActionClick`. An action with an `action` runs it instead of navigating, even when it also has a
+`route`: the `route` then only decides when the action is active, and the `action` is the place for a
+navigation of your own, with query params or a confirmation first. Keep `action` for what is not a page, such
+as logging out.
 
 When any action declares a `route`, the layout keeps the menu and the breadcrumb in sync with the router on
 its own: on every navigation it activates the deepest action whose route is the url or one of its ancestors,
 builds the breadcrumb from the labels of that path, translated on the spot and again whenever the language
 changes, and calls `onRouteActivated`. A url no action claims clears both. Using a routed action from the
-menu activates it the same way.
+menu activates it at once, and a navigation that a guard cancels, or that fails, brings the menu back to the
+page the router stays on.
 
 Without routes, nothing is activated for you: call `activeMenuAction` and `setBreadcrumb` from
 `onMenuActionClick`, as the style-guide does.
@@ -95,7 +104,7 @@ A root singleton, so a page can update the shell from anywhere.
 | `clearActiveAction()`     | Leaves no action active                                 |
 | `expanded`                | Signal with the state of the menu                       |
 | `setExpanded(value)`      | Collapses or expands it, and persists the choice        |
-| `emitMenuClick(key)`      | Reports an action as if it had been used from the menu  |
+| `emitMenuClick(key)`      | Reports an action as the menu does, without running it  |
 | `emitBreadcrumbClick(id)` | Reports a breadcrumb item as if it had been clicked     |
 | `onMenuClick$`            | The keys reported by the menu or by `emitMenuClick`     |
 | `onBreadcrumbClick$`      | The ids reported by the bar or by `emitBreadcrumbClick` |

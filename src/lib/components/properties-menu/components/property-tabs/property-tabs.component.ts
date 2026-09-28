@@ -14,8 +14,6 @@ import { PropertiesMenuService } from '../../services/properties-menu.service';
     templateUrl: './property-tabs.component.html'
 })
 export class PropertyTabsComponent {
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
-
     /** A computed, not a getter: a new TabsConfig per change-detection cycle made bey-tabs re-measure forever. */
     readonly tabsConfig = computed(() => {
         const config = this.propertiesMenuService.config();
@@ -37,4 +35,6 @@ export class PropertyTabsComponent {
                 )
         });
     });
+
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
 }

@@ -34,6 +34,7 @@ const PANEL_MAX_HEIGHT_PX = 208;
 export class FormAutocompleteFieldComponent {
     readonly control = input.required<FormControl<string | null>>();
     readonly field = input.required<FormAutocompleteField>();
+    readonly isRequired = input(false);
     readonly options = input<FormFieldOption[]>([]);
     readonly prefix = input.required<string>();
 
@@ -41,7 +42,6 @@ export class FormAutocompleteFieldComponent {
     readonly clearIcon = faXmark;
     readonly controlState = trackControl(this.control);
     readonly emptyKey = computed(() => this.field().emptyKey ?? EMPTY_KEY);
-    readonly query = signal('');
     readonly filteredOptions = computed(() => {
         const term = this.query().trim().toLowerCase();
 
@@ -51,6 +51,7 @@ export class FormAutocompleteFieldComponent {
     });
     readonly isOpen = signal(false);
     readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
+    readonly query = signal('');
     readonly toggleIcon = faChevronDown;
 
     private readonly onAncestorScroll = (event: Event): void => {

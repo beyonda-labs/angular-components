@@ -1,0 +1,18 @@
+{
+    "angular-components-style-guide": {
+        "file-preview": {
+            "buttons": {
+                "image": "Preview an image",
+                "pdf": "Preview a PDF"
+            },
+            "example": "A dialog that previews a PDF or an image from a blob or a URL, opened with one call to the service. An object URL it creates for a blob is released when the dialog closes.",
+            "image": {
+                "alt": "A dark circle on a light grey background",
+                "title": "Sample image"
+            },
+            "pdf": {
+                "title": "Sample document"
+            }
+        }
+    }
+}

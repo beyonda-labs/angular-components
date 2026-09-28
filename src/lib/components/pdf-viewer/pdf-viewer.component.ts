@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, linkedSignal } from '@angular/core';
 import { NgxExtendedPdfViewerModule, PageRenderedEvent, PdfLoadedEvent } from 'ngx-extended-pdf-viewer';
 
+import { PdfViewerToolbarComponent } from './components/pdf-viewer-toolbar/pdf-viewer-toolbar.component';
 import { PdfViewerConfig, PdfViewerHandle } from './models/pdf-viewer-config.model';
-import { PdfViewerRotation, PdfViewerZoom } from './models/pdf-viewer-value.model';
+import { PdfViewerRotation, PdfViewerToolbar, PdfViewerZoom } from './models/pdf-viewer-value.model';
 
 const PERCENT = 100;
 
-/** A thin wrapper around ngx-extended-pdf-viewer: the config drives it, the handle moves it, the callbacks report. */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgxExtendedPdfViewerModule],
+    imports: [NgxExtendedPdfViewerModule, PdfViewerToolbarComponent],
     selector: 'bey-pdf-viewer',
     standalone: true,
     styleUrls: ['./pdf-viewer.component.css'],
@@ -29,7 +29,10 @@ export class PdfViewerComponent {
         rotate: rotation => this.currentRotation.set(rotation),
         setZoom: zoom => this.currentZoom.set(zoom)
     };
-    /** The underlying viewer wants a percentage for a fractional zoom and the keywords as they are. */
+    readonly hasCompactToolbar = computed(() => this.config().toolbar === PdfViewerToolbar.Compact);
+    readonly hasFullToolbar = computed(() => this.config().toolbar === PdfViewerToolbar.Full);
+    readonly pagesCount = linkedSignal({ computation: () => 0, source: this.config });
+    readonly zoomFactor = linkedSignal(() => toZoomFactor(this.config().zoom));
     readonly zoomInput = computed<PdfViewerZoom>(() => {
         const zoom = this.currentZoom();
 
@@ -58,6 +61,7 @@ export class PdfViewerComponent {
     }
 
     onPdfLoaded(event: PdfLoadedEvent): void {
+        this.pagesCount.set(event.pagesCount);
         this.config().onLoaded?.({ pagesCount: event.pagesCount });
     }
 
@@ -70,7 +74,17 @@ export class PdfViewerComponent {
         this.config().onRotationChange?.({ rotation });
     }
 
+    onToolbarPageChange(page: number): void {
+        this.currentPage.set(page);
+    }
+
+    onToolbarZoomChange(zoom: number): void {
+        this.zoomFactor.set(zoom);
+        this.currentZoom.set(zoom);
+    }
+
     onZoomFactorChange(zoomFactor: number): void {
+        this.zoomFactor.set(zoomFactor);
         this.config().onZoomChange?.(zoomFactor);
     }
 
@@ -81,4 +95,8 @@ export class PdfViewerComponent {
 
         this.currentZoom.set((typeof zoom === 'number' ? zoom / PERCENT : zoom) as PdfViewerZoom);
     }
+}
+
+function toZoomFactor(zoom: PdfViewerZoom): number {
+    return typeof zoom === 'number' ? zoom : 1;
 }

@@ -13,7 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType, TooltipPlacement } from '../../internal/button/models/button-config.model';
-import { toKeySegment } from '../../internal/i18n/key-segment';
+import { toKeySegment } from '../../utilities/key-segment';
 import { BadgeComponent } from '../badge/badge.component';
 import { HeaderAction, HeaderActionType, HeaderConfig, HeaderVariant } from './models/header.model';
 
@@ -39,6 +39,11 @@ export class HeaderComponent {
 
         return backAction ? this.buildActionButton(backAction) : null;
     });
+    readonly hasActions = computed(
+        () => this.leftActions().length + this.menuButtons().length + this.rightActions().length > 0
+    );
+    readonly isMenuOpen = signal(false);
+    readonly isSubpage = computed(() => this.config().variant === HeaderVariant.SubPage);
     readonly leftActions = computed(() => this.render(this.config().leftActions));
     readonly menuButtons = computed(() =>
         this.config().menuActions.map(action =>
@@ -48,12 +53,6 @@ export class HeaderComponent {
             })
         )
     );
-    readonly rightActions = computed(() => this.render(this.config().rightActions));
-    readonly hasActions = computed(
-        () => this.leftActions().length + this.menuButtons().length + this.rightActions().length > 0
-    );
-    readonly isMenuOpen = signal(false);
-    readonly isSubpage = computed(() => this.config().variant === HeaderVariant.SubPage);
     readonly menuToggleButton = new ButtonConfig({
         action: () => this.isMenuOpen.update(isOpen => !isOpen),
         customClass: 'bey-header-menu-toggle',
@@ -63,6 +62,7 @@ export class HeaderComponent {
         type: ButtonType.Tertiary
     });
     readonly openActionKey = signal<string | null>(null);
+    readonly rightActions = computed(() => this.render(this.config().rightActions));
     readonly title = computed(() => this.config().title);
 
     private readonly elementRef = inject(ElementRef);

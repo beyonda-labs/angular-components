@@ -1,0 +1,18 @@
+{
+    "angular-components-style-guide": {
+        "file-preview": {
+            "buttons": {
+                "image": "Previsualizar una imagen",
+                "pdf": "Previsualizar un PDF"
+            },
+            "example": "Un diálogo que previsualiza un PDF o una imagen a partir de un blob o una URL, abierto con una sola llamada al servicio. La URL de objeto que crea para un blob se libera al cerrarse el diálogo.",
+            "image": {
+                "alt": "Un círculo oscuro sobre un fondo gris claro",
+                "title": "Imagen de ejemplo"
+            },
+            "pdf": {
+                "title": "Documento de ejemplo"
+            }
+        }
+    }
+}

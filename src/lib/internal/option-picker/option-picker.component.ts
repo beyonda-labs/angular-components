@@ -43,7 +43,6 @@ export class OptionPickerComponent {
     readonly closed = output<void>();
     readonly selected = output<OptionPickerOption>();
 
-    readonly searchTerm = signal('');
     readonly visibleOptions = computed(() => {
         const term = this.searchTerm().trim().toLowerCase();
 
@@ -57,6 +56,7 @@ export class OptionPickerComponent {
     readonly closeIcon = faXmark;
     readonly isFiltering = computed(() => this.searchTerm().trim().length > 0);
     readonly searchIcon = faMagnifyingGlass;
+    readonly searchTerm = signal('');
 
     private readonly onAncestorScroll = (event: Event): void => {
         if (!this.elementRef.nativeElement.contains(event.target as Node)) {

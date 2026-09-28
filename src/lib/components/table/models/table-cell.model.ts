@@ -2,7 +2,9 @@ import { BadgeConfig } from '../../badge/models/badge.model';
 
 export enum CellType {
     Badge = 'badge',
+    Date = 'date',
     Link = 'link',
+    Tags = 'tags',
     Text = 'text'
 }
 
@@ -30,12 +32,33 @@ export class BadgeTableCell extends TableCell {
     }
 }
 
+export class DateTableCell extends TableCell {
+    format: string;
+
+    value?: Date | number | string | null;
+
+    constructor({ format = 'mediumDate', tooltip, value }: DateTableCellParameters) {
+        super({ content: value, type: CellType.Date, tooltip });
+        this.format = format;
+        this.value = value;
+    }
+}
+
 export class LinkTableCell extends TableCell {
     action: () => void;
 
     constructor({ action, content, translate, tooltip }: LinkTableCellParameters) {
         super({ content, type: CellType.Link, translate, tooltip });
         this.action = action;
+    }
+}
+
+export class TagsTableCell extends TableCell {
+    tags: string[];
+
+    constructor({ tags, tooltip }: TagsTableCellParameters) {
+        super({ content: tags, type: CellType.Tags, tooltip });
+        this.tags = tags;
     }
 }
 
@@ -52,6 +75,12 @@ export interface BadgeTableCellParameters {
     translate?: boolean;
 }
 
+export interface DateTableCellParameters {
+    format?: string;
+    tooltip?: string;
+    value?: Date | number | string | null;
+}
+
 export interface LinkTableCellParameters {
     action: () => void;
     content: string;
@@ -66,6 +95,12 @@ export interface TableCellParameters {
 
     tooltip?: string;
     translate?: boolean;
+}
+
+export interface TagsTableCellParameters {
+    tags: string[];
+
+    tooltip?: string;
 }
 
 export interface TextTableCellParameters {

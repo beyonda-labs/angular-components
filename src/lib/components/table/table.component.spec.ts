@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { queryAll, renderComponent, settle } from '@testing/dom';
+import { queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { BadgeConfig, BadgeVariant } from '../badge/models/badge.model';
 import { TableColumn, TableConfig, TableConfigParameters } from './models/table.model';
@@ -168,6 +168,12 @@ describe('TableComponent', () => {
 
         expect(fixture.nativeElement.textContent).toContain('Angular');
         expect(fixture.nativeElement.textContent).toContain('RxJS');
+    });
+
+    it('fills a row that has fewer cells than columns with empty cells', async () => {
+        await render(buildConfig({ items: [ADA], loadRow: item => [new TextTableCell({ content: item.name })] }));
+
+        expect(textsOf(queryAll(rowOf('Ada'), '[role="cell"]'))).toEqual(['Ada', '']);
     });
 
     it('follows a replaced config and forgets the previous selection and scroll', async () => {

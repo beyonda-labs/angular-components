@@ -1,7 +1,7 @@
 <select
     class="form-select form-select-sm bey-form-field-control"
     [attr.aria-invalid]="isInvalid() || null"
-    [attr.aria-required]="field().isRequired || null"
+    [attr.aria-required]="isRequired() || null"
     [formControl]="control()"
     [id]="field().key"
 >

@@ -5,8 +5,8 @@ import { FooterConfig } from '../../footer/models/footer.model';
 import { LeftMenuAction, LeftMenuTitle, LeftMenuUserInfo } from '../../left-menu/models/left-menu.model';
 
 export class AppLayoutBottomAction extends LeftMenuAction {
-    constructor({ action, icon, key }: AppLayoutBottomActionParameters) {
-        super({ action, key, icon });
+    constructor({ action, icon, key, route }: AppLayoutBottomActionParameters) {
+        super({ action, key, icon, route });
     }
 }
 
@@ -89,6 +89,7 @@ export interface AppLayoutBottomActionParameters {
     key: string;
 
     action?: () => void;
+    route?: string;
 }
 
 export interface AppLayoutBreadcrumbItemParameters {

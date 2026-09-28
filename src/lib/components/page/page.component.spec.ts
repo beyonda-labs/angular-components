@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { renderComponent, settle } from '@testing/dom';
+import { buttonByName, renderComponent, settle } from '@testing/dom';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
 import { TableColumn } from '../table/models/table.model';
-import { TextTableCell } from '../table/models/table-cell.model';
+import { TableCell, TextTableCell } from '../table/models/table-cell.model';
 import { PageBackendResponse, PageConfig, PageConfigParameters } from './models/page.model';
+import { PageCategoriesConfig, PageItemType, PageViewMode } from './models/page-categories.model';
 import { PageItem } from './models/page-item.model';
 import { PageTableConfig, PageTableSearchConfig } from './models/page-table.model';
 import { PageComponent } from './page.component';
@@ -17,12 +18,21 @@ interface Person extends PageItem {
     name: string;
 }
 
+interface Team extends PageItem {
+    title: string;
+    type: PageItemType;
+}
+
 const PEOPLE: Person[] = [
     { id: 1, name: 'Ada' },
     { id: 2, name: 'Grace' }
 ];
+const STAFF: Team = { id: 'staff', title: 'Staff', type: PageItemType.Category };
 
-function buildResponse(results: Person[] = PEOPLE, total = results.length): PageBackendResponse {
+function buildResponse(
+    results: (Person | Team)[] = PEOPLE,
+    total = results.length
+): PageBackendResponse<Person | Team> {
     return { globalActions: [], results, search: { filters: [], page: 1, size: 25, total } };
 }
 
@@ -30,19 +40,38 @@ describe('PageComponent', () => {
     let fixture: ComponentFixture<PageComponent>;
     let pageHttpService: MockProxy<PageHttpService>;
 
-    function buildConfig(overrides: Partial<PageConfigParameters> = {}): PageConfig {
-        return new PageConfig({
+    function buildConfig(overrides: Partial<PageConfigParameters<unknown, Person>> = {}): PageConfig<unknown, Person> {
+        return new PageConfig<unknown, Person>({
             baseUrl: '/people',
             prefix: 'demo',
             tableConfig: new PageTableConfig({
                 columns: [new TableColumn({ key: 'name' })],
-                loadRow: item => [new TextTableCell({ content: (item as Person).name })]
+                loadRow: person => [new TextTableCell({ content: person.name })]
             }),
             ...overrides
         });
     }
 
-    async function render(config: PageConfig = buildConfig()): Promise<void> {
+    function buildTeamsConfig(
+        loadTeamRow?: (team: Team, viewMode: PageViewMode) => TableCell[]
+    ): PageConfig<unknown, Person, Team> {
+        return new PageConfig<unknown, Person, Team>({
+            baseUrl: '/people',
+            prefix: 'demo',
+            tableConfig: new PageTableConfig({
+                categoriesConfig: new PageCategoriesConfig({ loadRow: loadTeamRow, nameField: 'title' }),
+                columns: [new TableColumn({ key: 'name' }), new TableColumn({ key: 'role' })],
+                loadRow: person => [
+                    new TextTableCell({ content: person.name }),
+                    new TextTableCell({ content: 'Member' })
+                ]
+            })
+        });
+    }
+
+    async function render(
+        config: PageConfig<unknown, Person> | PageConfig<unknown, Person, Team> = buildConfig()
+    ): Promise<void> {
         fixture = await renderComponent(PageComponent, { config });
     }
 
@@ -109,5 +138,24 @@ describe('PageComponent', () => {
 
         expect(text()).toContain('Linus');
         expect(text()).not.toContain('Ada');
+    });
+
+    it('renders the category rows through the loadRow of the categories config', async () => {
+        pageHttpService.load.mockReturnValue(of(buildResponse([STAFF, PEOPLE[0]])));
+        await render(buildTeamsConfig(team => [new TextTableCell({ content: `Team ${team.title}` })]));
+
+        expect(text()).toContain('Team Staff');
+        expect(text()).toContain('Ada');
+    });
+
+    it('opens a category from the link its default row shows', async () => {
+        pageHttpService.load.mockReturnValue(of(buildResponse([STAFF])));
+        pageHttpService.loadCategoryPath.mockReturnValue(of([STAFF]));
+        await render(buildTeamsConfig());
+
+        buttonByName(fixture, 'Staff').click();
+        await settle(fixture);
+
+        expect(pageHttpService.load).toHaveBeenLastCalledWith('/people', { parentId: 'staff' });
     });
 });

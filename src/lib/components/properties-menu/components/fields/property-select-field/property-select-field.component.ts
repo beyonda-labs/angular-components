@@ -24,9 +24,6 @@ export class PropertySelectFieldComponent {
 
     readonly valueChange = output<unknown>();
 
-    readonly query = signal('');
-
-    private readonly translateService = inject(TranslateService);
     readonly filteredOptions = computed(() => {
         const term = this.query().trim().toLowerCase();
         const { options } = this.field();
@@ -35,17 +32,20 @@ export class PropertySelectFieldComponent {
             ? options.filter(option => this.translateService.instant(option.label).toLowerCase().includes(term))
             : options;
     });
+    readonly inputValue = computed(() => (this.isOpen() ? this.query() : this.selectedLabel()));
     readonly isOpen = signal(false);
+    readonly pickerOpen = signal(false);
+    readonly query = signal('');
     readonly selectedLabel = computed(() => {
         const { options, value } = this.field();
         const selected = options.find(option => option.value === value);
 
         return selected ? this.translateService.instant(selected.label) : '';
     });
-    readonly inputValue = computed(() => (this.isOpen() ? this.query() : this.selectedLabel()));
-    readonly pickerOpen = signal(false);
     readonly variableIcon = PROPERTY_VARIABLE_ICON;
     readonly variableOptions = computed(() => toVariableOptions(this.field().variables));
+
+    private readonly translateService = inject(TranslateService);
 
     close(): void {
         this.isOpen.set(false);

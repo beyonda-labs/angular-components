@@ -8,7 +8,7 @@ import { FormTextField } from '../../models/fields/form-text-field.model';
 import { FormRow, FormSection, FormSectionParameters } from '../../models/form.model';
 import { FormSectionComponent } from './section.component';
 
-const VISIBLE: FormFieldState = { isDisabled: false, isHidden: false, isValid: true, options: [] };
+const VISIBLE: FormFieldState = { isDisabled: false, isHidden: false, isRequired: false, isValid: true, options: [] };
 const HIDDEN: FormFieldState = { ...VISIBLE, isHidden: true };
 const ALL_VISIBLE: Record<string, FormFieldState> = { 'contact.name': VISIBLE, 'contact.email': VISIBLE };
 

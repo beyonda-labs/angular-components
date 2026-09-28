@@ -14,10 +14,10 @@ import {
     providedIn: 'root'
 })
 export class ModalFormService {
-    private openDialogs: BsModalRef<ModalFormDialogComponent>[] = [];
-
     private readonly bsModalService = inject(BsModalService);
     private readonly modalService = inject(ModalService);
+
+    private openDialogs: BsModalRef<ModalFormDialogComponent>[] = [];
 
     canDeactivate(): Observable<boolean> | boolean {
         if (this.openDialogs.length === 0) {

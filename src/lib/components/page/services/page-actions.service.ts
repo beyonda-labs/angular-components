@@ -11,9 +11,10 @@ import { ModalTreeService } from '../../tree/components/modal/services/modal-tre
 import { TreeNode } from '../../tree/models/tree.model';
 import { PageConfig } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
-import { PageCategoriesConfig, PageItemType, PageTrashItem } from '../models/page-categories.model';
+import { PageCategoriesConfig, PageTrashItem } from '../models/page-categories.model';
 import { PageFormConfig } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
+import { isActionVisible, isCategoryRow, readRowField, toHandlerItems } from '../models/page-row';
 import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
 
@@ -56,6 +57,11 @@ interface SaveEntityOptions {
     providedIn: 'root'
 })
 export class PageActionsService {
+    private readonly modalService = inject(ModalService);
+    private readonly modalTreeService = inject(ModalTreeService);
+    private readonly pageFormService = inject(PageFormService);
+    private readonly pageHttpService = inject(PageHttpService);
+
     private readonly actionHandlers: Record<string, (context: PageActionsContext) => void> = {
         [PageStandardAction.Create]: context => this.executeCreate(context),
         [PageStandardAction.CreateCategory]: context => this.executeCreateCategory(context),
@@ -67,11 +73,6 @@ export class PageActionsService {
         [PageStandardAction.Move]: context => this.executeMove(context),
         [PageStandardAction.RestoreTrashItem]: context => this.executeRestoreTrashItem(context)
     };
-
-    private readonly modalService = inject(ModalService);
-    private readonly modalTreeService = inject(ModalTreeService);
-    private readonly pageFormService = inject(PageFormService);
-    private readonly pageHttpService = inject(PageHttpService);
 
     buildHeaderActions(
         actions: PageAction[],
@@ -106,7 +107,9 @@ export class PageActionsService {
 
     executeAction(action: PageAction, context: PageActionsContext): void {
         if (action.handler) {
-            action.handler(action.scope === PageActionScope.Item ? context.selectedItems() : undefined);
+            action.handler(
+                toHandlerItems(action, context.selectedItems(), context.config.tableConfig?.categoriesConfig)
+            );
 
             return;
         }
@@ -114,19 +117,29 @@ export class PageActionsService {
         this.actionHandlers[action.key]?.(context);
     }
 
-    filterVisibleActions(actions: PageAction[], allowedKeys: string[] | null, selectedItems: PageItem[]): PageAction[] {
+    filterVisibleActions(
+        actions: PageAction[],
+        allowedKeys: string[] | null,
+        selectedItems: PageItem[],
+        categoriesConfig?: PageCategoriesConfig
+    ): PageAction[] {
         const visible: PageAction[] = [];
 
         for (const action of actions) {
             if (action.scope !== PageActionScope.Group) {
-                if (this.isActionVisible(action, allowedKeys, selectedItems)) {
+                if (isActionVisible(action, allowedKeys, selectedItems, categoriesConfig)) {
                     visible.push(action);
                 }
 
                 continue;
             }
 
-            const visibleSubActions = this.filterVisibleActions(action.subActions ?? [], allowedKeys, selectedItems);
+            const visibleSubActions = this.filterVisibleActions(
+                action.subActions ?? [],
+                allowedKeys,
+                selectedItems,
+                categoriesConfig
+            );
 
             if (visibleSubActions.length > 0) {
                 visible.push(new PageAction({ ...action, subActions: visibleSubActions }));
@@ -146,8 +159,7 @@ export class PageActionsService {
         const childrenByParent = new Map<string | number | null, PageItem[]>();
 
         for (const category of categories) {
-            const parentId =
-                ((category as unknown as Record<string, unknown>)[parentField] as string | number | null) ?? null;
+            const parentId = (readRowField(category, parentField) as string | number | null) ?? null;
             const siblings = childrenByParent.get(parentId) ?? [];
 
             siblings.push(category);
@@ -155,7 +167,7 @@ export class PageActionsService {
         }
 
         const blockedIds = new Set<string | number>(
-            selectedItems.filter(item => (item as PageTrashItem).type === PageItemType.Category).map(item => item.id)
+            selectedItems.filter(item => isCategoryRow(item, categoriesConfig)).map(item => item.id)
         );
         let frontier = [...blockedIds];
 
@@ -179,7 +191,7 @@ export class PageActionsService {
                 category =>
                     new TreeNode<MoveTargetData>({
                         key: String(category.id),
-                        label: String((category as unknown as Record<string, unknown>)[nameField] ?? ''),
+                        label: String(readRowField(category, nameField) ?? ''),
                         isDisabled: blockedIds.has(category.id),
                         data: { id: category.id },
                         children: buildLevel(category.id)
@@ -327,22 +339,6 @@ export class PageActionsService {
             request: (baseUrl, items, successToast) =>
                 this.pageHttpService.restoreTrashItems(baseUrl, items, successToast)
         });
-    }
-
-    private isActionVisible(action: PageAction, allowedKeys: string[] | null, selectedItems: PageItem[]): boolean {
-        if (action.scope === PageActionScope.Global) {
-            return allowedKeys?.includes(action.key) ?? false;
-        }
-
-        if (selectedItems.length === 0) {
-            return false;
-        }
-
-        if (action.key === PageStandardAction.Edit && selectedItems.length !== 1) {
-            return false;
-        }
-
-        return selectedItems.every(item => item.actions?.includes(action.key));
     }
 
     private mergeParentField(context: PageActionsContext, value: unknown, original?: PageItem): unknown {

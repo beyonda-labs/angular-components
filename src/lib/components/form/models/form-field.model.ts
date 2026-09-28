@@ -1,3 +1,5 @@
+import { Signal } from '@angular/core';
+
 import { FormFieldAsyncValidator, FormFieldValidator } from './form-field-validator.model';
 
 export enum FormFieldType {
@@ -18,7 +20,7 @@ export enum FormFieldType {
 
 export type FormFieldColumn = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 
-export type FormRule<T> = T | ((value: FormValue) => T);
+export type FormRule<T> = T | Signal<T> | ((value: FormValue) => T);
 
 export type FormValue = Record<string, Record<string, unknown>>;
 
@@ -37,7 +39,7 @@ export abstract class FormField {
     isHidden: FormRule<boolean>;
     isLabelTooltipVisible: boolean;
     isLabelVisible: boolean;
-    isRequired: boolean;
+    isRequired: FormRule<boolean>;
     key: string;
     type: FormFieldType;
     validators: FormFieldValidator[];
@@ -81,7 +83,7 @@ export interface FormFieldBaseParameters {
     isHidden?: FormRule<boolean>;
     isLabelTooltipVisible?: boolean;
     isLabelVisible?: boolean;
-    isRequired?: boolean;
+    isRequired?: FormRule<boolean>;
     placeholder?: string;
     validators?: FormFieldValidator[];
 }

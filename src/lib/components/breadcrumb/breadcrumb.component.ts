@@ -38,11 +38,6 @@ interface RenderedItem {
 export class BreadcrumbComponent implements AfterViewInit {
     readonly config = input.required<BreadcrumbConfig>();
 
-    readonly visibleStartIndex = linkedSignal(() => {
-        this.config();
-
-        return 0;
-    });
     readonly collapsedItems = computed<RenderedItem[]>(() =>
         this.render(this.config().items.slice(0, this.visibleStartIndex()))
     );
@@ -55,6 +50,11 @@ export class BreadcrumbComponent implements AfterViewInit {
     readonly visibleItems = computed<RenderedItem[]>(() =>
         this.render(this.config().items.slice(this.visibleStartIndex()))
     );
+    readonly visibleStartIndex = linkedSignal(() => {
+        this.config();
+
+        return 0;
+    });
 
     private cachedItemWidths: number[] = [];
 

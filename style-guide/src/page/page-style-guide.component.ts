@@ -46,9 +46,9 @@ interface ProductFormValue {
     templateUrl: './page-style-guide.component.html'
 })
 export class PageStyleGuideComponent {
-    readonly config = new BeyPageConfig<ProductFormValue>({
+    readonly config = new BeyPageConfig<ProductFormValue, Product>({
         baseUrl: '/products',
-        formConfig: new BeyPageFormConfig<ProductFormValue>({
+        formConfig: new BeyPageFormConfig<ProductFormValue, Product>({
             buildSections: () => [
                 new BeyFormSection({
                     isTitleVisible: false,
@@ -67,13 +67,10 @@ export class PageStyleGuideComponent {
                 })
             ],
             prefix: `${PREFIX}.form`,
-            toFormValue: item => {
-                const product = item as Product | undefined;
-
-                return product
+            toFormValue: product =>
+                product
                     ? { product: { category: product.category, name: product.name, price: product.price } }
-                    : undefined;
-            },
+                    : undefined,
             toItem: value => value.product
         }),
         headerConfig: new BeyPageHeaderConfig({
@@ -87,7 +84,7 @@ export class PageStyleGuideComponent {
                 }),
                 new BeyPageAction({
                     key: BeyPageStandardAction.Edit,
-                    scope: BeyPageActionScope.Item,
+                    scope: BeyPageActionScope.Single,
                     zone: BeyPageActionZone.Left
                 }),
                 new BeyPageAction({
@@ -106,7 +103,7 @@ export class PageStyleGuideComponent {
                 new BeyTableColumn({ key: 'price', width: 2 })
             ],
             height: '24rem',
-            loadRow: item => this.loadRow(item as Product),
+            loadRow: product => this.loadRow(product),
             order: { direction: BeySearchSortDirection.Asc, field: 'name' },
             search: new BeyPageTableSearchConfig({
                 fields: [

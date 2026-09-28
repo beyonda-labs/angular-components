@@ -7,23 +7,34 @@ the content area of `bey-app-layout`.
 ## Usage
 
 ```ts
-readonly config = new BeyPageConfig({
+interface User extends BeyPageItem {
+    email: string;
+    name: string;
+}
+
+interface UserFormValue {
+    user: { email: string; name: string };
+}
+
+readonly config = new BeyPageConfig<UserFormValue, User>({
     prefix: 'myApp.users',
     baseUrl: '/users',
     headerConfig: new BeyPageHeaderConfig({
         actions: [
             new BeyPageAction({ key: BeyPageStandardAction.Create, scope: BeyPageActionScope.Global, zone: BeyPageActionZone.Right }),
-            new BeyPageAction({ key: BeyPageStandardAction.Edit, scope: BeyPageActionScope.Item, zone: BeyPageActionZone.Left }),
+            new BeyPageAction({ key: BeyPageStandardAction.Edit, scope: BeyPageActionScope.Single, zone: BeyPageActionZone.Left }),
+            new BeyPageAction({ key: 'invite', scope: BeyPageActionScope.Single, zone: BeyPageActionZone.Menu, handler: ([user]) => this.invite(user) }),
             new BeyPageAction({ key: BeyPageStandardAction.Delete, scope: BeyPageActionScope.Item, zone: BeyPageActionZone.Menu })
         ]
     }),
     tableConfig: new BeyPageTableConfig({
         columns: [new BeyTableColumn({ key: 'name' }), new BeyTableColumn({ key: 'email' })],
-        loadRow: item => [new BeyTextTableCell({ content: item.name }), new BeyTextTableCell({ content: item.email })]
+        loadRow: user => [new BeyTextTableCell({ content: user.name }), new BeyTextTableCell({ content: user.email })]
     }),
-    formConfig: new BeyPageFormConfig({
+    formConfig: new BeyPageFormConfig<UserFormValue, User>({
         prefix: 'myApp.users.form',
-        buildSections: item => [...]
+        buildSections: user => [...],
+        toFormValue: user => (user ? { user: { email: user.email, name: user.name } } : undefined)
     }),
     onReady: handle => (this.page = handle)
 });
@@ -46,8 +57,19 @@ readonly config = new BeyPageConfig({
 | `onReady`      | no       | Run with the page handle once the page exists                                                                                |
 
 The config is never written to. What the consumer needs to do to the live page goes through the
-`BeyPageHandle` that `onReady` delivers: `refresh()` reloads the current page, `openCategory(item)` drills
+`BeyPageHandle` that `onReady` delivers: `refresh()` reloads the current page, `openCategory(category)` drills
 into a category, `selected()` and `viewMode()` read the state.
+
+## Row types
+
+`BeyPageConfig<TValue, TItem, TCategory>` is generic over the form value, the rows and the category rows. Every
+callback that sees a row sees its type: `loadRow`, `onSelectionChange`, the action `handler`, `buildSections`,
+`toFormValue`, `afterCreate`, `onDataLoaded` and the handle, so a typed page needs no cast. `TItem` and
+`TCategory` extend `BeyPageItem`, `TCategory` defaults to `TItem` and the rows default to `BeyPageItem`. The
+rows are typed, not checked: the page trusts the backend to answer with them. A nested config infers its types
+from the page, except a form config, whose value would be inferred from `toFormValue`: it takes them
+explicitly, `new BeyPageFormConfig<UserFormValue, User>`, and the categories form keeps `unknown` as its value,
+`new BeyPageFormConfig<unknown, Folder>`.
 
 ## Backend contract
 
@@ -72,16 +94,18 @@ goes through `BeyHttpService`, so errors open the standard modal and writes show
 An action has a `key`, a `scope`, a `zone` and optionally an `icon`, a `label`, a `tooltip`, a `type`, a
 `handler` and `subActions`.
 
-| Scope    | Shown when                                                                                                |
-| -------- | --------------------------------------------------------------------------------------------------------- |
-| `Global` | The backend listed its key in `globalActions`                                                             |
-| `Item`   | Something is selected and every selected row lists the key in its `actions`; `edit` needs exactly one row |
-| `Group`  | Any of its `subActions` is shown; the group itself is never checked                                       |
+| Scope    | Shown when                                                                  | `handler` receives           |
+| -------- | --------------------------------------------------------------------------- | ---------------------------- |
+| `Global` | The backend listed its key in `globalActions`                               | `[]`                         |
+| `Group`  | Any of its `subActions` is shown; the group itself is never checked         | `[]`                         |
+| `Item`   | Something is selected and every selected row lists the key in its `actions` | The selected rows            |
+| `Single` | Exactly one row is selected and it lists the key in its `actions`           | That row, as a one-row array |
 
 Zones are `Left` next to the title, `Right` for the main buttons and `Menu` for the kebab. A standard key
 (`create`, `edit`, `delete`, `move`, `create-category`, `edit-category`, `delete-category`,
-`restore-trash-item`, `delete-trash-item`) needs no `handler`; a custom action gets its `handler`, which
-receives the selected items when its scope is `Item`. The page does no permission logic of its own.
+`restore-trash-item`, `delete-trash-item`) needs no `handler`; `edit` and `edit-category` need exactly one row
+whatever their scope. A `handler` always receives an array, so a single-row action reads `([user]) => …`; given
+to a standard key it replaces the standard behaviour. The page does no permission logic of its own.
 
 ## Search
 
@@ -90,16 +114,22 @@ change goes back to the first page and reloads; the whole query travels in the `
 
 ## Categories and trash
 
-`tableConfig.categoriesConfig` turns the table into a drill-down browser: rows of type `category` are opened
-by the consumer's own cell, through `handle.openCategory(item)`, and a breadcrumb starting at
+`tableConfig.categoriesConfig` turns the table into a drill-down browser, and a breadcrumb starting at
 `<prefix>.categories.root` shows where the user is. `nameField`, `parentField` and `typeField` name the
-fields the page reads. With `useTrash` a segmented toggle switches to the flat trash view, where the
-`restore-trash-item` and `delete-trash-item` actions apply. `move` opens the tree picker with every
-category, disabling the selected ones and their descendants.
+fields the page reads. A row whose `typeField` says `category` is drawn by
+`categoriesConfig.loadRow(category, viewMode)` instead of the table's `loadRow`; without one it shows its name
+as a link that opens it, as plain text in the trash. A custom cell opens a category through
+`handle.openCategory(category)`. With `useTrash` a segmented toggle switches to the flat trash view, where the
+`restore-trash-item` and `delete-trash-item` actions apply. `move` opens the tree picker with every category,
+disabling the selected ones and their descendants.
+
+On a page with categories an action `handler` receives only the selected rows that are not categories, since
+categories are handled by the standard category actions, and an action with a `handler` is hidden while every
+selected row is a category. Standard actions without a `handler` work on the whole selection.
 
 ## Forms
 
-`BeyPageFormConfig` takes `prefix`, `buildSections(item?)`, and optionally `toFormValue(item?)`,
+`BeyPageFormConfig<TValue, TItem>` takes `prefix`, `buildSections(item?)`, and optionally `toFormValue(item?)`,
 `toItem(value)`, `onReady(handle)`, `onValueChange(value, handle)`, `onCreate(value, handle)`,
 `onEdit(value, handle)`, `afterCreate(created)` and `allowSubmitWithoutChanges`. `onValueChange` runs on every
 change of the open form, so a field can fill another through `handle.patchValue`. Create and edit open a modal form from the form

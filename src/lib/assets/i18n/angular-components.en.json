@@ -6,6 +6,9 @@
         "breadcrumb": {
             "label": "Breadcrumb"
         },
+        "file-preview": {
+            "close": "Close preview"
+        },
         "floating-preferences": {
             "dark": "Dark",
             "language": "Language",
@@ -259,6 +262,12 @@
                 "error": "Error",
                 "info": "Information",
                 "warning": "Warning"
+            },
+            "unsaved-changes": {
+                "leave": "Leave without saving",
+                "message": "You have unsaved changes. If you leave now, they will be lost.",
+                "stay": "Keep editing",
+                "title": "Unsaved changes"
             }
         },
         "option-picker": {
@@ -282,6 +291,13 @@
             "page-size": "Page size",
             "previous-page": "Go to previous page",
             "results-range": "Showing {{ start }}-{{ end }} of {{ total }} results"
+        },
+        "pdf-viewer": {
+            "toolbar": {
+                "page": "Page",
+                "zoom-in": "Zoom in",
+                "zoom-out": "Zoom out"
+            }
         },
         "properties-menu": {
             "attachment-field": {

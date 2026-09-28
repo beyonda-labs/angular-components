@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { AppLayoutStyleGuideComponent } from './app-layout/app-layout-style-guide.component';
 import { BadgeStyleGuideComponent } from './badge/badge-style-guide.component';
 import { BreadcrumbStyleGuideComponent } from './breadcrumb/breadcrumb-style-guide.component';
 import { StyleGuideSectionComponent } from './components/section/style-guide-section.component';
+import { FilePreviewStyleGuideComponent } from './file-preview/file-preview-style-guide.component';
 import { FloatingPreferencesStyleGuideComponent } from './floating-preferences/floating-preferences-style-guide.component';
 import { FooterStyleGuideComponent } from './footer/footer-style-guide.component';
 import { FormStyleGuideComponent } from './form/form-style-guide.component';
@@ -19,6 +21,7 @@ import { PaginationStyleGuideComponent } from './pagination/pagination-style-gui
 import { PdfViewerStyleGuideComponent } from './pdf-viewer/pdf-viewer-style-guide.component';
 import { PropertiesMenuStyleGuideComponent } from './properties-menu/properties-menu-style-guide.component';
 import { SearchStyleGuideComponent } from './search/search-style-guide.component';
+import { StyleGuideTranslationService } from './services/style-guide-translation.service';
 import { TableStyleGuideComponent } from './table/table-style-guide.component';
 import { TabsStyleGuideComponent } from './tabs/tabs-style-guide.component';
 import { ToastStyleGuideComponent } from './toast/toast-style-guide.component';
@@ -32,6 +35,7 @@ import { TreeStyleGuideComponent } from './tree/tree-style-guide.component';
         AppLayoutStyleGuideComponent,
         BadgeStyleGuideComponent,
         BreadcrumbStyleGuideComponent,
+        FilePreviewStyleGuideComponent,
         FloatingPreferencesStyleGuideComponent,
         FooterStyleGuideComponent,
         HeaderStyleGuideComponent,
@@ -56,4 +60,15 @@ import { TreeStyleGuideComponent } from './tree/tree-style-guide.component';
     styleUrls: ['./style-guide.component.css'],
     templateUrl: './style-guide.component.html'
 })
-export class StyleGuideComponent {}
+export class StyleGuideComponent {
+    readonly isReady = signal(false);
+
+    private readonly styleGuideTranslationService = inject(StyleGuideTranslationService);
+
+    constructor() {
+        this.styleGuideTranslationService
+            .loadBundles()
+            .pipe(takeUntilDestroyed())
+            .subscribe(() => this.isReady.set(true));
+    }
+}

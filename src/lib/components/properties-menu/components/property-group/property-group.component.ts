@@ -24,12 +24,6 @@ export class PropertyGroupComponent {
     readonly group = input.required<PropertyGroup>();
     readonly tabId = input.required<string>();
 
-    readonly content = computed(() => this.group().content);
-    readonly tabsContent = computed(() => {
-        const content = this.content();
-
-        return content.type === PropertyGroupContentType.TABS ? content : undefined;
-    });
     readonly activeTabFields = computed<PropertyField[]>(() => {
         const content = this.tabsContent();
         const active = content?.tabs.find(tab => tab.id === content.activeTabId);
@@ -38,14 +32,13 @@ export class PropertyGroupComponent {
     });
     readonly addIcon = faPlus;
     readonly chevronIcon = faChevronDown;
+    readonly content = computed(() => this.group().content);
     readonly fieldsContent = computed(() => {
         const content = this.content();
 
         return content.type === PropertyGroupContentType.FIELDS ? content : undefined;
     });
     readonly isSecondary = computed(() => this.group().variant === PropertyGroupVariant.SECONDARY);
-
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
     readonly labelKey = computed(() =>
         resolvePropertyLabelKey(
             this.propertiesMenuService.config().prefix,
@@ -60,6 +53,11 @@ export class PropertyGroupComponent {
         return content.type === PropertyGroupContentType.LIST ? content : undefined;
     });
     readonly removeIcon = faTrash;
+    readonly tabsContent = computed(() => {
+        const content = this.content();
+
+        return content.type === PropertyGroupContentType.TABS ? content : undefined;
+    });
     readonly treeContent = computed(() => {
         const content = this.content();
 
@@ -68,6 +66,8 @@ export class PropertyGroupComponent {
     readonly visibleFields = computed<PropertyField[]>(
         () => this.fieldsContent()?.fields.filter(field => !field.hidden) ?? []
     );
+
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
 
     contentTabLabelKey(tab: PropertyGroupTab): string {
         return resolvePropertyLabelKey(this.propertiesMenuService.config().prefix, 'groups', tab.id, tab.label);

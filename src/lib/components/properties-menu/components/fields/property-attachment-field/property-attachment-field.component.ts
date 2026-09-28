@@ -32,7 +32,6 @@ export class PropertyAttachmentFieldComponent {
     readonly valueChange = output<string>();
 
     readonly clearIcon = faXmark;
-    readonly query = signal('');
     readonly filteredOptions = computed(() => {
         const term = this.query().trim().toLowerCase();
         const { options } = this.field();
@@ -40,14 +39,15 @@ export class PropertyAttachmentFieldComponent {
         return term ? options.filter(option => option.label.toLowerCase().includes(term)) : options;
     });
     readonly hasTypeError = signal(false);
+    readonly inputValue = computed(() => (this.isOpen() ? this.query() : this.selectedLabel()));
     readonly isOpen = signal(false);
+    readonly pickerOpen = signal(false);
+    readonly query = signal('');
     readonly selectedLabel = computed(() => {
         const field = this.field();
 
         return field.selectedOption?.label ?? field.value ?? '';
     });
-    readonly inputValue = computed(() => (this.isOpen() ? this.query() : this.selectedLabel()));
-    readonly pickerOpen = signal(false);
     readonly sizeErrorMaxSizeMB = signal<number | null>(null);
     readonly uploadIcon = faFileArrowUp;
     readonly variableIcon = PROPERTY_VARIABLE_ICON;

@@ -2,7 +2,10 @@
     "angular-components-style-guide": {
         "properties-menu": {
             "example": "Inspector de propiedades de un bloque seleccionado, con pestañas, grupos plegables e inserción de variables.",
-            "provide-variables": "Aportar variables"
+            "provide-variables": "Aportar variables",
+            "tree": {
+                "page": "Página {{number}}"
+            }
         }
     }
 }

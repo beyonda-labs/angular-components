@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { toKeySegment } from '../../../../internal/i18n/key-segment';
+import { toKeySegment } from '../../../../utilities/key-segment';
 import { PropertyAttachmentField } from '../../models/fields/property-attachment-field.model';
 import { PropertyColorField } from '../../models/fields/property-color-field.model';
 import { PropertyFileField } from '../../models/fields/property-file-field.model';
@@ -59,8 +59,6 @@ export class PropertyFieldComponent {
     readonly field = input.required<PropertyField>();
     readonly hideLabel = input(false);
 
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
-
     readonly actionButtonTooltipKey = computed(
         () =>
             `${this.propertiesMenuService.config().prefix}.fields.${toKeySegment(this.field().id)}.action-button.tooltip`
@@ -79,6 +77,8 @@ export class PropertyFieldComponent {
 
         return Boolean(field.label) && !this.hideLabel() && field.type !== PropertyFieldType.Toggle;
     });
+
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
 
     asAttachmentField(): PropertyAttachmentField {
         return this.field() as PropertyAttachmentField;

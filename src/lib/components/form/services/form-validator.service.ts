@@ -8,28 +8,37 @@ import {
     FormFieldValidatorType
 } from '../models/form-field-validator.model';
 
+const SYNC_VALIDATED_TYPES: ReadonlySet<FormFieldType> = new Set([
+    FormFieldType.Checkbox,
+    FormFieldType.Date,
+    FormFieldType.Number,
+    FormFieldType.Radio,
+    FormFieldType.Select,
+    FormFieldType.Text,
+    FormFieldType.Textarea,
+    FormFieldType.TextVariable
+]);
+
 @Injectable({
     providedIn: 'root'
 })
 export class FormValidatorService {
+    getCustomValidators(field: FormField): ValidatorFn[] {
+        if (!SYNC_VALIDATED_TYPES.has(field.type)) {
+            return [];
+        }
+
+        return field.validators
+            .filter(validator => validator instanceof FormFieldCustomValidator)
+            .map(validator => validator.validatorFn);
+    }
+
     getFieldAsyncValidators(field: FormField): AsyncValidatorFn[] {
         return field.asyncValidators.map(v => v.asyncValidatorFn);
     }
 
     getFieldValidators(field: FormField): ValidatorFn[] {
-        switch (field.type) {
-            case FormFieldType.Text:
-            case FormFieldType.TextVariable:
-            case FormFieldType.Checkbox:
-            case FormFieldType.Date:
-            case FormFieldType.Number:
-            case FormFieldType.Radio:
-            case FormFieldType.Select:
-            case FormFieldType.Textarea:
-                return this.getSyncValidators(field.validators);
-            default:
-                return [];
-        }
+        return SYNC_VALIDATED_TYPES.has(field.type) ? this.getSyncValidators(field.validators) : [];
     }
 
     private getSyncValidators(textFieldValidator: FormFieldValidator[]): ValidatorFn[] {

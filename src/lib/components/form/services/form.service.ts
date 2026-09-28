@@ -10,7 +10,6 @@ import { FormField, FormFieldType, FormValue } from '../models/form-field.model'
 import { DateFormatService } from './date-format.service';
 import { FormValidatorService } from './form-validator.service';
 
-/** What a control holds until the consumer or the user gives it a value; a type missing here has no control. */
 const EMPTY_VALUES: Partial<Record<FormFieldType, unknown>> = {
     [FormFieldType.Autocomplete]: '',
     [FormFieldType.Checkbox]: false,
@@ -54,6 +53,14 @@ export class FormService {
         }
 
         return formGroup;
+    }
+
+    emptyValue(type: FormFieldType): unknown {
+        return EMPTY_VALUES[type];
+    }
+
+    getCustomValidator(field: FormField): ValidatorFn | null {
+        return Validators.compose(this.formValidatorService.getCustomValidators(field));
     }
 
     initFieldControl(field: FormField, initialValue?: unknown): FormControl | undefined {
@@ -191,7 +198,7 @@ export class FormService {
 
     private getValidators(field: FormField): ValidatorFn[] {
         return [
-            ...(field.isRequired ? [Validators.required] : []),
+            ...(field.isRequired === true ? [Validators.required] : []),
             ...this.formValidatorService.getFieldValidators(field),
             ...this.getTypeValidators(field)
         ];
