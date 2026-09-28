@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { queryAll, renderComponent } from '@testing/dom';
+import { buttonByName, queryAll, queryButton, renderComponent } from '@testing/dom';
 
 import { LoginProviderConfig } from '../../models/login.model';
 import { LoginProvidersComponent } from './login-providers.component';
@@ -33,12 +33,22 @@ describe('LoginProvidersComponent', () => {
         expect(buttons()).toHaveLength(2);
     });
 
+    it('names each provider button after its provider', async () => {
+        await render([
+            { id: 'google', authUrl: 'https://google' },
+            { id: 'microsoft', authUrl: 'https://microsoft' }
+        ]);
+
+        expect(queryButton(fixture, 'angular-components.login.provider.google')).not.toBeNull();
+        expect(queryButton(fixture, 'angular-components.login.provider.microsoft')).not.toBeNull();
+    });
+
     it('reports the provider whose button is used', async () => {
         const clicked = jest.fn();
         await render([{ id: 'facebook', authUrl: 'https://facebook' }]);
         fixture.componentInstance.providerClick.subscribe(clicked);
 
-        buttons()[0].click();
+        buttonByName(fixture, 'angular-components.login.provider.facebook').click();
 
         expect(clicked).toHaveBeenCalledWith({ id: 'facebook', authUrl: 'https://facebook' });
     });

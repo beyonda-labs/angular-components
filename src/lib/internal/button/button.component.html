@@ -9,7 +9,13 @@
         [style]="current.customStyles"
         [tooltip]="current.tooltip | translate"
     >
-        <button type="button" [class]="classes()" [disabled]="current.isDisabled" (click)="onClick()">
+        <button
+            type="button"
+            [attr.aria-label]="current.ariaLabel ? (current.ariaLabel | translate) : null"
+            [class]="classes()"
+            [disabled]="current.isDisabled"
+            (click)="onClick()"
+        >
             @if (current.icon) {
                 <fa-icon class="bey-button-icon" [class.me-2]="current.label" [icon]="current.icon"></fa-icon>
             }

@@ -55,6 +55,7 @@ export class HeaderComponent {
     );
     readonly menuToggleButton = new ButtonConfig({
         action: () => this.isMenuOpen.update(isOpen => !isOpen),
+        ariaLabel: 'angular-components.header.menu',
         customClass: 'bey-header-menu-toggle',
         icon: faEllipsis,
         tooltip: 'angular-components.header.menu',
@@ -88,6 +89,7 @@ export class HeaderComponent {
         options: { onRun?: () => void; tooltipPlacement?: TooltipPlacement } = {}
     ): ButtonConfig {
         const isIconOnly = action.type === HeaderActionType.Icon;
+        const label = this.resolveActionText(action, 'label');
         const run = action.action ?? ((): void => {});
 
         return new ButtonConfig({
@@ -95,10 +97,11 @@ export class HeaderComponent {
                 options.onRun?.();
                 run();
             },
+            ariaLabel: isIconOnly ? label : undefined,
             customClass: isIconOnly ? 'bey-header-action-icon' : undefined,
             icon: action.icon,
             isDisabled: action.disabled,
-            label: isIconOnly ? '' : this.resolveActionText(action, 'label'),
+            label: isIconOnly ? '' : label,
             tooltip: this.resolveActionText(action, 'tooltip'),
             tooltipPlacement: options.tooltipPlacement,
             type: this.toButtonType(action.type)

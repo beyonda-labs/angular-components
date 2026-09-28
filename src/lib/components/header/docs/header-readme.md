@@ -50,6 +50,10 @@ const header = new BeyHeaderConfig({
 A default text uses the key as a kebab-case segment: `saveDraft` reads `<prefix>.actions.save-draft.label`.
 A `label` or `tooltip` given in the config is used as it is.
 
+An `Icon` action does not show its label but is named by it: the same key a `Text` action would show becomes
+the button's `aria-label`, so switching the type never changes what a screen reader announces. The tooltip
+stays the visual hint. The overflow toggle is named `angular-components.header.menu`.
+
 An action with `subActions` never runs its own `action`: using it opens the panel. Picking a sub-action closes
 it, and so does Escape or a click outside.
 
