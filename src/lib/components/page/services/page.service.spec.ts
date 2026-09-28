@@ -6,12 +6,21 @@ import { TableColumn } from '../../table/models/table.model';
 import { PageBackendResponse, PageConfig, PageConfigParameters, PageHandle } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageViewMode } from '../models/page-categories.model';
+import { PageFormConfig } from '../models/page-form.model';
 import { PageHeaderConfig } from '../models/page-header.model';
 import { PageItem } from '../models/page-item.model';
 import { PageTableConfig } from '../models/page-table.model';
 import { PageService } from './page.service';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
+
+interface Team extends PageItem {
+    title: string;
+}
+
+interface TeamFormValue {
+    team: { title: string };
+}
 
 const ITEMS: PageItem[] = [
     { id: 1, actions: ['edit'] },
@@ -234,6 +243,45 @@ describe('PageService', () => {
             service.setViewMode(PageViewMode.Table);
             flush();
             expect(breadcrumbLabels()).toEqual(['demo.categories.root']);
+        });
+
+        it('takes a category form typed by its value and hands it to the category actions', () => {
+            const formConfig = new PageFormConfig<TeamFormValue, Team>({
+                buildSections: () => [],
+                prefix: 'demo.team-form',
+                toFormValue: team => (team ? { team: { title: team.title } } : undefined),
+                toItem: value => ({ title: value.team.title })
+            });
+            service.setConfig(
+                new PageConfig<unknown, PageItem, Team, TeamFormValue>({
+                    baseUrl: '/items',
+                    headerConfig: new PageHeaderConfig({
+                        actions: [
+                            new PageAction({
+                                key: PageStandardAction.CreateCategory,
+                                scope: PageActionScope.Global,
+                                zone: PageActionZone.Right
+                            })
+                        ]
+                    }),
+                    prefix: 'demo',
+                    tableConfig: new PageTableConfig({
+                        categoriesConfig: new PageCategoriesConfig<Team, TeamFormValue>({ formConfig }),
+                        columns: [],
+                        loadRow: () => []
+                    })
+                })
+            );
+            pageActionsService.buildHeaderActions.mockImplementation((actions, _zone, execute) =>
+                actions.map(action => ({ action: () => execute(action) }) as never)
+            );
+            flush();
+
+            service.headerConfig()?.rightActions[0].action?.();
+            const [action, context] = pageActionsService.executeAction.mock.calls[0];
+
+            expect(action.key).toBe(PageStandardAction.CreateCategory);
+            expect(context.config.tableConfig?.categoriesConfig?.formConfig).toBe(formConfig);
         });
     });
 

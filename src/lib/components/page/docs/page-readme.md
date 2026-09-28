@@ -62,14 +62,17 @@ into a category, `selected()` and `viewMode()` read the state.
 
 ## Row types
 
-`BeyPageConfig<TValue, TItem, TCategory>` is generic over the form value, the rows and the category rows. Every
-callback that sees a row sees its type: `loadRow`, `onSelectionChange`, the action `handler`, `buildSections`,
-`toFormValue`, `afterCreate`, `onDataLoaded` and the handle, so a typed page needs no cast. `TItem` and
-`TCategory` extend `BeyPageItem`, `TCategory` defaults to `TItem` and the rows default to `BeyPageItem`. The
-rows are typed, not checked: the page trusts the backend to answer with them. A nested config infers its types
+`BeyPageConfig<TValue, TItem, TCategory, TCategoryValue>` is generic over the form value, the rows, the
+category rows and the categories form value. Every callback that sees a row or a form value sees its type:
+`loadRow`, `onSelectionChange`, the action `handler`, `buildSections`, `toFormValue`, `toItem`, `afterCreate`,
+`onDataLoaded` and the handle, so a typed page needs no cast. `TItem` and `TCategory` extend `BeyPageItem`,
+`TCategory` defaults to `TItem`, the rows default to `BeyPageItem` and both form values to `unknown`. The rows
+are typed, not checked: the page trusts the backend to answer with them. A nested config infers its types
 from the page, except a form config, whose value would be inferred from `toFormValue`: it takes them
-explicitly, `new BeyPageFormConfig<UserFormValue, User>`, and the categories form keeps `unknown` as its value,
-`new BeyPageFormConfig<unknown, Folder>`.
+explicitly, `new BeyPageFormConfig<UserFormValue, User>`. The categories form works the same way,
+`new BeyPageFormConfig<FolderFormValue, Folder>`, and carries its value up through
+`BeyPageCategoriesConfig<Folder, FolderFormValue>` and `BeyPageTableConfig<User, Folder, FolderFormValue>`, which
+infer it from that form, to `BeyPageConfig<UserFormValue, User, Folder, FolderFormValue>`.
 
 ## Backend contract
 
