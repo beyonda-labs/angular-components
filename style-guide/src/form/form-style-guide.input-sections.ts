@@ -1,6 +1,8 @@
 import {
     BeyFormDateField,
+    BeyFormFieldLengthValidator,
     BeyFormFieldPatternValidator,
+    BeyFormFieldValidatorType,
     BeyFormInfoField,
     BeyFormNumberField,
     BeyFormPasswordField,
@@ -62,7 +64,8 @@ export function buildInputSections(): BeyFormSection[] {
                     fields: [
                         new BeyFormPasswordField({
                             key: 'password1',
-                            columns: 6
+                            columns: 6,
+                            validators: [new BeyFormFieldLengthValidator(8, BeyFormFieldValidatorType.MinLength)]
                         }),
                         new BeyFormPasswordField({
                             key: 'password2',

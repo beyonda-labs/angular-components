@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { renderComponent, settle } from '@testing/dom';
 
@@ -10,8 +10,11 @@ describe('FormChipsFieldComponent', () => {
     let fixture: ComponentFixture<FormChipsFieldComponent>;
     let control: FormControl<string[] | null>;
 
-    async function render(field: FormChipsField = new FormChipsField({ key: 'tags' })): Promise<void> {
-        control = new FormControl<string[] | null>([]);
+    async function render(
+        field: FormChipsField = new FormChipsField({ key: 'tags' }),
+        validators = Validators.nullValidator
+    ): Promise<void> {
+        control = new FormControl<string[] | null>([], validators);
         fixture = await renderComponent(FormChipsFieldComponent, { control, field, prefix: 'demo.person.tags' });
     }
 
@@ -51,5 +54,17 @@ describe('FormChipsFieldComponent', () => {
         await typeChip('b');
 
         expect(control.value).toEqual(['a', 'a']);
+    });
+
+    it('flags a control that rejects its chips once the input is left', async () => {
+        await render(new FormChipsField({ key: 'tags' }), Validators.required);
+        const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+
+        expect(fixture.nativeElement.querySelector('[aria-invalid="true"]')).toBeNull();
+
+        input.dispatchEvent(new Event('blur'));
+        await settle(fixture);
+
+        expect(fixture.nativeElement.querySelector('[aria-invalid="true"]')).not.toBeNull();
     });
 });

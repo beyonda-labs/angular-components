@@ -59,6 +59,11 @@ export class FormChipsFieldComponent {
         return maxItems !== undefined && this.chips().length >= maxItems;
     }
 
+    onBlur(): void {
+        this.addChip();
+        this.control().markAsTouched();
+    }
+
     onInput(event: Event): void {
         this.inputValue.set((event.target as HTMLInputElement).value);
     }

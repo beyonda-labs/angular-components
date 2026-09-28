@@ -1,4 +1,5 @@
 import { FormField, FormFieldBaseParameters, FormFieldType } from '../form-field.model';
+import { FormFieldCustomValidator } from '../form-field-validator.model';
 
 export class FormCheckboxField extends FormField {
     isSwitch: boolean;
@@ -12,4 +13,5 @@ export class FormCheckboxField extends FormField {
 
 export interface FormCheckboxFieldParameters extends FormFieldBaseParameters {
     isSwitch?: boolean;
+    validators?: FormFieldCustomValidator[];
 }

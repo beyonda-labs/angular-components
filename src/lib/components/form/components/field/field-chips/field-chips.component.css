@@ -18,6 +18,10 @@
     cursor: default;
 }
 
+.bey-form-chips.is-invalid {
+    border-color: var(--bey-danger);
+}
+
 .bey-form-chips-chip {
     align-items: center;
     background-color: var(--bey-form-chips-chip-bg);
