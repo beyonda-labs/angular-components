@@ -36,16 +36,16 @@ readonly config = new BeyPropertiesMenuConfig({
 
 ## BeyPropertiesMenuConfig
 
-| Field         | Required | Meaning                                                                          |
-| ------------- | -------- | -------------------------------------------------------------------------------- |
-| `prefix`      | yes      | i18n prefix the default labels resolve from                                      |
-| `tabs`        | no       | `BeyPropertyTab[]`, each with its `groups`; a tab may carry `addLabel`           |
-| `activeTabId` | no       | Open tab, defaults to the first visible one; see Replacing the config            |
-| `title`       | no       | Header title key, defaults to `<prefix>.title`                                   |
-| `subtitle`    | no       | Header subtitle key                                                              |
-| `icon`        | no       | Header icon                                                                      |
-| `embedded`    | no       | Drops the header and the card chrome, for a panel that already sits in a sidebar |
-| `on…`         | no       | The callbacks below                                                              |
+| Field         | Required | Meaning                                                                                                               |
+| ------------- | -------- | --------------------------------------------------------------------------------------------------------------------- |
+| `prefix`      | yes      | i18n prefix the default labels resolve from                                                                           |
+| `tabs`        | no       | `BeyPropertyTab[]`, each with `label`, `labelParameters` and its `groups`; a tab may carry `addLabel`                 |
+| `activeTabId` | no       | Open tab, defaults to the first visible one; opening a tab scrolls the body back to the top; see Replacing the config |
+| `title`       | no       | Header title key, defaults to `<prefix>.title`                                                                        |
+| `subtitle`    | no       | Header subtitle key                                                                                                   |
+| `icon`        | no       | Header icon                                                                                                           |
+| `embedded`    | no       | Drops the header and the card chrome, for a panel that already sits in a sidebar                                      |
+| `on…`         | no       | The callbacks below                                                                                                   |
 
 `[variables]` is the catalogue of `BeyPropertyVariable` the text fields offer when `acceptsVariable` is set.
 The select and attachment fields carry their own `variables`, since which variable fits them is domain knowledge.
@@ -93,7 +93,8 @@ the content no longer lists, a selected node that is in no tree. Whenever the se
 config marks another node `active` or because the kept one disappeared, every ancestor of the new one opens so
 it is visible, without calling `onTreeNodeToggle`; from then on those ancestors are kept like any other node.
 
-Field values are not kept: the consumer owns the model, and every new config replaces them.
+Field values and labels are not kept: the consumer owns the model, and every new config replaces them, so a
+change of `labelParameters` alone relabels its tab, group, card or node.
 
 ## Labels
 
@@ -103,7 +104,7 @@ id is a kebab-case segment (`fontFamily` reads `<prefix>.fields.font-family.labe
 explicitly, it is used as the key as is. `subtitle`, `description`, `addLabel` and option labels have no
 default and go through the translate pipe only when present, so a literal without a matching key shows as is.
 
-A group, a tab of a `BeyPropertyTabsContent`, a list card and a tree node also take `labelParameters`, the
+A tab, a group, a tab of a `BeyPropertyTabsContent`, a list card and a tree node also take `labelParameters`, the
 interpolation parameters of their label key. With `"page": "Page {{number}}"`, a node with
 `label: 'myApp.structure.page'` and `labelParameters: { number: 2 }` reads "Page 2" and follows a language
 change on its own, so the consumer never translates a label itself.
