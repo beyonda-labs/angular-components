@@ -24,11 +24,7 @@ describe('FormValidatorService', () => {
         service = TestBed.inject(FormValidatorService);
     });
 
-    it('should create', () => {
-        expect(service).toBeTruthy();
-    });
-
-    it('should return sync validators for text field', () => {
+    it('returns one sync validator per length and pattern rule', () => {
         const validators = service.getFieldValidators(
             new FormTextField({
                 key: 'text1',
@@ -42,7 +38,7 @@ describe('FormValidatorService', () => {
         expect(validators.length).toBe(2);
     });
 
-    it('should support email and url validators', () => {
+    it('returns one validator per email and url rule', () => {
         const validators = service.getFieldValidators(
             new FormTextField({
                 key: 'text2',
@@ -53,7 +49,7 @@ describe('FormValidatorService', () => {
         expect(validators.length).toBe(2);
     });
 
-    it('should support custom validator', () => {
+    it('returns a custom validator that runs its function on the control', () => {
         const validators = service.getFieldValidators(
             new FormTextField({
                 key: 'text3',
@@ -79,7 +75,7 @@ describe('FormValidatorService', () => {
         expect(validators).toEqual([unique]);
     });
 
-    it('should return async validators', () => {
+    it('returns the async validators of a field', () => {
         const asyncValidators = service.getFieldAsyncValidators(
             new FormTextField({
                 key: 'text4',

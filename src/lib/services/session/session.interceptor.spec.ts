@@ -57,7 +57,7 @@ describe('sessionInterceptor', () => {
     }
 
     describe('authorization header', () => {
-        it('should add Authorization header when token exists', done => {
+        it('adds the Authorization header when there is a token', done => {
             sessionService.getToken.mockReturnValue('my-jwt');
             next = jest.fn(request => {
                 expect(request.headers.get('Authorization')).toBe('Bearer my-jwt');
@@ -73,7 +73,7 @@ describe('sessionInterceptor', () => {
             });
         });
 
-        it('should not add Authorization header when no token', done => {
+        it('does not add the Authorization header when there is no token', done => {
             sessionService.getToken.mockReturnValue(null);
             next = jest.fn(request => {
                 expect(request.headers.has('Authorization')).toBe(false);
@@ -90,7 +90,7 @@ describe('sessionInterceptor', () => {
         });
     });
 
-    it('should not touch the session on non-401 errors', () => {
+    it('leaves the session alone on errors other than 401', () => {
         sessionService.getToken.mockReturnValue('valid-token');
         next = jest.fn(() => throwError(() => new HttpErrorResponse({ status: 500 })));
 

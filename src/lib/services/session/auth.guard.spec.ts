@@ -45,7 +45,7 @@ describe('authGuard', () => {
     });
 
     describe('authentication check', () => {
-        it('should redirect to loginRoute when not authenticated', () => {
+        it('redirects to the login route when not authenticated', () => {
             sessionService.isAuthenticated.mockReturnValue(false);
 
             runGuard('dashboard');
@@ -53,7 +53,7 @@ describe('authGuard', () => {
             expect(router.createUrlTree).toHaveBeenCalledWith(['/login']);
         });
 
-        it('should redirect to loginRoute when authenticated but no user data', () => {
+        it('redirects to the login route when authenticated without a user', () => {
             sessionService.isAuthenticated.mockReturnValue(true);
             sessionService.getUser.mockReturnValue(null);
 
@@ -64,7 +64,7 @@ describe('authGuard', () => {
     });
 
     describe('authorization check', () => {
-        it('should allow access when route is in allowedPaths', () => {
+        it('allows a route listed in allowedPaths', () => {
             sessionService.isAuthenticated.mockReturnValue(true);
             sessionService.getUser.mockReturnValue(mockUser);
 
@@ -73,7 +73,7 @@ describe('authGuard', () => {
             expect(result).toBe(true);
         });
 
-        it('should allow access for sub-paths of allowedPaths', () => {
+        it('allows the sub-paths of a route in allowedPaths', () => {
             sessionService.isAuthenticated.mockReturnValue(true);
             sessionService.getUser.mockReturnValue(mockUser);
 
@@ -82,7 +82,7 @@ describe('authGuard', () => {
             expect(result).toBe(true);
         });
 
-        it('should redirect to redirectPath when route is not in allowedPaths', () => {
+        it('redirects to redirectPath when the route is not in allowedPaths', () => {
             sessionService.isAuthenticated.mockReturnValue(true);
             sessionService.getUser.mockReturnValue(mockUser);
 
@@ -93,7 +93,7 @@ describe('authGuard', () => {
     });
 
     describe('custom config', () => {
-        it('should use custom loginRoute from config', () => {
+        it('redirects to the login route given in the config', () => {
             TestBed.resetTestingModule();
             TestBed.configureTestingModule({
                 providers: [

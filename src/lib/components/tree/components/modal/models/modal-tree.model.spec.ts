@@ -2,43 +2,43 @@ import { TreeNode } from '../../../models/tree.model';
 import { ModalTreeConfig, ModalTreeSize } from './modal-tree.model';
 
 describe('ModalTreeConfig', () => {
-    it('should expand every node that has children by default, so the full hierarchy is visible upfront', () => {
+    it('expands every node that has children by default', () => {
         const config = buildConfig();
 
         expect(config.treeConfig.expandedKeys).toEqual(['folder-1', 'sub-folder-1']);
     });
 
-    it('should keep an explicit expandedKeys override instead of computing one', () => {
+    it('keeps an explicit expandedKeys override instead of computing one', () => {
         const config = buildConfig({ expandedKeys: [] });
 
         expect(config.treeConfig.expandedKeys).toEqual([]);
     });
 
-    it('should default the size to medium', () => {
+    it('defaults the size to medium', () => {
         const config = buildConfig();
 
         expect(config.size).toBe(ModalTreeSize.Medium);
     });
 
-    it('should keep the provided size', () => {
+    it('keeps the provided size', () => {
         const config = buildConfig({ size: ModalTreeSize.Large });
 
         expect(config.size).toBe(ModalTreeSize.Large);
     });
 
-    it('should build the title key from the prefix when no title is provided', () => {
+    it('builds the title key from the prefix when no title is provided', () => {
         const config = buildConfig();
 
         expect(config.title).toBe('test.move.title');
     });
 
-    it('should keep the provided title', () => {
+    it('keeps the provided title', () => {
         const config = buildConfig({ title: 'custom.title' });
 
         expect(config.title).toBe('custom.title');
     });
 
-    it('should hand the initial selection and the node prefix to the tree', () => {
+    it('hands the initial selection and the node prefix to the tree', () => {
         const config = buildConfig({ selectedKey: 'leaf-1' });
 
         expect(config.treeConfig.selectedKey).toBe('leaf-1');

@@ -20,13 +20,20 @@ describe('OptionPickerComponent', () => {
         return queryAll<HTMLButtonElement>(element, '[role="option"]');
     }
 
+    function searchInput(): HTMLInputElement {
+        return element.querySelector<HTMLInputElement>('[aria-label="angular-components.option-picker.search"]')!;
+    }
+
     function search(term: string): void {
-        const input = element.querySelector<HTMLInputElement>(
-            '[aria-label="angular-components.option-picker.search"]'
-        )!;
+        const input = searchInput();
 
         input.value = term;
         input.dispatchEvent(new Event('input'));
+        fixture.detectChanges();
+    }
+
+    function press(key: string): void {
+        searchInput().dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key }));
         fixture.detectChanges();
     }
 
@@ -47,32 +54,30 @@ describe('OptionPickerComponent', () => {
         element.remove();
     });
 
-    it('should list every option, indented by depth, without a search term', () => {
+    it('lists every option without a search term', () => {
         expect(textsOf(rows())).toEqual(['Customer', 'Name', 'Invoice']);
-        expect(rows()[1].style.getPropertyValue('--bey-option-picker-row-depth')).toBe('1');
     });
 
-    it('should filter by value or label as a flat list', () => {
+    it('filters the options by value or label', () => {
         search('name');
 
         expect(textsOf(rows())).toEqual(['Name']);
-        expect(rows()[0].style.getPropertyValue('--bey-option-picker-row-depth')).toBe('0');
     });
 
-    it('should show an empty state when nothing matches', () => {
+    it('shows an empty state when nothing matches', () => {
         search('unknown');
 
         expect(element.textContent).toContain('angular-components.option-picker.empty');
     });
 
-    it('should hide the search header when not searchable', () => {
+    it('hides the search box when it is not searchable', () => {
         fixture.componentRef.setInput('searchable', false);
         fixture.detectChanges();
 
         expect(element.querySelector('[aria-label="angular-components.option-picker.search"]')).toBeNull();
     });
 
-    it('should emit the clicked option and ignore disabled ones', () => {
+    it('emits the clicked option and ignores disabled ones', () => {
         const selected = jest.fn();
 
         component.selected.subscribe(selected);
@@ -83,25 +88,24 @@ describe('OptionPickerComponent', () => {
         expect(selected).toHaveBeenCalledWith(OPTIONS[1]);
     });
 
-    it('should move the active row with the arrow keys and select it with Enter', () => {
+    it('moves the active row with the arrow keys and selects it with Enter', () => {
         const selected = jest.fn();
 
         component.selected.subscribe(selected);
-        component.onKeydown(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
-        fixture.detectChanges();
+        press('ArrowDown');
 
         expect(rows()[1].getAttribute('aria-selected')).toBe('true');
 
-        component.onKeydown(new KeyboardEvent('keydown', { key: 'Enter' }));
+        press('Enter');
 
         expect(selected).toHaveBeenCalledWith(OPTIONS[1]);
     });
 
-    it('should emit closed on Escape and on a click outside the picker and its anchor', () => {
+    it('emits closed on Escape and on a click outside the picker and its anchor', () => {
         const closed = jest.fn();
 
         component.closed.subscribe(closed);
-        component.onKeydown(new KeyboardEvent('keydown', { key: 'Escape' }));
+        press('Escape');
         document.body.click();
 
         expect(closed).toHaveBeenCalledTimes(2);

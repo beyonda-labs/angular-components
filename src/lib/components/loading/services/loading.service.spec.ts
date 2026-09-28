@@ -13,28 +13,24 @@ describe('LoadingService', () => {
         service = TestBed.inject(LoadingService);
     });
 
-    it('should create', () => {
-        expect(service).toBeTruthy();
-    });
-
-    it('should not be loading initially', () => {
+    it('is not loading initially', () => {
         expect(service.isLoading()).toBe(false);
     });
 
-    it('should be loading after show()', () => {
+    it('is loading after show()', () => {
         service.show();
 
         expect(service.isLoading()).toBe(true);
     });
 
-    it('should stop loading after matching hide()', () => {
+    it('stops loading after a matching hide()', () => {
         service.show();
         service.hide();
 
         expect(service.isLoading()).toBe(false);
     });
 
-    it('should remain loading when show() is called more times than hide()', () => {
+    it('keeps loading while show() has been called more times than hide()', () => {
         service.show();
         service.show();
         service.hide();
@@ -42,7 +38,7 @@ describe('LoadingService', () => {
         expect(service.isLoading()).toBe(true);
     });
 
-    it('should stop loading when all show() calls are matched by hide()', () => {
+    it('stops loading once every show() is matched by a hide()', () => {
         service.show();
         service.show();
         service.show();
@@ -53,14 +49,14 @@ describe('LoadingService', () => {
         expect(service.isLoading()).toBe(false);
     });
 
-    it('should not go below zero when hide() is called without show()', () => {
+    it('stays idle when hide() is called without show()', () => {
         service.hide();
         service.hide();
 
         expect(service.isLoading()).toBe(false);
     });
 
-    it('should not go below zero when hide() is called more times than show()', () => {
+    it('does not go below zero when hide() is called more times than show()', () => {
         service.show();
         service.hide();
         service.hide();
@@ -73,7 +69,7 @@ describe('LoadingService', () => {
         expect(service.isLoading()).toBe(true);
     });
 
-    it('should reset to zero regardless of current count', () => {
+    it('stops loading on reset() whatever the count', () => {
         service.show();
         service.show();
         service.show();
@@ -82,7 +78,7 @@ describe('LoadingService', () => {
         expect(service.isLoading()).toBe(false);
     });
 
-    it('should work normally after reset()', () => {
+    it('counts from zero again after reset()', () => {
         service.show();
         service.show();
         service.reset();
