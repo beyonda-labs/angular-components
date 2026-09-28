@@ -56,15 +56,18 @@ when it was opened. The modal methods return a `BsModalRef` whose `hide()` does 
 
 A `BeyQueryScope` is a fixture or an element.
 
-| Function                                 | Returns                                                                     |
-| ---------------------------------------- | --------------------------------------------------------------------------- |
-| `beyRenderComponent(component, inputs?)` | The fixture, with the inputs set and settled                                |
-| `beySettle(fixture)`                     | Once `detectChanges()`, `whenStable()` and `detectChanges()` again have run |
-| `beyButtonByName(scope, name)`           | The button or `role="button"` named `name` by text or `aria-label`; throws  |
-| `beyQueryButton(scope, name)`            | The same, or `null`                                                         |
-| `beyQueryAll(scope, selector)`           | Every match, as an array                                                    |
-| `beyTextsOf(elements)`                   | Their trimmed texts                                                         |
-| `beyHostOf(scope)`                       | The element of a fixture, or the element itself                             |
+| Function                                 | Returns                                                                                                               |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `beyRenderComponent(component, inputs?)` | The fixture, with the inputs set and settled                                                                          |
+| `beySettle(fixture)`                     | Once `detectChanges()`, `whenStable()` and `detectChanges()` again have run                                           |
+| `beyButtonByName(scope, name)`           | The button or `role="button"` named `name` by text or `aria-label`; throws                                            |
+| `beyQueryButton(scope, name)`            | The same, or `null`                                                                                                   |
+| `beyControlByName(scope, name)`          | The input, select, textarea or grouping role named `name` by `aria-labelledby`, `aria-label` or its `<label>`; throws |
+| `beyQueryControl(scope, name)`           | The same, or `null`                                                                                                   |
+| `beyAccessibleName(element)`             | The name `beyControlByName` matches against                                                                           |
+| `beyQueryAll(scope, selector)`           | Every match, as an array                                                                                              |
+| `beyTextsOf(elements)`                   | Their trimmed texts                                                                                                   |
+| `beyHostOf(scope)`                       | The element of a fixture, or the element itself                                                                       |
 
 ## Usage
 
