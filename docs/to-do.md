@@ -211,13 +211,17 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [x] `provideBeyApp` and the style guide loading its own translations
 -   [x] The categories form value typed by a fourth generic on `BeyPageConfig`, `BeyPageTableConfig` and
         `BeyPageCategoriesConfig`
--   [ ] `labelParameters` on the top-level tabs of `properties-menu` needs the same field on `BeyTab` first
+-   [x] `labelParameters` on `BeyTab` and on the top-level tabs of `properties-menu`
 -   [x] `validators` on autocomplete, chips, file and password fields, typed as custom validators where the value is
         not text
 -   [x] `ariaLabel` on `ButtonConfig`, so icon-only header actions, the header overflow toggle and the login
         providers have an accessible name
--   [ ] The compact PDF toolbar keeps native buttons: no `bey-button` variant is a bordered, fixed-size icon
-        square with the toolbar's colours
+-   [x] The compact PDF toolbar uses `bey-button`s with `ButtonType.IconOutline`, a bordered, fixed-size icon square
+        with the toolbar's colours
+-   [ ] The other `bey-button` types carry Bootstrap's `rounded`, an `!important` radius no token feeds, so they
+        ignore a consumer's `--bey-radius-sm`
+-   [ ] `properties-menu` fields put the untranslated label key in `aria-label` (`text.label`), and the visible
+        `<label for>` points at an id the input does not have
 -   [x] `isRouteBreadcrumbEnabled` turns the route breadcrumb off
 -   [x] `BeyAppLayoutConfig` keeps the footer fields as its own, so a spread copies it whole, and `icon` is optional
         on the app-layout actions
