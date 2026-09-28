@@ -26,7 +26,6 @@ export class ModalTreeDialogComponent implements OnInit {
         type: ButtonType.Secondary
     });
     config!: ModalTreeConfig;
-    readonly selectedKey = signal<string>('');
     readonly confirmButton = computed(
         () =>
             new ButtonConfig({
@@ -37,6 +36,7 @@ export class ModalTreeDialogComponent implements OnInit {
             })
     );
     readonly expandedKeys = signal<string[]>([]);
+    readonly selectedKey = signal<string>('');
     readonly titleIcon = faFolderTree;
     readonly treeConfig = computed<TreeConfig>(
         () =>

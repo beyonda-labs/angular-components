@@ -20,7 +20,7 @@ import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { toKeySegment } from '../../internal/i18n/key-segment';
+import { toKeySegment } from '../../utilities/key-segment';
 import { Tab, TabsConfig, TabsVariant } from './models/tabs.model';
 
 const OVERFLOW_TRIGGER_ESTIMATED_WIDTH = 40;
@@ -41,8 +41,8 @@ export class TabsComponent implements AfterViewInit {
     readonly isOverflowMenuOpen = signal(false);
     readonly isSegmented = computed(() => this.config().variant === TabsVariant.Segmented);
     readonly overflowIcon = faEllipsis;
-    readonly visibleCount = linkedSignal(() => this.config().tabs.length);
     readonly overflowTabs = computed(() => this.config().tabs.slice(this.visibleCount()));
+    readonly visibleCount = linkedSignal(() => this.config().tabs.length);
     readonly visibleTabs = computed(() => this.config().tabs.slice(0, this.visibleCount()));
 
     private cachedTabWidths: number[] = [];

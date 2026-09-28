@@ -5,7 +5,7 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { toKeySegment } from '../../internal/i18n/key-segment';
+import { toKeySegment } from '../../utilities/key-segment';
 import { TreeConfig, TreeNode } from './models/tree.model';
 
 const BASE_INDENT_REM = 0.6;

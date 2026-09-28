@@ -10,19 +10,15 @@ const STORAGE_KEY = 'bey-left-menu-expanded';
 })
 export class AppLayoutService {
     private readonly _activeActionKey = signal<string | null>(null);
-    readonly activeActionKey = this._activeActionKey.asReadonly();
-
     private readonly _breadcrumb = signal<AppLayoutBreadcrumbItem[]>([]);
-    readonly breadcrumb = this._breadcrumb.asReadonly();
-
     private readonly _expanded = signal(loadExpanded());
-
-    readonly expanded = this._expanded.asReadonly();
-
     private readonly breadcrumbClickSubject = new Subject<number>();
-    readonly onBreadcrumbClick$: Observable<number> = this.breadcrumbClickSubject.asObservable();
-
     private readonly menuClickSubject = new Subject<string>();
+
+    readonly activeActionKey = this._activeActionKey.asReadonly();
+    readonly breadcrumb = this._breadcrumb.asReadonly();
+    readonly expanded = this._expanded.asReadonly();
+    readonly onBreadcrumbClick$: Observable<number> = this.breadcrumbClickSubject.asObservable();
     readonly onMenuClick$: Observable<string> = this.menuClickSubject.asObservable();
 
     activeMenuAction(key: string): void {

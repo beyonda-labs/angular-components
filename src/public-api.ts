@@ -21,12 +21,17 @@ export * from './lib/components/table/public-api';
 export * from './lib/components/toast/public-api';
 
 /* product — tied to one product, stable only by agreement */
+export * from './lib/components/file-preview/public-api';
 export * from './lib/components/page/public-api';
 export * from './lib/components/pdf-viewer/public-api';
 export * from './lib/components/properties-menu/public-api';
 
 /* services */
+export * from './lib/services/app/public-api';
 export * from './lib/services/environment/public-api';
 export * from './lib/services/http/public-api';
 export * from './lib/services/session/public-api';
 export * from './lib/services/theme/public-api';
+
+/* utilities — plain functions a consumer shares with the library */
+export * from './lib/utilities/public-api';
