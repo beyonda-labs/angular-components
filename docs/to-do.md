@@ -209,19 +209,18 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [x] `properties-menu` keeps the user's state across config replacements, and labels take translation parameters
 -   [x] Form rules for `isRequired`, signal rules and validators, and option fields that drop an unlisted value
 -   [x] `provideBeyApp` and the style guide loading its own translations
--   [ ] The categories form value is still `unknown`: typing it needs a fourth generic on `BeyPageConfig` and
-        `BeyPageTableConfig`
+-   [x] The categories form value typed by a fourth generic on `BeyPageConfig`, `BeyPageTableConfig` and
+        `BeyPageCategoriesConfig`
 -   [ ] `labelParameters` on the top-level tabs of `properties-menu` needs the same field on `BeyTab` first
--   [ ] `validators` on autocomplete, chips, file and password fields are ignored without a warning
--   [ ] `ButtonConfig` has no `ariaLabel`, so an icon-only `bey-button` has no accessible name; the compact PDF
-        toolbar uses native buttons for that reason
--   [ ] Icon-only header actions pass an empty label to `bey-button`, so the editor's move, duplicate and delete
-        buttons have no accessible name (same fix as the `ariaLabel` item above)
--   [ ] `app-layout` has no way to turn the route breadcrumb off: the front and the demo clear it in
-        `onRouteActivated`, so every activation builds it and wipes it
--   [ ] `BeyAppLayoutConfig` keeps `iconSrc`, `productName`, `orgName`, `privacyUrl` and `termsUrl` only inside
-        `footerConfig`, so copying a config means spreading them back; and `BeyAppLayoutTopAction` makes `icon`
-        required where `BeyLeftMenuAction` has it optional
+-   [x] `validators` on autocomplete, chips, file and password fields, typed as custom validators where the value is
+        not text
+-   [x] `ariaLabel` on `ButtonConfig`, so icon-only header actions, the header overflow toggle and the login
+        providers have an accessible name
+-   [ ] The compact PDF toolbar keeps native buttons: no `bey-button` variant is a bordered, fixed-size icon
+        square with the toolbar's colours
+-   [x] `isRouteBreadcrumbEnabled` turns the route breadcrumb off
+-   [x] `BeyAppLayoutConfig` keeps the footer fields as its own, so a spread copies it whole, and `icon` is optional
+        on the app-layout actions
 
 ---
 
