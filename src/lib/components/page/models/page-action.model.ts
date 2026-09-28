@@ -6,7 +6,8 @@ import { PageItem } from './page-item.model';
 export enum PageActionScope {
     Global = 'global',
     Group = 'group',
-    Item = 'item'
+    Item = 'item',
+    Single = 'single'
 }
 
 export enum PageActionZone {
@@ -27,19 +28,19 @@ export enum PageStandardAction {
     RestoreTrashItem = 'restore-trash-item'
 }
 
-export class PageAction {
+export class PageAction<TItem extends PageItem = PageItem> {
     key: string;
     scope: PageActionScope;
     type: HeaderActionType;
     zone: PageActionZone;
 
-    handler?: (items?: PageItem[]) => void;
+    handler?: (items: TItem[]) => void;
     icon?: IconDefinition;
     label?: string;
-    subActions?: PageAction[];
+    subActions?: PageAction<TItem>[];
     tooltip?: string;
 
-    constructor({ key, scope, type, zone, handler, icon, label, tooltip, subActions }: PageActionParameters) {
+    constructor({ handler, icon, key, label, scope, subActions, tooltip, type, zone }: PageActionParameters<TItem>) {
         this.handler = handler;
         this.icon = icon;
         this.key = key;
@@ -52,15 +53,15 @@ export class PageAction {
     }
 }
 
-export interface PageActionParameters {
+export interface PageActionParameters<TItem extends PageItem = PageItem> {
     key: string;
     scope: PageActionScope;
     zone: PageActionZone;
 
-    handler?: (items?: PageItem[]) => void;
+    handler?: (items: TItem[]) => void;
     icon?: IconDefinition;
     label?: string;
-    subActions?: PageAction[];
+    subActions?: PageAction<TItem>[];
     tooltip?: string;
     type?: HeaderActionType;
 }

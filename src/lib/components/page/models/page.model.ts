@@ -5,39 +5,39 @@ import { PageItem } from './page-item.model';
 import { PageSearch } from './page-search.model';
 import { PageTableConfig } from './page-table.model';
 
-export interface PageBackendResponse {
+export interface PageBackendResponse<TRow extends PageItem = PageItem> {
     globalActions: string[];
-    results: PageItem[];
+    results: TRow[];
 
     search?: PageSearch;
 }
 
-export interface PageHandle {
-    openCategory(item: PageItem): void;
+export interface PageHandle<TItem extends PageItem = PageItem, TCategory extends PageItem = TItem> {
+    openCategory(category: TCategory): void;
     refresh(): void;
-    selected(): PageItem[];
+    selected(): (TItem | TCategory)[];
     viewMode(): PageViewMode;
 }
 
-export class PageConfig<TValue = unknown> {
+export class PageConfig<TValue = unknown, TItem extends PageItem = PageItem, TCategory extends PageItem = TItem> {
     prefix: string;
 
     baseUrl?: string;
-    formConfig?: PageFormConfig<TValue>;
-    headerConfig?: PageHeaderConfig;
-    onDataLoaded?: (response: PageBackendResponse) => void;
-    onReady?: (handle: PageHandle) => void;
-    tableConfig?: PageTableConfig;
+    formConfig?: PageFormConfig<TValue, TItem>;
+    headerConfig?: PageHeaderConfig<TItem>;
+    onDataLoaded?: (response: PageBackendResponse<TItem | TCategory>) => void;
+    onReady?: (handle: PageHandle<TItem, TCategory>) => void;
+    tableConfig?: PageTableConfig<TItem, TCategory>;
 
     constructor({
-        prefix,
         baseUrl,
         formConfig,
         headerConfig,
         onDataLoaded,
         onReady,
+        prefix,
         tableConfig
-    }: PageConfigParameters<TValue>) {
+    }: PageConfigParameters<TValue, TItem, TCategory>) {
         this.baseUrl = baseUrl;
         this.formConfig = formConfig;
         this.headerConfig = headerConfig;
@@ -48,13 +48,17 @@ export class PageConfig<TValue = unknown> {
     }
 }
 
-export interface PageConfigParameters<TValue = unknown> {
+export interface PageConfigParameters<
+    TValue = unknown,
+    TItem extends PageItem = PageItem,
+    TCategory extends PageItem = TItem
+> {
     prefix: string;
 
     baseUrl?: string;
-    formConfig?: PageFormConfig<TValue>;
-    headerConfig?: PageHeaderConfig;
-    onDataLoaded?: (response: PageBackendResponse) => void;
-    onReady?: (handle: PageHandle) => void;
-    tableConfig?: PageTableConfig;
+    formConfig?: PageFormConfig<TValue, TItem>;
+    headerConfig?: PageHeaderConfig<TItem>;
+    onDataLoaded?: (response: PageBackendResponse<TItem | TCategory>) => void;
+    onReady?: (handle: PageHandle<TItem, TCategory>) => void;
+    tableConfig?: PageTableConfig<TItem, TCategory>;
 }

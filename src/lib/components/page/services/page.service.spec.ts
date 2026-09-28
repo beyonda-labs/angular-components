@@ -174,7 +174,8 @@ describe('PageService', () => {
         expect(service.pageSearch().page).toBe(1);
     });
 
-    it('offers the header actions the backend and the selection allow', () => {
+    it('offers the header actions the backend, the selection and the categories allow', () => {
+        const categoriesConfig = new PageCategoriesConfig({});
         service.setConfig(
             buildConfig({
                 headerConfig: new PageHeaderConfig({
@@ -185,7 +186,8 @@ describe('PageService', () => {
                             zone: PageActionZone.Right
                         })
                     ]
-                })
+                }),
+                tableConfig: new PageTableConfig({ categoriesConfig, columns: [], loadRow: () => [] })
             })
         );
         flush();
@@ -194,7 +196,8 @@ describe('PageService', () => {
         expect(pageActionsService.filterVisibleActions).toHaveBeenLastCalledWith(
             expect.arrayContaining([expect.objectContaining({ key: 'create' })]),
             ['create'],
-            []
+            [],
+            categoriesConfig
         );
     });
 

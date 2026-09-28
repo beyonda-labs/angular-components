@@ -1,4 +1,6 @@
+import { TableCell } from '../../table/models/table-cell.model';
 import { PageFormConfig } from './page-form.model';
+import { PageItem } from './page-item.model';
 
 export enum PageItemType {
     Category = 'category',
@@ -15,22 +17,25 @@ export interface PageTrashItem {
     type: PageItemType;
 }
 
-export class PageCategoriesConfig {
+export class PageCategoriesConfig<TCategory extends PageItem = PageItem> {
     nameField: string;
     parentField: string;
     typeField: string;
     useTrash: boolean;
 
-    formConfig?: PageFormConfig;
+    formConfig?: PageFormConfig<unknown, TCategory>;
+    loadRow?: (category: TCategory, viewMode: PageViewMode) => TableCell[];
 
     constructor({
         formConfig,
+        loadRow,
         nameField = 'name',
         parentField = 'parentId',
         typeField = 'type',
         useTrash = false
-    }: PageCategoriesConfigParameters) {
+    }: PageCategoriesConfigParameters<TCategory>) {
         this.formConfig = formConfig;
+        this.loadRow = loadRow;
         this.nameField = nameField;
         this.parentField = parentField;
         this.typeField = typeField;
@@ -38,8 +43,9 @@ export class PageCategoriesConfig {
     }
 }
 
-export interface PageCategoriesConfigParameters {
-    formConfig?: PageFormConfig;
+export interface PageCategoriesConfigParameters<TCategory extends PageItem = PageItem> {
+    formConfig?: PageFormConfig<unknown, TCategory>;
+    loadRow?: (category: TCategory, viewMode: PageViewMode) => TableCell[];
     nameField?: string;
     parentField?: string;
     typeField?: string;

@@ -5,15 +5,15 @@ import { PageCategoriesConfig, PageViewMode } from './page-categories.model';
 import { PageItem } from './page-item.model';
 import { SearchSort } from './page-search.model';
 
-export class PageTableConfig {
+export class PageTableConfig<TItem extends PageItem = PageItem, TCategory extends PageItem = TItem> {
     allowSelection: boolean;
     columns: TableColumn[];
     height: string;
-    loadRow: (item: PageItem, viewMode: PageViewMode) => TableCell[];
+    loadRow: (item: TItem, viewMode: PageViewMode) => TableCell[];
     showPagination: boolean;
 
-    categoriesConfig?: PageCategoriesConfig;
-    onSelectionChange?: (items: PageItem[]) => void;
+    categoriesConfig?: PageCategoriesConfig<TCategory>;
+    onSelectionChange?: (items: (TItem | TCategory)[]) => void;
     order?: SearchSort;
     search?: PageTableSearchConfig;
 
@@ -27,7 +27,7 @@ export class PageTableConfig {
         order,
         search,
         showPagination = true
-    }: PageTableConfigParameters) {
+    }: PageTableConfigParameters<TItem, TCategory>) {
         this.allowSelection = allowSelection;
         this.categoriesConfig = categoriesConfig;
         this.columns = columns;
@@ -51,14 +51,14 @@ export class PageTableSearchConfig {
     }
 }
 
-export interface PageTableConfigParameters {
+export interface PageTableConfigParameters<TItem extends PageItem = PageItem, TCategory extends PageItem = TItem> {
     columns: TableColumn[];
-    loadRow: (item: PageItem, viewMode: PageViewMode) => TableCell[];
+    loadRow: (item: TItem, viewMode: PageViewMode) => TableCell[];
 
     allowSelection?: boolean;
-    categoriesConfig?: PageCategoriesConfig;
+    categoriesConfig?: PageCategoriesConfig<TCategory>;
     height?: string;
-    onSelectionChange?: (items: PageItem[]) => void;
+    onSelectionChange?: (items: (TItem | TCategory)[]) => void;
     order?: SearchSort;
     search?: PageTableSearchConfig;
     showPagination?: boolean;

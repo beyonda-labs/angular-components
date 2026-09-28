@@ -1,7 +1,7 @@
 import { computed, DestroyRef, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
-import { toKeySegment } from '../../../internal/i18n/key-segment';
+import { toKeySegment } from '../../../utilities/key-segment';
 import { BreadcrumbConfig, BreadcrumbItem } from '../../breadcrumb/models/breadcrumb.model';
 import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
 import { HeaderConfig } from '../../header/models/header.model';
@@ -9,12 +9,15 @@ import { PAGINATION_SIZE_DEFAULT, PaginationConfig } from '../../pagination/mode
 import { SearchConfig } from '../../search/models/search.model';
 import { SearchFilter } from '../../search/models/search-filter.model';
 import { TableColumn, TableConfig } from '../../table/models/table.model';
+import { LinkTableCell, TableCell, TextTableCell } from '../../table/models/table-cell.model';
 import { Tab, TabsConfig, TabsVariant } from '../../tabs/models/tabs.model';
 import { PageConfig, PageHandle } from '../models/page.model';
 import { PageAction, PageActionZone } from '../models/page-action.model';
-import { PageViewMode } from '../models/page-categories.model';
+import { PageCategoriesConfig, PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
+import { isCategoryRow, readRowField } from '../models/page-row';
 import { PageSearch } from '../models/page-search.model';
+import { PageTableConfig } from '../models/page-table.model';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
 import { PageSearchService } from './page-search.service';
@@ -28,10 +31,15 @@ const INITIAL_SEARCH: PageSearch = { filters: [], page: 1, size: PAGINATION_SIZE
 
 @Injectable()
 export class PageService {
-    readonly categoryPath = signal<CategoryPathEntry[]>([]);
-    readonly viewMode = signal<PageViewMode>(PageViewMode.Table);
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly pageActionsService = inject(PageActionsService);
+    private readonly pageHttpService = inject(PageHttpService);
+    private readonly pageSearchService = inject(PageSearchService);
 
     private readonly config = signal<PageConfig | null>(null);
+    private formModalReference?: BsModalRef<ModalFormDialogComponent>;
+    private readonly globalActions = signal<string[] | null>(null);
+
     readonly categoryBreadcrumbConfig = computed<BreadcrumbConfig | null>(() => {
         const config = this.config();
 
@@ -57,6 +65,7 @@ export class PageService {
             translate: false
         });
     });
+    readonly categoryPath = signal<CategoryPathEntry[]>([]);
     readonly currentCategoryId = signal<string | number | null>(null);
     readonly handle: PageHandle = {
         openCategory: item => this.openCategory(item),
@@ -64,18 +73,6 @@ export class PageService {
         selected: () => this.selected(),
         viewMode: () => this.viewMode()
     };
-    readonly selected = signal<PageItem[]>([]);
-
-    private readonly globalActions = signal<string[] | null>(null);
-
-    private readonly pageActionsService = inject(PageActionsService);
-    readonly visibleActions = computed<PageAction[]>(() =>
-        this.pageActionsService.filterVisibleActions(
-            this.config()?.headerConfig?.actions ?? [],
-            this.globalActions(),
-            this.selected()
-        )
-    );
     readonly headerConfig = computed<HeaderConfig | null>(() => {
         const config = this.config();
 
@@ -98,7 +95,6 @@ export class PageService {
     readonly items = signal<PageItem[]>([]);
     readonly loading = signal(false);
     readonly pageSearch = signal<PageSearch>(INITIAL_SEARCH);
-    readonly totalItems = signal(0);
     readonly paginationConfig = computed<PaginationConfig | null>(() => {
         const config = this.config();
 
@@ -131,6 +127,7 @@ export class PageService {
             prefix: `${config.prefix}.search`
         });
     });
+    readonly selected = signal<PageItem[]>([]);
     readonly tableConfig = computed<TableConfig<PageItem> | null>(() => {
         const config = this.config();
         const pageTable = config?.tableConfig;
@@ -153,12 +150,14 @@ export class PageService {
             height: pageTable.height,
             isRowSelected: item => this.selected().some(selected => selected.id === item.id),
             items: this.items(),
-            loadRow: item => pageTable.loadRow(item, this.viewMode()),
+            loadRow: item => this.loadRow(pageTable, item),
             prefix: tablePrefix,
             selectable: pageTable.allowSelection,
             selectedItemsChange: items => this.setSelected(items)
         });
     });
+    readonly totalItems = signal(0);
+    readonly viewMode = signal<PageViewMode>(PageViewMode.Table);
     readonly viewToggleConfig = computed<TabsConfig | null>(() => {
         const config = this.config();
 
@@ -174,12 +173,14 @@ export class PageService {
             variant: TabsVariant.Segmented
         });
     });
-
-    private formModalReference?: BsModalRef<ModalFormDialogComponent>;
-
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly pageHttpService = inject(PageHttpService);
-    private readonly pageSearchService = inject(PageSearchService);
+    readonly visibleActions = computed<PageAction[]>(() =>
+        this.pageActionsService.filterVisibleActions(
+            this.config()?.headerConfig?.actions ?? [],
+            this.globalActions(),
+            this.selected(),
+            this.config()?.tableConfig?.categoriesConfig
+        )
+    );
 
     constructor() {
         effect(() => {
@@ -215,7 +216,7 @@ export class PageService {
             this.categoryPath.set(
                 path.map(ancestor => ({
                     id: ancestor.id,
-                    label: (ancestor as unknown as Record<string, unknown>)[categoriesConfig.nameField] as string
+                    label: String(readRowField(ancestor, categoriesConfig.nameField) ?? '')
                 }))
             );
             this.currentCategoryId.set(item.id);
@@ -228,8 +229,10 @@ export class PageService {
         this.pageSearch.update(search => ({ ...search, page: 1 }));
     }
 
-    setConfig<TValue>(typedConfig: PageConfig<TValue>): void {
-        const config = typedConfig as PageConfig;
+    setConfig<TValue, TItem extends PageItem, TCategory extends PageItem>(
+        typedConfig: PageConfig<TValue, TItem, TCategory>
+    ): void {
+        const config = typedConfig as unknown as PageConfig;
 
         this.config.set(config);
 
@@ -317,6 +320,33 @@ export class PageService {
                 config.onDataLoaded?.(response);
             }
         });
+    }
+
+    private loadCategoryRow(
+        category: PageItem,
+        categoriesConfig: PageCategoriesConfig,
+        viewMode: PageViewMode
+    ): TableCell[] {
+        if (categoriesConfig.loadRow) {
+            return categoriesConfig.loadRow(category, viewMode);
+        }
+
+        const name = String(readRowField(category, categoriesConfig.nameField) ?? '');
+
+        return [
+            viewMode === PageViewMode.Trash
+                ? new TextTableCell({ content: name })
+                : new LinkTableCell({ action: () => this.openCategory(category), content: name })
+        ];
+    }
+
+    private loadRow(tableConfig: PageTableConfig, item: PageItem): TableCell[] {
+        const { categoriesConfig } = tableConfig;
+        const viewMode = this.viewMode();
+
+        return categoriesConfig && isCategoryRow(item, categoriesConfig)
+            ? this.loadCategoryRow(item, categoriesConfig, viewMode)
+            : tableConfig.loadRow(item, viewMode);
     }
 
     private restoreSelection(): void {
