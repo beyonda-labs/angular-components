@@ -1,12 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { queryButton } from '@testing/dom';
+import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { PropertyTextField } from './models/fields/property-text-field.model';
 import { PropertiesMenuConfig, PropertiesMenuConfigParameters } from './models/properties-menu-config.model';
 import { PropertyGroup } from './models/property-group.model';
-import { PropertyFieldsContent, PropertyListContent, PropertyTreeContent } from './models/property-group-content.model';
+import {
+    PropertyFieldsContent,
+    PropertyGroupTab,
+    PropertyListContent,
+    PropertyTabsContent,
+    PropertyTreeContent
+} from './models/property-group-content.model';
 import { PropertyListItem } from './models/property-list-item.model';
+import { PropertySummaryRow } from './models/property-summary-row.model';
 import { PropertyTab } from './models/property-tab.model';
 import { PropertyTreeConfig } from './models/property-tree-config.model';
 import { PropertyTreeNode } from './models/property-tree-node.model';
@@ -228,5 +235,231 @@ describe('PropertiesMenuComponent', () => {
         render(buildConfig(), variables);
 
         expect(service().variables()).toBe(variables);
+    });
+});
+
+describe('PropertiesMenuComponent · replacing the config', () => {
+    const COLLAPSE = 'angular-components.properties-menu.list.collapse';
+    const EXPAND = 'angular-components.properties-menu.list.expand';
+
+    let fixture: ComponentFixture<PropertiesMenuComponent>;
+
+    interface StatefulConfigOverrides {
+        activeNodeId?: string;
+        activeTabId?: string;
+        contentExpanded?: boolean;
+    }
+
+    function buildNode(
+        id: string,
+        label: string,
+        activeNodeId: string | undefined,
+        children: PropertyTreeNode[] = []
+    ): PropertyTreeNode {
+        return new PropertyTreeNode({ active: id === activeNodeId, children, expanded: false, id, label });
+    }
+
+    function buildStatefulConfig({
+        activeNodeId,
+        activeTabId = 'properties',
+        contentExpanded = true
+    }: StatefulConfigOverrides = {}): PropertiesMenuConfig {
+        return new PropertiesMenuConfig({
+            activeTabId,
+            prefix: 'app.properties-menu',
+            tabs: [
+                new PropertyTab({
+                    groups: [
+                        new PropertyGroup({
+                            content: new PropertyFieldsContent({
+                                fields: [new PropertyTextField({ id: 'text', label: 'Text' })]
+                            }),
+                            expanded: contentExpanded,
+                            id: 'content',
+                            label: 'Content'
+                        }),
+                        new PropertyGroup({
+                            content: new PropertyTabsContent({
+                                tabs: [
+                                    new PropertyGroupTab({ id: 'top', label: 'Top' }),
+                                    new PropertyGroupTab({ id: 'left', label: 'Left' })
+                                ]
+                            }),
+                            expanded: true,
+                            id: 'borders',
+                            label: 'Borders'
+                        })
+                    ],
+                    id: 'properties',
+                    label: 'Properties'
+                }),
+                new PropertyTab({
+                    groups: [
+                        new PropertyGroup({
+                            content: new PropertyTreeContent({
+                                tree: new PropertyTreeConfig({
+                                    nodes: [
+                                        buildNode('page-1', 'Page 1', activeNodeId, [
+                                            buildNode('section', 'Section', activeNodeId, [
+                                                buildNode('totals', 'Totals', activeNodeId)
+                                            ])
+                                        ])
+                                    ]
+                                })
+                            }),
+                            id: 'structure-tree',
+                            showHeader: false
+                        })
+                    ],
+                    id: 'structure',
+                    label: 'Structure'
+                }),
+                new PropertyTab({
+                    groups: [
+                        new PropertyGroup({
+                            content: new PropertyListContent({
+                                list: [
+                                    new PropertyListItem({
+                                        body: [new PropertySummaryRow({ label: 'Value', value: '3' })],
+                                        id: 'total-pages',
+                                        label: 'Total pages'
+                                    })
+                                ]
+                            }),
+                            id: 'variables-list',
+                            showHeader: false
+                        })
+                    ],
+                    id: 'variables',
+                    label: 'Variables'
+                })
+            ]
+        });
+    }
+
+    async function render(overrides: StatefulConfigOverrides = {}): Promise<void> {
+        fixture = await renderComponent(PropertiesMenuComponent, { config: buildStatefulConfig(overrides) });
+    }
+
+    async function replaceConfig(overrides: StatefulConfigOverrides = {}): Promise<void> {
+        fixture.componentRef.setInput('config', buildStatefulConfig(overrides));
+        await settle(fixture);
+    }
+
+    async function click(element: HTMLElement): Promise<void> {
+        element.click();
+        await settle(fixture);
+    }
+
+    async function pressKey(element: HTMLElement, key: string): Promise<void> {
+        element.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key }));
+        await settle(fixture);
+    }
+
+    function byRole(role: string, name: string): HTMLElement {
+        const found = queryAll(fixture, `[role="${role}"]`).find(element => element.textContent?.trim() === name);
+
+        if (!found) {
+            throw new Error(`No ${role} named ${name}`);
+        }
+
+        return found;
+    }
+
+    function treeItemNames(): string[] {
+        return textsOf(queryAll(fixture, '[role="treeitem"]'));
+    }
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [PropertiesMenuComponent, TranslateModule.forRoot()]
+        }).compileComponents();
+    });
+
+    it('keeps a group the user collapsed when the config is replaced', async () => {
+        await render();
+        await click(buttonByName(fixture, 'Content'));
+
+        await replaceConfig();
+
+        expect(buttonByName(fixture, 'Content').getAttribute('aria-expanded')).toBe('false');
+    });
+
+    it('opens a group the user collapsed when the config changes expanded to true', async () => {
+        await render({ contentExpanded: true });
+        await click(buttonByName(fixture, 'Content'));
+        await replaceConfig({ contentExpanded: false });
+
+        await replaceConfig({ contentExpanded: true });
+
+        expect(buttonByName(fixture, 'Content').getAttribute('aria-expanded')).toBe('true');
+    });
+
+    it('keeps the tab the user opened when the config is replaced', async () => {
+        await render();
+        await click(byRole('tab', 'Structure'));
+
+        await replaceConfig();
+
+        expect(byRole('tab', 'Structure').getAttribute('aria-selected')).toBe('true');
+        expect(treeItemNames()).toEqual(['Page 1']);
+    });
+
+    it('switches to the tab the config changes activeTabId to', async () => {
+        await render();
+        await click(byRole('tab', 'Structure'));
+
+        await replaceConfig({ activeTabId: 'variables' });
+
+        expect(byRole('tab', 'Variables').getAttribute('aria-selected')).toBe('true');
+        expect(byRole('tab', 'Structure').getAttribute('aria-selected')).toBe('false');
+    });
+
+    it('keeps the tab of a group the user picked when the config is replaced', async () => {
+        await render();
+        await click(byRole('tab', 'Left'));
+
+        await replaceConfig();
+
+        expect(byRole('tab', 'Left').getAttribute('aria-selected')).toBe('true');
+        expect(byRole('tab', 'Top').getAttribute('aria-selected')).toBe('false');
+    });
+
+    it('keeps a card the user expanded when the config is replaced', async () => {
+        await render({ activeTabId: 'variables' });
+        await click(buttonByName(fixture, EXPAND));
+
+        await replaceConfig({ activeTabId: 'variables' });
+
+        expect(buttonByName(fixture, COLLAPSE).getAttribute('aria-expanded')).toBe('true');
+        expect(fixture.nativeElement.textContent).toContain('Value');
+    });
+
+    it('keeps a tree node the user expanded when the config is replaced', async () => {
+        await render({ activeTabId: 'structure' });
+        await pressKey(byRole('treeitem', 'Page 1'), 'ArrowRight');
+
+        await replaceConfig({ activeTabId: 'structure' });
+
+        expect(byRole('treeitem', 'Page 1').getAttribute('aria-expanded')).toBe('true');
+        expect(treeItemNames()).toEqual(['Page 1', 'Section']);
+    });
+
+    it('keeps the tree node the user selected when the config is replaced', async () => {
+        await render({ activeTabId: 'structure' });
+        await click(byRole('treeitem', 'Page 1'));
+
+        await replaceConfig({ activeTabId: 'structure' });
+
+        expect(byRole('treeitem', 'Page 1').getAttribute('aria-selected')).toBe('true');
+    });
+
+    it('selects a nested node the config marks active and opens its ancestors', async () => {
+        await render({ activeTabId: 'structure' });
+
+        await replaceConfig({ activeNodeId: 'totals', activeTabId: 'structure' });
+
+        expect(treeItemNames()).toEqual(['Page 1', 'Section', 'Totals']);
+        expect(byRole('treeitem', 'Totals').getAttribute('aria-selected')).toBe('true');
     });
 });

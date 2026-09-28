@@ -1,5 +1,6 @@
 import { PropertyTextField } from '../models/fields/property-text-field.model';
 import { PropertiesMenuConfig } from '../models/properties-menu-config.model';
+import { PropertyTreeNodeToggle } from '../models/properties-menu-events.model';
 import { PropertyGroup } from '../models/property-group.model';
 import {
     PropertyFieldsContent,
@@ -469,5 +470,125 @@ describe('PropertiesMenuService · items de lista desplegables', () => {
         service.toggleListItem('variables', 'variables-list', 'total_pages');
 
         expect(service.getListItem('variables', 'variables-list', 'other')?.expanded).toBe(false);
+    });
+});
+
+describe('PropertiesMenuService · replacing the config', () => {
+    let service: PropertiesMenuService;
+
+    interface ReplacementOverrides {
+        activeNodeId?: string;
+        activeTabId?: string;
+        extraGroups?: PropertyGroup[];
+        onTreeNodeToggle?: (event: PropertyTreeNodeToggle) => void;
+        treeNodes?: PropertyTreeNode[];
+    }
+
+    function buildTree(activeNodeId?: string): PropertyTreeNode[] {
+        return [
+            new PropertyTreeNode({
+                children: [
+                    new PropertyTreeNode({ active: activeNodeId === 'header', expanded: false, id: 'header' }),
+                    new PropertyTreeNode({ active: activeNodeId === 'footer', expanded: false, id: 'footer' })
+                ],
+                expanded: false,
+                id: 'page-1'
+            })
+        ];
+    }
+
+    function buildReplacement({
+        activeNodeId,
+        activeTabId,
+        extraGroups = [],
+        onTreeNodeToggle,
+        treeNodes = buildTree(activeNodeId)
+    }: ReplacementOverrides = {}): PropertiesMenuConfig {
+        return new PropertiesMenuConfig({
+            activeTabId,
+            onTreeNodeToggle,
+            prefix: 'app.properties-menu',
+            tabs: [
+                new PropertyTab({
+                    groups: [new PropertyGroup({ expanded: true, id: 'content' }), ...extraGroups],
+                    id: 'properties'
+                }),
+                new PropertyTab({
+                    groups: [
+                        new PropertyGroup({
+                            content: new PropertyTreeContent({ tree: new PropertyTreeConfig({ nodes: treeNodes }) }),
+                            id: 'structure-tree',
+                            showHeader: false
+                        })
+                    ],
+                    id: 'structure'
+                })
+            ]
+        });
+    }
+
+    beforeEach(() => {
+        service = new PropertiesMenuService();
+    });
+
+    it('gives a group that is new in the config the expanded value it carries', () => {
+        service.setConfig(buildReplacement());
+        service.toggleGroup('properties', 'content');
+
+        service.setConfig(buildReplacement({ extraGroups: [new PropertyGroup({ expanded: true, id: 'spacing' })] }));
+
+        expect(service.getGroup('properties', 'content')?.expanded).toBe(false);
+        expect(service.getGroup('properties', 'spacing')?.expanded).toBe(true);
+    });
+
+    it('falls back to the tab of the config when the tab the user opened is gone', () => {
+        service.setConfig(buildReplacement());
+        service.setActiveTab('structure');
+
+        service.setConfig(
+            new PropertiesMenuConfig({
+                ...buildReplacement(),
+                tabs: buildReplacement().tabs.filter(tab => tab.id !== 'structure')
+            })
+        );
+
+        expect(service.activeTabId()).toBe('properties');
+    });
+
+    it('falls back to the node the config marks active when the node the user selected is gone', () => {
+        service.setConfig(buildReplacement({ activeNodeId: 'header' }));
+        service.selectTreeNode('structure', 'structure-tree', 'footer');
+
+        service.setConfig(buildReplacement({ treeNodes: [new PropertyTreeNode({ active: true, id: 'header' })] }));
+
+        expect(service.selectedTreeNodeId()).toBe('header');
+    });
+
+    it('clears the selection when the config stops marking a node active', () => {
+        service.setConfig(buildReplacement({ activeNodeId: 'header' }));
+
+        service.setConfig(buildReplacement());
+
+        expect(service.selectedTreeNodeId()).toBeNull();
+    });
+
+    it('opens the ancestors of the node the config selects without reporting them as toggles', () => {
+        const onTreeNodeToggle = jest.fn();
+        service.setConfig(buildReplacement({ onTreeNodeToggle }));
+
+        service.setConfig(buildReplacement({ activeNodeId: 'footer', onTreeNodeToggle }));
+
+        expect(service.getTreeNode('structure', 'structure-tree', 'page-1')?.expanded).toBe(true);
+        expect(service.getTreeNode('structure', 'structure-tree', 'footer')?.expanded).toBe(false);
+        expect(onTreeNodeToggle).not.toHaveBeenCalled();
+    });
+
+    it('keeps an ancestor the user closed after the reveal while the config selects the same node', () => {
+        service.setConfig(buildReplacement({ activeNodeId: 'footer' }));
+        service.toggleTreeNode('structure', 'structure-tree', 'page-1');
+
+        service.setConfig(buildReplacement({ activeNodeId: 'footer' }));
+
+        expect(service.getTreeNode('structure', 'structure-tree', 'page-1')?.expanded).toBe(false);
     });
 });

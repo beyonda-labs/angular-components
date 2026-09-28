@@ -11,10 +11,10 @@ interface DropTarget {
 
 @Injectable()
 export class PropertyTreeDragService {
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
+
     readonly dragNodeId = signal<string | null>(null);
     readonly dropTarget = signal<DropTarget | null>(null);
-
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
 
     cancel(tabId: string, groupId: string): void {
         if (!this.dragging()) {

@@ -1,12 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
-import { queryAll, queryButton, renderComponent } from '@testing/dom';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { queryAll, queryButton, renderComponent, textsOf } from '@testing/dom';
 
 import { PropertiesMenuConfig } from '../../models/properties-menu-config.model';
 import { PropertyGroup } from '../../models/property-group.model';
 import {
     PropertyFieldsContent,
+    PropertyGroupTab,
     PropertyListContent,
+    PropertyTabsContent,
     PropertyTreeContent
 } from '../../models/property-group-content.model';
 import { PropertyListItem } from '../../models/property-list-item.model';
@@ -229,5 +231,39 @@ describe('PropertyGroupComponent', () => {
         button('add.label')?.click();
 
         expect(onTreeAddBlock).toHaveBeenCalledWith({ groupId: 'structure', tabId: 'properties' });
+    });
+});
+
+describe('PropertyGroupComponent · label parameters', () => {
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [PropertyGroupComponent, TranslateModule.forRoot()],
+            providers: [PropertiesMenuService, PropertyTreeDragService]
+        }).compileComponents();
+
+        const translate = TestBed.inject(TranslateService);
+        translate.setTranslation('en', { borders: { side: '{{side}} side', title: 'Borders of {{name}}' } });
+        translate.use('en');
+    });
+
+    it('interpolates the label parameters of the group and of its tabs', async () => {
+        const fixture = await renderComponent(PropertyGroupComponent, {
+            group: new PropertyGroup({
+                content: new PropertyTabsContent({
+                    tabs: [
+                        new PropertyGroupTab({ id: 'top', label: 'borders.side', labelParameters: { side: 'Top' } }),
+                        new PropertyGroupTab({ id: 'left', label: 'borders.side', labelParameters: { side: 'Left' } })
+                    ]
+                }),
+                expanded: true,
+                id: 'borders',
+                label: 'borders.title',
+                labelParameters: { name: 'Heading' }
+            }),
+            tabId: 'properties'
+        });
+
+        expect(queryButton(fixture, 'Borders of Heading')).not.toBeNull();
+        expect(textsOf(queryAll(fixture, '[role="tab"]'))).toEqual(['Top side', 'Left side']);
     });
 });

@@ -41,7 +41,7 @@
                     </span>
                 }
 
-                <span class="bey-property-tree-label">{{ labelKey(node) | translate }}</span>
+                <span class="bey-property-tree-label">{{ labelKey(node) | translate: node.labelParameters }}</span>
             </button>
 
             @if (node.expanded && hasVisibleChildren(node)) {

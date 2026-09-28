@@ -17,6 +17,8 @@ export class PropertyGroup {
     showHeader: boolean;
     variant: PropertyGroupVariant;
 
+    labelParameters?: Record<string, unknown>;
+
     constructor({
         content = new PropertyFieldsContent({}),
         disabled = false,
@@ -24,6 +26,7 @@ export class PropertyGroup {
         hidden = false,
         id,
         label = `${id}.label`,
+        labelParameters,
         order = 0,
         removable = false,
         showHeader = true,
@@ -35,6 +38,7 @@ export class PropertyGroup {
         this.hidden = hidden;
         this.id = id;
         this.label = label;
+        this.labelParameters = labelParameters;
         this.order = order;
         this.removable = removable;
         this.showHeader = showHeader;
@@ -50,6 +54,7 @@ export interface PropertyGroupParameters {
     expanded?: boolean;
     hidden?: boolean;
     label?: string;
+    labelParameters?: Record<string, unknown>;
     order?: number;
     removable?: boolean;
     showHeader?: boolean;

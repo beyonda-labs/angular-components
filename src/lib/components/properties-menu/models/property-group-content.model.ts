@@ -32,12 +32,14 @@ export class PropertyGroupTab {
     label: string;
 
     icon?: IconDefinition;
+    labelParameters?: Record<string, unknown>;
 
-    constructor({ fields = [], icon, id, label = `${id}.label` }: PropertyGroupTabParameters) {
+    constructor({ fields = [], icon, id, label = `${id}.label`, labelParameters }: PropertyGroupTabParameters) {
         this.fields = fields;
         this.icon = icon;
         this.id = id;
         this.label = label;
+        this.labelParameters = labelParameters;
     }
 }
 
@@ -80,6 +82,7 @@ export interface PropertyGroupTabParameters {
     fields?: PropertyField[];
     icon?: IconDefinition;
     label?: string;
+    labelParameters?: Record<string, unknown>;
 }
 
 export interface PropertyListContentParameters {

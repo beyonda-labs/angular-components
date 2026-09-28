@@ -14,7 +14,9 @@
             [disabled]="current.disabled"
             (click)="toggle()"
         >
-            <span class="bey-property-group-label" [title]="labelKey() | translate">{{ labelKey() | translate }}</span>
+            <span class="bey-property-group-label" [title]="labelKey() | translate: current.labelParameters">
+                {{ labelKey() | translate: current.labelParameters }}
+            </span>
 
             @if (current.removable) {
                 <span
@@ -61,7 +63,7 @@
                             @if (tab.icon) {
                                 <fa-icon [icon]="tab.icon"></fa-icon>
                             }
-                            <span>{{ contentTabLabelKey(tab) | translate }}</span>
+                            <span>{{ contentTabLabelKey(tab) | translate: tab.labelParameters }}</span>
                         </button>
                     }
                 </div>

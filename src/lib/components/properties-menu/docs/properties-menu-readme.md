@@ -40,7 +40,7 @@ readonly config = new BeyPropertiesMenuConfig({
 | ------------- | -------- | -------------------------------------------------------------------------------- |
 | `prefix`      | yes      | i18n prefix the default labels resolve from                                      |
 | `tabs`        | no       | `BeyPropertyTab[]`, each with its `groups`; a tab may carry `addLabel`           |
-| `activeTabId` | no       | Open tab, defaults to the first visible one                                      |
+| `activeTabId` | no       | Open tab, defaults to the first visible one; see Replacing the config            |
 | `title`       | no       | Header title key, defaults to `<prefix>.title`                                   |
 | `subtitle`    | no       | Header subtitle key                                                              |
 | `icon`        | no       | Header icon                                                                      |
@@ -66,8 +66,34 @@ The select and attachment fields carry their own `variables`, since which variab
 | `onTreeNodeSelect`, `onTreeNodeToggle`, `onTreeAddBlock`                       | `{ tabId, groupId, nodeId?, node? \| expanded? }`                | A tree row, its chevron or `ArrowRight` / `ArrowLeft` on the row, the add-block button |
 | `onTreeDragStart`, `onTreeDrop`, `onTreeDragEnd`                               | `{ tabId, groupId, nodeId?, node? \| position?, targetNodeId? }` | The drag and drop cycle, see below                                                     |
 
-The menu keeps its own copy of the config for the state it owns (expanded groups and nodes, list cards, field
-values) so the panel reacts at once; a new `[config]` replaces that copy.
+## Replacing the config
+
+The menu applies what the user does at once on its own copy of the config and keeps it when a new `[config]`
+arrives. What it keeps, and how each piece is matched:
+
+| State                                      | Read from                              | Matched by                   |
+| ------------------------------------------ | -------------------------------------- | ---------------------------- |
+| An open or closed group                    | `expanded` of the group                | tab id and group id          |
+| The open tab of a `BeyPropertyTabsContent` | `activeTabId` of the content           | tab id and group id          |
+| An open or closed list card                | `expanded` of the item                 | tab id, group id and item id |
+| An open or closed tree node                | `expanded` of the node                 | tab id, group id and node id |
+| The open tab of the menu                   | `activeTabId` of the config            | tab id                       |
+| The selected tree node                     | the first node with `active` in a tree | node id                      |
+
+For each piece the new config wins only where its value differs from the one the previous config gave for the
+same id; where both configs agree, what the user did stays. An id the previous config did not have takes the
+value of the new one. So a consumer that rebuilds the config from its model with the same values keeps the
+user's work without mirroring it, and one that changes a value opens, closes, switches or selects on purpose.
+To send a value the previous config already held once the user has moved away from it (`activeTabId: 'add'`
+again after the user left that tab), keep the value in step through the matching callback (`onActiveTabChange`,
+`onGroupToggle`, `onListItemToggle`, `onTreeNodeToggle`, `onTreeNodeSelect`) so the next config differs.
+
+What was kept gives way to the new config once it is gone: an open tab that was removed or hidden, a group tab
+the content no longer lists, a selected node that is in no tree. Whenever the selected node changes, because the
+config marks another node `active` or because the kept one disappeared, every ancestor of the new one opens so
+it is visible, without calling `onTreeNodeToggle`; from then on those ancestors are kept like any other node.
+
+Field values are not kept: the consumer owns the model, and every new config replaces them.
 
 ## Labels
 
@@ -77,18 +103,24 @@ id is a kebab-case segment (`fontFamily` reads `<prefix>.fields.font-family.labe
 explicitly, it is used as the key as is. `subtitle`, `description`, `addLabel` and option labels have no
 default and go through the translate pipe only when present, so a literal without a matching key shows as is.
 
+A group, a tab of a `BeyPropertyTabsContent`, a list card and a tree node also take `labelParameters`, the
+interpolation parameters of their label key. With `"page": "Page {{number}}"`, a node with
+`label: 'myApp.structure.page'` and `labelParameters: { number: 2 }` reads "Page 2" and follows a language
+change on its own, so the consumer never translates a label itself.
+
 ## Groups
 
-A `BeyPropertyGroup` has `expanded`, `disabled`, `hidden`, `removable`, `order`, a `variant` (`PRIMARY` or
-`SECONDARY`, muted) and `showHeader`. Without a header the group has no chevron and is always expanded, for a
-structure tree that should never fold. Its `content` decides what it renders:
+A `BeyPropertyGroup` has `label` with `labelParameters`, `expanded`, `disabled`, `hidden`, `removable`,
+`order`, a `variant` (`PRIMARY` or `SECONDARY`, muted) and `showHeader`. Without a header the group has no
+chevron and is always expanded, for a structure tree that should never fold. Its `content` decides what it
+renders:
 
-| Content                    | Holds                                                                 |
-| -------------------------- | --------------------------------------------------------------------- |
-| `BeyPropertyFieldsContent` | `fields: BeyPropertyField[]`                                          |
-| `BeyPropertyTabsContent`   | `tabs: BeyPropertyGroupTab[]`, each with `fields`, plus `activeTabId` |
-| `BeyPropertyListContent`   | `list: BeyPropertyListItem[]`                                         |
-| `BeyPropertyTreeContent`   | `tree: BeyPropertyTreeConfig`                                         |
+| Content                    | Holds                                                                                                |
+| -------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `BeyPropertyFieldsContent` | `fields: BeyPropertyField[]`                                                                         |
+| `BeyPropertyTabsContent`   | `tabs: BeyPropertyGroupTab[]`, each with `label`, `labelParameters` and `fields`, plus `activeTabId` |
+| `BeyPropertyListContent`   | `list: BeyPropertyListItem[]`                                                                        |
+| `BeyPropertyTreeContent`   | `tree: BeyPropertyTreeConfig`                                                                        |
 
 ## Fields
 
@@ -125,9 +157,10 @@ whose value travels through `onFieldValueChange`.
 
 ## Trees
 
-A `BeyPropertyTreeNode` has `label`, `icon`, `children`, `expanded`, `disabled`, `hidden`, `active` (selected
-on load) and the drag flags. `addBlockLabel` shows the add-block button under the nodes; with
-`showEmptyStateAddBlock` an empty tree shows it as a centred call to action instead.
+A `BeyPropertyTreeNode` has `label` with `labelParameters`, `icon`, `children`, `expanded`, `disabled`,
+`hidden`, `active` (the selected node, see Replacing the config) and the drag flags. `addBlockLabel` shows the
+add-block button under the nodes; with `showEmptyStateAddBlock` an empty tree shows it as a centred call to
+action instead.
 
 A node with `draggable` can be moved with the mouse or a pen (touch is left to scrolling). The library holds
 no nesting rules: a node never drops onto itself or its descendants, and everything else travels in the config:

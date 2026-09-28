@@ -1,6 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, untracked } from '@angular/core';
 
 import { PropertiesMenuConfig } from '../models/properties-menu-config.model';
+import { keepPropertiesMenuState } from '../models/properties-menu-state';
 import { PropertyField } from '../models/property-field.model';
 import { PropertyGroup, PropertyGroupParameters } from '../models/property-group.model';
 import {
@@ -17,17 +18,18 @@ import { PropertyTreeNode, PropertyTreeNodeParameters } from '../models/property
 import { PropertyVariable } from '../models/property-variable.model';
 import { toVariableExpression } from '../models/property-variable-options';
 
-/**
- * Menu state shared by the menu's inner components. The config signal starts from the consumer's config and
- * is replaced on every interaction that the menu owns (group and node expansion, field values); every
- * interaction also reaches the consumer through the config callbacks.
- */
 @Injectable()
 export class PropertiesMenuService {
-    readonly activeTabId = signal<string | null>(null);
-    readonly config = signal<PropertiesMenuConfig>(new PropertiesMenuConfig({ prefix: '' }));
-    readonly selectedTreeNodeId = signal<string | null>(null);
-    readonly variables = signal<PropertyVariable[]>([]);
+    private readonly _activeTabId = signal<string | null>(null);
+    private readonly _config = signal<PropertiesMenuConfig>(new PropertiesMenuConfig({ prefix: '' }));
+    private readonly _selectedTreeNodeId = signal<string | null>(null);
+    private readonly _variables = signal<PropertyVariable[]>([]);
+    private consumerConfig: PropertiesMenuConfig | null = null;
+
+    readonly activeTabId = this._activeTabId.asReadonly();
+    readonly config = this._config.asReadonly();
+    readonly selectedTreeNodeId = this._selectedTreeNodeId.asReadonly();
+    readonly variables = this._variables.asReadonly();
 
     applyVariableSelection(fieldId: string, variable: PropertyVariable, value: unknown): void {
         this.updateFieldValue(fieldId, value);
@@ -93,7 +95,7 @@ export class PropertiesMenuService {
     }
 
     selectGroupTab(tabId: string, groupId: string, contentTabId: string): void {
-        this.config.update(config =>
+        this._config.update(config =>
             this.updateGroup(config, tabId, groupId, current => {
                 if (current.content.type !== PropertyGroupContentType.TABS) {
                     return current;
@@ -124,7 +126,7 @@ export class PropertiesMenuService {
             return;
         }
 
-        this.selectedTreeNodeId.set(nodeId);
+        this._selectedTreeNodeId.set(nodeId);
         this.config().onTreeNodeSelect?.({ groupId, node, nodeId, tabId });
     }
 
@@ -135,18 +137,31 @@ export class PropertiesMenuService {
             return;
         }
 
-        this.activeTabId.set(tabId);
+        this._activeTabId.set(tabId);
         this.config().onActiveTabChange?.(tabId);
     }
 
     setConfig(config: PropertiesMenuConfig): void {
-        this.config.set(config);
-        this.activeTabId.set(config.activeTabId || null);
-        this.selectedTreeNodeId.set(this.findActiveTreeNodeId(config));
+        const state = untracked(() =>
+            keepPropertiesMenuState(
+                this.consumerConfig,
+                {
+                    activeTabId: this._activeTabId(),
+                    config: this._config(),
+                    selectedTreeNodeId: this._selectedTreeNodeId()
+                },
+                config
+            )
+        );
+
+        this.consumerConfig = config;
+        this._activeTabId.set(state.activeTabId);
+        this._config.set(state.config);
+        this._selectedTreeNodeId.set(state.selectedTreeNodeId);
     }
 
     setVariables(variables: PropertyVariable[]): void {
-        this.variables.set(variables);
+        this._variables.set(variables);
     }
 
     toggleGroup(tabId: string, groupId: string): void {
@@ -158,7 +173,7 @@ export class PropertiesMenuService {
 
         let expanded = false;
 
-        this.config.update(config =>
+        this._config.update(config =>
             this.updateGroup(config, tabId, groupId, current => {
                 expanded = !current.expanded;
 
@@ -178,7 +193,7 @@ export class PropertiesMenuService {
 
         const expanded = !item.expanded;
 
-        this.config.update(config =>
+        this._config.update(config =>
             this.updateListItem(config, tabId, groupId, itemId, current => ({ ...current, expanded }))
         );
 
@@ -188,7 +203,7 @@ export class PropertiesMenuService {
     toggleTreeNode(tabId: string, groupId: string, nodeId: string): void {
         let expanded = false;
 
-        this.config.update(config =>
+        this._config.update(config =>
             this.updateTreeNode(config, tabId, groupId, nodeId, node => {
                 expanded = !node.expanded;
 
@@ -224,43 +239,9 @@ export class PropertiesMenuService {
     updateFieldValue(fieldId: string, value: unknown): void {
         const previousValue = this.getField(fieldId)?.value;
 
-        this.config.update(config => this.updateField(config, fieldId, value));
+        this._config.update(config => this.updateField(config, fieldId, value));
 
         this.config().onFieldValueChange?.({ fieldId, previousValue, value });
-    }
-
-    private findActiveNode(nodes: PropertyTreeNode[]): string | null {
-        for (const node of nodes) {
-            if (node.active) {
-                return node.id;
-            }
-
-            const found = this.findActiveNode(node.children);
-
-            if (found) {
-                return found;
-            }
-        }
-
-        return null;
-    }
-
-    private findActiveTreeNodeId(config: PropertiesMenuConfig): string | null {
-        for (const tab of config.tabs) {
-            for (const group of tab.groups) {
-                if (group.content.type !== PropertyGroupContentType.TREE) {
-                    continue;
-                }
-
-                const found = this.findActiveNode(group.content.tree.nodes);
-
-                if (found) {
-                    return found;
-                }
-            }
-        }
-
-        return null;
     }
 
     private findTreeNode(nodes: PropertyTreeNode[], nodeId: string): PropertyTreeNode | undefined {

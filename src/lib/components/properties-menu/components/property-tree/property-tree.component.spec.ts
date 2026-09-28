@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
-import { queryAll, queryButton, renderComponent, textsOf } from '@testing/dom';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { PropertiesMenuConfig } from '../../models/properties-menu-config.model';
 import { PropertyTreeNode } from '../../models/property-tree-node.model';
@@ -107,5 +107,36 @@ describe('PropertyTreeComponent', () => {
         expect(component.labelKey(new PropertyTreeNode({ id: 'page-1' }))).toBe(
             'app.properties-menu.tree.page-1.label'
         );
+    });
+});
+
+describe('PropertyTreeComponent · label parameters', () => {
+    let translate: TranslateService;
+
+    beforeEach(async () => {
+        await TestBed.configureTestingModule({
+            imports: [PropertyTreeComponent, TranslateModule.forRoot()],
+            providers: [PropertiesMenuService, PropertyTreeDragService]
+        }).compileComponents();
+
+        translate = TestBed.inject(TranslateService);
+        translate.setTranslation('en', { structure: { page: 'Page {{number}}' } });
+        translate.setTranslation('es', { structure: { page: 'Página {{number}}' } });
+        translate.use('en');
+    });
+
+    it('interpolates the label parameters of a node and follows a language change', async () => {
+        const fixture = await renderComponent(PropertyTreeComponent, {
+            groupId: 'structure-tree',
+            nodes: [new PropertyTreeNode({ id: 'page-1', label: 'structure.page', labelParameters: { number: 1 } })],
+            tabId: 'structure'
+        });
+
+        expect(textsOf(queryAll(fixture, '[role="treeitem"]'))).toEqual(['Page 1']);
+
+        translate.use('es');
+        await settle(fixture);
+
+        expect(textsOf(queryAll(fixture, '[role="treeitem"]'))).toEqual(['Página 1']);
     });
 });

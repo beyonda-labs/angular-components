@@ -33,17 +33,10 @@ export class PropertiesMenuComponent {
     /** Variables offered by the fields that accept one (`acceptsVariable`). */
     readonly variables = input<PropertyVariable[]>([]);
 
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
-
     readonly activeTab = computed(() => {
         const activeTabId = this.propertiesMenuService.activeTabId();
 
         return this.propertiesMenuService.config().tabs.find(tab => tab.id === activeTabId);
-    });
-    readonly titleKey = computed(() => {
-        const { prefix, title } = this.config();
-
-        return title === 'title' ? `${prefix}.title` : title;
     });
     readonly headerConfig = computed(
         () =>
@@ -54,9 +47,16 @@ export class PropertiesMenuComponent {
                 title: this.titleKey()
             })
     );
+    readonly titleKey = computed(() => {
+        const { prefix, title } = this.config();
+
+        return title === 'title' ? `${prefix}.title` : title;
+    });
     readonly visibleTabs = computed(() => this.config().tabs.filter(tab => !tab.hidden));
 
     private readonly menuBody = viewChild<ElementRef<HTMLElement>>('menuBody');
+
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
 
     constructor() {
         effect(() => this.propertiesMenuService.setConfig(this.config()));

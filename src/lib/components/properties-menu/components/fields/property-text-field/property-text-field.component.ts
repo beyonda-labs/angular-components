@@ -39,8 +39,6 @@ export class PropertyTextFieldComponent {
     readonly valueChange = output<string>();
     readonly variableInserted = output<PropertyTextFieldVariableInsertion>();
 
-    private readonly selectionEnd = signal<number | null>(null);
-    private readonly selectionStart = signal<number | null>(null);
     readonly hasSelection = computed(
         () => this.selectionStart() !== null && this.selectionStart() !== this.selectionEnd()
     );
@@ -48,9 +46,12 @@ export class PropertyTextFieldComponent {
     readonly pickerOpen = signal(false);
     readonly showsActions = computed(() => this.field().acceptsVariable || Boolean(this.field().actionButton));
     readonly variableIcon = PROPERTY_VARIABLE_ICON;
+    readonly variableOptions = computed(() => toVariableOptions(this.propertiesMenuService.variables()));
+
+    private readonly selectionEnd = signal<number | null>(null);
+    private readonly selectionStart = signal<number | null>(null);
 
     private readonly propertiesMenuService = inject(PropertiesMenuService);
-    readonly variableOptions = computed(() => toVariableOptions(this.propertiesMenuService.variables()));
 
     closePicker(): void {
         this.pickerOpen.set(false);
