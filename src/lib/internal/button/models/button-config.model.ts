@@ -1,6 +1,7 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
 export enum ButtonType {
+    IconOutline = 'icon-outline',
     LinkSecondary = 'link-secondary',
     Primary = 'primary',
     Secondary = 'secondary',
