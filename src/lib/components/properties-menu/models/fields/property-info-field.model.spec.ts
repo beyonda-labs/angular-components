@@ -4,19 +4,19 @@ import { PropertyFieldType } from '../property-field-type.model';
 import { PropertyInfoField } from './property-info-field.model';
 
 describe('PropertyInfoField', () => {
-    it('should fix the field type to "info"', () => {
+    it('fixes the field type to "info"', () => {
         expect(new PropertyInfoField({ id: 'scope' }).type).toBe(PropertyFieldType.Info);
     });
 
-    it('should always be disabled, even when constructed as enabled', () => {
+    it('is always disabled, even when built as enabled', () => {
         expect(new PropertyInfoField({ id: 'scope', disabled: false }).disabled).toBe(true);
     });
 
-    it('should default to an empty item list', () => {
+    it('defaults to an empty item list', () => {
         expect(new PropertyInfoField({ id: 'scope' }).items).toEqual([]);
     });
 
-    it('should keep the items it was given, icons included', () => {
+    it('keeps the items it is given, icons included', () => {
         const field = new PropertyInfoField({
             id: 'scope',
             items: [{ label: 'Global', icon: faCircleInfo }, { label: 'string' }]

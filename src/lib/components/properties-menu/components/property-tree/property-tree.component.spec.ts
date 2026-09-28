@@ -9,7 +9,6 @@ import { PropertyTreeDragService } from '../../services/property-tree-drag.servi
 import { PropertyTreeComponent } from './property-tree.component';
 
 describe('PropertyTreeComponent', () => {
-    let component: PropertyTreeComponent;
     let fixture: ComponentFixture<PropertyTreeComponent>;
     let propertiesMenuService: PropertiesMenuService;
 
@@ -39,21 +38,20 @@ describe('PropertyTreeComponent', () => {
                 })
             ]
         });
-        component = fixture.componentInstance;
     });
 
-    it('should render root and nested node labels', () => {
+    it('renders root and nested node labels', () => {
         expect(textsOf(treeItems())).toEqual(['Page 1', 'Header']);
     });
 
-    it('should call PropertiesMenuService.selectTreeNode when a row is clicked', () => {
+    it('selects the node through the menu service when its row is clicked', () => {
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectTreeNode');
         treeItems()[0].click();
 
         expect(selectSpy).toHaveBeenCalledWith('structure', 'structure-tree', 'page-1');
     });
 
-    it('should call PropertiesMenuService.toggleTreeNode when the chevron is clicked', () => {
+    it('toggles the node through the menu service when its chevron is clicked', () => {
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleTreeNode');
         toggle(0)?.click();
 
@@ -87,11 +85,11 @@ describe('PropertyTreeComponent', () => {
         expect(toggleSpy).toHaveBeenCalledWith('structure', 'structure-tree', 'page-1');
     });
 
-    it('should not render the add-block button without a label', () => {
+    it('renders no add-block button without a label', () => {
         expect(fixture.nativeElement.textContent).not.toContain('Add block');
     });
 
-    it('should call PropertiesMenuService.triggerTreeAddBlock when the add-block button is clicked', () => {
+    it('asks the menu service for a new block when the add-block button is clicked', () => {
         fixture.componentRef.setInput('addBlockLabel', 'Add block');
         fixture.detectChanges();
 
@@ -101,12 +99,12 @@ describe('PropertyTreeComponent', () => {
         expect(addBlockSpy).toHaveBeenCalledWith('structure', 'structure-tree');
     });
 
-    it('should resolve a default node label into a prefixed translation key', () => {
+    it('shows the default label of a node as a prefixed translation key', () => {
         propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
+        fixture.componentRef.setInput('nodes', [new PropertyTreeNode({ id: 'page-1' })]);
+        fixture.detectChanges();
 
-        expect(component.labelKey(new PropertyTreeNode({ id: 'page-1' }))).toBe(
-            'app.properties-menu.tree.page-1.label'
-        );
+        expect(textsOf(treeItems())).toEqual(['app.properties-menu.tree.page-1.label']);
     });
 });
 

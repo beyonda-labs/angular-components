@@ -4,9 +4,10 @@
     <input
         class="bey-property-toggle-field-input"
         type="checkbox"
-        [attr.aria-label]="current.label"
+        [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
         [checked]="current.value ?? false"
         [disabled]="current.disabled"
+        [id]="labelling().controlId"
         [required]="current.required"
         (change)="onChange($event)"
     />

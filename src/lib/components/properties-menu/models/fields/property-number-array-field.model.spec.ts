@@ -2,7 +2,7 @@ import { PropertyFieldType } from '../property-field-type.model';
 import { PropertyNumberArrayField } from './property-number-array-field.model';
 
 describe('PropertyNumberArrayField', () => {
-    it('should apply default values for optional properties', () => {
+    it('applies the defaults of the optional properties', () => {
         const field = new PropertyNumberArrayField({ id: 'widths' });
 
         expect(field.entryDefaultValue).toBe(1);
@@ -13,7 +13,7 @@ describe('PropertyNumberArrayField', () => {
         expect(field.step).toBeUndefined();
     });
 
-    it('should keep the provided constraints and value', () => {
+    it('keeps the constraints and the value it is given', () => {
         const field = new PropertyNumberArrayField({
             id: 'widths',
             entryDefaultValue: 2,
@@ -34,7 +34,7 @@ describe('PropertyNumberArrayField', () => {
         expect(field.value).toEqual([1, 1, 2]);
     });
 
-    it('should fix the field type to "numberArray"', () => {
+    it('fixes the field type to "numberArray"', () => {
         const field = new PropertyNumberArrayField({ id: 'widths' });
 
         expect(field.type).toBe(PropertyFieldType.NumberArray);

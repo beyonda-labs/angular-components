@@ -1,7 +1,7 @@
 import { PropertyVariable } from './property-variable.model';
 
 describe('PropertyVariable', () => {
-    it('should default label to path when not provided', () => {
+    it('defaults the label to the path', () => {
         const variable = new PropertyVariable({ id: 'customer', path: 'customer' });
 
         expect(variable.label).toBe('customer');
@@ -9,7 +9,7 @@ describe('PropertyVariable', () => {
         expect(variable.children).toEqual([]);
     });
 
-    it('should transform nested children into PropertyVariable instances', () => {
+    it('turns nested children into PropertyVariable instances', () => {
         const variable = new PropertyVariable({
             id: 'customer',
             path: 'customer',

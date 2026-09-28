@@ -6,9 +6,10 @@
             <textarea
                 class="bey-property-field-input"
                 rows="3"
-                [attr.aria-label]="current.label"
+                [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
                 [class.bey-property-field-input--with-actions]="current.acceptsVariable && current.actionButton"
                 [disabled]="current.disabled"
+                [id]="labelling().controlId"
                 [placeholder]="current.placeholder"
                 [readonly]="current.readonly"
                 [required]="current.required"
@@ -23,8 +24,9 @@
             <input
                 class="bey-property-field-input"
                 type="text"
-                [attr.aria-label]="current.label"
+                [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
                 [disabled]="current.disabled"
+                [id]="labelling().controlId"
                 [placeholder]="current.placeholder"
                 [readOnly]="current.readonly"
                 [required]="current.required"

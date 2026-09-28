@@ -19,7 +19,6 @@ import { PropertyTreeDragService } from '../../services/property-tree-drag.servi
 import { PropertyGroupComponent } from './property-group.component';
 
 describe('PropertyGroupComponent', () => {
-    let component: PropertyGroupComponent;
     let fixture: ComponentFixture<PropertyGroupComponent>;
     let propertiesMenuService: PropertiesMenuService;
 
@@ -50,21 +49,20 @@ describe('PropertyGroupComponent', () => {
                 content: new PropertyFieldsContent({})
             })
         });
-        component = fixture.componentInstance;
     });
 
-    it('should reflect the expanded state through aria-expanded', () => {
+    it('reflects the expanded state through aria-expanded', () => {
         expect(header()?.getAttribute('aria-expanded')).toBe('true');
     });
 
-    it('should call PropertiesMenuService.toggleGroup when the header is clicked', () => {
+    it('toggles the group through the menu service when the header is clicked', () => {
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleGroup');
         header()?.click();
 
         expect(toggleSpy).toHaveBeenCalledWith('properties', 'content');
     });
 
-    it('should not toggle a disabled group', () => {
+    it('does not toggle a disabled group', () => {
         fixture.componentRef.setInput(
             'group',
             new PropertyGroup({ id: 'content', label: 'Contenido', disabled: true })
@@ -73,12 +71,12 @@ describe('PropertyGroupComponent', () => {
 
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleGroup');
 
-        component.toggle();
+        header()?.click();
 
         expect(toggleSpy).not.toHaveBeenCalled();
     });
 
-    it('should not render the body when collapsed', () => {
+    it('does not render the body while collapsed', () => {
         fixture.componentRef.setInput(
             'group',
             new PropertyGroup({ id: 'content', label: 'Contenido', expanded: false, content: listContent() })
@@ -88,22 +86,22 @@ describe('PropertyGroupComponent', () => {
         expect(fixture.nativeElement.textContent).not.toContain('Encabezado');
     });
 
-    it('should resolve the default label into a prefixed translation key', () => {
+    it('shows the default label as a prefixed translation key', () => {
         propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
         fixture.componentRef.setInput('group', new PropertyGroup({ id: 'content' }));
         fixture.detectChanges();
 
-        expect(component.labelKey()).toBe('app.properties-menu.groups.content.label');
+        expect(header()?.textContent?.trim()).toBe('app.properties-menu.groups.content.label');
     });
 
-    it('should keep an explicit label as-is', () => {
+    it('shows an explicit label as it is', () => {
         fixture.componentRef.setInput('group', new PropertyGroup({ id: 'content', label: 'Contenido' }));
         fixture.detectChanges();
 
-        expect(component.labelKey()).toBe('Contenido');
+        expect(header()?.textContent?.trim()).toBe('Contenido');
     });
 
-    it('should expose the full label as a tooltip, since a long one is truncated', () => {
+    it('exposes the full label as a tooltip, since a long one is truncated', () => {
         const name = 'unaVariableConUnNombreExageradamenteLargoQueNoCabe';
         fixture.componentRef.setInput('group', new PropertyGroup({ id: 'variable', label: name }));
         fixture.detectChanges();
@@ -111,14 +109,14 @@ describe('PropertyGroupComponent', () => {
         expect(header()?.querySelector(`[title="${name}"]`)?.textContent?.trim()).toBe(name);
     });
 
-    it('should not render a header when showHeader is false', () => {
+    it('renders no header when showHeader is false', () => {
         fixture.componentRef.setInput('group', new PropertyGroup({ id: 'content', showHeader: false }));
         fixture.detectChanges();
 
         expect(header()).toBeNull();
     });
 
-    it('should stay expanded when showHeader is false', () => {
+    it('stays expanded when showHeader is false', () => {
         fixture.componentRef.setInput(
             'group',
             new PropertyGroup({ id: 'content', showHeader: false, content: listContent() })
@@ -128,39 +126,35 @@ describe('PropertyGroupComponent', () => {
         expect(fixture.nativeElement.textContent).toContain('Encabezado');
     });
 
-    it('should render the list content and skip tree/fields rendering', () => {
+    it('renders the list content alone', () => {
         fixture.componentRef.setInput(
             'group',
-            new PropertyGroup({
-                id: 'add-block',
-                expanded: true,
-                content: new PropertyListContent({ list: [new PropertyListItem({ id: 'block-heading' })] })
-            })
+            new PropertyGroup({ id: 'add-block', expanded: true, content: listContent() })
         );
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('bey-property-list')).toBeTruthy();
-        expect(fixture.nativeElement.querySelector('bey-property-tree')).toBeNull();
+        expect(fixture.nativeElement.textContent).toContain('Encabezado');
+        expect(queryAll(fixture, '[role="tree"], [role="treeitem"]')).toEqual([]);
     });
 
-    it('should render the tree content and skip list/fields rendering', () => {
+    it('renders the tree content alone', () => {
         fixture.componentRef.setInput(
             'group',
             new PropertyGroup({
                 id: 'structure',
                 expanded: true,
                 content: new PropertyTreeContent({
-                    tree: new PropertyTreeConfig({ nodes: [new PropertyTreeNode({ id: 'page-1' })] })
+                    tree: new PropertyTreeConfig({ nodes: [new PropertyTreeNode({ id: 'page-1', label: 'Página 1' })] })
                 })
             })
         );
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('bey-property-tree')).toBeTruthy();
-        expect(fixture.nativeElement.querySelector('bey-property-list')).toBeNull();
+        expect(textsOf(queryAll(fixture, '[role="treeitem"]'))).toEqual(['Página 1']);
+        expect(fixture.nativeElement.textContent).not.toContain('Encabezado');
     });
 
-    it('should not render the empty-state add-block button when the tree has nodes', () => {
+    it('leaves the add-block button to the tree when it has nodes', () => {
         fixture.componentRef.setInput(
             'group',
             new PropertyGroup({
@@ -181,7 +175,7 @@ describe('PropertyGroupComponent', () => {
         expect(buttons('add.label').length).toBe(1);
     });
 
-    it('should not render the empty-state add-block button when showEmptyStateAddBlock is false', () => {
+    it('renders no empty-state add-block button when showEmptyStateAddBlock is false', () => {
         fixture.componentRef.setInput(
             'group',
             new PropertyGroup({
@@ -195,7 +189,7 @@ describe('PropertyGroupComponent', () => {
         expect(button('add.label')).toBeNull();
     });
 
-    it('should render the empty-state add-block button when the tree is empty and opted in', () => {
+    it('renders the empty-state add-block button for an empty tree that opts in', () => {
         fixture.componentRef.setInput(
             'group',
             new PropertyGroup({
@@ -211,7 +205,7 @@ describe('PropertyGroupComponent', () => {
         expect(button('add.label')).toBeTruthy();
     });
 
-    it('should trigger the tree add-block event for the tab/group when the empty-state button is clicked', () => {
+    it('calls onTreeAddBlock with the tab and group when the empty-state button is clicked', () => {
         fixture.componentRef.setInput(
             'group',
             new PropertyGroup({

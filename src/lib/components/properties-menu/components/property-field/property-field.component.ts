@@ -14,6 +14,7 @@ import { PropertySpacingField } from '../../models/fields/property-spacing-field
 import { PropertyTextField } from '../../models/fields/property-text-field.model';
 import { PropertyToggleField } from '../../models/fields/property-toggle-field.model';
 import { PropertyField } from '../../models/property-field.model';
+import { PropertyFieldLabelling } from '../../models/property-field-labelling.model';
 import { PropertyFieldType } from '../../models/property-field-type.model';
 import { resolvePropertyLabelKey } from '../../models/property-i18n';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
@@ -33,7 +34,15 @@ import {
 } from '../fields/property-text-field/property-text-field.component';
 import { PropertyToggleFieldComponent } from '../fields/property-toggle-field/property-toggle-field.component';
 
-/** Renders the component that matches the field type and forwards its changes to the menu service. */
+const FIELD_TYPES_WITH_LABELABLE_CONTROL = new Set<PropertyFieldType>([
+    PropertyFieldType.Attachment,
+    PropertyFieldType.Color,
+    PropertyFieldType.Number,
+    PropertyFieldType.Select,
+    PropertyFieldType.Text,
+    PropertyFieldType.Textarea
+]);
+
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -56,14 +65,21 @@ import { PropertyToggleFieldComponent } from '../fields/property-toggle-field/pr
     templateUrl: './property-field.component.html'
 })
 export class PropertyFieldComponent {
+    readonly externalLabel = input<string>();
     readonly field = input.required<PropertyField>();
-    readonly hideLabel = input(false);
 
     readonly actionButtonTooltipKey = computed(
         () =>
             `${this.propertiesMenuService.config().prefix}.fields.${toKeySegment(this.field().id)}.action-button.tooltip`
     );
+
+    private static nextInstanceId = 0;
+    readonly controlId = `bey-property-field-${PropertyFieldComponent.nextInstanceId++}`;
     readonly fieldType = PropertyFieldType;
+    readonly labelFor = computed(() =>
+        FIELD_TYPES_WITH_LABELABLE_CONTROL.has(this.field().type) ? this.controlId : null
+    );
+    readonly labelId = `${this.controlId}-label`;
     readonly labelKey = computed(() =>
         resolvePropertyLabelKey(
             this.propertiesMenuService.config().prefix,
@@ -72,10 +88,20 @@ export class PropertyFieldComponent {
             this.field().label
         )
     );
+    readonly labelling = computed<PropertyFieldLabelling>(() => ({
+        controlId: this.controlId,
+        labelId: this.showsLabel() || this.showsToggleLabel() ? this.labelId : null,
+        labelKey: this.externalLabel() ?? this.labelKey()
+    }));
     readonly showsLabel = computed(() => {
         const field = this.field();
 
-        return Boolean(field.label) && !this.hideLabel() && field.type !== PropertyFieldType.Toggle;
+        return Boolean(field.label) && this.externalLabel() === undefined && field.type !== PropertyFieldType.Toggle;
+    });
+    readonly showsToggleLabel = computed(() => {
+        const field = this.field();
+
+        return Boolean(field.label) && field.type === PropertyFieldType.Toggle;
     });
 
     private readonly propertiesMenuService = inject(PropertiesMenuService);

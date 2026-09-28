@@ -4,6 +4,7 @@ import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertyNumberArrayField } from '../../../models/fields/property-number-array-field.model';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,6 +16,7 @@ import { PropertyNumberArrayField } from '../../../models/fields/property-number
 })
 export class PropertyNumberArrayFieldComponent {
     readonly field = input.required<PropertyNumberArrayField>();
+    readonly labelling = input.required<PropertyFieldLabelling>();
 
     readonly valueChange = output<number[]>();
 

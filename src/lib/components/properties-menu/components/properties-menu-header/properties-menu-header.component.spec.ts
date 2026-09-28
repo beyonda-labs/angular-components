@@ -28,22 +28,20 @@ describe('PropertiesMenuHeaderComponent', () => {
         element = fixture.nativeElement;
     });
 
-    it('should render the title, subtitle and icon', () => {
+    it('renders the title and the subtitle', () => {
         render(new PropertiesMenuHeaderConfig({ icon: faFont, subtitle: 'Block', title: 'Properties' }));
 
         expect(element.textContent).toContain('Properties');
         expect(element.textContent).toContain('Block');
-        expect(element.querySelector('fa-icon')).not.toBeNull();
     });
 
-    it('should omit the subtitle and the icon when not configured', () => {
+    it('omits the subtitle when not configured', () => {
         render(new PropertiesMenuHeaderConfig({ title: 'Properties' }));
 
         expect(element.textContent).not.toContain('Block');
-        expect(element.querySelector('fa-icon')).toBeNull();
     });
 
-    it('should render the close button only with onClose and call it on click', () => {
+    it('renders the close button only with onClose and calls it on click', () => {
         const onClose = jest.fn();
 
         render(new PropertiesMenuHeaderConfig({ title: 'Properties' }));

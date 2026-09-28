@@ -1,14 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
-import { queryButton } from '@testing/dom';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { queryAll, queryButton, renderComponent } from '@testing/dom';
 
+import propertiesMenuEn from '../../../assets/properties-menu.en.json';
 import { PropertyColorField } from '../../../models/fields/property-color-field.model';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 import { PropertyColorFieldComponent } from './property-color-field.component';
 
-const CLEAR_LABEL = 'angular-components.properties-menu.color-field.clear';
+const LABELLING: PropertyFieldLabelling = { controlId: 'fill', labelId: null, labelKey: 'Fill' };
 
 describe('PropertyColorFieldComponent', () => {
-    let component: PropertyColorFieldComponent;
     let fixture: ComponentFixture<PropertyColorFieldComponent>;
 
     beforeEach(async () => {
@@ -16,42 +17,57 @@ describe('PropertyColorFieldComponent', () => {
             imports: [PropertyColorFieldComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(PropertyColorFieldComponent);
-        component = fixture.componentInstance;
+        const translate = TestBed.inject(TranslateService);
+
+        translate.setTranslation('en', propertiesMenuEn);
+        translate.use('en');
     });
+
+    async function render(value: string): Promise<void> {
+        fixture = await renderComponent(PropertyColorFieldComponent, {
+            field: new PropertyColorField({ id: 'fill', value }),
+            labelling: LABELLING
+        });
+    }
 
     function hexInput(): HTMLInputElement {
-        return fixture.nativeElement.querySelector('input[type="text"]');
+        const [found] = queryAll<HTMLInputElement>(fixture, '[aria-label="Fill hex value"]');
+
+        return found;
     }
 
-    function clearButton(): HTMLButtonElement | null {
-        return queryButton(fixture, CLEAR_LABEL);
-    }
-
-    it('shows no clear button when the value is unset', () => {
-        fixture.componentRef.setInput('field', new PropertyColorField({ id: 'fill', value: '' }));
-        fixture.detectChanges();
+    it('shows no clear button when the value is unset', async () => {
+        await render('');
 
         expect(hexInput().value).toBe('');
-        expect(clearButton()).toBeNull();
+        expect(queryButton(fixture, 'Clear')).toBeNull();
     });
 
-    it('shows the value and a clear button once a value is set', () => {
-        fixture.componentRef.setInput('field', new PropertyColorField({ id: 'fill', value: '#ff0000' }));
-        fixture.detectChanges();
+    it('shows the value and a clear button once a value is set', async () => {
+        await render('#ff0000');
 
         expect(hexInput().value).toBe('#ff0000');
-        expect(clearButton()).not.toBeNull();
+        expect(queryButton(fixture, 'Clear')).not.toBeNull();
     });
 
-    it('emits an empty string when the clear button is clicked', () => {
-        fixture.componentRef.setInput('field', new PropertyColorField({ id: 'fill', value: '#ff0000' }));
-        fixture.detectChanges();
+    it('emits an empty string when the clear button is clicked', async () => {
+        await render('#ff0000');
+        const emitted: string[] = [];
 
-        const emitSpy = jest.spyOn(component.valueChange, 'emit');
+        fixture.componentInstance.valueChange.subscribe(value => emitted.push(value));
+        queryButton(fixture, 'Clear')?.click();
 
-        clearButton()?.click();
+        expect(emitted).toEqual(['']);
+    });
 
-        expect(emitSpy).toHaveBeenCalledWith('');
+    it('emits the colour typed as a hex value', async () => {
+        await render('#ff0000');
+        const emitted: string[] = [];
+
+        fixture.componentInstance.valueChange.subscribe(value => emitted.push(value));
+        hexInput().value = '#00ff00';
+        hexInput().dispatchEvent(new Event('change'));
+
+        expect(emitted).toEqual(['#00ff00']);
     });
 });

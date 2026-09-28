@@ -1,15 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
-import { queryButton } from '@testing/dom';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { queryAll, queryButton, renderComponent, settle } from '@testing/dom';
 
-import { PropertyFileField } from '../../../models/fields/property-file-field.model';
+import propertiesMenuEn from '../../../assets/properties-menu.en.json';
+import { PropertyFileField, PropertyFileFieldParameters } from '../../../models/fields/property-file-field.model';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 import { PropertyFileFieldComponent } from './property-file-field.component';
 
-const CLEAR_LABEL = 'angular-components.properties-menu.file-field.clear';
-const TOO_LARGE_TEXT = 'angular-components.properties-menu.file-field.too-large';
+const LABELLING: PropertyFieldLabelling = { controlId: 'source', labelId: null, labelKey: 'Source' };
+const TOO_LARGE_TEXT = 'This file exceeds the 0 MB limit.';
 
 describe('PropertyFileFieldComponent', () => {
-    let component: PropertyFileFieldComponent;
     let fixture: ComponentFixture<PropertyFileFieldComponent>;
 
     beforeEach(async () => {
@@ -17,112 +18,103 @@ describe('PropertyFileFieldComponent', () => {
             imports: [PropertyFileFieldComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(PropertyFileFieldComponent);
-        component = fixture.componentInstance;
+        const translate = TestBed.inject(TranslateService);
+
+        translate.setTranslation('en', propertiesMenuEn);
+        translate.use('en');
     });
 
-    function clearButton(): HTMLButtonElement | null {
-        return queryButton(fixture, CLEAR_LABEL);
+    async function render(parameters: Omit<PropertyFileFieldParameters, 'id'> = {}): Promise<void> {
+        fixture = await renderComponent(PropertyFileFieldComponent, {
+            field: new PropertyFileField({ id: 'source', ...parameters }),
+            labelling: LABELLING
+        });
     }
 
-    it('shows no clear button when the value is unset', () => {
-        fixture.componentRef.setInput('field', new PropertyFileField({ id: 'source', value: '' }));
-        fixture.detectChanges();
+    async function choose(name: string, bytes: number[]): Promise<void> {
+        const [input] = queryAll<HTMLInputElement>(fixture, 'input[type="file"]');
+        const file = new File([new Uint8Array(bytes)], name, { type: 'application/pdf' });
 
-        expect(clearButton()).toBeNull();
-    });
+        Object.defineProperty(input, 'files', { configurable: true, value: [file] });
+        input.dispatchEvent(new Event('change'));
+        await settle(fixture);
+    }
 
-    it('shows a clear button once a value is set', () => {
-        fixture.componentRef.setInput('field', new PropertyFileField({ id: 'source', value: 'AAAA' }));
-        fixture.detectChanges();
-
-        expect(clearButton()).not.toBeNull();
-    });
-
-    it('emits an empty string when the clear button is clicked', () => {
-        fixture.componentRef.setInput('field', new PropertyFileField({ id: 'source', value: 'AAAA' }));
-        fixture.detectChanges();
-
-        const emitSpy = jest.spyOn(component.valueChange, 'emit');
-
-        clearButton()?.click();
-
-        expect(emitSpy).toHaveBeenCalledWith('');
-        expect(component.selectedFileName()).toBeNull();
-    });
-
-    it('reads the chosen file as base64 and emits it without the data URI prefix', done => {
-        fixture.componentRef.setInput(
-            'field',
-            new PropertyFileField({ id: 'source', accept: 'application/pdf', value: '' })
-        );
-        fixture.detectChanges();
-
-        component.valueChange.subscribe((value: string) => {
-            expect(value).toBe('AQID');
-            expect(component.selectedFileName()).toBe('sample.pdf');
-            done();
+    function nextValue(): Promise<string> {
+        return new Promise(resolve => {
+            fixture.componentInstance.valueChange.subscribe(resolve);
         });
+    }
 
-        const file = new File([new Uint8Array([1, 2, 3])], 'sample.pdf', { type: 'application/pdf' });
-        const input = document.createElement('input');
-        Object.defineProperty(input, 'files', { value: [file] });
+    function text(): string {
+        return fixture.nativeElement.textContent ?? '';
+    }
 
-        component.onFileSelected({ target: input } as unknown as Event);
+    it('names the chooser after the field and shows that nothing is chosen', async () => {
+        await render({ value: '' });
+
+        expect(queryButton(fixture, 'Choose file for Source')).not.toBeNull();
+        expect(text()).toContain('No file selected');
+        expect(queryButton(fixture, 'Clear')).toBeNull();
     });
 
-    it('rejects a file larger than maxSizeBytes without reading or emitting it', () => {
-        fixture.componentRef.setInput('field', new PropertyFileField({ id: 'source', value: '', maxSizeBytes: 2 }));
-        fixture.detectChanges();
+    it('shows a clear button once a value is set', async () => {
+        await render({ value: 'AAAA' });
 
-        const emitSpy = jest.spyOn(component.valueChange, 'emit');
-        const file = new File([new Uint8Array([1, 2, 3])], 'too-big.pdf', { type: 'application/pdf' });
-        const input = document.createElement('input');
-        Object.defineProperty(input, 'files', { value: [file] });
-
-        component.onFileSelected({ target: input } as unknown as Event);
-        fixture.detectChanges();
-
-        expect(emitSpy).not.toHaveBeenCalled();
-        expect(component.selectedFileName()).toBeNull();
-        expect(component.sizeErrorMaxSizeMB()).toBe(0);
-        expect(fixture.nativeElement.textContent).toContain(TOO_LARGE_TEXT);
+        expect(text()).toContain('File selected');
+        expect(queryButton(fixture, 'Clear')).not.toBeNull();
     });
 
-    it('accepts a file at or under maxSizeBytes', done => {
-        fixture.componentRef.setInput('field', new PropertyFileField({ id: 'source', value: '', maxSizeBytes: 10 }));
-        fixture.detectChanges();
+    it('emits an empty string when the clear button is clicked', async () => {
+        await render({ value: 'AAAA' });
+        const emitted: string[] = [];
 
-        component.valueChange.subscribe((value: string) => {
-            expect(value).toBe('AQID');
-            expect(component.sizeErrorMaxSizeMB()).toBeNull();
-            done();
-        });
+        fixture.componentInstance.valueChange.subscribe(value => emitted.push(value));
+        queryButton(fixture, 'Clear')?.click();
 
-        const file = new File([new Uint8Array([1, 2, 3])], 'sample.pdf', { type: 'application/pdf' });
-        const input = document.createElement('input');
-        Object.defineProperty(input, 'files', { value: [file] });
-
-        component.onFileSelected({ target: input } as unknown as Event);
+        expect(emitted).toEqual(['']);
     });
 
-    it('clears the size error once a valid file is picked', () => {
-        fixture.componentRef.setInput('field', new PropertyFileField({ id: 'source', value: '', maxSizeBytes: 2 }));
-        fixture.detectChanges();
+    it('reads the chosen file as base64, emits it without the data URI prefix and shows its name', async () => {
+        await render({ accept: 'application/pdf', value: '' });
+        const value = nextValue();
 
-        const oversized = new File([new Uint8Array([1, 2, 3])], 'too-big.pdf', { type: 'application/pdf' });
-        const oversizedInput = document.createElement('input');
-        Object.defineProperty(oversizedInput, 'files', { value: [oversized] });
-        component.onFileSelected({ target: oversizedInput } as unknown as Event);
+        await choose('sample.pdf', [1, 2, 3]);
 
-        expect(component.sizeErrorMaxSizeMB()).not.toBeNull();
+        expect(await value).toBe('AQID');
+        expect(text()).toContain('sample.pdf');
+    });
 
-        fixture.componentRef.setInput('field', new PropertyFileField({ id: 'source', value: '', maxSizeBytes: 10 }));
-        const valid = new File([new Uint8Array([1, 2])], 'ok.pdf', { type: 'application/pdf' });
-        const validInput = document.createElement('input');
-        Object.defineProperty(validInput, 'files', { value: [valid] });
-        component.onFileSelected({ target: validInput } as unknown as Event);
+    it('rejects a file larger than maxSizeBytes without reading or emitting it', async () => {
+        await render({ maxSizeBytes: 2, value: '' });
+        const emitted: string[] = [];
 
-        expect(component.sizeErrorMaxSizeMB()).toBeNull();
+        fixture.componentInstance.valueChange.subscribe(value => emitted.push(value));
+        await choose('too-big.pdf', [1, 2, 3]);
+
+        expect(emitted).toEqual([]);
+        expect(text()).toContain(TOO_LARGE_TEXT);
+        expect(text()).not.toContain('too-big.pdf');
+    });
+
+    it('accepts a file at or under maxSizeBytes', async () => {
+        await render({ maxSizeBytes: 10, value: '' });
+        const value = nextValue();
+
+        await choose('sample.pdf', [1, 2, 3]);
+
+        expect(await value).toBe('AQID');
+        expect(text()).not.toContain(TOO_LARGE_TEXT);
+    });
+
+    it('clears the size error once a valid file is picked', async () => {
+        await render({ maxSizeBytes: 2, value: '' });
+        await choose('too-big.pdf', [1, 2, 3]);
+
+        expect(text()).toContain(TOO_LARGE_TEXT);
+
+        await choose('ok.pdf', [1, 2]);
+
+        expect(text()).not.toContain(TOO_LARGE_TEXT);
     });
 });

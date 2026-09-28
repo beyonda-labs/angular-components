@@ -79,7 +79,6 @@ export interface PropertiesMenuConfigParameters {
     icon?: IconDefinition;
     onActiveTabChange?: (tabId: string) => void;
     onAttachmentUpload?: (upload: PropertyAttachmentUpload) => void;
-    /** When set, the header shows a close button that calls it. */
     onClose?: () => void;
     onFieldAction?: (action: PropertyFieldAction) => void;
     onFieldValueChange?: (change: PropertyFieldValueChange) => void;

@@ -1,7 +1,7 @@
 import { resolvePropertyLabelKey } from './property-i18n';
 
 describe('resolvePropertyLabelKey', () => {
-    it('should prefix the key when the label is still the default sentinel', () => {
+    it('prefixes the key while the label is still the default sentinel', () => {
         expect(resolvePropertyLabelKey('app.properties-menu', 'groups', 'content', 'content.label')).toBe(
             'app.properties-menu.groups.content.label'
         );
@@ -13,7 +13,7 @@ describe('resolvePropertyLabelKey', () => {
         );
     });
 
-    it('should keep an explicitly provided label as-is', () => {
+    it('keeps an explicit label as it is', () => {
         expect(resolvePropertyLabelKey('app.properties-menu', 'groups', 'content', 'Contenido')).toBe('Contenido');
     });
 });

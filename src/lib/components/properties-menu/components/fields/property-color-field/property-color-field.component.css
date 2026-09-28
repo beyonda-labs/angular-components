@@ -14,7 +14,6 @@
     width: var(--bey-property-field-control-size);
 }
 
-/* Checkerboard for "no colour", so an empty field does not look like a solid colour is applied. */
 .bey-property-color-field-swatch.is-empty {
     background-image: linear-gradient(45deg, var(--bey-property-color-field-checker) 25%, transparent 25%),
         linear-gradient(-45deg, var(--bey-property-color-field-checker) 25%, transparent 25%),

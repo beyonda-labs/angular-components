@@ -3,7 +3,6 @@ import { IconDefinition } from '@fortawesome/angular-fontawesome';
 import { BadgeConfig } from '../../badge/models/badge.model';
 import { PropertyField } from './property-field.model';
 
-/** One line of an expandable list card: a label and a field, a badge or a plain value. */
 export class PropertySummaryRow {
     label: string;
 

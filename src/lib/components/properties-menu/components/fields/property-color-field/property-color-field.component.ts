@@ -5,8 +5,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { PropertyColorField } from '../../../models/fields/property-color-field.model';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 
-const DEFAULT_COLOR = '#000000';
+const NATIVE_PICKER_FALLBACK_COLOR = '#000000';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,13 +19,13 @@ const DEFAULT_COLOR = '#000000';
 })
 export class PropertyColorFieldComponent {
     readonly field = input.required<PropertyColorField>();
+    readonly labelling = input.required<PropertyFieldLabelling>();
 
     readonly valueChange = output<string>();
 
     readonly clearIcon = faXmark;
     readonly hasValue = computed(() => Boolean(this.field().value));
-    /** The native colour input always needs a hex value for its own swatch; this fallback is never emitted. */
-    readonly pickerValue = computed(() => this.field().value || DEFAULT_COLOR);
+    readonly pickerValue = computed(() => this.field().value || NATIVE_PICKER_FALLBACK_COLOR);
     readonly showsClear = computed(() => {
         const field = this.field();
 

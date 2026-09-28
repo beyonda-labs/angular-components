@@ -1,9 +1,12 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertyToggleField } from '../../../models/fields/property-toggle-field.model';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [TranslateModule],
     selector: 'bey-property-toggle-field',
     standalone: true,
     styleUrls: ['./property-toggle-field.component.css'],
@@ -11,6 +14,7 @@ import { PropertyToggleField } from '../../../models/fields/property-toggle-fiel
 })
 export class PropertyToggleFieldComponent {
     readonly field = input.required<PropertyToggleField>();
+    readonly labelling = input.required<PropertyFieldLabelling>();
 
     readonly valueChange = output<boolean>();
 

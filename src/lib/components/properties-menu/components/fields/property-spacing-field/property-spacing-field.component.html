@@ -1,6 +1,11 @@
 @let current = field();
 
-<div class="bey-property-spacing-field" role="group" [attr.aria-label]="current.label">
+<div
+    class="bey-property-spacing-field"
+    role="group"
+    [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
+    [attr.aria-labelledby]="labelling().labelId"
+>
     @for (side of sides; track side) {
         <label class="bey-property-spacing-field-side">
             <span class="bey-property-spacing-field-side-label">
