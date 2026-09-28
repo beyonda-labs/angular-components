@@ -1,9 +1,3 @@
-/* ─── Shared style-guide utilities ─────────────────────────────────────────
-   Imported through `styleUrls` by the style-guide of each module. Angular
-   scopes styles per component, so every module that uses these classes has to
-   pull this file in.
-*/
-
 .bey-style-guide-description {
     line-height: var(--bey-line-height-loose);
 }

@@ -108,10 +108,6 @@ export class HttpService {
             this.loadingService.show();
         }
 
-        // `subscribe()` below drives the loading/toast/error side effects immediately, independent of
-        // whether (or how many times) the caller subscribes to the returned observable. `shareReplay(1)`
-        // makes that subscription and the caller's share the same underlying HTTP call — without it,
-        // HttpClient's cold observable would fire the request a second time when the caller subscribes.
         const request = source$.pipe(
             tap(result => {
                 options?.onSuccess?.(result);

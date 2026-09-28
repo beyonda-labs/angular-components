@@ -4,11 +4,9 @@ export class TreeConfig<TData = unknown> {
     nodes: TreeNode<TData>[];
     prefix: string;
 
-    /** Keys expanded on init; expand/collapse state afterwards is managed internally. */
     expandedKeys?: string[];
     onNodeSelect?: (node: TreeNode<TData>) => void;
     onNodeToggle?: (node: TreeNode<TData>, expanded: boolean) => void;
-    /** Key of the currently selected node, controlled by the consumer (like a controlled input). */
     selectedKey?: string;
 
     constructor({ nodes, prefix, expandedKeys, onNodeSelect, onNodeToggle, selectedKey }: TreeConfigParameters<TData>) {

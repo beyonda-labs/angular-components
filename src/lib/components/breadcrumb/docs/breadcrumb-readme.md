@@ -42,6 +42,8 @@ const breadcrumb = new BeyBreadcrumbConfig({
 | `isDisabled`       | no       | `false` | Rendered dimmed and not clickable                              |
 | `isTranslationKey` | no       | `false` | Treat the label as a full key and ignore `prefix`              |
 
+Labels are translated as the trail renders, and again on every language change.
+
 ## Replacing the config
 
 The config is read as the initial state and never written to. To change the trail, build a new

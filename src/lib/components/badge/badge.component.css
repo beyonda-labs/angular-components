@@ -22,8 +22,6 @@
     white-space: nowrap;
 }
 
-/* Greyscale emphasis */
-
 .bey-badge--neutral {
     --bey-badge-bg: color-mix(in srgb, var(--bey-secondary) 10%, var(--bey-bg-page));
     --bey-badge-border: var(--bey-border-default);
@@ -39,8 +37,6 @@
     --bey-badge-bg: var(--bey-bg-inverse);
     --bey-badge-fg: var(--bey-text-inverse);
 }
-
-/* Semantic hues: a light tint as background and the hue blended with the text colour, legible in both themes */
 
 .bey-badge--primary {
     --bey-badge-bg: var(--bey-primary);

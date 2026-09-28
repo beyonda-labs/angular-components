@@ -10,7 +10,6 @@
     display: block;
 }
 
-/* The native scrollbar follows the theme; the palette already does through the tokens. */
 :host-context(body.dark) {
     color-scheme: dark;
 }
