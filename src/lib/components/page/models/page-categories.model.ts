@@ -17,13 +17,13 @@ export interface PageTrashItem {
     type: PageItemType;
 }
 
-export class PageCategoriesConfig<TCategory extends PageItem = PageItem> {
+export class PageCategoriesConfig<TCategory extends PageItem = PageItem, TCategoryValue = unknown> {
     nameField: string;
     parentField: string;
     typeField: string;
     useTrash: boolean;
 
-    formConfig?: PageFormConfig<unknown, TCategory>;
+    formConfig?: PageFormConfig<TCategoryValue, TCategory>;
     loadRow?: (category: TCategory, viewMode: PageViewMode) => TableCell[];
 
     constructor({
@@ -33,7 +33,7 @@ export class PageCategoriesConfig<TCategory extends PageItem = PageItem> {
         parentField = 'parentId',
         typeField = 'type',
         useTrash = false
-    }: PageCategoriesConfigParameters<TCategory>) {
+    }: PageCategoriesConfigParameters<TCategory, TCategoryValue>) {
         this.formConfig = formConfig;
         this.loadRow = loadRow;
         this.nameField = nameField;
@@ -43,8 +43,8 @@ export class PageCategoriesConfig<TCategory extends PageItem = PageItem> {
     }
 }
 
-export interface PageCategoriesConfigParameters<TCategory extends PageItem = PageItem> {
-    formConfig?: PageFormConfig<unknown, TCategory>;
+export interface PageCategoriesConfigParameters<TCategory extends PageItem = PageItem, TCategoryValue = unknown> {
+    formConfig?: PageFormConfig<TCategoryValue, TCategory>;
     loadRow?: (category: TCategory, viewMode: PageViewMode) => TableCell[];
     nameField?: string;
     parentField?: string;

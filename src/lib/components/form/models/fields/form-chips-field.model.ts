@@ -1,4 +1,5 @@
 import { FormField, FormFieldBaseParameters, FormFieldType } from '../form-field.model';
+import { FormFieldCustomValidator } from '../form-field-validator.model';
 
 export class FormChipsField extends FormField {
     allowDuplicates: boolean;
@@ -16,4 +17,5 @@ export class FormChipsField extends FormField {
 export interface FormChipsFieldParameters extends FormFieldBaseParameters {
     allowDuplicates?: boolean;
     maxItems?: number;
+    validators?: FormFieldCustomValidator[];
 }

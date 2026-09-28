@@ -229,8 +229,8 @@ export class PageService {
         this.pageSearch.update(search => ({ ...search, page: 1 }));
     }
 
-    setConfig<TValue, TItem extends PageItem, TCategory extends PageItem>(
-        typedConfig: PageConfig<TValue, TItem, TCategory>
+    setConfig<TValue, TItem extends PageItem, TCategory extends PageItem, TCategoryValue>(
+        typedConfig: PageConfig<TValue, TItem, TCategory, TCategoryValue>
     ): void {
         const config = typedConfig as unknown as PageConfig;
 

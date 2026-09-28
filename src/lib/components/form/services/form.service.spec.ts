@@ -4,9 +4,11 @@ import { FormControl } from '@angular/forms';
 import { FormCheckboxField } from '../models/fields/form-checkbox-field.model';
 import { FormChipsField } from '../models/fields/form-chips-field.model';
 import { FormDateField } from '../models/fields/form-date-field.model';
+import { FormFileField } from '../models/fields/form-file-field.model';
 import { FormNumberField } from '../models/fields/form-number-field.model';
 import { FormTextField } from '../models/fields/form-text-field.model';
 import { FormConfig, FormRow, FormSection } from '../models/form.model';
+import { FormFieldCustomValidator } from '../models/form-field-validator.model';
 import { FormService } from './form.service';
 
 describe('FormService', () => {
@@ -95,6 +97,30 @@ describe('FormService', () => {
         expect(control.errors?.['maxItems']).toBeTruthy();
 
         control.setValue(['a', 'b']);
+        expect(control.valid).toBe(true);
+    });
+
+    it('validates a file with its validators together with the accepted types and the size limit', () => {
+        const control = service.initFieldControl(
+            new FormFileField({
+                key: 'attachment',
+                accept: ['application/pdf'],
+                maxSizeBytes: 4,
+                validators: [
+                    new FormFieldCustomValidator(current =>
+                        (current.value as File | null)?.name.startsWith('draft') ? { draft: true } : null
+                    )
+                ]
+            })
+        ) as FormControl<File | null>;
+
+        control.setValue(new File(['too large'], 'draft.txt', { type: 'text/plain' }));
+        expect(Object.keys(control.errors ?? {}).sort()).toEqual(['accept', 'draft', 'maxSizeBytes']);
+
+        control.setValue(new File(['pdf'], 'draft.pdf', { type: 'application/pdf' }));
+        expect(Object.keys(control.errors ?? {})).toEqual(['draft']);
+
+        control.setValue(new File(['pdf'], 'final.pdf', { type: 'application/pdf' }));
         expect(control.valid).toBe(true);
     });
 });

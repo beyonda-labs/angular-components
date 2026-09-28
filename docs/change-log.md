@@ -23,6 +23,10 @@
 -   Services: `provideBeyApp` registers the HTTP client with the session interceptor, the environment, the session, the modal, the toast and the translations loader in one provider, typed by `BeyAppConfig`.
 -   Utilities: `beyFormatBytes` formats a size in bytes as the file field shows it (`1.5 KB`), and `beyToKeySegment` turns an identifier into the kebab-case segment the library builds its translation keys from.
 -   Style guide: `bey-style-guide` loads its own translations from `assets/angular-components/i18n-style-guide/` for the current language and every language change.
+-   Page module: `BeyPageCategoriesConfig<TCategory, TCategoryValue>` types the categories form value, carried through `BeyPageTableConfig` and `BeyPageConfig<TValue, TItem, TCategory, TCategoryValue>`, so the categories form's `toItem` reads it without a cast; it defaults to `unknown`.
+-   App layout module: `isRouteBreadcrumbEnabled` on `BeyAppLayoutConfig` (`true` by default); `false` leaves the breadcrumb to the consumer on navigation and on language changes, while the menu still follows the route and `onRouteActivated` still runs.
+-   App layout module: `BeyAppLayoutConfig` keeps `iconSrc`, `productName`, `orgName`, `privacyUrl` and `termsUrl` as fields next to `footerConfig`, so a config spread into a new one is a full copy.
+-   App layout module: `BeyAppLayoutConfigParameters`, `BeyAppLayoutTopActionParameters`, `BeyAppLayoutBottomActionParameters` and `BeyAppLayoutBreadcrumbItemParameters` are exported.
 
 ### Changed
 
@@ -46,6 +50,8 @@
 -   Pdf viewer module: `showToolbar` is replaced by `toolbar`, a `BeyPdfViewerToolbar` (`None` by default, `Full` for the toolbar of pdf.js).
 -   Properties menu module: a new config keeps what the user expanded, the open tabs and the selected tree node, matched by id, unless the config changes that value; a node the config selects opens its ancestors.
 -   `BeyCellType` gains `Date` and `Tags`, and `BeyPageActionScope` gains `Single`.
+-   App layout module: `icon` is optional on `BeyAppLayoutTopAction` and `BeyAppLayoutBottomAction`.
+-   Form module: the number, checkbox, chips and file fields type `validators` as `BeyFormFieldCustomValidator[]`, so a length, pattern, email or url validator on them no longer compiles.
 
 ### Fixed
 
@@ -57,6 +63,9 @@
 -   Form module: a custom validator that reads a signal no longer rebuilds the form, and loses what was typed, when that signal changes.
 -   Page module: `edit-category` is offered only with exactly one row selected, as `edit` already was.
 -   Page module: `move` recognises the selected categories through `typeField` instead of a hard-coded `type`.
+-   Header module: icon-only actions are named by the label key a text action would show, and the overflow toggle by `angular-components.header.menu`, so screen readers announce them.
+-   Login module: the provider buttons are named after their provider (`angular-components.login.provider.<id>`).
+-   Form module: the autocomplete, chips, file and password fields apply their `validators`, which were silently ignored; the file field runs them together with `accept` and `maxSizeBytes`, and the chips field shows its invalid state once its input is left.
 
 ## [1.2.0] - 2026-09-26
 

@@ -6,7 +6,7 @@ import { LeftMenuAction, LeftMenuTitle, LeftMenuUserInfo } from '../../left-menu
 
 export class AppLayoutBottomAction extends LeftMenuAction {
     constructor({ action, icon, key, route }: AppLayoutBottomActionParameters) {
-        super({ action, key, icon, route });
+        super({ action, icon, key, route });
     }
 }
 
@@ -20,7 +20,11 @@ export class AppLayoutConfig {
     bottomActions: AppLayoutBottomAction[];
     breadcrumb: AppLayoutBreadcrumbItem[];
     footerConfig: FooterConfig;
+    iconSrc: string;
+    isRouteBreadcrumbEnabled: boolean;
+    orgName: string;
     prefix: string;
+    productName: string;
     title: LeftMenuTitle;
     topActions: AppLayoutTopAction[];
     useBodyPadding: boolean;
@@ -29,12 +33,15 @@ export class AppLayoutConfig {
     onLayoutInitialized?: () => void;
     onMenuActionClick?: (key: string) => void;
     onRouteActivated?: (key: string) => void;
+    privacyUrl?: string;
+    termsUrl?: string;
     userInfo?: LeftMenuUserInfo;
 
     constructor({
         bottomActions = [],
         breadcrumb = [],
         iconSrc,
+        isRouteBreadcrumbEnabled = true,
         onBreadcrumbClick,
         onLayoutInitialized,
         onMenuActionClick,
@@ -51,22 +58,22 @@ export class AppLayoutConfig {
     }: AppLayoutConfigParameters) {
         this.bottomActions = bottomActions;
         this.breadcrumb = breadcrumb;
+        this.footerConfig = new FooterConfig({ iconSrc, orgName, privacyUrl, productName, termsUrl });
+        this.iconSrc = iconSrc;
+        this.isRouteBreadcrumbEnabled = isRouteBreadcrumbEnabled;
         this.onBreadcrumbClick = onBreadcrumbClick;
         this.onLayoutInitialized = onLayoutInitialized;
         this.onMenuActionClick = onMenuActionClick;
         this.onRouteActivated = onRouteActivated;
+        this.orgName = orgName;
         this.prefix = prefix;
+        this.privacyUrl = privacyUrl;
+        this.productName = productName;
+        this.termsUrl = termsUrl;
         this.title = title;
         this.topActions = topActions;
         this.useBodyPadding = useBodyPadding;
         this.userInfo = userInfo;
-        this.footerConfig = new FooterConfig({
-            iconSrc,
-            orgName,
-            privacyUrl,
-            productName,
-            termsUrl
-        });
     }
 }
 
@@ -85,10 +92,10 @@ export class AppLayoutTopAction extends LeftMenuAction {
 }
 
 export interface AppLayoutBottomActionParameters {
-    icon: IconDefinition;
     key: string;
 
     action?: () => void;
+    icon?: IconDefinition;
     route?: string;
 }
 
@@ -106,6 +113,7 @@ export interface AppLayoutConfigParameters {
 
     bottomActions?: AppLayoutBottomAction[];
     breadcrumb?: AppLayoutBreadcrumbItem[];
+    isRouteBreadcrumbEnabled?: boolean;
     onBreadcrumbClick?: (id: number) => void;
     onLayoutInitialized?: () => void;
     onMenuActionClick?: (key: string) => void;
@@ -120,12 +128,12 @@ export interface AppLayoutConfigParameters {
 }
 
 export interface AppLayoutTopActionParameters {
-    icon: IconDefinition;
     key: string;
 
     action?: () => void;
     active?: boolean;
     disabled?: boolean;
+    icon?: IconDefinition;
     route?: string;
     subActions?: AppLayoutTopAction[];
 }

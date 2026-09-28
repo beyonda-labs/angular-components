@@ -81,8 +81,8 @@
             },
             "section-chips": {
                 "chips1": {
-                    "label": "Chips básico",
-                    "placeholder": "Escriba y pulse Enter"
+                    "label": "Chips en minúsculas",
+                    "placeholder": "Solo etiquetas en minúsculas"
                 },
                 "chips2": {
                     "label": "Chips obligatorio (máx. 5)",
@@ -92,7 +92,7 @@
                     "label": "Chips deshabilitado"
                 },
                 "label": "Campos de chips",
-                "tooltip": "Variantes de chips con estado básico, obligatorio con maxItems, y deshabilitado"
+                "tooltip": "Variantes de chips con validador propio, obligatorio con maxItems, y deshabilitado"
             },
             "section-date": {
                 "date1": {
@@ -162,8 +162,8 @@
             "section-password": {
                 "label": "Campos de contraseña",
                 "password1": {
-                    "label": "Contraseña",
-                    "placeholder": "Ingrese su contraseña"
+                    "label": "Contraseña (mín. 8)",
+                    "placeholder": "Al menos 8 caracteres"
                 },
                 "password2": {
                     "label": "Contraseña obligatoria",
@@ -177,7 +177,7 @@
                     "label": "Contraseña sin toggle",
                     "placeholder": "Sin toggle de visibilidad"
                 },
-                "tooltip": "Campos de contraseña con toggle, obligatorio y deshabilitado"
+                "tooltip": "Campos de contraseña con validador de longitud, toggle, obligatorio y deshabilitado"
             },
             "section-radio": {
                 "label": "Campos de radio",

@@ -2,6 +2,7 @@ import {
     BeyFormAutocompleteField,
     BeyFormCheckboxField,
     BeyFormChipsField,
+    BeyFormFieldCustomValidator,
     BeyFormFieldOption,
     BeyFormRadioField,
     BeyFormRow,
@@ -214,7 +215,14 @@ export function buildChoiceSections(): BeyFormSection[] {
                     fields: [
                         new BeyFormChipsField({
                             key: 'chips1',
-                            columns: 4
+                            columns: 4,
+                            validators: [
+                                new BeyFormFieldCustomValidator(control =>
+                                    ((control.value as string[] | null) ?? []).some(tag => tag !== tag.toLowerCase())
+                                        ? { lowercase: true }
+                                        : null
+                                )
+                            ]
                         }),
                         new BeyFormChipsField({
                             key: 'chips2',

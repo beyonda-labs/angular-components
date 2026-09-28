@@ -28,8 +28,13 @@ import { PageService } from './services/page.service';
     styleUrls: ['./page.component.css'],
     templateUrl: './page.component.html'
 })
-export class PageComponent<TValue = unknown, TItem extends PageItem = PageItem, TCategory extends PageItem = TItem> {
-    readonly config = input.required<PageConfig<TValue, TItem, TCategory>>();
+export class PageComponent<
+    TValue = unknown,
+    TItem extends PageItem = PageItem,
+    TCategory extends PageItem = TItem,
+    TCategoryValue = unknown
+> {
+    readonly config = input.required<PageConfig<TValue, TItem, TCategory, TCategoryValue>>();
 
     readonly hasToolbar = computed(() => Boolean(this.service.viewToggleConfig() || this.service.searchConfig()));
 

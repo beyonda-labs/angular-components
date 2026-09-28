@@ -37,33 +37,46 @@ readonly config = new BeyAppLayoutConfig({
 
 ## BeyAppLayoutConfig
 
-| Field                 | Required | Default          | Meaning                                                   |
-| --------------------- | -------- | ---------------- | --------------------------------------------------------- |
-| `iconSrc`             | yes      |                  | Organisation icon shown in the footer                     |
-| `productName`         | yes      |                  | i18n key of the product name shown in the footer          |
-| `title`               | yes      |                  | Brand of the side menu, a `BeyLeftMenuTitle`              |
-| `prefix`              | no       | `'app-layout'`   | i18n prefix the action texts are built from               |
-| `topActions`          | no       | `[]`             | Main navigation                                           |
-| `bottomActions`       | no       | `[]`             | Secondary group, pinned below                             |
-| `breadcrumb`          | no       | `[]`             | Items the breadcrumb starts with                          |
-| `useBodyPadding`      | no       | `true`           | Pads the projected content                                |
-| `userInfo`            | no       | none             | Shows the signed-in user at the foot of the menu          |
-| `orgName`             | no       | `'Beyonda Labs'` | Organisation name in the footer                           |
-| `privacyUrl`          | no       | none             | Route of the privacy link in the footer                   |
-| `termsUrl`            | no       | none             | Route of the terms link in the footer                     |
-| `onLayoutInitialized` | no       |                  | Run once, when the layout is ready                        |
-| `onMenuActionClick`   | no       |                  | Run with the key of any action used, nested ones included |
-| `onBreadcrumbClick`   | no       |                  | Run with the id of a breadcrumb item that is clicked      |
-| `onRouteActivated`    | no       |                  | Run with the key of the action a route activated          |
+| Field                      | Required | Default          | Meaning                                                   |
+| -------------------------- | -------- | ---------------- | --------------------------------------------------------- |
+| `iconSrc`                  | yes      |                  | Organisation icon shown in the footer                     |
+| `productName`              | yes      |                  | i18n key of the product name shown in the footer          |
+| `title`                    | yes      |                  | Brand of the side menu, a `BeyLeftMenuTitle`              |
+| `prefix`                   | no       | `'app-layout'`   | i18n prefix the action texts are built from               |
+| `topActions`               | no       | `[]`             | Main navigation                                           |
+| `bottomActions`            | no       | `[]`             | Secondary group, pinned below                             |
+| `breadcrumb`               | no       | `[]`             | Items the breadcrumb starts with                          |
+| `isRouteBreadcrumbEnabled` | no       | `true`           | Builds the breadcrumb from the route, see Routes          |
+| `useBodyPadding`           | no       | `true`           | Pads the projected content                                |
+| `userInfo`                 | no       | none             | Shows the signed-in user at the foot of the menu          |
+| `orgName`                  | no       | `'Beyonda Labs'` | Organisation name in the footer                           |
+| `privacyUrl`               | no       | none             | Route of the privacy link in the footer                   |
+| `termsUrl`                 | no       | none             | Route of the terms link in the footer                     |
+| `onLayoutInitialized`      | no       |                  | Run once, when the layout is ready                        |
+| `onMenuActionClick`        | no       |                  | Run with the key of any action used, nested ones included |
+| `onBreadcrumbClick`        | no       |                  | Run with the id of a breadcrumb item that is clicked      |
+| `onRouteActivated`         | no       |                  | Run with the key of the action a route activated          |
 
-`BeyAppLayoutTopAction` takes `key`, `icon`, and optionally `action`, `active`, `disabled`, `route` and
-`subActions`. `BeyAppLayoutBottomAction` takes `key`, `icon`, and optionally `action` and `route`. Both are
-`BeyLeftMenuAction`s, so their texts resolve as `<prefix>.actions.<key>.label` and `.tooltip`, with the key
-as a kebab-case segment: `monthlyReports` reads `<prefix>.actions.monthly-reports.label`, in the menu and in
-the breadcrumb alike.
+`BeyAppLayoutTopAction` takes `key`, and optionally `action`, `active`, `disabled`, `icon`, `route` and
+`subActions`. `BeyAppLayoutBottomAction` takes `key`, and optionally `action`, `icon` and `route`. An action
+without `icon` keeps the place of one, so its label lines up with the rest. Both are `BeyLeftMenuAction`s, so
+their texts resolve as `<prefix>.actions.<key>.label` and `.tooltip`, with the key as a kebab-case segment:
+`monthlyReports` reads `<prefix>.actions.monthly-reports.label`, in the menu and in the breadcrumb alike.
 
 `BeyAppLayoutBreadcrumbItem` takes `id`, `label` and an optional `icon`. The label is shown as it is: translate
 it before building the item.
+
+## Copying a config
+
+Every field the constructor takes stays on the config, and `footerConfig` is built from `iconSrc`,
+`productName`, `orgName`, `privacyUrl` and `termsUrl`. A config spread into a new one is therefore a full
+copy, and whatever the copy overrides wins, footer fields included:
+
+```ts
+const editorConfig = new BeyAppLayoutConfig({ ...config, useBodyPadding: false });
+```
+
+`footerConfig` is not a parameter: change the footer through its fields.
 
 ## The actions are yours
 
@@ -86,6 +99,11 @@ builds the breadcrumb from the labels of that path, translated on the spot and a
 changes, and calls `onRouteActivated`. A url no action claims clears both. Using a routed action from the
 menu activates it at once, and a navigation that a guard cancels, or that fails, brings the menu back to the
 page the router stays on.
+
+With `isRouteBreadcrumbEnabled: false` the breadcrumb is yours: the layout still activates the action a
+route claims, clears it on a url no action claims and calls `onRouteActivated`, but it never sets nor clears
+the breadcrumb, and a language change leaves everything as it is. The bar shows only what `breadcrumb` starts
+with or what you give `setBreadcrumb`.
 
 Without routes, nothing is activated for you: call `activeMenuAction` and `setBreadcrumb` from
 `onMenuActionClick`, as the style-guide does.
@@ -110,7 +128,7 @@ A root singleton, so a page can update the shell from anywhere.
 | `onBreadcrumbClick$`      | The ids reported by the bar or by `emitBreadcrumbClick` |
 
 The expanded state is stored under `bey-left-menu-expanded` in `localStorage`, so it survives a reload and
-defaults to expanded the first time.
+defaults to expanded the first time. Where `localStorage` is unavailable the state lives only in the service.
 
 ## Customisation
 

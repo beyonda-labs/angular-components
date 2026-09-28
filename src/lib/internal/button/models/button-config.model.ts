@@ -17,6 +17,7 @@ export class ButtonConfig {
     tooltip: string;
     type: ButtonType;
 
+    ariaLabel?: string;
     customClass?: string;
     customStyles?: string;
     icon?: IconDefinition;
@@ -24,24 +25,25 @@ export class ButtonConfig {
 
     constructor({
         action,
-        icon,
-        label,
-
+        ariaLabel,
         customClass,
         customStyles,
+        icon,
         isDisabled = false,
         isHidden = false,
+        label = '',
         tooltip = '',
         tooltipPlacement,
         type = ButtonType.Primary
     }: ButtonParameters) {
         this.action = action;
+        this.ariaLabel = ariaLabel;
         this.customClass = customClass;
         this.customStyles = customStyles;
         this.icon = icon;
         this.isDisabled = isDisabled;
         this.isHidden = isHidden;
-        this.label = label ?? '';
+        this.label = label;
         this.tooltip = tooltip;
         this.tooltipPlacement = tooltipPlacement;
         this.type = type;
@@ -51,6 +53,7 @@ export class ButtonConfig {
 export interface ButtonParameters {
     action: () => void;
 
+    ariaLabel?: string;
     customClass?: string;
     customStyles?: string;
     icon?: IconDefinition;

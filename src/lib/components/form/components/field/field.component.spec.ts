@@ -1,12 +1,23 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { renderComponent } from '@testing/dom';
+import { queryAll, renderComponent, settle } from '@testing/dom';
 
 import { FormFieldState } from '../../form.component';
+import { FormAutocompleteField } from '../../models/fields/form-autocomplete-field.model';
 import { FormCheckboxField } from '../../models/fields/form-checkbox-field.model';
+import { FormChipsField } from '../../models/fields/form-chips-field.model';
+import { FormFileField } from '../../models/fields/form-file-field.model';
+import { FormPasswordField } from '../../models/fields/form-password-field.model';
 import { FormTextField } from '../../models/fields/form-text-field.model';
-import { FormField } from '../../models/form-field.model';
+import { FormField, FormFieldOption } from '../../models/form-field.model';
+import {
+    FormFieldCustomValidator,
+    FormFieldLengthValidator,
+    FormFieldPatternValidator,
+    FormFieldValidatorType
+} from '../../models/form-field-validator.model';
+import { FormService } from '../../services/form.service';
 import { FormFieldComponent } from './field.component';
 
 const VALID: FormFieldState = { isDisabled: false, isHidden: false, isRequired: false, isValid: true, options: [] };
@@ -64,5 +75,131 @@ describe('FormFieldComponent', () => {
 
         expect(fixture.nativeElement.querySelectorAll('label')).toHaveLength(1);
         expect(fixture.nativeElement.querySelector('input[type="checkbox"]')).not.toBeNull();
+    });
+
+    describe('validators of each field type', () => {
+        async function renderValidated(field: FormField, options: FormFieldOption[] = []): Promise<void> {
+            fixture = await renderComponent(FormFieldComponent, {
+                control: TestBed.inject(FormService).initFieldControl(field),
+                field,
+                prefix: 'demo.contact',
+                state: { ...VALID, options }
+            });
+        }
+
+        function control(): HTMLInputElement {
+            return fixture.nativeElement.querySelector('#secret');
+        }
+
+        function isFlaggedInvalid(): boolean {
+            return fixture.nativeElement.querySelector('[aria-invalid="true"]') !== null;
+        }
+
+        async function addChip(value: string): Promise<void> {
+            await type(value);
+            control().dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+            await settle(fixture);
+        }
+
+        async function choose(file: File): Promise<void> {
+            Object.defineProperty(control(), 'files', { configurable: true, value: [file] });
+            control().dispatchEvent(new Event('change'));
+            await settle(fixture);
+        }
+
+        async function pick(label: string): Promise<void> {
+            control().dispatchEvent(new Event('focus'));
+            await settle(fixture);
+            queryAll(document.body, '[role="option"]')
+                .find(option => option.textContent?.trim() === label)
+                ?.dispatchEvent(new MouseEvent('mousedown'));
+            await settle(fixture);
+        }
+
+        async function type(value: string): Promise<void> {
+            control().value = value;
+            control().dispatchEvent(new Event('input'));
+            await settle(fixture);
+        }
+
+        it('flags a password that fails its length validator', async () => {
+            await renderValidated(
+                new FormPasswordField({
+                    key: 'secret',
+                    validators: [new FormFieldLengthValidator(8, FormFieldValidatorType.MinLength)]
+                })
+            );
+
+            await type('short');
+            control().dispatchEvent(new Event('blur'));
+            await settle(fixture);
+            expect(isFlaggedInvalid()).toBe(true);
+
+            await type('long enough');
+            expect(isFlaggedInvalid()).toBe(false);
+        });
+
+        it('flags an autocomplete whose picked value fails its pattern', async () => {
+            await renderValidated(
+                new FormAutocompleteField({
+                    key: 'secret',
+                    validators: [new FormFieldPatternValidator(/^[a-z]{3}$/u)]
+                }),
+                [
+                    { label: 'Madrid', value: 'mad' },
+                    { label: 'Paris', value: 'paris' }
+                ]
+            );
+
+            await pick('Paris');
+            expect(isFlaggedInvalid()).toBe(true);
+
+            await pick('Madrid');
+            expect(isFlaggedInvalid()).toBe(false);
+        });
+
+        it('flags a chips list that fails its custom validator', async () => {
+            await renderValidated(
+                new FormChipsField({
+                    key: 'secret',
+                    validators: [
+                        new FormFieldCustomValidator(current =>
+                            ((current.value as string[] | null) ?? []).some(tag => tag !== tag.toLowerCase())
+                                ? { lowercase: true }
+                                : null
+                        )
+                    ]
+                })
+            );
+
+            await addChip('angular');
+            expect(isFlaggedInvalid()).toBe(false);
+
+            await addChip('Jest');
+            expect(isFlaggedInvalid()).toBe(true);
+        });
+
+        it('flags a file that fails its custom validator and still enforces its size limit', async () => {
+            await renderValidated(
+                new FormFileField({
+                    key: 'secret',
+                    maxSizeBytes: 1024,
+                    validators: [
+                        new FormFieldCustomValidator(current =>
+                            (current.value as File | null)?.name.startsWith('draft') ? { draft: true } : null
+                        )
+                    ]
+                })
+            );
+
+            await choose(new File(['pdf'], 'draft.pdf'));
+            expect(isFlaggedInvalid()).toBe(true);
+
+            await choose(new File(['x'.repeat(2048)], 'report.pdf'));
+            expect(fixture.nativeElement.textContent).toContain('angular-components.form.file-field.too-large');
+
+            await choose(new File(['pdf'], 'report.pdf'));
+            expect(isFlaggedInvalid()).toBe(false);
+        });
     });
 });

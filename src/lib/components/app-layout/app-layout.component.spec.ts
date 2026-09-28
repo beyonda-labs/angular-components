@@ -107,6 +107,16 @@ describe('AppLayoutComponent', () => {
         expect(fixture.nativeElement.querySelector('aside').textContent).toContain('Ada Lovelace');
     });
 
+    it('keeps the footer of a config copied with a spread, with the overrides of the copy', async () => {
+        const original = buildConfig({ orgName: 'Acme', termsUrl: '/terms' });
+
+        await render(new AppLayoutConfig({ ...original, productName: 'Copied product' }));
+
+        expect(fixture.nativeElement.textContent).toContain('Acme');
+        expect(fixture.nativeElement.textContent).toContain('Copied product');
+        expect(buttonOf('angular-components.footer.terms')).toBeTruthy();
+    });
+
     describe('breadcrumb', () => {
         it('shows nothing until the service has items, and hides again when they are cleared', async () => {
             await render();
@@ -184,6 +194,31 @@ describe('AppLayoutComponent', () => {
             buttonOf('demo.actions.daily.label').click();
             buttonOf('demo.actions.settings.label').click();
 
+            expect(clicked.mock.calls).toEqual([['daily'], ['settings']]);
+        });
+
+        it('shows and runs actions that have no icon, nested ones included', async () => {
+            const run = jest.fn();
+            const clicked = jest.fn();
+            await render(
+                buildConfig({
+                    bottomActions: [new AppLayoutBottomAction({ action: run, key: 'settings' })],
+                    topActions: [
+                        new AppLayoutTopAction({
+                            key: 'reports',
+                            subActions: [new AppLayoutTopAction({ key: 'daily' })]
+                        })
+                    ]
+                })
+            );
+            service.onMenuClick$.subscribe(clicked);
+
+            chevronOf('demo.actions.reports.label').click();
+            await settle(fixture);
+            buttonOf('demo.actions.daily.label').click();
+            buttonOf('demo.actions.settings.label').click();
+
+            expect(run).toHaveBeenCalled();
             expect(clicked.mock.calls).toEqual([['daily'], ['settings']]);
         });
 
@@ -359,6 +394,46 @@ describe('AppLayoutComponent', () => {
             await settle(fixture);
 
             expect(breadcrumbLabels()).toEqual(['Inicio']);
+        });
+
+        it('activates the route but leaves the breadcrumb to the consumer when the route breadcrumb is off', async () => {
+            const onRouteActivated = jest.fn();
+            const router = TestBed.inject(Router);
+            await router.navigateByUrl('/reports/daily');
+
+            await render(
+                buildConfig({
+                    breadcrumb: [new AppLayoutBreadcrumbItem({ id: 1, label: 'Start' })],
+                    isRouteBreadcrumbEnabled: false,
+                    onRouteActivated,
+                    topActions: routed()
+                })
+            );
+
+            expect(buttonOf('demo.actions.daily.label').getAttribute('aria-current')).toBe('page');
+            expect(onRouteActivated).toHaveBeenCalledWith('daily');
+            expect(breadcrumbLabels()).toEqual(['Start']);
+
+            await router.navigateByUrl('/elsewhere');
+            await settle(fixture);
+
+            expect(service.activeActionKey()).toBeNull();
+            expect(breadcrumbLabels()).toEqual(['Start']);
+        });
+
+        it('keeps the breadcrumb and reports no activation on a language change when the route breadcrumb is off', async () => {
+            const onRouteActivated = jest.fn();
+            const translate = TestBed.inject(TranslateService);
+            await TestBed.inject(Router).navigateByUrl('/home');
+            await render(buildConfig({ isRouteBreadcrumbEnabled: false, onRouteActivated, topActions: routed() }));
+            service.setBreadcrumb([new AppLayoutBreadcrumbItem({ id: 1, label: 'Kept' })]);
+
+            translate.setTranslation('es', { demo: { actions: { home: { label: 'Inicio' } } } });
+            translate.use('es');
+            await settle(fixture);
+
+            expect(breadcrumbLabels()).toEqual(['Kept']);
+            expect(onRouteActivated).toHaveBeenCalledTimes(1);
         });
 
         it('leaves the service alone when no action declares a route', async () => {

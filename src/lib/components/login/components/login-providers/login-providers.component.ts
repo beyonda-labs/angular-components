@@ -35,15 +35,20 @@ export class LoginProvidersComponent {
     readonly buttons = computed<ProviderButton[]>(() =>
         this.providers()
             .filter(provider => ICONS[provider.id])
-            .map(provider => ({
-                button: new ButtonConfig({
-                    action: () => this.providerClick.emit(provider),
-                    icon: ICONS[provider.id],
-                    tooltip: `angular-components.login.provider.${provider.id}`,
-                    type: ButtonType.Secondary
-                }),
-                provider
-            }))
+            .map(provider => {
+                const name = `angular-components.login.provider.${provider.id}`;
+
+                return {
+                    button: new ButtonConfig({
+                        action: () => this.providerClick.emit(provider),
+                        ariaLabel: name,
+                        icon: ICONS[provider.id],
+                        tooltip: name,
+                        type: ButtonType.Secondary
+                    }),
+                    provider
+                };
+            })
     );
     readonly label = computed(() => `${this.prefix()}.login.signin-with`);
 }

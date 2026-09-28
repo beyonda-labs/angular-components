@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { faGear, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faArrowUp, faGear, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
-import { queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
+import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { BadgeConfig } from '../badge/models/badge.model';
 import { HeaderComponent } from './header.component';
@@ -109,12 +109,32 @@ describe('HeaderComponent', () => {
         expect(labels()).toEqual(['app.shared.saveNow']);
     });
 
-    it('shows no label for an icon-only action', async () => {
+    it('names an icon-only action with the label a text action would show, without showing it', async () => {
         await render(
-            buildConfig({ leftActions: [buildAction({ key: 'add', icon: faPlus, type: HeaderActionType.Icon })] })
+            buildConfig({
+                leftActions: [
+                    buildAction({ key: 'moveUp', icon: faArrowUp, type: HeaderActionType.Icon }),
+                    buildAction({
+                        key: 'delete',
+                        icon: faTrash,
+                        label: 'app.shared.delete',
+                        type: HeaderActionType.Icon
+                    })
+                ]
+            })
         );
 
-        expect(labels()).toEqual(['']);
+        expect(buttonByName(fixture, 'demo.actions.move-up.label').textContent?.trim()).toBe('');
+        expect(buttonByName(fixture, 'app.shared.delete').textContent?.trim()).toBe('');
+    });
+
+    it('names the overflow toggle after what it opens', async () => {
+        await render(buildConfig({ menuActions: [buildAction({ key: 'archive', label: 'Archive' })] }));
+
+        buttonByName(fixture, 'angular-components.header.menu').click();
+        await settle(fixture);
+
+        expect(labels()).toContain('Archive');
     });
 
     it('runs the action behind a button', async () => {

@@ -1,4 +1,5 @@
 import { FormField, FormFieldBaseParameters, FormFieldType } from '../form-field.model';
+import { FormFieldCustomValidator } from '../form-field-validator.model';
 
 export class FormNumberField extends FormField {
     max?: number;
@@ -15,4 +16,5 @@ export class FormNumberField extends FormField {
 export interface FormNumberFieldParameters extends FormFieldBaseParameters {
     max?: number;
     min?: number;
+    validators?: FormFieldCustomValidator[];
 }
