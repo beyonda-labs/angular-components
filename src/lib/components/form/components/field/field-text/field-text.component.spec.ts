@@ -10,9 +10,17 @@ describe('FormTextFieldComponent', () => {
     let fixture: ComponentFixture<FormTextFieldComponent>;
     let control: FormControl<string | null>;
 
-    async function render(field: FormTextField = new FormTextField({ key: 'name' })): Promise<void> {
+    async function render(
+        field: FormTextField = new FormTextField({ key: 'name' }),
+        isRequired = false
+    ): Promise<void> {
         control = new FormControl<string | null>('', Validators.required);
-        fixture = await renderComponent(FormTextFieldComponent, { control, field, prefix: 'demo.contact.name' });
+        fixture = await renderComponent(FormTextFieldComponent, {
+            control,
+            field,
+            isRequired,
+            prefix: 'demo.contact.name'
+        });
     }
 
     function input(): HTMLInputElement {
@@ -38,7 +46,7 @@ describe('FormTextFieldComponent', () => {
     });
 
     it('keeps an explicit placeholder and flags an invalid touched control', async () => {
-        await render(new FormTextField({ key: 'name', isRequired: true, placeholder: 'Type a name' }));
+        await render(new FormTextField({ key: 'name', isRequired: true, placeholder: 'Type a name' }), true);
 
         expect(input().placeholder).toBe('Type a name');
         expect(input().getAttribute('aria-invalid')).toBeNull();

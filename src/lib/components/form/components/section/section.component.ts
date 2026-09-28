@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { toKeySegment } from '../../../../internal/i18n/key-segment';
+import { toKeySegment } from '../../../../utilities/key-segment';
 import { fieldStateKey, FormFieldStates } from '../../form.component';
 import { FormRow, FormSection } from '../../models/form.model';
 import { FormRowComponent } from '../row/row.component';
@@ -22,8 +22,8 @@ export class FormSectionComponent {
     readonly prefix = input.required<string>();
     readonly section = input.required<FormSection>();
 
-    readonly sectionPrefix = computed(() => `${this.prefix()}.${toKeySegment(this.section().prefix)}`);
     readonly label = computed(() => `${this.sectionPrefix()}.label`);
+    readonly sectionPrefix = computed(() => `${this.prefix()}.${toKeySegment(this.section().prefix)}`);
     readonly tooltip = computed(() => (this.section().isTooltipVisible ? `${this.sectionPrefix()}.tooltip` : ''));
     readonly visibleRows = computed(() => this.section().rows.filter(row => this.hasVisibleField(row)));
 

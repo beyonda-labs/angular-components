@@ -4,7 +4,7 @@
     bsDatepicker
     type="text"
     [attr.aria-invalid]="isInvalid() || null"
-    [attr.aria-required]="field().isRequired || null"
+    [attr.aria-required]="isRequired() || null"
     [bsConfig]="datepickerConfig()"
     [class.ng-dirty]="control().dirty"
     [class.ng-invalid]="control().invalid"

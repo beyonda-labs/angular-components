@@ -17,6 +17,7 @@ import { FormPasswordField } from '../../../models/fields/form-password-field.mo
 export class FormPasswordFieldComponent {
     readonly control = input.required<FormControl<string | null>>();
     readonly field = input.required<FormPasswordField>();
+    readonly isRequired = input(false);
     readonly prefix = input.required<string>();
 
     readonly isVisible = signal(false);

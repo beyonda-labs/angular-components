@@ -107,6 +107,32 @@
                 "label": "Date Fields",
                 "tooltip": "Date fields with range, required and disabled states"
             },
+            "section-dependent": {
+                "label": "Dependent Fields",
+                "load-regions": "Load the regions",
+                "plan": {
+                    "label": "Plan",
+                    "options": {
+                        "free": "Free",
+                        "pro": "Pro"
+                    },
+                    "placeholder": "Choose a plan"
+                },
+                "region": {
+                    "label": "Region",
+                    "options": {
+                        "asia": "Asia",
+                        "eu": "Europe",
+                        "us": "United States"
+                    },
+                    "placeholder": "Load the regions, then pick one"
+                },
+                "seats": {
+                    "label": "Seats",
+                    "placeholder": "Required on the Pro plan"
+                },
+                "tooltip": "Seats are required on the Pro plan only; the regions arrive after the form is built, and a region the new plan does not offer is cleared"
+            },
             "section-info": {
                 "info1": {
                     "label": "Version"

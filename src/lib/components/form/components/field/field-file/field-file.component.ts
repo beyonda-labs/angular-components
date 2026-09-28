@@ -4,11 +4,9 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPaperclip, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { formatBytes } from '../../../../../utilities/file-size';
 import { FormFileField } from '../../../models/fields/form-file-field.model';
 import { trackControl } from '../control-state';
-
-const BYTES_PER_UNIT = 1024;
-const SIZE_UNITS = ['B', 'KB', 'MB', 'GB'];
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,6 +19,7 @@ const SIZE_UNITS = ['B', 'KB', 'MB', 'GB'];
 export class FormFileFieldComponent {
     readonly control = input.required<FormControl<File | null>>();
     readonly field = input.required<FormFileField>();
+    readonly isRequired = input(false);
     readonly prefix = input.required<string>();
 
     readonly accept = computed(() => (this.field().accept.length > 0 ? this.field().accept.join(',') : null));
@@ -28,11 +27,7 @@ export class FormFileFieldComponent {
     readonly clearIcon = faXmark;
     readonly controlState = trackControl(this.control);
     readonly fileIcon = faPaperclip;
-    readonly maxSize = computed(() => {
-        const { maxSizeBytes } = this.field();
-
-        return maxSizeBytes === undefined ? '' : formatBytes(maxSizeBytes);
-    });
+    readonly maxSize = computed(() => formatBytes(this.field().maxSizeBytes));
 
     private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
 
@@ -60,9 +55,7 @@ export class FormFileFieldComponent {
     }
 
     fileSize(): string {
-        const file = this.file();
-
-        return file ? formatBytes(file.size) : '';
+        return formatBytes(this.file()?.size);
     }
 
     isDisabled(): boolean {
@@ -92,18 +85,4 @@ export class FormFileFieldComponent {
         control.markAsDirty();
         control.markAsTouched();
     }
-}
-
-function formatBytes(bytes: number): string {
-    let value = bytes;
-    let unitIndex = 0;
-
-    while (value >= BYTES_PER_UNIT && unitIndex < SIZE_UNITS.length - 1) {
-        value /= BYTES_PER_UNIT;
-        unitIndex += 1;
-    }
-
-    const decimals = unitIndex === 0 || value >= 100 ? 0 : 1;
-
-    return `${value.toFixed(decimals)} ${SIZE_UNITS[unitIndex]}`;
 }

@@ -5,7 +5,7 @@ import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { toKeySegment } from '../../../../internal/i18n/key-segment';
+import { toKeySegment } from '../../../../utilities/key-segment';
 import { FormFieldState } from '../../form.component';
 import { FormField, FormFieldType } from '../../models/form-field.model';
 import { FormAutocompleteFieldComponent } from './field-autocomplete/field-autocomplete.component';

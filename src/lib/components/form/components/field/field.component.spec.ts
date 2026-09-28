@@ -9,7 +9,7 @@ import { FormTextField } from '../../models/fields/form-text-field.model';
 import { FormField } from '../../models/form-field.model';
 import { FormFieldComponent } from './field.component';
 
-const VALID: FormFieldState = { isDisabled: false, isHidden: false, isValid: true, options: [] };
+const VALID: FormFieldState = { isDisabled: false, isHidden: false, isRequired: false, isValid: true, options: [] };
 
 describe('FormFieldComponent', () => {
     let fixture: ComponentFixture<FormFieldComponent>;
@@ -30,7 +30,11 @@ describe('FormFieldComponent', () => {
     });
 
     it('labels the input from the prefix and marks a required field until it is valid', async () => {
-        await render(new FormTextField({ key: 'name', isRequired: true }), { ...VALID, isValid: false });
+        await render(new FormTextField({ key: 'name', isRequired: true }), {
+            ...VALID,
+            isRequired: true,
+            isValid: false
+        });
         const label = fixture.nativeElement.querySelector('label') as HTMLLabelElement;
 
         expect(label.textContent?.trim()).toBe('demo.contact.name.label');

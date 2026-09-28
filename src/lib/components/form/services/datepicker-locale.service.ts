@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
 import { enGbLocale, esLocale } from 'ngx-bootstrap/locale';
@@ -7,12 +7,14 @@ import { enGbLocale, esLocale } from 'ngx-bootstrap/locale';
     providedIn: 'root'
 })
 export class DatepickerLocaleService {
-    static readonly ENGLISH_LOCALE = 'en-gb';
-    static readonly SPANISH_LOCALE = 'es';
+    private readonly bsLocaleService = inject(BsLocaleService);
 
     private static localesDefined = false;
 
-    constructor(private readonly bsLocaleService: BsLocaleService) {
+    static readonly ENGLISH_LOCALE = 'en-gb';
+    static readonly SPANISH_LOCALE = 'es';
+
+    constructor() {
         this.defineSupportedLocales();
     }
 

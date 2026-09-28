@@ -15,6 +15,7 @@ import { FormTextField } from '../../../models/fields/form-text-field.model';
 export class FormTextFieldComponent {
     readonly control = input.required<FormControl<string | null>>();
     readonly field = input.required<FormTextField>();
+    readonly isRequired = input(false);
     readonly prefix = input.required<string>();
 
     readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
