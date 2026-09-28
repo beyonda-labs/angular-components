@@ -6,12 +6,14 @@
         "source.fixAll.stylelint": "explicit"
     },
     "eslint.validate": ["typescript", "html"],
+    "eslint.codeActionsOnSave.mode": "all",
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
     "eslint.workingDirectories": [
         {
             "mode": "auto"
         }
     ],
-    "eslint.codeActionsOnSave.mode": "all",
     "stylelint.validate": ["css"],
     "css.validate": false
 }
