@@ -218,10 +218,22 @@ What `document-builder-front` did by hand that belongs in the library.
         providers have an accessible name
 -   [x] The compact PDF toolbar uses `bey-button`s with `ButtonType.IconOutline`, a bordered, fixed-size icon square
         with the toolbar's colours
--   [ ] The other `bey-button` types carry Bootstrap's `rounded`, an `!important` radius no token feeds, so they
-        ignore a consumer's `--bey-radius-sm`
--   [ ] `properties-menu` fields put the untranslated label key in `aria-label` (`text.label`), and the visible
-        `<label for>` points at an id the input does not have
+-   [x] Every `bey-button` type and the Bootstrap radius utilities follow the `--bey-radius-*` tokens
+-   [x] `properties-menu` fields are named by their translated label, through a `<label for>` tied to a unique id
+-   [ ] The library's own specs still mock library services by hand (http, session, session interceptor, auth guard,
+        page form, modal form guard, the toast style guide) instead of taking the fakes of the testing entry
+-   [ ] The session, theme, app and environment services have no `docs/<module>-readme.md`
+-   [ ] `SearchField.getOperators()` is behaviour in a model, and `BadgeConfig.translate` is a boolean without the
+        `is` prefix; both fixes rename or move a public member
+-   [ ] The tree chevron has no role or name (it is mouse only), so the specs reach it through its markup
+-   [ ] `search.component.css` needs a `stylelint-disable` because it styles Bootstrap's `.form-select` and
+        `.form-control`; styling its own `bey-search-*` classes would drop it
+-   [ ] `BeyHttpService` as one typed, cold channel: today it subscribes by itself, completes empty after an error
+        and reports failures only through `onError`, so callers wrap each call in a `new Observable`, `onSuccess` loses
+        the type, unsubscribing never cancels and the page list can paint a stale response. Proposal: the request
+        leaves on subscribe and is cancelled on unsubscribe, emits `T`, and propagates the error after the modal;
+        `onSuccess` / `onError` go, `handleError`, `successToast` and `loading` stay, `provideBeyApp` silences the
+        unhandled HTTP errors the modal already showed, and the page loads through `switchMap`
 -   [x] `isRouteBreadcrumbEnabled` turns the route breadcrumb off
 -   [x] `BeyAppLayoutConfig` keeps the footer fields as its own, so a spread copies it whole, and `icon` is optional
         on the app-layout actions

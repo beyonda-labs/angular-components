@@ -523,7 +523,7 @@
         "list": {
             "empty": "No employees found",
             "empty-example": "Empty state (no items):",
-            "example": "Vertical list of cards with fully custom HTML per card, keeping a consistent shell (spacing, border, hover). Click a card to log it to the console.",
+            "example": "Vertical list of cards with fully custom HTML per card, keeping a consistent shell (spacing, border, hover). Click a card to select it.",
             "selected": "Employee selected:"
         },
         "lists": "Lists",
