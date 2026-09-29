@@ -32,6 +32,10 @@ const PANEL_GAP_PX = 4;
     templateUrl: './option-picker.component.html'
 })
 export class OptionPickerComponent {
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+    private readonly renderer = inject(Renderer2);
+
     readonly anchor = input.required<HTMLElement>();
     readonly options = input.required<OptionPickerOption[]>();
     readonly searchable = input(true);
@@ -60,10 +64,6 @@ export class OptionPickerComponent {
         }
     };
     private readonly onWindowResize = (): void => this.position();
-
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
-    private readonly renderer = inject(Renderer2);
 
     constructor() {
         afterNextRender(() => {

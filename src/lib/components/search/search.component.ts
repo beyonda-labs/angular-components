@@ -48,6 +48,8 @@ interface SearchDraftRow {
     templateUrl: './search.component.html'
 })
 export class SearchComponent {
+    private readonly elementRef = inject(ElementRef<HTMLElement>);
+
     readonly config = input.required<SearchConfig>();
 
     readonly addIcon = faPlus;
@@ -79,8 +81,6 @@ export class SearchComponent {
     readonly searchTerm = signal('');
 
     private readonly searchTerm$ = new Subject<void>();
-
-    private readonly elementRef = inject(ElementRef<HTMLElement>);
 
     constructor() {
         this.searchTerm$.pipe(debounceTime(SEARCH_DEBOUNCE_MS), takeUntilDestroyed()).subscribe(() => {

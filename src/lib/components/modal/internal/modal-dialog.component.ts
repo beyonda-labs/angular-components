@@ -24,13 +24,13 @@ import { InternalModalConfig, ModalType } from '../models/modal.model';
     templateUrl: './modal-dialog.component.html'
 })
 export class ModalDialogComponent implements OnDestroy {
+    private readonly bsModalReference = inject<BsModalRef<ModalDialogComponent>>(BsModalRef);
+
     readonly closed = new ReplaySubject<boolean>(1);
     config!: InternalModalConfig;
     result = false;
 
     private resolved = false;
-
-    private readonly bsModalReference = inject<BsModalRef<ModalDialogComponent>>(BsModalRef);
 
     ngOnDestroy(): void {
         if (!this.resolved) {

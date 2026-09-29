@@ -15,14 +15,14 @@ import { PropertyOption } from '../../../models/property-option.model';
     templateUrl: './property-segmented-field.component.html'
 })
 export class PropertySegmentedFieldComponent {
+    private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+
     readonly field = input.required<PropertySegmentedField>();
     readonly labelling = input.required<PropertyFieldLabelling>();
 
     readonly valueChange = output<unknown>();
 
     readonly enabledOptions = computed(() => this.field().options.filter(option => !option.disabled));
-
-    private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
 
     isActive(option: PropertyOption): boolean {
         return this.field().value === option.value;

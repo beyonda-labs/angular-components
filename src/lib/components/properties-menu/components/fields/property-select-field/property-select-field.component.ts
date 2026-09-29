@@ -20,6 +20,8 @@ import { PROPERTY_VARIABLE_ICON } from '../../../models/property-variable.model'
     templateUrl: './property-select-field.component.html'
 })
 export class PropertySelectFieldComponent {
+    private readonly translateService = inject(TranslateService);
+
     readonly field = input.required<PropertySelectField>();
     readonly labelling = input.required<PropertyFieldLabelling>();
 
@@ -46,8 +48,6 @@ export class PropertySelectFieldComponent {
     });
     readonly variableIcon = PROPERTY_VARIABLE_ICON;
     readonly variableOptions = computed(() => toVariableOptions(this.field().variables));
-
-    private readonly translateService = inject(TranslateService);
 
     close(): void {
         this.isOpen.set(false);

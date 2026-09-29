@@ -34,11 +34,11 @@ export class PageComponent<
     TCategory extends PageItem = TItem,
     TCategoryValue = unknown
 > {
+    readonly service = inject(PageService);
+
     readonly config = input.required<PageConfig<TValue, TItem, TCategory, TCategoryValue>>();
 
     readonly hasToolbar = computed(() => Boolean(this.service.viewToggleConfig() || this.service.searchConfig()));
-
-    readonly service = inject(PageService);
 
     constructor() {
         effect(() => {

@@ -18,15 +18,14 @@ import { FILE_PREVIEW_CONFIG, FILE_PREVIEW_TITLE_ID } from './file-preview-dialo
     templateUrl: './file-preview-dialog.component.html'
 })
 export class FilePreviewDialogComponent implements OnDestroy {
-    readonly alt = computed(() => this.config.alt ?? this.config.title);
-
+    private readonly bsModalReference = inject<BsModalRef<FilePreviewDialogComponent>>(BsModalRef);
     readonly config = inject(FILE_PREVIEW_CONFIG);
+
+    readonly alt = computed(() => this.config.alt ?? this.config.title);
     readonly imageSource = this.config.type === FilePreviewType.Image ? toImageSource(this.config.content) : null;
     readonly isPdf = computed(() => this.config.type === FilePreviewType.Pdf);
     readonly titleId = FILE_PREVIEW_TITLE_ID;
     readonly viewerConfig = computed(() => (this.isPdf() ? buildViewerConfig(this.config) : null));
-
-    private readonly bsModalReference = inject<BsModalRef<FilePreviewDialogComponent>>(BsModalRef);
 
     ngOnDestroy(): void {
         if (this.imageSource && this.config.content instanceof Blob) {

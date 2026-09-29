@@ -16,10 +16,10 @@ const UNSAVED_CHANGES = 'angular-components-style-guide.modal.unsaved-changes';
     templateUrl: './modal-style-guide.component.html'
 })
 export class ModalStyleGuideComponent {
-    readonly hasChanges = signal(false);
-
     private readonly modalService = inject(BeyModalService);
     private readonly unsavedChangesService = inject(BeyUnsavedChangesService);
+
+    readonly hasChanges = signal(false);
 
     constructor() {
         this.unsavedChangesService.track(this.hasChanges);

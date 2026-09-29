@@ -36,6 +36,9 @@ const BRAND_ICON =
     templateUrl: './app-layout-style-guide.component.html'
 })
 export class AppLayoutStyleGuideComponent {
+    private readonly appLayoutService = inject(BeyAppLayoutService);
+    private readonly translateService = inject(TranslateService);
+
     readonly config = new BeyAppLayoutConfig({
         iconSrc: BRAND_ICON,
         productName: `${PREFIX}.title`,
@@ -67,9 +70,6 @@ export class AppLayoutStyleGuideComponent {
         action: () => this.appLayoutService.emitMenuClick(page),
         label: `${PREFIX}.actions.${page}.label`
     }));
-
-    private readonly appLayoutService = inject(BeyAppLayoutService);
-    private readonly translateService = inject(TranslateService);
 
     constructor() {
         this.translateService.onLangChange

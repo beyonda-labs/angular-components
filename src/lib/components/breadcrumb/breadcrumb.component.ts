@@ -36,6 +36,11 @@ interface RenderedItem {
     templateUrl: './breadcrumb.component.html'
 })
 export class BreadcrumbComponent implements AfterViewInit {
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly elementReference = inject<ElementRef<HTMLElement>>(ElementRef);
+    private readonly ngZone = inject(NgZone);
+    private readonly translateService = inject(TranslateService);
+
     readonly config = input.required<BreadcrumbConfig>();
 
     readonly collapsedItems = computed<RenderedItem[]>(() =>
@@ -57,16 +62,10 @@ export class BreadcrumbComponent implements AfterViewInit {
     });
 
     private cachedItemWidths: number[] = [];
-
-    private readonly translateService = inject(TranslateService);
     private readonly languageChange = toSignal(this.translateService.onLangChange, { initialValue: undefined });
     private readonly listElement = viewChild<ElementRef<HTMLOListElement>>('listElement');
     private previousContainerWidth = 0;
     private resizeObserver?: ResizeObserver;
-
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly elementReference = inject<ElementRef<HTMLElement>>(ElementRef);
-    private readonly ngZone = inject(NgZone);
 
     constructor() {
         effect(() => {

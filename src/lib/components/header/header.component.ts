@@ -32,6 +32,8 @@ interface RenderedAction {
     templateUrl: './header.component.html'
 })
 export class HeaderComponent {
+    private readonly elementRef = inject(ElementRef);
+
     readonly config = input.required<HeaderConfig>();
 
     readonly backButton = computed(() => {
@@ -65,8 +67,6 @@ export class HeaderComponent {
     readonly openActionKey = signal<string | null>(null);
     readonly rightActions = computed(() => this.render(this.config().rightActions));
     readonly title = computed(() => this.config().title);
-
-    private readonly elementRef = inject(ElementRef);
 
     isActionMenuOpen(action: HeaderAction): boolean {
         return this.openActionKey() === action.key;

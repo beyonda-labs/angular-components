@@ -16,6 +16,8 @@ import { FooterConfig } from './models/footer.model';
     templateUrl: './footer.component.html'
 })
 export class FooterComponent {
+    private readonly router = inject(Router);
+
     readonly config = input.required<FooterConfig>();
 
     readonly privacyButton = computed(
@@ -34,6 +36,4 @@ export class FooterComponent {
                 action: () => this.router.navigate([this.config().termsUrl])
             })
     );
-
-    private readonly router = inject(Router);
 }

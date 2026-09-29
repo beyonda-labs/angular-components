@@ -29,13 +29,13 @@ const SECTION_PREFIX = 'register';
     templateUrl: './login-register-form.component.html'
 })
 export class LoginRegisterFormComponent {
+    private readonly loginHttpService = inject(LoginHttpService);
+    private readonly loginSessionService = inject(LoginSessionService);
+
     readonly config = input.required<LoginConfig>();
     readonly registerFields = input.required<RegisterField[]>();
 
     readonly formConfig = computed(() => this.buildForm(groupByStep(this.registerFields())));
-
-    private readonly loginHttpService = inject(LoginHttpService);
-    private readonly loginSessionService = inject(LoginSessionService);
 
     private buildForm(steps: RegisterField[][]): FormConfig | null {
         if (steps.length === 0) {

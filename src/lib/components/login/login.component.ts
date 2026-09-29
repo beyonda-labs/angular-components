@@ -25,6 +25,9 @@ const BG_IMAGE_DARK = 'assets/angular-components/images/login-bg-dark.avif';
     templateUrl: './login.component.html'
 })
 export class LoginComponent {
+    private readonly loginHttpService = inject(LoginHttpService);
+    private readonly themeService = inject(ThemeService);
+
     readonly config = input.required<LoginConfig>();
 
     readonly activeView = signal<LoginView>('login');
@@ -32,12 +35,8 @@ export class LoginComponent {
     readonly canRegister = computed(() => this.registerFields().length > 0);
     readonly isRegistering = computed(() => this.canRegister() && this.activeView() === 'register');
     readonly prefix = computed(() => this.config().prefix);
-
-    private readonly loginHttpService = inject(LoginHttpService);
     readonly providers = toSignal(this.loginHttpService.getProviders(), { initialValue: [] });
     readonly registerFields = toSignal(this.loginHttpService.getRegisterFields(), { initialValue: [] });
-
-    private readonly themeService = inject(ThemeService);
     readonly theme = toSignal(this.themeService.theme$, { requireSync: true });
     readonly title = computed(() => `${this.prefix()}.title.${this.isRegistering() ? 'register' : 'login'}`);
     readonly viewButton = computed(() => {

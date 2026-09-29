@@ -21,6 +21,8 @@ import { PropertyTreeComponent } from '../property-tree/property-tree.component'
     templateUrl: './property-group.component.html'
 })
 export class PropertyGroupComponent {
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
+
     readonly group = input.required<PropertyGroup>();
     readonly tabId = input.required<string>();
 
@@ -69,8 +71,6 @@ export class PropertyGroupComponent {
     readonly visibleFields = computed<PropertyField[]>(
         () => this.fieldsContent()?.fields.filter(field => !field.hidden) ?? []
     );
-
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
 
     contentTabLabelKey(tab: PropertyGroupTab): string {
         return resolvePropertyLabelKey(this.propertiesMenuService.config().prefix, 'groups', tab.id, tab.label);

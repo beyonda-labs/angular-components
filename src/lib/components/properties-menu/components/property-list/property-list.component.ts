@@ -24,6 +24,9 @@ const EMPTY_VALUE = '—';
     templateUrl: './property-list.component.html'
 })
 export class PropertyListComponent {
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
+
     readonly groupId = input.required<string>();
     readonly items = input.required<PropertyListItem[]>();
     readonly tabId = input.required<string>();
@@ -45,9 +48,6 @@ export class PropertyListComponent {
     readonly removeIcon = faTrash;
 
     private copiedTimeoutId?: ReturnType<typeof setTimeout>;
-
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
 
     constructor() {
         this.destroyRef.onDestroy(() => clearTimeout(this.copiedTimeoutId));

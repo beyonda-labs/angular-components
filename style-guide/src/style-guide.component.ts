@@ -61,9 +61,9 @@ import { TreeStyleGuideComponent } from './tree/tree-style-guide.component';
     templateUrl: './style-guide.component.html'
 })
 export class StyleGuideComponent {
-    readonly isReady = signal(false);
-
     private readonly styleGuideTranslationService = inject(StyleGuideTranslationService);
+
+    readonly isReady = signal(false);
 
     constructor() {
         this.styleGuideTranslationService

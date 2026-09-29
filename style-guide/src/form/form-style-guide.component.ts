@@ -27,6 +27,8 @@ const PREFIX = 'angular-components-style-guide.form';
     templateUrl: './form-style-guide.component.html'
 })
 export class FormStyleGuideComponent {
+    private readonly modalFormService = inject(BeyModalFormService);
+
     readonly regions = signal<StyleGuideRegion[]>([]);
     readonly config = new BeyFormConfig({
         buttons: [
@@ -62,8 +64,6 @@ export class FormStyleGuideComponent {
         isPrimary: true,
         label: `${PREFIX}.modal.open`
     };
-
-    private readonly modalFormService = inject(BeyModalFormService);
 
     openModalForm(): void {
         this.modalFormService.open(

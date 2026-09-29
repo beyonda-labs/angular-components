@@ -29,6 +29,8 @@ import { PropertyTreeDragService } from './services/property-tree-drag.service';
     templateUrl: './properties-menu.component.html'
 })
 export class PropertiesMenuComponent {
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
+
     readonly config = input.required<PropertiesMenuConfig>();
     readonly variables = input<PropertyVariable[]>([]);
 
@@ -54,8 +56,6 @@ export class PropertiesMenuComponent {
     readonly visibleTabs = computed(() => this.config().tabs.filter(tab => !tab.hidden));
 
     private readonly menuBody = viewChild<ElementRef<HTMLElement>>('menuBody');
-
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
 
     constructor() {
         effect(() => this.propertiesMenuService.setConfig(this.config()));

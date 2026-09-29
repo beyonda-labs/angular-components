@@ -32,6 +32,11 @@ interface DragCandidate {
     templateUrl: './property-tree.component.html'
 })
 export class PropertyTreeComponent {
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly hostElement = inject<ElementRef<HTMLElement>>(ElementRef);
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
+    private readonly propertyTreeDragService = inject(PropertyTreeDragService);
+
     readonly acceptsRootDrop = input(false);
     readonly addBlockLabel = input<string>();
     readonly groupId = input.required<string>();
@@ -79,11 +84,6 @@ export class PropertyTreeComponent {
         this.detachPointerListeners();
     };
     private ignoresClickEndingDrag = false;
-
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly hostElement = inject<ElementRef<HTMLElement>>(ElementRef);
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
-    private readonly propertyTreeDragService = inject(PropertyTreeDragService);
 
     constructor() {
         this.destroyRef.onDestroy(() => {

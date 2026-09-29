@@ -33,6 +33,8 @@ type TextControl = HTMLInputElement | HTMLTextAreaElement;
     templateUrl: './property-text-field.component.html'
 })
 export class PropertyTextFieldComponent {
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
+
     readonly actionButtonTooltipKey = input<string>('');
     readonly field = input.required<PropertyTextField>();
     readonly labelling = input.required<PropertyFieldLabelling>();
@@ -52,8 +54,6 @@ export class PropertyTextFieldComponent {
 
     private readonly selectionEnd = signal<number | null>(null);
     private readonly selectionStart = signal<number | null>(null);
-
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
 
     closePicker(): void {
         this.pickerOpen.set(false);
