@@ -19,6 +19,7 @@ import {
     BeyStorageService,
     BeyToastService,
     provideBeyEnvironment,
+    provideBeyHttp,
     provideBeyModal,
     provideBeySession
 } from '@beyonda-labs/angular-components';
@@ -54,6 +55,7 @@ export function provideBeyTesting({
         provideHttpClient(withInterceptors([beySessionInterceptor, ...interceptors])),
         provideHttpClientTesting(),
         provideBeyEnvironment({ ...DEFAULT_ENVIRONMENT, ...environment }),
+        provideBeyHttp(),
         provideBeyModal(),
         provideBeySession(session),
         provideTranslateService(),

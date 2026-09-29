@@ -1,12 +1,13 @@
 import { HttpClient, HttpInterceptorFn } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, flush, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 
 import { ModalService } from '../../../components/modal/services/modal.service';
 import { ToastService } from '../../../components/toast/services/toast.service';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from '../../environment/models/environment.model';
+import { HttpService } from '../../http/http.service';
 import { DEFAULT_SESSION_CONFIG, SESSION_CONFIG } from '../../session/models/session.model';
 import { SessionService } from '../../session/session.service';
 import { AppConfig } from '../models/app.model';
@@ -63,6 +64,17 @@ describe('provideBeyApp', () => {
         expect(headers.get('X-App')).toBe('test-app');
         expect(seenAuthorization).toEqual(['Bearer session-token']);
     });
+
+    it('raises nothing for a failed request the HTTP service already reported', fakeAsync(() => {
+        const handleError = jest.fn();
+
+        setup();
+        TestBed.inject(HttpService).get('/api/items', { handleError }).subscribe();
+        httpTesting.expectOne('/api/items').flush(null, { status: 500, statusText: 'Server Error' });
+
+        expect(() => flush()).not.toThrow();
+        expect(handleError).toHaveBeenCalledTimes(1);
+    }));
 
     it('loads the translations of a language from ./assets/i18n/ by default', () => {
         setup();

@@ -6,6 +6,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { provideBeyModal } from '../../../components/modal/providers/modal.providers';
 import { provideBeyToast } from '../../../components/toast/providers/toast.providers';
 import { provideBeyEnvironment } from '../../environment/providers/environment.providers';
+import { provideBeyHttp } from '../../http/providers/http.providers';
 import { provideBeySession } from '../../session/providers/session.providers';
 import { sessionInterceptor } from '../../session/session.interceptor';
 import { AppConfig } from '../models/app.model';
@@ -22,6 +23,7 @@ export function provideBeyApp({
     return makeEnvironmentProviders([
         provideHttpClient(withInterceptors([sessionInterceptor, ...interceptors])),
         provideBeyEnvironment(environment),
+        provideBeyHttp(),
         provideBeyModal(),
         provideBeySession(session),
         provideBeyToast(),
