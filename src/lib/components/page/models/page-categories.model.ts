@@ -12,6 +12,10 @@ export enum PageViewMode {
     Trash = 'trash'
 }
 
+export interface PageMoveTarget {
+    id: string | number | null;
+}
+
 export interface PageTrashItem {
     id: string | number;
     type: PageItemType;

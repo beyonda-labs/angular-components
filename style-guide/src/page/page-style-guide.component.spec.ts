@@ -1,38 +1,28 @@
+import { HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
-import { renderComponent } from '@testing/dom';
-import { mock } from 'jest-mock-extended';
-import { of } from 'rxjs';
+import { renderComponent, settle } from '@testing/dom';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
 
-import { PageActionsService } from '../../../src/lib/components/page/services/page-actions.service';
-import { PageHttpService } from '../../../src/lib/components/page/services/page-http.service';
 import { PageStyleGuideComponent } from './page-style-guide.component';
 
 describe('PageStyleGuideComponent', () => {
     let fixture: ComponentFixture<PageStyleGuideComponent>;
 
     beforeEach(async () => {
-        const pageActionsService = mock<PageActionsService>();
-        pageActionsService.filterVisibleActions.mockReturnValue([]);
-        pageActionsService.buildHeaderActions.mockReturnValue([]);
-        const pageHttpService = mock<PageHttpService>();
-        pageHttpService.load.mockReturnValue(
-            of({
-                globalActions: ['create'],
-                results: [{ id: 1, name: 'Keyboard', category: 'Hardware', price: 49.9 }],
-                search: { filters: [], page: 1, size: 25, total: 1 }
-            })
-        );
-
         await TestBed.configureTestingModule({
-            imports: [PageStyleGuideComponent, TranslateModule.forRoot()],
-            providers: [
-                { provide: PageActionsService, useValue: pageActionsService },
-                { provide: PageHttpService, useValue: pageHttpService }
-            ]
+            imports: [PageStyleGuideComponent],
+            providers: [provideBeyTesting()]
         }).compileComponents();
 
         fixture = await renderComponent(PageStyleGuideComponent);
+        TestBed.inject(HttpTestingController)
+            .expectOne(request => request.url === 'https://api.test/api/products')
+            .flush({
+                globalActions: ['create'],
+                results: [{ id: 1, name: 'Keyboard', category: 'Hardware', price: 49.9 }],
+                search: { filters: [], page: 1, size: 25, total: 1 }
+            });
+        await settle(fixture);
     });
 
     it('lists the products from the demo backend', () => {

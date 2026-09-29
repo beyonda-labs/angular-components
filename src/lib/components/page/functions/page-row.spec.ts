@@ -1,6 +1,6 @@
-import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from './page-action.model';
-import { PageCategoriesConfig, PageItemType } from './page-categories.model';
-import { PageItem } from './page-item.model';
+import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
+import { PageCategoriesConfig, PageItemType } from '../models/page-categories.model';
+import { PageItem } from '../models/page-item.model';
 import { isActionVisible, isCategoryRow, toHandlerItems } from './page-row';
 
 interface Row extends PageItem {

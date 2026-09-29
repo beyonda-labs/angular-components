@@ -7,7 +7,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { BadgeComponent } from '../../../badge/badge.component';
 import { ListComponent } from '../../../list/list.component';
 import { ListConfig } from '../../../list/models/list.model';
-import { resolvePropertyLabelKey } from '../../models/property-i18n';
+import { resolvePropertyLabelKey } from '../../functions/property-i18n';
 import { PropertyListItem } from '../../models/property-list-item.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { PropertyFieldComponent } from '../property-field/property-field.component';

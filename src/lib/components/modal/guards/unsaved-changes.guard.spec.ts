@@ -1,28 +1,27 @@
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { FakeModalService } from '@testing/services/fake-modal.service';
+import { firstValueFrom, Observable } from 'rxjs';
 
 import { UnsavedChangesService } from '../services/unsaved-changes.service';
 import { unsavedChangesGuard } from './unsaved-changes.guard';
 
 describe('unsavedChangesGuard', () => {
-    const canDeactivate = jest.fn();
-
     beforeEach(() => {
-        canDeactivate.mockReset();
-
-        TestBed.configureTestingModule({
-            providers: [{ provide: UnsavedChangesService, useValue: { canDeactivate } }]
-        });
+        TestBed.configureTestingModule({ providers: [provideBeyTesting()] });
     });
 
-    it('answers with what the unsaved changes service decides', () => {
-        canDeactivate.mockReturnValue(false);
+    it('answers with what the unsaved changes service decides', async () => {
+        const unsavedChanges = TestBed.inject(UnsavedChangesService);
+        TestBed.runInInjectionContext(() => unsavedChanges.track(signal(true)));
 
         const result = TestBed.runInInjectionContext(() =>
             unsavedChangesGuard({}, {} as ActivatedRouteSnapshot, {} as RouterStateSnapshot, {} as RouterStateSnapshot)
         );
 
-        expect(result).toBe(false);
-        expect(canDeactivate).toHaveBeenCalled();
+        await expect(firstValueFrom(result as Observable<boolean>)).resolves.toBe(false);
+        expect(TestBed.inject(FakeModalService).confirmations()).toHaveLength(1);
     });
 });

@@ -1,6 +1,6 @@
 import { signal } from '@angular/core';
 
-import { FormValue } from './form-field.model';
+import { FormValue } from '../models/form-field.model';
 import { resolveRule } from './form-rule-resolution';
 
 describe('resolveRule', () => {

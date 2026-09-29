@@ -5,7 +5,14 @@ export {
     PageActionZone as BeyPageActionZone,
     PageStandardAction as BeyPageStandardAction
 } from './models/page-action.model';
-export type { PageActionParameters as BeyPageActionParameters } from './models/page-action.model';
+export type {
+    PageActionConfirmation as BeyPageActionConfirmation,
+    PageActionParameters as BeyPageActionParameters
+} from './models/page-action.model';
+export {
+    pageAddAction as beyPageAddAction,
+    pageStandardAction as beyPageStandardAction
+} from './functions/page-standard-actions';
 export {
     PageCategoriesConfig as BeyPageCategoriesConfig,
     PageItemType as BeyPageItemType,

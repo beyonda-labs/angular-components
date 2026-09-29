@@ -6,16 +6,16 @@ import {
     WritableSignal
 } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Observable, of } from 'rxjs';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { FakeModalService } from '@testing/services/fake-modal.service';
+import { Observable } from 'rxjs';
 
 import { UnsavedChangesConfig } from '../models/unsaved-changes.model';
-import { ModalService } from './modal.service';
 import { UnsavedChangesService } from './unsaved-changes.service';
 
 describe('UnsavedChangesService', () => {
+    let modal: FakeModalService;
     let service: UnsavedChangesService;
-
-    const openConfirmation = jest.fn();
 
     function track(hasChanges: WritableSignal<boolean>, config?: UnsavedChangesConfig): void {
         TestBed.runInInjectionContext(() => service.track(hasChanges, config));
@@ -30,13 +30,9 @@ describe('UnsavedChangesService', () => {
     }
 
     beforeEach(() => {
-        openConfirmation.mockReset();
-        openConfirmation.mockReturnValue(of(true));
+        TestBed.configureTestingModule({ providers: [provideBeyTesting()] });
 
-        TestBed.configureTestingModule({
-            providers: [{ provide: ModalService, useValue: { openConfirmation } }]
-        });
-
+        modal = TestBed.inject(FakeModalService);
         service = TestBed.inject(UnsavedChangesService);
     });
 
@@ -44,21 +40,24 @@ describe('UnsavedChangesService', () => {
         track(signal(false));
 
         expect(service.canDeactivate()).toBe(true);
-        expect(openConfirmation).not.toHaveBeenCalled();
+        expect(modal.confirmations()).toEqual([]);
     });
 
     it('asks with the library texts before leaving changes behind, and answers with the choice', () => {
         const answer = jest.fn();
+        modal.setConfirmationAnswer(true);
         track(signal(true));
 
         (service.canDeactivate() as Observable<boolean>).subscribe(answer);
 
-        expect(openConfirmation).toHaveBeenCalledWith({
-            cancelLabel: 'angular-components.modal.unsaved-changes.stay',
-            confirmLabel: 'angular-components.modal.unsaved-changes.leave',
-            message: 'angular-components.modal.unsaved-changes.message',
-            title: 'angular-components.modal.unsaved-changes.title'
-        });
+        expect(modal.confirmations()).toEqual([
+            {
+                cancelLabel: 'angular-components.modal.unsaved-changes.stay',
+                confirmLabel: 'angular-components.modal.unsaved-changes.leave',
+                message: 'angular-components.modal.unsaved-changes.message',
+                title: 'angular-components.modal.unsaved-changes.title'
+            }
+        ]);
         expect(answer).toHaveBeenCalledWith(true);
     });
 
@@ -68,9 +67,9 @@ describe('UnsavedChangesService', () => {
 
         service.canDeactivate();
 
-        expect(openConfirmation).toHaveBeenCalledWith(
+        expect(modal.confirmations()).toEqual([
             expect.objectContaining({ message: 'editor.message', title: 'editor.title' })
-        );
+        ]);
     });
 
     it('follows the tracked signals in hasChanges', () => {

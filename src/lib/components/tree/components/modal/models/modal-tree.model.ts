@@ -1,5 +1,5 @@
+import { collectExpandableKeys } from '../../../functions/tree-node-search';
 import { TreeConfig, TreeNode } from '../../../models/tree.model';
-import { collectExpandableKeys } from '../../../models/tree-node-search';
 
 export enum ModalTreeSize {
     Large = 'modal-lg',

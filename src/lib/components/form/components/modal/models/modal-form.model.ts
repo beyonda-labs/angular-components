@@ -22,6 +22,9 @@ export class ModalFormConfig<TValue = unknown> extends FormConfig<TValue> {
     size: ModalFormSize;
     title: string;
 
+    cancelLabel?: string;
+    submitLabel?: string;
+
     constructor({
         cancelLabel,
         prefix,
@@ -43,7 +46,9 @@ export class ModalFormConfig<TValue = unknown> extends FormConfig<TValue> {
             prefix
         });
 
+        this.cancelLabel = cancelLabel;
         this.size = size;
+        this.submitLabel = submitLabel;
         this.title = title;
     }
 }

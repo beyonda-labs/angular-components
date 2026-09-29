@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 
 import { Tab, TabsConfig } from '../../../tabs/models/tabs.model';
 import { TabsComponent } from '../../../tabs/tabs.component';
-import { resolvePropertyLabelKey } from '../../models/property-i18n';
+import { resolvePropertyLabelKey } from '../../functions/property-i18n';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
 
 @Component({

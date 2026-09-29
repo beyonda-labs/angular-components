@@ -40,6 +40,16 @@ describe('ModalFormConfig', () => {
         expect(config.size).toBe(ModalFormSize.Small);
     });
 
+    it('keeps its labels when a copy is spread into a new config', () => {
+        const copy = new ModalFormConfig({
+            ...buildConfig({ cancelLabel: 'custom.cancel', submitLabel: 'custom.submit' }),
+            title: 'custom.copy'
+        });
+
+        expect(copy.buttons.map(button => button.label)).toEqual(['custom.cancel', 'custom.submit']);
+        expect(copy.title).toBe('custom.copy');
+    });
+
     it('asks the host to close, with confirmation, from the cancel button', () => {
         const handle = { requestClose: jest.fn() } as unknown as FormHandle;
 

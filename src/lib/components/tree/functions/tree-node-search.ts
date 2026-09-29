@@ -1,4 +1,4 @@
-import { TreeNode } from './tree.model';
+import { TreeNode } from '../models/tree.model';
 
 export function collectExpandableKeys<TData>(nodes: TreeNode<TData>[]): string[] {
     const keys: string[] = [];

@@ -220,20 +220,25 @@ What `document-builder-front` did by hand that belongs in the library.
         with the toolbar's colours
 -   [x] Every `bey-button` type and the Bootstrap radius utilities follow the `--bey-radius-*` tokens
 -   [x] `properties-menu` fields are named by their translated label, through a `<label for>` tied to a unique id
--   [ ] The library's own specs still mock library services by hand (http, session, session interceptor, auth guard,
-        page form, modal form guard, the toast style guide) instead of taking the fakes of the testing entry
+-   [x] The library's own specs take `provideBeyTesting` and the fakes of the testing entry, or the real service over
+        them; only a module's own internals (page, login) and the ngx-bootstrap / ngx-toastr layer under the service a
+        spec tests stay mocked
+-   [ ] `BeyModalTreeService` has no fake, so `page-actions.service.spec.ts` still mocks it by hand; a
+        `BeyFakeModalTreeService` would reverse the choice that `provideBeyTesting` opens the tree dialog for real
+-   [ ] Error texts the HTTP service resolves oddly, kept as they were: a `message` without translation shows its raw key;
+        a range with both limits null reads `-max`; an unknown `errorCode` gets the default title while an empty body or a
+        network error gets `unknown`; a `getBlob` error always shows `unknown`, since its body is a Blob
 -   [ ] The session, theme, app and environment services have no `docs/<module>-readme.md`
 -   [ ] `SearchField.getOperators()` is behaviour in a model, and `BadgeConfig.translate` is a boolean without the
         `is` prefix; both fixes rename or move a public member
 -   [ ] The tree chevron has no role or name (it is mouse only), so the specs reach it through its markup
 -   [ ] `search.component.css` needs a `stylelint-disable` because it styles Bootstrap's `.form-select` and
         `.form-control`; styling its own `bey-search-*` classes would drop it
--   [ ] `BeyHttpService` as one typed, cold channel: today it subscribes by itself, completes empty after an error
-        and reports failures only through `onError`, so callers wrap each call in a `new Observable`, `onSuccess` loses
-        the type, unsubscribing never cancels and the page list can paint a stale response. Proposal: the request
-        leaves on subscribe and is cancelled on unsubscribe, emits `T`, and propagates the error after the modal;
-        `onSuccess` / `onError` go, `handleError`, `successToast` and `loading` stay, `provideBeyApp` silences the
-        unhandled HTTP errors the modal already showed, and the page loads through `switchMap`
+-   [x] `BeyHttpService` as one typed, cold channel: the request leaves on subscribe and is cancelled on
+        unsubscribe, emits `T`, and propagates the error after the modal; `onSuccess` / `onError` are gone,
+        `handleError`, `successToast` and `loading` stay, `provideBeyHttp` (inside `provideBeyApp` and
+        `provideBeyTesting`) silences the unhandled HTTP errors the modal already showed, and the page loads through
+        `switchMap`, so a stale response never overwrites a newer one
 -   [x] `isRouteBreadcrumbEnabled` turns the route breadcrumb off
 -   [x] `BeyAppLayoutConfig` keeps the footer fields as its own, so a spread copies it whole, and `icon` is optional
         on the app-layout actions

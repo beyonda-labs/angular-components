@@ -5,7 +5,7 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { FormChipsField } from '../../../models/fields/form-chips-field.model';
-import { trackControl } from '../control-state';
+import { trackControl } from '../functions/control-state';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,

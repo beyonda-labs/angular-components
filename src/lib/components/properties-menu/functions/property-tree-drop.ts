@@ -1,4 +1,4 @@
-import { PropertyTreeDropPosition, PropertyTreeNode } from './property-tree-node.model';
+import { PropertyTreeDropPosition, PropertyTreeNode } from '../models/property-tree-node.model';
 
 interface NodeLookup {
     node: PropertyTreeNode;

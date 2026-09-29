@@ -1,26 +1,24 @@
 import { inject, Injectable } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { Observable } from 'rxjs';
+import { isObservable, Observable, of, switchMap } from 'rxjs';
 
 import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
+import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { FormHandle } from '../../form/models/form.model';
 import { HeaderAction } from '../../header/models/header.model';
+import { ConfirmationModalConfig } from '../../modal/models/modal.model';
 import { ModalService } from '../../modal/services/modal.service';
 import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
 import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
-import { TreeNode } from '../../tree/models/tree.model';
+import { buildMoveTargetNodes } from '../functions/page-move-targets';
+import { isActionVisible, toHandlerItems } from '../functions/page-row';
 import { PageConfig } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
-import { PageCategoriesConfig, PageTrashItem } from '../models/page-categories.model';
+import { PageCategoriesConfig, PageMoveTarget, PageTrashItem } from '../models/page-categories.model';
 import { PageFormConfig } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
-import { isActionVisible, isCategoryRow, readRowField, toHandlerItems } from '../models/page-row';
 import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
-
-interface MoveTargetData {
-    id: string | number | null;
-}
 
 export interface PageActionsContext {
     config: PageConfig;
@@ -62,12 +60,12 @@ export class PageActionsService {
     private readonly pageFormService = inject(PageFormService);
     private readonly pageHttpService = inject(PageHttpService);
 
-    private readonly actionHandlers: Record<string, (context: PageActionsContext) => void> = {
+    private readonly actionHandlers: Record<string, (context: PageActionsContext, action: PageAction) => void> = {
         [PageStandardAction.Create]: context => this.executeCreate(context),
         [PageStandardAction.CreateCategory]: context => this.executeCreateCategory(context),
-        [PageStandardAction.Delete]: context => this.executeDelete(context),
-        [PageStandardAction.DeleteCategory]: context => this.executeDeleteCategory(context),
-        [PageStandardAction.DeleteTrashItem]: context => this.executeDeleteTrashItem(context),
+        [PageStandardAction.Delete]: (context, action) => this.executeDelete(context, action),
+        [PageStandardAction.DeleteCategory]: (context, action) => this.executeDeleteCategory(context, action),
+        [PageStandardAction.DeleteTrashItem]: (context, action) => this.executeDeleteTrashItem(context, action),
         [PageStandardAction.Edit]: context => this.executeEdit(context),
         [PageStandardAction.EditCategory]: context => this.executeEditCategory(context),
         [PageStandardAction.Move]: context => this.executeMove(context),
@@ -114,7 +112,7 @@ export class PageActionsService {
             return;
         }
 
-        this.actionHandlers[action.key]?.(context);
+        this.actionHandlers[action.key]?.(context, action);
     }
 
     filterVisibleActions(
@@ -149,63 +147,12 @@ export class PageActionsService {
         return visible;
     }
 
-    private buildMoveTreeNodes(
-        prefix: string,
-        categories: PageItem[],
-        categoriesConfig: PageCategoriesConfig,
-        selectedItems: PageItem[]
-    ): TreeNode<MoveTargetData>[] {
-        const { nameField, parentField } = categoriesConfig;
-        const childrenByParent = new Map<string | number | null, PageItem[]>();
-
-        for (const category of categories) {
-            const parentId = (readRowField(category, parentField) as string | number | null) ?? null;
-            const siblings = childrenByParent.get(parentId) ?? [];
-
-            siblings.push(category);
-            childrenByParent.set(parentId, siblings);
-        }
-
-        const blockedIds = new Set<string | number>(
-            selectedItems.filter(item => isCategoryRow(item, categoriesConfig)).map(item => item.id)
-        );
-        let frontier = [...blockedIds];
-
-        while (frontier.length > 0) {
-            const next: (string | number)[] = [];
-
-            for (const id of frontier) {
-                for (const child of childrenByParent.get(id) ?? []) {
-                    if (!blockedIds.has(child.id)) {
-                        blockedIds.add(child.id);
-                        next.push(child.id);
-                    }
-                }
-            }
-
-            frontier = next;
-        }
-
-        const buildLevel = (parentId: string | number | null): TreeNode<MoveTargetData>[] =>
-            (childrenByParent.get(parentId) ?? []).map(
-                category =>
-                    new TreeNode<MoveTargetData>({
-                        key: String(category.id),
-                        label: String(readRowField(category, nameField) ?? ''),
-                        isDisabled: blockedIds.has(category.id),
-                        data: { id: category.id },
-                        children: buildLevel(category.id)
-                    })
-            );
-
-        return [
-            new TreeNode<MoveTargetData>({
-                key: '__root__',
-                label: `${prefix}.categories.root`,
-                data: { id: null },
-                children: buildLevel(null)
-            })
-        ];
+    openRequestForm<TValue>(
+        config: ModalFormConfig<TValue>,
+        submit: (value: TValue) => Observable<unknown>,
+        onSaved: () => void
+    ): void {
+        this.pageFormService.openWithRequest(config, submit, onSaved);
     }
 
     private completeSave(handle: FormHandle, options: SaveEntityOptions): void {
@@ -213,7 +160,11 @@ export class PageActionsService {
         options.onSaved();
     }
 
-    private executeBulkAction<T>(context: PageActionsContext, options: BulkActionOptions<T>): void {
+    private executeBulkAction<T>(
+        context: PageActionsContext,
+        options: BulkActionOptions<T>,
+        action?: PageAction
+    ): void {
         const items = context.selectedItems();
         const { baseUrl, prefix } = context.config;
 
@@ -233,12 +184,14 @@ export class PageActionsService {
             return;
         }
 
-        this.modalService
-            .openConfirmation({
-                message: `${prefix}.modal.${options.key}.message`,
-                messageParameters: { count: items.length },
-                title: `${prefix}.modal.${options.key}.title`
-            })
+        const confirmation: ConfirmationModalConfig = {
+            message: `${prefix}.modal.${options.key}.message`,
+            messageParameters: { count: items.length },
+            title: `${prefix}.modal.${options.key}.title`
+        };
+
+        toObservable(action?.confirmation?.(items, confirmation) ?? confirmation)
+            .pipe(switchMap(config => this.modalService.openConfirmation(config)))
             .subscribe(confirmed => {
                 if (confirmed) {
                     run();
@@ -254,35 +207,48 @@ export class PageActionsService {
         this.openCategoryForm(context);
     }
 
-    private executeDelete(context: PageActionsContext): void {
-        this.executeBulkAction(context, {
-            confirm: true,
-            key: 'delete',
-            mapPayload: items => items.map(item => item.id),
-            onComplete: () => context.onDeleted(),
-            request: (baseUrl, ids, successToast) => this.pageHttpService.deleteItems(baseUrl, ids, successToast)
-        });
+    private executeDelete(context: PageActionsContext, action: PageAction): void {
+        this.executeBulkAction(
+            context,
+            {
+                confirm: true,
+                key: 'delete',
+                mapPayload: items => items.map(item => item.id),
+                onComplete: () => context.onDeleted(),
+                request: (baseUrl, ids, successToast) => this.pageHttpService.deleteItems(baseUrl, ids, successToast)
+            },
+            action
+        );
     }
 
-    private executeDeleteCategory(context: PageActionsContext): void {
-        this.executeBulkAction(context, {
-            confirm: true,
-            key: 'delete-category',
-            mapPayload: items => items.map(item => item.id),
-            onComplete: () => context.onCategoryDeleted(),
-            request: (baseUrl, ids, successToast) => this.pageHttpService.deleteCategories(baseUrl, ids, successToast)
-        });
+    private executeDeleteCategory(context: PageActionsContext, action: PageAction): void {
+        this.executeBulkAction(
+            context,
+            {
+                confirm: true,
+                key: 'delete-category',
+                mapPayload: items => items.map(item => item.id),
+                onComplete: () => context.onCategoryDeleted(),
+                request: (baseUrl, ids, successToast) =>
+                    this.pageHttpService.deleteCategories(baseUrl, ids, successToast)
+            },
+            action
+        );
     }
 
-    private executeDeleteTrashItem(context: PageActionsContext): void {
-        this.executeBulkAction(context, {
-            confirm: true,
-            key: 'delete-trash-item',
-            mapPayload: toTrashItems,
-            onComplete: () => context.onTrashItemDeleted(),
-            request: (baseUrl, items, successToast) =>
-                this.pageHttpService.deleteTrashItems(baseUrl, items, successToast)
-        });
+    private executeDeleteTrashItem(context: PageActionsContext, action: PageAction): void {
+        this.executeBulkAction(
+            context,
+            {
+                confirm: true,
+                key: 'delete-trash-item',
+                mapPayload: toTrashItems,
+                onComplete: () => context.onTrashItemDeleted(),
+                request: (baseUrl, items, successToast) =>
+                    this.pageHttpService.deleteTrashItems(baseUrl, items, successToast)
+            },
+            action
+        );
     }
 
     private executeEdit(context: PageActionsContext): void {
@@ -312,8 +278,8 @@ export class PageActionsService {
 
         this.pageHttpService.loadCategoryTree(baseUrl).subscribe(categories => {
             const reference = this.modalTreeService.open(
-                new ModalTreeConfig<MoveTargetData>({
-                    nodes: this.buildMoveTreeNodes(prefix, categories, categoriesConfig, items),
+                new ModalTreeConfig<PageMoveTarget>({
+                    nodes: buildMoveTargetNodes(prefix, categories, categoriesConfig, items),
                     prefix: `${prefix}.move`,
                     onConfirm: node => {
                         const targetId = node?.data?.id ?? null;
@@ -445,6 +411,10 @@ export class PageActionsService {
             followUp.subscribe(() => this.completeSave(handle, options));
         });
     }
+}
+
+function toObservable<T>(value: T | Observable<T>): Observable<T> {
+    return isObservable(value) ? value : of(value);
 }
 
 function toTrashItems(items: PageItem[]): PageTrashItem[] {

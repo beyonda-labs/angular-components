@@ -1,256 +1,167 @@
-import { HttpClient, HttpErrorResponse, HttpHandlerFn, HttpRequest, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
-import { of, Subject, throwError } from 'rxjs';
+import { provideRouter, Router } from '@angular/router';
+import { TestingConfig } from '@testing/models/testing.model';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
 
-import { ENVIRONMENT_CONFIG, EnvironmentConfig } from '../environment/models/environment.model';
-import { DEFAULT_SESSION_CONFIG, SESSION_CONFIG } from './models/session.model';
-import { resetSessionInterceptorStateForTesting, sessionInterceptor } from './session.interceptor';
+import { resetSessionInterceptorStateForTesting } from './session.interceptor';
 import { SessionService } from './session.service';
 
+const REFRESH_URL = 'https://api.test/auth/refresh';
+const UNAUTHORIZED = { status: 401, statusText: 'Unauthorized' };
+
 describe('sessionInterceptor', () => {
-    const sessionService = {
-        clear: jest.fn(),
-        getRefreshToken: jest.fn(),
-        getToken: jest.fn(),
-        setRefreshToken: jest.fn(),
-        setToken: jest.fn()
-    };
+    let httpClient: HttpClient;
+    let httpTesting: HttpTestingController;
+    let navigate: jest.SpyInstance;
+    let session: SessionService;
 
-    const router = {
-        navigate: jest.fn()
-    };
+    function configure(config: TestingConfig = {}, refreshToken?: string): void {
+        TestBed.configureTestingModule({ providers: [provideRouter([]), provideBeyTesting(config)] });
 
-    const httpClient = {
-        post: jest.fn()
-    };
+        httpClient = TestBed.inject(HttpClient);
+        httpTesting = TestBed.inject(HttpTestingController);
+        navigate = jest.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+        session = TestBed.inject(SessionService);
 
-    const environmentConfig: EnvironmentConfig = {
-        accessControlUrl: 'https://api.test',
-        appName: 'test-app',
-        cookieName: 'test-session',
-        webApiPath: '/api',
-        baseUrl: 'https://api.test'
-    };
-
-    let next: HttpHandlerFn;
-
-    beforeEach(() => {
-        jest.resetAllMocks();
-        resetSessionInterceptorStateForTesting();
-        sessionService.getToken.mockReturnValue(null);
-        sessionService.getRefreshToken.mockReturnValue(null);
-
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: SessionService, useValue: sessionService },
-                { provide: Router, useValue: router },
-                { provide: HttpClient, useValue: httpClient },
-                { provide: ENVIRONMENT_CONFIG, useValue: environmentConfig },
-                { provide: SESSION_CONFIG, useValue: DEFAULT_SESSION_CONFIG }
-            ]
-        });
-    });
-
-    function runInterceptor(request: HttpRequest<unknown>, handler: HttpHandlerFn) {
-        return TestBed.runInInjectionContext(() => sessionInterceptor(request, handler));
+        if (refreshToken) {
+            session.setRefreshToken(refreshToken);
+        }
     }
 
+    beforeEach(() => {
+        resetSessionInterceptorStateForTesting();
+    });
+
+    afterEach(() => {
+        httpTesting.verify();
+    });
+
     describe('authorization header', () => {
-        it('adds the Authorization header when there is a token', done => {
-            sessionService.getToken.mockReturnValue('my-jwt');
-            next = jest.fn(request => {
-                expect(request.headers.get('Authorization')).toBe('Bearer my-jwt');
+        it('adds the Authorization header when there is a token', () => {
+            configure({ token: 'my-jwt' });
 
-                return of(new HttpResponse({ status: 200 }));
-            });
+            httpClient.get('/api/data').subscribe();
+            const request = httpTesting.expectOne('/api/data');
 
-            const request = new HttpRequest('GET', '/api/data');
-
-            runInterceptor(request, next).subscribe(() => {
-                expect(next).toHaveBeenCalled();
-                done();
-            });
+            expect(request.request.headers.get('Authorization')).toBe('Bearer my-jwt');
+            request.flush({});
         });
 
-        it('does not add the Authorization header when there is no token', done => {
-            sessionService.getToken.mockReturnValue(null);
-            next = jest.fn(request => {
-                expect(request.headers.has('Authorization')).toBe(false);
+        it('does not add the Authorization header when there is no token', () => {
+            configure();
 
-                return of(new HttpResponse({ status: 200 }));
-            });
+            httpClient.get('/api/data').subscribe();
+            const request = httpTesting.expectOne('/api/data');
 
-            const request = new HttpRequest('GET', '/api/data');
-
-            runInterceptor(request, next).subscribe(() => {
-                expect(next).toHaveBeenCalled();
-                done();
-            });
+            expect(request.request.headers.has('Authorization')).toBe(false);
+            request.flush({});
         });
     });
 
     it('leaves the session alone on errors other than 401', () => {
-        sessionService.getToken.mockReturnValue('valid-token');
-        next = jest.fn(() => throwError(() => new HttpErrorResponse({ status: 500 })));
+        configure({ token: 'valid-token' });
+        const error = jest.fn();
 
-        const request = new HttpRequest('GET', '/api/data');
+        httpClient.get('/api/data').subscribe({ error });
+        httpTesting.expectOne('/api/data').flush(null, { status: 500, statusText: 'Server Error' });
 
-        runInterceptor(request, next).subscribe({
-            error: () => {
-                expect(sessionService.clear).not.toHaveBeenCalled();
-                expect(router.navigate).not.toHaveBeenCalled();
-                expect(httpClient.post).not.toHaveBeenCalled();
-            }
-        });
+        expect(error).toHaveBeenCalledWith(expect.objectContaining({ status: 500 }));
+        expect(session.getToken()).toBe('valid-token');
+        expect(navigate).not.toHaveBeenCalled();
+        httpTesting.expectNone(REFRESH_URL);
     });
 
     describe('401 without a refresh token', () => {
-        it('clears the session and redirects to login immediately', done => {
-            sessionService.getToken.mockReturnValue('expired-token');
-            sessionService.getRefreshToken.mockReturnValue(null);
-            next = jest.fn(() => throwError(() => new HttpErrorResponse({ status: 401 })));
+        it('clears the session and redirects to login immediately', () => {
+            configure({ token: 'expired-token' });
+            const error = jest.fn();
 
-            const request = new HttpRequest('GET', '/api/data');
+            httpClient.get('/api/data').subscribe({ error });
+            httpTesting.expectOne('/api/data').flush(null, UNAUTHORIZED);
 
-            runInterceptor(request, next).subscribe({
-                error: (error: HttpErrorResponse) => {
-                    expect(sessionService.clear).toHaveBeenCalled();
-                    expect(router.navigate).toHaveBeenCalledWith(['/login']);
-                    expect(httpClient.post).not.toHaveBeenCalled();
-                    expect(error.status).toBe(401);
-                    done();
-                }
-            });
+            expect(error).toHaveBeenCalledWith(expect.objectContaining({ status: 401 }));
+            expect(session.isAuthenticated()).toBe(false);
+            expect(navigate).toHaveBeenCalledWith(['/login']);
+            httpTesting.expectNone(REFRESH_URL);
         });
 
-        it('uses the configured loginRoute', done => {
-            TestBed.resetTestingModule();
-            TestBed.configureTestingModule({
-                providers: [
-                    { provide: SessionService, useValue: sessionService },
-                    { provide: Router, useValue: router },
-                    { provide: HttpClient, useValue: httpClient },
-                    { provide: ENVIRONMENT_CONFIG, useValue: environmentConfig },
-                    { provide: SESSION_CONFIG, useValue: { ...DEFAULT_SESSION_CONFIG, loginRoute: '/auth/signin' } }
-                ]
-            });
+        it('uses the configured loginRoute', () => {
+            configure({ session: { loginRoute: '/auth/signin' }, token: 'expired-token' });
 
-            sessionService.getToken.mockReturnValue('expired-token');
-            sessionService.getRefreshToken.mockReturnValue(null);
-            next = jest.fn(() => throwError(() => new HttpErrorResponse({ status: 401 })));
+            httpClient.get('/api/data').subscribe({ error: jest.fn() });
+            httpTesting.expectOne('/api/data').flush(null, UNAUTHORIZED);
 
-            const request = new HttpRequest('GET', '/api/data');
-
-            runInterceptor(request, next).subscribe({
-                error: () => {
-                    expect(router.navigate).toHaveBeenCalledWith(['/auth/signin']);
-                    done();
-                }
-            });
+            expect(navigate).toHaveBeenCalledWith(['/auth/signin']);
         });
     });
 
     describe('401 with a refresh token', () => {
-        it('refreshes the token and retries the original request with it', done => {
-            sessionService.getToken.mockReturnValue('expired-token');
-            sessionService.getRefreshToken.mockReturnValue('my-refresh-token');
-            httpClient.post.mockReturnValue(of({ accessToken: 'new-token', refreshToken: 'new-refresh-token' }));
+        it('refreshes the token and retries the original request with it', () => {
+            configure({ token: 'expired-token' }, 'my-refresh-token');
+            const received = jest.fn();
 
-            let attempt = 0;
-            next = jest.fn(request => {
-                attempt++;
+            httpClient.get('/api/data').subscribe(received);
+            const firstAttempt = httpTesting.expectOne('/api/data');
+            expect(firstAttempt.request.headers.get('Authorization')).toBe('Bearer expired-token');
+            firstAttempt.flush(null, UNAUTHORIZED);
 
-                if (attempt === 1) {
-                    expect(request.headers.get('Authorization')).toBe('Bearer expired-token');
+            const refresh = httpTesting.expectOne({ method: 'POST', url: REFRESH_URL });
+            expect(refresh.request.body).toEqual({ refreshToken: 'my-refresh-token' });
+            refresh.flush({ accessToken: 'new-token', refreshToken: 'new-refresh-token' });
 
-                    return throwError(() => new HttpErrorResponse({ status: 401 }));
-                }
+            const retry = httpTesting.expectOne('/api/data');
+            expect(retry.request.headers.get('Authorization')).toBe('Bearer new-token');
+            retry.flush({ id: 1 });
 
-                expect(request.headers.get('Authorization')).toBe('Bearer new-token');
-
-                return of(new HttpResponse({ status: 200 }));
-            });
-
-            const request = new HttpRequest('GET', '/api/data');
-
-            runInterceptor(request, next).subscribe(() => {
-                expect(httpClient.post).toHaveBeenCalledWith(`${environmentConfig.accessControlUrl}/refresh`, {
-                    refreshToken: 'my-refresh-token'
-                });
-                expect(sessionService.setToken).toHaveBeenCalledWith('new-token');
-                expect(sessionService.setRefreshToken).toHaveBeenCalledWith('new-refresh-token');
-                expect(sessionService.clear).not.toHaveBeenCalled();
-                expect(attempt).toBe(2);
-                done();
-            });
+            expect(received).toHaveBeenCalledWith({ id: 1 });
+            expect(session.getToken()).toBe('new-token');
+            expect(session.getRefreshToken()).toBe('new-refresh-token');
+            expect(navigate).not.toHaveBeenCalled();
         });
 
-        it('clears the session and redirects to login when the refresh request itself fails', done => {
-            sessionService.getToken.mockReturnValue('expired-token');
-            sessionService.getRefreshToken.mockReturnValue('my-refresh-token');
-            httpClient.post.mockReturnValue(throwError(() => new HttpErrorResponse({ status: 401 })));
-            next = jest.fn(() => throwError(() => new HttpErrorResponse({ status: 401 })));
+        it('clears the session and redirects to login when the refresh request itself fails', () => {
+            configure({ token: 'expired-token' }, 'my-refresh-token');
+            const error = jest.fn();
 
-            const request = new HttpRequest('GET', '/api/data');
+            httpClient.get('/api/data').subscribe({ error });
+            httpTesting.expectOne('/api/data').flush(null, UNAUTHORIZED);
+            httpTesting.expectOne(REFRESH_URL).flush(null, UNAUTHORIZED);
 
-            runInterceptor(request, next).subscribe({
-                error: () => {
-                    expect(sessionService.clear).toHaveBeenCalled();
-                    expect(router.navigate).toHaveBeenCalledWith(['/login']);
-                    done();
-                }
-            });
+            expect(error).toHaveBeenCalledWith(expect.any(HttpErrorResponse));
+            expect(session.isAuthenticated()).toBe(false);
+            expect(navigate).toHaveBeenCalledWith(['/login']);
         });
 
         it('shares a single in-flight refresh across concurrent 401s instead of issuing one per request', () => {
-            sessionService.getToken.mockReturnValue('expired-token');
-            sessionService.getRefreshToken.mockReturnValue('my-refresh-token');
-
-            const refreshResult$ = new Subject<{ accessToken: string; refreshToken: string }>();
-            httpClient.post.mockReturnValue(refreshResult$);
-
-            const makeNext = () =>
-                jest.fn((request: HttpRequest<unknown>) =>
-                    request.headers.get('Authorization') === 'Bearer expired-token'
-                        ? throwError(() => new HttpErrorResponse({ status: 401 }))
-                        : of(new HttpResponse({ status: 200 }))
-                );
-
-            const nextA = makeNext();
-            const nextB = makeNext();
+            configure({ token: 'expired-token' }, 'my-refresh-token');
             const resultA = jest.fn();
             const resultB = jest.fn();
 
-            runInterceptor(new HttpRequest('GET', '/api/a'), nextA).subscribe(resultA);
-            runInterceptor(new HttpRequest('GET', '/api/b'), nextB).subscribe(resultB);
+            httpClient.get('/api/a').subscribe(resultA);
+            httpClient.get('/api/b').subscribe(resultB);
+            httpTesting.expectOne('/api/a').flush(null, UNAUTHORIZED);
+            httpTesting.expectOne('/api/b').flush(null, UNAUTHORIZED);
 
-            expect(httpClient.post).toHaveBeenCalledTimes(1);
+            httpTesting.expectOne(REFRESH_URL).flush({ accessToken: 'new-token', refreshToken: 'new-refresh-token' });
+            httpTesting.expectOne('/api/a').flush('a');
+            httpTesting.expectOne('/api/b').flush('b');
 
-            refreshResult$.next({ accessToken: 'new-token', refreshToken: 'new-refresh-token' });
-            refreshResult$.complete();
-
-            expect(resultA).toHaveBeenCalled();
-            expect(resultB).toHaveBeenCalled();
-            expect(nextA).toHaveBeenCalledTimes(2);
-            expect(nextB).toHaveBeenCalledTimes(2);
+            expect(resultA).toHaveBeenCalledWith('a');
+            expect(resultB).toHaveBeenCalledWith('b');
         });
     });
 
-    it('propagates a 401 from the refresh request itself without attempting to refresh again', done => {
-        sessionService.getToken.mockReturnValue('some-token');
-        sessionService.getRefreshToken.mockReturnValue('my-refresh-token');
-        next = jest.fn(() => throwError(() => new HttpErrorResponse({ status: 401 })));
+    it('propagates a 401 from the refresh request itself without attempting to refresh again', () => {
+        configure({ token: 'some-token' }, 'my-refresh-token');
+        const error = jest.fn();
 
-        const request = new HttpRequest('GET', `${environmentConfig.accessControlUrl}/refresh`);
+        httpClient.post(REFRESH_URL, {}).subscribe({ error });
+        httpTesting.expectOne(REFRESH_URL).flush(null, UNAUTHORIZED);
 
-        runInterceptor(request, next).subscribe({
-            error: (error: HttpErrorResponse) => {
-                expect(error.status).toBe(401);
-                expect(httpClient.post).not.toHaveBeenCalled();
-                expect(sessionService.clear).not.toHaveBeenCalled();
-                done();
-            }
-        });
+        expect(error).toHaveBeenCalledWith(expect.objectContaining({ status: 401 }));
+        expect(session.getToken()).toBe('some-token');
+        httpTesting.expectNone(REFRESH_URL);
     });
 });

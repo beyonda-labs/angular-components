@@ -1,7 +1,7 @@
 import { HttpClient, HttpInterceptorFn } from '@angular/common/http';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, flush, TestBed } from '@angular/core/testing';
 import {
     BEY_ENVIRONMENT_CONFIG,
     BeyFilePreviewService,
@@ -94,12 +94,24 @@ describe('provideBeyTesting', () => {
         setup();
         const httpTesting = TestBed.inject(HttpTestingController);
 
-        TestBed.inject(BeyHttpService).get('https://api.test/api/items', { successToast: 'items.loaded' });
+        TestBed.inject(BeyHttpService).get('https://api.test/api/items', { successToast: 'items.loaded' }).subscribe();
         httpTesting.expectOne('https://api.test/api/items').flush([]);
 
         expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: 'items.loaded' }]);
         httpTesting.verify();
     });
+
+    it('raises nothing for a failed request whose error modal is already open', fakeAsync(() => {
+        setup();
+
+        TestBed.inject(BeyHttpService).get('https://api.test/api/items').subscribe();
+        TestBed.inject(HttpTestingController)
+            .expectOne('https://api.test/api/items')
+            .flush(null, { status: 500, statusText: 'Server Error' });
+
+        expect(() => flush()).not.toThrow();
+        expect(TestBed.inject(FakeModalService).errors()).toHaveLength(1);
+    }));
 
     it('sends each request with the session token, through the extra interceptors after it', () => {
         const seenAuthorization: (null | string)[] = [];

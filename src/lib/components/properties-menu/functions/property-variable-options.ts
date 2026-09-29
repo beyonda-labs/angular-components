@@ -1,5 +1,5 @@
 import { OptionPickerOption } from '../../../internal/option-picker/models/option-picker-option.model';
-import { PropertyVariable } from './property-variable.model';
+import { PropertyVariable } from '../models/property-variable.model';
 
 export function findVariable(variables: PropertyVariable[], path: string): PropertyVariable | undefined {
     return flattenVariables(variables).find(variable => variable.path === path);

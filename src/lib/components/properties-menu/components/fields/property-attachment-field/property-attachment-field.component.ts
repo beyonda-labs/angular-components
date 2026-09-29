@@ -7,13 +7,13 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { isAcceptedMimeType } from '../../../../../internal/file/accept-pattern';
 import { OptionPickerOption } from '../../../../../internal/option-picker/models/option-picker-option.model';
 import { OptionPickerComponent } from '../../../../../internal/option-picker/option-picker.component';
+import { toVariableOptions } from '../../../functions/property-variable-options';
 import {
     PropertyAttachmentField,
     PropertyAttachmentOption
 } from '../../../models/fields/property-attachment-field.model';
 import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 import { PROPERTY_VARIABLE_ICON } from '../../../models/property-variable.model';
-import { toVariableOptions } from '../../../models/property-variable-options';
 
 const BYTES_PER_MB = 1024 * 1024;
 

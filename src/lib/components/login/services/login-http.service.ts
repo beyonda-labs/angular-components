@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 
 import { ENVIRONMENT_CONFIG } from '../../../services/environment/models/environment.model';
 import { HttpService } from '../../../services/http/http.service';
@@ -15,11 +15,15 @@ export class LoginHttpService {
     private readonly baseUrl = this.envConfig.accessControlUrl;
 
     getProviders(): Observable<LoginProviderConfig[]> {
-        return this.httpService.get<LoginProviderConfig[]>(`${this.baseUrl}/providers`, { handleError: ignoreError });
+        return this.httpService
+            .get<LoginProviderConfig[]>(`${this.baseUrl}/providers`, { handleError: ignoreError })
+            .pipe(catchError(() => of([])));
     }
 
     getRegisterFields(): Observable<RegisterField[]> {
-        return this.httpService.get<RegisterField[]>(`${this.baseUrl}/register/fields`, { handleError: ignoreError });
+        return this.httpService
+            .get<RegisterField[]>(`${this.baseUrl}/register/fields`, { handleError: ignoreError })
+            .pipe(catchError(() => of([])));
     }
 
     login(credentials: LoginCredentials): Observable<LoginResponse> {

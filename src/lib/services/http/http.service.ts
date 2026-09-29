@@ -8,11 +8,12 @@ import {
 } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, EMPTY, filter, finalize, map, Observable, shareReplay, tap } from 'rxjs';
+import { catchError, defer, filter, finalize, map, Observable, tap, throwError } from 'rxjs';
 
 import { LoadingService } from '../../components/loading/services/loading.service';
 import { ModalService } from '../../components/modal/services/modal.service';
 import { ToastService } from '../../components/toast/services/toast.service';
+import { markAsShown } from './functions/shown-errors';
 import { CustomErrorResponse, HttpRequestOptions, UploadRequestOptions } from './models/http.model';
 
 const TITLE_PREFIX = 'angular-components.http.title.';
@@ -104,41 +105,29 @@ export class HttpService {
     }
 
     private request<T>(source$: Observable<T>, options?: HttpRequestOptions): Observable<T> {
-        if (options?.loading) {
-            this.loadingService.show();
-        }
+        return defer(() => {
+            if (options?.loading) {
+                this.loadingService.show();
+            }
 
-        const request = source$.pipe(
-            tap(result => {
-                options?.onSuccess?.(result);
+            return source$.pipe(
+                tap(() => {
+                    if (options?.successToast) {
+                        this.toastService.showSuccess({ message: options.successToast });
+                    }
+                }),
+                catchError((error: HttpErrorResponse) => {
+                    this.showError(error, options);
 
-                if (options?.successToast) {
-                    this.toastService.showSuccess({ message: options.successToast });
-                }
-            }),
-            catchError((error: HttpErrorResponse) => {
-                if (options?.handleError) {
-                    options.handleError(error);
-                } else {
-                    const { message, title, messageParameters } = this.resolveErrorMessage(error);
-                    this.modalService.openError({ message, title, messageParameters });
-                }
-
-                options?.onError?.(error);
-
-                return EMPTY;
-            }),
-            finalize(() => {
-                if (options?.loading) {
-                    this.loadingService.hide();
-                }
-            }),
-            shareReplay(1)
-        );
-
-        request.subscribe();
-
-        return request;
+                    return throwError(() => markAsShown(error));
+                }),
+                finalize(() => {
+                    if (options?.loading) {
+                        this.loadingService.hide();
+                    }
+                })
+            );
+        });
     }
 
     private resolveErrorMessage(error: HttpErrorResponse): {
@@ -209,5 +198,17 @@ export class HttpService {
         }
 
         return errorCode;
+    }
+
+    private showError(error: HttpErrorResponse, options?: HttpRequestOptions): void {
+        if (options?.handleError) {
+            options.handleError(error);
+
+            return;
+        }
+
+        const { message, title, messageParameters } = this.resolveErrorMessage(error);
+
+        this.modalService.openError({ message, title, messageParameters });
     }
 }

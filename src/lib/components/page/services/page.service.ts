@@ -1,9 +1,12 @@
 import { computed, DestroyRef, effect, inject, Injectable, signal, untracked } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { catchError, EMPTY, finalize, Observable, Subject, switchMap, tap } from 'rxjs';
 
 import { toKeySegment } from '../../../utilities/key-segment';
 import { BreadcrumbConfig, BreadcrumbItem } from '../../breadcrumb/models/breadcrumb.model';
 import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
+import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { HeaderConfig } from '../../header/models/header.model';
 import { PAGINATION_SIZE_DEFAULT, PaginationConfig } from '../../pagination/models/pagination.model';
 import { SearchConfig } from '../../search/models/search.model';
@@ -11,11 +14,11 @@ import { SearchFilter } from '../../search/models/search-filter.model';
 import { TableColumn, TableConfig } from '../../table/models/table.model';
 import { LinkTableCell, TableCell, TextTableCell } from '../../table/models/table-cell.model';
 import { Tab, TabsConfig, TabsVariant } from '../../tabs/models/tabs.model';
-import { PageConfig, PageHandle } from '../models/page.model';
+import { isCategoryRow, readRowField } from '../functions/page-row';
+import { PageBackendResponse, PageConfig, PageHandle } from '../models/page.model';
 import { PageAction, PageActionZone } from '../models/page-action.model';
 import { PageCategoriesConfig, PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
-import { isCategoryRow, readRowField } from '../models/page-row';
 import { PageSearch } from '../models/page-search.model';
 import { PageTableConfig } from '../models/page-table.model';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
@@ -25,6 +28,11 @@ import { PageSearchService } from './page-search.service';
 interface CategoryPathEntry {
     id: string | number;
     label: string;
+}
+
+interface PageLoad {
+    config: PageConfig;
+    search: PageSearch;
 }
 
 const INITIAL_SEARCH: PageSearch = { filters: [], page: 1, size: PAGINATION_SIZE_DEFAULT };
@@ -39,6 +47,7 @@ export class PageService {
     private readonly config = signal<PageConfig | null>(null);
     private formModalReference?: BsModalRef<ModalFormDialogComponent>;
     private readonly globalActions = signal<string[] | null>(null);
+    private readonly loads = new Subject<PageLoad>();
 
     readonly categoryBreadcrumbConfig = computed<BreadcrumbConfig | null>(() => {
         const config = this.config();
@@ -69,6 +78,7 @@ export class PageService {
     readonly currentCategoryId = signal<string | number | null>(null);
     readonly handle: PageHandle = {
         openCategory: item => this.openCategory(item),
+        openForm: (config, submit) => this.openForm(config, submit),
         refresh: () => this.refresh(),
         selected: () => this.selected(),
         viewMode: () => this.viewMode()
@@ -183,12 +193,19 @@ export class PageService {
     );
 
     constructor() {
+        this.loads
+            .pipe(
+                switchMap(({ config, search }) => this.load(config, search)),
+                takeUntilDestroyed(this.destroyRef)
+            )
+            .subscribe();
+
         effect(() => {
             const config = this.config();
             const search = this.pageSearch();
 
             if (config) {
-                untracked(() => this.load(config, search));
+                untracked(() => this.loads.next({ config, search }));
             }
         });
 
@@ -223,6 +240,10 @@ export class PageService {
             this.selected.set([]);
             this.refresh();
         });
+    }
+
+    openForm<TValue>(config: ModalFormConfig<TValue>, submit: (value: TValue) => Observable<unknown>): void {
+        this.pageActionsService.openRequestForm(config, submit, () => this.refresh());
     }
 
     refresh(): void {
@@ -285,11 +306,11 @@ export class PageService {
         };
     }
 
-    private load(config: PageConfig, search: PageSearch): void {
+    private load(config: PageConfig, search: PageSearch): Observable<PageBackendResponse> {
         const { baseUrl } = config;
 
         if (!baseUrl) {
-            return;
+            return EMPTY;
         }
 
         const categoriesConfig = config.tableConfig?.categoriesConfig;
@@ -309,17 +330,17 @@ export class PageService {
             ? this.pageHttpService.loadTrash(baseUrl, queryParameters)
             : this.pageHttpService.load(baseUrl, queryParameters);
 
-        request.subscribe({
-            complete: () => this.loading.set(false),
-            error: () => this.loading.set(false),
-            next: response => {
+        return request.pipe(
+            tap(response => {
                 this.items.set(response.results);
                 this.totalItems.set(response.search?.total ?? response.results.length);
                 this.globalActions.set(response.globalActions ?? []);
                 this.restoreSelection();
                 config.onDataLoaded?.(response);
-            }
-        });
+            }),
+            catchError(() => EMPTY),
+            finalize(() => this.loading.set(false))
+        );
     }
 
     private loadCategoryRow(

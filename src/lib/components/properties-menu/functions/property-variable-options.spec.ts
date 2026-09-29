@@ -1,4 +1,4 @@
-import { PropertyVariable, PropertyVariableType } from './property-variable.model';
+import { PropertyVariable, PropertyVariableType } from '../models/property-variable.model';
 import { findVariable, flattenVariables, toVariableExpression, toVariableOptions } from './property-variable-options';
 
 describe('property-variable-options', () => {

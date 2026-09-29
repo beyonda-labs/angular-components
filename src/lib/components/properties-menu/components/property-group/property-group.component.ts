@@ -3,10 +3,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { resolvePropertyLabelKey } from '../../functions/property-i18n';
 import { PropertyField } from '../../models/property-field.model';
 import { PropertyGroup, PropertyGroupVariant } from '../../models/property-group.model';
 import { PropertyGroupContentType, PropertyGroupTab } from '../../models/property-group-content.model';
-import { resolvePropertyLabelKey } from '../../models/property-i18n';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { PropertyFieldComponent } from '../property-field/property-field.component';
 import { PropertyListComponent } from '../property-list/property-list.component';

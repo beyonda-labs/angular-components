@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { formatBytes } from '../../../../../utilities/file-size';
 import { FormFileField } from '../../../models/fields/form-file-field.model';
-import { trackControl } from '../control-state';
+import { trackControl } from '../functions/control-state';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,

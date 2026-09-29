@@ -1,29 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { queryButton, renderComponent } from '@testing/dom';
-import { BsModalService } from 'ngx-bootstrap/modal';
-import { of } from 'rxjs';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { FormStyleGuideComponent } from './form-style-guide.component';
-
-class FakeTranslateLoader implements TranslateLoader {
-    getTranslation() {
-        return of({});
-    }
-}
 
 describe('FormStyleGuideComponent', () => {
     let fixture: ComponentFixture<FormStyleGuideComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [
-                FormStyleGuideComponent,
-                TranslateModule.forRoot({
-                    loader: { provide: TranslateLoader, useClass: FakeTranslateLoader }
-                })
-            ],
-            providers: [{ provide: BsModalService, useValue: { show: jest.fn() } }]
+            imports: [FormStyleGuideComponent],
+            providers: [provideBeyTesting()]
         }).compileComponents();
 
         fixture = await renderComponent(FormStyleGuideComponent);

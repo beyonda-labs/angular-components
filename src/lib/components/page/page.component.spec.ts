@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { buttonByName, renderComponent, settle } from '@testing/dom';
 import { mock, MockProxy } from 'jest-mock-extended';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 
 import { TableColumn } from '../table/models/table.model';
 import { TableCell, TextTableCell } from '../table/models/table-cell.model';
@@ -134,6 +134,25 @@ describe('PageComponent', () => {
 
         pageHttpService.load.mockReturnValue(of(buildResponse([{ id: 3, name: 'Linus' }])));
         onReady.mock.calls[0][0].refresh();
+        await settle(fixture);
+
+        expect(text()).toContain('Linus');
+        expect(text()).not.toContain('Ada');
+    });
+
+    it('shows the rows of the newest load when an older one answers last', async () => {
+        const older = new Subject<PageBackendResponse<Person | Team>>();
+        const newer = new Subject<PageBackendResponse<Person | Team>>();
+        const onReady = jest.fn();
+        pageHttpService.load.mockReturnValueOnce(older).mockReturnValueOnce(newer);
+        await render(buildConfig({ onReady }));
+
+        onReady.mock.calls[0][0].refresh();
+        await settle(fixture);
+        newer.next(buildResponse([{ id: 3, name: 'Linus' }]));
+        newer.complete();
+        older.next(buildResponse());
+        older.complete();
         await settle(fixture);
 
         expect(text()).toContain('Linus');
