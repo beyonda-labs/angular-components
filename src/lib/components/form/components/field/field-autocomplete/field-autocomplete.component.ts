@@ -17,7 +17,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { FormAutocompleteField } from '../../../models/fields/form-autocomplete-field.model';
 import { FormFieldOption } from '../../../models/form-field.model';
-import { trackControl } from '../control-state';
+import { trackControl } from '../functions/control-state';
 
 const EMPTY_KEY = 'angular-components.form.autocomplete-field.empty';
 const PANEL_GAP_PX = 2;

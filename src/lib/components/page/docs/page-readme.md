@@ -21,10 +21,10 @@ readonly config = new BeyPageConfig<UserFormValue, User>({
     baseUrl: '/users',
     headerConfig: new BeyPageHeaderConfig({
         actions: [
-            new BeyPageAction({ key: BeyPageStandardAction.Create, scope: BeyPageActionScope.Global, zone: BeyPageActionZone.Right }),
-            new BeyPageAction({ key: BeyPageStandardAction.Edit, scope: BeyPageActionScope.Single, zone: BeyPageActionZone.Left }),
+            beyPageStandardAction(BeyPageStandardAction.Create),
+            beyPageStandardAction(BeyPageStandardAction.Edit),
             new BeyPageAction({ key: 'invite', scope: BeyPageActionScope.Single, zone: BeyPageActionZone.Menu, handler: ([user]) => this.invite(user) }),
-            new BeyPageAction({ key: BeyPageStandardAction.Delete, scope: BeyPageActionScope.Item, zone: BeyPageActionZone.Menu })
+            beyPageStandardAction(BeyPageStandardAction.Delete)
         ]
     }),
     tableConfig: new BeyPageTableConfig({
@@ -58,7 +58,9 @@ readonly config = new BeyPageConfig<UserFormValue, User>({
 
 The config is never written to. What the consumer needs to do to the live page goes through the
 `BeyPageHandle` that `onReady` delivers: `refresh()` reloads the current page, `openCategory(category)` drills
-into a category, `selected()` and `viewMode()` read the state.
+into a category, `selected()` and `viewMode()` read the state, and `openForm(config, submit)` opens a
+`BeyModalFormConfig` for an action of the page: its submit sends `submit(value)`, and the modal closes and the page
+reloads once that request answers, or stays open when it fails. The config's own `onSubmit` is replaced.
 
 ## Row types
 
@@ -90,12 +92,13 @@ query is `{ filters, page, size, sort?, text? }`, with the filters of the search
 With `categoriesConfig` the resource also serves, under `{baseUrl}`: `/categories/{id}/path`,
 `/categories/tree`, `POST` and `PUT /categories`, `DELETE /categories` with `{ ids }`, `PUT /move` with
 `{ items: [{ id, type }], targetId }`, and `GET`, `PUT` and `DELETE /trash` with `{ items }`. Every call
-goes through `BeyHttpService`, so errors open the standard modal and writes show their success toast.
+goes through `BeyHttpService`, so errors open the standard modal and writes show their success toast. A new
+load of the list cancels the one still out, so a slow answer never replaces a newer list.
 
 ## Header actions
 
 An action has a `key`, a `scope`, a `zone` and optionally an `icon`, a `label`, a `tooltip`, a `type`, a
-`handler` and `subActions`.
+`handler`, a `confirmation` and `subActions`.
 
 | Scope    | Shown when                                                                  | `handler` receives           |
 | -------- | --------------------------------------------------------------------------- | ---------------------------- |
@@ -109,6 +112,40 @@ Zones are `Left` next to the title, `Right` for the main buttons and `Menu` for 
 `restore-trash-item`, `delete-trash-item`) needs no `handler`; `edit` and `edit-category` need exactly one row
 whatever their scope. A `handler` always receives an array, so a single-row action reads `([user]) => …`; given
 to a standard key it replaces the standard behaviour. The page does no permission logic of its own.
+
+`delete`, `delete-category` and `delete-trash-item` ask before sending their request, with
+`<prefix>.modal.<key>.title` and `.message` and a `count` parameter. A `confirmation(items, confirmation)` on the
+action returns the confirmation to show instead, built from the rows and that default one, or an observable of it
+when the message needs a request first (how many documents use a file). The request, its toast and the reload
+stay the standard ones; an action with a `handler` never asks.
+
+```ts
+beyPageStandardAction<Attachment>(BeyPageStandardAction.Delete, {
+    confirmation: (attachments, confirmation) =>
+        this.usages
+            .count(attachments)
+            .pipe(
+                map(usageCount =>
+                    usageCount > 0
+                        ? { ...confirmation, message: 'myApp.files.modal.delete-in-use.message' }
+                        : confirmation
+                )
+            )
+});
+```
+
+`beyPageStandardAction(key, overrides?)` builds a standard action already placed, and `beyPageAddAction(overrides?)`
+the `add-group` button (`Group`, `Right`, primary, `faPlus`) whose entries are `create` and `create-category` as
+text. Any field but the key can be overridden, such as a `handler` or other `subActions` for the group; the
+actions of the page are still listed in the order they should render, standard or not.
+
+| Key                                                      | Scope    | Zone    | Type and icon                |
+| -------------------------------------------------------- | -------- | ------- | ---------------------------- |
+| `create`                                                 | `Global` | `Right` | primary button with `faPlus` |
+| `create-category`                                        | `Global` | `Right` | secondary button             |
+| `edit`, `edit-category`                                  | `Single` | `Left`  | text                         |
+| `restore-trash-item`                                     | `Item`   | `Left`  | text                         |
+| `move`, `delete`, `delete-category`, `delete-trash-item` | `Item`   | `Menu`  | text                         |
 
 ## Search
 

@@ -1,6 +1,6 @@
-import { PageAction, PageActionScope, PageStandardAction } from './page-action.model';
-import { PageCategoriesConfig, PageItemType } from './page-categories.model';
-import { PageItem } from './page-item.model';
+import { PageAction, PageActionScope, PageStandardAction } from '../models/page-action.model';
+import { PageCategoriesConfig, PageItemType } from '../models/page-categories.model';
+import { PageItem } from '../models/page-item.model';
 
 const ROWLESS_SCOPES = new Set([PageActionScope.Global, PageActionScope.Group]);
 const SINGLE_ROW_KEYS = new Set<string>([PageStandardAction.Edit, PageStandardAction.EditCategory]);

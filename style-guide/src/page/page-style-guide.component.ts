@@ -4,16 +4,13 @@ import {
     BeyFormRow,
     BeyFormSection,
     BeyFormTextField,
-    BeyHeaderActionType,
-    BeyPageAction,
-    BeyPageActionScope,
-    BeyPageActionZone,
     BeyPageComponent,
     BeyPageConfig,
     BeyPageFormConfig,
     BeyPageHeaderConfig,
     BeyPageItem,
     BeyPageStandardAction,
+    beyPageStandardAction,
     BeyPageTableConfig,
     BeyPageTableSearchConfig,
     BeySearchField,
@@ -22,7 +19,6 @@ import {
     BeyTableColumn,
     BeyTextTableCell
 } from '@beyonda-labs/angular-components';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 const PREFIX = 'angular-components-style-guide.page';
@@ -75,23 +71,9 @@ export class PageStyleGuideComponent {
         }),
         headerConfig: new BeyPageHeaderConfig({
             actions: [
-                new BeyPageAction({
-                    icon: faPlus,
-                    key: BeyPageStandardAction.Create,
-                    scope: BeyPageActionScope.Global,
-                    type: BeyHeaderActionType.PrimaryButton,
-                    zone: BeyPageActionZone.Right
-                }),
-                new BeyPageAction({
-                    key: BeyPageStandardAction.Edit,
-                    scope: BeyPageActionScope.Single,
-                    zone: BeyPageActionZone.Left
-                }),
-                new BeyPageAction({
-                    key: BeyPageStandardAction.Delete,
-                    scope: BeyPageActionScope.Item,
-                    zone: BeyPageActionZone.Menu
-                })
+                beyPageStandardAction(BeyPageStandardAction.Create),
+                beyPageStandardAction(BeyPageStandardAction.Edit),
+                beyPageStandardAction(BeyPageStandardAction.Delete)
             ],
             title: `${PREFIX}.title`
         }),

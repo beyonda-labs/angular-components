@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { mock, MockProxy } from 'jest-mock-extended';
-import { of } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 
+import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { TableColumn } from '../../table/models/table.model';
 import { PageBackendResponse, PageConfig, PageConfigParameters, PageHandle } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
@@ -105,6 +106,57 @@ describe('PageService', () => {
         expect(service.pageSearch().sort).toEqual({ direction: 'asc', field: 'name' });
         expect(onDataLoaded).toHaveBeenCalledWith(buildResponse());
         expect(service.loading()).toBe(false);
+    });
+
+    it('cancels a load still out when a newer one starts, and keeps loading until the newer one answers', () => {
+        const older = new Subject<PageBackendResponse>();
+        const newer = new Subject<PageBackendResponse>();
+        pageHttpService.load.mockReturnValueOnce(older).mockReturnValueOnce(newer);
+        service.setConfig(buildConfig());
+        flush();
+
+        service.refresh();
+        flush();
+
+        expect(older.observed).toBe(false);
+        expect(service.loading()).toBe(true);
+
+        newer.next(buildResponse([ITEMS[1]]));
+        newer.complete();
+
+        expect(service.items()).toEqual([ITEMS[1]]);
+        expect(service.loading()).toBe(false);
+    });
+
+    it('stops loading after a failed load and still loads again afterwards', () => {
+        pageHttpService.load.mockReturnValueOnce(throwError(() => new Error('failed')));
+        service.setConfig(buildConfig());
+        flush();
+
+        expect(service.loading()).toBe(false);
+        expect(service.items()).toEqual([]);
+
+        service.refresh();
+        flush();
+
+        expect(service.items()).toEqual(ITEMS);
+    });
+
+    it('opens a form with its own request from the handle and reloads once it is saved', () => {
+        const onReady = jest.fn();
+        service.setConfig(buildConfig({ onReady }));
+        flush();
+        const handle = onReady.mock.calls[0][0] as PageHandle;
+        const form = new ModalFormConfig({ prefix: 'demo.status', sections: [] });
+        const submit = jest.fn(() => of(null));
+
+        handle.openForm(form, submit);
+        const [openedForm, openedSubmit, onSaved] = pageActionsService.openRequestForm.mock.calls[0];
+        onSaved();
+        flush();
+
+        expect([openedForm, openedSubmit]).toEqual([form, submit]);
+        expect(pageHttpService.load).toHaveBeenCalledTimes(2);
     });
 
     it('hands the consumer a handle that reloads and reports the selection', () => {

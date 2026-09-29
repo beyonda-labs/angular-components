@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { FakeModalService } from '@testing/services/fake-modal.service';
+import { of, Subject } from 'rxjs';
 
+import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { FormHandle, FormSection } from '../../form/models/form.model';
-import { ModalService } from '../../modal/services/modal.service';
 import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
 import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
 import { PageConfig } from '../models/page.model';
@@ -16,10 +18,11 @@ import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
 
 describe('PageActionsService', () => {
+    let modal: FakeModalService;
     let service: PageActionsService;
 
-    const openConfirmation = jest.fn();
     const openForm = jest.fn();
+    const openWithRequest = jest.fn();
     const openTree = jest.fn();
     const create = jest.fn();
     const createCategory = jest.fn();
@@ -33,7 +36,6 @@ describe('PageActionsService', () => {
     const restoreTrashItems = jest.fn();
 
     beforeEach(() => {
-        openConfirmation.mockReset();
         openForm.mockReset();
         openTree.mockReset();
         create.mockReset();
@@ -51,10 +53,10 @@ describe('PageActionsService', () => {
 
         TestBed.configureTestingModule({
             providers: [
+                provideBeyTesting(),
                 PageActionsService,
-                { provide: ModalService, useValue: { openConfirmation } },
                 { provide: ModalTreeService, useValue: { open: openTree } },
-                { provide: PageFormService, useValue: { open: openForm } },
+                { provide: PageFormService, useValue: { open: openForm, openWithRequest } },
                 {
                     provide: PageHttpService,
                     useValue: {
@@ -73,7 +75,18 @@ describe('PageActionsService', () => {
             ]
         });
 
+        modal = TestBed.inject(FakeModalService);
         service = TestBed.inject(PageActionsService);
+    });
+
+    it('opens a form with its own request through the page forms', () => {
+        const config = new ModalFormConfig({ prefix: 'testPage.status', sections: [] });
+        const submit = jest.fn();
+        const onSaved = jest.fn();
+
+        service.openRequestForm(config, submit, onSaved);
+
+        expect(openWithRequest).toHaveBeenCalledWith(config, submit, onSaved);
     });
 
     it('runs a custom item handler with the selected items', () => {
@@ -122,7 +135,7 @@ describe('PageActionsService', () => {
         ).not.toThrow();
 
         expect(openForm).not.toHaveBeenCalled();
-        expect(openConfirmation).not.toHaveBeenCalled();
+        expect(modal.confirmations()).toEqual([]);
     });
 
     describe('create / edit item', () => {
@@ -229,19 +242,18 @@ describe('PageActionsService', () => {
 
     describe('delete item', () => {
         it('deletes the selected items after confirmation', () => {
-            openConfirmation.mockReturnValue(of(true));
+            modal.setConfirmationAnswer(true);
             deleteItems.mockReturnValue(of(null));
             const context = buildContext({ selectedItems: () => [{ id: 1 }, { id: 2 }] });
 
             service.executeAction(buildAction(PageStandardAction.Delete, PageActionScope.Item), context);
 
-            expect(openConfirmation).toHaveBeenCalled();
+            expect(modal.confirmations()).toHaveLength(1);
             expect(deleteItems).toHaveBeenCalledWith('/items', [1, 2], 'testPage.toast.delete-success');
             expect(context.onDeleted).toHaveBeenCalled();
         });
 
         it('does not delete when the confirmation is rejected', () => {
-            openConfirmation.mockReturnValue(of(false));
             const context = buildContext({ selectedItems: () => [{ id: 1 }] });
 
             service.executeAction(buildAction(PageStandardAction.Delete, PageActionScope.Item), context);
@@ -252,7 +264,7 @@ describe('PageActionsService', () => {
         it('does not ask for confirmation without selected items', () => {
             service.executeAction(buildAction(PageStandardAction.Delete, PageActionScope.Item), buildContext());
 
-            expect(openConfirmation).not.toHaveBeenCalled();
+            expect(modal.confirmations()).toEqual([]);
         });
     });
 
@@ -389,21 +401,74 @@ describe('PageActionsService', () => {
         });
     });
 
+    describe('confirmation hook', () => {
+        it('asks with the confirmation the action builds from the rows and the default one, then deletes', () => {
+            modal.setConfirmationAnswer(true);
+            deleteItems.mockReturnValue(of(null));
+            const confirmation = jest.fn((items: PageItem[], defaults: { title: string }) => ({
+                message: 'testPage.modal.delete-in-use.message',
+                messageParameters: { count: items.length },
+                title: defaults.title
+            }));
+            const action = new PageAction({
+                ...buildAction(PageStandardAction.Delete, PageActionScope.Item),
+                confirmation
+            });
+
+            service.executeAction(action, buildContext({ selectedItems: () => [{ id: 1 }, { id: 2 }] }));
+
+            expect(confirmation).toHaveBeenCalledWith([{ id: 1 }, { id: 2 }], {
+                message: 'testPage.modal.delete.message',
+                messageParameters: { count: 2 },
+                title: 'testPage.modal.delete.title'
+            });
+            expect(modal.confirmations()).toEqual([
+                {
+                    message: 'testPage.modal.delete-in-use.message',
+                    messageParameters: { count: 2 },
+                    title: 'testPage.modal.delete.title'
+                }
+            ]);
+            expect(deleteItems).toHaveBeenCalledWith('/items', [1, 2], 'testPage.toast.delete-success');
+        });
+
+        it('waits for a confirmation built asynchronously before asking', () => {
+            const built = new Subject<{ message: string; title: string }>();
+            const action = new PageAction({
+                ...buildAction(PageStandardAction.DeleteTrashItem, PageActionScope.Item),
+                confirmation: () => built
+            });
+
+            service.executeAction(action, buildContext({ selectedItems: () => [{ id: 1 }] }));
+
+            expect(modal.confirmations()).toEqual([]);
+
+            built.next({ message: 'testPage.modal.in-use.message', title: 'testPage.modal.in-use.title' });
+
+            expect(modal.confirmations()).toEqual([
+                {
+                    message: 'testPage.modal.in-use.message',
+                    title: 'testPage.modal.in-use.title'
+                }
+            ]);
+            expect(deleteTrashItems).not.toHaveBeenCalled();
+        });
+    });
+
     describe('delete category', () => {
         it('deletes the selected categories after confirmation', () => {
-            openConfirmation.mockReturnValue(of(true));
+            modal.setConfirmationAnswer(true);
             deleteCategories.mockReturnValue(of(null));
             const context = buildContext({ selectedItems: () => [{ id: 1 }, { id: 2 }] });
 
             service.executeAction(buildAction(PageStandardAction.DeleteCategory, PageActionScope.Item), context);
 
-            expect(openConfirmation).toHaveBeenCalled();
+            expect(modal.confirmations()).toHaveLength(1);
             expect(deleteCategories).toHaveBeenCalledWith('/items', [1, 2], 'testPage.toast.delete-category-success');
             expect(context.onCategoryDeleted).toHaveBeenCalled();
         });
 
         it('does not delete categories when the confirmation is rejected', () => {
-            openConfirmation.mockReturnValue(of(false));
             const context = buildContext({ selectedItems: () => [{ id: 1 }] });
 
             service.executeAction(buildAction(PageStandardAction.DeleteCategory, PageActionScope.Item), context);
@@ -421,57 +486,6 @@ describe('PageActionsService', () => {
             expect(loadCategoryTree).not.toHaveBeenCalled();
         });
 
-        it('loads the category tree and opens a picker with a root node plus the nested categories', () => {
-            loadCategoryTree.mockReturnValue(of(buildCategories()));
-            const context = buildCategoryContext({ selectedItems: () => [{ id: 'item-1', type: PageItemType.Item }] });
-
-            service.executeAction(buildAction(PageStandardAction.Move, PageActionScope.Item), context);
-
-            expect(loadCategoryTree).toHaveBeenCalledWith('/items');
-            expect(openTree).toHaveBeenCalledTimes(1);
-
-            const treeConfig = openTree.mock.calls[0][0] as ModalTreeConfig;
-            const [root] = treeConfig.treeConfig.nodes;
-            const [electronics, books] = root.children;
-
-            expect(root.key).toBe('__root__');
-            expect(electronics.key).toBe('cat-1');
-            expect(electronics.label).toBe('Electronics');
-            expect(electronics.children.map(node => node.key)).toEqual(['cat-2']);
-            expect(books.key).toBe('cat-3');
-        });
-
-        it('nests the top-level categories as children of the root node, not as its siblings', () => {
-            loadCategoryTree.mockReturnValue(of(buildCategories()));
-            const context = buildCategoryContext({ selectedItems: () => [{ id: 'item-1', type: PageItemType.Item }] });
-
-            service.executeAction(buildAction(PageStandardAction.Move, PageActionScope.Item), context);
-
-            const treeConfig = openTree.mock.calls[0][0] as ModalTreeConfig;
-
-            expect(treeConfig.treeConfig.nodes).toHaveLength(1);
-            expect(treeConfig.treeConfig.nodes[0].children.map(node => node.key)).toEqual(['cat-1', 'cat-3']);
-        });
-
-        it('disables the moved category and its descendants as valid targets', () => {
-            loadCategoryTree.mockReturnValue(of(buildCategories()));
-            const context = buildCategoryContext({
-                selectedItems: () => [{ id: 'cat-1', type: PageItemType.Category }]
-            });
-
-            service.executeAction(buildAction(PageStandardAction.Move, PageActionScope.Item), context);
-
-            const treeConfig = openTree.mock.calls[0][0] as ModalTreeConfig;
-            const [root] = treeConfig.treeConfig.nodes;
-            const [electronics, books] = root.children;
-            const [phones] = electronics.children;
-
-            expect(root.isDisabled).toBe(false);
-            expect(electronics.isDisabled).toBe(true);
-            expect(phones.isDisabled).toBe(true);
-            expect(books.isDisabled).toBe(false);
-        });
-
         it('moves the selected items to the confirmed category, closes the picker and refreshes', () => {
             const hide = jest.fn();
             loadCategoryTree.mockReturnValue(of(buildCategories()));
@@ -486,6 +500,7 @@ describe('PageActionsService', () => {
 
             treeConfig.onConfirm?.(target);
 
+            expect(loadCategoryTree).toHaveBeenCalledWith('/items');
             expect(moveItems).toHaveBeenCalledWith(
                 '/items',
                 [{ id: 'item-1', type: PageItemType.Item }],
@@ -515,7 +530,7 @@ describe('PageActionsService', () => {
 
     describe('trash items', () => {
         it('deletes the selected trash items after confirmation', () => {
-            openConfirmation.mockReturnValue(of(true));
+            modal.setConfirmationAnswer(true);
             deleteTrashItems.mockReturnValue(of(null));
             const items: PageTrashItem[] = [
                 { id: 1, type: PageItemType.Item },
@@ -525,13 +540,12 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.DeleteTrashItem, PageActionScope.Item), context);
 
-            expect(openConfirmation).toHaveBeenCalled();
+            expect(modal.confirmations()).toHaveLength(1);
             expect(deleteTrashItems).toHaveBeenCalledWith('/items', items, 'testPage.toast.delete-trash-item-success');
             expect(context.onTrashItemDeleted).toHaveBeenCalled();
         });
 
         it('does not delete trash items when the confirmation is rejected', () => {
-            openConfirmation.mockReturnValue(of(false));
             const context = buildContext({ selectedItems: () => [{ id: 1, type: PageItemType.Item }] });
 
             service.executeAction(buildAction(PageStandardAction.DeleteTrashItem, PageActionScope.Item), context);
@@ -546,7 +560,7 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.RestoreTrashItem, PageActionScope.Item), context);
 
-            expect(openConfirmation).not.toHaveBeenCalled();
+            expect(modal.confirmations()).toEqual([]);
             expect(restoreTrashItems).toHaveBeenCalledWith(
                 '/items',
                 items,

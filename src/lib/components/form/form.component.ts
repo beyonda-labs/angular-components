@@ -15,10 +15,10 @@ import { debounceTime, map, startWith, switchMap } from 'rxjs';
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
 import { FormSectionComponent } from './components/section/section.component';
+import { resolveRule } from './functions/form-rule-resolution';
 import { FormButton, FormButtonType, FormConfig, FormHandle, FormSection } from './models/form.model';
 import { FormField, FormFieldOption, FormFieldType, FormValue } from './models/form-field.model';
 import { FORM_HOST } from './models/form-host.model';
-import { resolveRule } from './models/form-rule-resolution';
 import { FormService } from './services/form.service';
 
 const NEXT_LABEL = 'angular-components.form.steps.next';

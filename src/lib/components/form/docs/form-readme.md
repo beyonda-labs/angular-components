@@ -36,8 +36,8 @@ readonly form = new BeyFormConfig<ContactValue>({
 
 ## BeyFormConfig
 
-| Field                       | Required | Default | Meaning                                                                 |
-| --------------------------- | -------- | ------- | ----------------------------------------------------------------------- |
+| Field                       | Required | Default | Meaning                                                                  |
+| --------------------------- | -------- | ------- | ------------------------------------------------------------------------ |
 | `prefix`                    | yes      |         | i18n prefix every text of the form resolves from                         |
 | `sections`                  | yes      |         | The sections, in order                                                   |
 | `buttons`                   | no       | `[]`    | Buttons under the form                                                   |
@@ -61,11 +61,11 @@ receives the handle, `isHidden` and `tooltip`.
 
 ## Buttons
 
-| Type        | What the form does with it                                                              |
-| ----------- | --------------------------------------------------------------------------------------- |
-| `Submit`    | Disabled until the form is valid and changed, then runs `onSubmit`                      |
-| `Cancel`    | Disabled until something changed, then resets to `initialValue` and runs `onCancel`     |
-| `Secondary` | Runs its own `action` with the handle                                                   |
+| Type        | What the form does with it                                                          |
+| ----------- | ----------------------------------------------------------------------------------- |
+| `Submit`    | Disabled until the form is valid and changed, then runs `onSubmit`                  |
+| `Cancel`    | Disabled until something changed, then resets to `initialValue` and runs `onCancel` |
+| `Secondary` | Runs its own `action` with the handle                                               |
 
 A button with an `action` of its own is never disabled by the form, whatever its type.
 
@@ -74,15 +74,15 @@ A button with an `action` of its own is never disabled by the form, whatever its
 The config never changes once built. Whatever has to happen to the live form goes through the
 `BeyFormHandle` the callbacks receive:
 
-| Member             | Meaning                                                            |
-| ------------------ | ------------------------------------------------------------------ |
-| `value()`          | The current value, disabled fields included                         |
-| `isDirty()`        | Whether anything changed since the last reset                       |
-| `patchValue(part)` | Writes into the form, section by section                            |
-| `reset()`          | Back to `initialValue`                                              |
-| `goToStep(key)`    | Opens that step                                                     |
-| `close()`          | Closes the modal hosting the form; does nothing elsewhere           |
-| `requestClose()`   | Same, asking first when there are changes                           |
+| Member             | Meaning                                                   |
+| ------------------ | --------------------------------------------------------- |
+| `value()`          | The current value, disabled fields included               |
+| `isDirty()`        | Whether anything changed since the last reset             |
+| `patchValue(part)` | Writes into the form, section by section                  |
+| `reset()`          | Back to `initialValue`                                    |
+| `goToStep(key)`    | Opens that step                                           |
+| `close()`          | Closes the modal hosting the form; does nothing elsewhere |
+| `requestClose()`   | Same, asking first when there are changes                 |
 
 ## Rules
 
@@ -91,7 +91,7 @@ signal or a function of the current form value. The form evaluates them on every
 
 ```ts
 new BeyFormSelectField({ key: 'fileType', isHidden: value => value['main']['type'] !== 'file' }),
-new BeyFormTextField({ key: 'vatNumber', isRequired: value => value['main']['customer'] === 'company' })
+    new BeyFormTextField({ key: 'vatNumber', isRequired: value => value['main']['customer'] === 'company' });
 ```
 
 A hidden field is also disabled, so its validators no longer hold the form back, and its value still comes
@@ -136,7 +136,7 @@ without it.
 steps: [
     new BeyFormStep({ key: 'who', sections: ['person'] }),
     new BeyFormStep({ key: 'how', sections: ['contact', 'consent'] })
-]
+];
 ```
 
 Every section keeps its controls from the start; a step only chooses which ones render. The form adds a
@@ -148,13 +148,13 @@ sections of the current step are valid. The config buttons show on the last step
 
 With `prefix: 'myApp.contact'`, a section `person` and its field `name`:
 
-| Key                                    | Shown as                            |
-| -------------------------------------- | ----------------------------------- |
-| `myApp.contact.person.label`           | Section title                       |
-| `myApp.contact.person.tooltip`         | Section tooltip, when enabled       |
-| `myApp.contact.person.name.label`      | Field label                         |
-| `myApp.contact.person.name.placeholder`| Field placeholder, unless given     |
-| `myApp.contact.person.name.tooltip`    | Field label tooltip, when enabled   |
+| Key                                     | Shown as                          |
+| --------------------------------------- | --------------------------------- |
+| `myApp.contact.person.label`            | Section title                     |
+| `myApp.contact.person.tooltip`          | Section tooltip, when enabled     |
+| `myApp.contact.person.name.label`       | Field label                       |
+| `myApp.contact.person.name.placeholder` | Field placeholder, unless given   |
+| `myApp.contact.person.name.tooltip`     | Field label tooltip, when enabled |
 
 A section with `prefix: 'person'` resolves its texts from `myApp.contact.person.*` whatever its key.
 
@@ -170,14 +170,17 @@ as a full translation key, such as `placeholder`, a button `label` or an option 
 `BeyModalFormService.open(config)` shows the same form inside a modal. `BeyModalFormConfig` takes everything
 `BeyFormConfig` does except `buttons`, which it builds itself, plus:
 
-| Field         | Default                    | Meaning                          |
-| ------------- | -------------------------- | -------------------------------- |
-| `title`       | `<prefix>.title`           | Title of the dialog              |
-| `size`        | `BeyModalFormSize.Large`   | Bootstrap modal size             |
-| `cancelLabel` | `<prefix>.buttons.cancel`  | Label of the cancel button       |
-| `submitLabel` | `<prefix>.buttons.submit`  | Label of the submit button       |
+| Field         | Default                   | Meaning                    |
+| ------------- | ------------------------- | -------------------------- |
+| `title`       | `<prefix>.title`          | Title of the dialog        |
+| `size`        | `BeyModalFormSize.Large`  | Bootstrap modal size       |
+| `cancelLabel` | `<prefix>.buttons.cancel` | Label of the cancel button |
+| `submitLabel` | `<prefix>.buttons.submit` | Label of the submit button |
 
-Submit does not close the dialog: call `handle.close()` once the operation succeeds. Cancel, the cross and
+Submit does not close the dialog: call `handle.close()` once the operation succeeds, or open it with
+`BeyModalFormService.openWithRequest(config, submit)`, whose submit sends `submit(value)` and closes the dialog once
+that request answers, keeping it open when it fails; the config's own `onSubmit` is replaced. A config spread into a
+new one keeps its labels, so it can be copied. Cancel, the cross and
 `handle.requestClose()` ask for confirmation when there are changes. The backdrop and Escape do nothing, so
 the confirmation cannot be skipped. `beyModalFormGuard` on a route closes pristine dialogs on navigation and
 asks before leaving a changed one.
@@ -188,11 +191,11 @@ See [form-fields-readme.md](./form-fields-readme.md).
 
 ## Customisation
 
-| Variable                          | Default                |
-| --------------------------------- | ---------------------- |
-| `--bey-form-sections-max-height`  | `none`                 |
-| `--bey-form-field-fg`             | `--bey-text-primary`   |
-| `--bey-form-field-placeholder`    | `--bey-text-disabled`  |
-| `--bey-form-field-control-height` | `2.125rem`             |
-| `--bey-form-field-label`          | `--bey-text-muted`     |
-| `--bey-modal-form-body-max-height`| `min(70vh, 34rem)`     |
+| Variable                           | Default               |
+| ---------------------------------- | --------------------- |
+| `--bey-form-sections-max-height`   | `none`                |
+| `--bey-form-field-fg`              | `--bey-text-primary`  |
+| `--bey-form-field-placeholder`     | `--bey-text-disabled` |
+| `--bey-form-field-control-height`  | `2.125rem`            |
+| `--bey-form-field-label`           | `--bey-text-muted`    |
+| `--bey-modal-form-body-max-height` | `min(70vh, 34rem)`    |

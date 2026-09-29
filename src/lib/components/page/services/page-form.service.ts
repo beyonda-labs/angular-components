@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
+import { Observable, tap } from 'rxjs';
 
 import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
@@ -44,5 +45,13 @@ export class PageFormService {
                 title: `${pagePrefix}.form.${mode}.title`
             })
         );
+    }
+
+    openWithRequest<TValue>(
+        config: ModalFormConfig<TValue>,
+        submit: (value: TValue) => Observable<unknown>,
+        onSaved: () => void
+    ): BsModalRef<ModalFormDialogComponent> {
+        return this.modalFormService.openWithRequest(config, value => submit(value).pipe(tap(() => onSaved())));
     }
 }

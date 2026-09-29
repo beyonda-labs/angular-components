@@ -66,6 +66,21 @@ export class ModalFormService {
         return reference;
     }
 
+    openWithRequest<TValue>(
+        config: ModalFormConfig<TValue>,
+        submit: (value: TValue) => Observable<unknown>
+    ): BsModalRef<ModalFormDialogComponent> {
+        return this.open(
+            new ModalFormConfig<TValue>({
+                ...config,
+                onSubmit: (value, handle) =>
+                    submit(value)
+                        .pipe(take(1))
+                        .subscribe(() => handle.close())
+            })
+        );
+    }
+
     private closeAll(): void {
         this.openDialogs.forEach(reference => reference.hide());
         this.openDialogs = [];

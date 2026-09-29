@@ -1,3 +1,6 @@
+import { Observable } from 'rxjs';
+
+import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { PageViewMode } from './page-categories.model';
 import { PageFormConfig } from './page-form.model';
 import { PageHeaderConfig } from './page-header.model';
@@ -14,6 +17,7 @@ export interface PageBackendResponse<TRow extends PageItem = PageItem> {
 
 export interface PageHandle<TItem extends PageItem = PageItem, TCategory extends PageItem = TItem> {
     openCategory(category: TCategory): void;
+    openForm<TValue>(config: ModalFormConfig<TValue>, submit: (value: TValue) => Observable<unknown>): void;
     refresh(): void;
     selected(): (TItem | TCategory)[];
     viewMode(): PageViewMode;

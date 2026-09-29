@@ -1,7 +1,9 @@
 import { TestBed } from '@angular/core/testing';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
+import { of } from 'rxjs';
 
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
-import { ModalFormService } from '../../form/components/modal/services/modal-form.service';
 import { FormTextField } from '../../form/models/fields/form-text-field.model';
 import { FormHandle, FormRow, FormSection } from '../../form/models/form.model';
 import { PageFormConfig } from '../models/page-form.model';
@@ -15,24 +17,13 @@ interface TestFormValue {
 }
 
 describe('PageFormService', () => {
+    let modalForm: FakeModalFormService;
     let service: PageFormService;
 
-    const open = jest.fn();
-
     beforeEach(() => {
-        open.mockReset();
-        open.mockReturnValue({});
+        TestBed.configureTestingModule({ providers: [provideBeyTesting()] });
 
-        TestBed.configureTestingModule({
-            providers: [
-                PageFormService,
-                {
-                    provide: ModalFormService,
-                    useValue: { open }
-                }
-            ]
-        });
-
+        modalForm = TestBed.inject(FakeModalFormService);
         service = TestBed.inject(PageFormService);
     });
 
@@ -115,8 +106,25 @@ describe('PageFormService', () => {
         expect(onEdit).toHaveBeenCalledWith(currentValue, handle);
     });
 
+    it('opens a form with its own request through the modal forms and reports the save once it answers', () => {
+        const config = new ModalFormConfig<TestFormValue>({ prefix: 'testPage.status', sections: [] });
+        const submit = jest.fn(() => of(null));
+        const onSaved = jest.fn();
+        const close = jest.fn();
+
+        service.openWithRequest(config, submit, onSaved);
+        getOpenedConfig().onSubmit?.({ section1: { text1: 'draft' } }, {
+            close
+        } as unknown as FormHandle<TestFormValue>);
+
+        expect(getOpenedConfig().prefix).toBe('testPage.status');
+        expect(submit).toHaveBeenCalledWith({ section1: { text1: 'draft' } });
+        expect(onSaved).toHaveBeenCalledTimes(1);
+        expect(close).toHaveBeenCalledTimes(1);
+    });
+
     function getOpenedConfig(): ModalFormConfig<TestFormValue> {
-        return open.mock.calls[0][0] as ModalFormConfig<TestFormValue>;
+        return modalForm.forms()[0] as ModalFormConfig<TestFormValue>;
     }
 });
 
