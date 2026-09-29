@@ -4,7 +4,8 @@ export interface CustomErrorResponse {
     readonly errorCode: string;
     readonly timestamp: string;
 
-    readonly message?: string;
+    readonly details?: Record<string, unknown>;
+    readonly messageKey?: string;
     readonly messageParameters?: Record<string, unknown>;
 }
 
