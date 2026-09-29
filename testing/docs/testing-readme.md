@@ -22,9 +22,10 @@ below. Routes stay in the spec, with `provideRouter`.
 ## provideBeyTesting(config?)
 
 The HTTP client with the session interceptor and then `interceptors`, backed by `provideHttpClientTesting`, so
-requests are answered with `HttpTestingController`; the environment; the session over in-memory storage;
-ngx-translate without a loader; the ngx-bootstrap modals, so the dialogs of the services without a fake (the tree
-dialog) open for real; and the fakes.
+requests are answered with `HttpTestingController`; `provideBeyHttp`, so a failed request whose error modal the
+fake recorded raises nothing in a spec that subscribes without an `error` callback; the environment; the session
+over in-memory storage; ngx-translate without a loader; the ngx-bootstrap modals, so the dialogs of the services
+without a fake (the tree dialog) open for real; and the fakes.
 
 | Field          | Default                              | Meaning                                                  |
 | -------------- | ------------------------------------ | -------------------------------------------------------- |
@@ -41,13 +42,13 @@ The test environment is `accessControlUrl: 'https://api.test/auth'`, `appName: '
 
 ## Fakes
 
-| Fake                        | Stands for              | Records                                                | Answers                                                                     |
-| --------------------------- | ----------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------- |
-| `BeyFakeModalService`       | `BeyModalService`       | `confirmations()`, `errors()`, `infos()`, `warnings()` | Each confirmation with `false`, or what `setConfirmationAnswer(answer)` set |
-| `BeyFakeToastService`       | `BeyToastService`       | `errors()`, `infos()`, `successes()`, `warnings()`     | Nothing                                                                     |
-| `BeyFakeModalFormService`   | `BeyModalFormService`   | `forms()`, whose callbacks the spec calls              | `canDeactivate()` with `true`                                               |
-| `BeyFakeFilePreviewService` | `BeyFilePreviewService` | `previews()`                                           | A `BsModalRef`                                                              |
-| `BeyFakeStorageService`     | `BeyStorageService`     | What is `set`, in memory                               | `get(key)`; nothing reaches `localStorage`, so no spec leaks into the next  |
+| Fake                        | Stands for              | Records                                                                                                           | Answers                                                                     |
+| --------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `BeyFakeModalService`       | `BeyModalService`       | `confirmations()`, `errors()`, `infos()`, `warnings()`                                                            | Each confirmation with `false`, or what `setConfirmationAnswer(answer)` set |
+| `BeyFakeToastService`       | `BeyToastService`       | `errors()`, `infos()`, `successes()`, `warnings()`                                                                | Nothing                                                                     |
+| `BeyFakeModalFormService`   | `BeyModalFormService`   | `forms()`, whose callbacks the spec calls; a form opened `openWithRequest` sends its request and closes on submit | `canDeactivate()` with `true`                                               |
+| `BeyFakeFilePreviewService` | `BeyFilePreviewService` | `previews()`                                                                                                      | A `BsModalRef`                                                              |
+| `BeyFakeStorageService`     | `BeyStorageService`     | What is `set`, in memory                                                                                          | `get(key)`; nothing reaches `localStorage`, so no spec leaks into the next  |
 
 Each record is the config exactly as the caller passed it. A confirmation emits at once, with the answer set
 when it was opened. The modal methods return a `BsModalRef` whose `hide()` does nothing.

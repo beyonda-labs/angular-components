@@ -32,9 +32,16 @@
 -   Testing: secondary entry point `@beyonda-labs/angular-components/testing` for the specs of a consuming app; `provideBeyTesting(config?)`, typed by `BeyTestingConfig`, registers the HTTP client backed by `HttpTestingController`, a test environment, the session over in-memory storage (signed in with `user`), ngx-translate without a loader or with `translations` per language, the ngx-bootstrap modals, and the fakes in place of the real services.
 -   Testing: `BeyFakeModalService`, `BeyFakeToastService`, `BeyFakeModalFormService`, `BeyFakeFilePreviewService` and `BeyFakeStorageService` record what they are asked for in signals, `setConfirmationAnswer` sets what a confirmation emits, and the DOM helpers `beyRenderComponent`, `beySettle`, `beyButtonByName`, `beyQueryButton`, `beyQueryAll`, `beyTextsOf` and `beyHostOf` are public.
 -   Testing: `beyControlByName`, `beyQueryControl` and `beyAccessibleName` find a form control by the name a user hears: its `aria-labelledby`, its `aria-label` or its `<label>`.
+-   Page module: `beyPageStandardAction(key, overrides?)` builds a standard action with its scope, zone, type and icon, and `beyPageAddAction(overrides?)` the `add-group` button holding `create` and `create-category`; any field but the key can be overridden.
+-   Page module: `confirmation(items, confirmation)` on a `delete`, `delete-category` or `delete-trash-item` action returns the confirmation to ask with, or an observable of it, so a page can warn about rows in use and keep the standard request, toast and reload.
+-   Page module: `openForm(config, submit)` on `BeyPageHandle` opens a modal form for a custom action, sends `submit(value)` on save, and closes and reloads the page once the request answers.
+-   Form module: `BeyModalFormConfig` keeps `cancelLabel` and `submitLabel`, so a config spread into a new one is a full copy.
+-   Form module: `BeyModalFormService.openWithRequest(config, submit)` opens a modal form whose submit sends a request and closes once it answers, for any screen; `BeyPageHandle.openForm` is built on it, and `BeyFakeModalFormService` does the same in specs.
+-   Services: `provideBeyHttp()`, included in `provideBeyApp` and `provideBeyTesting`, keeps rxjs from reporting an HTTP error the service already showed.
 
 ### Changed
 
+-   Services: `BeyHttpService` returns a cold, typed observable: the request leaves on subscribe, each subscription sends its own request and unsubscribing cancels it; after the error modal (or `handleError`) the `HttpErrorResponse` reaches the subscriber instead of completing empty. `onSuccess` and `onError` are removed from `BeyHttpRequestOptions`: subscribe instead.
 -   `BeyCellType`, `BeyLoadingSize`, `BeyModalFormSize` and `BeyModalTreeSize` list their members alphabetically, so `Object.values` returns them in that order.
 -   Tree module: `BeyModalTreeConfig` is plain data: `close`, `confirm`, `getSelectedNode`, `getTitle`, `hasSelection` and `closeHandler` are gone, `title` always holds a value (`<prefix>.title` by default), and the dialog closes through the `BsModalRef` that `BeyModalTreeService.open` returns.
 -   Form module: the key segments derived from section and field identifiers are kebab-case (`valueString` reads `value-string.label`); translation files with camelCase segments must be renamed.
@@ -62,6 +69,7 @@
 
 ### Fixed
 
+-   Page module: a new load of the list cancels the one still out, so a slow response no longer overwrites the rows of a newer page, search or category.
 -   Form module: `stretch` buttons share the full width in a row, and the sections no longer show a horizontal scroll.
 -   Tabs module: tabs whose labels widen after the first paint (translations that load late, a language switch, a web font) move into the overflow menu instead of spilling out of a narrow bar.
 -   Style guide: the login example scrolls with the library's thin scrollbar.

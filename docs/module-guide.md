@@ -21,16 +21,16 @@ what to touch; the rules themselves live in `c:\Dev\Personal\beyonda-labs\rules\
 
 ## 2. Where everything goes
 
-| What                 | Where                                                                                          |
-| -------------------- | ---------------------------------------------------------------------------------------------- |
-| The module           | `src/lib/components/<module>/`: component, `models/`, `services/`, `components/` for children  |
-| Its texts            | `src/lib/components/<module>/assets/<module>.en.json` and `.es.json`                           |
-| Its README           | `src/lib/components/<module>/docs/<module>-readme.md`                                          |
-| Its exports          | `src/lib/components/<module>/public-api.ts`                                                    |
-| Its demo             | `style-guide/src/<module>/`, with its own `assets/` for the demo texts                         |
-| A new design value   | `src/lib/assets/styles/tokens.css`, documented in `docs/tokens.md`                             |
-| A shared test helper | `testing/src/dom.ts`, only when it is generic; otherwise it stays in the spec                  |
-| A test double        | `testing/src/services/fake-<service>.service.ts`, for a public service a consumer's spec stubs |
+| What                 | Where                                                                                                                                         |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| The module           | `src/lib/components/<module>/`: component, `models/` for contracts, `services/`, `functions/` for stateless logic, `components/` for children |
+| Its texts            | `src/lib/components/<module>/assets/<module>.en.json` and `.es.json`                                                                          |
+| Its README           | `src/lib/components/<module>/docs/<module>-readme.md`                                                                                         |
+| Its exports          | `src/lib/components/<module>/public-api.ts`                                                                                                   |
+| Its demo             | `style-guide/src/<module>/`, with its own `assets/` for the demo texts                                                                        |
+| A new design value   | `src/lib/assets/styles/tokens.css`, documented in `docs/tokens.md`                                                                            |
+| A shared test helper | `testing/src/dom.ts`, only when it is generic; otherwise it stays in the spec                                                                 |
+| A test double        | `testing/src/services/fake-<service>.service.ts`, for a public service a consumer's spec stubs                                                |
 
 ## 3. While writing
 
