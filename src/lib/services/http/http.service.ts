@@ -139,10 +139,10 @@ export class HttpService {
         const body = error.error as CustomErrorResponse | null,
             messageParameters = this.resolveErrorParameters(body?.messageParameters);
 
-        if (body?.message) {
+        if (body?.messageKey) {
             return {
-                message: `angular-components.http.error.${body.message}`,
-                title: this.resolveErrorTitle(body.message),
+                message: `angular-components.http.error.${body.messageKey}`,
+                title: this.resolveErrorTitle(body.messageKey),
                 messageParameters
             };
         }

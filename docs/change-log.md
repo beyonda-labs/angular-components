@@ -41,6 +41,7 @@
 
 ### Changed
 
+-   Services: `BeyHttpService` reads the reason of an error from `messageKey` in the body instead of `message`, as express-components now sends it, and `CustomErrorResponse` carries the `details` of the error.
 -   Services: `BeyHttpService` returns a cold, typed observable: the request leaves on subscribe, each subscription sends its own request and unsubscribing cancels it; after the error modal (or `handleError`) the `HttpErrorResponse` reaches the subscriber instead of completing empty. `onSuccess` and `onError` are removed from `BeyHttpRequestOptions`: subscribe instead.
 -   `BeyCellType`, `BeyLoadingSize`, `BeyModalFormSize` and `BeyModalTreeSize` list their members alphabetically, so `Object.values` returns them in that order.
 -   Tree module: `BeyModalTreeConfig` is plain data: `close`, `confirm`, `getSelectedNode`, `getTitle`, `hasSelection` and `closeHandler` are gone, `title` always holds a value (`<prefix>.title` by default), and the dialog closes through the `BsModalRef` that `BeyModalTreeService.open` returns.
@@ -103,6 +104,7 @@
 
 ### Changed
 
+-   Services: `BeyHttpService` reads the reason of an error from `messageKey` in the body instead of `message`, as express-components now sends it, and `CustomErrorResponse` carries the `details` of the error.
 -   Every component: `config` is a required signal input, read as initial state and never written to; `OnPush`.
 -   Every public export carries the `Bey` prefix (`BeyFooterConfig`, `BEY_ENVIRONMENT_CONFIG`).
 -   Translation keys are kebab-case (`app-layout`, `pdf-viewer`, `greater-than`, `no-file-selected`).
@@ -200,6 +202,7 @@
 
 ### Changed
 
+-   Services: `BeyHttpService` reads the reason of an error from `messageKey` in the body instead of `message`, as express-components now sends it, and `CustomErrorResponse` carries the `details` of the error.
 -   Page module: `PageFormConfig` and `ModalFormConfig` are generic over the form value type, so `onCreate` and
     `onEdit` receive a typed value instead of `unknown`.
 -   Http service: requests configured with `loading`, `successToast` or `onSuccess` behave correctly when the caller

@@ -42,32 +42,35 @@ function failWithRange(errorCode: string, min: number | null, max: number | null
 
 const ERROR_CASES: ErrorCase[] = [
     {
-        name: 'a message with its own title',
-        respond: failWith(401, { errorCode: 'invalid-credentials', message: 'login.invalid-credentials' }),
+        name: 'a message key with its own title',
+        respond: failWith(401, { errorCode: 'invalid-credentials', messageKey: 'login.invalid-credentials' }),
         title: `${TITLE}login.invalid-credentials`,
         message: `${ERROR}login.invalid-credentials`,
         messageParameters: {},
         texts: ['Authentication failed', 'Invalid email or password.']
     },
     {
-        name: 'a message without a title',
-        respond: failWith(400, { message: 'unmapped-message' }),
+        name: 'a message key without a title',
+        respond: failWith(400, { messageKey: 'unmapped-message' }),
         title: `${TITLE}default`,
         message: `${ERROR}unmapped-message`,
         messageParameters: {},
         texts: ['Error', `${ERROR}unmapped-message`]
     },
     {
-        name: 'a message with parameters',
-        respond: failWith(409, { message: 'duplicate-field', messageParameters: { fieldName: 'name', value: 'Foo' } }),
+        name: 'a message key with parameters',
+        respond: failWith(409, {
+            messageKey: 'duplicate-field',
+            messageParameters: { fieldName: 'name', value: 'Foo' }
+        }),
         title: `${TITLE}duplicate-field`,
         message: `${ERROR}duplicate-field`,
         messageParameters: { fieldName: 'Name', value: 'Foo' },
         texts: ['Duplicate value', 'An item with field "Name" and value "Foo" already exists.']
     },
     {
-        name: 'a message next to an error code',
-        respond: failWith(409, { errorCode: 'not-found', message: 'conflict' }),
+        name: 'a message key next to an error code',
+        respond: failWith(409, { errorCode: 'not-found', messageKey: 'conflict' }),
         title: `${TITLE}conflict`,
         message: `${ERROR}conflict`,
         messageParameters: {},

@@ -52,3 +52,8 @@ so the subscriber decides what else happens (`error` callback, `catchError`). A 
 stays quiet: `provideBeyHttp`, part of `provideBeyApp` and `provideBeyTesting`, keeps rxjs from reporting an error
 the service already showed, and leaves every other unhandled error to the previous `onUnhandledError` of rxjs or to
 its default. An app that does not use `provideBeyApp` adds `provideBeyHttp()` to its providers.
+
+The reason the modal shows comes from the error body express-components sends,
+`{ errorCode, messageKey, messageParameters, details, timestamp }`: `angular-components.http.error.<messageKey>`
+when the body names one, the text of its `errorCode` otherwise, and the unknown error when neither is translated.
+`details` stays on the `HttpErrorResponse` for a `handleError` or a subscriber that shows it.
