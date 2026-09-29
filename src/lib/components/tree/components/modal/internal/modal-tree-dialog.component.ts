@@ -6,8 +6,8 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 
 import { ButtonComponent } from '../../../../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../../../../internal/button/models/button-config.model';
+import { findNodeByKey } from '../../../functions/tree-node-search';
 import { TreeConfig } from '../../../models/tree.model';
-import { findNodeByKey } from '../../../models/tree-node-search';
 import { TreeComponent } from '../../../tree.component';
 import { ModalTreeConfig } from '../models/modal-tree.model';
 

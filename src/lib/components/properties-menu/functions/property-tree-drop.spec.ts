@@ -1,5 +1,5 @@
+import { PropertyTreeNode } from '../models/property-tree-node.model';
 import { findTreeNode, isDropAllowed } from './property-tree-drop';
-import { PropertyTreeNode } from './property-tree-node.model';
 
 function buildTree(): PropertyTreeNode[] {
     return [

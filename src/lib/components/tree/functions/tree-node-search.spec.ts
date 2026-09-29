@@ -1,4 +1,4 @@
-import { TreeNode } from './tree.model';
+import { TreeNode } from '../models/tree.model';
 import { collectExpandableKeys, findNodeByKey } from './tree-node-search';
 
 describe('tree-node-search', () => {

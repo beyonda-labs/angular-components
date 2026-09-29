@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input } from '@an
 import { TranslateModule } from '@ngx-translate/core';
 
 import { toKeySegment } from '../../../../utilities/key-segment';
+import { resolvePropertyLabelKey } from '../../functions/property-i18n';
 import { PropertyAttachmentField } from '../../models/fields/property-attachment-field.model';
 import { PropertyColorField } from '../../models/fields/property-color-field.model';
 import { PropertyFileField } from '../../models/fields/property-file-field.model';
@@ -16,7 +17,6 @@ import { PropertyToggleField } from '../../models/fields/property-toggle-field.m
 import { PropertyField } from '../../models/property-field.model';
 import { PropertyFieldLabelling } from '../../models/property-field-labelling.model';
 import { PropertyFieldType } from '../../models/property-field-type.model';
-import { resolvePropertyLabelKey } from '../../models/property-i18n';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { PropertyAttachmentFieldComponent } from '../fields/property-attachment-field/property-attachment-field.component';
 import { PropertyColorFieldComponent } from '../fields/property-color-field/property-color-field.component';

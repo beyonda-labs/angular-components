@@ -1,16 +1,16 @@
-import { PropertiesMenuConfig } from './properties-menu-config.model';
-import { PropertyGroup } from './property-group.model';
+import { PropertiesMenuConfig } from '../models/properties-menu-config.model';
+import { PropertyGroup } from '../models/property-group.model';
 import {
     PropertyGroupContent,
     PropertyGroupContentType,
     PropertyListContent,
     PropertyTabsContent,
     PropertyTreeContent
-} from './property-group-content.model';
-import { PropertyListItem } from './property-list-item.model';
-import { PropertyTab } from './property-tab.model';
-import { PropertyTreeConfig } from './property-tree-config.model';
-import { PropertyTreeNode } from './property-tree-node.model';
+} from '../models/property-group-content.model';
+import { PropertyListItem } from '../models/property-list-item.model';
+import { PropertyTab } from '../models/property-tab.model';
+import { PropertyTreeConfig } from '../models/property-tree-config.model';
+import { PropertyTreeNode } from '../models/property-tree-node.model';
 
 export interface PropertiesMenuState {
     activeTabId: string | null;

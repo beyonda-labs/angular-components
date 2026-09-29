@@ -1,7 +1,8 @@
 import { Injectable, signal, untracked } from '@angular/core';
 
+import { keepPropertiesMenuState } from '../functions/properties-menu-state';
+import { toVariableExpression } from '../functions/property-variable-options';
 import { PropertiesMenuConfig } from '../models/properties-menu-config.model';
-import { keepPropertiesMenuState } from '../models/properties-menu-state';
 import { PropertyField } from '../models/property-field.model';
 import { PropertyGroup, PropertyGroupParameters } from '../models/property-group.model';
 import {
@@ -16,7 +17,6 @@ import { PropertyTab } from '../models/property-tab.model';
 import { PropertyTreeConfig } from '../models/property-tree-config.model';
 import { PropertyTreeNode, PropertyTreeNodeParameters } from '../models/property-tree-node.model';
 import { PropertyVariable } from '../models/property-variable.model';
-import { toVariableExpression } from '../models/property-variable-options';
 
 @Injectable()
 export class PropertiesMenuService {

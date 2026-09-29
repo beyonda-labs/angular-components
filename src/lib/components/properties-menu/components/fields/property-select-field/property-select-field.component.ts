@@ -5,11 +5,11 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { OptionPickerOption } from '../../../../../internal/option-picker/models/option-picker-option.model';
 import { OptionPickerComponent } from '../../../../../internal/option-picker/option-picker.component';
+import { toVariableOptions } from '../../../functions/property-variable-options';
 import { PropertySelectField } from '../../../models/fields/property-select-field.model';
 import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 import { PropertyOption } from '../../../models/property-option.model';
 import { PROPERTY_VARIABLE_ICON } from '../../../models/property-variable.model';
-import { toVariableOptions } from '../../../models/property-variable-options';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
