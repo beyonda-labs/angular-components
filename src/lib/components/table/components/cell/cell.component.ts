@@ -25,6 +25,8 @@ const BADGE_CELL_TYPES = new Set([CellType.Badge, CellType.Tags]);
     templateUrl: './cell.component.html'
 })
 export class TableCellComponent {
+    private readonly locale = inject(LOCALE_ID);
+
     readonly cell = input.required<TableCell>();
     readonly isHeader = input(false);
 
@@ -53,8 +55,6 @@ export class TableCellComponent {
     readonly isBadge = computed(() => BADGE_CELL_TYPES.has(this.cell().type));
     readonly isLink = computed(() => this.cell().type === CellType.Link);
     readonly tooltip = computed(() => this.cell().tooltip ?? '');
-
-    private readonly locale = inject(LOCALE_ID);
 
     onLinkClick(event: MouseEvent): void {
         event.preventDefault();

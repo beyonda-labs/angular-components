@@ -19,10 +19,10 @@ import { StyleGuideButton } from '../models/style-guide-button.model';
     templateUrl: './loading-style-guide.component.html'
 })
 export class LoadingStyleGuideComponent {
+    private readonly loadingService = inject(BeyLoadingService);
+
     readonly LoadingSize = BeyLoadingSize;
     readonly showFullscreenOverlay = signal(false);
-
-    private readonly loadingService = inject(BeyLoadingService);
 
     toggleFullscreen(): void {
         this.showFullscreenOverlay.update(isOpen => !isOpen);

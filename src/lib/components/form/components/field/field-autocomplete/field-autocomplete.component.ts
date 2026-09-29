@@ -32,6 +32,9 @@ const PANEL_MAX_HEIGHT_PX = 208;
     templateUrl: './field-autocomplete.component.html'
 })
 export class FormAutocompleteFieldComponent {
+    private readonly renderer = inject(Renderer2);
+    private readonly translateService = inject(TranslateService);
+
     readonly control = input.required<FormControl<string | null>>();
     readonly field = input.required<FormAutocompleteField>();
     readonly isRequired = input(false);
@@ -62,9 +65,6 @@ export class FormAutocompleteFieldComponent {
     private readonly onWindowResize = (): void => this.positionPanel();
     private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
     private readonly queryInput = viewChild.required<ElementRef<HTMLInputElement>>('queryInput');
-
-    private readonly renderer = inject(Renderer2);
-    private readonly translateService = inject(TranslateService);
 
     constructor() {
         effect(onCleanup => {

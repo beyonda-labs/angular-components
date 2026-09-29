@@ -64,6 +64,9 @@ interface FormSync {
     templateUrl: './form.component.html'
 })
 export class FormComponent<TValue = unknown> {
+    private readonly formHost = inject(FORM_HOST, { optional: true });
+    private readonly formService = inject(FormService);
+
     readonly config = input.required<FormConfig<TValue>>();
 
     readonly buttons = computed<ButtonConfig[]>(() => {
@@ -175,9 +178,6 @@ export class FormComponent<TValue = unknown> {
 
         return errors;
     });
-
-    private readonly formHost = inject(FORM_HOST, { optional: true });
-    private readonly formService = inject(FormService);
 
     constructor() {
         const formGroup$ = toObservable(this.formGroup);

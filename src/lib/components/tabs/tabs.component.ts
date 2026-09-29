@@ -35,6 +35,10 @@ const TAB_GAP_ESTIMATED_WIDTH = 4;
     templateUrl: './tabs.component.html'
 })
 export class TabsComponent implements AfterViewInit {
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly elementReference = inject<ElementRef<HTMLElement>>(ElementRef);
+    private readonly ngZone = inject(NgZone);
+
     readonly config = input.required<TabsConfig>();
 
     readonly activeTabKey = linkedSignal(() => this.config().activeTab);
@@ -50,10 +54,6 @@ export class TabsComponent implements AfterViewInit {
     private resizeObserver?: ResizeObserver;
     private readonly tabButtons = viewChildren<ElementRef<HTMLButtonElement>>('tabButton');
     private readonly tabsRow = viewChild<ElementRef<HTMLElement>>('tabsRow');
-
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly elementReference = inject<ElementRef<HTMLElement>>(ElementRef);
-    private readonly ngZone = inject(NgZone);
 
     constructor() {
         effect(() => {

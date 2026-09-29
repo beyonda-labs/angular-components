@@ -22,6 +22,10 @@ import { AppLayoutService } from './services/app-layout.service';
     templateUrl: './app-layout.component.html'
 })
 export class AppLayoutComponent implements OnInit {
+    private readonly appLayoutService = inject(AppLayoutService);
+    private readonly router = inject(Router);
+    private readonly translateService = inject(TranslateService);
+
     readonly config = input.required<AppLayoutConfig>();
 
     readonly breadcrumbConfig = computed(() => {
@@ -50,10 +54,6 @@ export class AppLayoutComponent implements OnInit {
         });
     });
     readonly usesRoutes = computed(() => hasRoutes(this.allActions()));
-
-    private readonly appLayoutService = inject(AppLayoutService);
-    private readonly router = inject(Router);
-    private readonly translateService = inject(TranslateService);
 
     constructor() {
         this.appLayoutService.onBreadcrumbClick$

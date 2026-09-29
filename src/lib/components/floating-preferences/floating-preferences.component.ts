@@ -16,16 +16,15 @@ import { ThemeService } from '../../services/theme/theme.service';
     templateUrl: './floating-preferences.component.html'
 })
 export class FloatingPreferencesComponent {
+    private readonly themeService = inject(ThemeService);
+    private readonly translateService = inject(TranslateService);
+
     readonly usePill = input(true);
 
     readonly chevronIcon = faChevronDown;
-
-    private readonly translateService = inject(TranslateService);
     readonly language = toSignal(this.translateService.onLangChange.pipe(map(event => event.lang)), {
         initialValue: this.translateService.currentLang ?? this.translateService.defaultLang
     });
-
-    private readonly themeService = inject(ThemeService);
     readonly theme = toSignal(this.themeService.theme$, { initialValue: 'light' as const });
 
     onLangChange(value: string): void {

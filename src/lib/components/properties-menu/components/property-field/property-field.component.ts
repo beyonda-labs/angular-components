@@ -65,6 +65,8 @@ const FIELD_TYPES_WITH_LABELABLE_CONTROL = new Set<PropertyFieldType>([
     templateUrl: './property-field.component.html'
 })
 export class PropertyFieldComponent {
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
+
     readonly externalLabel = input<string>();
     readonly field = input.required<PropertyField>();
 
@@ -103,8 +105,6 @@ export class PropertyFieldComponent {
 
         return Boolean(field.label) && field.type === PropertyFieldType.Toggle;
     });
-
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
 
     asAttachmentField(): PropertyAttachmentField {
         return this.field() as PropertyAttachmentField;

@@ -23,14 +23,14 @@ interface LoginFormValue {
     templateUrl: './login-form.component.html'
 })
 export class LoginFormComponent {
+    private readonly loginHttpService = inject(LoginHttpService);
+    private readonly loginSessionService = inject(LoginSessionService);
+
     readonly config = input.required<LoginConfig>();
     readonly providers = input.required<LoginProviderConfig[]>();
 
     readonly formConfig = computed(() => this.buildForm(this.prefix()));
     readonly prefix = computed(() => this.config().prefix);
-
-    private readonly loginHttpService = inject(LoginHttpService);
-    private readonly loginSessionService = inject(LoginSessionService);
 
     onProvider(provider: LoginProviderConfig): void {
         window.location.href = provider.authUrl;

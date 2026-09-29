@@ -14,6 +14,8 @@ import { PropertiesMenuService } from '../../services/properties-menu.service';
     templateUrl: './property-tabs.component.html'
 })
 export class PropertyTabsComponent {
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
+
     readonly tabsConfig = computed(() => {
         const config = this.propertiesMenuService.config();
 
@@ -35,6 +37,4 @@ export class PropertyTabsComponent {
                 )
         });
     });
-
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
 }

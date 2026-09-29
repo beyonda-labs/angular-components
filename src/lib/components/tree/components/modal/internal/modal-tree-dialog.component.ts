@@ -20,6 +20,8 @@ import { ModalTreeConfig } from '../models/modal-tree.model';
     templateUrl: './modal-tree-dialog.component.html'
 })
 export class ModalTreeDialogComponent implements OnInit {
+    private readonly bsModalReference: BsModalRef<ModalTreeDialogComponent> = inject(BsModalRef);
+
     readonly cancelButton = new ButtonConfig({
         action: () => this.dismiss(),
         label: 'angular-components.modal.actions.cancel',
@@ -49,8 +51,6 @@ export class ModalTreeDialogComponent implements OnInit {
                 selectedKey: this.selectedKey() || undefined
             })
     );
-
-    private readonly bsModalReference: BsModalRef<ModalTreeDialogComponent> = inject(BsModalRef);
 
     ngOnInit(): void {
         this.expandedKeys.set(this.config.treeConfig.expandedKeys ?? []);
