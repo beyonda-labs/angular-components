@@ -8,8 +8,11 @@
     [tooltip]="tooltip() | translate"
 >
     @if (isLink()) {
-        <button class="bey-table-cell-link bey-table-cell-content" type="button" (click)="onLinkClick($event)">
-            {{ cell().translate ? (content() | translate) : content() }}
+        <button class="bey-table-cell-link" type="button" (click)="onLinkClick($event)">
+            @if (icon(); as icon) {
+                <fa-icon class="bey-table-cell-icon" [icon]="icon"></fa-icon>
+            }
+            <span class="bey-table-cell-content">{{ cell().translate ? (content() | translate) : content() }}</span>
         </button>
     } @else if (isBadge()) {
         <span class="bey-table-cell-content bey-table-cell-badges">
@@ -18,6 +21,9 @@
             }
         </span>
     } @else {
+        @if (icon(); as icon) {
+            <fa-icon class="bey-table-cell-icon" [icon]="icon"></fa-icon>
+        }
         <span class="bey-table-cell-content">{{ cell().translate ? (content() | translate) : content() }}</span>
     }
 </div>

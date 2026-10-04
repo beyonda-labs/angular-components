@@ -1,3 +1,5 @@
+import { IconDefinition } from '@fortawesome/angular-fontawesome';
+
 import { BadgeConfig } from '../../badge/models/badge.model';
 
 export enum CellType {
@@ -47,9 +49,12 @@ export class DateTableCell extends TableCell {
 export class LinkTableCell extends TableCell {
     action: () => void;
 
-    constructor({ action, content, translate, tooltip }: LinkTableCellParameters) {
+    icon?: IconDefinition;
+
+    constructor({ action, content, icon, translate, tooltip }: LinkTableCellParameters) {
         super({ content, type: CellType.Link, translate, tooltip });
         this.action = action;
+        this.icon = icon;
     }
 }
 
@@ -63,8 +68,11 @@ export class TagsTableCell extends TableCell {
 }
 
 export class TextTableCell extends TableCell {
-    constructor({ content, translate, tooltip }: TextTableCellParameters) {
+    icon?: IconDefinition;
+
+    constructor({ content, icon, translate, tooltip }: TextTableCellParameters) {
         super({ content, type: CellType.Text, translate, tooltip });
+        this.icon = icon;
     }
 }
 
@@ -85,6 +93,7 @@ export interface LinkTableCellParameters {
     action: () => void;
     content: string;
 
+    icon?: IconDefinition;
     tooltip?: string;
     translate?: boolean;
 }
@@ -106,6 +115,7 @@ export interface TagsTableCellParameters {
 export interface TextTableCellParameters {
     content: string;
 
+    icon?: IconDefinition;
     tooltip?: string;
     translate?: boolean;
 }
