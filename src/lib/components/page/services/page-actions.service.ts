@@ -19,6 +19,7 @@ import { PageFormConfig } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
 import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
+import { PageLifecycleActionsService } from './page-lifecycle-actions.service';
 
 export interface PageActionsContext {
     config: PageConfig;
@@ -59,15 +60,20 @@ export class PageActionsService {
     private readonly modalTreeService = inject(ModalTreeService);
     private readonly pageFormService = inject(PageFormService);
     private readonly pageHttpService = inject(PageHttpService);
+    private readonly pageLifecycleActionsService = inject(PageLifecycleActionsService);
 
     private readonly actionHandlers: Record<string, (context: PageActionsContext, action: PageAction) => void> = {
+        [PageStandardAction.ChangeStatus]: context => this.executeChangeStatus(context),
         [PageStandardAction.Create]: context => this.executeCreate(context),
         [PageStandardAction.CreateCategory]: context => this.executeCreateCategory(context),
         [PageStandardAction.Delete]: (context, action) => this.executeDelete(context, action),
         [PageStandardAction.DeleteCategory]: (context, action) => this.executeDeleteCategory(context, action),
         [PageStandardAction.DeleteTrashItem]: (context, action) => this.executeDeleteTrashItem(context, action),
+        [PageStandardAction.Duplicate]: context => this.executeDuplicate(context),
         [PageStandardAction.Edit]: context => this.executeEdit(context),
         [PageStandardAction.EditCategory]: context => this.executeEditCategory(context),
+        [PageStandardAction.EmptyTrash]: (context, action) =>
+            this.pageLifecycleActionsService.emptyTrash(context.config, action, () => context.onTrashItemDeleted()),
         [PageStandardAction.Move]: context => this.executeMove(context),
         [PageStandardAction.RestoreTrashItem]: context => this.executeRestoreTrashItem(context)
     };
@@ -199,6 +205,14 @@ export class PageActionsService {
             });
     }
 
+    private executeChangeStatus(context: PageActionsContext): void {
+        const items = context.selectedItems();
+
+        if (items.length === 1) {
+            this.pageLifecycleActionsService.changeStatus(context.config, items[0], () => context.onSaved());
+        }
+    }
+
     private executeCreate(context: PageActionsContext): void {
         this.openForm(context);
     }
@@ -249,6 +263,14 @@ export class PageActionsService {
             },
             action
         );
+    }
+
+    private executeDuplicate(context: PageActionsContext): void {
+        const items = context.selectedItems();
+
+        if (items.length === 1) {
+            this.pageLifecycleActionsService.duplicate(context.config, items[0], () => context.onSaved());
+        }
     }
 
     private executeEdit(context: PageActionsContext): void {

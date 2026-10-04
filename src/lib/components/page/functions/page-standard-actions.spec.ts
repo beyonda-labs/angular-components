@@ -19,6 +19,12 @@ describe('page standard actions', () => {
     it('places every standard action where the page expects it', () => {
         expect(Object.values(PageStandardAction).map(key => placement(pageStandardAction(key)))).toEqual([
             {
+                key: 'change-status',
+                scope: PageActionScope.Single,
+                type: HeaderActionType.Text,
+                zone: PageActionZone.Menu
+            },
+            {
                 key: 'create',
                 scope: PageActionScope.Global,
                 type: HeaderActionType.PrimaryButton,
@@ -43,12 +49,19 @@ describe('page standard actions', () => {
                 type: HeaderActionType.Text,
                 zone: PageActionZone.Menu
             },
+            { key: 'duplicate', scope: PageActionScope.Single, type: HeaderActionType.Text, zone: PageActionZone.Menu },
             { key: 'edit', scope: PageActionScope.Single, type: HeaderActionType.Text, zone: PageActionZone.Left },
             {
                 key: 'edit-category',
                 scope: PageActionScope.Single,
                 type: HeaderActionType.Text,
                 zone: PageActionZone.Left
+            },
+            {
+                key: 'empty-trash',
+                scope: PageActionScope.Global,
+                type: HeaderActionType.SecondaryButton,
+                zone: PageActionZone.Right
             },
             { key: 'move', scope: PageActionScope.Item, type: HeaderActionType.Text, zone: PageActionZone.Menu },
             {
