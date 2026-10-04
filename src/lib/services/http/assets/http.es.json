@@ -2,6 +2,7 @@
     "angular-components": {
         "http": {
             "error": {
+                "action-unavailable": "Esta acción no está disponible para el elemento. Recarga la página y vuelve a intentarlo.",
                 "bad-gateway": "El servidor recibió una respuesta no válida. Por favor, inténtelo de nuevo más tarde.",
                 "bad-request": "La solicitud no pudo ser procesada. Por favor, revise los datos enviados.",
                 "conflict": "Se produjo un conflicto con el estado actual del recurso.",
@@ -33,6 +34,7 @@
                 "invalid-field-range-min": "El campo \"{{fieldName}}\" debe ser al menos {{min}}.",
                 "invalid-field-type": "El campo \"{{fieldName}}\" debe ser de tipo \"{{expectedType}}\".",
                 "invalid-field-value": "El campo \"{{fieldName}}\" tiene un valor no válido.",
+                "invalid-transition": "El estado no puede pasar de \"{{from}}\" a \"{{to}}\".",
                 "move-target-unchanged": "El elemento ya se encuentra en esta categoría.",
                 "not-found": "El recurso solicitado no fue encontrado.",
                 "required-field": "El campo \"{{fieldName}}\" es obligatorio.",
@@ -49,6 +51,7 @@
                 }
             },
             "title": {
+                "action-unavailable": "Acción no disponible",
                 "bad-gateway": "Error de conexión",
                 "bad-request": "Solicitud inválida",
                 "conflict": "Conflicto",
@@ -77,6 +80,7 @@
                 "invalid-field-range": "Valor fuera de rango",
                 "invalid-field-type": "Tipo de campo inválido",
                 "invalid-field-value": "Valor no permitido",
+                "invalid-transition": "Cambio de estado no válido",
                 "move-target-unchanged": "Sin cambios",
                 "not-found": "No encontrado",
                 "required-field": "Campo obligatorio",
