@@ -266,13 +266,26 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [ ] `page`: remember the search and the selection when the user comes back to a page (the old
         registry was removed unfinished)
 
--   [x] Table / grid (configurable columns, sorting, row selection)
+-   [x] Table / grid (configurable columns, row selection)
+-   [ ] Table: sort by clicking the header of a column, sent as the `sort` of the search; today `tableConfig.order`
+        fixes one order for the whole page
 -   [ ] Table / grid: filters
 -   [x] Pagination
 -   [x] Tabs
 -   [x] Breadcrumb
 -   [x] Sidebar (`left-menu` with grouped actions, sub-actions and collapse)
 -   [x] Header (configurable left / right actions)
+
+### Page
+
+-   [ ] Rethink the trash view: say which folder each row was in, and where a restored row goes back to
+-   [ ] _(low priority)_ Move rows by dragging them onto a folder
+-   [ ] _(low priority)_ The number of rows in each folder
+-   [ ] _(low priority)_ Saved views: tabs that apply a search with its filters (templates / blocks)
+-   [ ] _(low priority)_ Search every folder at once, naming the folder of each result; needs the matching search
+        in express-components' base-entity
+-   [ ] _(low priority)_ Undo right after a delete, from its toast
+-   [ ] _(very low priority)_ Favourite and recent rows
 
 ### Rich interactions
 
