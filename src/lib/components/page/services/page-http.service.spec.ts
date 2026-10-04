@@ -85,4 +85,20 @@ describe('PageHttpService', () => {
             { message: 'restored' }
         ]);
     });
+
+    it('duplicates a row and changes its status with the body and the success toast', () => {
+        service.duplicate('/items', 1, { name: 'Copy' }, 'duplicated').subscribe();
+        service.changeStatus('/items', 2, { status: 'published' }, 'status-changed').subscribe();
+
+        expect(answer('POST', '/items/1/duplicate').request.body).toEqual({ name: 'Copy' });
+        expect(answer('POST', '/items/2/status').request.body).toEqual({ status: 'published' });
+        expect(toast.successes()).toEqual([{ message: 'duplicated' }, { message: 'status-changed' }]);
+    });
+
+    it('empties the trash with the success toast', () => {
+        service.emptyTrash('/items', 'emptied').subscribe();
+
+        answer('DELETE', '/items/trash/all');
+        expect(toast.successes()).toEqual([{ message: 'emptied' }]);
+    });
 });

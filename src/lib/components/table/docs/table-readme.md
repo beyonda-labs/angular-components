@@ -17,7 +17,7 @@ readonly table = new BeyTableConfig<Person>({
     ],
     items: this.people,
     loadRow: item => [
-        new BeyTextTableCell({ content: item.name }),
+        new BeyTextTableCell({ content: item.name, icon: faUser }),
         new BeyBadgeTableCell({
             badges: [new BeyBadgeConfig({ label: `myApp.team.status.${item.status}`, variant: BeyBadgeVariant.Success })],
             translate: true
@@ -56,16 +56,20 @@ gets: two columns of width 3 and 1 split it 75 / 25. The header uses the key as 
 
 ## Cells
 
-| Cell                | Fields                     | Shows                                                        |
-| ------------------- | -------------------------- | ------------------------------------------------------------ |
-| `BeyTextTableCell`  | `content`                  | The text, one line, cut with an ellipsis                     |
-| `BeyLinkTableCell`  | `content`, `action`        | A link that runs `action` without selecting the row          |
-| `BeyBadgeTableCell` | `badges: BeyBadgeConfig[]` | One `bey-badge` per entry                                    |
-| `BeyTagsTableCell`  | `tags: string[]`           | One outline `bey-badge` per tag, never translated            |
-| `BeyDateTableCell`  | `value`, `format`          | The date in the app locale, nothing when there is no `value` |
+| Cell                | Fields                      | Shows                                                        |
+| ------------------- | --------------------------- | ------------------------------------------------------------ |
+| `BeyTextTableCell`  | `content`, `icon`           | The text, one line, cut with an ellipsis                     |
+| `BeyLinkTableCell`  | `content`, `action`, `icon` | A link that runs `action` without selecting the row          |
+| `BeyBadgeTableCell` | `badges: BeyBadgeConfig[]`  | One `bey-badge` per entry                                    |
+| `BeyTagsTableCell`  | `tags: string[]`            | One outline `bey-badge` per tag, never translated            |
+| `BeyDateTableCell`  | `value`, `format`           | The date in the app locale, nothing when there is no `value` |
 
 Every cell takes an optional `tooltip`, which always goes through the translate pipe. The text, link and badge
 cells also take `translate`, which runs the content and the badges through it too.
+
+The text and link cells take an optional `icon`, a FontAwesome `IconDefinition` drawn before the content in the
+muted text colour and hidden from screen readers. On a link it is part of the link, so clicking it runs
+`action` too.
 
 `BeyDateTableCell` takes a timestamp, an ISO string or a `Date`, and formats it with Angular's `formatDate` in
 the locale of `LOCALE_ID`. `format` is any `formatDate` format and defaults to `mediumDate` (`Sep 28, 2026`,

@@ -19,6 +19,10 @@
 -   Properties menu module: `labelParameters` on `BeyPropertyGroup`, `BeyPropertyGroupTab` and `BeyPropertyTreeNode`, passed to the translate pipe with the label key.
 -   Table module: `BeyDateTableCell`, formatted in the `LOCALE_ID` locale (`mediumDate` unless `format` says otherwise), and `BeyTagsTableCell`, plain strings as untranslated outline badges.
 -   Table module: a row with fewer cells than columns is completed with empty cells.
+-   Page module: `duplicate` and `change-status` standard actions: a modal form for the name of the copy or for one of the statuses the current one reaches (`BeyPageStatusConfig`), sent to `POST {baseUrl}/{id}/duplicate` and `POST {baseUrl}/{id}/status` with their success toast and a reload; `BeyPageDuplicationConfig` names the field the copy is named by.
+-   Page module: `empty-trash` standard action, shown in the trash while the backend lists it, asks with `<prefix>.modal.empty-trash` and sends `DELETE {baseUrl}/trash/all`.
+-   Services: the HTTP error modal explains `action-unavailable` and `invalid-transition`.
+-   Table module: `icon` on `BeyTextTableCell` and `BeyLinkTableCell`, a FontAwesome icon drawn before the content and hidden from screen readers; on a link it is part of the link.
 -   Table module: `BeyTableColumnParameters`, `BeyTableConfigParameters` and the `Bey*TableCellParameters` types are exported.
 -   Services: `provideBeyApp` registers the HTTP client with the session interceptor, the environment, the session, the modal, the toast and the translations loader in one provider, typed by `BeyAppConfig`.
 -   Utilities: `beyFormatBytes` formats a size in bytes as the file field shows it (`1.5 KB`), and `beyToKeySegment` turns an identifier into the kebab-case segment the library builds its translation keys from.

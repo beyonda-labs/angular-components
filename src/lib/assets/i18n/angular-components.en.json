@@ -73,6 +73,7 @@
         },
         "http": {
             "error": {
+                "action-unavailable": "This action is not available for the item. Reload the page and try again.",
                 "bad-gateway": "The server received an invalid response. Please try again later.",
                 "bad-request": "The request could not be processed. Please check the submitted data.",
                 "conflict": "A conflict occurred with the current state of the resource.",
@@ -104,6 +105,7 @@
                 "invalid-field-range-min": "The field \"{{fieldName}}\" must be at least {{min}}.",
                 "invalid-field-type": "The field \"{{fieldName}}\" must be of type \"{{expectedType}}\".",
                 "invalid-field-value": "The field \"{{fieldName}}\" has an invalid value.",
+                "invalid-transition": "The status cannot change from \"{{from}}\" to \"{{to}}\".",
                 "login": {
                     "existing-user": "An account with this email already exists.",
                     "invalid-credentials": "Invalid email or password.",
@@ -139,6 +141,7 @@
                 }
             },
             "title": {
+                "action-unavailable": "Action not available",
                 "bad-gateway": "Connection error",
                 "bad-request": "Invalid request",
                 "conflict": "Conflict",
@@ -167,6 +170,7 @@
                 "invalid-field-range": "Value out of range",
                 "invalid-field-type": "Invalid field type",
                 "invalid-field-value": "Invalid value",
+                "invalid-transition": "Invalid status change",
                 "login": {
                     "existing-user": "Account already exists",
                     "invalid-credentials": "Authentication failed",

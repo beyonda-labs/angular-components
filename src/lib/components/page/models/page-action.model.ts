@@ -20,13 +20,16 @@ export enum PageActionZone {
 }
 
 export enum PageStandardAction {
+    ChangeStatus = 'change-status',
     Create = 'create',
     CreateCategory = 'create-category',
     Delete = 'delete',
     DeleteCategory = 'delete-category',
     DeleteTrashItem = 'delete-trash-item',
+    Duplicate = 'duplicate',
     Edit = 'edit',
     EditCategory = 'edit-category',
+    EmptyTrash = 'empty-trash',
     Move = 'move',
     RestoreTrashItem = 'restore-trash-item'
 }
@@ -105,6 +108,7 @@ export const PAGE_ADD_ACTION_DEFAULTS: PageStandardActionDefaults & Pick<PageAct
 };
 
 export const PAGE_STANDARD_ACTION_DEFAULTS: Record<PageStandardAction, PageStandardActionDefaults> = {
+    [PageStandardAction.ChangeStatus]: { scope: PageActionScope.Single, zone: PageActionZone.Menu },
     [PageStandardAction.Create]: {
         icon: faPlus,
         scope: PageActionScope.Global,
@@ -115,8 +119,10 @@ export const PAGE_STANDARD_ACTION_DEFAULTS: Record<PageStandardAction, PageStand
     [PageStandardAction.Delete]: { scope: PageActionScope.Item, zone: PageActionZone.Menu },
     [PageStandardAction.DeleteCategory]: { scope: PageActionScope.Item, zone: PageActionZone.Menu },
     [PageStandardAction.DeleteTrashItem]: { scope: PageActionScope.Item, zone: PageActionZone.Menu },
+    [PageStandardAction.Duplicate]: { scope: PageActionScope.Single, zone: PageActionZone.Menu },
     [PageStandardAction.Edit]: { scope: PageActionScope.Single, zone: PageActionZone.Left },
     [PageStandardAction.EditCategory]: { scope: PageActionScope.Single, zone: PageActionZone.Left },
+    [PageStandardAction.EmptyTrash]: { scope: PageActionScope.Global, zone: PageActionZone.Right },
     [PageStandardAction.Move]: { scope: PageActionScope.Item, zone: PageActionZone.Menu },
     [PageStandardAction.RestoreTrashItem]: { scope: PageActionScope.Item, zone: PageActionZone.Left }
 };

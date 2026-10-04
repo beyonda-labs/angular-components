@@ -12,6 +12,7 @@ import {
     BeyTagsTableCell,
     BeyTextTableCell
 } from '@beyonda-labs/angular-components';
+import { faEye, faUser } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 const PREFIX = 'angular-components-style-guide.table';
@@ -83,7 +84,7 @@ export class TableStyleGuideComponent {
 
     private loadRow({ joinedAt, name, role, skills, status }: Person): BeyTableCell[] {
         return [
-            new BeyTextTableCell({ content: name, tooltip: name }),
+            new BeyTextTableCell({ content: name, icon: faUser, tooltip: name }),
             new BeyTextTableCell({ content: role, tooltip: role }),
             new BeyBadgeTableCell({
                 badges: [
@@ -100,6 +101,7 @@ export class TableStyleGuideComponent {
             new BeyLinkTableCell({
                 action: () => this.opened.set(name),
                 content: `${PREFIX}.actions.open`,
+                icon: faEye,
                 tooltip: `${PREFIX}.actions.open`,
                 translate: true
             })

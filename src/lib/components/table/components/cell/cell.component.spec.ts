@@ -2,8 +2,9 @@ import '@angular/common/locales/global/es';
 
 import { LOCALE_ID } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { faFolder } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { renderComponent } from '@testing/dom';
+import { buttonByName, renderComponent } from '@testing/dom';
 
 import { BadgeConfig, BadgeVariant } from '../../../badge/models/badge.model';
 import {
@@ -61,6 +62,18 @@ describe('TableCellComponent', () => {
         button.click();
 
         expect(button.textContent?.trim()).toBe('Open');
+        expect(action).toHaveBeenCalled();
+    });
+
+    it('keeps the text and the action of a cell that shows an icon, hiding the icon from screen readers', async () => {
+        await render(new TextTableCell({ content: 'demo.open', icon: faFolder, translate: true }));
+        expect(text()).toBe('Open');
+        expect(fixture.nativeElement.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
+
+        const action = jest.fn();
+        await render(new LinkTableCell({ action, content: 'demo.open', icon: faFolder, translate: true }));
+        buttonByName(fixture, 'Open').click();
+
         expect(action).toHaveBeenCalled();
     });
 

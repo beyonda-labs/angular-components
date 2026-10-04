@@ -7,6 +7,7 @@
     align-items: center;
     color: var(--bey-table-text);
     display: flex;
+    gap: var(--bey-space-sm);
     min-height: var(--bey-table-row-min-height);
     min-width: 0;
     padding: var(--bey-space-xs) var(--bey-space-md);
@@ -16,6 +17,12 @@
     min-height: 0;
     padding-bottom: var(--bey-space-md);
     padding-top: var(--bey-space-md);
+}
+
+.bey-table-cell-icon {
+    color: var(--bey-table-text-muted);
+    flex: 0 0 auto;
+    font-size: var(--bey-font-size-sm);
 }
 
 .bey-table-cell-content {
@@ -37,10 +44,14 @@
 }
 
 .bey-table-cell-link {
+    align-items: center;
     background: transparent;
     border: 0;
     color: var(--bey-table-text);
+    display: flex;
     font-family: inherit;
+    gap: var(--bey-space-sm);
+    min-width: 0;
     padding: 0;
     text-align: left;
     text-decoration: underline;

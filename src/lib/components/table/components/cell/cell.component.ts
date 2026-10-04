@@ -1,5 +1,6 @@
 import { formatDate } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, LOCALE_ID } from '@angular/core';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
@@ -11,14 +12,15 @@ import {
     DateTableCell,
     LinkTableCell,
     TableCell,
-    TagsTableCell
+    TagsTableCell,
+    TextTableCell
 } from '../../models/table-cell.model';
 
 const BADGE_CELL_TYPES = new Set([CellType.Badge, CellType.Tags]);
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [BadgeComponent, TooltipModule, TranslateModule],
+    imports: [BadgeComponent, FontAwesomeModule, TooltipModule, TranslateModule],
     selector: 'bey-table-cell',
     standalone: true,
     styleUrls: ['./cell.component.css'],
@@ -51,6 +53,11 @@ export class TableCellComponent {
         }
 
         return cell.content === null || cell.content === undefined ? '' : String(cell.content);
+    });
+    readonly icon = computed(() => {
+        const cell = this.cell();
+
+        return cell instanceof LinkTableCell || cell instanceof TextTableCell ? cell.icon : undefined;
     });
     readonly isBadge = computed(() => BADGE_CELL_TYPES.has(this.cell().type));
     readonly isLink = computed(() => this.cell().type === CellType.Link);

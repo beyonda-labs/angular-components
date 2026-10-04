@@ -25,6 +25,14 @@ export type {
 export { PageFormConfig as BeyPageFormConfig } from './models/page-form.model';
 export type { PageFormConfigParameters as BeyPageFormConfigParameters } from './models/page-form.model';
 export { PageHeaderConfig as BeyPageHeaderConfig } from './models/page-header.model';
+export {
+    PageDuplicationConfig as BeyPageDuplicationConfig,
+    PageStatusConfig as BeyPageStatusConfig
+} from './models/page-lifecycle.model';
+export type {
+    PageDuplicationConfigParameters as BeyPageDuplicationConfigParameters,
+    PageStatusConfigParameters as BeyPageStatusConfigParameters
+} from './models/page-lifecycle.model';
 export type { PageHeaderConfigParameters as BeyPageHeaderConfigParameters } from './models/page-header.model';
 export type { PageItem as BeyPageItem } from './models/page-item.model';
 export { SearchSortDirection as BeySearchSortDirection } from './models/page-search.model';

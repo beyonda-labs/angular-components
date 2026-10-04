@@ -16,6 +16,15 @@ export class PageHttpService {
     private readonly httpService = inject(HttpService);
     private readonly pageUrlService = inject(PageUrlService);
 
+    changeStatus(
+        relativeUrl: string,
+        id: string | number,
+        value: Record<string, string>,
+        successToast: string
+    ): Observable<unknown> {
+        return this.httpService.post(this.url(relativeUrl, `/${id}/status`), value, { successToast });
+    }
+
     create(relativeUrl: string, value: unknown, successToast: string): Observable<unknown> {
         return this.httpService.post(this.url(relativeUrl), value, { successToast });
     }
@@ -36,12 +45,25 @@ export class PageHttpService {
         return this.httpService.delete<void>(this.url(relativeUrl, '/trash'), { items }, { successToast });
     }
 
+    duplicate(
+        relativeUrl: string,
+        id: string | number,
+        value: Record<string, string>,
+        successToast: string
+    ): Observable<unknown> {
+        return this.httpService.post(this.url(relativeUrl, `/${id}/duplicate`), value, { successToast });
+    }
+
     edit(relativeUrl: string, id: string | number, value: unknown, successToast: string): Observable<unknown> {
         return this.httpService.put(this.url(relativeUrl, `/${id}`), value, { successToast });
     }
 
     editCategory(relativeUrl: string, id: string | number, value: unknown, successToast: string): Observable<unknown> {
         return this.httpService.put(this.url(relativeUrl, `/categories/${id}`), value, { successToast });
+    }
+
+    emptyTrash(relativeUrl: string, successToast: string): Observable<void> {
+        return this.httpService.delete<void>(this.url(relativeUrl, '/trash/all'), undefined, { successToast });
     }
 
     load(relativeUrl: string, queryParameters: QueryParameters): Observable<PageBackendResponse> {
