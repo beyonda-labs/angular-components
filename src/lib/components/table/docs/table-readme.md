@@ -34,6 +34,9 @@ readonly table = new BeyTableConfig<Person>({
 <bey-table [config]="table" />
 ```
 
+The rows are drawn again whenever the language changes, keeping the selection, so a `loadRow` that translates its
+texts itself (`instant`, a label with parameters) follows the language.
+
 `BeyTableConfig<T>` is generic over the item: `loadRow`, `isRowSelected` and `selectedItemsChange` see `T`,
 so a table is always built from a typed model, never from a loose record.
 
@@ -64,7 +67,8 @@ gets: two columns of width 3 and 1 split it 75 / 25. The header uses the key as 
 | `BeyTagsTableCell`  | `tags: string[]`            | One outline `bey-badge` per tag, never translated            |
 | `BeyDateTableCell`  | `value`, `format`           | The date in the app locale, nothing when there is no `value` |
 
-Every cell takes an optional `tooltip`, which always goes through the translate pipe. The text, link and badge
+Every cell takes an optional `tooltip`, which always goes through the translate pipe, and `tooltipItems`, which shows
+the tooltip as a list under the `tooltip` as its title (the templates that use a file). The text, link and badge
 cells also take `translate`, which runs the content and the badges through it too.
 
 The text and link cells take an optional `icon`, a FontAwesome `IconDefinition` drawn before the content in the

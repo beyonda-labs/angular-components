@@ -6,6 +6,8 @@ export interface FormInfoItem {
     label: string;
 
     icon?: IconDefinition;
+    tooltip?: string;
+    tooltipItems?: string[];
 }
 
 export class FormInfoField extends FormField {

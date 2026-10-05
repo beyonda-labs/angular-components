@@ -16,10 +16,12 @@ export abstract class TableCell {
     type: CellType;
 
     tooltip?: string;
+    tooltipItems?: string[];
 
-    constructor({ content, type, translate = false, tooltip }: TableCellParameters) {
+    constructor({ content, type, translate = false, tooltip, tooltipItems }: TableCellParameters) {
         this.content = content;
         this.tooltip = tooltip;
+        this.tooltipItems = tooltipItems;
         this.translate = translate;
         this.type = type;
     }
@@ -28,8 +30,8 @@ export abstract class TableCell {
 export class BadgeTableCell extends TableCell {
     badges: BadgeConfig[];
 
-    constructor({ badges, translate, tooltip }: BadgeTableCellParameters) {
-        super({ content: badges, type: CellType.Badge, translate, tooltip });
+    constructor({ badges, translate, tooltip, tooltipItems }: BadgeTableCellParameters) {
+        super({ content: badges, type: CellType.Badge, translate, tooltip, tooltipItems });
         this.badges = badges;
     }
 }
@@ -39,8 +41,8 @@ export class DateTableCell extends TableCell {
 
     value?: Date | number | string | null;
 
-    constructor({ format = 'mediumDate', tooltip, value }: DateTableCellParameters) {
-        super({ content: value, type: CellType.Date, tooltip });
+    constructor({ format = 'mediumDate', tooltip, tooltipItems, value }: DateTableCellParameters) {
+        super({ content: value, type: CellType.Date, tooltip, tooltipItems });
         this.format = format;
         this.value = value;
     }
@@ -51,8 +53,8 @@ export class LinkTableCell extends TableCell {
 
     icon?: IconDefinition;
 
-    constructor({ action, content, icon, translate, tooltip }: LinkTableCellParameters) {
-        super({ content, type: CellType.Link, translate, tooltip });
+    constructor({ action, content, icon, translate, tooltip, tooltipItems }: LinkTableCellParameters) {
+        super({ content, type: CellType.Link, translate, tooltip, tooltipItems });
         this.action = action;
         this.icon = icon;
     }
@@ -61,8 +63,8 @@ export class LinkTableCell extends TableCell {
 export class TagsTableCell extends TableCell {
     tags: string[];
 
-    constructor({ tags, tooltip }: TagsTableCellParameters) {
-        super({ content: tags, type: CellType.Tags, tooltip });
+    constructor({ tags, tooltip, tooltipItems }: TagsTableCellParameters) {
+        super({ content: tags, type: CellType.Tags, tooltip, tooltipItems });
         this.tags = tags;
     }
 }
@@ -70,8 +72,8 @@ export class TagsTableCell extends TableCell {
 export class TextTableCell extends TableCell {
     icon?: IconDefinition;
 
-    constructor({ content, icon, translate, tooltip }: TextTableCellParameters) {
-        super({ content, type: CellType.Text, translate, tooltip });
+    constructor({ content, icon, translate, tooltip, tooltipItems }: TextTableCellParameters) {
+        super({ content, type: CellType.Text, translate, tooltip, tooltipItems });
         this.icon = icon;
     }
 }
@@ -80,12 +82,14 @@ export interface BadgeTableCellParameters {
     badges: BadgeConfig[];
 
     tooltip?: string;
+    tooltipItems?: string[];
     translate?: boolean;
 }
 
 export interface DateTableCellParameters {
     format?: string;
     tooltip?: string;
+    tooltipItems?: string[];
     value?: Date | number | string | null;
 }
 
@@ -95,6 +99,7 @@ export interface LinkTableCellParameters {
 
     icon?: IconDefinition;
     tooltip?: string;
+    tooltipItems?: string[];
     translate?: boolean;
 }
 
@@ -103,6 +108,7 @@ export interface TableCellParameters {
     type: CellType;
 
     tooltip?: string;
+    tooltipItems?: string[];
     translate?: boolean;
 }
 
@@ -110,6 +116,7 @@ export interface TagsTableCellParameters {
     tags: string[];
 
     tooltip?: string;
+    tooltipItems?: string[];
 }
 
 export interface TextTableCellParameters {
@@ -117,5 +124,6 @@ export interface TextTableCellParameters {
 
     icon?: IconDefinition;
     tooltip?: string;
+    tooltipItems?: string[];
     translate?: boolean;
 }

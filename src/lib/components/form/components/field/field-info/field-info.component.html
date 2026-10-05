@@ -1,10 +1,20 @@
 <div class="bey-form-info">
     @for (item of field().items; track $index) {
-        <span class="bey-form-info-item">
+        <span
+            class="bey-form-info-item"
+            boundariesElement="viewport"
+            container="body"
+            placement="top"
+            [tooltip]="item.tooltipItems?.length ? tooltipList : (item.tooltip ?? '' | translate)"
+        >
             @if (item.icon) {
                 <fa-icon class="bey-form-info-icon" [icon]="item.icon"></fa-icon>
             }
             <span>{{ item.label }}</span>
         </span>
+
+        <ng-template #tooltipList>
+            <bey-tooltip-list [items]="item.tooltipItems ?? []" [title]="item.tooltip ?? ''"></bey-tooltip-list>
+        </ng-template>
     }
 </div>

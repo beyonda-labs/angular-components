@@ -20,6 +20,7 @@
 -   Table module: `BeyDateTableCell`, formatted in the `LOCALE_ID` locale (`mediumDate` unless `format` says otherwise), and `BeyTagsTableCell`, plain strings as untranslated outline badges.
 -   Table module: a row with fewer cells than columns is completed with empty cells.
 -   Page module: `duplicate` and `change-status` standard actions: a modal form for the name of the copy or for one of the statuses the current one reaches (`BeyPageStatusConfig`), sent to `POST {baseUrl}/{id}/duplicate` and `POST {baseUrl}/{id}/status` with their success toast and a reload; `BeyPageDuplicationConfig` names the field the copy is named by.
+-   Table and form modules: `tooltipItems` on every table cell and on the items of `BeyFormInfoField` shows the tooltip as a list, with the `tooltip` as its title.
 -   Page module: `openEdit(row)` on `BeyPageHandle` opens the edit form of a row, or the categories form of a category, as the `edit` action does, so a cell can open it.
 -   Page module: `empty-trash` standard action, shown in the trash while the backend lists it, asks with `<prefix>.modal.empty-trash` and sends `DELETE {baseUrl}/trash/all`.
 -   Services: the HTTP error modal explains `action-unavailable` and `invalid-transition`.
@@ -76,6 +77,7 @@
 
 ### Fixed
 
+-   Table module: the rows are drawn again when the language changes, keeping the selection, so texts a `loadRow` translates itself no longer stay in the previous language.
 -   Form module: the options of an autocomplete field keep their background, border and hover inside a modal: the panel moves to the body and lost the variables its host declared.
 -   Page module: a new load of the list cancels the one still out, so a slow response no longer overwrites the rows of a newer page, search or category.
 -   Form module: `stretch` buttons share the full width in a row, and the sections no longer show a horizontal scroll.

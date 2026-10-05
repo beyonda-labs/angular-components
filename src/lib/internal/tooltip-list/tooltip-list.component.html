@@ -1,0 +1,8 @@
+@if (title()) {
+    <p class="bey-tooltip-list-title">{{ title() | translate }}</p>
+}
+<ul class="bey-tooltip-list">
+    @for (item of items(); track $index) {
+        <li class="bey-tooltip-list-item">{{ item | translate }}</li>
+    }
+</ul>

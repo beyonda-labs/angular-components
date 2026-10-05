@@ -4,11 +4,14 @@ import {
     computed,
     effect,
     ElementRef,
+    inject,
     input,
     linkedSignal,
     viewChild
 } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { map } from 'rxjs';
 
 import { toKeySegment } from '../../utilities/key-segment';
 import { TableRowComponent } from './components/row/row.component';
@@ -26,6 +29,8 @@ const SELECTION_COLUMN_WIDTH = '3.25rem';
     templateUrl: './table.component.html'
 })
 export class TableComponent<T> {
+    private readonly translateService = inject(TranslateService);
+
     readonly config = input.required<TableConfig<T>>();
 
     readonly allSelected = computed(() => this.rows().length > 0 && this.rows().every(row => row.selected));
@@ -44,9 +49,21 @@ export class TableComponent<T> {
                 selected: this.allSelected()
             })
     );
-    readonly rows = linkedSignal(() => buildRows(this.config()));
+    readonly rows = linkedSignal<{ config: TableConfig<T>; language: string }, TableRow<T>[]>({
+        source: () => ({ config: this.config(), language: this.language() }),
+        computation: ({ config }, previous) => {
+            const rows = buildRows(config);
+
+            return previous?.source.config === config
+                ? rows.map((row, index) => withSelection(row, previous.value[index]?.selected ?? row.selected))
+                : rows;
+        }
+    });
     readonly someSelected = computed(() => !this.allSelected() && this.rows().some(row => row.selected));
 
+    private readonly language = toSignal(this.translateService.onLangChange.pipe(map(({ lang }) => lang)), {
+        initialValue: this.translateService.currentLang
+    });
     private readonly scrollContainer = viewChild<ElementRef<HTMLDivElement>>('scrollContainer');
 
     constructor() {
