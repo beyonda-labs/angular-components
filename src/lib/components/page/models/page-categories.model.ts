@@ -16,6 +16,14 @@ export interface PageMoveTarget {
     id: string | number | null;
 }
 
+export interface PageRestoredRename {
+    field: string;
+    from: string;
+    id: string | number;
+    to: string;
+    type: PageItemType;
+}
+
 export interface PageTrashItem {
     id: string | number;
     type: PageItemType;

@@ -4,6 +4,7 @@
 
 ### Added
 
+-   Page module: after a restore, an info toast lists the rows the backend renamed because another row already had their name (`renamed` in the answer of `PUT {baseUrl}/trash`).
 -   Form module: `label` on `BeyFormSection` and on every field overrides the title or the label read from the prefix, for a form built from data, such as one field per variable of a document.
 -   Left menu module: a branch with its own `action` gets a submenu toggle over its chevron, reachable from the keyboard and named with `angular-components.left-menu.submenu`.
 -   Page module: `BeyPageConfig` and `BeyPageConfigParameters` take the form value type, so a typed `BeyPageFormConfig<T>` fits without `<unknown>`.
