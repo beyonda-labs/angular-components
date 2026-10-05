@@ -74,6 +74,13 @@
         "http": {
             "error": {
                 "action-unavailable": "This action is not available for the item. Reload the page and try again.",
+                "attachments": {
+                    "content-already-set": "This attachment already has its file.",
+                    "content-too-large": "The file is larger than the maximum size allowed.",
+                    "duplicate-content": "This file is already uploaded as \"{{name}}\".",
+                    "empty-content": "The file is empty.",
+                    "unsupported-type": "Files of type \"{{mimeType}}\" are not supported."
+                },
                 "bad-gateway": "The server received an invalid response. Please try again later.",
                 "bad-request": "The request could not be processed. Please check the submitted data.",
                 "conflict": "A conflict occurred with the current state of the resource.",
@@ -142,6 +149,13 @@
             },
             "title": {
                 "action-unavailable": "Action not available",
+                "attachments": {
+                    "content-already-set": "File already uploaded",
+                    "content-too-large": "File too large",
+                    "duplicate-content": "Duplicate file",
+                    "empty-content": "Empty file",
+                    "unsupported-type": "Unsupported file"
+                },
                 "bad-gateway": "Connection error",
                 "bad-request": "Invalid request",
                 "conflict": "Conflict",
