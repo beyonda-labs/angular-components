@@ -7,7 +7,9 @@
             "label": "Migas de pan"
         },
         "file-preview": {
-            "close": "Cerrar vista previa"
+            "cancel": "Cancelar",
+            "close": "Cerrar vista previa",
+            "type": "Vista previa"
         },
         "floating-preferences": {
             "dark": "Oscuro",

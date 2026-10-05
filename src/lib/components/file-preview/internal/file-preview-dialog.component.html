@@ -1,13 +1,20 @@
 <div class="bey-file-preview" [class.bey-file-preview--pdf]="isPdf()">
     <div class="bey-file-preview-header">
-        <div class="bey-file-preview-heading">
-            <h2 class="bey-file-preview-title" [id]="titleId" [title]="config.title | translate">
-                {{ config.title | translate }}
-            </h2>
+        <span class="bey-file-preview-icon" aria-hidden="true">
+            <fa-icon [icon]="icon()"></fa-icon>
+        </span>
 
-            @if (config.fileName) {
-                <span class="bey-file-preview-file-name" [title]="config.fileName">{{ config.fileName }}</span>
-            }
+        <div class="bey-file-preview-heading">
+            <div class="bey-file-preview-type">{{ typeLabel | translate }}</div>
+            <div class="bey-file-preview-names">
+                <h2 class="bey-file-preview-title" [id]="titleId" [title]="config.title | translate">
+                    {{ config.title | translate }}
+                </h2>
+
+                @if (config.fileName) {
+                    <span class="bey-file-preview-file-name" [title]="config.fileName">{{ config.fileName }}</span>
+                }
+            </div>
         </div>
 
         <button
@@ -26,5 +33,9 @@
         } @else if (imageSource) {
             <img class="bey-file-preview-image" [alt]="alt() | translate" [src]="imageSource" />
         }
+    </div>
+
+    <div class="bey-file-preview-footer">
+        <bey-button [button]="cancelButton"></bey-button>
     </div>
 </div>

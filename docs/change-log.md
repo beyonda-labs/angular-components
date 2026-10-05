@@ -57,6 +57,7 @@
 ### Changed
 
 -   Pdf viewer module: without the toolbar of pdf.js (`None`, `Compact`) the viewer turns off its keyboard shortcuts, its context menu and opening a dropped file, so no half-built find bar or menu shows up.
+-   File preview module: the dialog looks like a modal form: an icon of the file type, "Preview" over the title and the file name, the content framed below, and a cancel button in a footer; a PDF shows the compact toolbar with a download button, and an image shrinks to fit without a scrollbar.
 -   Page module: `isTrashEnabled` on `BeyPageTableConfig` replaces `useTrash` on `BeyPageCategoriesConfig`, so a page without categories gets the trash view too.
 -   Form module: a select field shows its placeholder muted, as the inputs do, until an option is chosen, and its placeholder option is muted in the list too, so neither reads as a real option; picking that option empties the field.
 -   Services: `BeyHttpService` reads the reason of an error from `messageKey` in the body instead of `message`, as express-components now sends it, and `CustomErrorResponse` carries the `details` of the error.

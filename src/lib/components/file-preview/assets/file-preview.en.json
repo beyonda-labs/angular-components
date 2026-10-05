@@ -1,7 +1,9 @@
 {
     "angular-components": {
         "file-preview": {
-            "close": "Close preview"
+            "cancel": "Cancel",
+            "close": "Close preview",
+            "type": "Preview"
         }
     }
 }
