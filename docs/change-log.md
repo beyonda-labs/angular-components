@@ -45,6 +45,7 @@
 
 ### Changed
 
+-   Form module: a select field shows its placeholder muted, as the inputs do, until an option is chosen, and its placeholder option is muted in the list too, so neither reads as a real option; picking that option empties the field.
 -   Services: `BeyHttpService` reads the reason of an error from `messageKey` in the body instead of `message`, as express-components now sends it, and `CustomErrorResponse` carries the `details` of the error.
 -   Services: `BeyHttpService` returns a cold, typed observable: the request leaves on subscribe, each subscription sends its own request and unsubscribing cancels it; after the error modal (or `handleError`) the `HttpErrorResponse` reaches the subscriber instead of completing empty. `onSuccess` and `onError` are removed from `BeyHttpRequestOptions`: subscribe instead.
 -   `BeyCellType`, `BeyLoadingSize`, `BeyModalFormSize` and `BeyModalTreeSize` list their members alphabetically, so `Object.values` returns them in that order.
@@ -74,6 +75,7 @@
 
 ### Fixed
 
+-   Form module: the options of an autocomplete field keep their background, border and hover inside a modal: the panel moves to the body and lost the variables its host declared.
 -   Page module: a new load of the list cancels the one still out, so a slow response no longer overwrites the rows of a newer page, search or category.
 -   Form module: `stretch` buttons share the full width in a row, and the sections no longer show a horizontal scroll.
 -   Tabs module: tabs whose labels widen after the first paint (translations that load late, a language switch, a web font) move into the overflow menu instead of spilling out of a narrow bar.

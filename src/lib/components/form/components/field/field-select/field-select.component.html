@@ -2,10 +2,11 @@
     class="form-select form-select-sm bey-form-field-control"
     [attr.aria-invalid]="isInvalid() || null"
     [attr.aria-required]="isRequired() || null"
+    [class.is-placeholder]="isPlaceholderShown()"
     [formControl]="control()"
     [id]="field().key"
 >
-    <option disabled value="">{{ placeholder() | translate }}</option>
+    <option class="bey-form-field-placeholder-option" value="">{{ placeholder() | translate }}</option>
     @for (option of options(); track option.value) {
         <option [disabled]="option.isDisabled ?? false" [value]="option.value">
             {{ option.label | translate }}
