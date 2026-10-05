@@ -23,7 +23,10 @@ export type {
     PageTrashItem as BeyPageTrashItem
 } from './models/page-categories.model';
 export { PageFormConfig as BeyPageFormConfig } from './models/page-form.model';
-export type { PageFormConfigParameters as BeyPageFormConfigParameters } from './models/page-form.model';
+export type {
+    PageFormConfigParameters as BeyPageFormConfigParameters,
+    PageSaveConfirmation as BeyPageSaveConfirmation
+} from './models/page-form.model';
 export { PageHeaderConfig as BeyPageHeaderConfig } from './models/page-header.model';
 export {
     PageDuplicationConfig as BeyPageDuplicationConfig,

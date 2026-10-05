@@ -172,7 +172,7 @@ export class PageService {
     readonly viewToggleConfig = computed<TabsConfig | null>(() => {
         const config = this.config();
 
-        if (!config?.tableConfig?.categoriesConfig?.useTrash) {
+        if (!config?.tableConfig?.isTrashEnabled) {
             return null;
         }
 

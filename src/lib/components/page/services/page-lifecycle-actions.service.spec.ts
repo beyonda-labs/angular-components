@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { FormSelectField } from '../../form/models/fields/form-select-field.model';
+import { FormFieldPatternValidator } from '../../form/models/form-field-validator.model';
 import { PageConfig, PageConfigParameters } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageDuplicationConfig, PageLifecycleFormValue, PageStatusConfig } from '../models/page-lifecycle.model';
@@ -83,6 +84,23 @@ describe('PageLifecycleActionsService', () => {
             );
 
             expect(openedForm().initialValue).toEqual({ main: { title: 'Oats (copy)' } });
+        });
+
+        it('joins the copy suffix with the configured separator and checks the name with its validators', () => {
+            const validator = new FormFieldPatternValidator(/^[a-z_()]+$/u);
+
+            service.duplicate(
+                buildConfig({
+                    duplicationConfig: new PageDuplicationConfig({ copySeparator: '_', nameValidators: [validator] })
+                }),
+                { id: 'client', name: 'client' } as never,
+                onSaved
+            );
+
+            const [field] = openedForm().sections[0].rows[0].fields;
+
+            expect(openedForm().initialValue).toEqual({ main: { name: 'client_(copy)' } });
+            expect(field.validators).toEqual([validator]);
         });
 
         it('does nothing on a page without a backend', () => {

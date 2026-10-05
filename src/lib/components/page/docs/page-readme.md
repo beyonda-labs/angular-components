@@ -46,17 +46,17 @@ readonly config = new BeyPageConfig<UserFormValue, User>({
 
 ## BeyPageConfig
 
-| Field               | Required | Meaning                                                                                                                      |
-| ------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `prefix`            | yes      | i18n prefix every text of the page resolves from                                                                             |
-| `baseUrl`           | no       | Path of the resource, resolved against the environment's `baseUrl` and `webApiPath`; without it nothing is loaded            |
-| `headerConfig`      | no       | `title` and the `actions` catalogue                                                                                          |
-| `tableConfig`       | no       | Columns, `loadRow`, `height`, `order`, `search`, `allowSelection`, `showPagination`, `categoriesConfig`, `onSelectionChange` |
-| `formConfig`        | no       | How the create and edit modal forms are built, see below                                                                     |
-| `statusConfig`      | no       | `BeyPageStatusConfig`: the status field and its transitions, for `change-status`                                             |
-| `duplicationConfig` | no       | `BeyPageDuplicationConfig`: the field that names a row, `name` by default, for `duplicate`                                   |
-| `onDataLoaded`      | no       | Run with the backend response after every load                                                                               |
-| `onReady`           | no       | Run with the page handle once the page exists                                                                                |
+| Field               | Required | Meaning                                                                                                                                                                                                                                      |
+| ------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prefix`            | yes      | i18n prefix every text of the page resolves from                                                                                                                                                                                             |
+| `baseUrl`           | no       | Path of the resource, resolved against the environment's `baseUrl` and `webApiPath`; without it nothing is loaded                                                                                                                            |
+| `headerConfig`      | no       | `title` and the `actions` catalogue                                                                                                                                                                                                          |
+| `tableConfig`       | no       | Columns, `loadRow`, `height`, `order`, `search`, `allowSelection`, `showPagination`, `categoriesConfig`, `isTrashEnabled`, `onSelectionChange`                                                                                               |
+| `formConfig`        | no       | How the create and edit modal forms are built, see below                                                                                                                                                                                     |
+| `statusConfig`      | no       | `BeyPageStatusConfig`: the status field and its transitions, for `change-status`                                                                                                                                                             |
+| `duplicationConfig` | no       | `BeyPageDuplicationConfig`: the field that names a row (`nameField`, `name` by default), the validators of the name of a copy (`nameValidators`) and what joins the copy suffix to it (`copySeparator`, a space by default), for `duplicate` |
+| `onDataLoaded`      | no       | Run with the backend response after every load                                                                                                                                                                                               |
+| `onReady`           | no       | Run with the page handle once the page exists                                                                                                                                                                                                |
 
 The config is never written to. What the consumer needs to do to the live page goes through the
 `BeyPageHandle` that `onReady` delivers: `refresh()` reloads the current page, `openCategory(category)` drills
@@ -156,7 +156,8 @@ actions of the page are still listed in the order they should render, standard o
 ## Duplicate and change status
 
 `duplicate` asks for the name of the copy, filled in with the name of the row and `<prefix>.duplicate.copy-suffix`
-("Invoice (copy)"), and sends it in the `nameField` of `duplicationConfig`. `change-status` offers the statuses the
+("Invoice (copy)"), joined by its `copySeparator` and checked with its `nameValidators`, and sends it in the
+`nameField` of `duplicationConfig`. `change-status` offers the statuses the
 row's current one reaches in `statusConfig.transitions`, labelled `<prefix>.status.<status>`, and sends the one
 chosen; without a `statusConfig` it does nothing. Both open a modal form with the texts under `<prefix>.duplicate`
 or `<prefix>.change-status` (`title`, `buttons.cancel`, `buttons.submit`, `main.<field>.label`), show
@@ -183,7 +184,8 @@ change goes back to the first page and reloads; the whole query travels in the `
 fields the page reads. A row whose `typeField` says `category` is drawn by
 `categoriesConfig.loadRow(category, viewMode)` instead of the table's `loadRow`; without one it shows its name
 as a link that opens it, as plain text in the trash. A custom cell opens a category through
-`handle.openCategory(category)`. With `useTrash` a segmented toggle switches to the flat trash view, where the
+`handle.openCategory(category)`. With `tableConfig.isTrashEnabled`, with or without categories, a segmented toggle
+switches to the flat trash view, where the
 `restore-trash-item` and `delete-trash-item` actions apply, and `empty-trash`, shown while the backend lists it in
 the `globalActions` of the trash, deletes everything in it with `DELETE {baseUrl}/trash/all`. `move` opens the tree
 picker with every category, disabling the selected ones and their descendants.
@@ -196,11 +198,15 @@ selected row is a category. Standard actions without a `handler` work on the who
 
 `BeyPageFormConfig<TValue, TItem>` takes `prefix`, `buildSections(item?)`, and optionally `toFormValue(item?)`,
 `toItem(value)`, `onReady(handle)`, `onValueChange(value, handle)`, `onCreate(value, handle)`,
-`onEdit(value, handle)`, `afterCreate(created)` and `allowSubmitWithoutChanges`. `onValueChange` runs on every
+`onEdit(value, handle)`, `afterCreate(created)`, `confirmSave(value, item?)` and `allowSubmitWithoutChanges`. `onValueChange` runs on every
 change of the open form, so a field can fill another through `handle.patchValue`. Create and edit open a modal form from the form
 module; on success the modal closes and the table reloads, on error it stays open. `afterCreate` returns an
 observable the page waits for before closing, for entities that need a second request. Titles come from
 `<prefix>.form.create.title` and `.edit.title`, the buttons from the library.
+
+`confirmSave(value, item?)` asks before a create or an edit is sent: it answers a confirmation, or an observable of
+one, and the page shows it over the form and saves only once the user confirms; `null` saves at once. It suits a save
+that has consequences elsewhere, such as renaming something other records name.
 
 ## Texts
 

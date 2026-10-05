@@ -45,11 +45,14 @@
 -   Form module: `BeyModalFormService.openWithRequest(config, submit)` opens a modal form whose submit sends a request and closes once it answers, for any screen; `BeyPageHandle.openForm` is built on it, and `BeyFakeModalFormService` does the same in specs.
 -   Services: `provideBeyHttp()`, included in `provideBeyApp` and `provideBeyTesting`, keeps rxjs from reporting an HTTP error the service already showed.
 -   Form module: a validator error shaped as `BeyFormFieldError` (`{ messageKey, messageParameters? }`) is shown translated under its field once touched, sync or async; the file field drops its size hint meanwhile.
+-   Page module: `copySeparator` and `nameValidators` on `BeyPageDuplicationConfig` join the copy suffix to the name and check the name of the copy, for names that allow no space (`client_copy`).
+-   Page module: `confirmSave(value, item?)` on `BeyPageFormConfig` answers a confirmation the page asks over the form before a create or an edit is sent, typed as `BeyPageSaveConfirmation`.
 -   Form module: `isFreeTextAllowed` on `BeyFormAutocompleteField` takes the typed text as the value and keeps the options as suggestions, so a value outside them stays.
 -   Form module: `BeyFormListField` shows read-only texts as a list, from an array or a signal, with its placeholder while empty; it grows with its texts and leaves the scroll to the form.
 
 ### Changed
 
+-   Page module: `isTrashEnabled` on `BeyPageTableConfig` replaces `useTrash` on `BeyPageCategoriesConfig`, so a page without categories gets the trash view too.
 -   Form module: a select field shows its placeholder muted, as the inputs do, until an option is chosen, and its placeholder option is muted in the list too, so neither reads as a real option; picking that option empties the field.
 -   Services: `BeyHttpService` reads the reason of an error from `messageKey` in the body instead of `message`, as express-components now sends it, and `CustomErrorResponse` carries the `details` of the error.
 -   Services: `BeyHttpService` returns a cold, typed observable: the request leaves on subscribe, each subscription sends its own request and unsubscribing cancels it; after the error modal (or `handleError`) the `HttpErrorResponse` reaches the subscriber instead of completing empty. `onSuccess` and `onError` are removed from `BeyHttpRequestOptions`: subscribe instead.

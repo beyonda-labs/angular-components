@@ -3,6 +3,7 @@ import { FormSelectField } from '../../form/models/fields/form-select-field.mode
 import { FormTextField } from '../../form/models/fields/form-text-field.model';
 import { FormRow, FormSection } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
+import { FormFieldValidator } from '../../form/models/form-field-validator.model';
 import { PAGE_LIFECYCLE_FORM_SECTION as FORM_SECTION, PageLifecycleFormValue } from '../models/page-lifecycle.model';
 
 export function buildChangeStatusForm(
@@ -25,12 +26,13 @@ export function buildChangeStatusForm(
 export function buildDuplicateForm(
     prefix: string,
     nameField: string,
-    name: string
+    name: string,
+    validators: FormFieldValidator[] = []
 ): ModalFormConfig<PageLifecycleFormValue> {
     return buildSingleFieldForm(
         `${prefix}.duplicate`,
         { [FORM_SECTION]: { [nameField]: name } },
-        new FormTextField({ columns: 12, isRequired: true, key: nameField })
+        new FormTextField({ columns: 12, isRequired: true, key: nameField, validators })
     );
 }
 

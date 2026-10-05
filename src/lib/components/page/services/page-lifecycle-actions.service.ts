@@ -51,11 +51,12 @@ export class PageLifecycleActionsService {
             return;
         }
 
-        const { nameField } = duplicationConfig;
+        const { copySeparator, nameField, nameValidators } = duplicationConfig;
         const copySuffix = this.translateService.instant(`${prefix}.duplicate.copy-suffix`) as string;
+        const copyName = `${String(readRowField(item, nameField) ?? '')}${copySeparator}${copySuffix}`;
 
         this.pageFormService.openWithRequest(
-            buildDuplicateForm(prefix, nameField, `${String(readRowField(item, nameField) ?? '')} ${copySuffix}`),
+            buildDuplicateForm(prefix, nameField, copyName, nameValidators),
             value =>
                 this.pageHttpService.duplicate(
                     baseUrl,
