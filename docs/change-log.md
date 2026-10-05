@@ -4,6 +4,7 @@
 
 ### Added
 
+-   Pdf viewer module: `isDownloadable` adds a download button at the end of the compact toolbar, saving the document as `filenameForDownload`.
 -   Page module: after a restore, an info toast lists the rows the backend renamed because another row already had their name (`renamed` in the answer of `PUT {baseUrl}/trash`).
 -   Form module: `label` on `BeyFormSection` and on every field overrides the title or the label read from the prefix, for a form built from data, such as one field per variable of a document.
 -   Left menu module: a branch with its own `action` gets a submenu toggle over its chevron, reachable from the keyboard and named with `angular-components.left-menu.submenu`.
@@ -55,6 +56,8 @@
 
 ### Changed
 
+-   Pdf viewer module: without the toolbar of pdf.js (`None`, `Compact`) the viewer turns off its keyboard shortcuts, its context menu and opening a dropped file, so no half-built find bar or menu shows up.
+-   File preview module: the dialog looks like a modal form: an icon of the file type, "Preview" over the title and the file name, the content framed below, and a cancel button in a footer; a PDF shows the compact toolbar with a download button, and an image shrinks to fit without a scrollbar.
 -   Page module: `isTrashEnabled` on `BeyPageTableConfig` replaces `useTrash` on `BeyPageCategoriesConfig`, so a page without categories gets the trash view too.
 -   Form module: a select field shows its placeholder muted, as the inputs do, until an option is chosen, and its placeholder option is muted in the list too, so neither reads as a real option; picking that option empties the field.
 -   Services: `BeyHttpService` reads the reason of an error from `messageKey` in the body instead of `message`, as express-components now sends it, and `CustomErrorResponse` carries the `details` of the error.
@@ -86,6 +89,7 @@
 
 ### Fixed
 
+-   Pdf viewer module: the compact toolbar reads in the dark theme: the page field takes the text, border and background of the theme instead of dark text on black, the buttons show their icon in the main text color, and a disabled button only fades.
 -   Table module: the rows are drawn again when the language changes, keeping the selection, so texts a `loadRow` translates itself no longer stay in the previous language.
 -   Form module: the options of an autocomplete field keep their background, border and hover inside a modal: the panel moves to the body and lost the variables its host declared.
 -   Page module: a new load of the list cancels the one still out, so a slow response no longer overwrites the rows of a newer page, search or category.

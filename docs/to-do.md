@@ -260,6 +260,10 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [ ] Feedback: `alert`, `progress bar`
 -   [x] Modals (info, warning, error, confirmation via service)
 -   [ ] Drawers
+-   [ ] Pdf viewer: find text in the document from the compact toolbar, with its own search field, next and previous
+        match and a match count; the find bar of pdf.js is off outside its full toolbar
+-   [x] File preview dialog (`BeyFilePreviewService`): laid out like a modal form, with a cancel button in its footer;
+        a PDF shows the compact toolbar with a download button and an image fits without a scrollbar
 
 ### Data and navigation
 

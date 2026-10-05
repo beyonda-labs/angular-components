@@ -1,7 +1,9 @@
 {
     "angular-components": {
         "file-preview": {
-            "close": "Cerrar vista previa"
+            "cancel": "Cancelar",
+            "close": "Cerrar vista previa",
+            "type": "Vista previa"
         }
     }
 }

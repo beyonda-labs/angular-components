@@ -221,6 +221,20 @@ describe('PdfViewerComponent toolbar', () => {
         expect(handle.currentPage()).toBe(2);
     });
 
+    it('turns off the commands of pdf.js unless its own toolbar shows: keyboard, context menu and dropped files', async () => {
+        await render();
+
+        expect(pdfViewer().properties['ignoreKeyboard']).toBe(true);
+        expect(pdfViewer().properties['contextMenuAllowed']).toBe(false);
+        expect(pdfViewer().properties['enableDragAndDrop']).toBe(false);
+
+        await render({ toolbar: PdfViewerToolbar.Full });
+
+        expect(pdfViewer().properties['ignoreKeyboard']).toBe(false);
+        expect(pdfViewer().properties['contextMenuAllowed']).toBe(true);
+        expect(pdfViewer().properties['enableDragAndDrop']).toBe(true);
+    });
+
     it('shows the toolbar of pdf.js for the full variant, and neither for none', async () => {
         await render({ toolbar: PdfViewerToolbar.Full });
 

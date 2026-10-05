@@ -1,9 +1,12 @@
 # File preview
 
 A dialog that shows a PDF or an image, opened from a service with one call. The content is a `Blob` or a URL: a
-PDF goes to `bey-pdf-viewer` with the toolbar of pdf.js, an image to an `<img>`. The object URL the dialog
+PDF goes to `bey-pdf-viewer` with its compact toolbar and a download button, an image to an `<img>` that shrinks to
+fit the dialog without scrolling. The object URL the dialog
 creates for a `Blob` image is revoked when the dialog is destroyed, so the caller has nothing to clean up. The
-dialog component is internal; `BeyFilePreviewService` is the whole public surface.
+dialog has the shape of a modal form: an icon of the file type, `angular-components.file-preview.type` over the title
+and the file name, and a footer with `angular-components.file-preview.cancel`. The dialog component is internal;
+`BeyFilePreviewService` is the whole public surface.
 
 ## Setup
 

@@ -25,5 +25,9 @@
 
             <span class="bey-pdf-viewer-toolbar-pages">/ {{ pagesCount() }}</span>
         }
+
+        @if (config().isDownloadable) {
+            <bey-button [button]="downloadButton"></bey-button>
+        }
     </div>
 </div>

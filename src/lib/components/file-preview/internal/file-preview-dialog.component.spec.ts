@@ -66,10 +66,11 @@ describe('FilePreviewDialogComponent', () => {
             .compileComponents();
     });
 
-    it('shows the title and the file name', async () => {
+    it('shows the kind of dialog over the title and the file name', async () => {
         await render();
 
-        expect(fixture.nativeElement.textContent).toContain('Company logo');
+        expect(fixture.nativeElement.textContent).toContain('angular-components.file-preview.type');
+        expect(fixture.nativeElement.querySelector('h2')?.textContent?.trim()).toBe('Company logo');
         expect(fixture.nativeElement.textContent).toContain('logo.png');
     });
 
@@ -110,20 +111,29 @@ describe('FilePreviewDialogComponent', () => {
         expect(revokeObjectURL).not.toHaveBeenCalled();
     });
 
-    it('shows a PDF in the viewer with its own toolbar and the file name for downloading', async () => {
+    it('shows a PDF in the viewer with the compact toolbar, downloadable under its file name', async () => {
         await render({ fileName: 'invoice.pdf', type: FilePreviewType.Pdf });
 
         expect(image()).toBeNull();
         expect(createObjectURL).not.toHaveBeenCalled();
         expect(viewerConfig()?.src).toBe(content);
         expect(viewerConfig()?.filenameForDownload).toBe('invoice.pdf');
-        expect(viewerConfig()?.toolbar).toBe(PdfViewerToolbar.Full);
+        expect(viewerConfig()?.toolbar).toBe(PdfViewerToolbar.Compact);
+        expect(viewerConfig()?.isDownloadable).toBe(true);
     });
 
     it('closes from the labelled close button', async () => {
         await render();
 
         buttonByName(fixture, 'angular-components.file-preview.close').click();
+
+        expect(hide).toHaveBeenCalledTimes(1);
+    });
+
+    it('closes from the cancel button of its footer', async () => {
+        await render();
+
+        buttonByName(fixture, 'angular-components.file-preview.cancel').click();
 
         expect(hide).toHaveBeenCalledTimes(1);
     });

@@ -33,6 +33,7 @@ readonly viewer = new BeyPdfViewerConfig({
 | `rotation`            | no       | `0`          | `0`, `90`, `180` or `270`                                |
 | `toolbar`             | no       | `None`       | A `BeyPdfViewerToolbar`: `None`, `Full` or `Compact`     |
 | `toolbarButtons`      | no       | all on       | A `BeyPdfViewerToolbarButtons`, the buttons `Full` shows |
+| `isDownloadable`      | no       | `false`      | A download button at the end of the `Compact` toolbar    |
 | `zoomStep`            | no       | `0.1`        | What each zoom button of `Compact` adds or takes away    |
 | `backgroundColor`     | no       | surface      | Colour behind the pages, a token by default              |
 | `height`              | no       | `100%`       | Height of the document area                              |
@@ -59,6 +60,10 @@ readonly viewer = new BeyPdfViewerConfig({
 `minZoom`–`maxZoom` by `zoomStep`, the zoom as a percentage, and, once the document has loaded, the current page
 as a number field next to the page count. A typed page outside the document is brought back into it. Whatever
 the consumer marks with `bey-pdf-viewer-status` is projected on its left; with any other toolbar it is not shown.
+Without the toolbar of pdf.js, `None` and `Compact` also turn off its commands: the keyboard shortcuts (find, print,
+open, save), the context menu and opening a file dropped on the viewer, since nothing of that interface is on
+screen. `Full` keeps them. With `isDownloadable` it ends in a download button that saves the document as `filenameForDownload`
+(`document.pdf` without one).
 
 ```ts
 readonly viewer = new BeyPdfViewerConfig({
@@ -77,8 +82,8 @@ readonly viewer = new BeyPdfViewerConfig({
 </bey-pdf-viewer>
 ```
 
-Its buttons and the page field are named by `angular-components.pdf-viewer.toolbar.zoom-out`, `zoom-in` and
-`page`. The two zoom buttons are the library's bordered icon squares and show their name as a tooltip, also
+Its buttons and the page field are named by `angular-components.pdf-viewer.toolbar.zoom-out`, `zoom-in`,
+`download` and `page`. The two zoom buttons are the library's bordered icon squares and show their name as a tooltip, also
 while disabled at `minZoom` or `maxZoom`.
 
 ## The handle

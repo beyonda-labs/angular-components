@@ -7,7 +7,9 @@
             "label": "Breadcrumb"
         },
         "file-preview": {
-            "close": "Close preview"
+            "cancel": "Cancel",
+            "close": "Close preview",
+            "type": "Preview"
         },
         "floating-preferences": {
             "dark": "Dark",
@@ -315,6 +317,7 @@
         },
         "pdf-viewer": {
             "toolbar": {
+                "download": "Download",
                 "page": "Page",
                 "zoom-in": "Zoom in",
                 "zoom-out": "Zoom out"

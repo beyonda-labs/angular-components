@@ -25,7 +25,7 @@
 
 .bey-button--icon-outline {
     border: var(--bey-border-width) solid var(--bey-border-default);
-    color: var(--bey-text-secondary);
+    color: var(--bey-text-primary);
     height: var(--bey-button-square-size);
     line-height: inherit;
     margin-inline: 0;
@@ -42,8 +42,8 @@
 }
 
 .bey-button--icon-outline:disabled {
-    border-color: var(--bey-border-subtle);
-    color: var(--bey-text-disabled);
+    border-color: var(--bey-border-default);
+    color: var(--bey-text-primary);
     opacity: var(--bey-opacity-disabled);
 }
 

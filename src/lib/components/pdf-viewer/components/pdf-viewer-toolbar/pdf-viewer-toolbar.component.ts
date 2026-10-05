@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { faMagnifyingGlassMinus, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
+import { faDownload, faMagnifyingGlassMinus, faMagnifyingGlassPlus } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ButtonComponent } from '../../../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../../../internal/button/models/button-config.model';
 import { PdfViewerConfig } from '../../models/pdf-viewer-config.model';
 
+const DOWNLOAD = 'angular-components.pdf-viewer.toolbar.download';
 const PERCENT = 100;
 const ZOOM_IN = 'angular-components.pdf-viewer.toolbar.zoom-in';
 const ZOOM_OUT = 'angular-components.pdf-viewer.toolbar.zoom-out';
@@ -24,9 +25,18 @@ export class PdfViewerToolbarComponent {
     readonly pagesCount = input.required<number>();
     readonly zoom = input.required<number>();
 
+    readonly download = output<void>();
     readonly pageChange = output<number>();
     readonly zoomChange = output<number>();
 
+    readonly downloadButton = new ButtonConfig({
+        action: () => this.download.emit(),
+        ariaLabel: DOWNLOAD,
+        icon: faDownload,
+        tooltip: DOWNLOAD,
+        tooltipPlacement: 'bottom',
+        type: ButtonType.IconOutline
+    });
     readonly hasPages = computed(() => this.pagesCount() > 0);
     readonly zoomInButton = computed(
         () =>
