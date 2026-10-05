@@ -5,7 +5,7 @@
     placement="top"
     [attr.role]="isHeader() ? 'columnheader' : 'cell'"
     [class.bey-table-cell--header]="isHeader()"
-    [tooltip]="tooltip() | translate"
+    [tooltip]="tooltipItems().length > 0 ? tooltipList : (tooltip() | translate)"
 >
     @if (isLink()) {
         <button class="bey-table-cell-link" type="button" (click)="onLinkClick($event)">
@@ -27,3 +27,7 @@
         <span class="bey-table-cell-content">{{ cell().translate ? (content() | translate) : content() }}</span>
     }
 </div>
+
+<ng-template #tooltipList>
+    <bey-tooltip-list [items]="tooltipItems()" [title]="tooltip()"></bey-tooltip-list>
+</ng-template>

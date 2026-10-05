@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { BadgeConfig, BadgeVariant } from '../badge/models/badge.model';
@@ -94,6 +94,20 @@ describe('TableComponent', () => {
         await settle(fixture);
 
         expect(selectedItemsChange).toHaveBeenLastCalledWith([LINUS], [1]);
+        expect(rowOf('Linus').querySelector('input')?.checked).toBe(true);
+    });
+
+    it('draws its rows again when the language changes, keeping the selection', async () => {
+        const loadRow = jest.fn((item: Person) => [new TextTableCell({ content: item.name })]);
+        await render(buildConfig({ loadRow }));
+
+        rowOf('Linus').querySelector('input')?.click();
+        await settle(fixture);
+        loadRow.mockClear();
+        TestBed.inject(TranslateService).use('es');
+        await settle(fixture);
+
+        expect(loadRow).toHaveBeenCalledTimes(2);
         expect(rowOf('Linus').querySelector('input')?.checked).toBe(true);
     });
 

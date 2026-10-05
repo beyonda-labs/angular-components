@@ -4,6 +4,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { TooltipListComponent } from '../../../../internal/tooltip-list/tooltip-list.component';
 import { BadgeComponent } from '../../../badge/badge.component';
 import { BadgeConfig, BadgeVariant } from '../../../badge/models/badge.model';
 import {
@@ -20,7 +21,7 @@ const BADGE_CELL_TYPES = new Set([CellType.Badge, CellType.Tags]);
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [BadgeComponent, FontAwesomeModule, TooltipModule, TranslateModule],
+    imports: [BadgeComponent, FontAwesomeModule, TooltipListComponent, TooltipModule, TranslateModule],
     selector: 'bey-table-cell',
     standalone: true,
     styleUrls: ['./cell.component.css'],
@@ -62,6 +63,7 @@ export class TableCellComponent {
     readonly isBadge = computed(() => BADGE_CELL_TYPES.has(this.cell().type));
     readonly isLink = computed(() => this.cell().type === CellType.Link);
     readonly tooltip = computed(() => this.cell().tooltip ?? '');
+    readonly tooltipItems = computed(() => this.cell().tooltipItems ?? []);
 
     onLinkClick(event: MouseEvent): void {
         event.preventDefault();

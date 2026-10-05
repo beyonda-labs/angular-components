@@ -159,6 +159,20 @@ describe('PageService', () => {
         expect(pageHttpService.load).toHaveBeenCalledTimes(2);
     });
 
+    it('opens the edit form of a row from the handle, with the context of the page', () => {
+        const onReady = jest.fn();
+        service.setConfig(buildConfig({ onReady }));
+        flush();
+        const handle = onReady.mock.calls[0][0] as PageHandle;
+
+        handle.openEdit(ITEMS[0]);
+
+        const [context, row] = pageActionsService.openEditForm.mock.calls[0];
+
+        expect(row).toBe(ITEMS[0]);
+        expect((context as PageActionsContext).config.prefix).toBe(buildConfig().prefix);
+    });
+
     it('hands the consumer a handle that reloads and reports the selection', () => {
         const onReady = jest.fn();
         service.setConfig(buildConfig({ onReady }));

@@ -19,21 +19,21 @@ Every field extends `BeyFormField` and takes the same base parameters; each type
 
 ## Fields
 
-| Field                      | Value      | Extra parameters                                             |
-| -------------------------- | ---------- | ------------------------------------------------------------ |
-| `BeyFormTextField`         | `string`   |                                                              |
-| `BeyFormTextareaField`     | `string`   | `rows` (`3`), `maxHeight`                                    |
-| `BeyFormPasswordField`     | `string`   | `showToggle` (`true`)                                        |
-| `BeyFormNumberField`       | `number`   | `min`, `max`, both validated and honoured by the spinners    |
-| `BeyFormDateField`         | `string`   | `format` (`YYYY-MM-DD`), `minDate`, `maxDate` in that format |
-| `BeyFormSelectField`       | `string`   | `options`, a value or a rule                                 |
-| `BeyFormRadioField`        | `string`   | `options`, a value or a rule                                 |
-| `BeyFormAutocompleteField` | `string`   | `options`, a value or a rule; `emptyKey`                     |
-| `BeyFormCheckboxField`     | `boolean`  | `isSwitch` (`false`)                                         |
-| `BeyFormChipsField`        | `string[]` | `maxItems`, `allowDuplicates` (`false`)                      |
-| `BeyFormFileField`         | `File`     | `accept` (`[]`), `maxSizeBytes`, both validated              |
-| `BeyFormTextVariableField` | `string`   | `options`, a value or a rule, inserted as `{{ value }}`      |
-| `BeyFormInfoField`         | none       | `items: { label, icon? }[]`, shows text without a control    |
+| Field                      | Value      | Extra parameters                                                                                                                             |
+| -------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BeyFormTextField`         | `string`   |                                                                                                                                              |
+| `BeyFormTextareaField`     | `string`   | `rows` (`3`), `maxHeight`                                                                                                                    |
+| `BeyFormPasswordField`     | `string`   | `showToggle` (`true`)                                                                                                                        |
+| `BeyFormNumberField`       | `number`   | `min`, `max`, both validated and honoured by the spinners                                                                                    |
+| `BeyFormDateField`         | `string`   | `format` (`YYYY-MM-DD`), `minDate`, `maxDate` in that format                                                                                 |
+| `BeyFormSelectField`       | `string`   | `options`, a value or a rule                                                                                                                 |
+| `BeyFormRadioField`        | `string`   | `options`, a value or a rule                                                                                                                 |
+| `BeyFormAutocompleteField` | `string`   | `options`, a value or a rule; `emptyKey`                                                                                                     |
+| `BeyFormCheckboxField`     | `boolean`  | `isSwitch` (`false`)                                                                                                                         |
+| `BeyFormChipsField`        | `string[]` | `maxItems`, `allowDuplicates` (`false`)                                                                                                      |
+| `BeyFormFileField`         | `File`     | `accept` (`[]`), `maxSizeBytes`, both validated                                                                                              |
+| `BeyFormTextVariableField` | `string`   | `options`, a value or a rule, inserted as `{{ value }}`                                                                                      |
+| `BeyFormInfoField`         | none       | `items: { label, icon?, tooltip?, tooltipItems? }[]`, shows text without a control, with a tooltip that lists `tooltipItems` under `tooltip` |
 
 An option is `{ label, value, badge?, isDisabled? }`; `label` and `badge` are translation keys. When the options
 of a select, a radio or an autocomplete change and no longer list its value, the form clears it.

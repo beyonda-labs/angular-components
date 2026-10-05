@@ -1,0 +1,18 @@
+:host {
+    display: block;
+    text-align: left;
+}
+
+.bey-tooltip-list-title {
+    font-weight: var(--bey-font-weight-semibold);
+    margin: 0 0 var(--bey-space-2xs);
+}
+
+.bey-tooltip-list {
+    margin: 0;
+    padding-left: var(--bey-space-lg);
+}
+
+.bey-tooltip-list-item {
+    overflow-wrap: anywhere;
+}

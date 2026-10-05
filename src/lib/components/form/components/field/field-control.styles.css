@@ -25,6 +25,20 @@
     font-size: var(--bey-font-size-sm);
 }
 
+.bey-form-field-control.is-placeholder {
+    color: var(--bey-form-field-placeholder);
+    font-size: var(--bey-font-size-sm);
+}
+
+.bey-form-field-control.is-placeholder option {
+    color: var(--bey-form-field-fg);
+    font-size: var(--bey-font-size-md);
+}
+
+.bey-form-field-control option.bey-form-field-placeholder-option {
+    color: var(--bey-form-field-placeholder);
+}
+
 .bey-form-field-check {
     align-items: center;
     display: flex;
