@@ -13,6 +13,7 @@ Every field extends `BeyFormField` and takes the same base parameters; each type
 | `isHidden`              | `false` | Value or rule; a hidden field is disabled as well               |
 | `isLabelVisible`        | `true`  | Shows the label above the control                               |
 | `isLabelTooltipVisible` | `false` | Shows an info icon with `<prefix>.<key>.tooltip`                |
+| `label`                 |         | Overrides `<prefix>.<key>.label`, for a label built from data   |
 | `placeholder`           |         | Overrides `<prefix>.<key>.placeholder`                          |
 | `validators`            | `[]`    | Sync validators; which ones depends on the value, see below     |
 | `asyncValidators`       | `[]`    | `BeyFormFieldAsyncValidator` instances                          |

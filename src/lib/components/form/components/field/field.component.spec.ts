@@ -65,6 +65,20 @@ describe('FormFieldComponent', () => {
         expect(input.placeholder).toBe('demo.contact.value-string.placeholder');
     });
 
+    it('shows the label the field is given instead of the one of its prefix', async () => {
+        await render(new FormTextField({ key: 'clientName', label: 'client_name' }));
+        const label = fixture.nativeElement.querySelector('label') as HTMLLabelElement;
+
+        expect(label.textContent?.trim()).toBe('client_name');
+        expect(label.htmlFor).toBe('clientName');
+    });
+
+    it('labels a checkbox with the label it is given', async () => {
+        await render(new FormCheckboxField({ key: 'subscribed', label: 'is_subscribed' }));
+
+        expect(fixture.nativeElement.querySelector('label')?.textContent?.trim()).toBe('is_subscribed');
+    });
+
     it('keeps a placeholder given in the config as it is', async () => {
         await render(new FormTextField({ key: 'valueString', placeholder: 'app.shared.typeHere' }));
         const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;

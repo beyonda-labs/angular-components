@@ -98,6 +98,8 @@ export class FormSection {
     prefix: string;
     rows: FormRow[];
 
+    label?: string;
+
     constructor({
         key,
         rows,
@@ -105,12 +107,14 @@ export class FormSection {
         isHidden = false,
         isTitleVisible = true,
         isTooltipVisible = false,
+        label,
         prefix = key
     }: FormSectionParameters) {
         this.isHidden = isHidden;
         this.isTitleVisible = isTitleVisible;
         this.isTooltipVisible = isTooltipVisible;
         this.key = key;
+        this.label = label;
         this.prefix = prefix;
         this.rows = rows;
     }
@@ -164,6 +168,7 @@ export interface FormSectionParameters {
     isHidden?: FormRule<boolean>;
     isTitleVisible?: boolean;
     isTooltipVisible?: boolean;
+    label?: string;
     prefix?: string;
 }
 
