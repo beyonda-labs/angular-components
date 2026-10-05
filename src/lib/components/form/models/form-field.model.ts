@@ -45,6 +45,7 @@ export abstract class FormField {
     type: FormFieldType;
     validators: FormFieldValidator[];
 
+    label?: string;
     placeholder?: string;
 
     constructor({
@@ -58,6 +59,7 @@ export abstract class FormField {
         isLabelTooltipVisible = false,
         isLabelVisible = true,
         isRequired = false,
+        label,
         placeholder,
         validators = []
     }: FormFieldParameters) {
@@ -69,6 +71,7 @@ export abstract class FormField {
         this.isLabelVisible = isLabelVisible;
         this.isRequired = isRequired;
         this.key = key;
+        this.label = label;
         this.placeholder = placeholder;
         this.type = type;
         this.validators = validators;
@@ -85,6 +88,7 @@ export interface FormFieldBaseParameters {
     isLabelTooltipVisible?: boolean;
     isLabelVisible?: boolean;
     isRequired?: FormRule<boolean>;
+    label?: string;
     placeholder?: string;
     validators?: FormFieldValidator[];
 }

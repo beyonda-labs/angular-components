@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 
 import { HttpService } from '../../../services/http/http.service';
 import { PageBackendResponse } from '../models/page.model';
-import { PageTrashItem } from '../models/page-categories.model';
+import { PageRestoredRename, PageTrashItem } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
 import { PageUrlService } from './page-url.service';
 
@@ -93,8 +93,16 @@ export class PageHttpService {
         return this.httpService.put<void>(this.url(relativeUrl, '/move'), { items, targetId }, { successToast });
     }
 
-    restoreTrashItems(relativeUrl: string, items: PageTrashItem[], successToast: string): Observable<void> {
-        return this.httpService.put<void>(this.url(relativeUrl, '/trash'), { items }, { successToast });
+    restoreTrashItems(
+        relativeUrl: string,
+        items: PageTrashItem[],
+        successToast: string
+    ): Observable<PageRestoredRename[]> {
+        return this.httpService
+            .put<{
+                renamed?: PageRestoredRename[];
+            } | null>(this.url(relativeUrl, '/trash'), { items }, { successToast })
+            .pipe(map(response => response?.renamed ?? []));
     }
 
     private url(relativeUrl: string, suffix = ''): string {

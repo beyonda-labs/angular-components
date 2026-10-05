@@ -554,7 +554,7 @@ describe('PageActionsService', () => {
         });
 
         it('restores the selected trash items without asking for confirmation', () => {
-            restoreTrashItems.mockReturnValue(of(null));
+            restoreTrashItems.mockReturnValue(of([]));
             const items: PageTrashItem[] = [{ id: 3, type: PageItemType.Category }];
             const context = buildContext({ selectedItems: () => items });
 

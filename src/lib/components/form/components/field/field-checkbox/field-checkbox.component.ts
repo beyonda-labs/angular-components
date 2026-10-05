@@ -18,7 +18,7 @@ export class FormCheckboxFieldComponent {
     readonly isRequired = input(false);
     readonly prefix = input.required<string>();
 
-    readonly label = computed(() => `${this.prefix()}.label`);
+    readonly label = computed(() => this.field().label ?? `${this.prefix()}.label`);
 
     isInvalid(): boolean {
         const control = this.control();

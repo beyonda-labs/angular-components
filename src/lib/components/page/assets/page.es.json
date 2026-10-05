@@ -4,6 +4,9 @@
             "form": {
                 "cancel": "Cancelar",
                 "submit": "Guardar"
+            },
+            "toast": {
+                "restored-renamed": "Restaurado con otro nombre, porque otro elemento ya tiene el anterior: {{names}}"
             }
         }
     }

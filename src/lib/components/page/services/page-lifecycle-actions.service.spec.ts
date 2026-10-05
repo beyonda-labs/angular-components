@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
+import { FakeToastService } from '@testing/services/fake-toast.service';
 import { of } from 'rxjs';
 
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
@@ -9,6 +10,7 @@ import { FormSelectField } from '../../form/models/fields/form-select-field.mode
 import { FormFieldPatternValidator } from '../../form/models/form-field-validator.model';
 import { PageConfig, PageConfigParameters } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
+import { PageItemType } from '../models/page-categories.model';
 import { PageDuplicationConfig, PageLifecycleFormValue, PageStatusConfig } from '../models/page-lifecycle.model';
 import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
@@ -185,6 +187,17 @@ describe('PageLifecycleActionsService', () => {
             service.changeStatus(buildConfig({ statusConfig: undefined }), { id: 'oats' }, onSaved);
 
             expect(openWithRequest).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('reportRenamed', () => {
+        it('tells the user which restored items took a new name, and says nothing when none did', () => {
+            const toast = TestBed.inject(FakeToastService);
+
+            service.reportRenamed([]);
+            service.reportRenamed([{ field: 'name', from: 'Oats', id: 'oats', to: 'Oats 2', type: PageItemType.Item }]);
+
+            expect(toast.infos()).toEqual([{ message: 'angular-components.page.toast.restored-renamed' }]);
         });
     });
 });

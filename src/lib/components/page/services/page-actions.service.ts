@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { isObservable, Observable, of, switchMap } from 'rxjs';
+import { isObservable, map, Observable, of, switchMap } from 'rxjs';
 
 import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
@@ -333,7 +333,9 @@ export class PageActionsService {
             mapPayload: toTrashItems,
             onComplete: () => context.onSaved(),
             request: (baseUrl, items, successToast) =>
-                this.pageHttpService.restoreTrashItems(baseUrl, items, successToast)
+                this.pageHttpService
+                    .restoreTrashItems(baseUrl, items, successToast)
+                    .pipe(map(renamed => this.pageLifecycleActionsService.reportRenamed(renamed)))
         });
     }
 

@@ -187,7 +187,9 @@ as a link that opens it, as plain text in the trash. A custom cell opens a categ
 `handle.openCategory(category)`. With `tableConfig.isTrashEnabled`, with or without categories, a segmented toggle
 switches to the flat trash view, where the
 `restore-trash-item` and `delete-trash-item` actions apply, and `empty-trash`, shown while the backend lists it in
-the `globalActions` of the trash, deletes everything in it with `DELETE {baseUrl}/trash/all`. `move` opens the tree
+the `globalActions` of the trash, deletes everything in it with `DELETE {baseUrl}/trash/all`. When the backend answers
+a restore with `renamed`, the rows that came back with a new name because another row had theirs, an info toast lists
+them (`angular-components.page.toast.restored-renamed`). `move` opens the tree
 picker with every category, disabling the selected ones and their descendants.
 
 On a page with categories an action `handler` receives only the selected rows that are not categories, since

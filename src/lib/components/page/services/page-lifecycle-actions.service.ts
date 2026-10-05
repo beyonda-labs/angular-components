@@ -4,14 +4,18 @@ import { isObservable, of, switchMap } from 'rxjs';
 
 import { ConfirmationModalConfig } from '../../modal/models/modal.model';
 import { ModalService } from '../../modal/services/modal.service';
+import { ToastService } from '../../toast/services/toast.service';
 import { buildChangeStatusForm, buildDuplicateForm } from '../functions/page-lifecycle-forms';
 import { readRowField } from '../functions/page-row';
 import { PageConfig } from '../models/page.model';
 import { PageAction } from '../models/page-action.model';
+import { PageRestoredRename } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
 import { PAGE_LIFECYCLE_FORM_SECTION, PageDuplicationConfig } from '../models/page-lifecycle.model';
 import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
+
+const RESTORED_RENAMED_KEY = 'angular-components.page.toast.restored-renamed';
 
 @Injectable({
     providedIn: 'root'
@@ -20,6 +24,7 @@ export class PageLifecycleActionsService {
     private readonly modalService = inject(ModalService);
     private readonly pageFormService = inject(PageFormService);
     private readonly pageHttpService = inject(PageHttpService);
+    private readonly toastService = inject(ToastService);
     private readonly translateService = inject(TranslateService);
 
     changeStatus(config: PageConfig, item: PageItem, onSaved: () => void): void {
@@ -90,5 +95,17 @@ export class PageLifecycleActionsService {
                         .subscribe(() => onEmptied());
                 }
             });
+    }
+
+    reportRenamed(renamed: PageRestoredRename[]): void {
+        if (renamed.length === 0) {
+            return;
+        }
+
+        this.toastService.showInfo({
+            message: this.translateService.instant(RESTORED_RENAMED_KEY, {
+                names: renamed.map(({ from, to }) => `"${from}" → "${to}"`).join(', ')
+            })
+        });
     }
 }

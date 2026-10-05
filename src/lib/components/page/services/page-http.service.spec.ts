@@ -65,6 +65,18 @@ describe('PageHttpService', () => {
         ]);
     });
 
+    it('answers the items a restore renamed, and none from a backend that answers no body', () => {
+        const renamed = [{ field: 'name', from: 'Offer', id: '1', to: 'Offer 2', type: 'item' }];
+        const answers: unknown[] = [];
+
+        service.restoreTrashItems('/items', trashItems, 'restored').subscribe(value => answers.push(value));
+        httpTesting.expectOne('https://api.test/api/items/trash').flush({ renamed });
+        service.restoreTrashItems('/items', trashItems, 'restored').subscribe(value => answers.push(value));
+        httpTesting.expectOne('https://api.test/api/items/trash').flush(null);
+
+        expect(answers).toEqual([renamed, []]);
+    });
+
     it('deletes, moves and restores in bulk with the ids or the typed items as body', () => {
         service.deleteItems('/items', [1, 2], 'deleted').subscribe();
         service.deleteCategories('/items', [3], 'categories-deleted').subscribe();

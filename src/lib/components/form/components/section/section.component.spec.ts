@@ -47,6 +47,13 @@ describe('FormSectionComponent', () => {
         expect(fixture.nativeElement.querySelectorAll('input')).toHaveLength(2);
     });
 
+    it('shows the title it is given instead of the one of its prefix', async () => {
+        await render({ label: 'Customer data' });
+
+        expect(fixture.nativeElement.textContent).toContain('Customer data');
+        expect(fixture.nativeElement.textContent).not.toContain('demo.contact.label');
+    });
+
     it('resolves the texts from its own prefix when the section names one', async () => {
         await render({ prefix: 'person' });
 

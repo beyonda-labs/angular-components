@@ -55,7 +55,8 @@ The value is one object per section, keyed by the section key, with one entry pe
 `{ person: { name: 'Ada', email: '' } }`.
 
 `BeyFormSection` takes `key`, `rows`, and optionally `isHidden` (a rule, see below), `isTitleVisible`,
-`isTooltipVisible` and `prefix`, which lets two sections share the same texts. `BeyFormRow` takes `fields`
+`isTooltipVisible`, `prefix`, which lets two sections share the same texts, and `label`, a title that replaces
+`<prefix>.<key>.label`. `BeyFormRow` takes `fields`
 and an `alignment` of `start` or `end`. `BeyFormButton` takes `label`, `type`, an optional `action` that
 receives the handle, `isHidden` and `tooltip`.
 

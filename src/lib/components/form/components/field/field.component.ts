@@ -62,7 +62,7 @@ export class FormFieldComponent {
     readonly formControl = computed(() => this.control() as FormControl | null);
     readonly hasLabel = computed(() => this.field().isLabelVisible && this.field().type !== FormFieldType.Checkbox);
     readonly infoIcon = faInfoCircle;
-    readonly label = computed(() => `${this.fieldPrefix()}.label`);
+    readonly label = computed(() => this.field().label ?? `${this.fieldPrefix()}.label`);
     readonly tooltip = computed(() => `${this.fieldPrefix()}.tooltip`);
     readonly type = computed(() => this.field().type);
 
