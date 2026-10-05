@@ -5,6 +5,7 @@ import { faPaperclip, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { formatBytes } from '../../../../../utilities/file-size';
+import { fieldErrorOf } from '../../../functions/field-error';
 import { FormFileField } from '../../../models/fields/form-file-field.model';
 import { trackControl } from '../functions/control-state';
 
@@ -56,6 +57,10 @@ export class FormFileFieldComponent {
 
     fileSize(): string {
         return formatBytes(this.file()?.size);
+    }
+
+    hasErrorMessage(): boolean {
+        return this.isInvalid() && fieldErrorOf(this.control().errors) !== null;
     }
 
     isDisabled(): boolean {

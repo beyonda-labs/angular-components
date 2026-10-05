@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 import { of } from 'rxjs';
 
@@ -104,6 +105,40 @@ describe('PageFormService', () => {
         config.onSubmit?.(currentValue, handle);
 
         expect(onEdit).toHaveBeenCalledWith(currentValue, handle);
+    });
+
+    it('asks with the confirmation of confirmSave before saving, and saves only once confirmed', () => {
+        const modal = TestBed.inject(FakeModalService);
+        const onSave = jest.fn();
+        const pageForm = buildPageForm();
+        const item: PageItem = { id: 7 };
+        const confirmation = { message: 'testPage.modal.rename.message', title: 'testPage.modal.rename.title' };
+        const currentValue: TestFormValue = { section1: { text1: 'renamed' } };
+
+        pageForm.confirmSave = (value, original) =>
+            value.section1.text1 !== String(original?.id) ? confirmation : null;
+        service.open(pageForm, item, 'testPage', onSave);
+
+        getOpenedConfig().onSubmit?.(currentValue, {} as FormHandle<TestFormValue>);
+        expect(modal.confirmations()).toEqual([confirmation]);
+        expect(onSave).not.toHaveBeenCalled();
+
+        modal.setConfirmationAnswer(true);
+        getOpenedConfig().onSubmit?.(currentValue, {} as FormHandle<TestFormValue>);
+        expect(onSave).toHaveBeenCalledWith({ mapped: currentValue }, {});
+    });
+
+    it('saves without asking when confirmSave answers no confirmation', () => {
+        const modal = TestBed.inject(FakeModalService);
+        const onSave = jest.fn();
+        const pageForm = buildPageForm();
+
+        pageForm.confirmSave = () => of(null);
+        service.open(pageForm, { id: 7 }, 'testPage', onSave);
+        getOpenedConfig().onSubmit?.({ section1: { text1: '7' } }, {} as FormHandle<TestFormValue>);
+
+        expect(modal.confirmations()).toEqual([]);
+        expect(onSave).toHaveBeenCalledTimes(1);
     });
 
     it('opens a form with its own request through the modal forms and reports the save once it answers', () => {

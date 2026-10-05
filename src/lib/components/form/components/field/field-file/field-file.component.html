@@ -43,7 +43,7 @@
         <div class="bey-form-file-message is-error">
             {{ errorKey | translate: { maxSize: maxSize(), accept: acceptLabel() } }}
         </div>
-    } @else if (maxSize()) {
+    } @else if (maxSize() && !hasErrorMessage()) {
         <div class="bey-form-file-message">
             {{ 'angular-components.form.file-field.max-size' | translate: { maxSize: maxSize() } }}
         </div>

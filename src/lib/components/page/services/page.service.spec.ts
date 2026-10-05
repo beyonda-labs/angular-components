@@ -46,11 +46,12 @@ describe('PageService', () => {
         });
     }
 
-    function buildCategorisedConfig(useTrash = false): PageConfig {
+    function buildCategorisedConfig(isTrashEnabled = false): PageConfig {
         return buildConfig({
             tableConfig: new PageTableConfig({
-                categoriesConfig: new PageCategoriesConfig({ useTrash }),
+                categoriesConfig: new PageCategoriesConfig({}),
                 columns: [],
+                isTrashEnabled,
                 loadRow: () => []
             })
         });
@@ -309,6 +310,20 @@ describe('PageService', () => {
             service.setViewMode(PageViewMode.Table);
             flush();
             expect(breadcrumbLabels()).toEqual(['demo.categories.root']);
+        });
+
+        it('offers the trash on a page without categories too', () => {
+            service.setConfig(
+                buildConfig({
+                    tableConfig: new PageTableConfig({ columns: [], isTrashEnabled: true, loadRow: () => [] })
+                })
+            );
+            flush();
+
+            service.viewToggleConfig()?.onTabChange?.(PageViewMode.Trash);
+            flush();
+
+            expect(pageHttpService.loadTrash).toHaveBeenCalled();
         });
 
         it('takes a category form typed by its value and hands it to the category actions', () => {

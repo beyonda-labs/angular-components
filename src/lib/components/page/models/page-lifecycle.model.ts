@@ -1,12 +1,22 @@
+import { FormFieldValidator } from '../../form/models/form-field-validator.model';
+
 export const PAGE_LIFECYCLE_FORM_SECTION = 'main';
 
 export type PageLifecycleFormValue = Record<typeof PAGE_LIFECYCLE_FORM_SECTION, Record<string, string>>;
 
 export class PageDuplicationConfig {
+    copySeparator: string;
     nameField: string;
+    nameValidators: FormFieldValidator[];
 
-    constructor({ nameField = 'name' }: PageDuplicationConfigParameters = {}) {
+    constructor({
+        copySeparator = ' ',
+        nameField = 'name',
+        nameValidators = []
+    }: PageDuplicationConfigParameters = {}) {
+        this.copySeparator = copySeparator;
         this.nameField = nameField;
+        this.nameValidators = nameValidators;
     }
 }
 
@@ -21,7 +31,9 @@ export class PageStatusConfig {
 }
 
 export interface PageDuplicationConfigParameters {
+    copySeparator?: string;
     nameField?: string;
+    nameValidators?: FormFieldValidator[];
 }
 
 export interface PageStatusConfigParameters {

@@ -141,7 +141,14 @@
                     "label": "Created On"
                 },
                 "label": "Info Fields",
-                "tooltip": "Read-only icon/label pairs — no input styling, no FormControl"
+                "list1": {
+                    "label": "Used In"
+                },
+                "list2": {
+                    "label": "Empty List",
+                    "placeholder": "Nothing to list yet"
+                },
+                "tooltip": "Read-only icon/label pairs and scrollable lists — no input styling, no FormControl"
             },
             "section-number": {
                 "label": "Number Fields",

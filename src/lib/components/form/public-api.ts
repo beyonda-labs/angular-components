@@ -32,6 +32,7 @@ export {
     FormFieldCustomValidator as BeyFormFieldCustomValidator,
     FormFieldAsyncValidator as BeyFormFieldAsyncValidator
 } from './models/form-field-validator.model';
+export type { FormFieldError as BeyFormFieldError } from './models/form-field-validator.model';
 export { FormAutocompleteField as BeyFormAutocompleteField } from './models/fields/form-autocomplete-field.model';
 export { FormTextField as BeyFormTextField } from './models/fields/form-text-field.model';
 export { FormTextVariableField as BeyFormTextVariableField } from './models/fields/form-text-variable-field.model';
@@ -40,6 +41,8 @@ export { FormChipsField as BeyFormChipsField } from './models/fields/form-chips-
 export { FormDateField as BeyFormDateField } from './models/fields/form-date-field.model';
 export { FormFileField as BeyFormFileField } from './models/fields/form-file-field.model';
 export { FormInfoField as BeyFormInfoField } from './models/fields/form-info-field.model';
+export { FormListField as BeyFormListField } from './models/fields/form-list-field.model';
+export type { FormListFieldParameters as BeyFormListFieldParameters } from './models/fields/form-list-field.model';
 export type { FormInfoItem as BeyFormInfoItem } from './models/fields/form-info-field.model';
 export { FormNumberField as BeyFormNumberField } from './models/fields/form-number-field.model';
 export { FormPasswordField as BeyFormPasswordField } from './models/fields/form-password-field.model';

@@ -25,7 +25,6 @@ export class PageCategoriesConfig<TCategory extends PageItem = PageItem, TCatego
     nameField: string;
     parentField: string;
     typeField: string;
-    useTrash: boolean;
 
     formConfig?: PageFormConfig<TCategoryValue, TCategory>;
     loadRow?: (category: TCategory, viewMode: PageViewMode) => TableCell[];
@@ -35,15 +34,13 @@ export class PageCategoriesConfig<TCategory extends PageItem = PageItem, TCatego
         loadRow,
         nameField = 'name',
         parentField = 'parentId',
-        typeField = 'type',
-        useTrash = false
+        typeField = 'type'
     }: PageCategoriesConfigParameters<TCategory, TCategoryValue>) {
         this.formConfig = formConfig;
         this.loadRow = loadRow;
         this.nameField = nameField;
         this.parentField = parentField;
         this.typeField = typeField;
-        this.useTrash = useTrash;
     }
 }
 
@@ -53,5 +50,4 @@ export interface PageCategoriesConfigParameters<TCategory extends PageItem = Pag
     nameField?: string;
     parentField?: string;
     typeField?: string;
-    useTrash?: boolean;
 }

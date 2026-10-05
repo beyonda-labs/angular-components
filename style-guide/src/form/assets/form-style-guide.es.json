@@ -141,7 +141,14 @@
                     "label": "Creada el"
                 },
                 "label": "Campos de información",
-                "tooltip": "Pares de icono/etiqueta de solo lectura — sin estilo de input, sin FormControl"
+                "list1": {
+                    "label": "Usado en"
+                },
+                "list2": {
+                    "label": "Lista vacía",
+                    "placeholder": "Nada que listar todavía"
+                },
+                "tooltip": "Pares de icono/etiqueta y listas con scroll de solo lectura — sin estilo de input, sin FormControl"
             },
             "section-number": {
                 "label": "Campos numéricos",

@@ -4,6 +4,7 @@ import {
     BeyFormFieldPatternValidator,
     BeyFormFieldValidatorType,
     BeyFormInfoField,
+    BeyFormListField,
     BeyFormNumberField,
     BeyFormPasswordField,
     BeyFormRow,
@@ -139,6 +140,16 @@ export function buildInputSections(): BeyFormSection[] {
                                 { icon: faUser, label: 'Admin Admin' }
                             ]
                         })
+                    ]
+                }),
+                new BeyFormRow({
+                    fields: [
+                        new BeyFormListField({
+                            key: 'list1',
+                            columns: 6,
+                            items: Array.from({ length: 12 }, (_, index) => `Template ${index + 1}`)
+                        }),
+                        new BeyFormListField({ key: 'list2', columns: 6 })
                     ]
                 })
             ]

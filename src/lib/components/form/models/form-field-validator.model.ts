@@ -9,6 +9,12 @@ export enum FormFieldValidatorType {
     Url
 }
 
+export interface FormFieldError {
+    messageKey: string;
+
+    messageParameters?: Record<string, unknown>;
+}
+
 export class FormFieldAsyncValidator {
     asyncValidatorFn: AsyncValidatorFn;
 

@@ -7,13 +7,16 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { toKeySegment } from '../../../../utilities/key-segment';
 import { FormFieldState } from '../../form.component';
+import { fieldErrorOf } from '../../functions/field-error';
 import { FormField, FormFieldType } from '../../models/form-field.model';
+import { FormFieldError } from '../../models/form-field-validator.model';
 import { FormAutocompleteFieldComponent } from './field-autocomplete/field-autocomplete.component';
 import { FormCheckboxFieldComponent } from './field-checkbox/field-checkbox.component';
 import { FormChipsFieldComponent } from './field-chips/field-chips.component';
 import { FormDateFieldComponent } from './field-date/field-date.component';
 import { FormFileFieldComponent } from './field-file/field-file.component';
 import { FormInfoFieldComponent } from './field-info/field-info.component';
+import { FormListFieldComponent } from './field-list/field-list.component';
 import { FormNumberFieldComponent } from './field-number/field-number.component';
 import { FormPasswordFieldComponent } from './field-password/field-password.component';
 import { FormRadioFieldComponent } from './field-radio/field-radio.component';
@@ -32,6 +35,7 @@ import { FormTextareaFieldComponent } from './field-textarea/field-textarea.comp
         FormDateFieldComponent,
         FormFileFieldComponent,
         FormInfoFieldComponent,
+        FormListFieldComponent,
         FormNumberFieldComponent,
         FormPasswordFieldComponent,
         FormRadioFieldComponent,
@@ -61,4 +65,10 @@ export class FormFieldComponent {
     readonly label = computed(() => `${this.fieldPrefix()}.label`);
     readonly tooltip = computed(() => `${this.fieldPrefix()}.tooltip`);
     readonly type = computed(() => this.field().type);
+
+    error(): FormFieldError | null {
+        const control = this.control();
+
+        return control?.touched ? fieldErrorOf(control.errors) : null;
+    }
 }

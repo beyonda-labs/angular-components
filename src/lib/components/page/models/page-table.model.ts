@@ -13,6 +13,7 @@ export class PageTableConfig<
     allowSelection: boolean;
     columns: TableColumn[];
     height: string;
+    isTrashEnabled: boolean;
     loadRow: (item: TItem, viewMode: PageViewMode) => TableCell[];
     showPagination: boolean;
 
@@ -26,6 +27,7 @@ export class PageTableConfig<
         categoriesConfig,
         columns,
         height = '60vh',
+        isTrashEnabled = false,
         loadRow,
         onSelectionChange,
         order,
@@ -36,6 +38,7 @@ export class PageTableConfig<
         this.categoriesConfig = categoriesConfig;
         this.columns = columns;
         this.height = height;
+        this.isTrashEnabled = isTrashEnabled;
         this.loadRow = loadRow;
         this.onSelectionChange = onSelectionChange;
         this.order = order;
@@ -66,6 +69,7 @@ export interface PageTableConfigParameters<
     allowSelection?: boolean;
     categoriesConfig?: PageCategoriesConfig<TCategory, TCategoryValue>;
     height?: string;
+    isTrashEnabled?: boolean;
     onSelectionChange?: (items: (TItem | TCategory)[]) => void;
     order?: SearchSort;
     search?: PageTableSearchConfig;

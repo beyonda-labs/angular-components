@@ -19,6 +19,8 @@
 
 @if (type() === fieldType.Info) {
     <bey-form-info-field [field]="$any(field())"></bey-form-info-field>
+} @else if (type() === fieldType.List) {
+    <bey-form-list-field [field]="$any(field())" [label]="label()" [prefix]="fieldPrefix()"></bey-form-list-field>
 } @else if (formControl()) {
     @let control = formControl()!;
 
@@ -123,5 +125,11 @@
                 [prefix]="fieldPrefix()"
             ></bey-form-file-field>
         }
+    }
+
+    @if (error(); as error) {
+        <div class="bey-form-field-error" role="alert">
+            {{ error.messageKey | translate: error.messageParameters }}
+        </div>
     }
 }
