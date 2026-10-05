@@ -1,0 +1,30 @@
+:host {
+    --bey-form-list-border: var(--bey-border-default);
+    --bey-form-list-empty: var(--bey-text-disabled);
+    --bey-form-list-fg: var(--bey-text-primary);
+
+    display: block;
+    min-width: 0;
+}
+
+.bey-form-list {
+    border: var(--bey-border-width) solid var(--bey-form-list-border);
+    border-radius: var(--bey-radius-sm);
+    color: var(--bey-form-list-fg);
+    font-size: var(--bey-font-size-md);
+    line-height: var(--bey-line-height-base);
+    list-style: none;
+    margin: 0;
+    padding: var(--bey-space-xs) var(--bey-space-md);
+}
+
+.bey-form-list-item {
+    overflow-wrap: anywhere;
+}
+
+.bey-form-list-empty {
+    color: var(--bey-form-list-empty);
+    font-size: var(--bey-font-size-sm);
+    margin: 0;
+    padding: var(--bey-space-xs) 0;
+}

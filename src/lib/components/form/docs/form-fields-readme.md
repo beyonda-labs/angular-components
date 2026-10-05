@@ -28,15 +28,22 @@ Every field extends `BeyFormField` and takes the same base parameters; each type
 | `BeyFormDateField`         | `string`   | `format` (`YYYY-MM-DD`), `minDate`, `maxDate` in that format                                                                                 |
 | `BeyFormSelectField`       | `string`   | `options`, a value or a rule                                                                                                                 |
 | `BeyFormRadioField`        | `string`   | `options`, a value or a rule                                                                                                                 |
-| `BeyFormAutocompleteField` | `string`   | `options`, a value or a rule; `emptyKey`                                                                                                     |
+| `BeyFormAutocompleteField` | `string`   | `options`, a value or a rule; `emptyKey`; `isFreeTextAllowed` (`false`)                                                                      |
 | `BeyFormCheckboxField`     | `boolean`  | `isSwitch` (`false`)                                                                                                                         |
 | `BeyFormChipsField`        | `string[]` | `maxItems`, `allowDuplicates` (`false`)                                                                                                      |
 | `BeyFormFileField`         | `File`     | `accept` (`[]`), `maxSizeBytes`, both validated                                                                                              |
 | `BeyFormTextVariableField` | `string`   | `options`, a value or a rule, inserted as `{{ value }}`                                                                                      |
 | `BeyFormInfoField`         | none       | `items: { label, icon?, tooltip?, tooltipItems? }[]`, shows text without a control, with a tooltip that lists `tooltipItems` under `tooltip` |
+| `BeyFormListField`         | none       | `items`, a list of texts or a signal of one; shows its placeholder while empty                                                               |
 
 An option is `{ label, value, badge?, isDisabled? }`; `label` and `badge` are translation keys. When the options
-of a select, a radio or an autocomplete change and no longer list its value, the form clears it.
+of a select, a radio or an autocomplete change and no longer list its value, the form clears it. An autocomplete with
+`isFreeTextAllowed` takes what is typed as its value and offers the options as suggestions, so its value need not be
+one of them and the form keeps it; it shows no panel while no option matches.
+
+The list field shows read-only texts, such as everything that uses a record, in a bordered box. It never scrolls on
+its own: it grows with its texts and the form scrolls, so a modal has one scrollbar. A signal lets the texts arrive
+after the form opens. Like the info field, it has no control.
 
 The date field keeps the value as text in `format` and shows a datepicker in the current language. The
 autocomplete and the variable picker float above their ancestors, so a scrolling modal cannot clip them.
@@ -96,5 +103,33 @@ The checks a field brings with it (`min` and `max`, `minDate` and `maxDate`, `ma
 field has no control, so it has nothing to validate.
 
 Every field flags itself once touched while any of them fails: `aria-invalid` on the control and the invalid
-border. Apart from the file field, which writes a message for its own `accept` and `maxSizeBytes` checks, no
-field shows the text of an error.
+border. The file field writes a message for its own `accept` and `maxSizeBytes` checks.
+
+## Error messages
+
+A validator that returns its error as a `BeyFormFieldError`, `{ messageKey, messageParameters? }`, gets its text
+under the field once the field is touched: the first such error, translated with its parameters, in an
+`alert`. An error with any other value only flags the field, as before. It works the same from a custom or an
+async validator, and the file field hides its size hint while it shows.
+
+```ts
+new BeyFormFileField({
+    key: 'file',
+    asyncValidators: [
+        new BeyFormFieldAsyncValidator(control =>
+            findByContent(control.value).pipe(
+                map(existing =>
+                    existing
+                        ? {
+                              duplicate: {
+                                  messageKey: 'app.files.duplicate',
+                                  messageParameters: { name: existing.name }
+                              }
+                          }
+                        : null
+                )
+            )
+        )
+    ]
+});
+```

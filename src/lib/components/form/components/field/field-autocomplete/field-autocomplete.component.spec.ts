@@ -79,6 +79,59 @@ describe('FormAutocompleteFieldComponent', () => {
         expect(control.value).toBe('');
     });
 
+    describe('with free text', () => {
+        beforeEach(async () => {
+            fixture.destroy();
+            control = new FormControl<string | null>('Sales');
+            fixture = await renderComponent(FormAutocompleteFieldComponent, {
+                control,
+                field: new FormAutocompleteField({ key: 'section', isFreeTextAllowed: true }),
+                options: [
+                    { label: 'Sales', value: 'Sales' },
+                    { label: 'Support', value: 'Support' },
+                    { label: 'Billing', value: 'Billing' }
+                ],
+                prefix: 'demo.variable.section'
+            });
+        });
+
+        it('keeps the current value to edit and suggests every option until something is typed', async () => {
+            input().dispatchEvent(new Event('focus'));
+            await settle(fixture);
+
+            expect(input().value).toBe('Sales');
+            expect(panelOptions()).toHaveLength(3);
+        });
+
+        it('takes the typed text as the value, suggesting the options that match it', async () => {
+            input().dispatchEvent(new Event('focus'));
+            input().value = 'Su';
+            input().dispatchEvent(new Event('input'));
+            await settle(fixture);
+
+            expect(control.value).toBe('Su');
+            expect(textsOf(panelOptions())).toEqual(['Support']);
+
+            input().value = 'Suppliers';
+            input().dispatchEvent(new Event('input'));
+            input().dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+            await settle(fixture);
+
+            expect(control.value).toBe('Suppliers');
+            expect(input().value).toBe('Suppliers');
+            expect(panelOptions()).toHaveLength(0);
+        });
+
+        it('shows no panel while no option matches the typed text', async () => {
+            input().dispatchEvent(new Event('focus'));
+            input().value = 'Suppliers';
+            input().dispatchEvent(new Event('input'));
+            await settle(fixture);
+
+            expect(document.body.querySelector('[role="listbox"]')).toBeNull();
+        });
+    });
+
     it('moves the panel to the body while open and takes it away on close', async () => {
         input().dispatchEvent(new Event('focus'));
         await settle(fixture);

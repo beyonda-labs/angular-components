@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { queryAll, renderComponent, settle } from '@testing/dom';
+import { of } from 'rxjs';
 
 import { FormFieldState } from '../../form.component';
 import { FormAutocompleteField } from '../../models/fields/form-autocomplete-field.model';
@@ -12,6 +13,7 @@ import { FormPasswordField } from '../../models/fields/form-password-field.model
 import { FormTextField } from '../../models/fields/form-text-field.model';
 import { FormField, FormFieldOption } from '../../models/form-field.model';
 import {
+    FormFieldAsyncValidator,
     FormFieldCustomValidator,
     FormFieldLengthValidator,
     FormFieldPatternValidator,
@@ -89,6 +91,10 @@ describe('FormFieldComponent', () => {
 
         function control(): HTMLInputElement {
             return fixture.nativeElement.querySelector('#secret');
+        }
+
+        function alert(): HTMLElement | null {
+            return fixture.nativeElement.querySelector('[role="alert"]');
         }
 
         function isFlaggedInvalid(): boolean {
@@ -200,6 +206,48 @@ describe('FormFieldComponent', () => {
 
             await choose(new File(['pdf'], 'report.pdf'));
             expect(isFlaggedInvalid()).toBe(false);
+        });
+
+        it('shows the message of a failing validator once the field is touched', async () => {
+            await renderValidated(
+                new FormPasswordField({
+                    key: 'secret',
+                    validators: [
+                        new FormFieldCustomValidator(current =>
+                            current.value === 'secret'
+                                ? { obvious: { messageKey: 'demo.contact.secret.obvious' } }
+                                : null
+                        )
+                    ]
+                })
+            );
+
+            await type('secret');
+            expect(alert()).toBeNull();
+
+            control().dispatchEvent(new Event('blur'));
+            await settle(fixture);
+            expect(alert()?.textContent?.trim()).toBe('demo.contact.secret.obvious');
+
+            await type('long enough');
+            expect(alert()).toBeNull();
+        });
+
+        it('shows the message of a failing async validator on a file instead of its size hint', async () => {
+            await renderValidated(
+                new FormFileField({
+                    key: 'secret',
+                    asyncValidators: [
+                        new FormFieldAsyncValidator(() => of({ duplicate: { messageKey: 'demo.files.duplicate' } }))
+                    ],
+                    maxSizeBytes: 1024
+                })
+            );
+
+            await choose(new File(['pdf'], 'report.pdf'));
+
+            expect(alert()?.textContent?.trim()).toBe('demo.files.duplicate');
+            expect(fixture.nativeElement.textContent).not.toContain('angular-components.form.file-field.max-size');
         });
     });
 });

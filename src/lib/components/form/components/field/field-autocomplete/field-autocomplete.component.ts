@@ -46,13 +46,17 @@ export class FormAutocompleteFieldComponent {
     readonly controlState = trackControl(this.control);
     readonly emptyKey = computed(() => this.field().emptyKey ?? EMPTY_KEY);
     readonly filteredOptions = computed(() => {
-        const term = this.query().trim().toLowerCase();
+        const term = this.hasTyped() ? this.query().trim().toLowerCase() : '';
 
         return term
             ? this.options().filter(option => this.optionLabel(option).toLowerCase().includes(term))
             : this.options();
     });
+    readonly hasTyped = signal(false);
     readonly isOpen = signal(false);
+    readonly isPanelVisible = computed(
+        () => this.isOpen() && (this.filteredOptions().length > 0 || !this.field().isFreeTextAllowed)
+    );
     readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
     readonly query = signal('');
     readonly toggleIcon = faChevronDown;
@@ -88,7 +92,11 @@ export class FormAutocompleteFieldComponent {
     }
 
     displayValue(): string {
-        return this.isOpen() ? this.query() : this.selectedLabel();
+        if (this.isOpen() && (this.hasTyped() || !this.field().isFreeTextAllowed)) {
+            return this.query();
+        }
+
+        return this.selectedLabel();
     }
 
     hasValue(): boolean {
@@ -145,6 +153,8 @@ export class FormAutocompleteFieldComponent {
 
             if (option) {
                 this.onOptionPicked(option);
+            } else if (this.field().isFreeTextAllowed) {
+                this.close();
             }
         }
     }
@@ -161,9 +171,16 @@ export class FormAutocompleteFieldComponent {
     }
 
     onQueryInput(event: Event): void {
-        this.query.set((event.target as HTMLInputElement).value);
+        const { value } = event.target as HTMLInputElement;
+
+        this.query.set(value);
+        this.hasTyped.set(true);
         this.activeIndex.set(-1);
         this.isOpen.set(true);
+
+        if (this.field().isFreeTextAllowed) {
+            this.select(value);
+        }
     }
 
     onToggle(): void {
@@ -184,6 +201,7 @@ export class FormAutocompleteFieldComponent {
     private close(): void {
         this.isOpen.set(false);
         this.query.set('');
+        this.hasTyped.set(false);
         this.activeIndex.set(-1);
     }
 
@@ -208,6 +226,7 @@ export class FormAutocompleteFieldComponent {
     private open(): void {
         this.isOpen.set(true);
         this.query.set('');
+        this.hasTyped.set(false);
         this.activeIndex.set(-1);
     }
 
@@ -250,8 +269,13 @@ export class FormAutocompleteFieldComponent {
     }
 
     private selectedLabel(): string {
-        const selected = this.options().find(option => option.value === this.controlState.value());
+        const value = this.controlState.value();
+        const selected = this.options().find(option => option.value === value);
 
-        return selected ? this.optionLabel(selected) : '';
+        if (selected) {
+            return this.optionLabel(selected);
+        }
+
+        return this.field().isFreeTextAllowed ? (value ?? '') : '';
     }
 }

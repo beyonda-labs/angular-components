@@ -16,6 +16,7 @@ import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
 import { FormSectionComponent } from './components/section/section.component';
 import { resolveRule } from './functions/form-rule-resolution';
+import { FormAutocompleteField } from './models/fields/form-autocomplete-field.model';
 import { FormButton, FormButtonType, FormConfig, FormHandle, FormSection } from './models/form.model';
 import { FormField, FormFieldOption, FormFieldType, FormValue } from './models/form-field.model';
 import { FORM_HOST } from './models/form-host.model';
@@ -342,7 +343,7 @@ export class FormComponent<TValue = unknown> {
                         );
                     }
 
-                    if (OPTION_FIELD_TYPES.has(field.type)) {
+                    if (OPTION_FIELD_TYPES.has(field.type) && !isFreeText(field)) {
                         this.dropUnlistedValue(control, field, state, previous?.fieldStates.get(key));
                     }
                 }
@@ -363,6 +364,10 @@ function haveSameOptions(previous: FormFieldOption[], current: FormFieldOption[]
     return (
         previous.length === current.length && previous.every((option, index) => option.value === current[index].value)
     );
+}
+
+function isFreeText(field: FormField): boolean {
+    return field.type === FormFieldType.Autocomplete && (field as FormAutocompleteField).isFreeTextAllowed;
 }
 
 function noop(): void {}

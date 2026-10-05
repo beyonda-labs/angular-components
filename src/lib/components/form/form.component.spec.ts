@@ -483,6 +483,23 @@ describe('FormComponent', () => {
             );
         });
 
+        it('keeps the value of an autocomplete that allows free text, listed or not', async () => {
+            const onReady = jest.fn();
+            await render(
+                buildContactConfig(
+                    [
+                        new FormTextField({ key: 'name' }),
+                        new FormAutocompleteField({ key: 'email', isFreeTextAllowed: true, options: optionsByName })
+                    ],
+                    { initialValue: { contact: { email: 'home', name: 'Ada' } }, onReady }
+                )
+            );
+
+            await type('name', 'Grace');
+
+            expect((onReady.mock.calls[0][0] as FormHandle<DemoValue>).value().contact.email).toBe('home');
+        });
+
         it('keeps a value its new options still list', async () => {
             const onReady = jest.fn();
             await render(

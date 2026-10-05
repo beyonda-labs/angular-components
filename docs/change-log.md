@@ -44,6 +44,9 @@
 -   Form module: `BeyModalFormConfig` keeps `cancelLabel` and `submitLabel`, so a config spread into a new one is a full copy.
 -   Form module: `BeyModalFormService.openWithRequest(config, submit)` opens a modal form whose submit sends a request and closes once it answers, for any screen; `BeyPageHandle.openForm` is built on it, and `BeyFakeModalFormService` does the same in specs.
 -   Services: `provideBeyHttp()`, included in `provideBeyApp` and `provideBeyTesting`, keeps rxjs from reporting an HTTP error the service already showed.
+-   Form module: a validator error shaped as `BeyFormFieldError` (`{ messageKey, messageParameters? }`) is shown translated under its field once touched, sync or async; the file field drops its size hint meanwhile.
+-   Form module: `isFreeTextAllowed` on `BeyFormAutocompleteField` takes the typed text as the value and keeps the options as suggestions, so a value outside them stays.
+-   Form module: `BeyFormListField` shows read-only texts as a list, from an array or a signal, with its placeholder while empty; it grows with its texts and leaves the scroll to the form.
 
 ### Changed
 

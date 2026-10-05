@@ -9,6 +9,7 @@ export enum FormFieldType {
     Date = 'date',
     File = 'file',
     Info = 'info',
+    List = 'list',
     Number = 'number',
     Password = 'password',
     Radio = 'radio',
