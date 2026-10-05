@@ -18,6 +18,7 @@ export interface PageBackendResponse<TRow extends PageItem = PageItem> {
 
 export interface PageHandle<TItem extends PageItem = PageItem, TCategory extends PageItem = TItem> {
     openCategory(category: TCategory): void;
+    openEdit(row: TItem | TCategory): void;
     openForm<TValue>(config: ModalFormConfig<TValue>, submit: (value: TValue) => Observable<unknown>): void;
     refresh(): void;
     selected(): (TItem | TCategory)[];

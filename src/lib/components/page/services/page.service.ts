@@ -78,6 +78,7 @@ export class PageService {
     readonly currentCategoryId = signal<string | number | null>(null);
     readonly handle: PageHandle = {
         openCategory: item => this.openCategory(item),
+        openEdit: row => this.openEdit(row),
         openForm: (config, submit) => this.openForm(config, submit),
         refresh: () => this.refresh(),
         selected: () => this.selected(),
@@ -240,6 +241,14 @@ export class PageService {
             this.selected.set([]);
             this.refresh();
         });
+    }
+
+    openEdit(row: PageItem): void {
+        const config = this.config();
+
+        if (config) {
+            this.pageActionsService.openEditForm(this.buildActionsContext(config), row);
+        }
     }
 
     openForm<TValue>(config: ModalFormConfig<TValue>, submit: (value: TValue) => Observable<unknown>): void {

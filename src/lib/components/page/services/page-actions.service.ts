@@ -11,7 +11,7 @@ import { ModalService } from '../../modal/services/modal.service';
 import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
 import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
 import { buildMoveTargetNodes } from '../functions/page-move-targets';
-import { isActionVisible, toHandlerItems } from '../functions/page-row';
+import { isActionVisible, isCategoryRow, toHandlerItems } from '../functions/page-row';
 import { PageConfig } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageMoveTarget, PageTrashItem } from '../models/page-categories.model';
@@ -151,6 +151,14 @@ export class PageActionsService {
         }
 
         return visible;
+    }
+
+    openEditForm(context: PageActionsContext, row: PageItem): void {
+        if (isCategoryRow(row, context.config.tableConfig?.categoriesConfig)) {
+            this.openCategoryForm(context, row);
+        } else {
+            this.openForm(context, row);
+        }
     }
 
     openRequestForm<TValue>(

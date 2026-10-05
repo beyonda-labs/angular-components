@@ -20,6 +20,7 @@
 -   Table module: `BeyDateTableCell`, formatted in the `LOCALE_ID` locale (`mediumDate` unless `format` says otherwise), and `BeyTagsTableCell`, plain strings as untranslated outline badges.
 -   Table module: a row with fewer cells than columns is completed with empty cells.
 -   Page module: `duplicate` and `change-status` standard actions: a modal form for the name of the copy or for one of the statuses the current one reaches (`BeyPageStatusConfig`), sent to `POST {baseUrl}/{id}/duplicate` and `POST {baseUrl}/{id}/status` with their success toast and a reload; `BeyPageDuplicationConfig` names the field the copy is named by.
+-   Page module: `openEdit(row)` on `BeyPageHandle` opens the edit form of a row, or the categories form of a category, as the `edit` action does, so a cell can open it.
 -   Page module: `empty-trash` standard action, shown in the trash while the backend lists it, asks with `<prefix>.modal.empty-trash` and sends `DELETE {baseUrl}/trash/all`.
 -   Services: the HTTP error modal explains `action-unavailable` and `invalid-transition`.
 -   Table module: `icon` on `BeyTextTableCell` and `BeyLinkTableCell`, a FontAwesome icon drawn before the content and hidden from screen readers; on a link it is part of the link.

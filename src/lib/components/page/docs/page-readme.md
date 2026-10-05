@@ -60,7 +60,8 @@ readonly config = new BeyPageConfig<UserFormValue, User>({
 
 The config is never written to. What the consumer needs to do to the live page goes through the
 `BeyPageHandle` that `onReady` delivers: `refresh()` reloads the current page, `openCategory(category)` drills
-into a category, `selected()` and `viewMode()` read the state, and `openForm(config, submit)` opens a
+into a category, `openEdit(row)` opens the edit form of a row as the `edit` action does (the categories form for a
+category), `selected()` and `viewMode()` read the state, and `openForm(config, submit)` opens a
 `BeyModalFormConfig` for an action of the page: its submit sends `submit(value)`, and the modal closes and the page
 reloads once that request answers, or stays open when it fails. The config's own `onSubmit` is replaced.
 

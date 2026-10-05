@@ -1,16 +1,22 @@
 import { TestBed } from '@angular/core/testing';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
+import { FormSection } from '../../form/models/form.model';
 import { PageConfig } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
+import { PageCategoriesConfig, PageItemType } from '../models/page-categories.model';
+import { PageFormConfig } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
+import { PageTableConfig } from '../models/page-table.model';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
+import { PageFormService } from './page-form.service';
 import { PageLifecycleActionsService } from './page-lifecycle-actions.service';
 
 describe('PageActionsService — duplicate and change status', () => {
     const changeStatus = jest.fn();
     const duplicate = jest.fn();
     const emptyTrash = jest.fn();
+    const openPageForm = jest.fn<object, [unknown, unknown]>(() => ({}));
     let service: PageActionsService;
 
     function buildContext(selectedItems: PageItem[]): PageActionsContext {
@@ -41,7 +47,8 @@ describe('PageActionsService — duplicate and change status', () => {
         TestBed.configureTestingModule({
             providers: [
                 provideBeyTesting(),
-                { provide: PageLifecycleActionsService, useValue: { changeStatus, duplicate, emptyTrash } }
+                { provide: PageLifecycleActionsService, useValue: { changeStatus, duplicate, emptyTrash } },
+                { provide: PageFormService, useValue: { open: openPageForm } }
             ]
         });
         service = TestBed.inject(PageActionsService);
@@ -68,6 +75,37 @@ describe('PageActionsService — duplicate and change status', () => {
 
         expect(emptyTrash).toHaveBeenCalledWith(context.config, expect.any(PageAction), expect.any(Function));
         expect(context.onTrashItemDeleted).toHaveBeenCalled();
+    });
+
+    it('opens the edit form of the row it is given, or the category form for a category', () => {
+        const itemForm = new PageFormConfig({
+            buildSections: () => [new FormSection({ key: 'main', rows: [] })],
+            prefix: 'item'
+        });
+        const categoryForm = new PageFormConfig({ buildSections: () => [], prefix: 'category' });
+        const context = {
+            ...buildContext([]),
+            config: new PageConfig({
+                baseUrl: '/items',
+                formConfig: itemForm,
+                prefix: 'testPage',
+                tableConfig: new PageTableConfig({
+                    categoriesConfig: new PageCategoriesConfig({ formConfig: categoryForm }),
+                    columns: [],
+                    loadRow: () => []
+                })
+            })
+        };
+        const item = { id: 1, type: PageItemType.Item };
+        const category = { id: 2, type: PageItemType.Category };
+
+        service.openEditForm(context, item);
+        service.openEditForm(context, category);
+
+        expect(openPageForm.mock.calls.map(([form, row]) => [form, row])).toEqual([
+            [itemForm, item],
+            [categoryForm, category]
+        ]);
     });
 
     it('neither duplicates nor changes the status of several rows at once', () => {
