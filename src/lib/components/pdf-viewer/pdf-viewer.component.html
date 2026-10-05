@@ -5,6 +5,7 @@
             [page]="currentPage()"
             [pagesCount]="pagesCount()"
             [zoom]="zoomFactor()"
+            (download)="onDownload()"
             (pageChange)="onToolbarPageChange($event)"
             (zoomChange)="onToolbarZoomChange($event)"
         >
@@ -15,8 +16,11 @@
     <div class="bey-pdf-viewer-frame" (click)="onContainerClick($event)">
         <ngx-extended-pdf-viewer
             [backgroundColor]="config().backgroundColor"
+            [contextMenuAllowed]="hasFullToolbar()"
+            [enableDragAndDrop]="hasFullToolbar()"
             [filenameForDownload]="config().filenameForDownload"
             [height]="config().height"
+            [ignoreKeyboard]="!hasFullToolbar()"
             [maxZoom]="config().maxZoom"
             [minZoom]="config().minZoom"
             [page]="currentPage()"

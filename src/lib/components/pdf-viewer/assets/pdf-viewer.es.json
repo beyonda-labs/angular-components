@@ -2,6 +2,7 @@
     "angular-components": {
         "pdf-viewer": {
             "toolbar": {
+                "download": "Descargar",
                 "page": "Página",
                 "zoom-in": "Ampliar",
                 "zoom-out": "Reducir"

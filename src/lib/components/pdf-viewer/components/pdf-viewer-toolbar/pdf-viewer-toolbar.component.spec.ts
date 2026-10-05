@@ -5,11 +5,13 @@ import { buttonByName, renderComponent, settle } from '@testing/dom';
 import { PdfViewerConfig } from '../../models/pdf-viewer-config.model';
 import { PdfViewerToolbarComponent } from './pdf-viewer-toolbar.component';
 
+const DOWNLOAD = 'angular-components.pdf-viewer.toolbar.download';
 const PAGE = 'angular-components.pdf-viewer.toolbar.page';
 const ZOOM_IN = 'angular-components.pdf-viewer.toolbar.zoom-in';
 const ZOOM_OUT = 'angular-components.pdf-viewer.toolbar.zoom-out';
 
 interface ToolbarInputs {
+    config?: PdfViewerConfig;
     page?: number;
     pagesCount?: number;
     zoom?: number;
@@ -18,6 +20,7 @@ interface ToolbarInputs {
 describe('PdfViewerToolbarComponent', () => {
     let fixture: ComponentFixture<PdfViewerToolbarComponent>;
 
+    const download = jest.fn();
     const pageChange = jest.fn();
     const zoomChange = jest.fn();
 
@@ -29,6 +32,7 @@ describe('PdfViewerToolbarComponent', () => {
             zoom: 1,
             ...inputs
         });
+        fixture.componentInstance.download.subscribe(download);
         fixture.componentInstance.pageChange.subscribe(pageChange);
         fixture.componentInstance.zoomChange.subscribe(zoomChange);
     }
@@ -62,6 +66,16 @@ describe('PdfViewerToolbarComponent', () => {
 
         expect(text()).toContain('150%');
         expect(text()).toContain('/ 3');
+    });
+
+    it('offers downloading the document only when the config allows it', async () => {
+        await render();
+        expect(fixture.nativeElement.querySelector(`button[aria-label="${DOWNLOAD}"]`)).toBeNull();
+
+        await render({ config: new PdfViewerConfig({ isDownloadable: true, src: 'invoice.pdf' }) });
+        buttonByName(fixture, DOWNLOAD).click();
+
+        expect(download).toHaveBeenCalledTimes(1);
     });
 
     it('leaves the page field out until the document has pages', async () => {

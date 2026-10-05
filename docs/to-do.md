@@ -260,6 +260,8 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [ ] Feedback: `alert`, `progress bar`
 -   [x] Modals (info, warning, error, confirmation via service)
 -   [ ] Drawers
+-   [ ] Pdf viewer: find text in the document from the compact toolbar, with its own search field, next and previous
+        match and a match count; the find bar of pdf.js is off outside its full toolbar
 
 ### Data and navigation
 

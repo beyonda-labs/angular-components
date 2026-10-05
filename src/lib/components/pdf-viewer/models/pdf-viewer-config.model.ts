@@ -19,6 +19,7 @@ export interface PdfViewerHandle {
 export class PdfViewerConfig {
     backgroundColor: string;
     height: string;
+    isDownloadable: boolean;
     maxZoom: number;
     minZoom: number;
     page: number;
@@ -44,6 +45,7 @@ export class PdfViewerConfig {
         backgroundColor = 'var(--bey-bg-surface)',
         filenameForDownload,
         height = '100%',
+        isDownloadable = false,
         maxZoom = 10,
         minZoom = 0.1,
         page = 1,
@@ -60,6 +62,7 @@ export class PdfViewerConfig {
         this.backgroundColor = backgroundColor;
         this.filenameForDownload = filenameForDownload;
         this.height = height;
+        this.isDownloadable = isDownloadable;
         this.maxZoom = maxZoom;
         this.minZoom = minZoom;
         this.page = page;
@@ -79,6 +82,7 @@ export interface PdfViewerConfigParameters {
     backgroundColor?: string;
     filenameForDownload?: string;
     height?: string;
+    isDownloadable?: boolean;
     maxZoom?: number;
     minZoom?: number;
     onClick?: (event: MouseEvent) => void;

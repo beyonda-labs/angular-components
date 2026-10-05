@@ -2,9 +2,11 @@ import { ChangeDetectionStrategy, Component, computed, effect, input, linkedSign
 import { NgxExtendedPdfViewerModule, PageRenderedEvent, PdfLoadedEvent } from 'ngx-extended-pdf-viewer';
 
 import { PdfViewerToolbarComponent } from './components/pdf-viewer-toolbar/pdf-viewer-toolbar.component';
+import { downloadPdf } from './functions/pdf-download';
 import { PdfViewerConfig, PdfViewerHandle } from './models/pdf-viewer-config.model';
 import { PdfViewerRotation, PdfViewerToolbar, PdfViewerZoom } from './models/pdf-viewer-value.model';
 
+const DEFAULT_FILE_NAME = 'document.pdf';
 const PERCENT = 100;
 
 @Component({
@@ -45,6 +47,12 @@ export class PdfViewerComponent {
 
     onContainerClick(event: MouseEvent): void {
         this.config().onClick?.(event);
+    }
+
+    onDownload(): void {
+        const { filenameForDownload, src } = this.config();
+
+        downloadPdf(src, filenameForDownload ?? DEFAULT_FILE_NAME);
     }
 
     onPageChange(page?: number): void {

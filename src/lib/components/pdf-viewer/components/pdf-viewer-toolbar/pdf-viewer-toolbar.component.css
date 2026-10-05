@@ -1,4 +1,10 @@
 :host {
+    --bey-pdf-viewer-toolbar-fg: var(--bey-text-primary);
+    --bey-pdf-viewer-toolbar-fg-muted: var(--bey-text-muted);
+    --bey-pdf-viewer-toolbar-field-bg: transparent;
+    --bey-pdf-viewer-toolbar-field-border: var(--bey-border-default);
+    --bey-pdf-viewer-toolbar-field-border-focus: var(--bey-primary);
+
     display: block;
 }
 
@@ -24,7 +30,7 @@
 }
 
 .bey-pdf-viewer-toolbar-zoom {
-    color: var(--bey-text-primary);
+    color: var(--bey-pdf-viewer-toolbar-fg);
     font-size: var(--bey-font-size-sm);
     font-variant-numeric: tabular-nums;
     min-width: 3rem;
@@ -32,12 +38,21 @@
 }
 
 .bey-pdf-viewer-toolbar-page {
+    background-color: var(--bey-pdf-viewer-toolbar-field-bg);
+    border-color: var(--bey-pdf-viewer-toolbar-field-border);
+    color: var(--bey-pdf-viewer-toolbar-fg);
     text-align: center;
     width: 3.5rem;
 }
 
+.bey-pdf-viewer-toolbar-page:focus {
+    background-color: var(--bey-pdf-viewer-toolbar-field-bg);
+    border-color: var(--bey-pdf-viewer-toolbar-field-border-focus);
+    color: var(--bey-pdf-viewer-toolbar-fg);
+}
+
 .bey-pdf-viewer-toolbar-pages {
-    color: var(--bey-text-muted);
+    color: var(--bey-pdf-viewer-toolbar-fg-muted);
     font-size: var(--bey-font-size-sm);
     white-space: nowrap;
 }

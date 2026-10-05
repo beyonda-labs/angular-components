@@ -315,6 +315,7 @@
         },
         "pdf-viewer": {
             "toolbar": {
+                "download": "Download",
                 "page": "Page",
                 "zoom-in": "Zoom in",
                 "zoom-out": "Zoom out"
