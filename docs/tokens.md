@@ -80,6 +80,16 @@ colours as bare channels, for the rules that need `rgba()`.
 | `--bey-danger`     | `--bey-red`    | —             |
 | `--bey-warning`    | `--bey-orange` | —             |
 
+### Highlight
+
+| Token                    | Value                               | Used for                |
+| ------------------------ | ----------------------------------- | ----------------------- |
+| `--bey-highlight`        | `rgba(var(--bey-orange-rgb), 0.35)` | Every match of a search |
+| `--bey-highlight-strong` | `rgba(var(--bey-orange-rgb), 0.7)`  | The current match       |
+
+Both are declared again under `body.dark`, so they read the dark orange: a custom property resolves the variables it
+reads where it is declared.
+
 ---
 
 ## Spacing

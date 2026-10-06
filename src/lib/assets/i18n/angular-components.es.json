@@ -322,7 +322,11 @@
         "pdf-viewer": {
             "toolbar": {
                 "download": "Descargar",
+                "next-match": "Coincidencia siguiente",
+                "no-matches": "Sin resultados",
                 "page": "Página",
+                "previous-match": "Coincidencia anterior",
+                "search": "Buscar en el documento",
                 "zoom-in": "Ampliar",
                 "zoom-out": "Reducir"
             }

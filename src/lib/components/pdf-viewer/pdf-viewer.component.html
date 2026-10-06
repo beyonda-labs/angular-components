@@ -4,9 +4,13 @@
             [config]="config()"
             [page]="currentPage()"
             [pagesCount]="pagesCount()"
+            [searchMatches]="searchMatches()"
             [zoom]="zoomFactor()"
             (download)="onDownload()"
             (pageChange)="onToolbarPageChange($event)"
+            (searchChange)="onSearchChange($event)"
+            (searchNext)="onSearchNext()"
+            (searchPrevious)="onSearchPrevious()"
             (zoomChange)="onToolbarZoomChange($event)"
         >
             <ng-content select="[bey-pdf-viewer-status]"></ng-content>
@@ -42,6 +46,7 @@
             [showZoomButtons]="config().toolbarButtons.zoomButtons"
             [showZoomDropdown]="config().toolbarButtons.zoomDropdown"
             [src]="config().src"
+            [textLayer]="textLayer()"
             [zoom]="zoomInput()"
             (currentZoomFactor)="onZoomFactorChange($event)"
             (pageChange)="onPageChange($event)"
@@ -49,6 +54,7 @@
             (pdfLoaded)="onPdfLoaded($event)"
             (pdfLoadingFailed)="onPdfLoadingFailed($event)"
             (rotationChange)="onRotationChange($event)"
+            (updateFindMatchesCount)="onFindMatchesCount($event)"
             (zoomChange)="onZoomModelChange($event)"
         ></ngx-extended-pdf-viewer>
     </div>

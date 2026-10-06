@@ -322,7 +322,11 @@
         "pdf-viewer": {
             "toolbar": {
                 "download": "Download",
+                "next-match": "Next match",
+                "no-matches": "No matches",
                 "page": "Page",
+                "previous-match": "Previous match",
+                "search": "Search in the document",
                 "zoom-in": "Zoom in",
                 "zoom-out": "Zoom out"
             }

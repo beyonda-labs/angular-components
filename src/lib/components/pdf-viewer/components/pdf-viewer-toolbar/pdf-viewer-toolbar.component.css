@@ -4,7 +4,9 @@
     --bey-pdf-viewer-toolbar-field-bg: transparent;
     --bey-pdf-viewer-toolbar-field-border: var(--bey-border-default);
     --bey-pdf-viewer-toolbar-field-border-focus: var(--bey-primary);
+    --bey-pdf-viewer-toolbar-placeholder: var(--bey-text-disabled);
 
+    container-type: inline-size;
     display: block;
 }
 
@@ -55,4 +57,61 @@
     color: var(--bey-pdf-viewer-toolbar-fg-muted);
     font-size: var(--bey-font-size-sm);
     white-space: nowrap;
+}
+
+.bey-pdf-viewer-toolbar-search {
+    align-items: center;
+    display: inline-flex;
+    gap: var(--bey-space-sm);
+    justify-self: end;
+    min-width: 0;
+}
+
+.bey-pdf-viewer-toolbar-search-box {
+    flex: 0 1 12rem;
+    min-width: 6rem;
+    position: relative;
+}
+
+.bey-pdf-viewer-toolbar-search-icon {
+    color: var(--bey-pdf-viewer-toolbar-fg-muted);
+    font-size: var(--bey-font-size-xs);
+    left: var(--bey-space-sm);
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.bey-pdf-viewer-toolbar-search-input {
+    background-color: var(--bey-pdf-viewer-toolbar-field-bg);
+    border-color: var(--bey-pdf-viewer-toolbar-field-border);
+    border-radius: var(--bey-radius-sm);
+    color: var(--bey-pdf-viewer-toolbar-fg);
+    font-size: var(--bey-font-size-sm);
+    padding-left: var(--bey-space-xl);
+}
+
+.bey-pdf-viewer-toolbar-search-input:focus {
+    background-color: var(--bey-pdf-viewer-toolbar-field-bg);
+    border-color: var(--bey-pdf-viewer-toolbar-field-border-focus);
+    color: var(--bey-pdf-viewer-toolbar-fg);
+}
+
+.bey-pdf-viewer-toolbar-search-input::placeholder {
+    color: var(--bey-pdf-viewer-toolbar-placeholder);
+}
+
+.bey-pdf-viewer-toolbar-matches {
+    color: var(--bey-pdf-viewer-toolbar-fg-muted);
+    font-size: var(--bey-font-size-sm);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+@container (max-width: 991.98px) {
+    .bey-pdf-viewer-toolbar-search {
+        grid-column: 1 / -1;
+        justify-self: center;
+    }
 }
