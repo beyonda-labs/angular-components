@@ -24,6 +24,18 @@ describe('PropertyField', () => {
         expect(field.value).toBe('custom');
     });
 
+    describe('withDisabled', () => {
+        it('returns a disabled copy of the same subclass, leaving the original enabled', () => {
+            const field = new PropertyTextField({ id: 'text', placeholder: 'Enter text', value: 'FACTURA' });
+            const disabled = field.withDisabled();
+
+            expect(disabled).toBeInstanceOf(PropertyTextField);
+            expect([disabled.disabled, disabled.value, disabled.placeholder]).toEqual([true, 'FACTURA', 'Enter text']);
+            expect(field.disabled).toBe(false);
+            expect(disabled.withDisabled(false).disabled).toBe(false);
+        });
+    });
+
     describe('withValue', () => {
         it('returns a new instance with the updated value, of the same subclass', () => {
             const field = new PropertyTextField({ id: 'text', placeholder: 'Enter text', value: 'FACTURA' });

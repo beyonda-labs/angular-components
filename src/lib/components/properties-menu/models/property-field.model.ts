@@ -57,6 +57,10 @@ export abstract class PropertyField<T = unknown> {
         this.value = value ?? defaultValue;
     }
 
+    withDisabled(disabled = true): this {
+        return Object.assign(Object.create(Object.getPrototypeOf(this)), this, { disabled });
+    }
+
     withValue(value: T | undefined): this {
         return Object.assign(Object.create(Object.getPrototypeOf(this)), this, { value });
     }
