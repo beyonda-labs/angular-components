@@ -320,13 +320,18 @@
             "results-range": "Showing {{ start }}-{{ end }} of {{ total }} results"
         },
         "pdf-viewer": {
-            "toolbar": {
-                "download": "Download",
+            "search": {
+                "close": "Close search",
+                "field": "Search in the document",
                 "next-match": "Next match",
                 "no-matches": "No matches",
+                "previous-match": "Previous match"
+            },
+            "toolbar": {
+                "download": "Download",
                 "page": "Page",
-                "previous-match": "Previous match",
                 "search": "Search in the document",
+                "search-tooltip": "Search in the document (Ctrl+F)",
                 "zoom-in": "Zoom in",
                 "zoom-out": "Zoom out"
             }

@@ -41,6 +41,10 @@
     color: var(--bey-text-primary);
 }
 
+.bey-button--icon-outline.is-pressed {
+    background-color: var(--bey-bg-active);
+}
+
 .bey-button--icon-outline:disabled {
     border-color: var(--bey-border-default);
     color: var(--bey-text-primary);

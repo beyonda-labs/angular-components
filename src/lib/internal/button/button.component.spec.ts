@@ -76,4 +76,12 @@ describe('ButtonComponent', () => {
         expect(button.disabled).toBe(true);
         expect(action).not.toHaveBeenCalled();
     });
+
+    it('tells assistive technology a pressed button is pressed, and says nothing of the others', async () => {
+        await render(buildButton({ isPressed: true }));
+        expect(buttons()[0].getAttribute('aria-pressed')).toBe('true');
+
+        await render();
+        expect(buttons()[0].hasAttribute('aria-pressed')).toBe(false);
+    });
 });

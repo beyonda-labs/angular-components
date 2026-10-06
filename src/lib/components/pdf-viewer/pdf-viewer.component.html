@@ -1,61 +1,73 @@
-<div class="bey-pdf-viewer">
+<div class="bey-pdf-viewer" (keydown)="onKeydown($event)">
     @if (hasCompactToolbar()) {
         <bey-pdf-viewer-toolbar
             [config]="config()"
+            [isSearchOpen]="isSearchOpen()"
             [page]="currentPage()"
             [pagesCount]="pagesCount()"
-            [searchMatches]="searchMatches()"
             [zoom]="zoomFactor()"
             (download)="onDownload()"
             (pageChange)="onToolbarPageChange($event)"
-            (searchChange)="onSearchChange($event)"
-            (searchNext)="onSearchNext()"
-            (searchPrevious)="onSearchPrevious()"
+            (searchToggle)="onSearchToggle()"
             (zoomChange)="onToolbarZoomChange($event)"
         >
             <ng-content select="[bey-pdf-viewer-status]"></ng-content>
         </bey-pdf-viewer-toolbar>
     }
 
-    <div class="bey-pdf-viewer-frame" (click)="onContainerClick($event)">
-        <ngx-extended-pdf-viewer
-            [backgroundColor]="config().backgroundColor"
-            [contextMenuAllowed]="hasFullToolbar()"
-            [enableDragAndDrop]="hasFullToolbar()"
-            [filenameForDownload]="config().filenameForDownload"
-            [height]="config().height"
-            [ignoreKeyboard]="!hasFullToolbar()"
-            [maxZoom]="config().maxZoom"
-            [minZoom]="config().minZoom"
-            [page]="currentPage()"
-            [password]="config().password"
-            [rotation]="currentRotation()"
-            [showBorders]="false"
-            [showDownloadButton]="config().toolbarButtons.downloadButton"
-            [showFindButton]="config().toolbarButtons.findButton"
-            [showHandToolButton]="config().toolbarButtons.handToolButton"
-            [showOpenFileButton]="config().toolbarButtons.openFileButton"
-            [showPagingButtons]="config().toolbarButtons.pagingButtons"
-            [showPresentationModeButton]="config().toolbarButtons.presentationModeButton"
-            [showPrintButton]="config().toolbarButtons.printButton"
-            [showPropertiesButton]="config().toolbarButtons.propertiesButton"
-            [showRotateButton]="config().toolbarButtons.rotateButton"
-            [showSecondaryToolbarButton]="config().toolbarButtons.secondaryToolbarButton"
-            [showSidebarButton]="config().toolbarButtons.sidebarButton"
-            [showToolbar]="hasFullToolbar()"
-            [showZoomButtons]="config().toolbarButtons.zoomButtons"
-            [showZoomDropdown]="config().toolbarButtons.zoomDropdown"
-            [src]="config().src"
-            [textLayer]="textLayer()"
-            [zoom]="zoomInput()"
-            (currentZoomFactor)="onZoomFactorChange($event)"
-            (pageChange)="onPageChange($event)"
-            (pageRendered)="onPageRendered($event)"
-            (pdfLoaded)="onPdfLoaded($event)"
-            (pdfLoadingFailed)="onPdfLoadingFailed($event)"
-            (rotationChange)="onRotationChange($event)"
-            (updateFindMatchesCount)="onFindMatchesCount($event)"
-            (zoomChange)="onZoomModelChange($event)"
-        ></ngx-extended-pdf-viewer>
+    <div class="bey-pdf-viewer-body">
+        @if (isSearchOpen()) {
+            <bey-pdf-viewer-search
+                class="bey-pdf-viewer-search-popup"
+                [matches]="searchMatches()"
+                [query]="searchQuery()"
+                (dismiss)="closeSearch()"
+                (next)="onSearchNext()"
+                (previous)="onSearchPrevious()"
+                (queryChange)="onSearchChange($event)"
+            ></bey-pdf-viewer-search>
+        }
+
+        <div #frame class="bey-pdf-viewer-frame" tabindex="-1" (click)="onContainerClick($event)">
+            <ngx-extended-pdf-viewer
+                [backgroundColor]="config().backgroundColor"
+                [contextMenuAllowed]="hasFullToolbar()"
+                [enableDragAndDrop]="hasFullToolbar()"
+                [filenameForDownload]="config().filenameForDownload"
+                [height]="config().height"
+                [ignoreKeyboard]="!hasFullToolbar()"
+                [maxZoom]="config().maxZoom"
+                [minZoom]="config().minZoom"
+                [page]="currentPage()"
+                [password]="config().password"
+                [rotation]="currentRotation()"
+                [showBorders]="false"
+                [showDownloadButton]="config().toolbarButtons.downloadButton"
+                [showFindButton]="config().toolbarButtons.findButton"
+                [showHandToolButton]="config().toolbarButtons.handToolButton"
+                [showOpenFileButton]="config().toolbarButtons.openFileButton"
+                [showPagingButtons]="config().toolbarButtons.pagingButtons"
+                [showPresentationModeButton]="config().toolbarButtons.presentationModeButton"
+                [showPrintButton]="config().toolbarButtons.printButton"
+                [showPropertiesButton]="config().toolbarButtons.propertiesButton"
+                [showRotateButton]="config().toolbarButtons.rotateButton"
+                [showSecondaryToolbarButton]="config().toolbarButtons.secondaryToolbarButton"
+                [showSidebarButton]="config().toolbarButtons.sidebarButton"
+                [showToolbar]="hasFullToolbar()"
+                [showZoomButtons]="config().toolbarButtons.zoomButtons"
+                [showZoomDropdown]="config().toolbarButtons.zoomDropdown"
+                [src]="config().src"
+                [textLayer]="textLayer()"
+                [zoom]="zoomInput()"
+                (currentZoomFactor)="onZoomFactorChange($event)"
+                (pageChange)="onPageChange($event)"
+                (pageRendered)="onPageRendered($event)"
+                (pdfLoaded)="onPdfLoaded($event)"
+                (pdfLoadingFailed)="onPdfLoadingFailed($event)"
+                (rotationChange)="onRotationChange($event)"
+                (updateFindMatchesCount)="onFindMatchesCount($event)"
+                (zoomChange)="onZoomModelChange($event)"
+            ></ngx-extended-pdf-viewer>
+        </div>
     </div>
 </div>

@@ -3,10 +3,12 @@ import {
     Component,
     computed,
     effect,
+    ElementRef,
     inject,
     input,
     linkedSignal,
-    signal
+    signal,
+    viewChild
 } from '@angular/core';
 import {
     FindResultMatchesCount,
@@ -16,6 +18,7 @@ import {
     PdfLoadedEvent
 } from 'ngx-extended-pdf-viewer';
 
+import { PdfViewerSearchComponent } from './components/pdf-viewer-search/pdf-viewer-search.component';
 import { PdfViewerToolbarComponent } from './components/pdf-viewer-toolbar/pdf-viewer-toolbar.component';
 import { downloadPdf } from './functions/pdf-download';
 import { PdfViewerConfig, PdfViewerHandle } from './models/pdf-viewer-config.model';
@@ -32,7 +35,7 @@ const PERCENT = 100;
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [NgxExtendedPdfViewerModule, PdfViewerToolbarComponent],
+    imports: [NgxExtendedPdfViewerModule, PdfViewerSearchComponent, PdfViewerToolbarComponent],
     selector: 'bey-pdf-viewer',
     standalone: true,
     styleUrls: ['./pdf-viewer.component.css'],
@@ -56,11 +59,14 @@ export class PdfViewerComponent {
     };
     readonly hasCompactToolbar = computed(() => this.config().toolbar === PdfViewerToolbar.Compact);
     readonly hasFullToolbar = computed(() => this.config().toolbar === PdfViewerToolbar.Full);
+    readonly hasSearch = computed(() => this.hasCompactToolbar() && this.config().isSearchable);
+    readonly isSearchOpen = signal(false);
     readonly pagesCount = linkedSignal({ computation: () => 0, source: this.config });
     readonly searchMatches = linkedSignal<PdfViewerConfig, PdfViewerSearchMatches>({
         computation: () => NO_SEARCH_MATCHES,
         source: this.config
     });
+    readonly searchQuery = signal('');
     readonly textLayer = computed(() => (this.config().isSearchable ? true : undefined));
     readonly zoomFactor = linkedSignal(() => toZoomFactor(this.config().zoom));
     readonly zoomInput = computed<PdfViewerZoom>(() => {
@@ -69,13 +75,30 @@ export class PdfViewerComponent {
         return typeof zoom === 'number' ? zoom * PERCENT : zoom;
     });
 
-    private readonly searchQuery = signal('');
+    private readonly frame = viewChild<ElementRef<HTMLElement>>('frame');
+    private readonly searchPanel = viewChild(PdfViewerSearchComponent);
+    private readonly toolbar = viewChild(PdfViewerToolbarComponent);
 
     constructor() {
         effect(() => this.config().onReady?.(this.handle));
     }
 
+    closeSearch(): void {
+        this.isSearchOpen.set(false);
+        this.searchMatches.set(NO_SEARCH_MATCHES);
+
+        if (this.searchQuery()) {
+            this.pdfViewerService.find('', { highlightAll: true });
+        }
+
+        this.toolbar()?.focusSearchButton();
+    }
+
     onContainerClick(event: MouseEvent): void {
+        if (this.hasSearch()) {
+            this.frame()?.nativeElement.focus({ preventScroll: true });
+        }
+
         this.config().onClick?.(event);
     }
 
@@ -87,6 +110,13 @@ export class PdfViewerComponent {
 
     onFindMatchesCount({ current, total }: FindResultMatchesCount): void {
         this.searchMatches.set({ current, total });
+    }
+
+    onKeydown(event: KeyboardEvent): void {
+        if (this.hasSearch() && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'f') {
+            event.preventDefault();
+            this.openSearch();
+        }
     }
 
     onPageChange(page?: number): void {
@@ -106,7 +136,7 @@ export class PdfViewerComponent {
         this.pagesCount.set(event.pagesCount);
         this.config().onLoaded?.({ pagesCount: event.pagesCount });
 
-        if (this.searchQuery()) {
+        if (this.isSearchOpen() && this.searchQuery()) {
             this.search();
         }
     }
@@ -133,6 +163,14 @@ export class PdfViewerComponent {
         this.pdfViewerService.findPrevious();
     }
 
+    onSearchToggle(): void {
+        if (this.isSearchOpen()) {
+            this.closeSearch();
+        } else {
+            this.openSearch();
+        }
+    }
+
     onToolbarPageChange(page: number): void {
         this.currentPage.set(page);
     }
@@ -153,6 +191,20 @@ export class PdfViewerComponent {
         }
 
         this.currentZoom.set((typeof zoom === 'number' ? zoom / PERCENT : zoom) as PdfViewerZoom);
+    }
+
+    private openSearch(): void {
+        if (this.isSearchOpen()) {
+            this.searchPanel()?.focusField();
+
+            return;
+        }
+
+        this.isSearchOpen.set(true);
+
+        if (this.searchQuery()) {
+            this.search();
+        }
     }
 
     private search(): void {

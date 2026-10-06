@@ -3,22 +3,19 @@ import { TranslateModule } from '@ngx-translate/core';
 import { buttonByName, renderComponent, settle } from '@testing/dom';
 
 import { PdfViewerConfig } from '../../models/pdf-viewer-config.model';
-import { PdfViewerSearchMatches } from '../../models/pdf-viewer-value.model';
 import { PdfViewerToolbarComponent } from './pdf-viewer-toolbar.component';
 
 const DOWNLOAD = 'angular-components.pdf-viewer.toolbar.download';
-const NEXT_MATCH = 'angular-components.pdf-viewer.toolbar.next-match';
 const PAGE = 'angular-components.pdf-viewer.toolbar.page';
-const PREVIOUS_MATCH = 'angular-components.pdf-viewer.toolbar.previous-match';
 const SEARCH = 'angular-components.pdf-viewer.toolbar.search';
 const ZOOM_IN = 'angular-components.pdf-viewer.toolbar.zoom-in';
 const ZOOM_OUT = 'angular-components.pdf-viewer.toolbar.zoom-out';
 
 interface ToolbarInputs {
     config?: PdfViewerConfig;
+    isSearchOpen?: boolean;
     page?: number;
     pagesCount?: number;
-    searchMatches?: PdfViewerSearchMatches;
     zoom?: number;
 }
 
@@ -27,9 +24,7 @@ describe('PdfViewerToolbarComponent', () => {
 
     const download = jest.fn();
     const pageChange = jest.fn();
-    const searchChange = jest.fn();
-    const searchNext = jest.fn();
-    const searchPrevious = jest.fn();
+    const searchToggle = jest.fn();
     const zoomChange = jest.fn();
 
     async function render(inputs: ToolbarInputs = {}): Promise<void> {
@@ -42,38 +37,12 @@ describe('PdfViewerToolbarComponent', () => {
         });
         fixture.componentInstance.download.subscribe(download);
         fixture.componentInstance.pageChange.subscribe(pageChange);
-        fixture.componentInstance.searchChange.subscribe(searchChange);
-        fixture.componentInstance.searchNext.subscribe(searchNext);
-        fixture.componentInstance.searchPrevious.subscribe(searchPrevious);
+        fixture.componentInstance.searchToggle.subscribe(searchToggle);
         fixture.componentInstance.zoomChange.subscribe(zoomChange);
     }
 
     function pageField(): HTMLInputElement | null {
         return fixture.nativeElement.querySelector(`input[aria-label="${PAGE}"]`);
-    }
-
-    function renderSearchable(inputs: ToolbarInputs = {}): Promise<void> {
-        return render({ config: new PdfViewerConfig({ isSearchable: true, src: 'invoice.pdf' }), ...inputs });
-    }
-
-    function searchField(): HTMLInputElement | null {
-        return fixture.nativeElement.querySelector(`input[aria-label="${SEARCH}"]`);
-    }
-
-    async function typeSearch(value: string): Promise<void> {
-        const field = searchField()!;
-
-        field.value = value;
-        field.dispatchEvent(new Event('input'));
-        await settle(fixture);
-    }
-
-    function pressInSearch(key: string, shiftKey = false): KeyboardEvent {
-        const event = new KeyboardEvent('keydown', { bubbles: true, cancelable: true, key, shiftKey });
-
-        searchField()!.dispatchEvent(event);
-
-        return event;
     }
 
     function text(): string {
@@ -89,9 +58,7 @@ describe('PdfViewerToolbarComponent', () => {
 
     beforeEach(async () => {
         pageChange.mockReset();
-        searchChange.mockReset();
-        searchNext.mockReset();
-        searchPrevious.mockReset();
+        searchToggle.mockReset();
         zoomChange.mockReset();
 
         await TestBed.configureTestingModule({
@@ -171,60 +138,27 @@ describe('PdfViewerToolbarComponent', () => {
         expect(pageField()?.value).toBe('2');
     });
 
-    it('offers searching the document only when the config allows it', async () => {
+    it('offers searching the document only when the config allows it, pressed while the search is open', async () => {
         await render();
-        expect(searchField()).toBeNull();
+        expect(fixture.nativeElement.querySelector(`button[aria-label="${SEARCH}"]`)).toBeNull();
 
-        await renderSearchable();
+        await render({ config: new PdfViewerConfig({ isSearchable: true, src: 'invoice.pdf' }) });
+        buttonByName(fixture, SEARCH).click();
 
-        expect(searchField()?.placeholder).toBe(SEARCH);
-        expect(fixture.nativeElement.querySelector('[role="search"]')).not.toBeNull();
-    });
+        expect(searchToggle).toHaveBeenCalledTimes(1);
+        expect(buttonByName(fixture, SEARCH).hasAttribute('aria-pressed')).toBe(false);
 
-    it('sends the query as it is typed, and moves to the next match with Enter and the previous one with Shift+Enter', async () => {
-        await renderSearchable({ searchMatches: { current: 1, total: 4 } });
-
-        await typeSearch('total');
-        pressInSearch('Enter');
-        pressInSearch('Enter', true);
-
-        expect(searchChange).toHaveBeenCalledWith('total');
-        expect(searchNext).toHaveBeenCalledTimes(1);
-        expect(searchPrevious).toHaveBeenCalledTimes(1);
-    });
-
-    it('counts the matches of a query, or says there are none, and moves between them with its arrows', async () => {
-        await renderSearchable({ searchMatches: { current: 2, total: 7 } });
-
-        expect(text()).not.toContain('2 / 7');
-
-        await typeSearch('total');
-        buttonByName(fixture, NEXT_MATCH).click();
-        buttonByName(fixture, PREVIOUS_MATCH).click();
-
-        expect(text()).toContain('2 / 7');
-        expect(searchNext).toHaveBeenCalledTimes(1);
-        expect(searchPrevious).toHaveBeenCalledTimes(1);
-
-        fixture.componentRef.setInput('searchMatches', { current: 0, total: 0 });
+        fixture.componentRef.setInput('isSearchOpen', true);
         await settle(fixture);
 
-        expect(text()).toContain('angular-components.pdf-viewer.toolbar.no-matches');
-        expect(buttonByName(fixture, NEXT_MATCH).disabled).toBe(true);
-        expect(buttonByName(fixture, PREVIOUS_MATCH).disabled).toBe(true);
+        expect(buttonByName(fixture, SEARCH).getAttribute('aria-pressed')).toBe('true');
     });
 
-    it('clears the query with Escape, keeping the key from closing the dialog around it, and lets it through once empty', async () => {
-        await renderSearchable();
-        await typeSearch('total');
+    it('gives the focus back to its search button', async () => {
+        await render({ config: new PdfViewerConfig({ isSearchable: true, src: 'invoice.pdf' }) });
 
-        const clearing = pressInSearch('Escape');
+        fixture.componentInstance.focusSearchButton();
 
-        await settle(fixture);
-
-        expect(searchField()?.value).toBe('');
-        expect(searchChange).toHaveBeenLastCalledWith('');
-        expect(clearing.defaultPrevented).toBe(true);
-        expect(pressInSearch('Escape').defaultPrevented).toBe(false);
+        expect(document.activeElement).toBe(buttonByName(fixture, SEARCH));
     });
 });
