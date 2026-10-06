@@ -52,6 +52,10 @@
             },
             "text-field": {
                 "insert-variable": "Insert variable"
+            },
+            "tree": {
+                "collapse": "Collapse",
+                "expand": "Expand"
             }
         }
     }

@@ -231,7 +231,7 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [x] The session, theme, app and environment services have no `docs/<module>-readme.md`
 -   [ ] `SearchField.getOperators()` is behaviour in a model, and `BadgeConfig.translate` is a boolean without the
         `is` prefix; both fixes rename or move a public member
--   [ ] The tree chevron has no role or name (it is mouse only), so the specs reach it through its markup
+-   [x] The tree chevron has no role or name (it is mouse only), so the specs reach it through its markup
 -   [ ] `search.component.css` needs a `stylelint-disable` because it styles Bootstrap's `.form-select` and
         `.form-control`; styling its own `bey-search-*` classes would drop it
 -   [x] `BeyHttpService` as one typed, cold channel: the request leaves on subscribe and is cancelled on

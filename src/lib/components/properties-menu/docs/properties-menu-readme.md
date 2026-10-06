@@ -52,19 +52,19 @@ The select and attachment fields carry their own `variables`, since which variab
 
 ### Callbacks
 
-| Callback                                                                       | Payload                                                          | When                                                                                   |
-| ------------------------------------------------------------------------------ | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `onActiveTabChange`                                                            | `tabId`                                                          | The active tab changes                                                                 |
-| `onClose`                                                                      |                                                                  | The header close button; it only shows when set                                        |
-| `onFieldValueChange`                                                           | `{ fieldId, previousValue, value }`                              | Any field value changes, variables included                                            |
-| `onVariableSelect`                                                             | `{ fieldId, variable, expression }`                              | A variable is inserted into a field                                                    |
-| `onFieldAction`                                                                | `{ fieldId, key, selectionStart, selectionEnd }`                 | A text field's `actionButton` with a selection                                         |
-| `onAttachmentUpload`                                                           | `{ fieldId, file }`                                              | A file is chosen in an attachment field                                                |
-| `onGroupToggle`, `onGroupRemove`                                               | `{ tabId, groupId, expanded? }`                                  | A group header or its remove action                                                    |
-| `onTabAdd`                                                                     | `{ tabId }`                                                      | A tab's `addLabel` button                                                              |
-| `onListItemSelect`, `onListItemToggle`, `onListItemAction`, `onListItemRemove` | `{ tabId, groupId, itemId, item? \| expanded? \| key? }`         | A card, its chevron, one of its actions, its remove button                             |
-| `onTreeNodeSelect`, `onTreeNodeToggle`, `onTreeAddBlock`                       | `{ tabId, groupId, nodeId?, node? \| expanded? }`                | A tree row, its chevron or `ArrowRight` / `ArrowLeft` on the row, the add-block button |
-| `onTreeDragStart`, `onTreeDrop`, `onTreeDragEnd`                               | `{ tabId, groupId, nodeId?, node? \| position?, targetNodeId? }` | The drag and drop cycle, see below                                                     |
+| Callback                                                                       | Payload                                                          | When                                                                                                              |
+| ------------------------------------------------------------------------------ | ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `onActiveTabChange`                                                            | `tabId`                                                          | The active tab changes                                                                                            |
+| `onClose`                                                                      |                                                                  | The header close button; it only shows when set                                                                   |
+| `onFieldValueChange`                                                           | `{ fieldId, previousValue, value }`                              | Any field value changes, variables included                                                                       |
+| `onVariableSelect`                                                             | `{ fieldId, variable, expression }`                              | A variable is inserted into a field                                                                               |
+| `onFieldAction`                                                                | `{ fieldId, key, selectionStart, selectionEnd }`                 | A text field's `actionButton` with a selection                                                                    |
+| `onAttachmentUpload`                                                           | `{ fieldId, file }`                                              | A file is chosen in an attachment field                                                                           |
+| `onGroupToggle`, `onGroupRemove`                                               | `{ tabId, groupId, expanded? }`                                  | A group header or its remove action                                                                               |
+| `onTabAdd`                                                                     | `{ tabId }`                                                      | A tab's `addLabel` button                                                                                         |
+| `onListItemSelect`, `onListItemToggle`, `onListItemAction`, `onListItemRemove` | `{ tabId, groupId, itemId, item? \| expanded? \| key? }`         | A card, its chevron, one of its actions, its remove button                                                        |
+| `onTreeNodeSelect`, `onTreeNodeToggle`, `onTreeAddBlock`                       | `{ tabId, groupId, nodeId?, node? \| expanded? }`                | A tree row or `Enter` / `Space` on it, its chevron or `ArrowRight` / `ArrowLeft` on the row, the add-block button |
+| `onTreeDragStart`, `onTreeDrop`, `onTreeDragEnd`                               | `{ tabId, groupId, nodeId?, node? \| position?, targetNodeId? }` | The drag and drop cycle, see below                                                                                |
 
 ## Replacing the config
 
@@ -146,7 +146,7 @@ Each field extends `BeyPropertyField` (`id`, `label`, `description`, `value`, `d
 variable as `{{ path }}` at the cursor; with an `actionButton` it shows that button while text is selected and
 reports the selection through `onFieldAction`. A `searchable` select filters its options by their translated
 label as the user types, and `Enter` picks the first enabled match. A file field shows the name of a file picked
-in the session; a value it was given shows as *File selected*. The attachment field filters `options` as the
+in the session; a value it was given shows as _File selected_. The attachment field filters `options` as the
 user types and checks the file type and size before `onAttachmentUpload`; storing the file and adding it to
 `options` is the consumer's job.
 
