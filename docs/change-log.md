@@ -95,6 +95,7 @@
 
 ### Fixed
 
+-   Table module: a link cell only answers a click on its text and its icon, not on the empty space of the cell, which selects the row like any other cell.
 -   Loading module: the full-screen overlay sits over the dialogs (`--bey-z-loading`), so a request sent from a modal form shows its loading instead of leaving the form still until it answers.
 -   Pdf viewer module: the compact toolbar reads in the dark theme: the page field takes the text, border and background of the theme instead of dark text on black, the buttons show their icon in the main text color, and a disabled button only fades.
 -   Table module: the rows are drawn again when the language changes, keeping the selection, so texts a `loadRow` translates itself no longer stay in the previous language.

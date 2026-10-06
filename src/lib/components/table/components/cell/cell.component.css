@@ -51,16 +51,20 @@
     display: flex;
     font-family: inherit;
     gap: var(--bey-space-sm);
+    max-width: 100%;
     min-width: 0;
     padding: 0;
     text-align: left;
     text-decoration: underline;
     text-decoration-color: var(--bey-table-link-underline);
-    width: 100%;
 }
 
 .bey-table-cell-link:hover {
     text-decoration-color: var(--bey-table-link-underline-hover);
+}
+
+.bey-table-cell-link .bey-table-cell-content {
+    width: auto;
 }
 
 .bey-table-cell-badges {
