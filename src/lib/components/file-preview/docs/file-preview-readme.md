@@ -46,8 +46,8 @@ this.filePreview.open(
 | `alt`      | no       | `title` | i18n key or literal, the alternative text of an image    |
 
 The dialog is named by its title through `aria-labelledby`, and its close button by
-`angular-components.file-preview.close`. Escape and the backdrop close it as well; while the search of a PDF holds
-a query, Escape clears it first.
+`angular-components.file-preview.close`. Escape and the backdrop close it as well; while the search of a PDF is
+open, Escape closes it first.
 
 ## Theming
 

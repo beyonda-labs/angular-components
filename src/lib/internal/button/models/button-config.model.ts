@@ -14,6 +14,7 @@ export class ButtonConfig {
     action: () => void;
     isDisabled: boolean;
     isHidden: boolean;
+    isPressed: boolean;
     label: string;
     tooltip: string;
     type: ButtonType;
@@ -32,6 +33,7 @@ export class ButtonConfig {
         icon,
         isDisabled = false,
         isHidden = false,
+        isPressed = false,
         label = '',
         tooltip = '',
         tooltipPlacement,
@@ -44,6 +46,7 @@ export class ButtonConfig {
         this.icon = icon;
         this.isDisabled = isDisabled;
         this.isHidden = isHidden;
+        this.isPressed = isPressed;
         this.label = label;
         this.tooltip = tooltip;
         this.tooltipPlacement = tooltipPlacement;
@@ -60,6 +63,7 @@ export interface ButtonParameters {
     icon?: IconDefinition;
     isDisabled?: boolean;
     isHidden?: boolean;
+    isPressed?: boolean;
     label?: string;
     tooltip?: string;
     tooltipPlacement?: TooltipPlacement;

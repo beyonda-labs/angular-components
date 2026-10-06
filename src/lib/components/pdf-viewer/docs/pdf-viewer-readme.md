@@ -84,19 +84,25 @@ readonly viewer = new BeyPdfViewerConfig({
 ```
 
 Its buttons and the page field are named by `angular-components.pdf-viewer.toolbar.zoom-out`, `zoom-in`,
-`download` and `page`, and the search by `search`, `previous-match`, `next-match` and `no-matches`. The two zoom buttons are the library's bordered icon squares and show their name as a tooltip, also
+`download`, `page` and `search`, with `search-tooltip` as the tooltip of the last one. The search box names its field,
+its buttons and the empty count with `angular-components.pdf-viewer.search.field`, `previous-match`, `next-match`,
+`close` and `no-matches`. The two zoom buttons are the library's bordered icon squares and show their name as a tooltip, also
 while disabled at `minZoom` or `maxZoom`.
 
 ### Search
 
-With `isSearchable` the compact toolbar ends in a search field, drawn like the search box of `bey-search`: the
-document is searched as the reader types, ignoring case and accents as pdf.js does, every match is highlighted and
-the current one stands out. Next to the field the toolbar counts the matches (`2 / 7`) or says there are none, and
-two arrows move to the previous and the next one, as `Shift+Enter` and `Enter` do in the field. `Escape` clears a
-query and stops there, so it does not close the dialog the viewer is in; with the field empty it goes through. A new
-document in the same viewer, such as a refreshed preview, is searched again for the query still typed. When the
-toolbar is narrower than Bootstrap's `lg` breakpoint, as in a side panel, the search moves to a row of its own under
-the controls: the toolbar is a size container, so it follows its own width rather than the window's.
+With `isSearchable` the compact toolbar gets a search button, pressed while the search is open, and `Ctrl+F` (`Cmd+F`)
+opens it while the focus is inside the viewer. A click on the document takes the focus there, since the hand tool of
+pdf.js would leave it on the page. The search is a box floating at the top right of the document, over its pages,
+drawn like the filters panel of `bey-search`: the document is searched as the reader types, ignoring case and accents
+as pdf.js does, every match is highlighted and the current one stands out. The box counts the matches (`2 / 7`) or
+says there are none, and two arrows move to the previous and the next one, as `Shift+Enter` and `Enter` do in its
+field.
+
+`Escape`, from anywhere in the box, or its close button close it, clear the highlights and give the focus back to the
+search button; the key stops there, so it does not close the dialog the viewer is in. Opened again, the box searches
+the last query, selected to type over it. A new document in the same viewer, such as a refreshed preview, is searched
+again while the box is open.
 
 A searchable viewer always renders the text layer of pdf.js, which draws the highlights. The search goes through
 `NgxExtendedPdfViewerService`, which drives the viewer on screen, as `ngx-extended-pdf-viewer` shows one at a time.
@@ -123,8 +129,8 @@ A thin bottom border on every page but the last replaces the shadow as the page-
 The matches of a search are painted with `--bey-pdf-viewer-match-bg` and the current one with
 `--bey-pdf-viewer-match-bg-current`, read from `--bey-highlight` and `--bey-highlight-strong`, instead of the purple
 and green of pdf.js. `ngx-extended-pdf-viewer` paints each searched term with a class of its own (`color0`, …) at a
-higher specificity, so both colours are set with `!important`, as the page borders are. The search field takes the field variables of the toolbar, as the page field does, plus
-`--bey-pdf-viewer-toolbar-placeholder`.
+higher specificity, so both colours are set with `!important`, as the page borders are. The search box reads `--bey-pdf-viewer-search-bg`, `-border`, `-shadow`, `-fg`, `-fg-muted`, `-field-bg`,
+`-field-border`, `-field-border-focus` and `-placeholder`, all of them tokens by default.
 
 The scrollbar of the document mirrors `.bey-thin-scroll`: `scrollbar-color` alone lets Chromium fall back to
 its hover-only overlay thumb, so the `::-webkit-scrollbar*` rules keep the thumb visible, as in every other

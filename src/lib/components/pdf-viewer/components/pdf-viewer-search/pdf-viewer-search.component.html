@@ -1,0 +1,30 @@
+<div class="bey-pdf-viewer-search" role="search" (keydown)="onKeydown($event)">
+    <div class="bey-pdf-viewer-search-box">
+        <fa-icon class="bey-pdf-viewer-search-icon" aria-hidden="true" [icon]="searchIcon"></fa-icon>
+        <input
+            #field
+            class="bey-pdf-viewer-search-input form-control form-control-sm"
+            role="searchbox"
+            type="text"
+            [attr.aria-label]="'angular-components.pdf-viewer.search.field' | translate"
+            [placeholder]="'angular-components.pdf-viewer.search.field' | translate"
+            [value]="query()"
+            (input)="onInput(field)"
+            (keydown)="onFieldKeydown($event)"
+        />
+    </div>
+
+    <span class="bey-pdf-viewer-search-matches" aria-live="polite">
+        @if (typed()) {
+            @if (hasMatches()) {
+                {{ matches().current }} / {{ matches().total }}
+            } @else {
+                {{ 'angular-components.pdf-viewer.search.no-matches' | translate }}
+            }
+        }
+    </span>
+
+    <bey-button [button]="previousButton()"></bey-button>
+    <bey-button [button]="nextButton()"></bey-button>
+    <bey-button [button]="closeButton"></bey-button>
+</div>

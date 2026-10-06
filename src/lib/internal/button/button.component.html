@@ -12,6 +12,8 @@
         <button
             type="button"
             [attr.aria-label]="current.ariaLabel ? (current.ariaLabel | translate) : null"
+            [attr.aria-pressed]="current.isPressed || null"
+            [class.is-pressed]="current.isPressed"
             [class]="classes()"
             [disabled]="current.isDisabled"
             (click)="onClick()"

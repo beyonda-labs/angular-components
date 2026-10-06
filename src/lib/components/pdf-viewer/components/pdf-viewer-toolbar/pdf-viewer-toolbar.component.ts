@@ -1,8 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, input, output, viewChild } from '@angular/core';
 import {
-    faChevronDown,
-    faChevronUp,
     faDownload,
     faMagnifyingGlass,
     faMagnifyingGlassMinus,
@@ -13,18 +10,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ButtonComponent } from '../../../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../../../internal/button/models/button-config.model';
 import { PdfViewerConfig } from '../../models/pdf-viewer-config.model';
-import { NO_SEARCH_MATCHES, PdfViewerSearchMatches } from '../../models/pdf-viewer-value.model';
 
 const DOWNLOAD = 'angular-components.pdf-viewer.toolbar.download';
-const NEXT_MATCH = 'angular-components.pdf-viewer.toolbar.next-match';
 const PERCENT = 100;
-const PREVIOUS_MATCH = 'angular-components.pdf-viewer.toolbar.previous-match';
+const SEARCH = 'angular-components.pdf-viewer.toolbar.search';
+const SEARCH_TOOLTIP = 'angular-components.pdf-viewer.toolbar.search-tooltip';
 const ZOOM_IN = 'angular-components.pdf-viewer.toolbar.zoom-in';
 const ZOOM_OUT = 'angular-components.pdf-viewer.toolbar.zoom-out';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [ButtonComponent, FontAwesomeModule, TranslateModule],
+    imports: [ButtonComponent, TranslateModule],
     selector: 'bey-pdf-viewer-toolbar',
     standalone: true,
     styleUrls: ['./pdf-viewer-toolbar.component.css'],
@@ -32,16 +28,14 @@ const ZOOM_OUT = 'angular-components.pdf-viewer.toolbar.zoom-out';
 })
 export class PdfViewerToolbarComponent {
     readonly config = input.required<PdfViewerConfig>();
+    readonly isSearchOpen = input(false);
     readonly page = input.required<number>();
     readonly pagesCount = input.required<number>();
-    readonly searchMatches = input<PdfViewerSearchMatches>(NO_SEARCH_MATCHES);
     readonly zoom = input.required<number>();
 
     readonly download = output<void>();
     readonly pageChange = output<number>();
-    readonly searchChange = output<string>();
-    readonly searchNext = output<void>();
-    readonly searchPrevious = output<void>();
+    readonly searchToggle = output<void>();
     readonly zoomChange = output<number>();
 
     readonly downloadButton = new ButtonConfig({
@@ -52,34 +46,19 @@ export class PdfViewerToolbarComponent {
         tooltipPlacement: 'bottom',
         type: ButtonType.IconOutline
     });
-    readonly hasMatches = computed(() => this.searchMatches().total > 0);
     readonly hasPages = computed(() => this.pagesCount() > 0);
-    readonly nextMatchButton = computed(
+    readonly searchButton = computed(
         () =>
             new ButtonConfig({
-                action: () => this.searchNext.emit(),
-                ariaLabel: NEXT_MATCH,
-                icon: faChevronDown,
-                isDisabled: !this.hasMatches(),
-                tooltip: NEXT_MATCH,
+                action: () => this.searchToggle.emit(),
+                ariaLabel: SEARCH,
+                icon: faMagnifyingGlass,
+                isPressed: this.isSearchOpen(),
+                tooltip: SEARCH_TOOLTIP,
                 tooltipPlacement: 'bottom',
                 type: ButtonType.IconOutline
             })
     );
-    readonly previousMatchButton = computed(
-        () =>
-            new ButtonConfig({
-                action: () => this.searchPrevious.emit(),
-                ariaLabel: PREVIOUS_MATCH,
-                icon: faChevronUp,
-                isDisabled: !this.hasMatches(),
-                tooltip: PREVIOUS_MATCH,
-                tooltipPlacement: 'bottom',
-                type: ButtonType.IconOutline
-            })
-    );
-    readonly searchIcon = faMagnifyingGlass;
-    readonly searchQuery = signal('');
     readonly zoomInButton = computed(
         () =>
             new ButtonConfig({
@@ -106,6 +85,14 @@ export class PdfViewerToolbarComponent {
     );
     readonly zoomPercent = computed(() => Math.round(this.zoom() * PERCENT));
 
+    private readonly searchButtonHost = viewChild('searchButtonHost', { read: ElementRef });
+
+    focusSearchButton(): void {
+        const host = this.searchButtonHost()?.nativeElement as HTMLElement | undefined;
+
+        host?.querySelector('button')?.focus();
+    }
+
     onPageInput(field: HTMLInputElement): void {
         const requested = Number.parseInt(field.value, 10);
 
@@ -121,32 +108,6 @@ export class PdfViewerToolbarComponent {
 
         if (page !== this.page()) {
             this.pageChange.emit(page);
-        }
-    }
-
-    onSearchInput(field: HTMLInputElement): void {
-        this.searchQuery.set(field.value);
-        this.searchChange.emit(field.value);
-    }
-
-    onSearchKeydown(event: KeyboardEvent, field: HTMLInputElement): void {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-
-            if (event.shiftKey) {
-                this.searchPrevious.emit();
-            } else {
-                this.searchNext.emit();
-            }
-
-            return;
-        }
-
-        if (event.key === 'Escape' && field.value) {
-            event.preventDefault();
-            event.stopPropagation();
-            field.value = '';
-            this.onSearchInput(field);
         }
     }
 
