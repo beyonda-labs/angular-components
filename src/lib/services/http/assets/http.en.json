@@ -5,9 +5,11 @@
                 "action-unavailable": "This action is not available for the item. Reload the page and try again.",
                 "attachments": {
                     "content-already-set": "This attachment already has its file.",
+                    "content-not-set": "This attachment has no file to replace yet.",
                     "content-too-large": "The file is larger than the maximum size allowed.",
                     "duplicate-content": "This file is already uploaded as \"{{name}}\".",
                     "empty-content": "The file is empty.",
+                    "replace-type-mismatch": "Replace the file with another {{fileType}}.",
                     "unsupported-type": "Files of type \"{{mimeType}}\" are not supported."
                 },
                 "bad-gateway": "The server received an invalid response. Please try again later.",
@@ -61,9 +63,11 @@
                 "action-unavailable": "Action not available",
                 "attachments": {
                     "content-already-set": "File already uploaded",
+                    "content-not-set": "No file",
                     "content-too-large": "File too large",
                     "duplicate-content": "Duplicate file",
                     "empty-content": "Empty file",
+                    "replace-type-mismatch": "Wrong type of file",
                     "unsupported-type": "Unsupported file"
                 },
                 "bad-gateway": "Connection error",

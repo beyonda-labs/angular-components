@@ -78,9 +78,11 @@
                 "action-unavailable": "Esta acción no está disponible para el elemento. Recarga la página y vuelve a intentarlo.",
                 "attachments": {
                     "content-already-set": "Este adjunto ya tiene su archivo.",
+                    "content-not-set": "Este adjunto aún no tiene un archivo que reemplazar.",
                     "content-too-large": "El archivo supera el tamaño máximo permitido.",
                     "duplicate-content": "Este archivo ya está subido como \"{{name}}\".",
                     "empty-content": "El archivo está vacío.",
+                    "replace-type-mismatch": "Reemplaza el archivo por otro del mismo tipo ({{fileType}}).",
                     "unsupported-type": "Los archivos de tipo \"{{mimeType}}\" no están admitidos."
                 },
                 "bad-gateway": "El servidor recibió una respuesta no válida. Por favor, inténtelo de nuevo más tarde.",
@@ -153,9 +155,11 @@
                 "action-unavailable": "Acción no disponible",
                 "attachments": {
                     "content-already-set": "Archivo ya subido",
+                    "content-not-set": "Sin archivo",
                     "content-too-large": "Archivo demasiado grande",
                     "duplicate-content": "Archivo duplicado",
                     "empty-content": "Archivo vacío",
+                    "replace-type-mismatch": "Tipo de archivo distinto",
                     "unsupported-type": "Archivo no admitido"
                 },
                 "bad-gateway": "Error de conexión",

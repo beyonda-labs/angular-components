@@ -4,6 +4,7 @@
 
 ### Added
 
+-   Services: the HTTP error modal explains `attachments.replace-type-mismatch` and `attachments.content-not-set`, the refusals of replacing the file of an attachment.
 -   Properties menu module: `withDisabled(disabled?)` on every field returns a disabled copy, as `withValue` does with a value, to show a menu read-only.
 -   Pdf viewer module: `isDownloadable` adds a download button at the end of the compact toolbar, saving the document as `filenameForDownload`.
 -   Page module: after a restore, an info toast lists the rows the backend renamed because another row already had their name (`renamed` in the answer of `PUT {baseUrl}/trash`).
