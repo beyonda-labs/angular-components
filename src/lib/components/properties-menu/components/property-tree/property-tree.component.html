@@ -1,13 +1,14 @@
 <ng-template #renderNodes let-level="level" let-nodes>
     @for (node of nodes; track node.id) {
         <div class="bey-property-tree-node">
-            <button
+            <div
                 class="bey-property-tree-row"
                 role="treeitem"
-                type="button"
+                [attr.aria-disabled]="node.disabled || null"
                 [attr.aria-expanded]="hasVisibleChildren(node) ? node.expanded : null"
                 [attr.aria-selected]="isSelected(node)"
                 [attr.data-node-id]="node.id"
+                [attr.tabindex]="node.disabled ? -1 : 0"
                 [class.is-disabled]="node.disabled"
                 [class.is-draggable]="node.draggable"
                 [class.is-dragged]="isDragged(node)"
@@ -16,24 +17,29 @@
                 [class.is-drop-inside]="dropPositionFor(node) === 'inside'"
                 [class.is-drop-invalid]="isInvalidTarget(node)"
                 [class.is-selected]="isSelected(node)"
-                [disabled]="node.disabled"
                 [style.--bey-property-tree-level]="level"
                 (click)="onNodeClick(node)"
                 (keydown)="onRowKeyDown($event, node)"
                 (pointerdown)="onRowPointerDown($event, node)"
             >
-                <span
-                    class="bey-property-tree-toggle"
-                    aria-hidden="true"
-                    [class.is-hidden]="!hasVisibleChildren(node)"
-                    (click)="onToggleClick($event, node)"
-                >
-                    <fa-icon
-                        class="bey-property-tree-chevron"
-                        [class.is-expanded]="node.expanded"
-                        [icon]="chevronIcon"
-                    ></fa-icon>
-                </span>
+                @if (hasVisibleChildren(node)) {
+                    <button
+                        class="bey-property-tree-toggle"
+                        tabindex="-1"
+                        type="button"
+                        [attr.aria-label]="toggleLabelKey(node) | translate"
+                        [disabled]="node.disabled"
+                        (click)="onToggleClick($event, node)"
+                    >
+                        <fa-icon
+                            class="bey-property-tree-chevron"
+                            [class.is-expanded]="node.expanded"
+                            [icon]="chevronIcon"
+                        ></fa-icon>
+                    </button>
+                } @else {
+                    <span class="bey-property-tree-toggle" aria-hidden="true"></span>
+                }
 
                 @if (node.icon) {
                     <span class="bey-property-tree-icon">
@@ -42,7 +48,7 @@
                 }
 
                 <span class="bey-property-tree-label">{{ labelKey(node) | translate: node.labelParameters }}</span>
-            </button>
+            </div>
 
             @if (node.expanded && hasVisibleChildren(node)) {
                 <ng-container

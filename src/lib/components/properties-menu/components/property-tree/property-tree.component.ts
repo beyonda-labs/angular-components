@@ -10,6 +10,7 @@ import { PropertyTreeDropPosition, PropertyTreeNode } from '../../models/propert
 import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { PropertyTreeDragService } from '../../services/property-tree-drag.service';
 
+const ACTIVATION_KEYS = new Set(['Enter', ' ']);
 const AUTO_EXPAND_DELAY_MS = 600;
 const AUTO_SCROLL_EDGE_PX = 24;
 const AUTO_SCROLL_STEP_PX = 8;
@@ -129,6 +130,13 @@ export class PropertyTreeComponent {
     }
 
     onRowKeyDown(event: KeyboardEvent, node: PropertyTreeNode): void {
+        if (ACTIVATION_KEYS.has(event.key) && event.target === event.currentTarget) {
+            event.preventDefault();
+            this.onNodeClick(node);
+
+            return;
+        }
+
         const opens = event.key === 'ArrowRight' && !node.expanded;
         const closes = event.key === 'ArrowLeft' && node.expanded;
 
@@ -157,6 +165,12 @@ export class PropertyTreeComponent {
     onToggleClick(event: Event, node: PropertyTreeNode): void {
         event.stopPropagation();
         this.propertiesMenuService.toggleTreeNode(this.tabId(), this.groupId(), node.id);
+    }
+
+    toggleLabelKey(node: PropertyTreeNode): string {
+        return node.expanded
+            ? 'angular-components.properties-menu.tree.collapse'
+            : 'angular-components.properties-menu.tree.expand';
     }
 
     visibleChildren(node: PropertyTreeNode): PropertyTreeNode[] {

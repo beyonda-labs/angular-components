@@ -35,7 +35,7 @@
     padding-block: var(--bey-space-xs);
     padding-left: calc(var(--bey-space-sm) + var(--bey-property-tree-level, 0) * var(--bey-space-lg));
     padding-right: var(--bey-space-sm);
-    text-align: left;
+    user-select: none;
     width: 100%;
 }
 
@@ -80,15 +80,21 @@
 
 .bey-property-tree-toggle {
     align-items: center;
+    background: none;
+    border: none;
+    border-radius: var(--bey-radius-sm);
+    color: inherit;
+    cursor: pointer;
     display: inline-flex;
     flex: 0 0 auto;
     height: var(--bey-space-lg);
     justify-content: center;
+    padding: 0;
     width: var(--bey-space-lg);
 }
 
-.bey-property-tree-toggle.is-hidden {
-    visibility: hidden;
+.bey-property-tree-toggle:disabled {
+    cursor: not-allowed;
 }
 
 .bey-property-tree-chevron {

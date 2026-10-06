@@ -10,6 +10,8 @@
 -   Left menu module: a branch with its own `action` gets a submenu toggle over its chevron, reachable from the keyboard and named with `angular-components.left-menu.submenu`.
 -   Page module: `BeyPageConfig` and `BeyPageConfigParameters` take the form value type, so a typed `BeyPageFormConfig<T>` fits without `<unknown>`.
 -   Properties menu module: tree rows expand with `ArrowRight` and collapse with `ArrowLeft`.
+-   Properties menu module: the chevron of a tree row is a button named `angular-components.properties-menu.tree.expand` or
+    `.collapse`, and a row, now a `treeitem` that holds it, is selected with `Enter` or `Space` as well as a click.
 -   App layout module: `BeyAppLayoutBottomAction` takes an optional `route`.
 -   File preview module: `BeyFilePreviewService.open(config)` shows a PDF or an image from a `Blob` or a URL in a dialog, driven by `BeyFilePreviewConfig` and `BeyFilePreviewType`, and releases the object URL it creates.
 -   Form module: `isRequired` takes a rule, like `isHidden` and `isDisabled`; the required validator, the marker and `aria-required` follow it as the form value changes.

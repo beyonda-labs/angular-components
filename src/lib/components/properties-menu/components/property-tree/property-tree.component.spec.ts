@@ -12,10 +12,10 @@ describe('PropertyTreeComponent', () => {
     let fixture: ComponentFixture<PropertyTreeComponent>;
     let propertiesMenuService: PropertiesMenuService;
 
-    const treeItems = (): HTMLButtonElement[] => queryAll<HTMLButtonElement>(fixture, '[role="treeitem"]');
+    const treeItems = (): HTMLElement[] => queryAll<HTMLElement>(fixture, '[role="treeitem"]');
 
-    const toggle = (index: number): HTMLElement | null =>
-        treeItems()[index].querySelector(':scope > span[aria-hidden="true"]');
+    const toggle = (index: number): HTMLButtonElement | null =>
+        treeItems()[index].querySelector<HTMLButtonElement>(':scope > button');
 
     const button = (text: string): HTMLButtonElement | null => queryButton(fixture, text);
 
@@ -51,11 +51,62 @@ describe('PropertyTreeComponent', () => {
         expect(selectSpy).toHaveBeenCalledWith('structure', 'structure-tree', 'page-1');
     });
 
-    it('toggles the node through the menu service when its chevron is clicked', () => {
+    it('toggles the node through the menu service when its chevron is clicked, without selecting it', () => {
+        const selectSpy = jest.spyOn(propertiesMenuService, 'selectTreeNode');
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleTreeNode');
-        toggle(0)?.click();
+
+        button('angular-components.properties-menu.tree.collapse')?.click();
 
         expect(toggleSpy).toHaveBeenCalledWith('structure', 'structure-tree', 'page-1');
+        expect(selectSpy).not.toHaveBeenCalled();
+    });
+
+    it('names the chevron after what it does and gives none to a node without children', () => {
+        fixture.componentRef.setInput('nodes', [
+            new PropertyTreeNode({
+                id: 'page-1',
+                label: 'Page 1',
+                expanded: false,
+                children: [new PropertyTreeNode({ id: 'header', label: 'Header' })]
+            }),
+            new PropertyTreeNode({ id: 'footer', label: 'Footer' })
+        ]);
+        fixture.detectChanges();
+
+        expect(toggle(0)?.getAttribute('aria-label')).toBe('angular-components.properties-menu.tree.expand');
+        expect(toggle(1)).toBeNull();
+    });
+
+    it('selects the focused row with Enter or Space', () => {
+        const selectSpy = jest.spyOn(propertiesMenuService, 'selectTreeNode');
+
+        treeItems()[1].dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Enter' }));
+        treeItems()[0].dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: ' ' }));
+
+        expect(selectSpy.mock.calls).toEqual([
+            ['structure', 'structure-tree', 'header'],
+            ['structure', 'structure-tree', 'page-1']
+        ]);
+    });
+
+    it('neither selects nor toggles a disabled row, which leaves the tab order', () => {
+        fixture.componentRef.setInput('nodes', [
+            new PropertyTreeNode({
+                id: 'page-1',
+                label: 'Page 1',
+                disabled: true,
+                children: [new PropertyTreeNode({ id: 'header', label: 'Header' })]
+            })
+        ]);
+        fixture.detectChanges();
+        const selectSpy = jest.spyOn(propertiesMenuService, 'selectTreeNode');
+
+        treeItems()[0].click();
+
+        expect(selectSpy).not.toHaveBeenCalled();
+        expect(toggle(0)?.disabled).toBe(true);
+        expect(treeItems()[0].getAttribute('aria-disabled')).toBe('true');
+        expect(treeItems()[0].tabIndex).toBe(-1);
     });
 
     it('collapses an expanded row with ArrowLeft and ignores ArrowRight on it', () => {
