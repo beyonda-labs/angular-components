@@ -52,6 +52,7 @@ function buildViewerConfig(config: FilePreviewConfig): PdfViewerConfig {
     return new PdfViewerConfig({
         filenameForDownload: config.fileName,
         isDownloadable: true,
+        isSearchable: true,
         src: config.content,
         toolbar: PdfViewerToolbar.Compact
     });

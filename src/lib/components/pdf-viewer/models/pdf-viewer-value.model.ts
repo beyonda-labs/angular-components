@@ -4,6 +4,13 @@ export enum PdfViewerToolbar {
     None = 'none'
 }
 
+export interface PdfViewerSearchMatches {
+    current: number;
+    total: number;
+}
+
+export const NO_SEARCH_MATCHES: PdfViewerSearchMatches = { current: 0, total: 0 };
+
 export type PdfViewerRotation = 0 | 90 | 180 | 270;
 
 export type PdfViewerSource = string | ArrayBuffer | Blob | Uint8Array;

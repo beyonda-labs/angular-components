@@ -30,4 +30,35 @@
             <bey-button [button]="downloadButton"></bey-button>
         }
     </div>
+
+    @if (config().isSearchable) {
+        <div class="bey-pdf-viewer-toolbar-search" role="search">
+            <div class="bey-pdf-viewer-toolbar-search-box">
+                <fa-icon class="bey-pdf-viewer-toolbar-search-icon" aria-hidden="true" [icon]="searchIcon"></fa-icon>
+                <input
+                    #searchField
+                    class="bey-pdf-viewer-toolbar-search-input form-control form-control-sm"
+                    role="searchbox"
+                    type="text"
+                    [attr.aria-label]="'angular-components.pdf-viewer.toolbar.search' | translate"
+                    [placeholder]="'angular-components.pdf-viewer.toolbar.search' | translate"
+                    (input)="onSearchInput(searchField)"
+                    (keydown)="onSearchKeydown($event, searchField)"
+                />
+            </div>
+
+            @if (searchQuery()) {
+                <span class="bey-pdf-viewer-toolbar-matches" aria-live="polite">
+                    @if (hasMatches()) {
+                        {{ searchMatches().current }} / {{ searchMatches().total }}
+                    } @else {
+                        {{ 'angular-components.pdf-viewer.toolbar.no-matches' | translate }}
+                    }
+                </span>
+            }
+
+            <bey-button [button]="previousMatchButton()"></bey-button>
+            <bey-button [button]="nextMatchButton()"></bey-button>
+        </div>
+    }
 </div>

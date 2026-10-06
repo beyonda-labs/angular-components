@@ -3,14 +3,27 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { buttonByName, queryButton, renderComponent, settle } from '@testing/dom';
-import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { NgxExtendedPdfViewerModule, NgxExtendedPdfViewerService } from 'ngx-extended-pdf-viewer';
 
 import { PdfViewerConfig, PdfViewerConfigParameters, PdfViewerHandle } from './models/pdf-viewer-config.model';
 import { PdfViewerToolbar } from './models/pdf-viewer-value.model';
 import { PdfViewerComponent } from './pdf-viewer.component';
 
+const NEXT_MATCH = 'angular-components.pdf-viewer.toolbar.next-match';
 const PAGE = 'angular-components.pdf-viewer.toolbar.page';
+const PREVIOUS_MATCH = 'angular-components.pdf-viewer.toolbar.previous-match';
+const SEARCH = 'angular-components.pdf-viewer.toolbar.search';
 const ZOOM_IN = 'angular-components.pdf-viewer.toolbar.zoom-in';
+
+interface Finder {
+    find: jest.Mock;
+    findNext: jest.Mock;
+    findPrevious: jest.Mock;
+}
+
+function buildFinder(): Finder {
+    return { find: jest.fn(), findNext: jest.fn(), findPrevious: jest.fn() };
+}
 
 function buildConfig(overrides: Partial<PdfViewerConfigParameters> = {}): PdfViewerConfig {
     return new PdfViewerConfig({ page: 3, rotation: 90, src: 'invoice.pdf', zoom: 1.5, ...overrides });
@@ -48,7 +61,10 @@ describe('PdfViewerComponent', () => {
     }
 
     beforeEach(async () => {
-        await TestBed.configureTestingModule({ imports: [PdfViewerComponent] })
+        await TestBed.configureTestingModule({
+            imports: [PdfViewerComponent],
+            providers: [{ provide: NgxExtendedPdfViewerService, useValue: buildFinder() }]
+        })
             .overrideComponent(PdfViewerComponent, { set: { template: '' } })
             .compileComponents();
     });
@@ -156,6 +172,7 @@ describe('PdfViewerComponent', () => {
 });
 
 describe('PdfViewerComponent toolbar', () => {
+    let finder: Finder;
     let fixture: ComponentFixture<HostComponent>;
     let handle: PdfViewerHandle;
 
@@ -180,8 +197,21 @@ describe('PdfViewerComponent toolbar', () => {
         return fixture.nativeElement.textContent ?? '';
     }
 
+    async function typeSearch(value: string): Promise<void> {
+        const field = fixture.nativeElement.querySelector(`input[aria-label="${SEARCH}"]`) as HTMLInputElement;
+
+        field.value = value;
+        field.dispatchEvent(new Event('input'));
+        await settle(fixture);
+    }
+
     beforeEach(async () => {
-        await TestBed.configureTestingModule({ imports: [HostComponent, TranslateModule.forRoot()] })
+        finder = buildFinder();
+
+        await TestBed.configureTestingModule({
+            imports: [HostComponent, TranslateModule.forRoot()],
+            providers: [{ provide: NgxExtendedPdfViewerService, useValue: finder }]
+        })
             .overrideComponent(PdfViewerComponent, {
                 add: { schemas: [CUSTOM_ELEMENTS_SCHEMA] },
                 remove: { imports: [NgxExtendedPdfViewerModule] }
@@ -245,5 +275,46 @@ describe('PdfViewerComponent toolbar', () => {
 
         expect(pdfViewer().properties['showToolbar']).toBe(false);
         expect(text()).not.toContain('Out of date');
+    });
+
+    it('searches the document from the compact toolbar, highlighting every match, and moves between them', async () => {
+        await render({ isSearchable: true });
+
+        await typeSearch('total');
+        pdfViewer().triggerEventHandler('updateFindMatchesCount', { current: 1, total: 3 });
+        await settle(fixture);
+        buttonByName(fixture, NEXT_MATCH).click();
+        buttonByName(fixture, PREVIOUS_MATCH).click();
+
+        expect(finder.find).toHaveBeenCalledWith('total', { highlightAll: true });
+        expect(text()).toContain('1 / 3');
+        expect(finder.findNext).toHaveBeenCalledTimes(1);
+        expect(finder.findPrevious).toHaveBeenCalledTimes(1);
+    });
+
+    it('searches a new document again for the query still typed, and forgets the matches of a cleared query', async () => {
+        await render({ isSearchable: true });
+        await typeSearch('total');
+        pdfViewer().triggerEventHandler('updateFindMatchesCount', { current: 1, total: 3 });
+
+        pdfViewer().triggerEventHandler('pdfLoaded', { pagesCount: 2 });
+
+        expect(finder.find).toHaveBeenCalledTimes(2);
+
+        await typeSearch('');
+
+        expect(finder.find).toHaveBeenLastCalledWith('', { highlightAll: true });
+        expect(text()).not.toContain('1 / 3');
+    });
+
+    it('renders the text layer for a searchable viewer and leaves it to pdf.js otherwise', async () => {
+        await render({ isSearchable: true });
+
+        expect(pdfViewer().properties['textLayer']).toBe(true);
+
+        await render();
+
+        expect(pdfViewer().properties['textLayer']).toBeUndefined();
+        expect(finder.find).not.toHaveBeenCalled();
     });
 });

@@ -38,6 +38,7 @@ const FULL_TURN = 360;
 })
 export class PdfViewerStyleGuideComponent {
     readonly compactConfig = new BeyPdfViewerConfig({
+        isSearchable: true,
         maxZoom: 3,
         minZoom: 0.25,
         src: SAMPLE_PDF_URL,

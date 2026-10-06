@@ -20,6 +20,7 @@ export class PdfViewerConfig {
     backgroundColor: string;
     height: string;
     isDownloadable: boolean;
+    isSearchable: boolean;
     maxZoom: number;
     minZoom: number;
     page: number;
@@ -46,6 +47,7 @@ export class PdfViewerConfig {
         filenameForDownload,
         height = '100%',
         isDownloadable = false,
+        isSearchable = false,
         maxZoom = 10,
         minZoom = 0.1,
         page = 1,
@@ -63,6 +65,7 @@ export class PdfViewerConfig {
         this.filenameForDownload = filenameForDownload;
         this.height = height;
         this.isDownloadable = isDownloadable;
+        this.isSearchable = isSearchable;
         this.maxZoom = maxZoom;
         this.minZoom = minZoom;
         this.page = page;
@@ -83,6 +86,7 @@ export interface PdfViewerConfigParameters {
     filenameForDownload?: string;
     height?: string;
     isDownloadable?: boolean;
+    isSearchable?: boolean;
     maxZoom?: number;
     minZoom?: number;
     onClick?: (event: MouseEvent) => void;

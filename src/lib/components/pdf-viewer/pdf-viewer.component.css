@@ -1,4 +1,7 @@
 :host {
+    --bey-pdf-viewer-match-bg: var(--bey-highlight);
+    --bey-pdf-viewer-match-bg-current: var(--bey-highlight-strong);
+
     display: block;
     height: 100%;
     width: 100%;
@@ -26,6 +29,14 @@
 
 ::ng-deep .bey-pdf-viewer .pdfViewer .page:last-child {
     border-bottom: none !important;
+}
+
+::ng-deep .bey-pdf-viewer .textLayer .highlight {
+    background-color: var(--bey-pdf-viewer-match-bg) !important;
+}
+
+::ng-deep .bey-pdf-viewer .textLayer .highlight.selected {
+    background-color: var(--bey-pdf-viewer-match-bg-current) !important;
 }
 /* stylelint-enable selector-class-pattern, declaration-no-important */
 

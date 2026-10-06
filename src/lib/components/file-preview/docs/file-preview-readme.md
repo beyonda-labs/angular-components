@@ -1,7 +1,7 @@
 # File preview
 
 A dialog that shows a PDF or an image, opened from a service with one call. The content is a `Blob` or a URL: a
-PDF goes to `bey-pdf-viewer` with its compact toolbar and a download button, an image to an `<img>` that shrinks to
+PDF goes to `bey-pdf-viewer` with its compact toolbar, a download button and the search, an image to an `<img>` that shrinks to
 fit the dialog without scrolling. The object URL the dialog
 creates for a `Blob` image is revoked when the dialog is destroyed, so the caller has nothing to clean up. The
 dialog has the shape of a modal form: an icon of the file type, `angular-components.file-preview.type` over the title
@@ -46,8 +46,8 @@ this.filePreview.open(
 | `alt`      | no       | `title` | i18n key or literal, the alternative text of an image    |
 
 The dialog is named by its title through `aria-labelledby`, and its close button by
-`angular-components.file-preview.close`. Escape and the backdrop close it as well. A PDF shows every button of
-the pdf.js toolbar except opening another file.
+`angular-components.file-preview.close`. Escape and the backdrop close it as well; while the search of a PDF holds
+a query, Escape clears it first.
 
 ## Theming
 
