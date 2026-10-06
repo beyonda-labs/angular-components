@@ -5,7 +5,10 @@ How the layers work and when a module may declare its own variable is in `rules/
 They live in `src/lib/assets/styles/tokens.css`.
 
 All tokens are declared on `:root` and re-declared under `body.dark`. A token that does not appear in the dark
-column keeps its light value.
+column keeps its light value. A token that reads another one is declared again under `body.dark` even when its
+expression does not change, such as `--bey-danger: var(--bey-red)`: a custom property resolves the variables it reads
+where it is declared, so the one on `:root` would keep the light `--bey-red`. The Bootstrap bridge in `overrides.css`
+is declared on `:root, body.dark` for the same reason.
 
 ---
 
@@ -76,9 +79,9 @@ colours as bare channels, for the rules that need `rgba()`.
 | `--bey-primary`    | `--bey-black`  | `--bey-white` |
 | `--bey-primary-fg` | `--bey-white`  | `--bey-black` |
 | `--bey-secondary`  | `#949b98`      | `#7a8380`     |
-| `--bey-success`    | `--bey-teal`   | —             |
-| `--bey-danger`     | `--bey-red`    | —             |
-| `--bey-warning`    | `--bey-orange` | —             |
+| `--bey-success`    | `--bey-teal`   | `--bey-teal`   |
+| `--bey-danger`     | `--bey-red`    | `--bey-red`    |
+| `--bey-warning`    | `--bey-orange` | `--bey-orange` |
 
 ### Highlight
 
@@ -87,8 +90,7 @@ colours as bare channels, for the rules that need `rgba()`.
 | `--bey-highlight`        | `rgba(var(--bey-orange-rgb), 0.35)` | Every match of a search |
 | `--bey-highlight-strong` | `rgba(var(--bey-orange-rgb), 0.7)`  | The current match       |
 
-Both are declared again under `body.dark`, so they read the dark orange: a custom property resolves the variables it
-reads where it is declared.
+Both are declared again under `body.dark`, so they read the dark orange.
 
 ---
 

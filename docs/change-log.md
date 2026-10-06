@@ -98,6 +98,10 @@
 
 ### Fixed
 
+-   Styles: `--bey-success`, `--bey-danger`, `--bey-warning` and the Bootstrap bridge (`--bs-*`, the datepicker colours)
+    follow the dark theme; declared only on `:root`, they kept the light colours, and the body text stayed dark.
+-   Services: a failed `getBlob` shows the reason the server gives, read from its `Blob` body, instead of the unknown
+    error.
 -   Table module: a link cell only answers a click on its text and its icon, not on the empty space of the cell, which selects the row like any other cell.
 -   Loading module: the full-screen overlay sits over the dialogs (`--bey-z-loading`), so a request sent from a modal form shows its loading instead of leaving the form still until it answers.
 -   Pdf viewer module: the compact toolbar reads in the dark theme: the page field takes the text, border and background of the theme instead of dark text on black, the buttons show their icon in the main text color, and a disabled button only fades.
