@@ -4,6 +4,7 @@
 
 ### Added
 
+-   Properties menu module: `withDisabled(disabled?)` on every field returns a disabled copy, as `withValue` does with a value, to show a menu read-only.
 -   Pdf viewer module: `isDownloadable` adds a download button at the end of the compact toolbar, saving the document as `filenameForDownload`.
 -   Page module: after a restore, an info toast lists the rows the backend renamed because another row already had their name (`renamed` in the answer of `PUT {baseUrl}/trash`).
 -   Form module: `label` on `BeyFormSection` and on every field overrides the title or the label read from the prefix, for a form built from data, such as one field per variable of a document.

@@ -126,7 +126,9 @@ renders:
 ## Fields
 
 Each field extends `BeyPropertyField` (`id`, `label`, `description`, `value`, `defaultValue`, `disabled`,
-`hidden`, `required`, `acceptsVariable`, `actionButton`, `span`, `metadata`) and adds what it needs:
+`hidden`, `required`, `acceptsVariable`, `actionButton`, `span`, `metadata`) and adds what it needs. `withValue(value)`
+and `withDisabled(disabled?)` return a copy of the same field with that value or disabled, which is how a menu is shown
+read-only: `disabled` blocks the input, the variable picker and the action button, while `readonly` leaves them.
 
 | Field                          | Extra                                                                                                      |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------------- |
