@@ -47,6 +47,7 @@ export class HeaderAction {
 }
 
 export class HeaderConfig {
+    badges: BadgeConfig[] = [];
     leftActions: HeaderAction[] = [];
     menuActions: HeaderAction[] = [];
     prefix: string;
@@ -55,11 +56,10 @@ export class HeaderConfig {
     variant: HeaderVariant;
 
     backAction?: HeaderAction;
-    badge?: BadgeConfig;
 
     constructor({
         backAction,
-        badge,
+        badges = [],
         prefix,
         title = '',
         leftActions = [],
@@ -68,7 +68,7 @@ export class HeaderConfig {
         variant = HeaderVariant.Page
     }: HeaderConfigParameters) {
         this.backAction = backAction;
-        this.badge = badge;
+        this.badges = badges;
         this.leftActions = leftActions;
         this.menuActions = menuActions;
         this.prefix = prefix;
@@ -94,7 +94,7 @@ export interface HeaderConfigParameters {
     prefix: string;
 
     backAction?: HeaderAction;
-    badge?: BadgeConfig;
+    badges?: BadgeConfig[];
     leftActions?: HeaderAction[];
     menuActions?: HeaderAction[];
     rightActions?: HeaderAction[];

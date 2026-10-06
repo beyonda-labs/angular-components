@@ -26,10 +26,12 @@ export class HeaderStyleGuideComponent {
             key: 'back',
             type: BeyHeaderActionType.Text
         }),
-        badge: new BeyBadgeConfig({
-            label: 'angular-components-style-guide.header.badge',
-            variant: BeyBadgeVariant.Primary
-        }),
+        badges: [
+            new BeyBadgeConfig({
+                label: 'angular-components-style-guide.header.badge',
+                variant: BeyBadgeVariant.Primary
+            })
+        ],
         menuActions: []
     });
     readonly config = this.buildConfig();
@@ -39,7 +41,7 @@ export class HeaderStyleGuideComponent {
     });
 
     private buildConfig(
-        overrides: Partial<Pick<BeyHeaderConfig, 'backAction' | 'badge' | 'menuActions' | 'variant'>> = {}
+        overrides: Partial<Pick<BeyHeaderConfig, 'backAction' | 'badges' | 'menuActions' | 'variant'>> = {}
     ): BeyHeaderConfig {
         return new BeyHeaderConfig({
             leftActions: [
