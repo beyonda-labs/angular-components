@@ -1,6 +1,6 @@
 # Header
 
-The title bar of a page: an optional back action, the title, an optional badge, and the actions, all grouped
+The title bar of a page: an optional back action, the title, its badges, and the actions, all grouped
 to the right. Actions that do not fit a toolbar can be pushed into an overflow menu, and any action can open a
 set of sub-actions.
 
@@ -29,7 +29,7 @@ const header = new BeyHeaderConfig({
 | `title`        | no       | none    | A literal title or an i18n key; the bar drops it when empty |
 | `variant`      | no       | `Page`  | `Page` or `SubPage`, which only changes the title size      |
 | `backAction`   | no       | none    | Rendered before the title                                   |
-| `badge`        | no       | none    | A `BeyBadgeConfig` shown next to the title                  |
+| `badges`       | no       | `[]`    | `BeyBadgeConfig`s shown next to the title, in order         |
 | `leftActions`  | no       | `[]`    | Rendered first inside the group                             |
 | `menuActions`  | no       | `[]`    | Collapsed behind an overflow toggle                         |
 | `rightActions` | no       | `[]`    | Rendered last inside the group                              |

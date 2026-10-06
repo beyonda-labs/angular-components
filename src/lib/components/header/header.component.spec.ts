@@ -62,12 +62,16 @@ describe('HeaderComponent', () => {
         expect(fixture.nativeElement.querySelector('h1')).toBeNull();
     });
 
-    it('shows the badge the config gives', async () => {
-        await render(buildConfig({ badge: new BadgeConfig({ label: 'demo.badge' }) }));
+    it('shows the badges the config gives, in order, next to the title', async () => {
+        await render(
+            buildConfig({
+                badges: [new BadgeConfig({ label: 'demo.status' }), new BadgeConfig({ label: 'demo.read-only' })]
+            })
+        );
 
-        const badge = fixture.nativeElement.querySelector('bey-badge');
+        const badges = [...fixture.nativeElement.querySelectorAll('bey-badge')] as HTMLElement[];
 
-        expect(badge.textContent.trim()).toBe('demo.badge');
+        expect(badges.map(badge => badge.textContent?.trim())).toEqual(['demo.status', 'demo.read-only']);
     });
 
     it('puts the back action before the title', async () => {

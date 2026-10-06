@@ -58,6 +58,7 @@
 
 ### Changed
 
+-   Header module: `badges`, a list, replaces `badge`, so a title can carry several, such as a status and a read-only mark.
 -   Pdf viewer module: without the toolbar of pdf.js (`None`, `Compact`) the viewer turns off its keyboard shortcuts, its context menu and opening a dropped file, so no half-built find bar or menu shows up.
 -   File preview module: the dialog looks like a modal form: an icon of the file type, "Preview" over the title and the file name, the content framed below, and a cancel button in a footer; a PDF shows the compact toolbar with a download button, and an image shrinks to fit without a scrollbar.
 -   Page module: `isTrashEnabled` on `BeyPageTableConfig` replaces `useTrash` on `BeyPageCategoriesConfig`, so a page without categories gets the trash view too.
