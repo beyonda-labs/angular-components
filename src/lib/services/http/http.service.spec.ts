@@ -10,7 +10,7 @@ import { Observable, throwError } from 'rxjs';
 import translations from '../../assets/i18n/angular-components.en.json';
 import { LoadingService } from '../../components/loading/services/loading.service';
 import { HttpService } from './http.service';
-import { UploadRequestOptions } from './models/http.model';
+import { HttpRequestOptions, UploadRequestOptions } from './models/http.model';
 
 interface ErrorCase {
     message: string;
@@ -257,6 +257,12 @@ describe('HttpService', () => {
         return httpTesting.expectOne(request => request.method === method && request.url === URL);
     }
 
+    function downloadFailure(options?: HttpRequestOptions): Promise<unknown> {
+        return new Promise(resolve => {
+            service.getBlob(URL, options).subscribe({ error: resolve });
+        });
+    }
+
     function ignore(): void {
         return undefined;
     }
@@ -483,17 +489,30 @@ describe('HttpService', () => {
             ]);
         });
 
-        it('opens the unknown error modal when a download fails with a Blob body', () => {
-            service.getBlob(URL, { loading: true }).subscribe({ error: ignore });
+        it('reads the reason of a failed download from its Blob body', async () => {
+            const failed = downloadFailure({ loading: true });
+
             failWith(
                 404,
                 new Blob([JSON.stringify({ errorCode: 'not-found' })], { type: 'application/json' })
             )(expectRequest('GET'));
+            await failed;
+
+            expect(modal.errors()).toEqual([
+                { message: `${ERROR}not-found`, messageParameters: {}, title: `${TITLE}not-found` }
+            ]);
+            expect(loading.isLoading()).toBe(false);
+        });
+
+        it('opens the unknown error modal when a failed download has no readable reason', async () => {
+            const failed = downloadFailure();
+
+            failWith(502, new Blob(['Bad gateway'], { type: 'text/plain' }))(expectRequest('GET'));
+            await failed;
 
             expect(modal.errors()).toEqual([
                 { message: `${ERROR}unknown`, messageParameters: {}, title: `${TITLE}unknown` }
             ]);
-            expect(loading.isLoading()).toBe(false);
         });
     });
 

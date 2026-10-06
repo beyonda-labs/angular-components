@@ -169,6 +169,9 @@ body.dark {
     --bey-primary: var(--bey-white);
     --bey-primary-fg: var(--bey-black);
     --bey-secondary: #7a8380;
+    --bey-success: var(--bey-teal);
+    --bey-danger: var(--bey-red);
+    --bey-warning: var(--bey-orange);
 
     /* Highlight */
     --bey-highlight: rgba(var(--bey-orange-rgb), 0.35);

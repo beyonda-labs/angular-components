@@ -8,11 +8,12 @@ import {
 } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, defer, filter, finalize, map, Observable, tap, throwError } from 'rxjs';
+import { catchError, defer, filter, finalize, map, mergeMap, Observable, tap, throwError } from 'rxjs';
 
 import { LoadingService } from '../../components/loading/services/loading.service';
 import { ModalService } from '../../components/modal/services/modal.service';
 import { ToastService } from '../../components/toast/services/toast.service';
+import { readBlobError } from './functions/blob-error';
 import { markAsShown } from './functions/shown-errors';
 import { CustomErrorResponse, HttpRequestOptions, UploadRequestOptions } from './models/http.model';
 
@@ -40,7 +41,16 @@ export class HttpService {
     getBlob(url: string, options?: HttpRequestOptions): Observable<Blob> {
         const { headers, params } = this.buildHttpOptions(options);
 
-        return this.request(this.httpClient.get(url, { headers, params, responseType: 'blob' }), options);
+        return this.request(
+            this.httpClient
+                .get(url, { headers, params, responseType: 'blob' })
+                .pipe(
+                    catchError((error: HttpErrorResponse) =>
+                        readBlobError(error).pipe(mergeMap(readable => throwError(() => readable)))
+                    )
+                ),
+            options
+        );
     }
 
     patch<T>(url: string, body: unknown, options?: HttpRequestOptions): Observable<T> {

@@ -3,7 +3,8 @@
    assigned here, never read: see rules/angular/styles.md.
 */
 
-:root {
+:root,
+body.dark {
     --bs-red: var(--bey-red);
     --bs-orange: var(--bey-orange);
     --bs-teal: var(--bey-teal);
