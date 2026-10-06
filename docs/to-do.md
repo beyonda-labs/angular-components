@@ -228,7 +228,7 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [ ] Error texts the HTTP service resolves oddly, kept as they were: a `message` without translation shows its raw key;
         a range with both limits null reads `-max`; an unknown `errorCode` gets the default title while an empty body or a
         network error gets `unknown`; a `getBlob` error always shows `unknown`, since its body is a Blob
--   [ ] The session, theme, app and environment services have no `docs/<module>-readme.md`
+-   [x] The session, theme, app and environment services have no `docs/<module>-readme.md`
 -   [ ] `SearchField.getOperators()` is behaviour in a model, and `BadgeConfig.translate` is a boolean without the
         `is` prefix; both fixes rename or move a public member
 -   [ ] The tree chevron has no role or name (it is mouse only), so the specs reach it through its markup

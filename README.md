@@ -105,6 +105,14 @@ Component documentation:
 -   [Left Menu](src/lib/components/left-menu/docs/left-menu-readme.md)
 -   [Table](src/lib/components/table/docs/table-readme.md)
 
+Service documentation:
+
+-   [App](src/lib/services/app/docs/app-readme.md)
+-   [Environment](src/lib/services/environment/docs/environment-readme.md)
+-   [Http](src/lib/services/http/docs/http-readme.md)
+-   [Session](src/lib/services/session/docs/session-readme.md)
+-   [Theme](src/lib/services/theme/docs/theme-readme.md)
+
 ---
 
 ## Theming
