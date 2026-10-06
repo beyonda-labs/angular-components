@@ -200,7 +200,8 @@ selected row is a category. Standard actions without a `handler` work on the who
 
 `BeyPageFormConfig<TValue, TItem>` takes `prefix`, `buildSections(item?)`, and optionally `toFormValue(item?)`,
 `toItem(value)`, `onReady(handle)`, `onValueChange(value, handle)`, `onCreate(value, handle)`,
-`onEdit(value, handle)`, `afterCreate(created)`, `confirmSave(value, item?)` and `allowSubmitWithoutChanges`. `onValueChange` runs on every
+`onEdit(value, handle)`, `afterCreate(created)`, `confirmSave(value, item?)`, `allowSubmitWithoutChanges` and `size`
+(a `BeyModalFormSize`, `Large` by default). `onValueChange` runs on every
 change of the open form, so a field can fill another through `handle.patchValue`. Create and edit open a modal form from the form
 module; on success the modal closes and the table reloads, on error it stays open. `afterCreate` returns an
 observable the page waits for before closing, for entities that need a second request. Titles come from

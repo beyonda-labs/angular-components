@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs';
 
+import { ModalFormSize } from '../../form/components/modal/models/modal-form.model';
 import { FormHandle, FormSection } from '../../form/models/form.model';
 import { ConfirmationModalConfig } from '../../modal/models/modal.model';
 import { PageItem } from './page-item.model';
@@ -15,6 +16,7 @@ export class PageFormConfig<TValue = unknown, TItem extends PageItem = PageItem>
     allowSubmitWithoutChanges: boolean;
     buildSections: (item?: TItem) => FormSection[];
     prefix: string;
+    size: ModalFormSize;
     toFormValue: (item?: TItem) => TValue | undefined;
     toItem: (value: TValue) => unknown;
 
@@ -35,6 +37,7 @@ export class PageFormConfig<TValue = unknown, TItem extends PageItem = PageItem>
         onReady,
         onValueChange,
         prefix,
+        size = ModalFormSize.Large,
         toFormValue = (item?: TItem) => item as unknown as TValue | undefined,
         toItem = (value: TValue) => value
     }: PageFormConfigParameters<TValue, TItem>) {
@@ -47,6 +50,7 @@ export class PageFormConfig<TValue = unknown, TItem extends PageItem = PageItem>
         this.onReady = onReady;
         this.onValueChange = onValueChange;
         this.prefix = prefix;
+        this.size = size;
         this.toFormValue = toFormValue;
         this.toItem = toItem;
     }
@@ -63,6 +67,7 @@ export interface PageFormConfigParameters<TValue = unknown, TItem extends PageIt
     onEdit?: (value: TValue, handle: FormHandle<TValue>) => void;
     onReady?: (handle: FormHandle<TValue>) => void;
     onValueChange?: (value: TValue, handle: FormHandle<TValue>) => void;
+    size?: ModalFormSize;
     toFormValue?: (item?: TItem) => TValue | undefined;
     toItem?: (value: TValue) => unknown;
 }

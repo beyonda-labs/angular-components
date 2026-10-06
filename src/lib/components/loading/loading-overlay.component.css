@@ -17,7 +17,7 @@
 
 .bey-loading-overlay.is-fullscreen {
     position: fixed;
-    z-index: var(--bey-z-modal);
+    z-index: var(--bey-z-loading);
 }
 
 @keyframes bey-loading-overlay-in {

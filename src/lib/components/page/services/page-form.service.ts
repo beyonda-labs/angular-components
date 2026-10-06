@@ -48,6 +48,7 @@ export class PageFormService {
                 onValueChange: (value, handle) => pageForm.onValueChange?.(value, handle),
                 prefix: pageForm.prefix,
                 sections: pageForm.buildSections(item),
+                size: pageForm.size,
                 submitLabel: SUBMIT_LABEL_KEY,
                 title: `${pagePrefix}.form.${mode}.title`
             })
