@@ -71,14 +71,14 @@ colours as bare channels, for the rules that need `rgba()`.
 
 ### Intent
 
-| Token              | Light            | Dark          |
-| ------------------ | ---------------- | ------------- |
-| `--bey-primary`    | `--bey-black`    | `--bey-white` |
-| `--bey-primary-fg` | `--bey-white`    | `--bey-black` |
-| `--bey-secondary`  | `#949b98`        | `#7a8380`     |
-| `--bey-success`    | `--bey-teal`     | —             |
-| `--bey-danger`     | `--bey-red`      | —             |
-| `--bey-warning`    | `--bey-orange`   | —             |
+| Token              | Light          | Dark          |
+| ------------------ | -------------- | ------------- |
+| `--bey-primary`    | `--bey-black`  | `--bey-white` |
+| `--bey-primary-fg` | `--bey-white`  | `--bey-black` |
+| `--bey-secondary`  | `#949b98`      | `#7a8380`     |
+| `--bey-success`    | `--bey-teal`   | —             |
+| `--bey-danger`     | `--bey-red`    | —             |
+| `--bey-warning`    | `--bey-orange` | —             |
 
 ---
 
@@ -140,33 +140,34 @@ not `p-4`.
 
 ## Borders, elevation and motion
 
-| Token                      | Light                                           | Dark                  |
-| -------------------------- | ----------------------------------------------- | --------------------- |
-| `--bey-border-width`       | `1px`                                           | —                     |
-| `--bey-border-width-thick` | `2px`                                           | —                     |
-| `--bey-shadow-rgb`         | `var(--bey-black-rgb)`                          | —                     |
-| `--bey-shadow-sm`          | `0 1px 2px rgba(var(--bey-shadow-rgb), 0.25)`   | —                     |
-| `--bey-shadow-md`          | `0 16px 48px rgba(var(--bey-shadow-rgb), 0.14)` | same geometry, `0.4`  |
-| `--bey-shadow-lg`          | `0 24px 64px rgba(var(--bey-shadow-rgb), 0.16)` | same geometry, `0.5`  |
-| `--bey-duration-fast`      | `150ms`                                         | —                     |
-| `--bey-duration-base`      | `200ms`                                         | —                     |
-| `--bey-duration-slow`      | `300ms`                                         | —                     |
-| `--bey-easing-standard`    | `ease`                                          | —                     |
-| `--bey-opacity-disabled`   | `0.5`                                           | —                     |
-| `--bey-opacity-muted`      | `0.9`                                           | —                     |
+| Token                      | Light                                           | Dark                 |
+| -------------------------- | ----------------------------------------------- | -------------------- |
+| `--bey-border-width`       | `1px`                                           | —                    |
+| `--bey-border-width-thick` | `2px`                                           | —                    |
+| `--bey-shadow-rgb`         | `var(--bey-black-rgb)`                          | —                    |
+| `--bey-shadow-sm`          | `0 1px 2px rgba(var(--bey-shadow-rgb), 0.25)`   | —                    |
+| `--bey-shadow-md`          | `0 16px 48px rgba(var(--bey-shadow-rgb), 0.14)` | same geometry, `0.4` |
+| `--bey-shadow-lg`          | `0 24px 64px rgba(var(--bey-shadow-rgb), 0.16)` | same geometry, `0.5` |
+| `--bey-duration-fast`      | `150ms`                                         | —                    |
+| `--bey-duration-base`      | `200ms`                                         | —                    |
+| `--bey-duration-slow`      | `300ms`                                         | —                    |
+| `--bey-easing-standard`    | `ease`                                          | —                    |
+| `--bey-opacity-disabled`   | `0.5`                                           | —                    |
+| `--bey-opacity-muted`      | `0.9`                                           | —                    |
 
 ## Stacking
 
 Aligned with the Bootstrap scale, so a library panel never lands between two of its layers.
 
-| Token              | Value  | Used for                       |
-| ------------------ | ------ | ------------------------------ |
-| `--bey-z-base`     | `1`    | Inside the normal flow         |
-| `--bey-z-raised`   | `10`   | Anchored elements, chevrons    |
-| `--bey-z-sticky`   | `20`   | Sticky headers and toolbars    |
-| `--bey-z-dropdown` | `1000` | Menus and pickers              |
-| `--bey-z-modal`    | `1050` | Dialogs and their backdrop     |
-| `--bey-z-tooltip`  | `1080` | Tooltips, on top of everything |
+| Token              | Value  | Used for                                          |
+| ------------------ | ------ | ------------------------------------------------- |
+| `--bey-z-base`     | `1`    | Inside the normal flow                            |
+| `--bey-z-raised`   | `10`   | Anchored elements, chevrons                       |
+| `--bey-z-sticky`   | `20`   | Sticky headers and toolbars                       |
+| `--bey-z-dropdown` | `1000` | Menus and pickers                                 |
+| `--bey-z-modal`    | `1050` | Dialogs and their backdrop                        |
+| `--bey-z-loading`  | `1070` | The full-screen loading overlay, over the dialogs |
+| `--bey-z-tooltip`  | `1080` | Tooltips, on top of everything                    |
 
 ---
 

@@ -4,7 +4,7 @@ import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 import { of } from 'rxjs';
 
-import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
+import { ModalFormConfig, ModalFormSize } from '../../form/components/modal/models/modal-form.model';
 import { FormTextField } from '../../form/models/fields/form-text-field.model';
 import { FormHandle, FormRow, FormSection } from '../../form/models/form.model';
 import { PageFormConfig } from '../models/page-form.model';
@@ -40,6 +40,20 @@ describe('PageFormService', () => {
         expect(config.prefix).toBe('testPage.form');
         expect(config.sections).toHaveLength(1);
         expect(config.initialValue).toBeUndefined();
+    });
+
+    it('opens the modal form in the size the page form config asks for, large by default', () => {
+        service.open(buildPageForm(), undefined, 'testPage', jest.fn());
+        service.open(
+            new PageFormConfig({ ...buildPageForm(), size: ModalFormSize.Medium }),
+            undefined,
+            'testPage',
+            jest.fn()
+        );
+
+        const [large, medium] = modalForm.forms() as ModalFormConfig<unknown>[];
+
+        expect([large.size, medium.size]).toEqual([ModalFormSize.Large, ModalFormSize.Medium]);
     });
 
     it('opens an edit modal form with the item mapped through toFormValue', () => {

@@ -4,6 +4,7 @@
 
 ### Added
 
+-   Page module: `size` on `BeyPageFormConfig` opens its create and edit forms in that `BeyModalFormSize` (`Large` by default).
 -   Services: the HTTP error modal explains `attachments.replace-type-mismatch` and `attachments.content-not-set`, the refusals of replacing the file of an attachment.
 -   Properties menu module: `withDisabled(disabled?)` on every field returns a disabled copy, as `withValue` does with a value, to show a menu read-only.
 -   Pdf viewer module: `isDownloadable` adds a download button at the end of the compact toolbar, saving the document as `filenameForDownload`.
@@ -94,6 +95,7 @@
 
 ### Fixed
 
+-   Loading module: the full-screen overlay sits over the dialogs (`--bey-z-loading`), so a request sent from a modal form shows its loading instead of leaving the form still until it answers.
 -   Pdf viewer module: the compact toolbar reads in the dark theme: the page field takes the text, border and background of the theme instead of dark text on black, the buttons show their icon in the main text color, and a disabled button only fades.
 -   Table module: the rows are drawn again when the language changes, keeping the selection, so texts a `loadRow` translates itself no longer stay in the previous language.
 -   Form module: the options of an autocomplete field keep their background, border and hover inside a modal: the panel moves to the body and lost the variables its host declared.
