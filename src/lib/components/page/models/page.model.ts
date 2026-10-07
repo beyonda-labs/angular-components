@@ -8,6 +8,7 @@ import { PageItem } from './page-item.model';
 import { PageDuplicationConfig, PageStatusConfig } from './page-lifecycle.model';
 import { PageSearch } from './page-search.model';
 import { PageTableConfig } from './page-table.model';
+import { PageView } from './page-view.model';
 
 export interface PageBackendResponse<TRow extends PageItem = PageItem> {
     globalActions: string[];
@@ -32,6 +33,7 @@ export class PageConfig<
     TCategoryValue = unknown
 > {
     prefix: string;
+    views: PageView[];
 
     baseUrl?: string;
     duplicationConfig?: PageDuplicationConfig;
@@ -51,7 +53,8 @@ export class PageConfig<
         onReady,
         prefix,
         statusConfig,
-        tableConfig
+        tableConfig,
+        views = []
     }: PageConfigParameters<TValue, TItem, TCategory, TCategoryValue>) {
         this.baseUrl = baseUrl;
         this.duplicationConfig = duplicationConfig;
@@ -62,6 +65,7 @@ export class PageConfig<
         this.prefix = prefix;
         this.statusConfig = statusConfig;
         this.tableConfig = tableConfig;
+        this.views = views;
     }
 }
 
@@ -81,4 +85,5 @@ export interface PageConfigParameters<
     onReady?: (handle: PageHandle<TItem, TCategory>) => void;
     statusConfig?: PageStatusConfig;
     tableConfig?: PageTableConfig<TItem, TCategory, TCategoryValue>;
+    views?: PageView[];
 }

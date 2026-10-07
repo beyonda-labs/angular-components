@@ -30,6 +30,7 @@
                     "label": "Home"
                 },
                 "product": {
+                    "detail": "({{count}} variants)",
                     "label": "Product"
                 }
             },

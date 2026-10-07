@@ -72,6 +72,7 @@
                     "label": "Inicio"
                 },
                 "product": {
+                    "detail": "({{count}} variantes)",
                     "label": "Producto"
                 }
             },
@@ -635,7 +636,26 @@
                     "tooltip": "Editar el producto seleccionado"
                 }
             },
-            "example": "Una página autogestionada: acciones de cabecera, búsqueda, tabla y paginación conectadas al backend de demostración, con alta y edición en un formulario modal.",
+            "example": "Una página autogestionada: acciones de cabecera, búsqueda, tabla y paginación conectadas al backend de demostración, con alta y edición en un formulario modal. La pestaña Disponibles es una vista: la misma lista con un filtro propio, en la que también se puede buscar.",
+            "folders": {
+                "categories": {
+                    "root": "Todos los productos"
+                },
+                "example": "Con categorías la página recorre carpetas, y el último nodo de la ruta cuenta lo que contiene la carpeta, carpetas y productos de todas las páginas. Al ir a una ruta bajo la página y volver se conservan la carpeta, la búsqueda, la página y la selección.",
+                "heading": "Carpetas",
+                "table": {
+                    "columns": {
+                        "name": "Nombre",
+                        "price": "Precio"
+                    },
+                    "empty": "Esta carpeta está vacía",
+                    "tooltips": {
+                        "name": "Cómo se llama el producto o la carpeta",
+                        "price": "Precio unitario"
+                    }
+                },
+                "title": "Productos por carpeta"
+            },
             "form": {
                 "create": {
                     "title": "Nuevo producto"
@@ -685,6 +705,14 @@
                     "price": "Precio unitario"
                 }
             },
+            "tabs": {
+                "available": {
+                    "label": "Disponibles"
+                },
+                "table": {
+                    "label": "Todos"
+                }
+            },
             "title": "Productos",
             "toast": {
                 "create-success": "Producto creado",
@@ -718,7 +746,7 @@
         "properties-menu-section": "Menú de propiedades",
         "search": {
             "applied": "Filtros aplicados",
-            "example": "Caja de búsqueda rápida más un panel de filtros tipados. Cada cambio se informa por onFiltersChange; la consulta la ejecuta el consumidor.",
+            "example": "Caja de búsqueda rápida más un panel de filtros tipados. Parte de los filtros de su config, aquí el rol de editor; cada cambio se informa por onFiltersChange y la consulta la ejecuta el consumidor.",
             "fields": {
                 "active": "Activo",
                 "age": "Edad",

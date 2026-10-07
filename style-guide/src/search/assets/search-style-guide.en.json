@@ -2,7 +2,7 @@
     "angular-components-style-guide": {
         "search": {
             "applied": "Applied filters",
-            "example": "Quick search box plus a panel of typed filter rows. Every change is reported through onFiltersChange; the consumer runs the query.",
+            "example": "Quick search box plus a panel of typed filter rows. It starts from the filters of its config, here the editor role; every change is reported through onFiltersChange and the consumer runs the query.",
             "fields": {
                 "active": "Active",
                 "age": "Age",

@@ -38,14 +38,16 @@ export interface SearchFieldOption {
 
 export class SearchConfig {
     fields: SearchField[];
+    filters: SearchFilter[];
     prefix: string;
 
     mainField?: string;
     onFiltersChange?: (filters: SearchFilter[]) => void;
     placeholder?: string;
 
-    constructor({ fields, prefix, mainField, onFiltersChange, placeholder }: SearchConfigParameters) {
+    constructor({ fields, filters = [], prefix, mainField, onFiltersChange, placeholder }: SearchConfigParameters) {
         this.fields = fields;
+        this.filters = filters;
         this.mainField = mainField;
         this.onFiltersChange = onFiltersChange;
         this.placeholder = placeholder;
@@ -74,6 +76,7 @@ export interface SearchConfigParameters {
     fields: SearchField[];
     prefix: string;
 
+    filters?: SearchFilter[];
     mainField?: string;
     onFiltersChange?: (filters: SearchFilter[]) => void;
     placeholder?: string;

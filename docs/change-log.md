@@ -61,6 +61,12 @@
 -   Form module: `isFreeTextAllowed` on `BeyFormAutocompleteField` takes the typed text as the value and keeps the options as suggestions, so a value outside them stays.
 -   Form module: `BeyFormListField` shows read-only texts as a list, from an array or a signal, with its placeholder while empty; it grows with its texts and leaves the scroll to the form.
 -   Services: the HTTP error modal explains the `attachments.*` errors of express-components: `content-already-set`, `content-too-large`, `duplicate-content`, `empty-content` and `unsupported-type`.
+-   Page module: `views` on `BeyPageConfig` adds a tab per `BeyPageView` between the main tab and the trash, listing the same rows with the `filters` of the view before those of the user.
+-   Page module: a page left for a route under its URL comes back with its folder, tab, search, page, page size and selection; going anywhere else starts it fresh.
+-   Page module: the last node of the breadcrumb counts the rows of the folder or of the trash, `angular-components.page.count.one` or `.many` with `{{count}}`.
+-   Page module: in the trash, the first cell of a row that carries `parentPathField` (`parentPath` by default, on `BeyPageCategoriesConfig`) shows as its tooltip the folder a restore puts it back in.
+-   Breadcrumb module: `detail` and `detailParameters` on `BeyBreadcrumbItem` show a translated text after the label, never truncated, such as a count.
+-   Search module: `filters` on `BeySearchConfig`, the filters the box and the panel start from.
 
 ### Changed
 
@@ -95,6 +101,7 @@
 -   Form module: the number, checkbox, chips and file fields type `validators` as `BeyFormFieldCustomValidator[]`, so a length, pattern, email or url validator on them no longer compiles.
 -   Pdf viewer module: the zoom buttons of the compact toolbar are `bey-button`s with a bordered icon-square variant and keep their look; their name shows as the library tooltip instead of the browser's `title`, also while disabled.
 -   Style guide: the list and tree demos show the selected item on the page instead of logging it, and the tree demo highlights the node the user picks.
+-   Search module: a new `BeySearchConfig` starts the box and the panel again from its `filters` instead of keeping what the user had typed.
 
 ### Fixed
 

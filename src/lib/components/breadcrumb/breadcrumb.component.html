@@ -30,6 +30,9 @@
                     >
                         {{ entry.label }}
                     </span>
+                    @if (entry.detail) {
+                        <span class="bey-breadcrumb-item-detail">{{ entry.detail }}</span>
+                    }
                 } @else {
                     <button
                         class="bey-breadcrumb-item-button"
@@ -44,6 +47,9 @@
                             <fa-icon class="bey-breadcrumb-item-icon" [icon]="entry.item.icon"></fa-icon>
                         }
                         <span class="bey-breadcrumb-item-label">{{ entry.label }}</span>
+                        @if (entry.detail) {
+                            <span class="bey-breadcrumb-item-detail">{{ entry.detail }}</span>
+                        }
                     </button>
                 }
             </li>

@@ -72,6 +72,7 @@
                     "label": "Home"
                 },
                 "product": {
+                    "detail": "({{count}} variants)",
                     "label": "Product"
                 }
             },
@@ -635,7 +636,26 @@
                     "tooltip": "Edit the selected product"
                 }
             },
-            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form.",
+            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form. The Available tab is a view: the same list with a filter of its own, searchable too.",
+            "folders": {
+                "categories": {
+                    "root": "All products"
+                },
+                "example": "With categories the page browses folders, and the last node of the breadcrumb counts what the folder holds, folders and products across every page. Leaving for a route under the page and coming back keeps the folder, the search, the page and the selection.",
+                "heading": "Folders",
+                "table": {
+                    "columns": {
+                        "name": "Name",
+                        "price": "Price"
+                    },
+                    "empty": "This folder is empty",
+                    "tooltips": {
+                        "name": "What the product or the folder is called",
+                        "price": "Unit price"
+                    }
+                },
+                "title": "Products by folder"
+            },
             "form": {
                 "create": {
                     "title": "New product"
@@ -685,6 +705,14 @@
                     "price": "Unit price"
                 }
             },
+            "tabs": {
+                "available": {
+                    "label": "Available"
+                },
+                "table": {
+                    "label": "All"
+                }
+            },
             "title": "Products",
             "toast": {
                 "create-success": "Product created",
@@ -718,7 +746,7 @@
         "properties-menu-section": "Properties Menu",
         "search": {
             "applied": "Applied filters",
-            "example": "Quick search box plus a panel of typed filter rows. Every change is reported through onFiltersChange; the consumer runs the query.",
+            "example": "Quick search box plus a panel of typed filter rows. It starts from the filters of its config, here the editor role; every change is reported through onFiltersChange and the consumer runs the query.",
             "fields": {
                 "active": "Active",
                 "age": "Age",

@@ -1,6 +1,10 @@
 {
     "angular-components": {
         "page": {
+            "count": {
+                "many": "({{count}} elementos)",
+                "one": "({{count}} elemento)"
+            },
             "form": {
                 "cancel": "Cancelar",
                 "submit": "Guardar"

@@ -249,6 +249,24 @@ describe('SearchComponent', () => {
         expect(toggle().textContent).toContain('1');
     }));
 
+    it('starts from the filters of its config, in the box and in the panel, without reporting them', () => {
+        render(
+            buildConfig({
+                filters: [
+                    new StringFilter({ field: 'name', operator: SearchFilterOperator.Contains, value: 'ada' }),
+                    new NumberFilter({ field: 'age', operator: SearchFilterOperator.Between, value: [30, 40] })
+                ]
+            })
+        );
+        openPanel();
+
+        expect(mainInput().value).toBe('ada');
+        expect(toggle().textContent).toContain('2');
+        expect(rows().map(row => selectsOf(row)[0].value)).toEqual(['name', 'age']);
+        expect(queryAll<HTMLInputElement>(rows()[1], 'input').map(input => input.value)).toEqual(['30', '40']);
+        expect(onFiltersChange).not.toHaveBeenCalled();
+    });
+
     it('closes the panel on a click outside', fakeAsync(() => {
         render();
         openPanel();
