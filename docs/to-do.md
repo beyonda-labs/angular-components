@@ -234,8 +234,8 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [x] `SearchField.getOperators()` moved out of the model into `beySearchFieldOperators(field)`, and
         `BadgeConfig.translate` renamed to `isTranslated`
 -   [x] The tree chevron has no role or name (it is mouse only), so the specs reach it through its markup
--   [ ] _(when the search module is next changed)_ `search.component.css` needs a `stylelint-disable` because it
-        styles Bootstrap's `.form-select` and `.form-control`; styling its own `bey-search-*` classes would drop it
+-   [x] `search.component.css` dropped its `stylelint-disable`: the filter row styles its own `bey-search-control`
+        class instead of Bootstrap's `.form-select` and `.form-control`, which keep the base look
 -   [x] `BeyHttpService` as one typed, cold channel: the request leaves on subscribe and is cancelled on
         unsubscribe, emits `T`, and propagates the error after the modal; `onSuccess` / `onError` are gone,
         `handleError`, `successToast` and `loading` stay, `provideBeyHttp` (inside `provideBeyApp` and
