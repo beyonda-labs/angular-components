@@ -18,6 +18,7 @@ import { debounceTime, Subject } from 'rxjs';
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
 import { toKeySegment } from '../../utilities/key-segment';
+import { searchFieldOperators } from './functions/search-field-operators';
 import { SearchConfig, SearchField, SearchFieldOption, SearchFieldType } from './models/search.model';
 import {
     BooleanFilter,
@@ -119,7 +120,9 @@ export class SearchComponent {
     }
 
     getOperators(row: SearchDraftRow): SearchFilterOperator[] {
-        return this.getField(row)?.getOperators() ?? [];
+        const field = this.getField(row);
+
+        return field ? searchFieldOperators(field) : [];
     }
 
     getRowType(row: SearchDraftRow): SearchFieldType | null {
@@ -144,7 +147,7 @@ export class SearchComponent {
         this.rows.update(rows =>
             rows.map((row, currentIndex) =>
                 currentIndex === index
-                    ? { fieldKey, operator: field ? field.getOperators()[0] : '', value: '', valueTo: '' }
+                    ? { fieldKey, operator: field ? searchFieldOperators(field)[0] : '', value: '', valueTo: '' }
                     : row
             )
         );
@@ -261,7 +264,7 @@ export class SearchComponent {
 
             this.rows.update(rows => [
                 ...rows,
-                { fieldKey: mainField, operator: field?.getOperators()[0] ?? '', value: term, valueTo: '' }
+                { fieldKey: mainField, operator: field ? searchFieldOperators(field)[0] : '', value: term, valueTo: '' }
             ]);
 
             return;

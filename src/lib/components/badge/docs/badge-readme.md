@@ -15,11 +15,11 @@ readonly status = new BeyBadgeConfig({ label: 'myApp.status.active', variant: Be
 
 ## BeyBadgeConfig
 
-| Field       | Required | Default   | Meaning                                               |
-| ----------- | -------- | --------- | ----------------------------------------------------- |
-| `label`     | yes      |           | The text, a translation key unless `translate` is off |
-| `variant`   | no       | `Neutral` | One of `BeyBadgeVariant`                              |
-| `translate` | no       | `true`    | Run the label through the translate pipe              |
+| Field          | Required | Default   | Meaning                                                      |
+| -------------- | -------- | --------- | ------------------------------------------------------------ |
+| `label`        | yes      |           | The text, a translation key unless `isTranslated` is `false` |
+| `variant`      | no       | `Neutral` | One of `BeyBadgeVariant`                                     |
+| `isTranslated` | no       | `true`    | Run the label through the translate pipe                     |
 
 ## Variants
 

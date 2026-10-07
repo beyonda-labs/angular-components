@@ -8,7 +8,7 @@ export enum SearchFieldType {
     Text = 'text'
 }
 
-const OPERATORS_BY_TYPE: Record<SearchFieldType, SearchFilterOperator[]> = {
+export const OPERATORS_BY_TYPE: Record<SearchFieldType, SearchFilterOperator[]> = {
     [SearchFieldType.Boolean]: [SearchFilterOperator.Equals, SearchFilterOperator.NotEquals],
     [SearchFieldType.Number]: [
         SearchFilterOperator.Equals,
@@ -65,10 +65,6 @@ export class SearchField {
         this.key = key;
         this.options = options;
         this.type = type;
-    }
-
-    getOperators(): SearchFilterOperator[] {
-        return OPERATORS_BY_TYPE[this.type];
     }
 }
 

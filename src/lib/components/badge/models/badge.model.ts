@@ -14,13 +14,13 @@ export enum BadgeVariant {
 }
 
 export class BadgeConfig {
+    isTranslated: boolean;
     label: string;
-    translate: boolean;
     variant: BadgeVariant;
 
-    constructor({ label, translate = true, variant = BadgeVariant.Neutral }: BadgeConfigParameters) {
+    constructor({ isTranslated = true, label, variant = BadgeVariant.Neutral }: BadgeConfigParameters) {
+        this.isTranslated = isTranslated;
         this.label = label;
-        this.translate = translate;
         this.variant = variant;
     }
 }
@@ -28,6 +28,6 @@ export class BadgeConfig {
 export interface BadgeConfigParameters {
     label: string;
 
-    translate?: boolean;
+    isTranslated?: boolean;
     variant?: BadgeVariant;
 }

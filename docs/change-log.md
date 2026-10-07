@@ -112,6 +112,8 @@
 -   Style guide: the list and tree demos show the selected item on the page instead of logging it, and the tree demo highlights the node the user picks.
 -   Search module: a new `BeySearchConfig` starts the box and the panel again from its `filters` instead of keeping what the user had typed.
 -   Page module: a page with a sortable column sends the `search` parameter even without `tableConfig.search`.
+-   Search module: `BeySearchField.getOperators()` → `beySearchFieldOperators(field)`, a function, so `BeySearchField` only holds data.
+-   Badge module: `translate` → `isTranslated` on `BeyBadgeConfig` and `BeyBadgeConfigParameters`.
 
 ### Fixed
 
