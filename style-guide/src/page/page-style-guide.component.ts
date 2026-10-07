@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
+    BeyBooleanFilter,
     BeyFormNumberField,
     BeyFormRow,
     BeyFormSection,
     BeyFormTextField,
+    BeyPageCategoriesConfig,
     BeyPageComponent,
     BeyPageConfig,
     BeyPageFormConfig,
@@ -13,6 +15,7 @@ import {
     beyPageStandardAction,
     BeyPageTableConfig,
     BeyPageTableSearchConfig,
+    BeyPageView,
     BeySearchField,
     BeySearchFieldType,
     BeySearchSortDirection,
@@ -22,6 +25,12 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 
 const PREFIX = 'angular-components-style-guide.page';
+const FOLDERS_PREFIX = `${PREFIX}.folders`;
+
+interface FolderProduct extends BeyPageItem {
+    name: string;
+    price: number;
+}
 
 interface Product extends BeyPageItem {
     category: string;
@@ -78,6 +87,9 @@ export class PageStyleGuideComponent {
             title: `${PREFIX}.title`
         }),
         prefix: PREFIX,
+        views: [
+            new BeyPageView({ filters: [new BeyBooleanFilter({ field: 'available', value: true })], key: 'available' })
+        ],
         tableConfig: new BeyPageTableConfig({
             columns: [
                 new BeyTableColumn({ key: 'name', width: 4 }),
@@ -95,6 +107,20 @@ export class PageStyleGuideComponent {
                 ],
                 mainField: 'name'
             })
+        })
+    });
+    readonly foldersConfig = new BeyPageConfig<unknown, FolderProduct>({
+        baseUrl: '/product-categories',
+        headerConfig: new BeyPageHeaderConfig({ title: `${FOLDERS_PREFIX}.title` }),
+        prefix: FOLDERS_PREFIX,
+        tableConfig: new BeyPageTableConfig({
+            categoriesConfig: new BeyPageCategoriesConfig({}),
+            columns: [new BeyTableColumn({ key: 'name', width: 4 }), new BeyTableColumn({ key: 'price', width: 2 })],
+            height: '18rem',
+            loadRow: ({ name, price }) => [
+                new BeyTextTableCell({ content: name, tooltip: name }),
+                new BeyTextTableCell({ content: typeof price === 'number' ? `${price.toFixed(2)} €` : '' })
+            ]
         })
     });
 

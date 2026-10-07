@@ -1,5 +1,6 @@
 import { computed, DestroyRef, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslateService } from '@ngx-translate/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { catchError, EMPTY, finalize, Observable, Subject, switchMap, tap } from 'rxjs';
 
@@ -14,21 +15,20 @@ import { SearchFilter } from '../../search/models/search-filter.model';
 import { TableColumn, TableConfig } from '../../table/models/table.model';
 import { LinkTableCell, TableCell, TextTableCell } from '../../table/models/table-cell.model';
 import { Tab, TabsConfig, TabsVariant } from '../../tabs/models/tabs.model';
+import { withFolderCount } from '../functions/page-folder-count';
 import { isCategoryRow, readRowField } from '../functions/page-row';
+import { readParentPath, withOriginTooltip } from '../functions/page-trash-origin';
 import { PageBackendResponse, PageConfig, PageHandle } from '../models/page.model';
 import { PageAction, PageActionZone } from '../models/page-action.model';
 import { PageCategoriesConfig, PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
 import { PageSearch } from '../models/page-search.model';
+import { PageCategoryPathEntry } from '../models/page-state.model';
 import { PageTableConfig } from '../models/page-table.model';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
 import { PageSearchService } from './page-search.service';
-
-interface CategoryPathEntry {
-    id: string | number;
-    label: string;
-}
+import { PageStateService } from './page-state.service';
 
 interface PageLoad {
     config: PageConfig;
@@ -43,12 +43,19 @@ export class PageService {
     private readonly pageActionsService = inject(PageActionsService);
     private readonly pageHttpService = inject(PageHttpService);
     private readonly pageSearchService = inject(PageSearchService);
+    private readonly pageStateService = inject(PageStateService);
+    private readonly translateService = inject(TranslateService);
 
     private readonly config = signal<PageConfig | null>(null);
+    private readonly countedLocation = signal<string | null>(null);
     private formModalReference?: BsModalRef<ModalFormDialogComponent>;
     private readonly globalActions = signal<string[] | null>(null);
     private readonly loads = new Subject<PageLoad>();
+    private readonly location = computed(() => `${this.activeTab()}:${this.currentCategoryId() ?? ''}`);
+    private readonly statePath = this.pageStateService.currentPath();
 
+    readonly activeTab = computed(() => this.activeView() ?? this.viewMode());
+    readonly activeView = signal<string | null>(null);
     readonly categoryBreadcrumbConfig = computed<BreadcrumbConfig | null>(() => {
         const config = this.config();
 
@@ -58,23 +65,23 @@ export class PageService {
 
         if (this.viewMode() === PageViewMode.Trash) {
             return new BreadcrumbConfig({
-                items: [
+                items: this.withCount([
                     new BreadcrumbItem({ id: 0, label: `${config.prefix}.tabs.trash.label`, isTranslationKey: true })
-                ],
+                ]),
                 translate: false
             });
         }
 
         return new BreadcrumbConfig({
-            items: [
+            items: this.withCount([
                 new BreadcrumbItem({ id: 0, label: `${config.prefix}.categories.root`, isTranslationKey: true }),
                 ...this.categoryPath().map((entry, index) => new BreadcrumbItem({ id: index + 1, label: entry.label }))
-            ],
+            ]),
             onItemClick: id => this.navigateBreadcrumb(id),
             translate: false
         });
     });
-    readonly categoryPath = signal<CategoryPathEntry[]>([]);
+    readonly categoryPath = signal<PageCategoryPathEntry[]>([]);
     readonly currentCategoryId = signal<string | number | null>(null);
     readonly handle: PageHandle = {
         openCategory: item => this.openCategory(item),
@@ -133,6 +140,7 @@ export class PageService {
 
         return new SearchConfig({
             fields: search.fields,
+            filters: untracked(() => this.pageSearch().filters),
             mainField: search.mainField,
             onFiltersChange: filters => this.setFilters(filters),
             prefix: `${config.prefix}.search`
@@ -171,16 +179,21 @@ export class PageService {
     readonly viewMode = signal<PageViewMode>(PageViewMode.Table);
     readonly viewToggleConfig = computed<TabsConfig | null>(() => {
         const config = this.config();
+        const isTrashEnabled = Boolean(config?.tableConfig?.isTrashEnabled);
 
-        if (!config?.tableConfig?.isTrashEnabled) {
+        if (!config || (!isTrashEnabled && config.views.length === 0)) {
             return null;
         }
 
         return new TabsConfig({
-            activeTab: this.viewMode(),
-            onTabChange: key => this.setViewMode(key as PageViewMode),
+            activeTab: this.activeTab(),
+            onTabChange: key => this.selectTab(key),
             prefix: config.prefix,
-            tabs: [new Tab({ key: PageViewMode.Table }), new Tab({ key: PageViewMode.Trash })],
+            tabs: [
+                new Tab({ key: PageViewMode.Table }),
+                ...config.views.map(view => new Tab({ key: view.key, label: view.label })),
+                ...(isTrashEnabled ? [new Tab({ key: PageViewMode.Trash })] : [])
+            ],
             variant: TabsVariant.Segmented
         });
     });
@@ -211,6 +224,7 @@ export class PageService {
         });
 
         this.destroyRef.onDestroy(() => this.formModalReference?.hide());
+        this.destroyRef.onDestroy(() => this.saveState());
     }
 
     navigateBreadcrumb(id: number): void {
@@ -259,10 +273,18 @@ export class PageService {
         this.pageSearch.update(search => ({ ...search, page: 1 }));
     }
 
+    selectTab(key: string): void {
+        const view = this.config()?.views.find(current => current.key === key);
+
+        this.activeView.set(view?.key ?? null);
+        this.setViewMode(view ? PageViewMode.Table : (key as PageViewMode));
+    }
+
     setConfig<TValue, TItem extends PageItem, TCategory extends PageItem, TCategoryValue>(
         typedConfig: PageConfig<TValue, TItem, TCategory, TCategoryValue>
     ): void {
         const config = typedConfig as unknown as PageConfig;
+        const isFirstConfig = this.config() === null;
 
         this.config.set(config);
 
@@ -270,6 +292,10 @@ export class PageService {
             const { order } = config.tableConfig;
 
             this.pageSearch.update(search => ({ ...search, sort: order }));
+        }
+
+        if (isFirstConfig) {
+            this.restoreState(config);
         }
 
         config.onReady?.(this.handle);
@@ -324,9 +350,13 @@ export class PageService {
 
         const categoriesConfig = config.tableConfig?.categoriesConfig;
         const viewingTrash = this.viewMode() === PageViewMode.Trash;
+        const location = this.location();
+        const viewFilters = viewingTrash
+            ? []
+            : (config.views.find(view => view.key === this.activeView())?.filters ?? []);
         const queryParameters = this.pageSearchService.buildQueryParameters(
-            search,
-            Boolean(config.tableConfig?.search)
+            { ...search, filters: [...viewFilters, ...search.filters] },
+            Boolean(config.tableConfig?.search) || viewFilters.length > 0
         );
 
         if (categoriesConfig && !viewingTrash) {
@@ -343,6 +373,7 @@ export class PageService {
             tap(response => {
                 this.items.set(response.results);
                 this.totalItems.set(response.search?.total ?? response.results.length);
+                this.countedLocation.set(location);
                 this.globalActions.set(response.globalActions ?? []);
                 this.restoreSelection();
                 config.onDataLoaded?.(response);
@@ -373,10 +404,14 @@ export class PageService {
     private loadRow(tableConfig: PageTableConfig, item: PageItem): TableCell[] {
         const { categoriesConfig } = tableConfig;
         const viewMode = this.viewMode();
+        const cells =
+            categoriesConfig && isCategoryRow(item, categoriesConfig)
+                ? this.loadCategoryRow(item, categoriesConfig, viewMode)
+                : tableConfig.loadRow(item, viewMode);
 
-        return categoriesConfig && isCategoryRow(item, categoriesConfig)
-            ? this.loadCategoryRow(item, categoriesConfig, viewMode)
-            : tableConfig.loadRow(item, viewMode);
+        return categoriesConfig && viewMode === PageViewMode.Trash
+            ? this.withOrigin(cells, item, categoriesConfig)
+            : cells;
     }
 
     private restoreSelection(): void {
@@ -385,11 +420,54 @@ export class PageService {
         this.setSelected(this.items().filter(item => ids.has(item.id)));
     }
 
+    private restoreState(config: PageConfig): void {
+        const state = this.pageStateService.restore(this.statePath, config.prefix);
+
+        if (!state) {
+            return;
+        }
+
+        this.activeView.set(config.views.some(view => view.key === state.view) ? state.view : null);
+        this.categoryPath.set(state.categoryPath);
+        this.currentCategoryId.set(state.currentCategoryId);
+        this.pageSearch.set(state.search);
+        this.selected.set(state.selected);
+        this.viewMode.set(state.viewMode);
+    }
+
+    private saveState(): void {
+        const config = this.config();
+
+        if (config) {
+            this.pageStateService.leave(this.statePath, config.prefix, {
+                categoryPath: this.categoryPath(),
+                currentCategoryId: this.currentCategoryId(),
+                search: this.pageSearch(),
+                selected: this.selected(),
+                view: this.activeView(),
+                viewMode: this.viewMode()
+            });
+        }
+    }
+
     private setPage(page: number): void {
         this.pageSearch.update(search => ({ ...search, page }));
     }
 
     private setPageSize(size: number): void {
         this.pageSearch.update(search => ({ ...search, page: 1, size }));
+    }
+
+    private withCount(items: BreadcrumbItem[]): BreadcrumbItem[] {
+        return this.countedLocation() === this.location() ? withFolderCount(items, this.totalItems()) : items;
+    }
+
+    private withOrigin(cells: TableCell[], item: PageItem, categoriesConfig: PageCategoriesConfig): TableCell[] {
+        const parentPath = readParentPath(item, categoriesConfig.parentPathField);
+        const prefix = this.config()?.prefix;
+
+        return parentPath && prefix
+            ? withOriginTooltip(cells, this.translateService.instant(`${prefix}.categories.root`), parentPath)
+            : cells;
     }
 }

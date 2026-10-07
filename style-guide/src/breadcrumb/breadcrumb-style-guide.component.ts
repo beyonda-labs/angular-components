@@ -37,7 +37,13 @@ export class BreadcrumbStyleGuideComponent {
                 new BeyBreadcrumbItem({ id: 1, label: 'home.label', icon: faHome }),
                 new BeyBreadcrumbItem({ id: 2, label: 'catalog.label', icon: faList }),
                 new BeyBreadcrumbItem({ id: 3, label: 'category.label', icon: faTag }),
-                new BeyBreadcrumbItem({ id: 4, label: 'product.label', icon: faBox })
+                new BeyBreadcrumbItem({
+                    detail: 'angular-components-style-guide.breadcrumb.icons.product.detail',
+                    detailParameters: { count: 3 },
+                    icon: faBox,
+                    id: 4,
+                    label: 'product.label'
+                })
             ]
         });
 

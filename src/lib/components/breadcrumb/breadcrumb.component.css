@@ -83,6 +83,13 @@
     white-space: nowrap;
 }
 
+.bey-breadcrumb-item-detail {
+    color: var(--bey-breadcrumb-text);
+    flex-shrink: 0;
+    font-weight: var(--bey-font-weight-regular);
+    white-space: nowrap;
+}
+
 .bey-breadcrumb-item-icon {
     flex-shrink: 0;
     font-size: var(--bey-font-size-xs);

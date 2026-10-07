@@ -39,6 +39,9 @@ describe('StyleGuideComponent', () => {
             httpTesting
                 .expectOne(request => request.url === 'https://api.test/api/products')
                 .flush({ globalActions: [], results: [] });
+            httpTesting
+                .expectOne(request => request.url === 'https://api.test/api/product-categories')
+                .flush({ globalActions: [], results: [] });
 
             expect(fixture.nativeElement.querySelector('h1').textContent).toBe('Style guide');
         },

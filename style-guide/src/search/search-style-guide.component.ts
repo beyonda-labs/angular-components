@@ -4,11 +4,17 @@ import {
     BeySearchConfig,
     BeySearchField,
     BeySearchFieldType,
-    BeySearchFilter
+    BeySearchFilter,
+    BeySearchFilterOperator,
+    BeyStringFilter
 } from '@beyonda-labs/angular-components';
 import { TranslateModule } from '@ngx-translate/core';
 
 const PREFIX = 'angular-components-style-guide.search';
+
+const INITIAL_FILTERS: BeySearchFilter[] = [
+    new BeyStringFilter({ field: 'role', operator: BeySearchFilterOperator.Equals, value: 'editor' })
+];
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,8 +25,9 @@ const PREFIX = 'angular-components-style-guide.search';
     templateUrl: './search-style-guide.component.html'
 })
 export class SearchStyleGuideComponent {
-    readonly appliedFilters = signal<BeySearchFilter[]>([]);
+    readonly appliedFilters = signal<BeySearchFilter[]>(INITIAL_FILTERS);
     readonly config = new BeySearchConfig({
+        filters: INITIAL_FILTERS,
         mainField: 'name',
         onFiltersChange: filters => this.appliedFilters.set(filters),
         prefix: PREFIX,

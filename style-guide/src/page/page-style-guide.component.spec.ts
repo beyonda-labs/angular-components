@@ -29,4 +29,18 @@ describe('PageStyleGuideComponent', () => {
         expect(fixture.nativeElement.textContent).toContain('Keyboard');
         expect(fixture.nativeElement.textContent).toContain('49.90 €');
     });
+
+    it('offers the available view and counts the rows of the folder in the folders example', async () => {
+        TestBed.inject(HttpTestingController)
+            .expectOne(request => request.url === 'https://api.test/api/product-categories')
+            .flush({
+                globalActions: [],
+                results: [{ id: 'f', name: 'Hardware', type: 'category' }],
+                search: { filters: [], page: 1, size: 25, total: 1 }
+            });
+        await settle(fixture);
+
+        expect(fixture.nativeElement.textContent).toContain('angular-components-style-guide.page.tabs.available.label');
+        expect(fixture.nativeElement.textContent).toContain('angular-components.page.count.one');
+    });
 });

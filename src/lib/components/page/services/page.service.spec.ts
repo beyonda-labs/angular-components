@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideTranslateService } from '@ngx-translate/core';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of, Subject, throwError } from 'rxjs';
 
@@ -80,6 +81,7 @@ describe('PageService', () => {
         TestBed.configureTestingModule({
             providers: [
                 PageService,
+                provideTranslateService(),
                 { provide: PageActionsService, useValue: pageActionsService },
                 { provide: PageHttpService, useValue: pageHttpService }
             ]

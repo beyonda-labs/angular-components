@@ -15,7 +15,26 @@
                     "tooltip": "Edit the selected product"
                 }
             },
-            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form.",
+            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form. The Available tab is a view: the same list with a filter of its own, searchable too.",
+            "folders": {
+                "categories": {
+                    "root": "All products"
+                },
+                "example": "With categories the page browses folders, and the last node of the breadcrumb counts what the folder holds, folders and products across every page. Leaving for a route under the page and coming back keeps the folder, the search, the page and the selection.",
+                "heading": "Folders",
+                "table": {
+                    "columns": {
+                        "name": "Name",
+                        "price": "Price"
+                    },
+                    "empty": "This folder is empty",
+                    "tooltips": {
+                        "name": "What the product or the folder is called",
+                        "price": "Unit price"
+                    }
+                },
+                "title": "Products by folder"
+            },
             "form": {
                 "create": {
                     "title": "New product"
@@ -63,6 +82,14 @@
                     "category": "Where the product is filed",
                     "name": "What the product is called",
                     "price": "Unit price"
+                }
+            },
+            "tabs": {
+                "available": {
+                    "label": "Available"
+                },
+                "table": {
+                    "label": "All"
                 }
             },
             "title": "Products",

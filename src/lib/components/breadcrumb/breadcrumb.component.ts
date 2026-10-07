@@ -23,6 +23,7 @@ const ELLIPSIS_ESTIMATED_WIDTH = 40;
 const SEPARATOR_ESTIMATED_WIDTH = 20;
 
 interface RenderedItem {
+    detail: string;
     item: BreadcrumbItem;
     label: string;
 }
@@ -184,7 +185,11 @@ export class BreadcrumbComponent implements AfterViewInit {
     private render(items: BreadcrumbItem[]): RenderedItem[] {
         this.languageChange();
 
-        return items.map(item => ({ item, label: this.resolveLabel(item) }));
+        return items.map(item => ({ detail: this.resolveDetail(item), item, label: this.resolveLabel(item) }));
+    }
+
+    private resolveDetail({ detail, detailParameters }: BreadcrumbItem): string {
+        return detail ? this.translateService.instant(detail, detailParameters) : '';
     }
 
     private resolveLabel(item: BreadcrumbItem): string {

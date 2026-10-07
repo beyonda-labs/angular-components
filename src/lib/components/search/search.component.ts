@@ -6,6 +6,7 @@ import {
     HostListener,
     inject,
     input,
+    linkedSignal,
     signal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -59,7 +60,7 @@ export class SearchComponent {
         label: 'angular-components.search.add',
         type: ButtonType.Secondary
     });
-    readonly appliedFilters = signal<SearchFilter[]>([]);
+    readonly appliedFilters = linkedSignal<SearchFilter[]>(() => [...this.config().filters]);
     readonly applyButton = new ButtonConfig({
         action: () => this.applyFilters(),
         label: 'angular-components.search.apply',
@@ -76,9 +77,9 @@ export class SearchComponent {
     readonly isPanelOpen = signal(false);
     readonly placeholder = computed(() => this.config().placeholder ?? DEFAULT_PLACEHOLDER);
     readonly removeIcon = faXmark;
-    readonly rows = signal<SearchDraftRow[]>([]);
+    readonly rows = linkedSignal<SearchDraftRow[]>(() => this.config().filters.map(filter => toDraftRow(filter)));
     readonly searchIcon = faMagnifyingGlass;
-    readonly searchTerm = signal('');
+    readonly searchTerm = linkedSignal(() => findMainTerm(this.config()));
 
     private readonly searchTerm$ = new Subject<void>();
 
@@ -309,4 +310,21 @@ export class SearchComponent {
                 });
         }
     }
+}
+
+function findMainTerm({ fields, filters, mainField }: SearchConfig): string {
+    const field = fields.find(current => current.key === mainField);
+    const filter = filters.find(current => current.field === mainField);
+
+    if (!field || !filter || field.type === SearchFieldType.Boolean || field.type === SearchFieldType.Select) {
+        return '';
+    }
+
+    return String(filter.value ?? '');
+}
+
+function toDraftRow({ field, operator, value }: SearchFilter): SearchDraftRow {
+    const [from, to] = Array.isArray(value) ? value : [value, ''];
+
+    return { fieldKey: field, operator, value: String(from ?? ''), valueTo: String(to ?? '') };
 }

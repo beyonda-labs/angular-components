@@ -48,6 +48,8 @@ export type {
     PageTableConfigParameters as BeyPageTableConfigParameters,
     PageTableSearchConfigParameters as BeyPageTableSearchConfigParameters
 } from './models/page-table.model';
+export { PageView as BeyPageView } from './models/page-view.model';
+export type { PageViewParameters as BeyPageViewParameters } from './models/page-view.model';
 export { PageConfig as BeyPageConfig } from './models/page.model';
 export type {
     PageBackendResponse as BeyPageBackendResponse,

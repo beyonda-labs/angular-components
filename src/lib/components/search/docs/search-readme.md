@@ -28,6 +28,7 @@ const search = new BeySearchConfig({
 | `prefix`          | yes      |                        | i18n prefix the field labels are built from                 |
 | `fields`          | yes      |                        | What can be filtered, and how                               |
 | `mainField`       | no       | none                   | Key of the field the quick search box writes to             |
+| `filters`         | no       | `[]`                   | The filters the box and the panel start from                |
 | `placeholder`     | no       | the library's default  | Placeholder of the quick search box                         |
 | `onFiltersChange` | no       |                        | Called with the complete filters whenever they change       |
 
@@ -54,6 +55,10 @@ Rows built in the panel are reported when Apply is used, and only those that are
 operator and a value that fits the type. Clear empties the box, the rows and the reported filters at once.
 
 The panel closes on Apply, on Escape and on a click outside.
+
+A new config starts again from its `filters`: the box shows the value of the one on `mainField`, the panel one row
+per filter, and nothing is reported until the user changes them. A screen that keeps the search while it rebuilds
+the config passes the filters in force, as `bey-page` does when it comes back to a search.
 
 ## Theming
 

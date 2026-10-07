@@ -57,6 +57,7 @@ readonly config = new BeyPageConfig<UserFormValue, User>({
 | `duplicationConfig` | no       | `BeyPageDuplicationConfig`: the field that names a row (`nameField`, `name` by default), the validators of the name of a copy (`nameValidators`) and what joins the copy suffix to it (`copySeparator`, a space by default), for `duplicate` |
 | `onDataLoaded`      | no       | Run with the backend response after every load                                                                                                                                                                                               |
 | `onReady`           | no       | Run with the page handle once the page exists                                                                                                                                                                                                |
+| `views`             | no       | `BeyPageView`s shown as tabs after the main one, see [Views](#views)                                                                                                                                                                         |
 
 The config is never written to. What the consumer needs to do to the live page goes through the
 `BeyPageHandle` that `onReady` delivers: `refresh()` reloads the current page, `openCategory(category)` drills
@@ -91,8 +92,9 @@ infer it from that form, to `BeyPageConfig<UserFormValue, User, Folder, FolderFo
 | Status    | `POST {baseUrl}/{id}/status` with `{ [field]: status }`                                      |
 
 The list answers with `{ globalActions, results, search? }`: `globalActions` names the global actions the
-user may see, each result may carry its own `actions`, and `search.total` feeds the paginator. The `search`
-query is `{ filters, page, size, sort?, text? }`, with the filters of the search module.
+user may see, each result may carry its own `actions`, and `search.total` feeds the paginator and the count of the
+breadcrumb, so it counts every row the list shows across its pages, categories included. The `search` query is
+`{ filters, page, size, sort?, text? }`, with the filters of the search module.
 
 With `categoriesConfig` the resource also serves, under `{baseUrl}`: `/categories/{id}/path`,
 `/categories/tree`, `POST` and `PUT /categories`, `DELETE /categories` with `{ ids }`, `PUT /move` with
@@ -177,20 +179,53 @@ the transitions on the front only choose what the form offers.
 `tableConfig.search` takes the `fields` of the filters panel and a `mainField` for the text box. Every
 change goes back to the first page and reloads; the whole query travels in the `search` parameter.
 
+## Views
+
+`views` adds a tab per `BeyPageView` between the main tab and the trash, each one the same list with the `filters`
+of the view sent before those of the user, who can still search inside it. A view keeps the folder the user is in
+and the search, and goes back to the first page; its tab reads `<prefix>.tabs.<key>.label`, or its `label` when it
+has one. Its key must not be `table` nor `trash`. The page sends the `search` parameter whenever a view has filters,
+with or without `tableConfig.search`, and the trash never applies them.
+
+```ts
+views: [
+    new BeyPageView({
+        key: 'blocks',
+        filters: [
+            new BeyStringFilter({ field: 'blockType', operator: BeySearchFilterOperator.NotEquals, value: 'template' })
+        ]
+    })
+];
+```
+
+Filters on fields the categories do not have leave the categories alone on a backend like express-components'
+base-entity, so a view inside a folder still shows its sub-folders.
+
+## Coming back to a page
+
+A page the user leaves for a route under its own URL (from `/templates` to `/templates/definition/7`) comes back as
+it was left: the folder and its breadcrumb, the tab, the search and its filters, the page, the page size and the
+selection, which keeps only the rows that are still listed. Going anywhere else (`/documents`) drops what was kept,
+so the next visit starts fresh, and so does a reload of the browser. Pages on the same URL are told apart by their
+`prefix`. Nothing is kept for a page that is not left through the router.
+
 ## Categories and trash
 
 `tableConfig.categoriesConfig` turns the table into a drill-down browser, and a breadcrumb starting at
-`<prefix>.categories.root` shows where the user is. `nameField`, `parentField` and `typeField` name the
-fields the page reads. A row whose `typeField` says `category` is drawn by
-`categoriesConfig.loadRow(category, viewMode)` instead of the table's `loadRow`; without one it shows its name
-as a link that opens it, as plain text in the trash. A custom cell opens a category through
-`handle.openCategory(category)`. With `tableConfig.isTrashEnabled`, with or without categories, a segmented toggle
+`<prefix>.categories.root` shows where the user is. Its last node counts what the folder holds, the `search.total`
+of the list (`angular-components.page.count.one` or `.many`, with `{{count}}`), once the folder has answered.
+`nameField`, `parentField`, `parentPathField` and `typeField` name the fields the page reads. A row whose
+`typeField` says `category` is drawn by `categoriesConfig.loadRow(category, viewMode)` instead of the table's
+`loadRow`; without one it shows its name as a link that opens it, as plain text in the trash. A custom cell opens
+a category through `handle.openCategory(category)`. With `tableConfig.isTrashEnabled`, with or without categories, a segmented toggle
 switches to the flat trash view, where the
 `restore-trash-item` and `delete-trash-item` actions apply, and `empty-trash`, shown while the backend lists it in
 the `globalActions` of the trash, deletes everything in it with `DELETE {baseUrl}/trash/all`. When the backend answers
 a restore with `renamed`, the rows that came back with a new name because another row had theirs, an info toast lists
-them (`angular-components.page.toast.restored-renamed`). `move` opens the tree
-picker with every category, disabling the selected ones and their descendants.
+them (`angular-components.page.toast.restored-renamed`). A trashed row that carries `parentPathField` (`parentPath`,
+the names of the categories above it from the root down) shows on the tooltip of its first cell the folder a restore
+puts it back in, `<prefix>.categories.root / Clients / 2026`, in place of the tooltip that cell had. `move` opens
+the tree picker with every category, disabling the selected ones and their descendants.
 
 On a page with categories an action `handler` receives only the selected rows that are not categories, since
 categories are handled by the standard category actions, and an action with a `handler` is hidden while every
@@ -223,6 +258,8 @@ that has consequences elsewhere, such as renaming something other records name.
 | `<prefix>.duplicate.*`, `<prefix>.change-status.*`, `<prefix>.status.<status>`                              | The forms of `duplicate` and `change-status`           |
 | `<prefix>.toast.<key>-success`                                                                              | Success toast of every standard action                 |
 | `<prefix>.categories.root`, `<prefix>.tabs.table.label`, `<prefix>.tabs.trash.label`, `<prefix>.move.title` | Categories and trash                                   |
+| `<prefix>.tabs.<view>.label`                                                                                | The tab of a view                                      |
+| `angular-components.page.count.one` / `.many`                                                               | The count of the breadcrumb, with `{{count}}`          |
 
 Every `<key>` is the action, column or field key as a kebab-case segment: a column `createdAt` reads
 `<prefix>.table.columns.created-at`. The standard action keys are already kebab-case, so `create-category`
