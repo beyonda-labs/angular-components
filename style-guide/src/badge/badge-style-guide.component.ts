@@ -12,6 +12,6 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class BadgeStyleGuideComponent {
     readonly badges = Object.values(BeyBadgeVariant).map(
-        variant => new BeyBadgeConfig({ label: variant, translate: false, variant })
+        variant => new BeyBadgeConfig({ isTranslated: false, label: variant, variant })
     );
 }

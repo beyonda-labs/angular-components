@@ -48,12 +48,12 @@ export class TableCellComponent {
 
         if (cell instanceof TagsTableCell) {
             return cell.tags.map(
-                tag => new BadgeConfig({ label: tag, translate: false, variant: BadgeVariant.Outline })
+                tag => new BadgeConfig({ isTranslated: false, label: tag, variant: BadgeVariant.Outline })
             );
         }
 
         return cell instanceof BadgeTableCell
-            ? cell.badges.map(badge => new BadgeConfig({ ...badge, translate: cell.translate }))
+            ? cell.badges.map(badge => new BadgeConfig({ ...badge, isTranslated: cell.translate }))
             : [];
     });
     readonly content = computed(() => {

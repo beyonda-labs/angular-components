@@ -231,8 +231,8 @@ What `document-builder-front` did by hand that belongs in the library.
         limits null reads `-max`, and an unknown `errorCode` gets the default title while an empty body or a network
         error gets `unknown`
 -   [x] The session, theme, app and environment services have no `docs/<module>-readme.md`
--   [ ] _(2.0.0)_ `SearchField.getOperators()` is behaviour in a model, and `BadgeConfig.translate` is a boolean
-        without the `is` prefix; both fixes rename or move a public member, so they wait for a major version
+-   [x] `SearchField.getOperators()` moved out of the model into `beySearchFieldOperators(field)`, and
+        `BadgeConfig.translate` renamed to `isTranslated`
 -   [x] The tree chevron has no role or name (it is mouse only), so the specs reach it through its markup
 -   [ ] _(when the search module is next changed)_ `search.component.css` needs a `stylelint-disable` because it
         styles Bootstrap's `.form-select` and `.form-control`; styling its own `bey-search-*` classes would drop it

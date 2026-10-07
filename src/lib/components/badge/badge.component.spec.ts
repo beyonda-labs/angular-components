@@ -35,15 +35,15 @@ describe('BadgeComponent', () => {
         expect(badge.textContent?.trim()).toBe('Active');
     });
 
-    it('shows the label as is when translate is off', () => {
-        const badge = render(new BadgeConfig({ label: 'demo.active', translate: false }));
+    it('shows the label as is when isTranslated is false', () => {
+        const badge = render(new BadgeConfig({ isTranslated: false, label: 'demo.active' }));
 
         expect(badge.textContent?.trim()).toBe('demo.active');
     });
 
     it('follows a replaced config', () => {
         render(new BadgeConfig({ label: 'demo.active' }));
-        const badge = render(new BadgeConfig({ label: 'demo.active', translate: false }));
+        const badge = render(new BadgeConfig({ isTranslated: false, label: 'demo.active' }));
 
         expect(badge.textContent?.trim()).toBe('demo.active');
     });
