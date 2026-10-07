@@ -7,6 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { buttonByName, renderComponent } from '@testing/dom';
 
 import { BadgeConfig, BadgeVariant } from '../../../badge/models/badge.model';
+import { TableSortState } from '../../models/table.model';
 import {
     BadgeTableCell,
     DateTableCell,
@@ -119,5 +120,21 @@ describe('TableCellComponent', () => {
         await render(new DateTableCell({ value: null }));
 
         expect(text()).toBe('');
+    });
+
+    it('turns a sortable header into a button that reports the click, with its sort as aria-sort', async () => {
+        const toggles: number[] = [];
+        await render(new TextTableCell({ content: 'demo.open', translate: true }));
+        fixture.componentRef.setInput('isHeader', true);
+        fixture.componentRef.setInput('sortState', TableSortState.Descending);
+        fixture.componentInstance.sortToggle.subscribe(() => toggles.push(1));
+        fixture.detectChanges();
+
+        buttonByName(fixture, 'Open').click();
+
+        expect(fixture.nativeElement.querySelector('[role="columnheader"]').getAttribute('aria-sort')).toBe(
+            'descending'
+        );
+        expect(toggles).toHaveLength(1);
     });
 });

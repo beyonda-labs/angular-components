@@ -11,6 +11,7 @@ function buildState(overrides: Partial<PageState> = {}): PageState {
         currentCategoryId: 'clients',
         search: { filters: [], page: 2, size: 50 },
         selected: [{ id: 1 }],
+        sort: null,
         view: null,
         viewMode: PageViewMode.Table,
         ...overrides

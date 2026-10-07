@@ -153,6 +153,26 @@ export class PageActionsService {
         return visible;
     }
 
+    moveItems(
+        context: PageActionsContext,
+        items: PageItem[],
+        targetId: string | number | null,
+        onMoved?: () => void
+    ): void {
+        const { baseUrl, prefix } = context.config;
+
+        if (items.length === 0 || !baseUrl) {
+            return;
+        }
+
+        this.pageHttpService
+            .moveItems(baseUrl, toTrashItems(items), targetId, `${prefix}.toast.move-success`)
+            .subscribe(() => {
+                onMoved?.();
+                context.onMoved();
+            });
+    }
+
     openEditForm(context: PageActionsContext, row: PageItem): void {
         if (isCategoryRow(row, context.config.tableConfig?.categoriesConfig)) {
             this.openCategoryForm(context, row);
@@ -311,16 +331,7 @@ export class PageActionsService {
                 new ModalTreeConfig<PageMoveTarget>({
                     nodes: buildMoveTargetNodes(prefix, categories, categoriesConfig, items),
                     prefix: `${prefix}.move`,
-                    onConfirm: node => {
-                        const targetId = node?.data?.id ?? null;
-
-                        this.pageHttpService
-                            .moveItems(baseUrl, toTrashItems(items), targetId, `${prefix}.toast.move-success`)
-                            .subscribe(() => {
-                                reference.hide();
-                                context.onMoved();
-                            });
-                    }
+                    onConfirm: node => this.moveItems(context, items, node?.data?.id ?? null, () => reference.hide())
                 })
             );
         });

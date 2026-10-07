@@ -4,13 +4,15 @@ import { mock, MockProxy } from 'jest-mock-extended';
 import { of, Subject, throwError } from 'rxjs';
 
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
-import { TableColumn } from '../../table/models/table.model';
+import { TableColumn, TableSortDirection } from '../../table/models/table.model';
+import { pageStandardAction } from '../functions/page-standard-actions';
 import { PageBackendResponse, PageConfig, PageConfigParameters, PageHandle } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
-import { PageCategoriesConfig, PageViewMode } from '../models/page-categories.model';
+import { PageCategoriesConfig, PageItemType, PageViewMode } from '../models/page-categories.model';
 import { PageFormConfig } from '../models/page-form.model';
 import { PageHeaderConfig } from '../models/page-header.model';
 import { PageItem } from '../models/page-item.model';
+import { PageSearch, SearchSortDirection } from '../models/page-search.model';
 import { PageTableConfig } from '../models/page-table.model';
 import { PageService } from './page.service';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
@@ -397,5 +399,126 @@ describe('PageService', () => {
         flush();
         expect(service.selected()).toEqual([]);
         expect(pageHttpService.load).toHaveBeenCalledTimes(2);
+    });
+
+    describe('sort', () => {
+        const ORDER = { direction: SearchSortDirection.Asc, field: 'name' };
+
+        function decodedSearch(): PageSearch {
+            return JSON.parse(atob(String(lastQuery()['search']))) as PageSearch;
+        }
+
+        beforeEach(() => {
+            service.setConfig(
+                buildConfig({
+                    tableConfig: new PageTableConfig({
+                        columns: [new TableColumn({ isSortable: true, key: 'updatedAt' })],
+                        loadRow: () => [],
+                        order: ORDER
+                    })
+                })
+            );
+            pageHttpService.load.mockReturnValue(of(buildResponse(ITEMS, 80)));
+            flush();
+        });
+
+        it('sends the sort a sortable column reports from the first page, even without a search config', () => {
+            service.paginationConfig()?.onPageChange?.(3);
+            flush();
+
+            service.tableConfig()?.onSortChange?.({ direction: TableSortDirection.Desc, field: 'updatedAt' });
+            flush();
+
+            expect(decodedSearch()).toMatchObject({
+                page: 1,
+                sort: { direction: SearchSortDirection.Desc, field: 'updatedAt' }
+            });
+            expect(service.tableConfig()?.sort).toEqual({ direction: TableSortDirection.Desc, field: 'updatedAt' });
+        });
+
+        it('goes back to the configured order when the sort is cleared', () => {
+            service.tableConfig()?.onSortChange?.({ direction: TableSortDirection.Asc, field: 'updatedAt' });
+            flush();
+
+            service.tableConfig()?.onSortChange?.(null);
+            flush();
+
+            expect(decodedSearch().sort).toEqual(ORDER);
+            expect(service.tableConfig()?.sort).toBeUndefined();
+        });
+    });
+
+    it('hands the table its columns as declared, with the tooltips of the page, and its storage key', () => {
+        service.setConfig(
+            buildConfig({
+                tableConfig: new PageTableConfig({
+                    columns: [new TableColumn({ isHideable: false, isSortable: true, key: 'name', width: '12rem' })],
+                    loadRow: () => [],
+                    storageKey: 'items'
+                })
+            })
+        );
+        flush();
+
+        expect(service.tableConfig()?.storageKey).toBe('items');
+        expect(service.tableConfig()?.columns[0]).toMatchObject({
+            isHideable: false,
+            isSortable: true,
+            key: 'name',
+            sortField: 'name',
+            tooltip: 'demo.table.tooltips.name',
+            width: '12rem'
+        });
+    });
+
+    describe('drag to move', () => {
+        const FOLDER = { actions: ['move'], id: 'folder', parentId: null, type: PageItemType.Category };
+        const FILE = { actions: ['move'], id: 'file', parentId: null, type: PageItemType.Item };
+
+        function buildMoveConfig(actions: PageAction[], isTrashEnabled = false): PageConfig {
+            return buildConfig({
+                headerConfig: new PageHeaderConfig({ actions }),
+                tableConfig: new PageTableConfig({
+                    categoriesConfig: new PageCategoriesConfig({}),
+                    columns: [],
+                    isTrashEnabled,
+                    loadRow: () => []
+                })
+            });
+        }
+
+        it('lets the rows that may move be dropped onto a folder, through the move of the actions', () => {
+            pageHttpService.load.mockReturnValue(of(buildResponse([FOLDER, FILE])));
+            service.setConfig(buildMoveConfig([pageStandardAction(PageStandardAction.Move)]));
+            flush();
+            service.setSelected([FILE]);
+            const table = service.tableConfig();
+
+            expect(table?.isRowDraggable?.(FILE)).toBe(true);
+            expect(table?.isDropAllowed?.(FOLDER, [FILE])).toBe(true);
+            expect(table?.isDropAllowed?.(FILE, [FOLDER])).toBe(false);
+
+            table?.onRowDrop?.(FOLDER, [FILE]);
+            const [context, items, targetId] = pageActionsService.moveItems.mock.calls[0];
+
+            expect(items).toEqual([FILE]);
+            expect(targetId).toBe('folder');
+
+            context.onMoved();
+            flush();
+            expect(service.selected()).toEqual([]);
+            expect(pageHttpService.load).toHaveBeenCalledTimes(2);
+        });
+
+        it('offers no drag without the standard move action, nor in the trash', () => {
+            service.setConfig(buildMoveConfig([pageStandardAction(PageStandardAction.Delete)]));
+            flush();
+            expect(service.tableConfig()?.onRowDrop).toBeUndefined();
+
+            service.setConfig(buildMoveConfig([pageStandardAction(PageStandardAction.Move)], true));
+            service.setViewMode(PageViewMode.Trash);
+            flush();
+            expect(service.tableConfig()?.isRowDraggable).toBeUndefined();
+        });
     });
 });

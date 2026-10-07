@@ -2,6 +2,7 @@
     "angular-components-style-guide": {
         "table": {
             "actions": {
+                "dropped": "Filas soltadas",
                 "open": "Abrir",
                 "opened": "Acción de fila ejecutada"
             },
@@ -11,11 +12,13 @@
                 "name": "Nombre",
                 "role": "Rol",
                 "skills": "Habilidades",
-                "status": "Estado"
+                "status": "Estado",
+                "team": "Equipo"
             },
             "empty": "No hay filas disponibles para este ejemplo.",
-            "example": "Tabla de datos con ordenamiento, selección de filas y columnas configurables mediante modelo.",
+            "example": "Tabla de datos con ordenación desde las cabeceras, selección de filas, un menú de columnas recordado por tabla y filas que se pueden arrastrar sobre otras.",
             "examples": {
+                "drag": "Arrastra una persona sobre un equipo para moverla allí, o a las personas seleccionadas a la vez",
                 "empty": "La misma tabla sin filas",
                 "filled": "La misma tabla con filas"
             },

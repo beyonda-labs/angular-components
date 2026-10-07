@@ -16,8 +16,13 @@ export type {
     TagsTableCellParameters as BeyTagsTableCellParameters,
     TextTableCellParameters as BeyTextTableCellParameters
 } from './models/table-cell.model';
-export { TableColumn as BeyTableColumn, TableConfig as BeyTableConfig } from './models/table.model';
+export {
+    TableColumn as BeyTableColumn,
+    TableConfig as BeyTableConfig,
+    TableSortDirection as BeyTableSortDirection
+} from './models/table.model';
 export type {
     TableColumnParameters as BeyTableColumnParameters,
-    TableConfigParameters as BeyTableConfigParameters
+    TableConfigParameters as BeyTableConfigParameters,
+    TableSort as BeyTableSort
 } from './models/table.model';

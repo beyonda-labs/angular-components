@@ -27,11 +27,6 @@ import { TranslateModule } from '@ngx-translate/core';
 const PREFIX = 'angular-components-style-guide.page';
 const FOLDERS_PREFIX = `${PREFIX}.folders`;
 
-interface FolderProduct extends BeyPageItem {
-    name: string;
-    price: number;
-}
-
 interface Product extends BeyPageItem {
     category: string;
     name: string;
@@ -92,9 +87,9 @@ export class PageStyleGuideComponent {
         ],
         tableConfig: new BeyPageTableConfig({
             columns: [
-                new BeyTableColumn({ key: 'name', width: 4 }),
-                new BeyTableColumn({ key: 'category', width: 3 }),
-                new BeyTableColumn({ key: 'price', width: 2 })
+                new BeyTableColumn({ isHideable: false, isSortable: true, key: 'name', width: 4 }),
+                new BeyTableColumn({ isSortable: true, key: 'category', width: 3 }),
+                new BeyTableColumn({ isSortable: true, key: 'price', width: 2 })
             ],
             height: '24rem',
             loadRow: product => this.loadRow(product),
@@ -106,29 +101,45 @@ export class PageStyleGuideComponent {
                     new BeySearchField({ key: 'price', type: BeySearchFieldType.Number })
                 ],
                 mainField: 'name'
-            })
+            }),
+            storageKey: 'style-guide-products'
         })
     });
-    readonly foldersConfig = new BeyPageConfig<unknown, FolderProduct>({
+    readonly foldersConfig = new BeyPageConfig<unknown, Product>({
         baseUrl: '/product-categories',
-        headerConfig: new BeyPageHeaderConfig({ title: `${FOLDERS_PREFIX}.title` }),
+        headerConfig: new BeyPageHeaderConfig({
+            actions: [beyPageStandardAction(BeyPageStandardAction.Move)],
+            title: `${FOLDERS_PREFIX}.title`
+        }),
         prefix: FOLDERS_PREFIX,
         tableConfig: new BeyPageTableConfig({
             categoriesConfig: new BeyPageCategoriesConfig({}),
-            columns: [new BeyTableColumn({ key: 'name', width: 4 }), new BeyTableColumn({ key: 'price', width: 2 })],
-            height: '18rem',
-            loadRow: ({ name, price }) => [
-                new BeyTextTableCell({ content: name, tooltip: name }),
-                new BeyTextTableCell({ content: typeof price === 'number' ? `${price.toFixed(2)} €` : '' })
-            ]
+            columns: [
+                new BeyTableColumn({ isSortable: true, key: 'name', width: 4 }),
+                new BeyTableColumn({ isSortable: true, key: 'price', width: 2 })
+            ],
+            height: '20rem',
+            loadRow: product => this.loadFolderRow(product),
+            order: { direction: BeySearchSortDirection.Asc, field: 'name' }
         })
     });
+
+    private loadFolderRow({ name, price }: Product): BeyTextTableCell[] {
+        return [
+            new BeyTextTableCell({ content: name, tooltip: name }),
+            new BeyTextTableCell({ content: toPrice(price) })
+        ];
+    }
 
     private loadRow({ category, name, price }: Product): BeyTextTableCell[] {
         return [
             new BeyTextTableCell({ content: name, tooltip: name }),
             new BeyTextTableCell({ content: category, tooltip: category }),
-            new BeyTextTableCell({ content: typeof price === 'number' ? `${price.toFixed(2)} €` : '' })
+            new BeyTextTableCell({ content: toPrice(price) })
         ];
     }
+}
+
+function toPrice(price: number): string {
+    return typeof price === 'number' ? `${price.toFixed(2)} €` : '';
 }

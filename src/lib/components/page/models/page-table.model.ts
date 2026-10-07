@@ -21,6 +21,7 @@ export class PageTableConfig<
     onSelectionChange?: (items: (TItem | TCategory)[]) => void;
     order?: SearchSort;
     search?: PageTableSearchConfig;
+    storageKey?: string;
 
     constructor({
         allowSelection = true,
@@ -32,7 +33,8 @@ export class PageTableConfig<
         onSelectionChange,
         order,
         search,
-        showPagination = true
+        showPagination = true,
+        storageKey
     }: PageTableConfigParameters<TItem, TCategory, TCategoryValue>) {
         this.allowSelection = allowSelection;
         this.categoriesConfig = categoriesConfig;
@@ -44,6 +46,7 @@ export class PageTableConfig<
         this.order = order;
         this.search = search;
         this.showPagination = showPagination;
+        this.storageKey = storageKey;
     }
 }
 
@@ -74,6 +77,7 @@ export interface PageTableConfigParameters<
     order?: SearchSort;
     search?: PageTableSearchConfig;
     showPagination?: boolean;
+    storageKey?: string;
 }
 
 export interface PageTableSearchConfigParameters {

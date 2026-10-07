@@ -15,13 +15,22 @@
                     "tooltip": "Editar el producto seleccionado"
                 }
             },
-            "example": "Una página autogestionada: acciones de cabecera, búsqueda, tabla y paginación conectadas al backend de demostración, con alta y edición en un formulario modal. La pestaña Disponibles es una vista: la misma lista con un filtro propio, en la que también se puede buscar.",
+            "example": "Una página autogestionada: acciones de cabecera, búsqueda, tabla y paginación conectadas al backend de demostración, con alta y edición en un formulario modal. La pestaña Disponibles es una vista: la misma lista con un filtro propio, en la que también se puede buscar. Las cabeceras ordenan la lista y el menú de columnas oculta la categoría o el precio.",
             "folders": {
+                "actions": {
+                    "move": {
+                        "label": "Mover a...",
+                        "tooltip": "Mover las filas seleccionadas a otra carpeta"
+                    }
+                },
                 "categories": {
                     "root": "Todos los productos"
                 },
-                "example": "Con categorías la página recorre carpetas, y el último nodo de la ruta cuenta lo que contiene la carpeta, carpetas y productos de todas las páginas. Al ir a una ruta bajo la página y volver se conservan la carpeta, la búsqueda, la página y la selección.",
+                "example": "Con categorías la página recorre carpetas, y el último nodo de la ruta cuenta lo que contiene la carpeta, carpetas y productos de todas las páginas. Al ir a una ruta bajo la página y volver se conservan la carpeta, la búsqueda, la página y la selección. Arrastra un producto, o las filas seleccionadas, sobre una carpeta para moverlos allí; la acción Mover a... hace lo mismo desde el teclado. Las cabeceras ordenan la lista en el backend.",
                 "heading": "Carpetas",
+                "move": {
+                    "title": "Mover a"
+                },
                 "table": {
                     "columns": {
                         "name": "Nombre",
@@ -29,11 +38,14 @@
                     },
                     "empty": "Esta carpeta está vacía",
                     "tooltips": {
-                        "name": "Cómo se llama el producto o la carpeta",
+                        "name": "Productos y carpetas por nombre",
                         "price": "Precio unitario"
                     }
                 },
-                "title": "Productos por carpeta"
+                "title": "Productos por carpeta",
+                "toast": {
+                    "move-success": "Movido"
+                }
             },
             "form": {
                 "create": {

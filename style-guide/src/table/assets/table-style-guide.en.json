@@ -2,6 +2,7 @@
     "angular-components-style-guide": {
         "table": {
             "actions": {
+                "dropped": "Rows dropped",
                 "open": "Open",
                 "opened": "Row action executed"
             },
@@ -11,11 +12,13 @@
                 "name": "Name",
                 "role": "Role",
                 "skills": "Skills",
-                "status": "Status"
+                "status": "Status",
+                "team": "Team"
             },
             "empty": "No rows available for this example.",
-            "example": "Data table with sorting, row selection, and customizable columns via model configuration.",
+            "example": "Data table with sorting from the headers, row selection, a columns menu remembered per table and rows that can be dragged onto other rows.",
             "examples": {
+                "drag": "Drag a person onto a team to move them there, or the selected people at once",
                 "empty": "Same table without rows",
                 "filled": "Same table with rows"
             },

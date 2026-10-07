@@ -12,11 +12,15 @@ import { HeaderConfig } from '../../header/models/header.model';
 import { PAGINATION_SIZE_DEFAULT, PaginationConfig } from '../../pagination/models/pagination.model';
 import { SearchConfig } from '../../search/models/search.model';
 import { SearchFilter } from '../../search/models/search-filter.model';
-import { TableColumn, TableConfig } from '../../table/models/table.model';
+import { TableColumn, TableConfig, TableSort } from '../../table/models/table.model';
 import { LinkTableCell, TableCell, TextTableCell } from '../../table/models/table-cell.model';
-import { Tab, TabsConfig, TabsVariant } from '../../tabs/models/tabs.model';
+import { TabsConfig } from '../../tabs/models/tabs.model';
+import { buildPageBreadcrumbItems } from '../functions/page-breadcrumb';
 import { withFolderCount } from '../functions/page-folder-count';
 import { isCategoryRow, readRowField } from '../functions/page-row';
+import { findStandardMoveAction, isMoveDragAllowed, isMoveDropAllowed } from '../functions/page-row-drop';
+import { hasSortableColumn, toSearchSort } from '../functions/page-sort';
+import { buildPageTabs, readViewFilters } from '../functions/page-tabs';
 import { readParentPath, withOriginTooltip } from '../functions/page-trash-origin';
 import { PageBackendResponse, PageConfig, PageHandle } from '../models/page.model';
 import { PageAction, PageActionZone } from '../models/page-action.model';
@@ -53,33 +57,21 @@ export class PageService {
     private readonly loads = new Subject<PageLoad>();
     private readonly location = computed(() => `${this.activeTab()}:${this.currentCategoryId() ?? ''}`);
     private readonly statePath = this.pageStateService.currentPath();
+    private readonly tableSort = signal<TableSort | null>(null);
 
     readonly activeTab = computed(() => this.activeView() ?? this.viewMode());
     readonly activeView = signal<string | null>(null);
     readonly categoryBreadcrumbConfig = computed<BreadcrumbConfig | null>(() => {
         const config = this.config();
+        const viewMode = this.viewMode();
 
-        if (!config?.tableConfig?.categoriesConfig) {
-            return null;
-        }
-
-        if (this.viewMode() === PageViewMode.Trash) {
-            return new BreadcrumbConfig({
-                items: this.withCount([
-                    new BreadcrumbItem({ id: 0, label: `${config.prefix}.tabs.trash.label`, isTranslationKey: true })
-                ]),
-                translate: false
-            });
-        }
-
-        return new BreadcrumbConfig({
-            items: this.withCount([
-                new BreadcrumbItem({ id: 0, label: `${config.prefix}.categories.root`, isTranslationKey: true }),
-                ...this.categoryPath().map((entry, index) => new BreadcrumbItem({ id: index + 1, label: entry.label }))
-            ]),
-            onItemClick: id => this.navigateBreadcrumb(id),
-            translate: false
-        });
+        return config?.tableConfig?.categoriesConfig
+            ? new BreadcrumbConfig({
+                  items: this.withCount(buildPageBreadcrumbItems(config.prefix, viewMode, this.categoryPath())),
+                  onItemClick: viewMode === PageViewMode.Trash ? undefined : id => this.navigateBreadcrumb(id),
+                  translate: false
+              })
+            : null;
     });
     readonly categoryPath = signal<PageCategoryPathEntry[]>([]);
     readonly currentCategoryId = signal<string | number | null>(null);
@@ -156,46 +148,43 @@ export class PageService {
         }
 
         const tablePrefix = `${config.prefix}.table`;
+        const { categoriesConfig } = pageTable;
+        const moveAction = findStandardMoveAction(config.headerConfig?.actions ?? []);
+        const canMoveByDrop = Boolean(config.baseUrl) && this.viewMode() === PageViewMode.Table;
+        const dropMove = moveAction && categoriesConfig && canMoveByDrop ? { categoriesConfig, moveAction } : null;
 
         return new TableConfig<PageItem>({
             columns: pageTable.columns.map(
-                column =>
-                    new TableColumn({
-                        key: column.key,
-                        tooltip: `${tablePrefix}.tooltips.${toKeySegment(column.key)}`,
-                        width: column.width
-                    })
+                column => new TableColumn({ ...column, tooltip: `${tablePrefix}.tooltips.${toKeySegment(column.key)}` })
             ),
             height: pageTable.height,
+            isDropAllowed: dropMove
+                ? (target, items) => isMoveDropAllowed(dropMove.moveAction, target, items, dropMove.categoriesConfig)
+                : undefined,
+            isRowDraggable: dropMove
+                ? item => isMoveDragAllowed(dropMove.moveAction, item, dropMove.categoriesConfig)
+                : undefined,
             isRowSelected: item => this.selected().some(selected => selected.id === item.id),
             items: this.items(),
             loadRow: item => this.loadRow(pageTable, item),
+            onRowDrop: dropMove
+                ? (target, items) =>
+                      this.pageActionsService.moveItems(this.buildActionsContext(config), items, target.id)
+                : undefined,
+            onSortChange: sort => this.setSort(sort),
             prefix: tablePrefix,
             selectable: pageTable.allowSelection,
-            selectedItemsChange: items => this.setSelected(items)
+            selectedItemsChange: items => this.setSelected(items),
+            sort: this.tableSort() ?? undefined,
+            storageKey: pageTable.storageKey
         });
     });
     readonly totalItems = signal(0);
     readonly viewMode = signal<PageViewMode>(PageViewMode.Table);
     readonly viewToggleConfig = computed<TabsConfig | null>(() => {
         const config = this.config();
-        const isTrashEnabled = Boolean(config?.tableConfig?.isTrashEnabled);
 
-        if (!config || (!isTrashEnabled && config.views.length === 0)) {
-            return null;
-        }
-
-        return new TabsConfig({
-            activeTab: this.activeTab(),
-            onTabChange: key => this.selectTab(key),
-            prefix: config.prefix,
-            tabs: [
-                new Tab({ key: PageViewMode.Table }),
-                ...config.views.map(view => new Tab({ key: view.key, label: view.label })),
-                ...(isTrashEnabled ? [new Tab({ key: PageViewMode.Trash })] : [])
-            ],
-            variant: TabsVariant.Segmented
-        });
+        return config ? buildPageTabs(config, this.activeTab(), key => this.selectTab(key)) : null;
     });
     readonly visibleActions = computed<PageAction[]>(() =>
         this.pageActionsService.filterVisibleActions(
@@ -310,6 +299,13 @@ export class PageService {
         this.config()?.tableConfig?.onSelectionChange?.(items);
     }
 
+    setSort(sort: TableSort | null): void {
+        const order = this.config()?.tableConfig?.order;
+
+        this.tableSort.set(sort);
+        this.pageSearch.update(search => ({ ...search, page: 1, sort: sort ? toSearchSort(sort) : order }));
+    }
+
     setViewMode(mode: PageViewMode): void {
         this.viewMode.set(mode);
         this.selected.set([]);
@@ -351,12 +347,10 @@ export class PageService {
         const categoriesConfig = config.tableConfig?.categoriesConfig;
         const viewingTrash = this.viewMode() === PageViewMode.Trash;
         const location = this.location();
-        const viewFilters = viewingTrash
-            ? []
-            : (config.views.find(view => view.key === this.activeView())?.filters ?? []);
+        const viewFilters = viewingTrash ? [] : readViewFilters(config, this.activeView());
         const queryParameters = this.pageSearchService.buildQueryParameters(
             { ...search, filters: [...viewFilters, ...search.filters] },
-            Boolean(config.tableConfig?.search) || viewFilters.length > 0
+            Boolean(config.tableConfig?.search) || viewFilters.length > 0 || hasSortableColumn(config)
         );
 
         if (categoriesConfig && !viewingTrash) {
@@ -432,6 +426,7 @@ export class PageService {
         this.currentCategoryId.set(state.currentCategoryId);
         this.pageSearch.set(state.search);
         this.selected.set(state.selected);
+        this.tableSort.set(state.sort);
         this.viewMode.set(state.viewMode);
     }
 
@@ -444,6 +439,7 @@ export class PageService {
                 currentCategoryId: this.currentCategoryId(),
                 search: this.pageSearch(),
                 selected: this.selected(),
+                sort: this.tableSort(),
                 view: this.activeView(),
                 viewMode: this.viewMode()
             });

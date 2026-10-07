@@ -223,17 +223,19 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [x] The library's own specs take `provideBeyTesting` and the fakes of the testing entry, or the real service over
         them; only a module's own internals (page, login) and the ngx-bootstrap / ngx-toastr layer under the service a
         spec tests stay mocked
--   [ ] `BeyModalTreeService` has no fake, so `page-actions.service.spec.ts` still mocks it by hand; a
-        `BeyFakeModalTreeService` would reverse the choice that `provideBeyTesting` opens the tree dialog for real
--   [ ] Error texts the HTTP service resolves oddly, kept as they were: a `message` without translation shows its raw key;
-        a range with both limits null reads `-max`; an unknown `errorCode` gets the default title while an empty body or a
-        network error gets `unknown`; a `getBlob` error always shows `unknown`, since its body is a Blob
+-   ~~`BeyModalTreeService` has no fake, so `page-actions.service.spec.ts` still mocks it by hand~~ — decided
+    against: it only changes how specs are written, and a `BeyFakeModalTreeService` would reverse the choice that
+    `provideBeyTesting` opens the tree dialog for real
+-   [x] A `getBlob` error showed `unknown`, since its body is a Blob: the service now reads it as JSON. The other odd
+        texts stay as they are, by decision: a `message` without translation shows its raw key, a range with both
+        limits null reads `-max`, and an unknown `errorCode` gets the default title while an empty body or a network
+        error gets `unknown`
 -   [x] The session, theme, app and environment services have no `docs/<module>-readme.md`
--   [ ] `SearchField.getOperators()` is behaviour in a model, and `BadgeConfig.translate` is a boolean without the
-        `is` prefix; both fixes rename or move a public member
+-   [ ] _(2.0.0)_ `SearchField.getOperators()` is behaviour in a model, and `BadgeConfig.translate` is a boolean
+        without the `is` prefix; both fixes rename or move a public member, so they wait for a major version
 -   [x] The tree chevron has no role or name (it is mouse only), so the specs reach it through its markup
--   [ ] `search.component.css` needs a `stylelint-disable` because it styles Bootstrap's `.form-select` and
-        `.form-control`; styling its own `bey-search-*` classes would drop it
+-   [ ] _(when the search module is next changed)_ `search.component.css` needs a `stylelint-disable` because it
+        styles Bootstrap's `.form-select` and `.form-control`; styling its own `bey-search-*` classes would drop it
 -   [x] `BeyHttpService` as one typed, cold channel: the request leaves on subscribe and is cancelled on
         unsubscribe, emits `T`, and propagates the error after the modal; `onSuccess` / `onError` are gone,
         `handleError`, `successToast` and `loading` stay, `provideBeyHttp` (inside `provideBeyApp` and
@@ -267,12 +269,12 @@ What `document-builder-front` did by hand that belongs in the library.
 
 ### Data and navigation
 
--   [ ] `page`: remember the search and the selection when the user comes back to a page (the old
-        registry was removed unfinished)
+-   [x] `page`: remember the folder, the search, the sort and the selection when the user comes back from a route
+        under the page; any other route drops them
 
 -   [x] Table / grid (configurable columns, row selection)
--   [ ] Table: sort by clicking the header of a column, sent as the `sort` of the search; today `tableConfig.order`
-        fixes one order for the whole page
+-   [x] Table: sort by clicking the header of a column, sent as the `sort` of the search
+-   [x] Table: show and hide columns from a columns menu, each column defined visible or not and with its width
 -   [ ] Table / grid: filters
 -   [x] Pagination
 -   [x] Tabs
@@ -282,13 +284,12 @@ What `document-builder-front` did by hand that belongs in the library.
 
 ### Page
 
--   [ ] Rethink the trash view: say which folder each row was in, and where a restored row goes back to
--   [ ] _(low priority)_ Move rows by dragging them onto a folder
--   [ ] _(low priority)_ The number of rows in each folder
--   [ ] _(low priority)_ Saved views: tabs that apply a search with its filters (templates / blocks)
--   [ ] _(low priority)_ Search every folder at once, naming the folder of each result; needs the matching search
-        in express-components' base-entity
--   [ ] _(low priority)_ Undo right after a delete, from its toast
+-   [x] The trash names, as the tooltip of each row, the folder a restore puts it back in
+-   [x] Move rows by dragging them onto a folder
+-   [x] The number of rows of the folder, in the last node of the breadcrumb
+-   [x] Saved views: tabs that apply a search with its filters (templates / blocks)
+-   ~~Search every folder at once, naming the folder of each result~~ — decided against
+-   ~~Undo right after a delete, from its toast~~ — decided against
 -   [ ] _(very low priority)_ Favourite and recent rows
 
 ### Rich interactions

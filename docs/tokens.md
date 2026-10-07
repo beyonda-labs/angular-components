@@ -74,11 +74,11 @@ colours as bare channels, for the rules that need `rgba()`.
 
 ### Intent
 
-| Token              | Light          | Dark          |
-| ------------------ | -------------- | ------------- |
-| `--bey-primary`    | `--bey-black`  | `--bey-white` |
-| `--bey-primary-fg` | `--bey-white`  | `--bey-black` |
-| `--bey-secondary`  | `#949b98`      | `#7a8380`     |
+| Token              | Light          | Dark           |
+| ------------------ | -------------- | -------------- |
+| `--bey-primary`    | `--bey-black`  | `--bey-white`  |
+| `--bey-primary-fg` | `--bey-white`  | `--bey-black`  |
+| `--bey-secondary`  | `#949b98`      | `#7a8380`      |
 | `--bey-success`    | `--bey-teal`   | `--bey-teal`   |
 | `--bey-danger`     | `--bey-red`    | `--bey-red`    |
 | `--bey-warning`    | `--bey-orange` | `--bey-orange` |

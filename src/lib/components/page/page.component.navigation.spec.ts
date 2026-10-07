@@ -45,7 +45,7 @@ class PeopleComponent {
         prefix: 'demo',
         tableConfig: new PageTableConfig<Person>({
             categoriesConfig: new PageCategoriesConfig({}),
-            columns: [new TableColumn({ key: 'name' })],
+            columns: [new TableColumn({ isSortable: true, key: 'name' })],
             loadRow: person => [new TextTableCell({ content: person.name })],
             search: new PageTableSearchConfig({
                 fields: [new SearchField({ key: 'name', type: SearchFieldType.Text })],
@@ -132,6 +132,17 @@ describe('PageComponent — coming back from another route', () => {
         expect(searchBox().value).toBe('ada');
         expect(lastQuery()['parentId']).toBe('staff');
         expect(lastSearch().filters).toEqual([expect.objectContaining({ field: 'name', value: 'ada' })]);
+    });
+
+    it('comes back sorted as the user left it from the header', async () => {
+        (element().querySelector('[role="columnheader"] button') as HTMLButtonElement).click();
+        harness.detectChanges();
+
+        await harness.navigateByUrl('/people/1');
+        await harness.navigateByUrl('/people');
+
+        expect(element().querySelector('[aria-sort]')?.getAttribute('aria-sort')).toBe('ascending');
+        expect(lastSearch().sort).toEqual({ direction: 'asc', field: 'name' });
     });
 
     it('starts afresh after the user went to a route outside the page', async () => {

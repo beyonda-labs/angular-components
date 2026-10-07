@@ -27,6 +27,17 @@
     background: var(--bey-table-row-selected);
 }
 
+.bey-table-row.is-dragged {
+    opacity: var(--bey-opacity-muted);
+}
+
+.bey-table-row.is-drop-target,
+.bey-table-row--selectable.is-drop-target:hover {
+    background: var(--bey-table-row-drop-target);
+    outline: var(--bey-border-width-thick) solid var(--bey-table-drop-target-border);
+    outline-offset: calc(var(--bey-border-width-thick) * -1);
+}
+
 .bey-table-row--header,
 .bey-table-row--header.is-selected {
     background: var(--bey-table-surface);

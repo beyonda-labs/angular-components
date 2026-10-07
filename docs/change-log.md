@@ -62,11 +62,17 @@
 -   Form module: `BeyFormListField` shows read-only texts as a list, from an array or a signal, with its placeholder while empty; it grows with its texts and leaves the scroll to the form.
 -   Services: the HTTP error modal explains the `attachments.*` errors of express-components: `content-already-set`, `content-too-large`, `duplicate-content`, `empty-content` and `unsupported-type`.
 -   Page module: `views` on `BeyPageConfig` adds a tab per `BeyPageView` between the main tab and the trash, listing the same rows with the `filters` of the view before those of the user.
--   Page module: a page left for a route under its URL comes back with its folder, tab, search, page, page size and selection; going anywhere else starts it fresh.
+-   Page module: a page left for a route under its URL comes back with its folder, tab, search, header sort, page, page size and selection; going anywhere else starts it fresh.
 -   Page module: the last node of the breadcrumb counts the rows of the folder or of the trash, `angular-components.page.count.one` or `.many` with `{{count}}`.
 -   Page module: in the trash, the first cell of a row that carries `parentPathField` (`parentPath` by default, on `BeyPageCategoriesConfig`) shows as its tooltip the folder a restore puts it back in.
 -   Breadcrumb module: `detail` and `detailParameters` on `BeyBreadcrumbItem` show a translated text after the label, never truncated, such as a count.
 -   Search module: `filters` on `BeySearchConfig`, the filters the box and the panel start from.
+-   Table module: `isSortable` and `sortField` on `BeyTableColumn` turn its header into a button named by its text that goes from no sort to ascending and descending, with an arrow and `aria-sort`; `sort` and `onSortChange` on `BeyTableConfig` set and report it as a `BeyTableSort` with a `BeyTableSortDirection`.
+-   Table module: `storageKey` on `BeyTableConfig` offers a columns menu at the end of the header to hide and show the columns that are `isHideable`, starting from `isVisible` (both `true` by default), always keeping one, and remembers the choice in `localStorage`.
+-   Table module: `width` on `BeyTableColumn` also takes a CSS track (`8rem`), and the shares of the other columns spread over the ones shown.
+-   Table module: `isRowDraggable`, `isDropAllowed` and `onRowDrop` on `BeyTableConfig` let a row, or the selection it belongs to, be dragged onto another row with the native drag and drop.
+-   Page module: a sortable column sorts the list through the `sort` of the search, from the first page, and clearing it goes back to `order`; `storageKey` on `BeyPageTableConfig` gives the table its columns menu.
+-   Page module: with the standard `move` action, the rows that list it can be dragged onto a category row, moved with the request, the toast and the reload of the action.
 
 ### Changed
 
@@ -102,6 +108,7 @@
 -   Pdf viewer module: the zoom buttons of the compact toolbar are `bey-button`s with a bordered icon-square variant and keep their look; their name shows as the library tooltip instead of the browser's `title`, also while disabled.
 -   Style guide: the list and tree demos show the selected item on the page instead of logging it, and the tree demo highlights the node the user picks.
 -   Search module: a new `BeySearchConfig` starts the box and the panel again from its `filters` instead of keeping what the user had typed.
+-   Page module: a page with a sortable column sends the `search` parameter even without `tableConfig.search`.
 
 ### Fixed
 

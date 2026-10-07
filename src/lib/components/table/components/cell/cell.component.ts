@@ -1,12 +1,14 @@
 import { formatDate } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, LOCALE_ID } from '@angular/core';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ChangeDetectionStrategy, Component, computed, inject, input, LOCALE_ID, output } from '@angular/core';
+import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawesome';
+import { faArrowDown, faArrowsUpDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { TooltipListComponent } from '../../../../internal/tooltip-list/tooltip-list.component';
 import { BadgeComponent } from '../../../badge/badge.component';
 import { BadgeConfig, BadgeVariant } from '../../../badge/models/badge.model';
+import { TableSortState } from '../../models/table.model';
 import {
     BadgeTableCell,
     CellType,
@@ -18,6 +20,11 @@ import {
 } from '../../models/table-cell.model';
 
 const BADGE_CELL_TYPES = new Set([CellType.Badge, CellType.Tags]);
+const SORT_ICONS: Record<TableSortState, IconDefinition> = {
+    [TableSortState.Ascending]: faArrowUp,
+    [TableSortState.Descending]: faArrowDown,
+    [TableSortState.None]: faArrowsUpDown
+};
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +39,9 @@ export class TableCellComponent {
 
     readonly cell = input.required<TableCell>();
     readonly isHeader = input(false);
+    readonly sortState = input<TableSortState | null>(null);
+
+    readonly sortToggle = output<void>();
 
     readonly badges = computed<BadgeConfig[]>(() => {
         const cell = this.cell();
@@ -62,6 +72,12 @@ export class TableCellComponent {
     });
     readonly isBadge = computed(() => BADGE_CELL_TYPES.has(this.cell().type));
     readonly isLink = computed(() => this.cell().type === CellType.Link);
+    readonly isSorted = computed(() => {
+        const sortState = this.sortState();
+
+        return sortState !== null && sortState !== TableSortState.None;
+    });
+    readonly sortIcon = computed(() => SORT_ICONS[this.sortState() ?? TableSortState.None]);
     readonly tooltip = computed(() => this.cell().tooltip ?? '');
     readonly tooltipItems = computed(() => this.cell().tooltipItems ?? []);
 
@@ -69,6 +85,11 @@ export class TableCellComponent {
         event.preventDefault();
         event.stopPropagation();
         (this.cell() as LinkTableCell).action();
+    }
+
+    onSortClick(event: MouseEvent): void {
+        event.stopPropagation();
+        this.sortToggle.emit();
     }
 }
 
