@@ -5,6 +5,7 @@ import { HttpService } from '../../../services/http/http.service';
 import { PageBackendResponse } from '../models/page.model';
 import { PageRestoredRename, PageTrashItem } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
+import { PAGE_USAGES_IDS_SEPARATOR, PageUsages, PageUsagesResponse } from '../models/page-usages.model';
 import { PageUrlService } from './page-url.service';
 
 type QueryParameters = Record<string, string | number>;
@@ -64,6 +65,14 @@ export class PageHttpService {
 
     emptyTrash(relativeUrl: string, successToast: string): Observable<void> {
         return this.httpService.delete<void>(this.url(relativeUrl, '/trash/all'), undefined, { successToast });
+    }
+
+    findUsages(relativeUrl: string, ids: (string | number)[]): Observable<PageUsages[]> {
+        return this.httpService
+            .get<PageUsagesResponse>(this.url(relativeUrl, '/usages'), {
+                queryParams: { ids: ids.join(PAGE_USAGES_IDS_SEPARATOR) }
+            })
+            .pipe(map(({ usages }) => usages));
     }
 
     load(relativeUrl: string, queryParameters: QueryParameters): Observable<PageBackendResponse> {

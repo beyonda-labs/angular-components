@@ -1,5 +1,5 @@
 import { PageAction, PageActionScope, PageStandardAction } from '../models/page-action.model';
-import { PageCategoriesConfig, PageItemType } from '../models/page-categories.model';
+import { PageCategoriesConfig, PageItemType, PageTrashItem } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
 
 const ROWLESS_SCOPES = new Set([PageActionScope.Global, PageActionScope.Group]);
@@ -46,4 +46,12 @@ export function toHandlerItems(
     }
 
     return selectedItems.filter(item => !isCategoryRow(item, categoriesConfig));
+}
+
+export function toTrashItems(items: PageItem[]): PageTrashItem[] {
+    return items.map(item => {
+        const { id, type } = item as PageTrashItem;
+
+        return { id, type };
+    });
 }

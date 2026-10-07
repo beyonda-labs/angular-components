@@ -285,6 +285,7 @@ What `document-builder-front` did by hand that belongs in the library.
 ### Page
 
 -   [x] The trash names, as the tooltip of each row, the folder a restore puts it back in
+-   [x] Warn before deleting rows other rows use, from the usages the backend answers (`usagesConfig`)
 -   [x] Move rows by dragging them onto a folder
 -   [x] The number of rows of the folder, in the last node of the breadcrumb
 -   [x] Saved views: tabs that apply a search with its filters (templates / blocks)

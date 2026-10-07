@@ -1,7 +1,7 @@
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageItemType } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
-import { isActionVisible, isCategoryRow, toHandlerItems } from './page-row';
+import { isActionVisible, isCategoryRow, toHandlerItems, toTrashItems } from './page-row';
 
 interface Row extends PageItem {
     type: PageItemType;
@@ -61,5 +61,11 @@ describe('page rows', () => {
         expect(isCategoryRow(folder, kind)).toBe(true);
         expect(isCategoryRow(FOLDER, kind)).toBe(false);
         expect(isCategoryRow(FOLDER)).toBe(false);
+    });
+
+    it('keeps only the id and the type of each row for a trash request', () => {
+        expect(toTrashItems([{ id: 1, name: 'One', type: PageItemType.Item } as PageItem])).toEqual([
+            { id: 1, type: PageItemType.Item }
+        ]);
     });
 });

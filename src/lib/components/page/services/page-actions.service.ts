@@ -11,15 +11,16 @@ import { ModalService } from '../../modal/services/modal.service';
 import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
 import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
 import { buildMoveTargetNodes } from '../functions/page-move-targets';
-import { isActionVisible, isCategoryRow, toHandlerItems } from '../functions/page-row';
+import { isActionVisible, isCategoryRow, toHandlerItems, toTrashItems } from '../functions/page-row';
 import { PageConfig } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
-import { PageCategoriesConfig, PageMoveTarget, PageTrashItem } from '../models/page-categories.model';
+import { PageCategoriesConfig, PageMoveTarget } from '../models/page-categories.model';
 import { PageFormConfig } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
 import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
 import { PageLifecycleActionsService } from './page-lifecycle-actions.service';
+import { PageUsagesService } from './page-usages.service';
 
 export interface PageActionsContext {
     config: PageConfig;
@@ -61,6 +62,7 @@ export class PageActionsService {
     private readonly pageFormService = inject(PageFormService);
     private readonly pageHttpService = inject(PageHttpService);
     private readonly pageLifecycleActionsService = inject(PageLifecycleActionsService);
+    private readonly pageUsagesService = inject(PageUsagesService);
 
     private readonly actionHandlers: Record<string, (context: PageActionsContext, action: PageAction) => void> = {
         [PageStandardAction.ChangeStatus]: context => this.executeChangeStatus(context),
@@ -224,8 +226,12 @@ export class PageActionsService {
             title: `${prefix}.modal.${options.key}.title`
         };
 
-        toObservable(action?.confirmation?.(items, confirmation) ?? confirmation)
-            .pipe(switchMap(config => this.modalService.openConfirmation(config)))
+        this.pageUsagesService
+            .confirmInUse(context.config, options.key, items, confirmation)
+            .pipe(
+                switchMap(config => toObservable(action?.confirmation?.(items, config) ?? config)),
+                switchMap(config => this.modalService.openConfirmation(config))
+            )
             .subscribe(confirmed => {
                 if (confirmed) {
                     run();
@@ -458,12 +464,4 @@ export class PageActionsService {
 
 function toObservable<T>(value: T | Observable<T>): Observable<T> {
     return isObservable(value) ? value : of(value);
-}
-
-function toTrashItems(items: PageItem[]): PageTrashItem[] {
-    return items.map(item => {
-        const { id, type } = item as PageTrashItem;
-
-        return { id, type };
-    });
 }
