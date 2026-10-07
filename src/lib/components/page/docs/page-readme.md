@@ -51,7 +51,7 @@ readonly config = new BeyPageConfig<UserFormValue, User>({
 | `prefix`            | yes      | i18n prefix every text of the page resolves from                                                                                                                                                                                             |
 | `baseUrl`           | no       | Path of the resource, resolved against the environment's `baseUrl` and `webApiPath`; without it nothing is loaded                                                                                                                            |
 | `headerConfig`      | no       | `title` and the `actions` catalogue                                                                                                                                                                                                          |
-| `tableConfig`       | no       | Columns, `loadRow`, `height`, `order`, `search`, `allowSelection`, `showPagination`, `categoriesConfig`, `isTrashEnabled`, `onSelectionChange`                                                                                               |
+| `tableConfig`       | no       | Columns, `loadRow`, `height`, `order`, `search`, `allowSelection`, `showPagination`, `categoriesConfig`, `isTrashEnabled`, `onSelectionChange`, `storageKey`                                                                                 |
 | `formConfig`        | no       | How the create and edit modal forms are built, see below                                                                                                                                                                                     |
 | `statusConfig`      | no       | `BeyPageStatusConfig`: the status field and its transitions, for `change-status`                                                                                                                                                             |
 | `duplicationConfig` | no       | `BeyPageDuplicationConfig`: the field that names a row (`nameField`, `name` by default), the validators of the name of a copy (`nameValidators`) and what joins the copy suffix to it (`copySeparator`, a space by default), for `duplicate` |
@@ -177,6 +177,33 @@ the transitions on the front only choose what the form offers.
 `tableConfig.search` takes the `fields` of the filters panel and a `mainField` for the text box. Every
 change goes back to the first page and reloads; the whole query travels in the `search` parameter.
 
+## Sort and columns
+
+`tableConfig.order` is the sort of the list until the user picks another. A column with `isSortable` sorts from its
+header, as the [table](../../table/docs/table-readme.md#sort) describes: the page sends the column's `sortField` and
+direction as the `sort` of the search and reloads from the first page, and clearing the sort goes back to `order`, or
+to no sort without one. The backend decides which fields it sorts by, so only the columns whose field it sorts
+should say `isSortable`; a page with a sortable column always sends the `search` parameter, even without
+`tableConfig.search`.
+
+`tableConfig.storageKey` offers the columns menu of the table, where the user hides and shows the columns that are
+`isHideable`, starting from the ones `isVisible`; the choice is remembered in `localStorage` under that key, so
+every page gives its own.
+
+```ts
+tableConfig: new BeyPageTableConfig({
+    storageKey: 'documents',
+    order: { field: 'createdAt', direction: BeySearchSortDirection.Desc },
+    columns: [
+        new BeyTableColumn({ key: 'name', width: 4, isSortable: true, isHideable: false }),
+        new BeyTableColumn({ key: 'templateName', width: 4, isSortable: true }),
+        new BeyTableColumn({ key: 'createdAt', width: 2, isSortable: true, isVisible: false }),
+        new BeyTableColumn({ key: 'updatedAt', width: 2, isSortable: true })
+    ],
+    loadRow
+});
+```
+
 ## Categories and trash
 
 `tableConfig.categoriesConfig` turns the table into a drill-down browser, and a breadcrumb starting at
@@ -191,6 +218,14 @@ the `globalActions` of the trash, deletes everything in it with `DELETE {baseUrl
 a restore with `renamed`, the rows that came back with a new name because another row had theirs, an info toast lists
 them (`angular-components.page.toast.restored-renamed`). `move` opens the tree
 picker with every category, disabling the selected ones and their descendants.
+
+When the header lists the standard `move` action, with no `handler` of its own, the rows of the table can also be
+dragged onto a category row to move them there. A row can be dragged while it lists `move` in its `actions`, and
+dragging a selected row drags the whole selection. A category row takes the drop, highlighted while the pointer is
+over it, when every dragged row lists `move`, the category is not one of them nor inside one of them, and the rows
+are not in it already. The drop sends the same `PUT {baseUrl}/move`, shows `<prefix>.toast.move-success`, clears the
+selection and reloads, as the action does. There is no drag in the trash, and `move` stays the way to do it from the
+keyboard.
 
 On a page with categories an action `handler` receives only the selected rows that are not categories, since
 categories are handled by the standard category actions, and an action with a `handler` is hidden while every

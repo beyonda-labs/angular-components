@@ -635,7 +635,37 @@
                     "tooltip": "Edit the selected product"
                 }
             },
-            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form.",
+            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form. The headers sort the list and the columns menu hides the category or the price.",
+            "folders": {
+                "actions": {
+                    "move": {
+                        "label": "Move to...",
+                        "tooltip": "Move the selected rows to another folder"
+                    }
+                },
+                "categories": {
+                    "root": "All products"
+                },
+                "example": "A page with folders: drag a product, or the selected rows, onto a folder to move them there; the Move to... action does the same from the keyboard. The headers sort the list on the backend.",
+                "move": {
+                    "title": "Move to"
+                },
+                "table": {
+                    "columns": {
+                        "name": "Name",
+                        "price": "Price"
+                    },
+                    "empty": "This folder is empty",
+                    "tooltips": {
+                        "name": "Products and folders by name",
+                        "price": "Unit price"
+                    }
+                },
+                "title": "Products by folder",
+                "toast": {
+                    "move-success": "Moved"
+                }
+            },
             "form": {
                 "create": {
                     "title": "New product"
@@ -734,6 +764,7 @@
         "simple": "Simple",
         "table": {
             "actions": {
+                "dropped": "Rows dropped",
                 "open": "Open",
                 "opened": "Row action executed"
             },
@@ -743,11 +774,13 @@
                 "name": "Name",
                 "role": "Role",
                 "skills": "Skills",
-                "status": "Status"
+                "status": "Status",
+                "team": "Team"
             },
             "empty": "No rows available for this example.",
-            "example": "Data table with sorting, row selection, and customizable columns via model configuration.",
+            "example": "Data table with sorting from the headers, row selection, a columns menu remembered per table and rows that can be dragged onto other rows.",
             "examples": {
+                "drag": "Drag a person onto a team to move them there, or the selected people at once",
                 "empty": "Same table without rows",
                 "filled": "Same table with rows"
             },

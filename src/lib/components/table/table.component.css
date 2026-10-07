@@ -12,6 +12,10 @@
     --bey-table-checkbox-mark: var(--bey-primary-fg);
     --bey-table-link-underline: var(--bey-border-strong);
     --bey-table-link-underline-hover: var(--bey-primary);
+    --bey-table-sort-accent: var(--bey-primary);
+    --bey-table-row-drop-target: var(--bey-bg-active);
+    --bey-table-drop-target-border: var(--bey-primary);
+    --bey-table-menu-surface: var(--bey-bg-surface);
 
     display: block;
     min-width: 0;

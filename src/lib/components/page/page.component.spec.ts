@@ -1,13 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { buttonByName, renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryAll, renderComponent, settle } from '@testing/dom';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of, Subject } from 'rxjs';
 
 import { TableColumn } from '../table/models/table.model';
 import { TableCell, TextTableCell } from '../table/models/table-cell.model';
+import { pageStandardAction } from './functions/page-standard-actions';
 import { PageBackendResponse, PageConfig, PageConfigParameters } from './models/page.model';
+import { PageStandardAction } from './models/page-action.model';
 import { PageCategoriesConfig, PageItemType, PageViewMode } from './models/page-categories.model';
+import { PageHeaderConfig } from './models/page-header.model';
 import { PageItem } from './models/page-item.model';
 import { PageTableConfig, PageTableSearchConfig } from './models/page-table.model';
 import { PageComponent } from './page.component';
@@ -38,6 +41,7 @@ function buildResponse(
 
 describe('PageComponent', () => {
     let fixture: ComponentFixture<PageComponent>;
+    let pageActionsService: MockProxy<PageActionsService>;
     let pageHttpService: MockProxy<PageHttpService>;
 
     function buildConfig(overrides: Partial<PageConfigParameters<unknown, Person>> = {}): PageConfig<unknown, Person> {
@@ -79,8 +83,14 @@ describe('PageComponent', () => {
         return fixture.nativeElement.textContent;
     }
 
+    function dispatchOnRow(name: string, type: string): void {
+        queryAll(fixture, '[role="row"]')
+            .find(row => row.textContent?.includes(name))
+            ?.dispatchEvent(new Event(type, { bubbles: true, cancelable: true }));
+    }
+
     beforeEach(async () => {
-        const pageActionsService = mock<PageActionsService>();
+        pageActionsService = mock<PageActionsService>();
         pageActionsService.filterVisibleActions.mockReturnValue([]);
         pageActionsService.buildHeaderActions.mockReturnValue([]);
         pageHttpService = mock<PageHttpService>();
@@ -176,5 +186,43 @@ describe('PageComponent', () => {
         await settle(fixture);
 
         expect(pageHttpService.load).toHaveBeenLastCalledWith('/people', { parentId: 'staff' });
+    });
+
+    it('sorts the list from the header of a sortable column, from the first page', async () => {
+        await render(
+            buildConfig({
+                tableConfig: new PageTableConfig({
+                    columns: [new TableColumn({ isSortable: true, key: 'name' })],
+                    loadRow: person => [new TextTableCell({ content: person.name })]
+                })
+            })
+        );
+
+        buttonByName(fixture, 'demo.table.columns.name').click();
+        await settle(fixture);
+        const [, query] = pageHttpService.load.mock.calls[pageHttpService.load.mock.calls.length - 1];
+
+        expect(JSON.parse(atob(String(query['search'])))).toMatchObject({
+            page: 1,
+            sort: { direction: 'asc', field: 'name' }
+        });
+    });
+
+    it('moves a row dropped onto a folder through the move of the page', async () => {
+        const ada = { ...PEOPLE[0], actions: ['move'] };
+        pageHttpService.load.mockReturnValue(of(buildResponse([{ ...STAFF, actions: ['move'] }, ada])));
+        await render(
+            new PageConfig<unknown, Person, Team>({
+                ...buildTeamsConfig(),
+                headerConfig: new PageHeaderConfig({ actions: [pageStandardAction(PageStandardAction.Move)] })
+            })
+        );
+
+        dispatchOnRow('Ada', 'dragstart');
+        await settle(fixture);
+        dispatchOnRow('Staff', 'dragover');
+        dispatchOnRow('Staff', 'drop');
+
+        expect(pageActionsService.moveItems).toHaveBeenCalledWith(expect.anything(), [ada], 'staff');
     });
 });

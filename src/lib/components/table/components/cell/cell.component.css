@@ -19,6 +19,43 @@
     padding-top: var(--bey-space-md);
 }
 
+.bey-table-cell-sort {
+    align-items: center;
+    background: transparent;
+    border: 0;
+    color: var(--bey-table-text-muted);
+    display: flex;
+    font-family: inherit;
+    gap: var(--bey-space-xs);
+    max-width: 100%;
+    min-width: 0;
+    padding: 0;
+    text-align: left;
+}
+
+.bey-table-cell-sort:hover,
+.bey-table-cell-sort.is-sorted {
+    color: var(--bey-table-text);
+}
+
+.bey-table-cell-sort:focus-visible {
+    border-radius: var(--bey-radius-xs);
+    outline: var(--bey-border-width-thick) solid var(--bey-table-sort-accent);
+    outline-offset: 2px;
+}
+
+.bey-table-cell-sort-icon {
+    color: var(--bey-table-text-muted);
+    flex: 0 0 auto;
+    font-size: var(--bey-font-size-2xs);
+    opacity: var(--bey-opacity-muted);
+}
+
+.bey-table-cell-sort.is-sorted .bey-table-cell-sort-icon {
+    color: var(--bey-table-sort-accent);
+    opacity: 1;
+}
+
 .bey-table-cell-icon {
     color: var(--bey-table-text-muted);
     flex: 0 0 auto;
@@ -41,6 +78,11 @@
     color: var(--bey-table-text-muted);
     font-size: var(--bey-font-size-xs);
     font-weight: var(--bey-font-weight-semibold);
+}
+
+.bey-table-cell-sort .bey-table-cell-content {
+    color: inherit;
+    width: auto;
 }
 
 .bey-table-cell-link {

@@ -61,6 +61,12 @@
 -   Form module: `isFreeTextAllowed` on `BeyFormAutocompleteField` takes the typed text as the value and keeps the options as suggestions, so a value outside them stays.
 -   Form module: `BeyFormListField` shows read-only texts as a list, from an array or a signal, with its placeholder while empty; it grows with its texts and leaves the scroll to the form.
 -   Services: the HTTP error modal explains the `attachments.*` errors of express-components: `content-already-set`, `content-too-large`, `duplicate-content`, `empty-content` and `unsupported-type`.
+-   Table module: `isSortable` and `sortField` on `BeyTableColumn` turn its header into a button named by its text that goes from no sort to ascending and descending, with an arrow and `aria-sort`; `sort` and `onSortChange` on `BeyTableConfig` set and report it as a `BeyTableSort` with a `BeyTableSortDirection`.
+-   Table module: `storageKey` on `BeyTableConfig` offers a columns menu at the end of the header to hide and show the columns that are `isHideable`, starting from `isVisible` (both `true` by default), always keeping one, and remembers the choice in `localStorage`.
+-   Table module: `width` on `BeyTableColumn` also takes a CSS track (`8rem`), and the shares of the other columns spread over the ones shown.
+-   Table module: `isRowDraggable`, `isDropAllowed` and `onRowDrop` on `BeyTableConfig` let a row, or the selection it belongs to, be dragged onto another row with the native drag and drop.
+-   Page module: a sortable column sorts the list through the `sort` of the search, from the first page, and clearing it goes back to `order`; `storageKey` on `BeyPageTableConfig` gives the table its columns menu.
+-   Page module: with the standard `move` action, the rows that list it can be dragged onto a category row, moved with the request, the toast and the reload of the action.
 
 ### Changed
 
@@ -95,6 +101,7 @@
 -   Form module: the number, checkbox, chips and file fields type `validators` as `BeyFormFieldCustomValidator[]`, so a length, pattern, email or url validator on them no longer compiles.
 -   Pdf viewer module: the zoom buttons of the compact toolbar are `bey-button`s with a bordered icon-square variant and keep their look; their name shows as the library tooltip instead of the browser's `title`, also while disabled.
 -   Style guide: the list and tree demos show the selected item on the page instead of logging it, and the tree demo highlights the node the user picks.
+-   Page module: a page with a sortable column sends the `search` parameter even without `tableConfig.search`.
 
 ### Fixed
 

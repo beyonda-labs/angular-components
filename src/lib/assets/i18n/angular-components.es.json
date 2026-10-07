@@ -429,6 +429,10 @@
             }
         },
         "table": {
+            "columns": {
+                "label": "Columnas",
+                "reset": "Restaurar las columnas por defecto"
+            },
             "select-all": "Seleccionar todas las filas",
             "select-row": "Seleccionar fila"
         },
