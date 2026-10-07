@@ -9,6 +9,7 @@ export type {
     SearchFieldOption as BeySearchFieldOption,
     SearchFieldParameters as BeySearchFieldParameters
 } from './models/search.model';
+export { searchFieldOperators as beySearchFieldOperators } from './functions/search-field-operators';
 export {
     BooleanFilter as BeyBooleanFilter,
     NumberFilter as BeyNumberFilter,

@@ -45,6 +45,8 @@ while the filter keeps reporting `createdBy` as its `field`.
 
 Each type brings its own operators: text compares and matches, number adds ranges and `Between`, boolean and
 select only equality, and tags match a whole element of an array rather than a substring.
+`beySearchFieldOperators(field)` returns them in the order the panel offers them; a new row starts with the
+first.
 
 ## Behaviour
 
