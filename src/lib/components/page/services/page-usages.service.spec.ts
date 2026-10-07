@@ -135,6 +135,14 @@ describe('PageUsagesService', () => {
         });
     });
 
+    it('names the users a row carries, ending with an ellipsis when it lists only the first ones', () => {
+        const row = { id: 'a', usageCount: 3, usedBy: [OFFER, HEADER] } as never;
+
+        expect(service.describeRowUsers(row, USAGES_CONFIG)).toEqual(['Offer', 'Header (files.usages.block)', '...']);
+        expect(service.describeRowUsers({ id: 'b' }, USAGES_CONFIG)).toEqual([]);
+        expect(findUsages).not.toHaveBeenCalled();
+    });
+
     it('answers no usages without asking for no id', () => {
         let answer: unknown;
 

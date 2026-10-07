@@ -6,7 +6,7 @@
 
 -   Page module: `usagesConfig` (`BeyPageUsagesConfig`) warns before `delete` and `delete-trash-item` when other rows
     use the selected ones, asking `GET {baseUrl}/usages` and showing `<prefix>.modal.<key>-in-use.*` with the names of
-    the users; `BeyPageUsagesService` lists the users of a row for a form (`BeyPageUser`, `BeyPageUsages`).
+    the users; `BeyPageUsagesService` names the users of a row for a cell or a form (`BeyPageUser`, `BeyPageUsages`).
 -   Page module: `size` on `BeyPageFormConfig` opens its create and edit forms in that `BeyModalFormSize` (`Large` by default).
 -   Services: the HTTP error modal explains `attachments.replace-type-mismatch` and `attachments.content-not-set`, the refusals of replacing the file of an attachment.
 -   Properties menu module: `withDisabled(disabled?)` on every field returns a disabled copy, as `withValue` does with a value, to show a menu read-only.
