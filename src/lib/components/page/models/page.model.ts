@@ -8,6 +8,7 @@ import { PageItem } from './page-item.model';
 import { PageDuplicationConfig, PageStatusConfig } from './page-lifecycle.model';
 import { PageSearch } from './page-search.model';
 import { PageTableConfig } from './page-table.model';
+import { PageUsagesConfig } from './page-usages.model';
 import { PageView } from './page-view.model';
 
 export interface PageBackendResponse<TRow extends PageItem = PageItem> {
@@ -43,6 +44,7 @@ export class PageConfig<
     onReady?: (handle: PageHandle<TItem, TCategory>) => void;
     statusConfig?: PageStatusConfig;
     tableConfig?: PageTableConfig<TItem, TCategory, TCategoryValue>;
+    usagesConfig?: PageUsagesConfig;
 
     constructor({
         baseUrl,
@@ -54,6 +56,7 @@ export class PageConfig<
         prefix,
         statusConfig,
         tableConfig,
+        usagesConfig,
         views = []
     }: PageConfigParameters<TValue, TItem, TCategory, TCategoryValue>) {
         this.baseUrl = baseUrl;
@@ -65,6 +68,7 @@ export class PageConfig<
         this.prefix = prefix;
         this.statusConfig = statusConfig;
         this.tableConfig = tableConfig;
+        this.usagesConfig = usagesConfig;
         this.views = views;
     }
 }
@@ -85,5 +89,6 @@ export interface PageConfigParameters<
     onReady?: (handle: PageHandle<TItem, TCategory>) => void;
     statusConfig?: PageStatusConfig;
     tableConfig?: PageTableConfig<TItem, TCategory, TCategoryValue>;
+    usagesConfig?: PageUsagesConfig;
     views?: PageView[];
 }

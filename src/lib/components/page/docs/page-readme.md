@@ -58,6 +58,7 @@ readonly config = new BeyPageConfig<UserFormValue, User>({
 | `onDataLoaded`      | no       | Run with the backend response after every load                                                                                                                                                                                               |
 | `onReady`           | no       | Run with the page handle once the page exists                                                                                                                                                                                                |
 | `views`             | no       | `BeyPageView`s shown as tabs after the main one, see [Views](#views)                                                                                                                                                                         |
+| `usagesConfig`      | no       | `BeyPageUsagesConfig`: warns before deleting a row other rows use, see [Usages](#usages)                                                                                                                                                     |
 
 The config is never written to. What the consumer needs to do to the live page goes through the
 `BeyPageHandle` that `onReady` delivers: `refresh()` reloads the current page, `openCategory(category)` drills
@@ -123,21 +124,16 @@ to a standard key it replaces the standard behaviour. The page does no permissio
 `delete`, `delete-category`, `delete-trash-item` and `empty-trash` ask before sending their request, with
 `<prefix>.modal.<key>.title` and `.message` and a `count` parameter (none for `empty-trash`). A `confirmation(items, confirmation)` on the
 action returns the confirmation to show instead, built from the rows and that default one, or an observable of it
-when the message needs a request first (how many documents use a file). The request, its toast and the reload
-stay the standard ones; an action with a `handler` never asks.
+when the message needs a request first. The request, its toast and the reload stay the standard ones; an action
+with a `handler` never asks. A row other rows use needs no `confirmation` of its own: the page warns about it with
+its [usages](#usages), and hands that warning to the `confirmation` of the action when there is one.
 
 ```ts
-beyPageStandardAction<Attachment>(BeyPageStandardAction.Delete, {
-    confirmation: (attachments, confirmation) =>
-        this.usages
-            .count(attachments)
-            .pipe(
-                map(usageCount =>
-                    usageCount > 0
-                        ? { ...confirmation, message: 'myApp.files.modal.delete-in-use.message' }
-                        : confirmation
-                )
-            )
+beyPageStandardAction<Product>(BeyPageStandardAction.Delete, {
+    confirmation: (products, confirmation) =>
+        products.some(({ isFeatured }) => isFeatured)
+            ? { ...confirmation, message: 'myApp.products.modal.delete-featured.message' }
+            : confirmation
 });
 ```
 
@@ -266,6 +262,34 @@ On a page with categories an action `handler` receives only the selected rows th
 categories are handled by the standard category actions, and an action with a `handler` is hidden while every
 selected row is a category. Standard actions without a `handler` work on the whole selection.
 
+## Usages
+
+A resource other rows point at (a file the documents show, a block the templates include) answers what uses each row,
+as base-entity of express-components does with its `findUsages` hook: every item row carries `usageCount` and the first
+users as `usedBy`, and `GET {baseUrl}/usages?ids=a,b` answers all of them. A user is a `BeyPageUser`, `{ id, name,
+resource, kind? }`.
+
+`usagesConfig: new BeyPageUsagesConfig({ suffixes, listedUsers })` turns it on. Before `delete` and
+`delete-trash-item`, the page asks for the usages of the selected items (never of a folder) and, when anything else
+uses them, warns with `<prefix>.modal.<key>-in-use.title` and `.message` instead of the standard texts, with `count`,
+`usageCount` and `users`, the first `listedUsers` (10) names joined by commas. A user that is itself selected is left
+out, so deleting a block with the only template that includes it warns about nothing.
+
+`suffixes` names a kind or a resource of user by a translation key, shown after its name: `Header (block)`.
+
+```ts
+usagesConfig: new BeyPageUsagesConfig({
+    suffixes: {
+        'content-block': 'myApp.files.usages.block',
+        'global-variables': 'myApp.files.usages.global-variable'
+    }
+});
+```
+
+`BeyPageUsagesService` gives a form the same names: `listUsers(baseUrl, row, usagesConfig)` answers a signal with the
+users the row carries, and asks for all of them when the row lists only the first ones; `find(baseUrl, ids)` answers
+the usages of several rows.
+
 ## Forms
 
 `BeyPageFormConfig<TValue, TItem>` takes `prefix`, `buildSections(item?)`, and optionally `toFormValue(item?)`,
@@ -290,6 +314,7 @@ that has consequences elsewhere, such as renaming something other records name.
 | `<prefix>.table.columns.<key>` / `.tooltips.<key>` / `.empty`                                               | Table                                                  |
 | `<prefix>.search.fields.<key>`                                                                              | Filters                                                |
 | `<prefix>.modal.<key>.title` / `.message`                                                                   | Confirmation of a destructive action, with `{{count}}` |
+| `<prefix>.modal.<key>-in-use.title` / `.message`                                                            | The same for rows in use, see [Usages](#usages)        |
 | `<prefix>.duplicate.*`, `<prefix>.change-status.*`, `<prefix>.status.<status>`                              | The forms of `duplicate` and `change-status`           |
 | `<prefix>.toast.<key>-success`                                                                              | Success toast of every standard action                 |
 | `<prefix>.categories.root`, `<prefix>.tabs.table.label`, `<prefix>.tabs.trash.label`, `<prefix>.move.title` | Categories and trash                                   |

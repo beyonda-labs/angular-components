@@ -48,6 +48,13 @@ export type {
     PageTableConfigParameters as BeyPageTableConfigParameters,
     PageTableSearchConfigParameters as BeyPageTableSearchConfigParameters
 } from './models/page-table.model';
+export { PageUsagesConfig as BeyPageUsagesConfig } from './models/page-usages.model';
+export type {
+    PageUsages as BeyPageUsages,
+    PageUsagesConfigParameters as BeyPageUsagesConfigParameters,
+    PageUser as BeyPageUser
+} from './models/page-usages.model';
+export { PageUsagesService as BeyPageUsagesService } from './services/page-usages.service';
 export { PageView as BeyPageView } from './models/page-view.model';
 export type { PageViewParameters as BeyPageViewParameters } from './models/page-view.model';
 export { PageConfig as BeyPageConfig } from './models/page.model';

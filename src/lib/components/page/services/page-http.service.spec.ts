@@ -107,6 +107,21 @@ describe('PageHttpService', () => {
         expect(toast.successes()).toEqual([{ message: 'duplicated' }, { message: 'status-changed' }]);
     });
 
+    it('asks for the usages of several rows at once and answers their list', () => {
+        let usages: unknown;
+
+        service.findUsages('/items', ['a', 7]).subscribe(answered => {
+            usages = answered;
+        });
+
+        const request = httpTesting.expectOne(current => current.url === 'https://api.test/api/items/usages');
+
+        request.flush({ usages: [{ id: 'a', total: 0, users: [] }] });
+
+        expect(request.request.params.toString()).toBe('ids=a,7');
+        expect(usages).toEqual([{ id: 'a', total: 0, users: [] }]);
+    });
+
     it('empties the trash with the success toast', () => {
         service.emptyTrash('/items', 'emptied').subscribe();
 
