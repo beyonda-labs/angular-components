@@ -44,19 +44,24 @@ export class PageUsagesService {
         );
     }
 
+    describeRowUsers(item: PageItem, usagesConfig: PageUsagesConfig): string[] {
+        const { total, users } = readRowUsers(item);
+
+        return describeUsers(users, total, this.translateSuffixes(usagesConfig));
+    }
+
     find(baseUrl: string, ids: (string | number)[]): Observable<PageUsages[]> {
         return ids.length === 0 ? of([]) : this.pageHttpService.findUsages(baseUrl, ids);
     }
 
     listUsers(baseUrl: string, item: PageItem, usagesConfig: PageUsagesConfig): Signal<string[]> {
-        const suffixes = this.translateSuffixes(usagesConfig);
         const { total, users } = readRowUsers(item);
-        const names = signal(describeUsers(users, total, suffixes));
+        const names = signal(this.describeRowUsers(item, usagesConfig));
 
         if (total > users.length) {
             this.find(baseUrl, [item.id]).subscribe(([usage]) => {
                 if (usage) {
-                    names.set(describeUsers(usage.users, usage.total, suffixes));
+                    names.set(describeUsers(usage.users, usage.total, this.translateSuffixes(usagesConfig)));
                 }
             });
         }

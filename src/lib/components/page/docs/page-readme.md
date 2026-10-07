@@ -286,9 +286,10 @@ usagesConfig: new BeyPageUsagesConfig({
 });
 ```
 
-`BeyPageUsagesService` gives a form the same names: `listUsers(baseUrl, row, usagesConfig)` answers a signal with the
-users the row carries, and asks for all of them when the row lists only the first ones; `find(baseUrl, ids)` answers
-the usages of several rows.
+`BeyPageUsagesService` gives a cell or a form the same names: `describeRowUsers(row, usagesConfig)` names the users
+the row carries, with an ellipsis when it lists only the first ones, for the tooltip of a cell;
+`listUsers(baseUrl, row, usagesConfig)` answers a signal with them and asks for all of them when the row lists only
+the first ones, for a form; `find(baseUrl, ids)` answers the usages of several rows.
 
 ## Forms
 
