@@ -23,6 +23,7 @@ const ELLIPSIS_ESTIMATED_WIDTH = 40;
 const SEPARATOR_ESTIMATED_WIDTH = 20;
 
 interface RenderedItem {
+    detail: string;
     item: BreadcrumbItem;
     label: string;
 }
@@ -36,13 +37,12 @@ interface RenderedItem {
     templateUrl: './breadcrumb.component.html'
 })
 export class BreadcrumbComponent implements AfterViewInit {
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly elementReference = inject<ElementRef<HTMLElement>>(ElementRef);
+    private readonly ngZone = inject(NgZone);
+    private readonly translateService = inject(TranslateService);
+
     readonly config = input.required<BreadcrumbConfig>();
-
-    readonly visibleStartIndex = linkedSignal(() => {
-        this.config();
-
-        return 0;
-    });
 
     readonly collapsedItems = computed<RenderedItem[]>(() =>
         this.render(this.config().items.slice(0, this.visibleStartIndex()))
@@ -56,20 +56,17 @@ export class BreadcrumbComponent implements AfterViewInit {
     readonly visibleItems = computed<RenderedItem[]>(() =>
         this.render(this.config().items.slice(this.visibleStartIndex()))
     );
+    readonly visibleStartIndex = linkedSignal(() => {
+        this.config();
+
+        return 0;
+    });
 
     private cachedItemWidths: number[] = [];
+    private readonly languageChange = toSignal(this.translateService.onLangChange, { initialValue: undefined });
+    private readonly listElement = viewChild<ElementRef<HTMLOListElement>>('listElement');
     private previousContainerWidth = 0;
     private resizeObserver?: ResizeObserver;
-
-    private readonly listElement = viewChild<ElementRef<HTMLOListElement>>('listElement');
-
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly elementReference = inject<ElementRef<HTMLElement>>(ElementRef);
-    private readonly ngZone = inject(NgZone);
-    private readonly translateService = inject(TranslateService);
-
-    /* Label resolution goes through `instant`, so the rendered labels have to follow a language change. */
-    private readonly language = toSignal(this.translateService.onLangChange, { initialValue: undefined });
 
     constructor() {
         effect(() => {
@@ -186,9 +183,13 @@ export class BreadcrumbComponent implements AfterViewInit {
     }
 
     private render(items: BreadcrumbItem[]): RenderedItem[] {
-        this.language();
+        this.languageChange();
 
-        return items.map(item => ({ item, label: this.resolveLabel(item) }));
+        return items.map(item => ({ detail: this.resolveDetail(item), item, label: this.resolveLabel(item) }));
+    }
+
+    private resolveDetail({ detail, detailParameters }: BreadcrumbItem): string {
+        return detail ? this.translateService.instant(detail, detailParameters) : '';
     }
 
     private resolveLabel(item: BreadcrumbItem): string {

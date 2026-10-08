@@ -3,7 +3,7 @@
 </p>
 
 <p class="mb-2">{{ 'angular-components-style-guide.table.examples.filled' | translate }}</p>
-<bey-table class="mb-2" [config]="config"></bey-table>
+<bey-table class="mb-2" [config]="config()"></bey-table>
 <p class="text-muted mb-1">
     {{ 'angular-components-style-guide.table.selection-changed' | translate }}: {{ selected().join(', ') || '—' }}
 </p>
@@ -12,4 +12,10 @@
 </p>
 
 <p class="mb-2">{{ 'angular-components-style-guide.table.examples.empty' | translate }}</p>
-<bey-table [config]="emptyConfig"></bey-table>
+<bey-table class="mb-4" [config]="emptyConfig"></bey-table>
+
+<p class="mb-2">{{ 'angular-components-style-guide.table.examples.drag' | translate }}</p>
+<bey-table class="mb-2" [config]="teamsConfig()"></bey-table>
+<p class="text-muted mb-1">
+    {{ 'angular-components-style-guide.table.actions.dropped' | translate }}: {{ dropped() || '—' }}
+</p>

@@ -81,8 +81,8 @@
             },
             "section-chips": {
                 "chips1": {
-                    "label": "Basic Chips",
-                    "placeholder": "Type and press Enter"
+                    "label": "Lowercase Chips",
+                    "placeholder": "Lowercase tags only"
                 },
                 "chips2": {
                     "label": "Required Chips (max. 5)",
@@ -92,7 +92,7 @@
                     "label": "Disabled Chips"
                 },
                 "label": "Chips Fields",
-                "tooltip": "Chips variants with basic, required with maxItems, and disabled states"
+                "tooltip": "Chips variants with a custom validator, required with maxItems, and disabled states"
             },
             "section-date": {
                 "date1": {
@@ -107,6 +107,32 @@
                 "label": "Date Fields",
                 "tooltip": "Date fields with range, required and disabled states"
             },
+            "section-dependent": {
+                "label": "Dependent Fields",
+                "load-regions": "Load the regions",
+                "plan": {
+                    "label": "Plan",
+                    "options": {
+                        "free": "Free",
+                        "pro": "Pro"
+                    },
+                    "placeholder": "Choose a plan"
+                },
+                "region": {
+                    "label": "Region",
+                    "options": {
+                        "asia": "Asia",
+                        "eu": "Europe",
+                        "us": "United States"
+                    },
+                    "placeholder": "Load the regions, then pick one"
+                },
+                "seats": {
+                    "label": "Seats",
+                    "placeholder": "Required on the Pro plan"
+                },
+                "tooltip": "Seats are required on the Pro plan only; the regions arrive after the form is built, and a region the new plan does not offer is cleared"
+            },
             "section-info": {
                 "info1": {
                     "label": "Version"
@@ -115,7 +141,14 @@
                     "label": "Created On"
                 },
                 "label": "Info Fields",
-                "tooltip": "Read-only icon/label pairs — no input styling, no FormControl"
+                "list1": {
+                    "label": "Used In"
+                },
+                "list2": {
+                    "label": "Empty List",
+                    "placeholder": "Nothing to list yet"
+                },
+                "tooltip": "Read-only icon/label pairs and scrollable lists — no input styling, no FormControl"
             },
             "section-number": {
                 "label": "Number Fields",
@@ -136,8 +169,8 @@
             "section-password": {
                 "label": "Password Fields",
                 "password1": {
-                    "label": "Password",
-                    "placeholder": "Enter your password"
+                    "label": "Password (min. 8)",
+                    "placeholder": "At least 8 characters"
                 },
                 "password2": {
                     "label": "Required Password",
@@ -151,7 +184,7 @@
                     "label": "Password Without Toggle",
                     "placeholder": "No visibility toggle"
                 },
-                "tooltip": "Password fields with toggle, required and disabled states"
+                "tooltip": "Password fields with a length validator, toggle, required and disabled states"
             },
             "section-radio": {
                 "label": "Radio Fields",

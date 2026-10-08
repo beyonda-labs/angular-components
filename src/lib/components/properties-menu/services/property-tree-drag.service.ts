@@ -1,7 +1,6 @@
 import { inject, Injectable, signal } from '@angular/core';
 
-import { PropertyTreeNode } from '../models/property-tree-node.model';
-import { PropertyTreeDropPosition } from '../utils/property-tree-drop.util';
+import { PropertyTreeDropPosition, PropertyTreeNode } from '../models/property-tree-node.model';
 import { PropertiesMenuService } from './properties-menu.service';
 
 interface DropTarget {
@@ -12,23 +11,23 @@ interface DropTarget {
 
 @Injectable()
 export class PropertyTreeDragService {
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
+
     readonly dragNodeId = signal<string | null>(null);
     readonly dropTarget = signal<DropTarget | null>(null);
 
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
+    cancel(tabId: string, groupId: string): void {
+        if (!this.dragging()) {
+            return;
+        }
+
+        this.dragNodeId.set(null);
+        this.dropTarget.set(null);
+        this.propertiesMenuService.config().onTreeDragEnd?.({ groupId, tabId });
+    }
 
     dragging(): boolean {
         return this.dragNodeId() !== null;
-    }
-
-    start(tabId: string, groupId: string, node: PropertyTreeNode): void {
-        this.dragNodeId.set(node.id);
-        this.dropTarget.set(null);
-        this.propertiesMenuService.config().onTreeDragStart?.({ groupId, node, nodeId: node.id, tabId });
-    }
-
-    setDropTarget(target: DropTarget | null): void {
-        this.dropTarget.set(target);
     }
 
     drop(tabId: string, groupId: string): void {
@@ -44,16 +43,6 @@ export class PropertyTreeDragService {
         this.cancel(tabId, groupId);
     }
 
-    cancel(tabId: string, groupId: string): void {
-        if (!this.dragging()) {
-            return;
-        }
-
-        this.dragNodeId.set(null);
-        this.dropTarget.set(null);
-        this.propertiesMenuService.config().onTreeDragEnd?.({ groupId, tabId });
-    }
-
     dropPositionFor(nodeId: string): PropertyTreeDropPosition | null {
         const target = this.dropTarget();
 
@@ -64,5 +53,15 @@ export class PropertyTreeDragService {
         const target = this.dropTarget();
 
         return target !== null && target.nodeId === nodeId && !target.valid;
+    }
+
+    setDropTarget(target: DropTarget | null): void {
+        this.dropTarget.set(target);
+    }
+
+    start(tabId: string, groupId: string, node: PropertyTreeNode): void {
+        this.dragNodeId.set(node.id);
+        this.dropTarget.set(null);
+        this.propertiesMenuService.config().onTreeDragStart?.({ groupId, node, nodeId: node.id, tabId });
     }
 }

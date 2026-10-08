@@ -13,6 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType, TooltipPlacement } from '../../internal/button/models/button-config.model';
+import { toKeySegment } from '../../utilities/key-segment';
 import { BadgeComponent } from '../badge/badge.component';
 import { HeaderAction, HeaderActionType, HeaderConfig, HeaderVariant } from './models/header.model';
 
@@ -31,18 +32,21 @@ interface RenderedAction {
     templateUrl: './header.component.html'
 })
 export class HeaderComponent {
-    readonly config = input.required<HeaderConfig>();
+    private readonly elementRef = inject(ElementRef);
 
-    readonly isMenuOpen = signal(false);
-    readonly openActionKey = signal<string | null>(null);
+    readonly config = input.required<HeaderConfig>();
 
     readonly backButton = computed(() => {
         const { backAction } = this.config();
 
         return backAction ? this.buildActionButton(backAction) : null;
     });
+    readonly hasActions = computed(
+        () => this.leftActions().length + this.menuButtons().length + this.rightActions().length > 0
+    );
+    readonly isMenuOpen = signal(false);
+    readonly isSubpage = computed(() => this.config().variant === HeaderVariant.SubPage);
     readonly leftActions = computed(() => this.render(this.config().leftActions));
-    readonly rightActions = computed(() => this.render(this.config().rightActions));
     readonly menuButtons = computed(() =>
         this.config().menuActions.map(action =>
             this.buildActionButton(action, {
@@ -51,23 +55,22 @@ export class HeaderComponent {
             })
         )
     );
-
-    readonly hasActions = computed(
-        () => this.leftActions().length + this.menuButtons().length + this.rightActions().length > 0
-    );
-    readonly isSubpage = computed(() => this.config().variant === HeaderVariant.SubPage);
-    readonly title = computed(() => this.config().title);
-
     readonly menuToggleButton = new ButtonConfig({
         action: () => this.isMenuOpen.update(isOpen => !isOpen),
+        ariaLabel: 'angular-components.header.menu',
         customClass: 'bey-header-menu-toggle',
         icon: faEllipsis,
         tooltip: 'angular-components.header.menu',
         tooltipPlacement: 'left',
         type: ButtonType.Tertiary
     });
+    readonly openActionKey = signal<string | null>(null);
+    readonly rightActions = computed(() => this.render(this.config().rightActions));
+    readonly title = computed(() => this.config().title);
 
-    private readonly elementRef = inject(ElementRef);
+    isActionMenuOpen(action: HeaderAction): boolean {
+        return this.openActionKey() === action.key;
+    }
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event: MouseEvent): void {
@@ -81,15 +84,12 @@ export class HeaderComponent {
         this.closeMenus();
     }
 
-    isActionMenuOpen(action: HeaderAction): boolean {
-        return this.openActionKey() === action.key;
-    }
-
     private buildActionButton(
         action: HeaderAction,
         options: { onRun?: () => void; tooltipPlacement?: TooltipPlacement } = {}
     ): ButtonConfig {
         const isIconOnly = action.type === HeaderActionType.Icon;
+        const label = this.resolveActionText(action, 'label');
         const run = action.action ?? ((): void => {});
 
         return new ButtonConfig({
@@ -97,10 +97,11 @@ export class HeaderComponent {
                 options.onRun?.();
                 run();
             },
+            ariaLabel: isIconOnly ? label : undefined,
             customClass: isIconOnly ? 'bey-header-action-icon' : undefined,
             icon: action.icon,
             isDisabled: action.disabled,
-            label: isIconOnly ? '' : this.resolveActionText(action, 'label'),
+            label: isIconOnly ? '' : label,
             tooltip: this.resolveActionText(action, 'tooltip'),
             tooltipPlacement: options.tooltipPlacement,
             type: this.toButtonType(action.type)
@@ -138,7 +139,7 @@ export class HeaderComponent {
         const defaultValue = `${action.key}.${field}`;
 
         if (!value || value === defaultValue) {
-            return `${this.config().prefix}.actions.${defaultValue}`;
+            return `${this.config().prefix}.actions.${toKeySegment(action.key)}.${field}`;
         }
 
         return value;

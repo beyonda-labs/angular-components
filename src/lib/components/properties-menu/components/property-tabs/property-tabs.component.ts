@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 
 import { Tab, TabsConfig } from '../../../tabs/models/tabs.model';
 import { TabsComponent } from '../../../tabs/tabs.component';
+import { resolvePropertyLabelKey } from '../../functions/property-i18n';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
-import { resolvePropertyLabelKey } from '../../utils/property-i18n.util';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,7 +16,6 @@ import { resolvePropertyLabelKey } from '../../utils/property-i18n.util';
 export class PropertyTabsComponent {
     private readonly propertiesMenuService = inject(PropertiesMenuService);
 
-    /** A computed, not a getter: a new TabsConfig per change-detection cycle made bey-tabs re-measure forever. */
     readonly tabsConfig = computed(() => {
         const config = this.propertiesMenuService.config();
 
@@ -32,7 +31,8 @@ export class PropertyTabsComponent {
                             icon: tab.icon,
                             isDisabled: tab.disabled,
                             key: tab.id,
-                            label: resolvePropertyLabelKey(config.prefix, 'tabs', tab.id, tab.label)
+                            label: resolvePropertyLabelKey(config.prefix, 'tabs', tab.id, tab.label),
+                            labelParameters: tab.labelParameters
                         })
                 )
         });

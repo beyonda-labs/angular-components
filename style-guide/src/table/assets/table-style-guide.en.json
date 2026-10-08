@@ -2,19 +2,23 @@
     "angular-components-style-guide": {
         "table": {
             "actions": {
+                "dropped": "Rows dropped",
                 "open": "Open",
                 "opened": "Row action executed"
             },
             "columns": {
                 "action": "Action",
+                "joined-at": "Joined",
                 "name": "Name",
                 "role": "Role",
                 "skills": "Skills",
-                "status": "Status"
+                "status": "Status",
+                "team": "Team"
             },
             "empty": "No rows available for this example.",
-            "example": "Data table with sorting, row selection, and customizable columns via model configuration.",
+            "example": "Data table with sorting from the headers, row selection, a columns menu remembered per table and rows that can be dragged onto other rows.",
             "examples": {
+                "drag": "Drag a person onto a team to move them there, or the selected people at once",
                 "empty": "Same table without rows",
                 "filled": "Same table with rows"
             },
@@ -25,8 +29,9 @@
                 "review": "In review"
             },
             "tooltips": {
+                "joined-at": "Date cells format the value with the locale of the app",
                 "name": "Primary identity column",
-                "skills": "Badge cells accept a list, rendering more than one badge per row",
+                "skills": "Tags cells show plain strings as outline badges, never translated",
                 "status": "Status cells can be translated and tooltip-enabled"
             }
         }

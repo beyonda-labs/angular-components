@@ -5,7 +5,7 @@ import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { FormChipsField } from '../../../models/fields/form-chips-field.model';
-import { trackControl } from '../control-state';
+import { trackControl } from '../functions/control-state';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -18,13 +18,12 @@ import { trackControl } from '../control-state';
 export class FormChipsFieldComponent {
     readonly control = input.required<FormControl<string[] | null>>();
     readonly field = input.required<FormChipsField>();
+    readonly isRequired = input(false);
     readonly prefix = input.required<string>();
 
     readonly controlState = trackControl(this.control);
     readonly inputValue = signal('');
-
     readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
-
     readonly removeIcon = faXmark;
 
     addChip(): void {
@@ -58,6 +57,11 @@ export class FormChipsFieldComponent {
         const { maxItems } = this.field();
 
         return maxItems !== undefined && this.chips().length >= maxItems;
+    }
+
+    onBlur(): void {
+        this.addChip();
+        this.control().markAsTouched();
     }
 
     onInput(event: Event): void {

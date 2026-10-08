@@ -5,10 +5,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { PropertyFileField } from '../../../models/fields/property-file-field.model';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 
 const BYTES_PER_MB = 1024 * 1024;
 
-/** Reads the chosen file as base64; the file name is only known after a pick, never from a saved value. */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, TooltipModule, TranslateModule],
@@ -19,17 +19,16 @@ const BYTES_PER_MB = 1024 * 1024;
 })
 export class PropertyFileFieldComponent {
     readonly field = input.required<PropertyFileField>();
+    readonly labelling = input.required<PropertyFieldLabelling>();
 
     readonly valueChange = output<string>();
 
-    readonly selectedFileName = signal<string | null>(null);
-    readonly sizeErrorMaxSizeMB = signal<number | null>(null);
-
-    readonly hasValue = computed(() => Boolean(this.field().value));
-    readonly showsClear = computed(() => this.hasValue() && !this.field().disabled);
-
     readonly chooseIcon = faUpload;
     readonly clearIcon = faXmark;
+    readonly hasValue = computed(() => Boolean(this.field().value));
+    readonly selectedFileName = signal<string | null>(null);
+    readonly showsClear = computed(() => this.hasValue() && !this.field().disabled);
+    readonly sizeErrorMaxSizeMB = signal<number | null>(null);
 
     private isDestroyed = false;
 
@@ -71,7 +70,6 @@ export class PropertyFileFieldComponent {
         reader.addEventListener('load', () => {
             const result = reader.result as string;
 
-            // The read may finish after the field is gone (a replaced config); an output cannot emit then.
             if (!this.isDestroyed) {
                 this.valueChange.emit(result.slice(result.indexOf(',') + 1));
             }

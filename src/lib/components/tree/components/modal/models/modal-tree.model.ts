@@ -1,20 +1,19 @@
+import { collectExpandableKeys } from '../../../functions/tree-node-search';
 import { TreeConfig, TreeNode } from '../../../models/tree.model';
 
 export enum ModalTreeSize {
-    Small = 'modal-sm',
+    Large = 'modal-lg',
     Medium = '',
-    Large = 'modal-lg'
+    Small = 'modal-sm'
 }
 
 export class ModalTreeConfig<TData = unknown> {
-    readonly prefix: string;
-    readonly treeConfig: TreeConfig<TData>;
+    prefix: string;
     size: ModalTreeSize;
-    title?: string;
+    title: string;
+    treeConfig: TreeConfig<TData>;
 
-    closeHandler?: () => void;
-
-    private readonly onConfirm?: (node: TreeNode<TData> | undefined) => void;
+    onConfirm?: (node: TreeNode<TData> | undefined) => void;
 
     constructor({
         expandedKeys,
@@ -22,40 +21,19 @@ export class ModalTreeConfig<TData = unknown> {
         onConfirm,
         prefix,
         selectedKey,
-        size,
-        title
+        size = ModalTreeSize.Medium,
+        title = `${prefix}.title`
     }: ModalTreeConfigParameters<TData>) {
         this.onConfirm = onConfirm;
         this.prefix = prefix;
-        this.size = size ?? ModalTreeSize.Medium;
+        this.size = size;
         this.title = title;
         this.treeConfig = new TreeConfig({
+            expandedKeys: expandedKeys ?? collectExpandableKeys(nodes),
             nodes,
             prefix: `${prefix}.nodes`,
-            selectedKey,
-            expandedKeys: expandedKeys ?? collectExpandableKeys(nodes),
-            onNodeSelect: node => (this.treeConfig.selectedKey = node.key)
+            selectedKey
         });
-    }
-
-    close(): void {
-        this.closeHandler?.();
-    }
-
-    confirm(): void {
-        this.onConfirm?.(this.getSelectedNode());
-    }
-
-    getSelectedNode(): TreeNode<TData> | undefined {
-        return findNodeByKey(this.treeConfig.nodes, this.treeConfig.selectedKey);
-    }
-
-    getTitle(): string {
-        return this.title ?? `${this.prefix}.title`;
-    }
-
-    hasSelection(): boolean {
-        return Boolean(this.treeConfig.selectedKey);
     }
 }
 
@@ -68,36 +46,4 @@ export interface ModalTreeConfigParameters<TData = unknown> {
     selectedKey?: string;
     size?: ModalTreeSize;
     title?: string;
-}
-
-function collectExpandableKeys<TData>(nodes: TreeNode<TData>[]): string[] {
-    const keys: string[] = [];
-
-    for (const node of nodes) {
-        if (node.children.length > 0) {
-            keys.push(node.key, ...collectExpandableKeys(node.children));
-        }
-    }
-
-    return keys;
-}
-
-function findNodeByKey<TData>(nodes: TreeNode<TData>[], key: string | undefined): TreeNode<TData> | undefined {
-    if (!key) {
-        return undefined;
-    }
-
-    for (const node of nodes) {
-        if (node.key === key) {
-            return node;
-        }
-
-        const found = findNodeByKey(node.children, key);
-
-        if (found) {
-            return found;
-        }
-    }
-
-    return undefined;
 }

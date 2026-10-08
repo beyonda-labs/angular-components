@@ -1,0 +1,46 @@
+<button
+    #trigger
+    class="bey-table-columns-menu-toggle"
+    aria-haspopup="true"
+    boundariesElement="viewport"
+    container="body"
+    placement="left"
+    type="button"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-label]="'angular-components.table.columns.label' | translate"
+    [class.is-open]="isOpen()"
+    [tooltip]="'angular-components.table.columns.label' | translate"
+    (click)="toggle()"
+>
+    <fa-icon [icon]="icon"></fa-icon>
+</button>
+
+@if (isOpen()) {
+    <div
+        #panel
+        class="bey-table-columns-menu-panel"
+        role="group"
+        [attr.aria-label]="'angular-components.table.columns.label' | translate"
+        [style.right.px]="position().right"
+        [style.top.px]="position().top"
+    >
+        <div class="bey-table-columns-menu-title">{{ 'angular-components.table.columns.label' | translate }}</div>
+
+        @for (entry of entries(); track entry.key) {
+            <label class="bey-table-columns-menu-option" [class.is-disabled]="entry.isDisabled">
+                <input
+                    class="bey-table-columns-menu-checkbox"
+                    type="checkbox"
+                    [checked]="entry.isChecked"
+                    [disabled]="entry.isDisabled"
+                    (change)="onColumnChange(entry)"
+                />
+                <span class="bey-table-columns-menu-label">{{ entry.label | translate }}</span>
+            </label>
+        }
+
+        <button class="bey-table-columns-menu-reset" type="button" (click)="onReset()">
+            {{ 'angular-components.table.columns.reset' | translate }}
+        </button>
+    </div>
+}

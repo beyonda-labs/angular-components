@@ -35,6 +35,19 @@
                     "message": "El registro fue enviado a archivo y el proceso terminará en segundo plano.",
                     "title": "Acción confirmada"
                 }
+            },
+            "unsaved-changes": {
+                "example": "Un guard de ruta sobre señales registradas: marca la casilla para simular cambios sin guardar e intenta salir. Mientras está marcada, cerrar o recargar la pestaña también pregunta.",
+                "leave": "Salir de esta página",
+                "left": {
+                    "message": "Nada ha detenido la navegación.",
+                    "title": "Página abandonada"
+                },
+                "stayed": {
+                    "message": "Los cambios siguen aquí.",
+                    "title": "Sigues en la página"
+                },
+                "toggle": "Hay cambios sin guardar"
             }
         }
     }

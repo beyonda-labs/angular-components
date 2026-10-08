@@ -2,17 +2,6 @@ import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
 import { PropertyGroup } from './property-group.model';
 
-export interface PropertyTabParameters {
-    id: string;
-
-    addLabel?: string;
-    disabled?: boolean;
-    groups?: PropertyGroup[];
-    hidden?: boolean;
-    icon?: IconDefinition;
-    label?: string;
-}
-
 export class PropertyTab {
     disabled: boolean;
     groups: PropertyGroup[];
@@ -22,6 +11,7 @@ export class PropertyTab {
 
     addLabel?: string;
     icon?: IconDefinition;
+    labelParameters?: Record<string, unknown>;
 
     constructor({
         addLabel,
@@ -30,7 +20,8 @@ export class PropertyTab {
         hidden = false,
         icon,
         id,
-        label = `${id}.label`
+        label = `${id}.label`,
+        labelParameters
     }: PropertyTabParameters) {
         this.addLabel = addLabel;
         this.disabled = disabled;
@@ -39,5 +30,18 @@ export class PropertyTab {
         this.icon = icon;
         this.id = id;
         this.label = label;
+        this.labelParameters = labelParameters;
     }
+}
+
+export interface PropertyTabParameters {
+    id: string;
+
+    addLabel?: string;
+    disabled?: boolean;
+    groups?: PropertyGroup[];
+    hidden?: boolean;
+    icon?: IconDefinition;
+    label?: string;
+    labelParameters?: Record<string, unknown>;
 }

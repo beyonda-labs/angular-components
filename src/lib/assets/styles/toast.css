@@ -49,8 +49,6 @@
     opacity: 0.4;
 }
 
-/* Type variants */
-
 .toast-container .bey-toast.toast-info {
     --bey-toast-accent: var(--bey-primary);
     --bey-toast-accent-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);

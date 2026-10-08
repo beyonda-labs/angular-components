@@ -4,9 +4,9 @@ import { Injectable } from '@angular/core';
     providedIn: 'root'
 })
 export class DateFormatService {
-    static readonly DEFAULT_FORMAT = 'YYYY-MM-DD';
-
     private readonly dateFormatTokenPattern = /(YYYY|MM|DD)/gu;
+
+    static readonly DEFAULT_FORMAT = 'YYYY-MM-DD';
 
     formatDate(value: Date | null, format = DateFormatService.DEFAULT_FORMAT): string | null {
         if (!value) {

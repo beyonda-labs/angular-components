@@ -1,21 +1,24 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { buttonByName, queryAll, renderComponent, textsOf } from '@testing/dom';
 
 import { ButtonComponent } from './button.component';
-import { ButtonConfig, ButtonParameters, ButtonType } from './models/button-config.model';
+import { ButtonConfig, ButtonParameters } from './models/button-config.model';
 
 describe('ButtonComponent', () => {
     let fixture: ComponentFixture<ButtonComponent>;
-    let element: HTMLElement;
 
-    function render(overrides: Partial<ButtonParameters> = {}): HTMLButtonElement | null {
-        fixture.componentRef.setInput(
-            'button',
-            new ButtonConfig({ action: jest.fn(), label: 'demo.label', ...overrides })
-        );
-        fixture.detectChanges();
+    function buildButton(overrides: Partial<ButtonParameters> = {}): ButtonConfig {
+        return new ButtonConfig({ action: jest.fn(), label: 'demo.save', ...overrides });
+    }
 
-        return element.querySelector('button');
+    async function render(button: ButtonConfig = buildButton()): Promise<void> {
+        fixture = await renderComponent(ButtonComponent, { button });
+    }
+
+    function buttons(): HTMLButtonElement[] {
+        return queryAll<HTMLButtonElement>(fixture, 'button');
     }
 
     beforeEach(async () => {
@@ -23,49 +26,62 @@ describe('ButtonComponent', () => {
             imports: [ButtonComponent, TranslateModule.forRoot()]
         }).compileComponents();
 
-        fixture = TestBed.createComponent(ButtonComponent);
-        element = fixture.nativeElement;
+        const translate = TestBed.inject(TranslateService);
+
+        translate.setTranslation('en', { demo: { delete: 'Delete', save: 'Save' } });
+        translate.use('en');
     });
 
-    it('should render the label with the primary look by default', () => {
-        const button = render();
+    it('renders the translated label', async () => {
+        await render();
 
-        expect(button?.textContent?.trim()).toBe('demo.label');
-        expect(button?.classList).toContain('btn-dark');
+        expect(textsOf(buttons())).toEqual(['Save']);
     });
 
-    it.each([
-        [ButtonType.Secondary, 'btn-outline-dark'],
-        [ButtonType.Tertiary, 'btn-link'],
-        [ButtonType.LinkSecondary, 'btn-link-secondary']
-    ])('should map the %s type to its bootstrap class', (type, expected) => {
-        expect(render({ type })?.classList).toContain(expected);
+    it('names an icon-only button with its translated aria label', async () => {
+        await render(buildButton({ ariaLabel: 'demo.delete', icon: faTrash, label: '' }));
+
+        expect(buttonByName(fixture, 'Delete').textContent?.trim()).toBe('');
     });
 
-    it('should add the custom class to the button and to the host', () => {
-        const button = render({ customClass: 'demo-class' });
+    it('leaves the name to the label when the config gives no aria label', async () => {
+        await render();
 
-        expect(button?.classList).toContain('demo-class');
-        expect(element.classList).toContain('demo-class');
+        expect(buttonByName(fixture, 'Save').hasAttribute('aria-label')).toBe(false);
     });
 
-    it('should render nothing when hidden', () => {
-        expect(render({ isHidden: true })).toBeNull();
+    it('renders nothing when hidden', async () => {
+        await render(buildButton({ isHidden: true }));
+
+        expect(buttons()).toHaveLength(0);
     });
 
-    it('should run the action on click unless disabled', () => {
+    it('runs the action on click', async () => {
         const action = jest.fn();
+        await render(buildButton({ action }));
 
-        render({ action })?.click();
-        expect(action).toHaveBeenCalledTimes(1);
+        buttonByName(fixture, 'Save').click();
 
-        render({ action, isDisabled: true })?.click();
         expect(action).toHaveBeenCalledTimes(1);
     });
 
-    it('should show the icon before the label', () => {
-        const button = render({ icon: { iconName: 'plus', prefix: 'fas', icon: [512, 512, [], '', ''] } });
+    it('is disabled and does not run the action when the config disables it', async () => {
+        const action = jest.fn();
+        await render(buildButton({ action, isDisabled: true }));
 
-        expect(button?.querySelector('fa-icon.bey-button-icon')).not.toBeNull();
+        const button = buttonByName(fixture, 'Save');
+
+        button.click();
+
+        expect(button.disabled).toBe(true);
+        expect(action).not.toHaveBeenCalled();
+    });
+
+    it('tells assistive technology a pressed button is pressed, and says nothing of the others', async () => {
+        await render(buildButton({ isPressed: true }));
+        expect(buttons()[0].getAttribute('aria-pressed')).toBe('true');
+
+        await render();
+        expect(buttons()[0].hasAttribute('aria-pressed')).toBe(false);
     });
 });

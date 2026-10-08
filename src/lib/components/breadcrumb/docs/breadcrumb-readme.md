@@ -41,6 +41,15 @@ const breadcrumb = new BeyBreadcrumbConfig({
 | `icon`             | no       | none    | FontAwesome icon shown before the label                        |
 | `isDisabled`       | no       | `false` | Rendered dimmed and not clickable                              |
 | `isTranslationKey` | no       | `false` | Treat the label as a full key and ignore `prefix`              |
+| `detail`           | no       | none    | A key shown after the label, never truncated, such as a count  |
+| `detailParameters` | no       | none    | The parameters `detail` is translated with                     |
+
+Labels and details are translated as the trail renders, and again on every language change. A `detail` is always a
+full key, whatever `prefix` and `translate` say, so a page can add `({{count}} items)` to a literal folder name:
+
+```ts
+new BeyBreadcrumbItem({ id: 2, label: 'Invoices', detail: 'myPage.count', detailParameters: { count: 4 } });
+```
 
 ## Replacing the config
 

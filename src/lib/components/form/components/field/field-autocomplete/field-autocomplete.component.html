@@ -7,9 +7,9 @@
             role="combobox"
             type="text"
             [attr.aria-controls]="field().key + '-options'"
-            [attr.aria-expanded]="isOpen()"
+            [attr.aria-expanded]="isPanelVisible()"
             [attr.aria-invalid]="isInvalid() || null"
-            [attr.aria-required]="field().isRequired || null"
+            [attr.aria-required]="isRequired() || null"
             [class.is-invalid]="isInvalid()"
             [disabled]="isDisabled()"
             [id]="field().key"
@@ -45,7 +45,7 @@
         </button>
     </div>
 
-    @if (isOpen()) {
+    @if (isPanelVisible()) {
         <div #panel class="bey-form-autocomplete-panel" role="listbox" [id]="field().key + '-options'">
             @for (option of filteredOptions(); track option.value) {
                 <button

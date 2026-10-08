@@ -2,7 +2,7 @@
     {{ 'angular-components-style-guide.list.example' | translate }}
 </p>
 
-<bey-list class="mb-4" [config]="config">
+<bey-list class="mb-2" [config]="config">
     <ng-template let-employee>
         <div class="d-flex align-items-center gap-3">
             <div
@@ -24,6 +24,9 @@
         </div>
     </ng-template>
 </bey-list>
+<p class="text-muted mb-4">
+    {{ 'angular-components-style-guide.list.selected' | translate }} {{ selectedEmployee() || '—' }}
+</p>
 
 <p class="mb-2">{{ 'angular-components-style-guide.list.empty-example' | translate }}</p>
 <bey-list [config]="emptyConfig">

@@ -5,6 +5,7 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { toKeySegment } from '../../utilities/key-segment';
 import { TreeConfig, TreeNode } from './models/tree.model';
 
 const BASE_INDENT_REM = 0.6;
@@ -23,7 +24,6 @@ export class TreeComponent {
 
     readonly expandedKeys = linkedSignal(() => new Set(this.config().expandedKeys ?? []));
     readonly selectedKey = computed(() => this.config().selectedKey);
-
     readonly toggleIcon = faChevronRight;
 
     getIndent(level: number): number {
@@ -34,7 +34,7 @@ export class TreeComponent {
         const defaultValue = `${node.key}.label`;
 
         if (!node.label || node.label === defaultValue) {
-            return `${this.config().prefix}.nodes.${defaultValue}`;
+            return `${this.config().prefix}.nodes.${toKeySegment(node.key)}.label`;
         }
 
         return node.label;

@@ -1,5 +1,6 @@
 import { PropertyTextField } from '../models/fields/property-text-field.model';
 import { PropertiesMenuConfig } from '../models/properties-menu-config.model';
+import { PropertyTreeNodeToggle } from '../models/properties-menu-events.model';
 import { PropertyGroup } from '../models/property-group.model';
 import {
     PropertyFieldsContent,
@@ -82,24 +83,24 @@ describe('PropertiesMenuService', () => {
         service = new PropertiesMenuService();
     });
 
-    it('should default to an empty config', () => {
+    it('starts from an empty config', () => {
         expect(service.config().tabs).toEqual([]);
     });
 
-    it('should set the config and the active tab from it', () => {
+    it('takes the config and the active tab from it', () => {
         service.setConfig(buildConfig());
 
         expect(service.activeTabId()).toBe('properties');
         expect(service.config().tabs).toHaveLength(4);
     });
 
-    it('should default selectedTreeNodeId to null when no tree node is marked active', () => {
+    it('selects no tree node when none is marked active', () => {
         service.setConfig(buildConfig());
 
         expect(service.selectedTreeNodeId()).toBeNull();
     });
 
-    it('should initialize selectedTreeNodeId from a node marked active in the config', () => {
+    it('selects the tree node the config marks active', () => {
         service.setConfig(
             new PropertiesMenuConfig({
                 prefix: 'app.properties-menu',
@@ -131,7 +132,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('setActiveTab', () => {
-        it('should change the active tab and notify the hook', () => {
+        it('changes the active tab and calls the hook', () => {
             service.setConfig(buildConfig());
 
             const onActiveTabChange = jest.fn();
@@ -143,7 +144,7 @@ describe('PropertiesMenuService', () => {
             expect(onActiveTabChange).toHaveBeenCalledWith('page');
         });
 
-        it('should ignore unknown tab ids', () => {
+        it('ignores an unknown tab id', () => {
             service.setConfig(buildConfig());
 
             service.setActiveTab('unknown');
@@ -153,7 +154,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('toggleGroup', () => {
-        it('should flip the expanded state and notify the hook', () => {
+        it('flips the expanded state and calls the hook', () => {
             service.setConfig(buildConfig());
 
             const onGroupToggle = jest.fn();
@@ -167,7 +168,7 @@ describe('PropertiesMenuService', () => {
             expect(onGroupToggle).toHaveBeenCalledWith({ expanded: false, groupId: 'content', tabId: 'properties' });
         });
 
-        it('should ignore groups without a header', () => {
+        it('ignores a group without a header', () => {
             service.setConfig(buildConfig());
 
             const onGroupToggle = jest.fn();
@@ -180,7 +181,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('updateFieldValue', () => {
-        it('should update the field value immutably and notify the hook', () => {
+        it('updates the field value in a new config and calls the hook', () => {
             service.setConfig(buildConfig());
 
             const onFieldValueChange = jest.fn();
@@ -201,7 +202,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('applyVariableSelection', () => {
-        it('should update the field value and notify both hooks', () => {
+        it('updates the field value and calls both hooks', () => {
             service.setConfig(buildConfig());
 
             const onFieldValueChange = jest.fn();
@@ -224,7 +225,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('getField', () => {
-        it('should return undefined for an unknown field', () => {
+        it('returns undefined for an unknown field', () => {
             service.setConfig(buildConfig());
 
             expect(service.getField('missing')).toBeUndefined();
@@ -232,7 +233,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('selectTreeNode', () => {
-        it('should select the node and notify the hook', () => {
+        it('selects the node and calls the hook', () => {
             service.setConfig(buildConfig());
 
             const onTreeNodeSelect = jest.fn();
@@ -249,7 +250,7 @@ describe('PropertiesMenuService', () => {
             });
         });
 
-        it('should ignore unknown node ids', () => {
+        it('ignores an unknown node id', () => {
             service.setConfig(buildConfig());
 
             service.selectTreeNode('structure', 'structure-tree', 'missing');
@@ -259,7 +260,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('toggleTreeNode', () => {
-        it('should flip the expanded state of a nested node immutably', () => {
+        it('flips the expanded state of a nested node in a new config', () => {
             service.setConfig(buildConfig());
 
             const previousConfig = service.config();
@@ -270,7 +271,7 @@ describe('PropertiesMenuService', () => {
             expect(service.getTreeNode('structure', 'structure-tree', 'header')?.expanded).toBe(false);
         });
 
-        it('should notify the hook with the resulting expanded state', () => {
+        it('calls the hook with the resulting expanded state', () => {
             service.setConfig(buildConfig());
 
             const onTreeNodeToggle = jest.fn();
@@ -288,7 +289,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('triggerTreeAddBlock', () => {
-        it('should notify the hook with the tab and group ids', () => {
+        it('calls the hook with the tab and group ids', () => {
             service.setConfig(buildConfig());
 
             const onTreeAddBlock = jest.fn();
@@ -301,13 +302,13 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('getTreeNode', () => {
-        it('should find a nested node by id', () => {
+        it('finds a nested node by id', () => {
             service.setConfig(buildConfig());
 
             expect(service.getTreeNode('structure', 'structure-tree', 'header')?.label).toBe('Encabezado');
         });
 
-        it('should return undefined for an unknown node', () => {
+        it('returns undefined for an unknown node', () => {
             service.setConfig(buildConfig());
 
             expect(service.getTreeNode('structure', 'structure-tree', 'missing')).toBeUndefined();
@@ -315,7 +316,7 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('selectListItem', () => {
-        it('should notify the hook with the selected item', () => {
+        it('calls the hook with the selected item', () => {
             service.setConfig(buildConfig());
 
             const onListItemSelect = jest.fn();
@@ -331,7 +332,7 @@ describe('PropertiesMenuService', () => {
             });
         });
 
-        it('should ignore disabled items', () => {
+        it('ignores a disabled item', () => {
             service.setConfig(buildConfig());
 
             const onListItemSelect = jest.fn();
@@ -342,7 +343,7 @@ describe('PropertiesMenuService', () => {
             expect(onListItemSelect).not.toHaveBeenCalled();
         });
 
-        it('should ignore unknown item ids', () => {
+        it('ignores an unknown item id', () => {
             service.setConfig(buildConfig());
 
             const onListItemSelect = jest.fn();
@@ -355,13 +356,13 @@ describe('PropertiesMenuService', () => {
     });
 
     describe('getListItem', () => {
-        it('should find an item by id', () => {
+        it('finds an item by id', () => {
             service.setConfig(buildConfig());
 
             expect(service.getListItem('add', 'simple-blocks', 'block-heading')?.label).toBe('Encabezado');
         });
 
-        it('should return undefined for an unknown item', () => {
+        it('returns undefined for an unknown item', () => {
             service.setConfig(buildConfig());
 
             expect(service.getListItem('add', 'simple-blocks', 'missing')).toBeUndefined();
@@ -369,7 +370,7 @@ describe('PropertiesMenuService', () => {
     });
 });
 
-describe('PropertiesMenuService · items de lista desplegables', () => {
+describe('PropertiesMenuService · expandable list items', () => {
     let service: PropertiesMenuService;
 
     const EXPANDABLE_ITEM = { body: [new PropertySummaryRow({ label: 'Valor' })], id: 'total_pages' };
@@ -469,5 +470,125 @@ describe('PropertiesMenuService · items de lista desplegables', () => {
         service.toggleListItem('variables', 'variables-list', 'total_pages');
 
         expect(service.getListItem('variables', 'variables-list', 'other')?.expanded).toBe(false);
+    });
+});
+
+describe('PropertiesMenuService · replacing the config', () => {
+    let service: PropertiesMenuService;
+
+    interface ReplacementOverrides {
+        activeNodeId?: string;
+        activeTabId?: string;
+        extraGroups?: PropertyGroup[];
+        onTreeNodeToggle?: (event: PropertyTreeNodeToggle) => void;
+        treeNodes?: PropertyTreeNode[];
+    }
+
+    function buildTree(activeNodeId?: string): PropertyTreeNode[] {
+        return [
+            new PropertyTreeNode({
+                children: [
+                    new PropertyTreeNode({ active: activeNodeId === 'header', expanded: false, id: 'header' }),
+                    new PropertyTreeNode({ active: activeNodeId === 'footer', expanded: false, id: 'footer' })
+                ],
+                expanded: false,
+                id: 'page-1'
+            })
+        ];
+    }
+
+    function buildReplacement({
+        activeNodeId,
+        activeTabId,
+        extraGroups = [],
+        onTreeNodeToggle,
+        treeNodes = buildTree(activeNodeId)
+    }: ReplacementOverrides = {}): PropertiesMenuConfig {
+        return new PropertiesMenuConfig({
+            activeTabId,
+            onTreeNodeToggle,
+            prefix: 'app.properties-menu',
+            tabs: [
+                new PropertyTab({
+                    groups: [new PropertyGroup({ expanded: true, id: 'content' }), ...extraGroups],
+                    id: 'properties'
+                }),
+                new PropertyTab({
+                    groups: [
+                        new PropertyGroup({
+                            content: new PropertyTreeContent({ tree: new PropertyTreeConfig({ nodes: treeNodes }) }),
+                            id: 'structure-tree',
+                            showHeader: false
+                        })
+                    ],
+                    id: 'structure'
+                })
+            ]
+        });
+    }
+
+    beforeEach(() => {
+        service = new PropertiesMenuService();
+    });
+
+    it('gives a group that is new in the config the expanded value it carries', () => {
+        service.setConfig(buildReplacement());
+        service.toggleGroup('properties', 'content');
+
+        service.setConfig(buildReplacement({ extraGroups: [new PropertyGroup({ expanded: true, id: 'spacing' })] }));
+
+        expect(service.getGroup('properties', 'content')?.expanded).toBe(false);
+        expect(service.getGroup('properties', 'spacing')?.expanded).toBe(true);
+    });
+
+    it('falls back to the tab of the config when the tab the user opened is gone', () => {
+        service.setConfig(buildReplacement());
+        service.setActiveTab('structure');
+
+        service.setConfig(
+            new PropertiesMenuConfig({
+                ...buildReplacement(),
+                tabs: buildReplacement().tabs.filter(tab => tab.id !== 'structure')
+            })
+        );
+
+        expect(service.activeTabId()).toBe('properties');
+    });
+
+    it('falls back to the node the config marks active when the node the user selected is gone', () => {
+        service.setConfig(buildReplacement({ activeNodeId: 'header' }));
+        service.selectTreeNode('structure', 'structure-tree', 'footer');
+
+        service.setConfig(buildReplacement({ treeNodes: [new PropertyTreeNode({ active: true, id: 'header' })] }));
+
+        expect(service.selectedTreeNodeId()).toBe('header');
+    });
+
+    it('clears the selection when the config stops marking a node active', () => {
+        service.setConfig(buildReplacement({ activeNodeId: 'header' }));
+
+        service.setConfig(buildReplacement());
+
+        expect(service.selectedTreeNodeId()).toBeNull();
+    });
+
+    it('opens the ancestors of the node the config selects without reporting them as toggles', () => {
+        const onTreeNodeToggle = jest.fn();
+        service.setConfig(buildReplacement({ onTreeNodeToggle }));
+
+        service.setConfig(buildReplacement({ activeNodeId: 'footer', onTreeNodeToggle }));
+
+        expect(service.getTreeNode('structure', 'structure-tree', 'page-1')?.expanded).toBe(true);
+        expect(service.getTreeNode('structure', 'structure-tree', 'footer')?.expanded).toBe(false);
+        expect(onTreeNodeToggle).not.toHaveBeenCalled();
+    });
+
+    it('keeps an ancestor the user closed after the reveal while the config selects the same node', () => {
+        service.setConfig(buildReplacement({ activeNodeId: 'footer' }));
+        service.toggleTreeNode('structure', 'structure-tree', 'page-1');
+
+        service.setConfig(buildReplacement({ activeNodeId: 'footer' }));
+
+        expect(service.getTreeNode('structure', 'structure-tree', 'page-1')?.expanded).toBe(false);
     });
 });

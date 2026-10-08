@@ -2,7 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertySpacingField } from '../../../models/fields/property-spacing-field.model';
-import { PropertySpacingValue } from '../../../types/property-value';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
+import { PropertySpacingValue } from '../../../models/property-value.model';
 
 const EMPTY_SPACING: PropertySpacingValue = { bottom: 0, left: 0, right: 0, top: 0 };
 const SIDES: (keyof PropertySpacingValue)[] = ['top', 'right', 'bottom', 'left'];
@@ -17,12 +18,12 @@ const SIDES: (keyof PropertySpacingValue)[] = ['top', 'right', 'bottom', 'left']
 })
 export class PropertySpacingFieldComponent {
     readonly field = input.required<PropertySpacingField>();
+    readonly labelling = input.required<PropertyFieldLabelling>();
 
     readonly valueChange = output<PropertySpacingValue>();
 
-    readonly spacing = computed(() => this.field().value ?? EMPTY_SPACING);
-
     readonly sides = SIDES;
+    readonly spacing = computed(() => this.field().value ?? EMPTY_SPACING);
 
     onSideChange(side: keyof PropertySpacingValue, event: Event): void {
         const rawValue = (event.target as HTMLInputElement).value;

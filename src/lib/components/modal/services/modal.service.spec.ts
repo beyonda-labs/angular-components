@@ -27,11 +27,7 @@ describe('ModalService', () => {
         service = TestBed.inject(ModalService);
     });
 
-    it('should create', () => {
-        expect(service).toBeTruthy();
-    });
-
-    it('should open error modal with default close label', () => {
+    it('opens the error modal with the default close label', () => {
         show.mockReturnValue({} as BsModalRef<ModalDialogComponent>);
 
         service.openError({
@@ -52,7 +48,7 @@ describe('ModalService', () => {
         );
     });
 
-    it('should return confirmation observable from modal component', done => {
+    it('emits the answer of the confirmation once the modal is hidden', done => {
         const onHidden = new Subject<void>();
         show.mockReturnValue({
             content: {

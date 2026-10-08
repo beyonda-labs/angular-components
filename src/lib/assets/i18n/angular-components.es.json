@@ -6,6 +6,11 @@
         "breadcrumb": {
             "label": "Migas de pan"
         },
+        "file-preview": {
+            "cancel": "Cancelar",
+            "close": "Cerrar vista previa",
+            "type": "Vista previa"
+        },
         "floating-preferences": {
             "dark": "Oscuro",
             "language": "Idioma",
@@ -70,6 +75,16 @@
         },
         "http": {
             "error": {
+                "action-unavailable": "Esta acción no está disponible para el elemento. Recarga la página y vuelve a intentarlo.",
+                "attachments": {
+                    "content-already-set": "Este adjunto ya tiene su archivo.",
+                    "content-not-set": "Este adjunto aún no tiene un archivo que reemplazar.",
+                    "content-too-large": "El archivo supera el tamaño máximo permitido.",
+                    "duplicate-content": "Este archivo ya está subido como \"{{name}}\".",
+                    "empty-content": "El archivo está vacío.",
+                    "replace-type-mismatch": "Reemplaza el archivo por otro del mismo tipo ({{fileType}}).",
+                    "unsupported-type": "Los archivos de tipo \"{{mimeType}}\" no están admitidos."
+                },
                 "bad-gateway": "El servidor recibió una respuesta no válida. Por favor, inténtelo de nuevo más tarde.",
                 "bad-request": "La solicitud no pudo ser procesada. Por favor, revise los datos enviados.",
                 "conflict": "Se produjo un conflicto con el estado actual del recurso.",
@@ -101,6 +116,7 @@
                 "invalid-field-range-min": "El campo \"{{fieldName}}\" debe ser al menos {{min}}.",
                 "invalid-field-type": "El campo \"{{fieldName}}\" debe ser de tipo \"{{expectedType}}\".",
                 "invalid-field-value": "El campo \"{{fieldName}}\" tiene un valor no válido.",
+                "invalid-transition": "El estado no puede pasar de \"{{from}}\" a \"{{to}}\".",
                 "login": {
                     "existing-user": "Ya existe una cuenta con este correo electrónico.",
                     "invalid-credentials": "Email o contraseña incorrectos.",
@@ -136,6 +152,16 @@
                 }
             },
             "title": {
+                "action-unavailable": "Acción no disponible",
+                "attachments": {
+                    "content-already-set": "Archivo ya subido",
+                    "content-not-set": "Sin archivo",
+                    "content-too-large": "Archivo demasiado grande",
+                    "duplicate-content": "Archivo duplicado",
+                    "empty-content": "Archivo vacío",
+                    "replace-type-mismatch": "Tipo de archivo distinto",
+                    "unsupported-type": "Archivo no admitido"
+                },
                 "bad-gateway": "Error de conexión",
                 "bad-request": "Solicitud inválida",
                 "conflict": "Conflicto",
@@ -164,6 +190,7 @@
                 "invalid-field-range": "Valor fuera de rango",
                 "invalid-field-type": "Tipo de campo inválido",
                 "invalid-field-value": "Valor no permitido",
+                "invalid-transition": "Cambio de estado no válido",
                 "login": {
                     "existing-user": "Cuenta ya existente",
                     "invalid-credentials": "Autenticación fallida",
@@ -191,7 +218,8 @@
             "sections": {
                 "main": "Principales",
                 "others": "Otros"
-            }
+            },
+            "submenu": "Submenú de {{label}}"
         },
         "loading": {
             "label": "Cargando"
@@ -258,6 +286,12 @@
                 "error": "Error",
                 "info": "Información",
                 "warning": "Advertencia"
+            },
+            "unsaved-changes": {
+                "leave": "Salir sin guardar",
+                "message": "Tienes cambios sin guardar. Si sales ahora, se perderán.",
+                "stay": "Seguir editando",
+                "title": "Cambios sin guardar"
             }
         },
         "option-picker": {
@@ -267,9 +301,16 @@
             "search": "Buscar"
         },
         "page": {
+            "count": {
+                "many": "({{count}} elementos)",
+                "one": "({{count}} elemento)"
+            },
             "form": {
                 "cancel": "Cancelar",
                 "submit": "Guardar"
+            },
+            "toast": {
+                "restored-renamed": "Restaurado con otro nombre, porque otro elemento ya tiene el anterior: {{names}}"
             }
         },
         "pagination": {
@@ -281,6 +322,23 @@
             "page-size": "Tamaño de página",
             "previous-page": "Ir a la página anterior",
             "results-range": "Mostrando {{ start }}-{{ end }} de {{ total }} resultados"
+        },
+        "pdf-viewer": {
+            "search": {
+                "close": "Cerrar búsqueda",
+                "field": "Buscar en el documento",
+                "next-match": "Coincidencia siguiente",
+                "no-matches": "Sin resultados",
+                "previous-match": "Coincidencia anterior"
+            },
+            "toolbar": {
+                "download": "Descargar",
+                "page": "Página",
+                "search": "Buscar en el documento",
+                "search-tooltip": "Buscar en el documento (Ctrl+F)",
+                "zoom-in": "Ampliar",
+                "zoom-out": "Reducir"
+            }
         },
         "properties-menu": {
             "attachment-field": {
@@ -294,10 +352,12 @@
             },
             "close": "Cerrar",
             "color-field": {
-                "clear": "Vaciar"
+                "clear": "Vaciar",
+                "hex-value": "Valor hexadecimal de {{label}}"
             },
             "file-field": {
                 "choose": "Elegir archivo",
+                "choose-for": "Elegir archivo para {{label}}",
                 "clear": "Vaciar",
                 "file-selected": "Archivo seleccionado",
                 "no-file-selected": "Ningún archivo seleccionado",
@@ -311,7 +371,9 @@
                 "expand": "Desplegar"
             },
             "number-array-field": {
-                "add": "Añadir"
+                "add": "Añadir",
+                "entry": "{{label}}, entrada {{position}}",
+                "remove-entry": "Eliminar {{label}}, entrada {{position}}"
             },
             "remove": "Eliminar",
             "select-field": {
@@ -330,6 +392,10 @@
             },
             "text-field": {
                 "insert-variable": "Insertar variable"
+            },
+            "tree": {
+                "collapse": "Plegar",
+                "expand": "Desplegar"
             }
         },
         "search": {
@@ -367,6 +433,10 @@
             }
         },
         "table": {
+            "columns": {
+                "label": "Columnas",
+                "reset": "Restaurar las columnas por defecto"
+            },
             "select-all": "Seleccionar todas las filas",
             "select-row": "Seleccionar fila"
         },

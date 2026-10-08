@@ -1,7 +1,7 @@
 import { PdfViewerToolbarButtons } from './pdf-viewer-toolbar-buttons.model';
 
 describe('PdfViewerToolbarButtons', () => {
-    it('should default every button to visible', () => {
+    it('defaults every button to visible', () => {
         const buttons = new PdfViewerToolbarButtons();
 
         expect(buttons.downloadButton).toBe(true);
@@ -19,7 +19,7 @@ describe('PdfViewerToolbarButtons', () => {
         expect(buttons.zoomDropdown).toBe(true);
     });
 
-    it('should keep explicitly hidden buttons hidden', () => {
+    it('keeps explicitly hidden buttons hidden', () => {
         const buttons = new PdfViewerToolbarButtons({ openFileButton: false, printButton: false });
 
         expect(buttons.openFileButton).toBe(false);

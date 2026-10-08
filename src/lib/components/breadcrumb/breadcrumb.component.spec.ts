@@ -124,6 +124,22 @@ describe('BreadcrumbComponent', () => {
         expect(labels()).toEqual(['Back']);
     });
 
+    it('shows the detail of an item after its label, translated with its parameters', async () => {
+        TestBed.inject(TranslateService).setTranslation('en', { count: '({{count}} items)' });
+        TestBed.inject(TranslateService).use('en');
+
+        await render(
+            buildConfig({
+                items: [
+                    new BreadcrumbItem({ id: 1, label: 'Home' }),
+                    new BreadcrumbItem({ id: 2, label: 'Invoices', detail: 'count', detailParameters: { count: 4 } })
+                ]
+            })
+        );
+
+        expect(labels()).toEqual(['Home', 'Invoices (4 items)']);
+    });
+
     it('follows a language change', async () => {
         const translate = TestBed.inject(TranslateService);
         translate.setTranslation('en', { nav: { home: 'Home' } });

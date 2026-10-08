@@ -1,12 +1,16 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import {
+    BeyBadgeComponent,
+    BeyBadgeConfig,
+    BeyBadgeVariant,
     BeyPdfViewerComponent,
     BeyPdfViewerConfig,
     BeyPdfViewerHandle,
     BeyPdfViewerLoadingFailed,
     BeyPdfViewerRotation,
-    BeyPdfViewerRotationChange
+    BeyPdfViewerRotationChange,
+    BeyPdfViewerToolbar
 } from '@beyonda-labs/angular-components';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -26,19 +30,21 @@ const FULL_TURN = 360;
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [DecimalPipe, FontAwesomeModule, BeyPdfViewerComponent, TranslateModule],
+    imports: [BeyBadgeComponent, DecimalPipe, FontAwesomeModule, BeyPdfViewerComponent, TranslateModule],
     selector: 'bey-pdf-viewer-style-guide',
     standalone: true,
     styleUrls: ['../style-guide-shared.css', './pdf-viewer-style-guide.component.css'],
     templateUrl: './pdf-viewer-style-guide.component.html'
 })
 export class PdfViewerStyleGuideComponent {
-    readonly currentPage = signal(1);
-    readonly lastLoadingFailed = signal<BeyPdfViewerLoadingFailed | null>(null);
-    readonly lastRotationChange = signal<BeyPdfViewerRotationChange | null>(null);
-    readonly lastZoomFactor = signal<number | null>(null);
-    readonly pageCount = signal(0);
-
+    readonly compactConfig = new BeyPdfViewerConfig({
+        isSearchable: true,
+        maxZoom: 3,
+        minZoom: 0.25,
+        src: SAMPLE_PDF_URL,
+        toolbar: BeyPdfViewerToolbar.Compact,
+        zoom: 1
+    });
     readonly config = new BeyPdfViewerConfig({
         onLoaded: ({ pagesCount }) => this.pageCount.set(pagesCount),
         onLoadingFailed: event => this.lastLoadingFailed.set(event),
@@ -48,11 +54,19 @@ export class PdfViewerStyleGuideComponent {
         onZoomChange: zoom => this.lastZoomFactor.set(zoom),
         src: SAMPLE_PDF_URL
     });
-
+    readonly currentPage = signal(1);
+    readonly lastLoadingFailed = signal<BeyPdfViewerLoadingFailed | null>(null);
+    readonly lastRotationChange = signal<BeyPdfViewerRotationChange | null>(null);
+    readonly lastZoomFactor = signal<number | null>(null);
     readonly nextIcon = faChevronRight;
+    readonly pageCount = signal(0);
     readonly prevIcon = faChevronLeft;
     readonly rotateLeftIcon = faArrowRotateLeft;
     readonly rotateRightIcon = faArrowRotateRight;
+    readonly statusBadge = new BeyBadgeConfig({
+        label: 'angular-components-style-guide.pdf-viewer.status',
+        variant: BeyBadgeVariant.Success
+    });
     readonly zoomInIcon = faMagnifyingGlassPlus;
     readonly zoomOutIcon = faMagnifyingGlassMinus;
 

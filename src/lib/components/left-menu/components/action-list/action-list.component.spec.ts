@@ -24,7 +24,7 @@ describe('ActionListComponent', () => {
     }
 
     function labels(): string[] {
-        return textsOf(buttons());
+        return textsOf(buttons()).filter(Boolean);
     }
 
     function buttonOf(name: string): HTMLButtonElement {
@@ -55,6 +55,12 @@ describe('ActionListComponent', () => {
         await render([new LeftMenuAction({ key: 'home' })]);
 
         expect(labels()).toEqual(['demo.actions.home.label']);
+    });
+
+    it('builds the label of a camelCase action key from its kebab-case segment', async () => {
+        await render([new LeftMenuAction({ key: 'userSettings' })]);
+
+        expect(labels()).toEqual(['demo.actions.user-settings.label']);
     });
 
     it('runs the action of a leaf and reports it', async () => {
@@ -104,6 +110,22 @@ describe('ActionListComponent', () => {
 
             chevronOf('reports').click();
             fixture.detectChanges();
+            expect(labels()).toContain('daily');
+        });
+
+        it('gives a branch with its own action a submenu toggle that the keyboard reaches', async () => {
+            const run = jest.fn();
+            await render([action('reports', { action: run, subActions: [action('daily')] })]);
+            const toggle = buttonOf('angular-components.left-menu.submenu');
+
+            expect(buttonOf('reports').getAttribute('aria-expanded')).toBeNull();
+            expect(toggle.getAttribute('aria-expanded')).toBe('false');
+
+            toggle.click();
+            fixture.detectChanges();
+
+            expect(run).not.toHaveBeenCalled();
+            expect(toggle.getAttribute('aria-expanded')).toBe('true');
             expect(labels()).toContain('daily');
         });
 

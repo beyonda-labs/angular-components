@@ -6,21 +6,14 @@ export type LoginProvider = 'google' | 'microsoft' | 'facebook';
 
 export type RegisterFieldType = 'date' | 'email' | 'number' | 'password' | 'tel' | 'text';
 
-export interface RegisterField {
-    name: string;
-    type: RegisterFieldType;
-    required?: boolean;
-    step?: number;
-}
-
-export interface LoginProviderConfig {
-    id: LoginProvider;
-    authUrl: string;
-}
-
 export interface LoginCredentials {
     email: string;
     password: string;
+}
+
+export interface LoginProviderConfig {
+    authUrl: string;
+    id: LoginProvider;
 }
 
 export interface LoginResponse {
@@ -28,13 +21,21 @@ export interface LoginResponse {
     refreshToken: string;
 }
 
+export interface RegisterField {
+    name: string;
+    type: RegisterFieldType;
+
+    required?: boolean;
+    step?: number;
+}
+
 export class LoginConfig {
     footerConfig: FooterConfig;
     iconSrc: string;
     orgName: string;
+    prefix: string;
     productDescription: string;
     productName: string;
-    prefix: string;
 
     privacyUrl?: string;
     termsUrl?: string;
@@ -71,7 +72,7 @@ export interface LoginConfigParameters {
     productName: string;
 
     orgName?: string;
+    prefix?: string;
     privacyUrl?: string;
     termsUrl?: string;
-    prefix?: string;
 }

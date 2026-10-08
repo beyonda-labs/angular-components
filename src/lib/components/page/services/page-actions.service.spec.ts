@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { FakeModalService } from '@testing/services/fake-modal.service';
+import { of, Subject } from 'rxjs';
 
+import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { FormHandle, FormSection } from '../../form/models/form.model';
-import { ModalService } from '../../modal/services/modal.service';
 import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
 import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
 import { PageConfig } from '../models/page.model';
@@ -16,10 +18,11 @@ import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
 
 describe('PageActionsService', () => {
+    let modal: FakeModalService;
     let service: PageActionsService;
 
-    const openConfirmation = jest.fn();
     const openForm = jest.fn();
+    const openWithRequest = jest.fn();
     const openTree = jest.fn();
     const create = jest.fn();
     const createCategory = jest.fn();
@@ -33,7 +36,6 @@ describe('PageActionsService', () => {
     const restoreTrashItems = jest.fn();
 
     beforeEach(() => {
-        openConfirmation.mockReset();
         openForm.mockReset();
         openTree.mockReset();
         create.mockReset();
@@ -51,10 +53,10 @@ describe('PageActionsService', () => {
 
         TestBed.configureTestingModule({
             providers: [
+                provideBeyTesting(),
                 PageActionsService,
-                { provide: ModalService, useValue: { openConfirmation } },
                 { provide: ModalTreeService, useValue: { open: openTree } },
-                { provide: PageFormService, useValue: { open: openForm } },
+                { provide: PageFormService, useValue: { open: openForm, openWithRequest } },
                 {
                     provide: PageHttpService,
                     useValue: {
@@ -73,14 +75,21 @@ describe('PageActionsService', () => {
             ]
         });
 
+        modal = TestBed.inject(FakeModalService);
         service = TestBed.inject(PageActionsService);
     });
 
-    it('should create', () => {
-        expect(service).toBeTruthy();
+    it('opens a form with its own request through the page forms', () => {
+        const config = new ModalFormConfig({ prefix: 'testPage.status', sections: [] });
+        const submit = jest.fn();
+        const onSaved = jest.fn();
+
+        service.openRequestForm(config, submit, onSaved);
+
+        expect(openWithRequest).toHaveBeenCalledWith(config, submit, onSaved);
     });
 
-    it('should run a custom item handler with the selected items', () => {
+    it('runs a custom item handler with the selected items', () => {
         const handler = jest.fn();
         const selected: PageItem[] = [{ id: 1 }];
         const context = buildContext({ selectedItems: () => selected });
@@ -90,25 +99,47 @@ describe('PageActionsService', () => {
         expect(handler).toHaveBeenCalledWith(selected);
     });
 
-    it('should run a custom global handler without items', () => {
+    it('runs a custom global handler with no rows', () => {
         const handler = jest.fn();
 
         service.executeAction(buildAction('custom', PageActionScope.Global, handler), buildContext());
 
-        expect(handler).toHaveBeenCalledWith(undefined);
+        expect(handler).toHaveBeenCalledWith([]);
     });
 
-    it('should do nothing for an unrecognized standard action key', () => {
+    it('runs a custom single-row handler with the selected row', () => {
+        const handler = jest.fn();
+        const context = buildContext({ selectedItems: () => [{ id: 4 }] });
+
+        service.executeAction(buildAction('custom', PageActionScope.Single, handler), context);
+
+        expect(handler).toHaveBeenCalledWith([{ id: 4 }]);
+    });
+
+    it('hands a custom handler only the selected rows that are not categories', () => {
+        const handler = jest.fn();
+        const item = { id: 'item-1', type: PageItemType.Item };
+        const context = buildCategoryContext({
+            selectedItems: () => [{ id: 'cat-1', type: PageItemType.Category }, item]
+        });
+
+        service.executeAction(buildAction(PageStandardAction.Delete, PageActionScope.Item, handler), context);
+
+        expect(handler).toHaveBeenCalledWith([item]);
+        expect(deleteItems).not.toHaveBeenCalled();
+    });
+
+    it('does nothing for an unrecognized standard action key', () => {
         expect(() =>
             service.executeAction(buildAction('not-a-real-action', PageActionScope.Global), buildContext())
         ).not.toThrow();
 
         expect(openForm).not.toHaveBeenCalled();
-        expect(openConfirmation).not.toHaveBeenCalled();
+        expect(modal.confirmations()).toEqual([]);
     });
 
     describe('create / edit item', () => {
-        it('should open the create modal form and register its reference', () => {
+        it('opens the create modal form and registers its reference', () => {
             const context = buildContext();
 
             service.executeAction(buildAction(PageStandardAction.Create, PageActionScope.Global), context);
@@ -122,7 +153,7 @@ describe('PageActionsService', () => {
             expect(context.onFormModalOpened).toHaveBeenCalled();
         });
 
-        it('should not open the create modal form without a form config', () => {
+        it('does not open the create modal form without a form config', () => {
             const context = buildContext({ config: new PageConfig({ prefix: 'testPage', baseUrl: '/items' }) });
 
             service.executeAction(buildAction(PageStandardAction.Create, PageActionScope.Global), context);
@@ -130,7 +161,7 @@ describe('PageActionsService', () => {
             expect(openForm).not.toHaveBeenCalled();
         });
 
-        it('should open the edit modal form only with exactly one selected item', () => {
+        it('opens the edit modal form only with exactly one selected item', () => {
             const item: PageItem = { id: 1 };
             const context = buildContext({ selectedItems: () => [item] });
 
@@ -139,7 +170,7 @@ describe('PageActionsService', () => {
             expect(openForm).toHaveBeenCalledWith(context.config.formConfig, item, 'testPage', expect.any(Function));
         });
 
-        it('should not open the edit modal form with multiple selected items', () => {
+        it('does not open the edit modal form with multiple selected items', () => {
             const context = buildContext({ selectedItems: () => [{ id: 1 }, { id: 2 }] });
 
             service.executeAction(buildAction(PageStandardAction.Edit, PageActionScope.Item), context);
@@ -147,7 +178,7 @@ describe('PageActionsService', () => {
             expect(openForm).not.toHaveBeenCalled();
         });
 
-        it('should create the item and close the modal form when saving succeeds', () => {
+        it('creates the item and closes the modal form when saving succeeds', () => {
             create.mockReturnValue(of({}));
             const context = buildContext();
 
@@ -163,7 +194,7 @@ describe('PageActionsService', () => {
             expect(context.onSaved).toHaveBeenCalled();
         });
 
-        it('should edit the item through the http service when saving an edit', () => {
+        it('edits the item through the http service when saving an edit', () => {
             edit.mockReturnValue(of({}));
             const item: PageItem = { id: 7 };
             const context = buildContext({ selectedItems: () => [item] });
@@ -177,7 +208,7 @@ describe('PageActionsService', () => {
             expect(edit).toHaveBeenCalledWith('/items', 7, { name: 'Edited' }, 'testPage.toast.edit-success');
         });
 
-        it('should create the item with the current category id as parent when categories are enabled', () => {
+        it('creates the item with the current category id as parent when categories are enabled', () => {
             create.mockReturnValue(of({}));
             const context = buildCategoryContext();
 
@@ -194,7 +225,7 @@ describe('PageActionsService', () => {
             );
         });
 
-        it('should not merge the parent id when editing an item of a categorized page', () => {
+        it('does not merge the parent id when editing an item of a categorized page', () => {
             edit.mockReturnValue(of({}));
             const item: PageItem = { id: 7 };
             const context = buildCategoryContext({ selectedItems: () => [item] });
@@ -210,20 +241,19 @@ describe('PageActionsService', () => {
     });
 
     describe('delete item', () => {
-        it('should delete the selected items after confirmation', () => {
-            openConfirmation.mockReturnValue(of(true));
+        it('deletes the selected items after confirmation', () => {
+            modal.setConfirmationAnswer(true);
             deleteItems.mockReturnValue(of(null));
             const context = buildContext({ selectedItems: () => [{ id: 1 }, { id: 2 }] });
 
             service.executeAction(buildAction(PageStandardAction.Delete, PageActionScope.Item), context);
 
-            expect(openConfirmation).toHaveBeenCalled();
+            expect(modal.confirmations()).toHaveLength(1);
             expect(deleteItems).toHaveBeenCalledWith('/items', [1, 2], 'testPage.toast.delete-success');
             expect(context.onDeleted).toHaveBeenCalled();
         });
 
-        it('should not delete when the confirmation is rejected', () => {
-            openConfirmation.mockReturnValue(of(false));
+        it('does not delete when the confirmation is rejected', () => {
             const context = buildContext({ selectedItems: () => [{ id: 1 }] });
 
             service.executeAction(buildAction(PageStandardAction.Delete, PageActionScope.Item), context);
@@ -231,15 +261,15 @@ describe('PageActionsService', () => {
             expect(deleteItems).not.toHaveBeenCalled();
         });
 
-        it('should not ask for confirmation without selected items', () => {
+        it('does not ask for confirmation without selected items', () => {
             service.executeAction(buildAction(PageStandardAction.Delete, PageActionScope.Item), buildContext());
 
-            expect(openConfirmation).not.toHaveBeenCalled();
+            expect(modal.confirmations()).toEqual([]);
         });
     });
 
     describe('create / edit category', () => {
-        it('should open the category modal form using the category form prefix', () => {
+        it('opens the category modal form using the category form prefix', () => {
             const context = buildCategoryContext();
 
             service.executeAction(buildAction(PageStandardAction.CreateCategory, PageActionScope.Global), context);
@@ -252,7 +282,7 @@ describe('PageActionsService', () => {
             );
         });
 
-        it('should not open the category modal form without a categories config', () => {
+        it('does not open the category modal form without a categories config', () => {
             const context = buildContext();
 
             service.executeAction(buildAction(PageStandardAction.CreateCategory, PageActionScope.Global), context);
@@ -260,7 +290,7 @@ describe('PageActionsService', () => {
             expect(openForm).not.toHaveBeenCalled();
         });
 
-        it('should open the category modal form at root, without a current category id', () => {
+        it('opens the category modal form at root, without a current category id', () => {
             const context = buildCategoryContext({ getCurrentCategoryId: () => null });
 
             service.executeAction(buildAction(PageStandardAction.CreateCategory, PageActionScope.Global), context);
@@ -273,7 +303,7 @@ describe('PageActionsService', () => {
             );
         });
 
-        it('should not open the category modal form without a categories form config', () => {
+        it('does not open the category modal form without a categories form config', () => {
             const context = buildCategoryContext({
                 config: new PageConfig({
                     baseUrl: '/items',
@@ -291,7 +321,7 @@ describe('PageActionsService', () => {
             expect(openForm).not.toHaveBeenCalled();
         });
 
-        it('should open the edit category modal form only with exactly one selected item', () => {
+        it('opens the edit category modal form only with exactly one selected item', () => {
             const item: PageItem = { id: 1 };
             const context = buildCategoryContext({ selectedItems: () => [item] });
 
@@ -305,7 +335,7 @@ describe('PageActionsService', () => {
             );
         });
 
-        it('should not open the edit category modal form with multiple selected items', () => {
+        it('does not open the edit category modal form with multiple selected items', () => {
             const context = buildCategoryContext({ selectedItems: () => [{ id: 1 }, { id: 2 }] });
 
             service.executeAction(buildAction(PageStandardAction.EditCategory, PageActionScope.Item), context);
@@ -313,7 +343,7 @@ describe('PageActionsService', () => {
             expect(openForm).not.toHaveBeenCalled();
         });
 
-        it('should create the category with the current category id as parent, and close the modal form when saving succeeds', () => {
+        it('creates the category with the current category id as parent, and closes the modal form when saving succeeds', () => {
             createCategory.mockReturnValue(of({}));
             const context = buildCategoryContext();
 
@@ -333,7 +363,7 @@ describe('PageActionsService', () => {
             expect(context.onCategorySaved).toHaveBeenCalled();
         });
 
-        it('should create a root category with a null parent id when there is no current category', () => {
+        it('creates a root category with a null parent id when there is no current category', () => {
             createCategory.mockReturnValue(of({}));
             const context = buildCategoryContext({ getCurrentCategoryId: () => null });
 
@@ -350,7 +380,7 @@ describe('PageActionsService', () => {
             );
         });
 
-        it('should edit the category through the http service when saving an edit', () => {
+        it('edits the category through the http service when saving an edit', () => {
             editCategory.mockReturnValue(of({}));
             const item: PageItem = { id: 9 };
             const context = buildCategoryContext({ selectedItems: () => [item] });
@@ -371,21 +401,74 @@ describe('PageActionsService', () => {
         });
     });
 
+    describe('confirmation hook', () => {
+        it('asks with the confirmation the action builds from the rows and the default one, then deletes', () => {
+            modal.setConfirmationAnswer(true);
+            deleteItems.mockReturnValue(of(null));
+            const confirmation = jest.fn((items: PageItem[], defaults: { title: string }) => ({
+                message: 'testPage.modal.delete-in-use.message',
+                messageParameters: { count: items.length },
+                title: defaults.title
+            }));
+            const action = new PageAction({
+                ...buildAction(PageStandardAction.Delete, PageActionScope.Item),
+                confirmation
+            });
+
+            service.executeAction(action, buildContext({ selectedItems: () => [{ id: 1 }, { id: 2 }] }));
+
+            expect(confirmation).toHaveBeenCalledWith([{ id: 1 }, { id: 2 }], {
+                message: 'testPage.modal.delete.message',
+                messageParameters: { count: 2 },
+                title: 'testPage.modal.delete.title'
+            });
+            expect(modal.confirmations()).toEqual([
+                {
+                    message: 'testPage.modal.delete-in-use.message',
+                    messageParameters: { count: 2 },
+                    title: 'testPage.modal.delete.title'
+                }
+            ]);
+            expect(deleteItems).toHaveBeenCalledWith('/items', [1, 2], 'testPage.toast.delete-success');
+        });
+
+        it('waits for a confirmation built asynchronously before asking', () => {
+            const built = new Subject<{ message: string; title: string }>();
+            const action = new PageAction({
+                ...buildAction(PageStandardAction.DeleteTrashItem, PageActionScope.Item),
+                confirmation: () => built
+            });
+
+            service.executeAction(action, buildContext({ selectedItems: () => [{ id: 1 }] }));
+
+            expect(modal.confirmations()).toEqual([]);
+
+            built.next({ message: 'testPage.modal.in-use.message', title: 'testPage.modal.in-use.title' });
+
+            expect(modal.confirmations()).toEqual([
+                {
+                    message: 'testPage.modal.in-use.message',
+                    title: 'testPage.modal.in-use.title'
+                }
+            ]);
+            expect(deleteTrashItems).not.toHaveBeenCalled();
+        });
+    });
+
     describe('delete category', () => {
-        it('should delete the selected categories after confirmation', () => {
-            openConfirmation.mockReturnValue(of(true));
+        it('deletes the selected categories after confirmation', () => {
+            modal.setConfirmationAnswer(true);
             deleteCategories.mockReturnValue(of(null));
             const context = buildContext({ selectedItems: () => [{ id: 1 }, { id: 2 }] });
 
             service.executeAction(buildAction(PageStandardAction.DeleteCategory, PageActionScope.Item), context);
 
-            expect(openConfirmation).toHaveBeenCalled();
+            expect(modal.confirmations()).toHaveLength(1);
             expect(deleteCategories).toHaveBeenCalledWith('/items', [1, 2], 'testPage.toast.delete-category-success');
             expect(context.onCategoryDeleted).toHaveBeenCalled();
         });
 
-        it('should not delete categories when the confirmation is rejected', () => {
-            openConfirmation.mockReturnValue(of(false));
+        it('does not delete categories when the confirmation is rejected', () => {
             const context = buildContext({ selectedItems: () => [{ id: 1 }] });
 
             service.executeAction(buildAction(PageStandardAction.DeleteCategory, PageActionScope.Item), context);
@@ -395,7 +478,7 @@ describe('PageActionsService', () => {
     });
 
     describe('move', () => {
-        it('should do nothing when the table has no categoriesConfig', () => {
+        it('does nothing when the table has no categoriesConfig', () => {
             const context = buildContext({ selectedItems: () => [{ id: 1 }] });
 
             service.executeAction(buildAction(PageStandardAction.Move, PageActionScope.Item), context);
@@ -403,60 +486,11 @@ describe('PageActionsService', () => {
             expect(loadCategoryTree).not.toHaveBeenCalled();
         });
 
-        it('should load the category tree and open a picker with a root node plus the nested categories', () => {
-            loadCategoryTree.mockReturnValue(of(buildCategories()));
-            const context = buildCategoryContext({ selectedItems: () => [{ id: 'item-1', type: PageItemType.Item }] });
-
-            service.executeAction(buildAction(PageStandardAction.Move, PageActionScope.Item), context);
-
-            expect(loadCategoryTree).toHaveBeenCalledWith('/items');
-            expect(openTree).toHaveBeenCalledTimes(1);
-
-            const treeConfig = openTree.mock.calls[0][0] as ModalTreeConfig;
-            const [root] = treeConfig.treeConfig.nodes;
-            const [electronics, books] = root.children;
-
-            expect(root.key).toBe('__root__');
-            expect(electronics.key).toBe('cat-1');
-            expect(electronics.label).toBe('Electronics');
-            expect(electronics.children.map(node => node.key)).toEqual(['cat-2']);
-            expect(books.key).toBe('cat-3');
-        });
-
-        it('should nest the top-level categories as children of the root node, not as its siblings', () => {
-            loadCategoryTree.mockReturnValue(of(buildCategories()));
-            const context = buildCategoryContext({ selectedItems: () => [{ id: 'item-1', type: PageItemType.Item }] });
-
-            service.executeAction(buildAction(PageStandardAction.Move, PageActionScope.Item), context);
-
-            const treeConfig = openTree.mock.calls[0][0] as ModalTreeConfig;
-
-            expect(treeConfig.treeConfig.nodes).toHaveLength(1);
-            expect(treeConfig.treeConfig.nodes[0].children.map(node => node.key)).toEqual(['cat-1', 'cat-3']);
-        });
-
-        it('should disable the moved category and its descendants as valid targets', () => {
-            loadCategoryTree.mockReturnValue(of(buildCategories()));
-            const context = buildCategoryContext({
-                selectedItems: () => [{ id: 'cat-1', type: PageItemType.Category }]
-            });
-
-            service.executeAction(buildAction(PageStandardAction.Move, PageActionScope.Item), context);
-
-            const treeConfig = openTree.mock.calls[0][0] as ModalTreeConfig;
-            const [root] = treeConfig.treeConfig.nodes;
-            const [electronics, books] = root.children;
-            const [phones] = electronics.children;
-
-            expect(root.isDisabled).toBe(false);
-            expect(electronics.isDisabled).toBe(true);
-            expect(phones.isDisabled).toBe(true);
-            expect(books.isDisabled).toBe(false);
-        });
-
-        it('should move the selected items to the confirmed category and refresh', () => {
+        it('moves the selected items to the confirmed category, closes the picker and refreshes', () => {
+            const hide = jest.fn();
             loadCategoryTree.mockReturnValue(of(buildCategories()));
             moveItems.mockReturnValue(of(null));
+            openTree.mockReturnValue({ hide });
             const context = buildCategoryContext({ selectedItems: () => [{ id: 'item-1', type: PageItemType.Item }] });
 
             service.executeAction(buildAction(PageStandardAction.Move, PageActionScope.Item), context);
@@ -464,21 +498,23 @@ describe('PageActionsService', () => {
             const treeConfig = openTree.mock.calls[0][0] as ModalTreeConfig;
             const target = treeConfig.treeConfig.nodes[0].children[0];
 
-            treeConfig.treeConfig.onNodeSelect?.(target);
-            treeConfig.confirm();
+            treeConfig.onConfirm?.(target);
 
+            expect(loadCategoryTree).toHaveBeenCalledWith('/items');
             expect(moveItems).toHaveBeenCalledWith(
                 '/items',
                 [{ id: 'item-1', type: PageItemType.Item }],
                 'cat-1',
                 'testPage.toast.move-success'
             );
+            expect(hide).toHaveBeenCalled();
             expect(context.onMoved).toHaveBeenCalled();
         });
 
-        it('should move to the root when the root node is confirmed', () => {
+        it('moves to the root when the root node is confirmed', () => {
             loadCategoryTree.mockReturnValue(of(buildCategories()));
             moveItems.mockReturnValue(of(null));
+            openTree.mockReturnValue({ hide: jest.fn() });
             const context = buildCategoryContext({ selectedItems: () => [{ id: 'item-1', type: PageItemType.Item }] });
 
             service.executeAction(buildAction(PageStandardAction.Move, PageActionScope.Item), context);
@@ -486,16 +522,15 @@ describe('PageActionsService', () => {
             const treeConfig = openTree.mock.calls[0][0] as ModalTreeConfig;
             const root = treeConfig.treeConfig.nodes[0];
 
-            treeConfig.treeConfig.onNodeSelect?.(root);
-            treeConfig.confirm();
+            treeConfig.onConfirm?.(root);
 
             expect(moveItems).toHaveBeenCalledWith('/items', expect.anything(), null, 'testPage.toast.move-success');
         });
     });
 
     describe('trash items', () => {
-        it('should delete the selected trash items after confirmation', () => {
-            openConfirmation.mockReturnValue(of(true));
+        it('deletes the selected trash items after confirmation', () => {
+            modal.setConfirmationAnswer(true);
             deleteTrashItems.mockReturnValue(of(null));
             const items: PageTrashItem[] = [
                 { id: 1, type: PageItemType.Item },
@@ -505,13 +540,12 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.DeleteTrashItem, PageActionScope.Item), context);
 
-            expect(openConfirmation).toHaveBeenCalled();
+            expect(modal.confirmations()).toHaveLength(1);
             expect(deleteTrashItems).toHaveBeenCalledWith('/items', items, 'testPage.toast.delete-trash-item-success');
             expect(context.onTrashItemDeleted).toHaveBeenCalled();
         });
 
-        it('should not delete trash items when the confirmation is rejected', () => {
-            openConfirmation.mockReturnValue(of(false));
+        it('does not delete trash items when the confirmation is rejected', () => {
             const context = buildContext({ selectedItems: () => [{ id: 1, type: PageItemType.Item }] });
 
             service.executeAction(buildAction(PageStandardAction.DeleteTrashItem, PageActionScope.Item), context);
@@ -519,14 +553,14 @@ describe('PageActionsService', () => {
             expect(deleteTrashItems).not.toHaveBeenCalled();
         });
 
-        it('should restore the selected trash items without asking for confirmation', () => {
-            restoreTrashItems.mockReturnValue(of(null));
+        it('restores the selected trash items without asking for confirmation', () => {
+            restoreTrashItems.mockReturnValue(of([]));
             const items: PageTrashItem[] = [{ id: 3, type: PageItemType.Category }];
             const context = buildContext({ selectedItems: () => items });
 
             service.executeAction(buildAction(PageStandardAction.RestoreTrashItem, PageActionScope.Item), context);
 
-            expect(openConfirmation).not.toHaveBeenCalled();
+            expect(modal.confirmations()).toEqual([]);
             expect(restoreTrashItems).toHaveBeenCalledWith(
                 '/items',
                 items,
@@ -535,7 +569,7 @@ describe('PageActionsService', () => {
             expect(context.onSaved).toHaveBeenCalled();
         });
 
-        it('should not restore trash items without selected items', () => {
+        it('does not restore trash items without selected items', () => {
             service.executeAction(
                 buildAction(PageStandardAction.RestoreTrashItem, PageActionScope.Item),
                 buildContext()
@@ -546,7 +580,7 @@ describe('PageActionsService', () => {
     });
 
     describe('buildHeaderActions', () => {
-        it('should build header actions only for the requested zone', () => {
+        it('builds header actions only for the requested zone', () => {
             const execute = jest.fn();
             const actions = [
                 buildAction('left-action', PageActionScope.Global),
@@ -563,7 +597,7 @@ describe('PageActionsService', () => {
             expect(execute).toHaveBeenCalledWith(actions[0]);
         });
 
-        it('should build nested header actions for sub-actions', () => {
+        it('builds nested header actions for sub-actions', () => {
             const execute = jest.fn();
             const subAction = new PageAction({
                 key: 'sub-action',
@@ -587,7 +621,7 @@ describe('PageActionsService', () => {
         });
     });
 
-    it('should filter visible actions by backend keys and selection', () => {
+    it('filters visible actions by backend keys and selection', () => {
         const actions = [
             buildAction(PageStandardAction.Create, PageActionScope.Global),
             buildAction(PageStandardAction.Edit, PageActionScope.Item),
@@ -601,7 +635,7 @@ describe('PageActionsService', () => {
     });
 
     describe('filterVisibleActions — group scope', () => {
-        it('should keep the group with both sub-actions when both are allowed', () => {
+        it('keeps the group with both sub-actions when both are allowed', () => {
             const visible = service.filterVisibleActions(
                 [buildGroupAction()],
                 [PageStandardAction.Create, PageStandardAction.CreateCategory],
@@ -615,20 +649,20 @@ describe('PageActionsService', () => {
             ]);
         });
 
-        it('should keep the group with only the allowed sub-action when just one is allowed', () => {
+        it('keeps the group with only the allowed sub-action when just one is allowed', () => {
             const visible = service.filterVisibleActions([buildGroupAction()], [PageStandardAction.Create], []);
 
             expect(visible).toHaveLength(1);
             expect(visible[0].subActions?.map(action => action.key)).toEqual([PageStandardAction.Create]);
         });
 
-        it('should drop the group entirely when no sub-action is allowed', () => {
+        it('drops the group entirely when no sub-action is allowed', () => {
             const visible = service.filterVisibleActions([buildGroupAction()], [], []);
 
             expect(visible).toHaveLength(0);
         });
 
-        it('should not require the group key itself to be an allowed backend key', () => {
+        it('does not require the group key itself to be an allowed backend key', () => {
             const visible = service.filterVisibleActions(
                 [buildGroupAction()],
                 [PageStandardAction.Create, PageStandardAction.CreateCategory],
@@ -638,7 +672,7 @@ describe('PageActionsService', () => {
             expect(visible[0].key).toBe('createGroup');
         });
 
-        it('should not mutate the original group action across repeated calls', () => {
+        it('does not mutate the original group action across repeated calls', () => {
             const group = buildGroupAction();
 
             service.filterVisibleActions([group], [PageStandardAction.Create], []);
@@ -654,7 +688,7 @@ describe('PageActionsService', () => {
     });
 });
 
-function buildAction(key: string, scope: PageActionScope, handler?: (items?: PageItem[]) => void): PageAction {
+function buildAction(key: string, scope: PageActionScope, handler?: (items: PageItem[]) => void): PageAction {
     return new PageAction({ handler, key, scope, zone: PageActionZone.Left });
 }
 

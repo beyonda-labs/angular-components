@@ -20,26 +20,28 @@ import { TranslateModule } from '@ngx-translate/core';
     templateUrl: './header-style-guide.component.html'
 })
 export class HeaderStyleGuideComponent {
-    readonly config = this.buildConfig();
     backConfig = this.buildConfig({
         backAction: new BeyHeaderAction({
             icon: faArrowLeft,
             key: 'back',
             type: BeyHeaderActionType.Text
         }),
-        badge: new BeyBadgeConfig({
-            label: 'angular-components-style-guide.header.badge',
-            variant: BeyBadgeVariant.Primary
-        }),
+        badges: [
+            new BeyBadgeConfig({
+                label: 'angular-components-style-guide.header.badge',
+                variant: BeyBadgeVariant.Primary
+            })
+        ],
         menuActions: []
     });
+    readonly config = this.buildConfig();
     subPageConfig = this.buildConfig({
         menuActions: [],
         variant: BeyHeaderVariant.SubPage
     });
 
     private buildConfig(
-        overrides: Partial<Pick<BeyHeaderConfig, 'backAction' | 'badge' | 'menuActions' | 'variant'>> = {}
+        overrides: Partial<Pick<BeyHeaderConfig, 'backAction' | 'badges' | 'menuActions' | 'variant'>> = {}
     ): BeyHeaderConfig {
         return new BeyHeaderConfig({
             leftActions: [

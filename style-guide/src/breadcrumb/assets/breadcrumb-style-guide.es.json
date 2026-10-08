@@ -30,6 +30,7 @@
                     "label": "Inicio"
                 },
                 "product": {
+                    "detail": "({{count}} variantes)",
                     "label": "Producto"
                 }
             },

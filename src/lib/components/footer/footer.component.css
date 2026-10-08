@@ -12,7 +12,6 @@
     font-size: var(--bey-font-size-xs);
 }
 
-/* An icon drawn for a light background has to be flipped rather than re-coloured. */
 :host-context(body.dark) .bey-footer-icon {
     filter: invert(1);
 }

@@ -19,18 +19,14 @@ describe('StorageService', () => {
         localStorage.clear();
     });
 
-    it('should create', () => {
-        expect(service).toBeTruthy();
-    });
-
     describe('set and get', () => {
-        it('should store and retrieve a string value', () => {
+        it('returns a stored string', () => {
             service.set('key', 'hello');
 
             expect(service.get<string>('key')).toBe('hello');
         });
 
-        it('should store and retrieve an object', () => {
+        it('returns a stored object', () => {
             const data = { name: 'John', age: 30 };
 
             service.set('user', data);
@@ -38,7 +34,7 @@ describe('StorageService', () => {
             expect(service.get<typeof data>('user')).toEqual(data);
         });
 
-        it('should store and retrieve an array', () => {
+        it('returns a stored array', () => {
             const items = [1, 2, 3];
 
             service.set('items', items);
@@ -46,13 +42,13 @@ describe('StorageService', () => {
             expect(service.get<number[]>('items')).toEqual(items);
         });
 
-        it('should store and retrieve a boolean', () => {
+        it('returns a stored boolean', () => {
             service.set('flag', true);
 
             expect(service.get<boolean>('flag')).toBe(true);
         });
 
-        it('should store and retrieve a number', () => {
+        it('returns a stored number', () => {
             service.set('count', 42);
 
             expect(service.get<number>('count')).toBe(42);
@@ -60,11 +56,11 @@ describe('StorageService', () => {
     });
 
     describe('get', () => {
-        it('should return null for non-existent key', () => {
+        it('returns null for a key that was never stored', () => {
             expect(service.get('missing')).toBeNull();
         });
 
-        it('should return null for invalid JSON', () => {
+        it('returns null when the stored value is not valid JSON', () => {
             localStorage.setItem('broken', '{invalid json}');
 
             expect(service.get('broken')).toBeNull();
@@ -72,7 +68,7 @@ describe('StorageService', () => {
     });
 
     describe('remove', () => {
-        it('should remove a stored value', () => {
+        it('removes a stored value', () => {
             service.set('key', 'value');
 
             service.remove('key');
@@ -80,13 +76,13 @@ describe('StorageService', () => {
             expect(service.get('key')).toBeNull();
         });
 
-        it('should not throw when removing a non-existent key', () => {
+        it('does not throw when removing a key that was never stored', () => {
             expect(() => service.remove('missing')).not.toThrow();
         });
     });
 
     describe('clear', () => {
-        it('should remove all stored values', () => {
+        it('removes every stored value', () => {
             service.set('key1', 'value1');
             service.set('key2', 'value2');
 

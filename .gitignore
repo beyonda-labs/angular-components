@@ -1,10 +1,7 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
-
 # Compiled output
 /dist
 /tmp
 /out-tsc
-/bazel-out
 
 # Node
 /node_modules
@@ -28,14 +25,13 @@ yarn-error.log
 !.vscode/extensions.json
 .history/*
 
-# Miscellaneous
-/.angular/cache
-.sass-cache/
-/connect.lock
+# Coverage
 /coverage
-/libpeerconnection.log
-testem.log
-/typings
+
+# Environment
+.env
+.env.local
+.env.*.local
 
 # Claude Code
 .claude
@@ -46,5 +42,12 @@ Thumbs.db
 
 # NPM
 package-lock.json
-# local tooling
-.hintrc
+
+# Angular
+/.angular/cache
+/bazel-out
+.sass-cache/
+/connect.lock
+/libpeerconnection.log
+testem.log
+/typings

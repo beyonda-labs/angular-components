@@ -1,7 +1,10 @@
 import { TestBed } from '@angular/core/testing';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { FakeModalService } from '@testing/services/fake-modal.service';
+import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
+import { of } from 'rxjs';
 
-import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
-import { ModalFormService } from '../../form/components/modal/services/modal-form.service';
+import { ModalFormConfig, ModalFormSize } from '../../form/components/modal/models/modal-form.model';
 import { FormTextField } from '../../form/models/fields/form-text-field.model';
 import { FormHandle, FormRow, FormSection } from '../../form/models/form.model';
 import { PageFormConfig } from '../models/page-form.model';
@@ -15,32 +18,17 @@ interface TestFormValue {
 }
 
 describe('PageFormService', () => {
+    let modalForm: FakeModalFormService;
     let service: PageFormService;
 
-    const open = jest.fn();
-
     beforeEach(() => {
-        open.mockReset();
-        open.mockReturnValue({});
+        TestBed.configureTestingModule({ providers: [provideBeyTesting()] });
 
-        TestBed.configureTestingModule({
-            providers: [
-                PageFormService,
-                {
-                    provide: ModalFormService,
-                    useValue: { open }
-                }
-            ]
-        });
-
+        modalForm = TestBed.inject(FakeModalFormService);
         service = TestBed.inject(PageFormService);
     });
 
-    it('should create', () => {
-        expect(service).toBeTruthy();
-    });
-
-    it('should open a create modal form initialized from the page form config', () => {
+    it('opens a create modal form built from the page form config', () => {
         service.open(buildPageForm(), undefined, 'testPage', jest.fn());
 
         const config = getOpenedConfig();
@@ -54,7 +42,21 @@ describe('PageFormService', () => {
         expect(config.initialValue).toBeUndefined();
     });
 
-    it('should open an edit modal form with the item mapped through toFormValue', () => {
+    it('opens the modal form in the size the page form config asks for, large by default', () => {
+        service.open(buildPageForm(), undefined, 'testPage', jest.fn());
+        service.open(
+            new PageFormConfig({ ...buildPageForm(), size: ModalFormSize.Medium }),
+            undefined,
+            'testPage',
+            jest.fn()
+        );
+
+        const [large, medium] = modalForm.forms() as ModalFormConfig<unknown>[];
+
+        expect([large.size, medium.size]).toEqual([ModalFormSize.Large, ModalFormSize.Medium]);
+    });
+
+    it('opens an edit modal form with the item mapped through toFormValue', () => {
         const item: PageItem = { id: 7 };
 
         service.open(buildPageForm(), item, 'testPage', jest.fn());
@@ -65,7 +67,7 @@ describe('PageFormService', () => {
         expect(config.initialValue).toEqual({ section1: { text1: '7' } });
     });
 
-    it('should allow a create-mode initial value through toFormValue without an item', () => {
+    it('takes a create-mode initial value from toFormValue without an item', () => {
         const pageForm = buildPageForm();
 
         pageForm.toFormValue = item => ({ section1: { text1: item ? String(item.id) : 'default' } });
@@ -75,7 +77,7 @@ describe('PageFormService', () => {
         expect(getOpenedConfig().initialValue).toEqual({ section1: { text1: 'default' } });
     });
 
-    it('should forward every value change of the modal form with its handle', () => {
+    it('forwards every value change of the modal form with its handle', () => {
         const onValueChange = jest.fn();
         const pageForm = buildPageForm();
         const handle = {} as FormHandle<TestFormValue>;
@@ -88,7 +90,7 @@ describe('PageFormService', () => {
         expect(onValueChange).toHaveBeenCalledWith(value, handle);
     });
 
-    it('should map the submitted value through toItem and delegate saving', () => {
+    it('calls onCreate and saves the value mapped through toItem', () => {
         const onCreate = jest.fn();
         const onSave = jest.fn();
 
@@ -104,7 +106,7 @@ describe('PageFormService', () => {
         expect(onSave).toHaveBeenCalledWith({ mapped: currentValue }, handle);
     });
 
-    it('should call the edit callback when submitting with an item', () => {
+    it('calls onEdit when submitting with an item', () => {
         const onEdit = jest.fn();
         const item: PageItem = { id: 7 };
 
@@ -119,8 +121,59 @@ describe('PageFormService', () => {
         expect(onEdit).toHaveBeenCalledWith(currentValue, handle);
     });
 
+    it('asks with the confirmation of confirmSave before saving, and saves only once confirmed', () => {
+        const modal = TestBed.inject(FakeModalService);
+        const onSave = jest.fn();
+        const pageForm = buildPageForm();
+        const item: PageItem = { id: 7 };
+        const confirmation = { message: 'testPage.modal.rename.message', title: 'testPage.modal.rename.title' };
+        const currentValue: TestFormValue = { section1: { text1: 'renamed' } };
+
+        pageForm.confirmSave = (value, original) =>
+            value.section1.text1 !== String(original?.id) ? confirmation : null;
+        service.open(pageForm, item, 'testPage', onSave);
+
+        getOpenedConfig().onSubmit?.(currentValue, {} as FormHandle<TestFormValue>);
+        expect(modal.confirmations()).toEqual([confirmation]);
+        expect(onSave).not.toHaveBeenCalled();
+
+        modal.setConfirmationAnswer(true);
+        getOpenedConfig().onSubmit?.(currentValue, {} as FormHandle<TestFormValue>);
+        expect(onSave).toHaveBeenCalledWith({ mapped: currentValue }, {});
+    });
+
+    it('saves without asking when confirmSave answers no confirmation', () => {
+        const modal = TestBed.inject(FakeModalService);
+        const onSave = jest.fn();
+        const pageForm = buildPageForm();
+
+        pageForm.confirmSave = () => of(null);
+        service.open(pageForm, { id: 7 }, 'testPage', onSave);
+        getOpenedConfig().onSubmit?.({ section1: { text1: '7' } }, {} as FormHandle<TestFormValue>);
+
+        expect(modal.confirmations()).toEqual([]);
+        expect(onSave).toHaveBeenCalledTimes(1);
+    });
+
+    it('opens a form with its own request through the modal forms and reports the save once it answers', () => {
+        const config = new ModalFormConfig<TestFormValue>({ prefix: 'testPage.status', sections: [] });
+        const submit = jest.fn(() => of(null));
+        const onSaved = jest.fn();
+        const close = jest.fn();
+
+        service.openWithRequest(config, submit, onSaved);
+        getOpenedConfig().onSubmit?.({ section1: { text1: 'draft' } }, {
+            close
+        } as unknown as FormHandle<TestFormValue>);
+
+        expect(getOpenedConfig().prefix).toBe('testPage.status');
+        expect(submit).toHaveBeenCalledWith({ section1: { text1: 'draft' } });
+        expect(onSaved).toHaveBeenCalledTimes(1);
+        expect(close).toHaveBeenCalledTimes(1);
+    });
+
     function getOpenedConfig(): ModalFormConfig<TestFormValue> {
-        return open.mock.calls[0][0] as ModalFormConfig<TestFormValue>;
+        return modalForm.forms()[0] as ModalFormConfig<TestFormValue>;
     }
 });
 

@@ -1,15 +1,33 @@
+import '@angular/common/locales/global/es';
+
+import { LOCALE_ID } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { faFolder } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { renderComponent } from '@testing/dom';
+import { buttonByName, renderComponent } from '@testing/dom';
 
 import { BadgeConfig, BadgeVariant } from '../../../badge/models/badge.model';
-import { BadgeTableCell, LinkTableCell, TableCell, TextTableCell } from '../../models/table-cell.model';
+import { TableSortState } from '../../models/table.model';
+import {
+    BadgeTableCell,
+    DateTableCell,
+    LinkTableCell,
+    TableCell,
+    TagsTableCell,
+    TextTableCell
+} from '../../models/table-cell.model';
 import { TableCellComponent } from './cell.component';
+
+const SEPTEMBER_28 = Date.UTC(2026, 8, 28, 12);
 
 describe('TableCellComponent', () => {
     let fixture: ComponentFixture<TableCellComponent>;
 
     async function render(cell: TableCell): Promise<void> {
+        const translateService = TestBed.inject(TranslateService);
+
+        translateService.setTranslation('en', { demo: { open: 'Open', active: 'Active' } });
+        translateService.use('en');
         fixture = await renderComponent(TableCellComponent, { cell });
     }
 
@@ -21,9 +39,6 @@ describe('TableCellComponent', () => {
         await TestBed.configureTestingModule({
             imports: [TableCellComponent, TranslateModule.forRoot()]
         }).compileComponents();
-
-        TestBed.inject(TranslateService).setTranslation('en', { demo: { open: 'Open', active: 'Active' } });
-        TestBed.inject(TranslateService).use('en');
     });
 
     it('shows a text cell as it is, or translated when asked', async () => {
@@ -51,6 +66,18 @@ describe('TableCellComponent', () => {
         expect(action).toHaveBeenCalled();
     });
 
+    it('keeps the text and the action of a cell that shows an icon, hiding the icon from screen readers', async () => {
+        await render(new TextTableCell({ content: 'demo.open', icon: faFolder, translate: true }));
+        expect(text()).toBe('Open');
+        expect(fixture.nativeElement.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
+
+        const action = jest.fn();
+        await render(new LinkTableCell({ action, content: 'demo.open', icon: faFolder, translate: true }));
+        buttonByName(fixture, 'Open').click();
+
+        expect(action).toHaveBeenCalled();
+    });
+
     it('shows every badge of a badge cell', async () => {
         await render(
             new BadgeTableCell({
@@ -64,5 +91,50 @@ describe('TableCellComponent', () => {
 
         expect(text()).toContain('Active');
         expect(text()).toContain('Open');
+    });
+
+    it('shows every tag of a tags cell as it is, never translated', async () => {
+        await render(new TagsTableCell({ tags: ['demo.open', 'Angular'] }));
+
+        expect(text()).toContain('demo.open');
+        expect(text()).toContain('Angular');
+    });
+
+    it('formats a date cell in the medium format unless the cell names another one', async () => {
+        await render(new DateTableCell({ value: SEPTEMBER_28 }));
+        expect(text()).toBe('Sep 28, 2026');
+
+        await render(new DateTableCell({ format: 'yyyy-MM-dd', value: new Date(SEPTEMBER_28).toISOString() }));
+        expect(text()).toBe('2026-09-28');
+    });
+
+    it('formats a date cell with the locale of the app', async () => {
+        TestBed.overrideProvider(LOCALE_ID, { useValue: 'es' });
+
+        await render(new DateTableCell({ value: new Date(SEPTEMBER_28) }));
+
+        expect(text()).toBe('28 sept 2026');
+    });
+
+    it('shows nothing for a date cell without a value', async () => {
+        await render(new DateTableCell({ value: null }));
+
+        expect(text()).toBe('');
+    });
+
+    it('turns a sortable header into a button that reports the click, with its sort as aria-sort', async () => {
+        const toggles: number[] = [];
+        await render(new TextTableCell({ content: 'demo.open', translate: true }));
+        fixture.componentRef.setInput('isHeader', true);
+        fixture.componentRef.setInput('sortState', TableSortState.Descending);
+        fixture.componentInstance.sortToggle.subscribe(() => toggles.push(1));
+        fixture.detectChanges();
+
+        buttonByName(fixture, 'Open').click();
+
+        expect(fixture.nativeElement.querySelector('[role="columnheader"]').getAttribute('aria-sort')).toBe(
+            'descending'
+        );
+        expect(toggles).toHaveLength(1);
     });
 });

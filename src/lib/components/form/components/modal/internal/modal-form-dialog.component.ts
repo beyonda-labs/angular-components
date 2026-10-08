@@ -23,15 +23,14 @@ import {
     templateUrl: './modal-form-dialog.component.html'
 })
 export class ModalFormDialogComponent implements FormHost {
-    config!: ModalFormConfig;
+    private readonly bsModalReference: BsModalRef<ModalFormDialogComponent> = inject(BsModalRef);
+    private readonly modalService = inject(ModalService);
 
+    config!: ModalFormConfig;
     readonly icon = faPenToSquare;
     readonly typeLabel = 'angular-components.form.modal.type';
 
     private readonly form = viewChild(FormComponent);
-
-    private readonly bsModalReference: BsModalRef<ModalFormDialogComponent> = inject(BsModalRef);
-    private readonly modalService = inject(ModalService);
 
     close(): void {
         this.bsModalReference.hide();

@@ -8,16 +8,35 @@
                 [row]="headerRow()"
                 [selectable]="config().selectable"
                 [selectionIndeterminate]="someSelected()"
+                [sortStates]="sortStates()"
                 (selectionChange)="onAllSelectionChange($event)"
-            ></bey-table-row>
+                (sortToggle)="onSortToggle($event)"
+            >
+                @if (columnsMenuEntries().length > 0) {
+                    <bey-table-columns-menu
+                        [entries]="columnsMenuEntries()"
+                        (columnsReset)="onColumnsReset()"
+                        (columnToggle)="onColumnToggle($event)"
+                    ></bey-table-columns-menu>
+                }
+            </bey-table-row>
         </div>
 
         <div class="bey-table-body" role="rowgroup">
             @for (row of rows(); track $index) {
+                @let drag = rowDragStates()[$index];
                 <bey-table-row
+                    [acceptsDrop]="drag.acceptsDrop"
                     [gridTemplateColumns]="gridTemplateColumns()"
+                    [isDraggable]="drag.isDraggable"
+                    [isDragged]="drag.isDragged"
+                    [isDropTarget]="drag.isDropTarget"
                     [row]="row"
                     [selectable]="config().selectable"
+                    (dragEnded)="onRowDragEnd()"
+                    (dragStarted)="onRowDragStart($index)"
+                    (dropped)="onRowDrop($index)"
+                    (dropTargetChange)="onDropTargetChange($index, $event)"
                     (selectionChange)="onRowSelectionChange($index, $event)"
                 ></bey-table-row>
             } @empty {

@@ -1,28 +1,22 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 
-import { ModalFormService } from '../services/modal-form.service';
 import { modalFormGuard } from './modal-form.guard';
 
 describe('modalFormGuard', () => {
-    const canDeactivate = jest.fn();
-
     beforeEach(() => {
-        canDeactivate.mockReset();
-
-        TestBed.configureTestingModule({
-            providers: [{ provide: ModalFormService, useValue: { canDeactivate } }]
-        });
+        TestBed.configureTestingModule({ providers: [provideBeyTesting()] });
     });
 
-    it('should delegate to the modal form service', () => {
-        canDeactivate.mockReturnValue(true);
+    it('returns what the modal form service answers to canDeactivate', () => {
+        jest.spyOn(TestBed.inject(FakeModalFormService), 'canDeactivate').mockReturnValue(false);
 
         const result = TestBed.runInInjectionContext(() =>
             modalFormGuard({}, {} as ActivatedRouteSnapshot, {} as RouterStateSnapshot, {} as RouterStateSnapshot)
         );
 
-        expect(result).toBe(true);
-        expect(canDeactivate).toHaveBeenCalled();
+        expect(result).toBe(false);
     });
 });

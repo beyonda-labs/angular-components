@@ -1,14 +1,5 @@
-import { PropertyFieldType } from '../../types/property-field-type';
 import { PropertyField, PropertyFieldParameters } from '../property-field.model';
-
-export interface PropertyNumberFieldParameters extends Omit<PropertyFieldParameters<number>, 'type'> {
-    max?: number;
-    min?: number;
-    placeholder?: string;
-    readonly?: boolean;
-    step?: number;
-    unit?: string;
-}
+import { PropertyFieldType } from '../property-field-type.model';
 
 export class PropertyNumberField extends PropertyField<number> {
     placeholder: string;
@@ -29,4 +20,13 @@ export class PropertyNumberField extends PropertyField<number> {
         this.step = step;
         this.unit = unit;
     }
+}
+
+export interface PropertyNumberFieldParameters extends Omit<PropertyFieldParameters<number>, 'type'> {
+    max?: number;
+    min?: number;
+    placeholder?: string;
+    readonly?: boolean;
+    step?: number;
+    unit?: string;
 }

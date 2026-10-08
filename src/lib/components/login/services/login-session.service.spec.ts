@@ -1,41 +1,39 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { mock, MockProxy } from 'jest-mock-extended';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
 
-import { SessionUser } from '../../../services/session/models/session.model';
 import { SessionService } from '../../../services/session/session.service';
 import { LoginSessionService } from './login-session.service';
 
 describe('LoginSessionService', () => {
     let service: LoginSessionService;
-    let sessionService: MockProxy<SessionService>;
+    let session: SessionService;
     let navigate: jest.SpyInstance;
 
-    beforeEach(() => {
-        sessionService = mock<SessionService>();
+    function buildAccessToken(allowedPaths: string[]): string {
+        return `header.${btoa(JSON.stringify({ allowedPaths, email: 'ada@example.com' }))}.signature`;
+    }
 
-        TestBed.configureTestingModule({
-            providers: [provideRouter([]), { provide: SessionService, useValue: sessionService }]
-        });
+    beforeEach(() => {
+        TestBed.configureTestingModule({ providers: [provideRouter([]), provideBeyTesting()] });
 
         service = TestBed.inject(LoginSessionService);
+        session = TestBed.inject(SessionService);
         navigate = jest.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     });
 
     it('stores both tokens and goes where the user is allowed', () => {
-        sessionService.user.mockReturnValue({ redirectPath: '/home' } as SessionUser);
+        const accessToken = buildAccessToken(['/home']);
 
-        service.open({ accessToken: 'access', refreshToken: 'refresh' });
+        service.open({ accessToken, refreshToken: 'refresh' });
 
-        expect(sessionService.setToken).toHaveBeenCalledWith('access');
-        expect(sessionService.setRefreshToken).toHaveBeenCalledWith('refresh');
+        expect(session.getToken()).toBe(accessToken);
+        expect(session.getRefreshToken()).toBe('refresh');
         expect(navigate).toHaveBeenCalledWith(['/home']);
     });
 
     it('goes to the root when the user carries no redirect path', () => {
-        sessionService.user.mockReturnValue({ redirectPath: '' } as SessionUser);
-
-        service.open({ accessToken: 'access', refreshToken: 'refresh' });
+        service.open({ accessToken: buildAccessToken([]), refreshToken: 'refresh' });
 
         expect(navigate).toHaveBeenCalledWith(['/']);
     });

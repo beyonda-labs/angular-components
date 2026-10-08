@@ -1,8 +1,8 @@
 export enum LoadingSize {
-    Xs = 'xs',
-    Sm = 'sm',
+    Lg = 'lg',
     Md = 'md',
-    Lg = 'lg'
+    Sm = 'sm',
+    Xs = 'xs'
 }
 
 export const LOADING_SIZE_MAP: Record<LoadingSize, string> = {

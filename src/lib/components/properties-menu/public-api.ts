@@ -85,12 +85,12 @@ export { PropertyListItemAction as BeyPropertyListItemActionModel } from './mode
 export type { PropertyListItemActionParameters as BeyPropertyListItemActionParameters } from './models/property-list-item.model';
 export { PropertySummaryRow as BeyPropertySummaryRow } from './models/property-summary-row.model';
 export type { PropertySummaryRowParameters as BeyPropertySummaryRowParameters } from './models/property-summary-row.model';
-export type { PropertyFieldType as BeyPropertyFieldType } from './types/property-field-type';
+export type { PropertyFieldType as BeyPropertyFieldType } from './models/property-field-type.model';
 export type {
     PropertyPrimitiveValue as BeyPropertyPrimitiveValue,
     PropertySpacingValue as BeyPropertySpacingValue,
     PropertyValue as BeyPropertyValue
-} from './types/property-value';
+} from './models/property-value.model';
 export type {
     PropertyAttachmentUpload as BeyPropertyAttachmentUpload,
     PropertyFieldAction as BeyPropertyFieldAction,
@@ -109,5 +109,5 @@ export type {
     PropertyTreeNodeSelect as BeyPropertyTreeNodeSelect,
     PropertyTreeNodeToggle as BeyPropertyTreeNodeToggle,
     PropertyVariableSelection as BeyPropertyVariableSelection
-} from './types/properties-menu-events';
-export type { PropertyTreeDropPosition as BeyPropertyTreeDropPosition } from './utils/property-tree-drop.util';
+} from './models/properties-menu-events.model';
+export type { PropertyTreeDropPosition as BeyPropertyTreeDropPosition } from './models/property-tree-node.model';

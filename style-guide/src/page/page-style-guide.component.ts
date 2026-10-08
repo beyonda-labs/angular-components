@@ -1,31 +1,31 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
+    BeyBooleanFilter,
     BeyFormNumberField,
     BeyFormRow,
     BeyFormSection,
     BeyFormTextField,
-    BeyHeaderActionType,
-    BeyPageAction,
-    BeyPageActionScope,
-    BeyPageActionZone,
+    BeyPageCategoriesConfig,
     BeyPageComponent,
     BeyPageConfig,
     BeyPageFormConfig,
     BeyPageHeaderConfig,
     BeyPageItem,
     BeyPageStandardAction,
+    beyPageStandardAction,
     BeyPageTableConfig,
     BeyPageTableSearchConfig,
+    BeyPageView,
     BeySearchField,
     BeySearchFieldType,
     BeySearchSortDirection,
     BeyTableColumn,
     BeyTextTableCell
 } from '@beyonda-labs/angular-components';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 const PREFIX = 'angular-components-style-guide.page';
+const FOLDERS_PREFIX = `${PREFIX}.folders`;
 
 interface Product extends BeyPageItem {
     category: string;
@@ -46,9 +46,9 @@ interface ProductFormValue {
     templateUrl: './page-style-guide.component.html'
 })
 export class PageStyleGuideComponent {
-    readonly config = new BeyPageConfig({
+    readonly config = new BeyPageConfig<ProductFormValue, Product>({
         baseUrl: '/products',
-        formConfig: new BeyPageFormConfig<unknown>({
+        formConfig: new BeyPageFormConfig<ProductFormValue, Product>({
             buildSections: () => [
                 new BeyFormSection({
                     isTitleVisible: false,
@@ -67,46 +67,32 @@ export class PageStyleGuideComponent {
                 })
             ],
             prefix: `${PREFIX}.form`,
-            toFormValue: item => {
-                const product = item as Product | undefined;
-
-                return product
+            toFormValue: product =>
+                product
                     ? { product: { category: product.category, name: product.name, price: product.price } }
-                    : undefined;
-            },
-            toItem: value => (value as ProductFormValue).product
+                    : undefined,
+            toItem: value => value.product
         }),
         headerConfig: new BeyPageHeaderConfig({
             actions: [
-                new BeyPageAction({
-                    icon: faPlus,
-                    key: BeyPageStandardAction.Create,
-                    scope: BeyPageActionScope.Global,
-                    type: BeyHeaderActionType.PrimaryButton,
-                    zone: BeyPageActionZone.Right
-                }),
-                new BeyPageAction({
-                    key: BeyPageStandardAction.Edit,
-                    scope: BeyPageActionScope.Item,
-                    zone: BeyPageActionZone.Left
-                }),
-                new BeyPageAction({
-                    key: BeyPageStandardAction.Delete,
-                    scope: BeyPageActionScope.Item,
-                    zone: BeyPageActionZone.Menu
-                })
+                beyPageStandardAction(BeyPageStandardAction.Create),
+                beyPageStandardAction(BeyPageStandardAction.Edit),
+                beyPageStandardAction(BeyPageStandardAction.Delete)
             ],
             title: `${PREFIX}.title`
         }),
         prefix: PREFIX,
+        views: [
+            new BeyPageView({ filters: [new BeyBooleanFilter({ field: 'available', value: true })], key: 'available' })
+        ],
         tableConfig: new BeyPageTableConfig({
             columns: [
-                new BeyTableColumn({ key: 'name', width: 4 }),
-                new BeyTableColumn({ key: 'category', width: 3 }),
-                new BeyTableColumn({ key: 'price', width: 2 })
+                new BeyTableColumn({ isHideable: false, isSortable: true, key: 'name', width: 4 }),
+                new BeyTableColumn({ isSortable: true, key: 'category', width: 3 }),
+                new BeyTableColumn({ isSortable: true, key: 'price', width: 2 })
             ],
             height: '24rem',
-            loadRow: item => this.loadRow(item as Product),
+            loadRow: product => this.loadRow(product),
             order: { direction: BeySearchSortDirection.Asc, field: 'name' },
             search: new BeyPageTableSearchConfig({
                 fields: [
@@ -115,15 +101,45 @@ export class PageStyleGuideComponent {
                     new BeySearchField({ key: 'price', type: BeySearchFieldType.Number })
                 ],
                 mainField: 'name'
-            })
+            }),
+            storageKey: 'style-guide-products'
         })
     });
+    readonly foldersConfig = new BeyPageConfig<unknown, Product>({
+        baseUrl: '/product-categories',
+        headerConfig: new BeyPageHeaderConfig({
+            actions: [beyPageStandardAction(BeyPageStandardAction.Move)],
+            title: `${FOLDERS_PREFIX}.title`
+        }),
+        prefix: FOLDERS_PREFIX,
+        tableConfig: new BeyPageTableConfig({
+            categoriesConfig: new BeyPageCategoriesConfig({}),
+            columns: [
+                new BeyTableColumn({ isSortable: true, key: 'name', width: 4 }),
+                new BeyTableColumn({ isSortable: true, key: 'price', width: 2 })
+            ],
+            height: '20rem',
+            loadRow: product => this.loadFolderRow(product),
+            order: { direction: BeySearchSortDirection.Asc, field: 'name' }
+        })
+    });
+
+    private loadFolderRow({ name, price }: Product): BeyTextTableCell[] {
+        return [
+            new BeyTextTableCell({ content: name, tooltip: name }),
+            new BeyTextTableCell({ content: toPrice(price) })
+        ];
+    }
 
     private loadRow({ category, name, price }: Product): BeyTextTableCell[] {
         return [
             new BeyTextTableCell({ content: name, tooltip: name }),
             new BeyTextTableCell({ content: category, tooltip: category }),
-            new BeyTextTableCell({ content: typeof price === 'number' ? `${price.toFixed(2)} €` : '' })
+            new BeyTextTableCell({ content: toPrice(price) })
         ];
     }
+}
+
+function toPrice(price: number): string {
+    return typeof price === 'number' ? `${price.toFixed(2)} €` : '';
 }

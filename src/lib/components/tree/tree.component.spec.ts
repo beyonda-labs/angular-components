@@ -145,6 +145,12 @@ describe('TreeComponent', () => {
         expect(labels()).toEqual(['demo.nodes.root.label']);
     });
 
+    it('resolves the label of a camelCase node key from its kebab-case segment', async () => {
+        await render(buildConfig({ nodes: [new TreeNode({ key: 'sharedFolder' })] }));
+
+        expect(labels()).toEqual(['demo.nodes.shared-folder.label']);
+    });
+
     it('takes a label the node does carry as it is', async () => {
         await render(buildConfig({ nodes: [new TreeNode({ key: 'root', label: 'shared.root' })] }));
 

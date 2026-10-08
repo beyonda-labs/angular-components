@@ -61,7 +61,8 @@ created with, so a replaced config would leave them writing into a group nobody 
 
 With the default prefix, the keys are `angular-components.login.title.login`, `.title.register`,
 `.login.button.login`, `.login.email.label`, `.register.button.next` and so on. A consumer with its own
-prefix provides the same tree under it.
+prefix provides the same tree under it. A register field reads `.register.<name>.label`, with its `name` in
+kebab-case: `firstName` is `.register.first-name.label`.
 
 ## Background
 

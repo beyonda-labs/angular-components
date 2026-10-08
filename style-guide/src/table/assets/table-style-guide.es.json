@@ -2,19 +2,23 @@
     "angular-components-style-guide": {
         "table": {
             "actions": {
+                "dropped": "Filas soltadas",
                 "open": "Abrir",
                 "opened": "Acción de fila ejecutada"
             },
             "columns": {
                 "action": "Acción",
+                "joined-at": "Alta",
                 "name": "Nombre",
                 "role": "Rol",
                 "skills": "Habilidades",
-                "status": "Estado"
+                "status": "Estado",
+                "team": "Equipo"
             },
             "empty": "No hay filas disponibles para este ejemplo.",
-            "example": "Tabla de datos con ordenamiento, selección de filas y columnas configurables mediante modelo.",
+            "example": "Tabla de datos con ordenación desde las cabeceras, selección de filas, un menú de columnas recordado por tabla y filas que se pueden arrastrar sobre otras.",
             "examples": {
+                "drag": "Arrastra una persona sobre un equipo para moverla allí, o a las personas seleccionadas a la vez",
                 "empty": "La misma tabla sin filas",
                 "filled": "La misma tabla con filas"
             },
@@ -25,8 +29,9 @@
                 "review": "En revisión"
             },
             "tooltips": {
+                "joined-at": "Las celdas de fecha formatean el valor con el idioma de la aplicación",
                 "name": "Columna principal de identidad",
-                "skills": "Las celdas de badge aceptan una lista, mostrando más de un badge por fila",
+                "skills": "Las celdas de etiquetas muestran textos sin traducir como badges de contorno",
                 "status": "Las celdas de estado pueden traducirse y mostrar tooltip"
             }
         }

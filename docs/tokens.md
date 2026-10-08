@@ -5,7 +5,10 @@ How the layers work and when a module may declare its own variable is in `rules/
 They live in `src/lib/assets/styles/tokens.css`.
 
 All tokens are declared on `:root` and re-declared under `body.dark`. A token that does not appear in the dark
-column keeps its light value.
+column keeps its light value. A token that reads another one is declared again under `body.dark` even when its
+expression does not change, such as `--bey-danger: var(--bey-red)`: a custom property resolves the variables it reads
+where it is declared, so the one on `:root` would keep the light `--bey-red`. The Bootstrap bridge in `overrides.css`
+is declared on `:root, body.dark` for the same reason.
 
 ---
 
@@ -71,14 +74,23 @@ colours as bare channels, for the rules that need `rgba()`.
 
 ### Intent
 
-| Token              | Light            | Dark          |
-| ------------------ | ---------------- | ------------- |
-| `--bey-primary`    | `--bey-black`    | `--bey-white` |
-| `--bey-primary-fg` | `--bey-white`    | `--bey-black` |
-| `--bey-secondary`  | `#949b98`        | `#7a8380`     |
-| `--bey-success`    | `--bey-teal`     | —             |
-| `--bey-danger`     | `--bey-red`      | —             |
-| `--bey-warning`    | `--bey-orange`   | —             |
+| Token              | Light          | Dark           |
+| ------------------ | -------------- | -------------- |
+| `--bey-primary`    | `--bey-black`  | `--bey-white`  |
+| `--bey-primary-fg` | `--bey-white`  | `--bey-black`  |
+| `--bey-secondary`  | `#949b98`      | `#7a8380`      |
+| `--bey-success`    | `--bey-teal`   | `--bey-teal`   |
+| `--bey-danger`     | `--bey-red`    | `--bey-red`    |
+| `--bey-warning`    | `--bey-orange` | `--bey-orange` |
+
+### Highlight
+
+| Token                    | Value                               | Used for                |
+| ------------------------ | ----------------------------------- | ----------------------- |
+| `--bey-highlight`        | `rgba(var(--bey-orange-rgb), 0.35)` | Every match of a search |
+| `--bey-highlight-strong` | `rgba(var(--bey-orange-rgb), 0.7)`  | The current match       |
+
+Both are declared again under `body.dark`, so they read the dark orange.
 
 ---
 
@@ -140,33 +152,34 @@ not `p-4`.
 
 ## Borders, elevation and motion
 
-| Token                      | Light                                           | Dark                  |
-| -------------------------- | ----------------------------------------------- | --------------------- |
-| `--bey-border-width`       | `1px`                                           | —                     |
-| `--bey-border-width-thick` | `2px`                                           | —                     |
-| `--bey-shadow-rgb`         | `var(--bey-black-rgb)`                          | —                     |
-| `--bey-shadow-sm`          | `0 1px 2px rgba(var(--bey-shadow-rgb), 0.25)`   | —                     |
-| `--bey-shadow-md`          | `0 16px 48px rgba(var(--bey-shadow-rgb), 0.14)` | same geometry, `0.4`  |
-| `--bey-shadow-lg`          | `0 24px 64px rgba(var(--bey-shadow-rgb), 0.16)` | same geometry, `0.5`  |
-| `--bey-duration-fast`      | `150ms`                                         | —                     |
-| `--bey-duration-base`      | `200ms`                                         | —                     |
-| `--bey-duration-slow`      | `300ms`                                         | —                     |
-| `--bey-easing-standard`    | `ease`                                          | —                     |
-| `--bey-opacity-disabled`   | `0.5`                                           | —                     |
-| `--bey-opacity-muted`      | `0.9`                                           | —                     |
+| Token                      | Light                                           | Dark                 |
+| -------------------------- | ----------------------------------------------- | -------------------- |
+| `--bey-border-width`       | `1px`                                           | —                    |
+| `--bey-border-width-thick` | `2px`                                           | —                    |
+| `--bey-shadow-rgb`         | `var(--bey-black-rgb)`                          | —                    |
+| `--bey-shadow-sm`          | `0 1px 2px rgba(var(--bey-shadow-rgb), 0.25)`   | —                    |
+| `--bey-shadow-md`          | `0 16px 48px rgba(var(--bey-shadow-rgb), 0.14)` | same geometry, `0.4` |
+| `--bey-shadow-lg`          | `0 24px 64px rgba(var(--bey-shadow-rgb), 0.16)` | same geometry, `0.5` |
+| `--bey-duration-fast`      | `150ms`                                         | —                    |
+| `--bey-duration-base`      | `200ms`                                         | —                    |
+| `--bey-duration-slow`      | `300ms`                                         | —                    |
+| `--bey-easing-standard`    | `ease`                                          | —                    |
+| `--bey-opacity-disabled`   | `0.5`                                           | —                    |
+| `--bey-opacity-muted`      | `0.9`                                           | —                    |
 
 ## Stacking
 
 Aligned with the Bootstrap scale, so a library panel never lands between two of its layers.
 
-| Token              | Value  | Used for                       |
-| ------------------ | ------ | ------------------------------ |
-| `--bey-z-base`     | `1`    | Inside the normal flow         |
-| `--bey-z-raised`   | `10`   | Anchored elements, chevrons    |
-| `--bey-z-sticky`   | `20`   | Sticky headers and toolbars    |
-| `--bey-z-dropdown` | `1000` | Menus and pickers              |
-| `--bey-z-modal`    | `1050` | Dialogs and their backdrop     |
-| `--bey-z-tooltip`  | `1080` | Tooltips, on top of everything |
+| Token              | Value  | Used for                                          |
+| ------------------ | ------ | ------------------------------------------------- |
+| `--bey-z-base`     | `1`    | Inside the normal flow                            |
+| `--bey-z-raised`   | `10`   | Anchored elements, chevrons                       |
+| `--bey-z-sticky`   | `20`   | Sticky headers and toolbars                       |
+| `--bey-z-dropdown` | `1000` | Menus and pickers                                 |
+| `--bey-z-modal`    | `1050` | Dialogs and their backdrop                        |
+| `--bey-z-loading`  | `1070` | The full-screen loading overlay, over the dialogs |
+| `--bey-z-tooltip`  | `1080` | Tooltips, on top of everything                    |
 
 ---
 

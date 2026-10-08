@@ -107,14 +107,23 @@ describe('ModalTreeDialogComponent', () => {
         expect(onConfirm).toHaveBeenCalledWith(expect.objectContaining({ key: 'root' }));
     });
 
-    it('closes from the cancel button and from the config', async () => {
+    it('closes from the cancel button', async () => {
         await render();
 
         buttonLabelled('cancel').click();
-        expect(hide).toHaveBeenCalled();
 
-        hide.mockReset();
-        fixture.componentInstance.config.close();
         expect(hide).toHaveBeenCalled();
+    });
+
+    it('keeps a branch the user collapsed when a node is picked afterwards', async () => {
+        await render();
+
+        treeNode('Root').querySelector('button')?.click();
+        fixture.detectChanges();
+        treeNode('Root').click();
+        fixture.detectChanges();
+
+        expect(treeNode('Root').getAttribute('aria-expanded')).toBe('false');
+        expect(queryAll(fixture, '[role="treeitem"]').some(node => node.textContent?.includes('Child'))).toBe(false);
     });
 });

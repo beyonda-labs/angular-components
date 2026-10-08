@@ -1,6 +1,8 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
-import { PropertyFieldType } from '../types/property-field-type';
+import { PropertyFieldType } from './property-field-type.model';
+
+export type PropertyFieldSpan = 'full' | 'half';
 
 export interface PropertyFieldActionButton {
     icon: IconDefinition;
@@ -8,29 +10,8 @@ export interface PropertyFieldActionButton {
     key?: string;
 }
 
-export type PropertyFieldSpan = 'full' | 'half';
-
-export interface PropertyFieldParameters<T = unknown> {
-    id: string;
-    type: PropertyFieldType;
-
-    acceptsVariable?: boolean;
-    actionButton?: PropertyFieldActionButton;
-    defaultValue?: T;
-    description?: string;
-    disabled?: boolean;
-    hidden?: boolean;
-    label?: string;
-    metadata?: Record<string, unknown>;
-    required?: boolean;
-    span?: PropertyFieldSpan;
-    value?: T;
-}
-
 export abstract class PropertyField<T = unknown> {
     acceptsVariable: boolean;
-    actionButton?: PropertyFieldActionButton;
-    defaultValue?: T;
     description: string;
     disabled: boolean;
     hidden: boolean;
@@ -41,6 +22,9 @@ export abstract class PropertyField<T = unknown> {
     span: PropertyFieldSpan;
     type: PropertyFieldType;
     value: T | undefined;
+
+    actionButton?: PropertyFieldActionButton;
+    defaultValue?: T;
 
     constructor({
         id,
@@ -73,7 +57,28 @@ export abstract class PropertyField<T = unknown> {
         this.value = value ?? defaultValue;
     }
 
+    withDisabled(disabled = true): this {
+        return Object.assign(Object.create(Object.getPrototypeOf(this)), this, { disabled });
+    }
+
     withValue(value: T | undefined): this {
         return Object.assign(Object.create(Object.getPrototypeOf(this)), this, { value });
     }
+}
+
+export interface PropertyFieldParameters<T = unknown> {
+    id: string;
+    type: PropertyFieldType;
+
+    acceptsVariable?: boolean;
+    actionButton?: PropertyFieldActionButton;
+    defaultValue?: T;
+    description?: string;
+    disabled?: boolean;
+    hidden?: boolean;
+    label?: string;
+    metadata?: Record<string, unknown>;
+    required?: boolean;
+    span?: PropertyFieldSpan;
+    value?: T;
 }

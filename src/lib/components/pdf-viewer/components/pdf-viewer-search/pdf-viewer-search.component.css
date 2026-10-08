@@ -1,0 +1,69 @@
+:host {
+    --bey-pdf-viewer-search-bg: var(--bey-bg-surface);
+    --bey-pdf-viewer-search-border: var(--bey-border-subtle);
+    --bey-pdf-viewer-search-fg: var(--bey-text-primary);
+    --bey-pdf-viewer-search-fg-muted: var(--bey-text-muted);
+    --bey-pdf-viewer-search-field-bg: transparent;
+    --bey-pdf-viewer-search-field-border: var(--bey-border-default);
+    --bey-pdf-viewer-search-field-border-focus: var(--bey-primary);
+    --bey-pdf-viewer-search-placeholder: var(--bey-text-disabled);
+    --bey-pdf-viewer-search-shadow: var(--bey-shadow-md);
+
+    display: block;
+}
+
+.bey-pdf-viewer-search {
+    align-items: center;
+    background-color: var(--bey-pdf-viewer-search-bg);
+    border: var(--bey-border-width) solid var(--bey-pdf-viewer-search-border);
+    border-radius: var(--bey-radius-md);
+    box-shadow: var(--bey-pdf-viewer-search-shadow);
+    color: var(--bey-pdf-viewer-search-fg);
+    display: flex;
+    gap: var(--bey-space-xs);
+    padding: var(--bey-space-xs);
+}
+
+.bey-pdf-viewer-search-box {
+    flex: 0 1 14rem;
+    min-width: 6rem;
+    position: relative;
+}
+
+.bey-pdf-viewer-search-icon {
+    color: var(--bey-pdf-viewer-search-fg-muted);
+    font-size: var(--bey-font-size-xs);
+    left: var(--bey-space-sm);
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.bey-pdf-viewer-search-input {
+    background-color: var(--bey-pdf-viewer-search-field-bg);
+    border-color: var(--bey-pdf-viewer-search-field-border);
+    border-radius: var(--bey-radius-sm);
+    color: var(--bey-pdf-viewer-search-fg);
+    font-size: var(--bey-font-size-sm);
+    padding-left: var(--bey-space-xl);
+}
+
+.bey-pdf-viewer-search-input:focus {
+    background-color: var(--bey-pdf-viewer-search-field-bg);
+    border-color: var(--bey-pdf-viewer-search-field-border-focus);
+    color: var(--bey-pdf-viewer-search-fg);
+}
+
+.bey-pdf-viewer-search-input::placeholder {
+    color: var(--bey-pdf-viewer-search-placeholder);
+}
+
+.bey-pdf-viewer-search-matches {
+    color: var(--bey-pdf-viewer-search-fg-muted);
+    font-size: var(--bey-font-size-sm);
+    font-variant-numeric: tabular-nums;
+    min-width: 3.5rem;
+    text-align: center;
+    white-space: nowrap;
+}

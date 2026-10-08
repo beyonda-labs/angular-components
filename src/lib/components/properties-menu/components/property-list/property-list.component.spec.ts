@@ -33,12 +33,22 @@ const byText = (fixture: ComponentFixture<PropertyListComponent>, text: string):
     return found;
 };
 
+const rowField = (fixture: ComponentFixture<PropertyListComponent>, name: string): HTMLInputElement => {
+    const [found] = queryAll<HTMLInputElement>(fixture, `input[aria-label="${name}"]`);
+
+    if (!found) {
+        throw new Error(`No field named ${name}`);
+    }
+
+    return found;
+};
+
+const COPIED = 'angular-components.properties-menu.list.copied';
 const EXPAND = 'angular-components.properties-menu.list.expand';
 const REMOVE = 'angular-components.properties-menu.remove';
 const COPY = 'angular-components.properties-menu.list.copy';
 
 describe('PropertyListComponent', () => {
-    let component: PropertyListComponent;
     let fixture: ComponentFixture<PropertyListComponent>;
     let propertiesMenuService: PropertiesMenuService;
 
@@ -58,33 +68,32 @@ describe('PropertyListComponent', () => {
                 new PropertyListItem({ disabled: true, id: 'block-locked', label: 'Bloqueado' })
             ]
         });
-        component = fixture.componentInstance;
     });
 
-    it('should render a card per item', () => {
+    it('renders a card per item', () => {
         expect(textsOf(items(fixture))).toEqual(['Encabezado', 'Bloqueado']);
     });
 
-    it('should call PropertiesMenuService.selectListItem when a card is clicked', () => {
+    it('selects the item through the menu service when its card is clicked', () => {
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
         items(fixture)[0].click();
 
         expect(selectSpy).toHaveBeenCalledWith('add', 'simple-blocks', 'block-heading');
     });
 
-    it('should not call PropertiesMenuService.selectListItem for a disabled item', () => {
+    it('does not select a disabled item', () => {
         const selectSpy = jest.spyOn(propertiesMenuService, 'selectListItem');
         items(fixture)[1].click();
 
         expect(selectSpy).not.toHaveBeenCalled();
     });
 
-    it('should resolve a default item label into a prefixed translation key', () => {
+    it('shows the default label of an item as a prefixed translation key', () => {
         propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
+        fixture.componentRef.setInput('items', [new PropertyListItem({ id: 'block-heading' })]);
+        fixture.detectChanges();
 
-        expect(component.labelKey(new PropertyListItem({ id: 'block-heading' }))).toBe(
-            'app.properties-menu.list.block-heading.label'
-        );
+        expect(textsOf(items(fixture))).toEqual(['app.properties-menu.list.block-heading.label']);
     });
 });
 
@@ -144,7 +153,7 @@ describe('PropertyListComponent with expandable items', () => {
     it('renders the badges an item brings', () => {
         setUp([buildItem()]);
 
-        expect(fixture.nativeElement.querySelector('bey-badge').textContent?.trim()).toBe('Número');
+        expect(items(fixture)[0].textContent).toContain('Número');
     });
 
     it('shows a chevron only on the items that carry a body', () => {
@@ -161,7 +170,7 @@ describe('PropertyListComponent with expandable items', () => {
         setUp([buildItem({ expanded: true })]);
 
         expect(fixture.nativeElement.textContent).toContain('Valor por defecto');
-        expect(fixture.nativeElement.querySelector('input').value).toBe('x');
+        expect(rowField(fixture, 'Valor').value).toBe('x');
     });
 
     it('toggles from the header, without selecting the card', () => {
@@ -180,7 +189,7 @@ describe('PropertyListComponent with expandable items', () => {
         setUp([buildItem({ expanded: true })]);
 
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
-        fixture.nativeElement.querySelector('input').click();
+        rowField(fixture, 'Valor').click();
 
         expect(toggleSpy).not.toHaveBeenCalled();
     });
@@ -239,7 +248,7 @@ describe('PropertyListComponent with expandable items', () => {
     it('renders a real field for an editable row and a dash for an empty one', () => {
         setUp([buildItem({ expanded: true })]);
 
-        expect(fixture.nativeElement.querySelector('input').value).toBe('x');
+        expect(rowField(fixture, 'Valor').value).toBe('x');
         expect(fixture.nativeElement.textContent).toContain('—');
     });
 });
@@ -261,7 +270,7 @@ describe('PropertyListComponent body labels', () => {
         fixture.componentRef.setInput('groupId', 'variables-list');
     });
 
-    it('lets the row own the label, so the field does not repeat it', () => {
+    it('names the field of a row after the row label, without a label of its own', () => {
         propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
         fixture.componentRef.setInput('items', [
             new PropertyListItem({
@@ -277,8 +286,8 @@ describe('PropertyListComponent body labels', () => {
         ]);
         fixture.detectChanges();
 
-        expect(fixture.nativeElement.querySelector('label')).toBeNull();
-        expect(byText(fixture, 'Valor')).toBeTruthy();
+        expect(rowField(fixture, 'Valor').value).toBe('x');
+        expect(fixture.nativeElement.textContent).not.toContain('app.properties-menu.fields.variable.v1.value.label');
     });
 });
 
@@ -324,7 +333,6 @@ describe('PropertyListComponent label parameters', () => {
 });
 
 describe('PropertyListComponent copy and actions', () => {
-    let component: PropertyListComponent;
     let fixture: ComponentFixture<PropertyListComponent>;
     let propertiesMenuService: PropertiesMenuService;
     let written: string[];
@@ -348,7 +356,6 @@ describe('PropertyListComponent copy and actions', () => {
         }).compileComponents();
 
         fixture = TestBed.createComponent(PropertyListComponent);
-        component = fixture.componentInstance;
         propertiesMenuService = TestBed.inject(PropertiesMenuService);
         propertiesMenuService.setConfig(
             new PropertiesMenuConfig({
@@ -397,33 +404,46 @@ describe('PropertyListComponent copy and actions', () => {
         fixture.detectChanges();
     });
 
+    async function copy(): Promise<void> {
+        queryButton(fixture, COPY)?.click();
+        await new Promise(resolve => {
+            setTimeout(resolve);
+        });
+        fixture.detectChanges();
+    }
+
     it('shows one button per action plus the copy one', () => {
         expect(queryButton(fixture, COPY)).toBeTruthy();
         expect(queryButton(fixture, 'Duplicar')).toBeTruthy();
     });
 
     it('copies the expression the item carries, not its label', async () => {
-        await component.onCopy(new MouseEvent('click'), component.items()[0]);
+        await copy();
 
         expect(written).toEqual(['{{ total }}']);
     });
 
-    it('marks the item as copied so the button can confirm it', async () => {
-        await component.onCopy(new MouseEvent('click'), component.items()[0]);
+    it('renames the copy button to confirm the copy', async () => {
+        await copy();
 
-        expect(component.copiedItemId()).toBe('v1');
-        expect(component.copyLabelKey(component.items()[0])).toBe('angular-components.properties-menu.list.copied');
+        expect(queryButton(fixture, COPIED)).not.toBeNull();
+        expect(queryButton(fixture, COPY)).toBeNull();
     });
 
     it('does not leave the copied state on when the clipboard refuses', async () => {
         Object.defineProperty(navigator, 'clipboard', {
             configurable: true,
-            value: { writeText: () => Promise.reject(new Error('denied')) }
+            value: {
+                writeText: () =>
+                    new Promise((_resolve, reject) => {
+                        setTimeout(() => reject(new Error('denied')));
+                    })
+            }
         });
 
-        await component.onCopy(new MouseEvent('click'), component.items()[0]);
+        await copy();
 
-        expect(component.copiedItemId()).toBeNull();
+        expect(queryButton(fixture, COPIED)).toBeNull();
     });
 
     it('reports the action key without selecting or toggling the card', () => {

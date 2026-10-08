@@ -1,10 +1,13 @@
 @let current = field();
+@let label = labelling().labelKey | translate;
 
 <div class="bey-property-field-control">
     <button
         class="bey-property-file-field-choose"
         type="button"
+        [attr.aria-label]="'angular-components.properties-menu.file-field.choose-for' | translate: { label: label }"
         [disabled]="current.disabled"
+        [id]="labelling().controlId"
         (click)="fileInput.click()"
     >
         <fa-icon [icon]="chooseIcon"></fa-icon>

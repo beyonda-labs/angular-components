@@ -1,0 +1,23 @@
+{
+    "version": "0.1.0-develop.13.780d70e",
+    "files": {
+        ".editorconfig": "67f2a34801deef7fd67991d9fdb18fd9c382654a0c92c1d9a3074f4fd1b1682c",
+        ".gitattributes": "250db083c03f90a62baeb34e4993cab4906efa03c0d7d756ce76c3b9d732f9de",
+        ".gitignore": "ece20fc99d321fb34c9c9ac7ff5e57a4ba82b534d763c7e2d40281d719b1c513",
+        ".hintrc": "66995309118b3fd640cdd68a0665d8c559dada296bf6ff2dc885a781c03318b2",
+        ".husky/pre-commit": "5bb8ebe63faa14625f822dbda6d738dc04fa00261cbaa3b284da620ffd039f5a",
+        ".npmrc": "9f56ad36d2116218cb8ee0aea6402275a2254803682b4beedf7bbeaced7564be",
+        ".vscode/extensions.json": "e460b55d85038c3258e25fc450b4d1893ca86716ea7066d2a734711ecc3b4557",
+        ".vscode/launch.json": "c4da1341c283fa2a0c5bb1e717b3283894b071f9bf52306d57462fa88895fc00",
+        ".vscode/settings.json": "43580731094e2a3db327a833ef3ed7d575b85f6d5d16e0b09b97bda6ebda6354",
+        ".vscode/tasks.json": "79264d60edd8f9faab3e391cc4dc4e5b7cab92741d750b9b78fe6409cadd9f94",
+        "eslint.config.js": "ef0d9e9b578644ef61f0447047564b9c502c3e48649d8fae253ede15ec3fbb2e",
+        "jest.config.js": "1889bef1d4366660560ba612a3d7a97a7ed159d448c95ea09ad1f535128e9fa8",
+        "lint-staged.config.js": "09d1274f579414b2514ec18fc5b2048e1a00f8be5a022ffde133b1fac20db14e",
+        "package.json": "3f56eacb347137cbee32a69593ea6ef6e1f2928b27e4a8bd658fbdbf14e2e87d",
+        "pnpm-workspace.yaml": "a25c6f63ab2e9000d439a8c1418e62e0fb62f3f666ccf3ad78b1f165b087d7db",
+        "prettier.config.js": "c22606828d1f13ede8ef2aef7e9c1ac9de780ed86a2c748a96ed2107d642cd96",
+        "setup-jest.ts": "2f81c84f920bca19bfa886e2b104868426b50cb28358951f6c1622f5f12121c6",
+        "stylelint.config.js": "07f5e6d645f4971d4fdc9653825c9c14a1810c0848b194c260c44ae4289a4427"
+    }
+}

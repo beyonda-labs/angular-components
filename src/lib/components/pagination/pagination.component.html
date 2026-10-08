@@ -5,8 +5,6 @@
 
             <select
                 class="form-select bey-pagination-select"
-                aria-label="Page size"
-                data-testid="page-size-select"
                 [id]="pageSizeId"
                 [ngModel]="pageSize()"
                 (ngModelChange)="onPageSizeChange($event)"
@@ -22,7 +20,6 @@
         @if (shouldShowFirstLastButtons()) {
             <button
                 class="btn bey-pagination-icon-button"
-                data-testid="first-page-button"
                 type="button"
                 [attr.aria-label]="'angular-components.pagination.first-page' | translate"
                 [disabled]="isFirstPage()"
@@ -35,7 +32,6 @@
 
         <button
             class="btn bey-pagination-icon-button"
-            data-testid="previous-page-button"
             type="button"
             [attr.aria-label]="'angular-components.pagination.previous-page' | translate"
             [disabled]="isFirstPage()"
@@ -52,8 +48,6 @@
 
             <input
                 class="form-control bey-pagination-input"
-                aria-label="Current page"
-                data-testid="page-input"
                 inputmode="numeric"
                 min="1"
                 placeholder="1"
@@ -74,7 +68,6 @@
                 class="btn bey-pagination-icon-button bey-pagination-info-button"
                 boundariesElement="viewport"
                 container="body"
-                data-testid="results-info-button"
                 type="button"
                 [attr.aria-label]="'angular-components.pagination.results-range' | translate: resultsTooltipParams()"
                 [tooltip]="'angular-components.pagination.results-range' | translate: resultsTooltipParams()"
@@ -88,7 +81,6 @@
 
         <button
             class="btn bey-pagination-icon-button"
-            data-testid="next-page-button"
             type="button"
             [attr.aria-label]="'angular-components.pagination.next-page' | translate"
             [disabled]="isLastPage()"
@@ -101,7 +93,6 @@
         @if (shouldShowFirstLastButtons()) {
             <button
                 class="btn bey-pagination-icon-button"
-                data-testid="last-page-button"
                 type="button"
                 [attr.aria-label]="'angular-components.pagination.last-page' | translate"
                 [disabled]="isLastPage()"

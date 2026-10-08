@@ -8,11 +8,13 @@ import {
 } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, EMPTY, filter, finalize, map, Observable, shareReplay, tap } from 'rxjs';
+import { catchError, defer, filter, finalize, map, mergeMap, Observable, tap, throwError } from 'rxjs';
 
 import { LoadingService } from '../../components/loading/services/loading.service';
 import { ModalService } from '../../components/modal/services/modal.service';
 import { ToastService } from '../../components/toast/services/toast.service';
+import { readBlobError } from './functions/blob-error';
+import { markAsShown } from './functions/shown-errors';
 import { CustomErrorResponse, HttpRequestOptions, UploadRequestOptions } from './models/http.model';
 
 const TITLE_PREFIX = 'angular-components.http.title.';
@@ -39,7 +41,16 @@ export class HttpService {
     getBlob(url: string, options?: HttpRequestOptions): Observable<Blob> {
         const { headers, params } = this.buildHttpOptions(options);
 
-        return this.request(this.httpClient.get(url, { headers, params, responseType: 'blob' }), options);
+        return this.request(
+            this.httpClient
+                .get(url, { headers, params, responseType: 'blob' })
+                .pipe(
+                    catchError((error: HttpErrorResponse) =>
+                        readBlobError(error).pipe(mergeMap(readable => throwError(() => readable)))
+                    )
+                ),
+            options
+        );
     }
 
     patch<T>(url: string, body: unknown, options?: HttpRequestOptions): Observable<T> {
@@ -103,18 +114,45 @@ export class HttpService {
         return result;
     }
 
+    private request<T>(source$: Observable<T>, options?: HttpRequestOptions): Observable<T> {
+        return defer(() => {
+            if (options?.loading) {
+                this.loadingService.show();
+            }
+
+            return source$.pipe(
+                tap(() => {
+                    if (options?.successToast) {
+                        this.toastService.showSuccess({ message: options.successToast });
+                    }
+                }),
+                catchError((error: HttpErrorResponse) => {
+                    this.showError(error, options);
+
+                    return throwError(() => markAsShown(error));
+                }),
+                finalize(() => {
+                    if (options?.loading) {
+                        this.loadingService.hide();
+                    }
+                })
+            );
+        });
+    }
+
     private resolveErrorMessage(error: HttpErrorResponse): {
         message: string;
         title: string;
+
         messageParameters?: Record<string, unknown>;
     } {
         const body = error.error as CustomErrorResponse | null,
             messageParameters = this.resolveErrorParameters(body?.messageParameters);
 
-        if (body?.message) {
+        if (body?.messageKey) {
             return {
-                message: `angular-components.http.error.${body.message}`,
-                title: this.resolveErrorTitle(body.message),
+                message: `angular-components.http.error.${body.messageKey}`,
+                title: this.resolveErrorTitle(body.messageKey),
                 messageParameters
             };
         }
@@ -129,30 +167,6 @@ export class HttpService {
             title: this.resolveErrorTitle(resolvedCode),
             messageParameters
         };
-    }
-
-    private resolveRangeCode(errorCode: string, parameters?: Record<string, unknown>): string {
-        if (errorCode !== 'invalid-field-range' && errorCode !== 'invalid-field-length') {
-            return errorCode;
-        }
-
-        if (parameters?.['min'] === null) {
-            return `${errorCode}-max`;
-        }
-
-        if (parameters?.['max'] === null) {
-            return `${errorCode}-min`;
-        }
-
-        return errorCode;
-    }
-
-    private resolveErrorTitle(errorKey: string): string {
-        const baseKey = errorKey.replace(/-(min|max)$/u, '');
-        const titleKey = `${TITLE_PREFIX}${baseKey}`;
-        const translated = this.translateService.instant(titleKey);
-
-        return translated !== titleKey ? titleKey : `${TITLE_PREFIX}default`;
     }
 
     private resolveErrorParameters(parameters: Record<string, unknown> = {}): Record<string, unknown> {
@@ -172,45 +186,39 @@ export class HttpService {
         );
     }
 
-    private request<T>(source$: Observable<T>, options?: HttpRequestOptions): Observable<T> {
-        if (options?.loading) {
-            this.loadingService.show();
+    private resolveErrorTitle(errorKey: string): string {
+        const baseKey = errorKey.replace(/-(min|max)$/u, '');
+        const titleKey = `${TITLE_PREFIX}${baseKey}`;
+        const translated = this.translateService.instant(titleKey);
+
+        return translated !== titleKey ? titleKey : `${TITLE_PREFIX}default`;
+    }
+
+    private resolveRangeCode(errorCode: string, parameters?: Record<string, unknown>): string {
+        if (errorCode !== 'invalid-field-range' && errorCode !== 'invalid-field-length') {
+            return errorCode;
         }
 
-        // `subscribe()` below drives the loading/toast/error side effects immediately, independent of
-        // whether (or how many times) the caller subscribes to the returned observable. `shareReplay(1)`
-        // makes that subscription and the caller's share the same underlying HTTP call — without it,
-        // HttpClient's cold observable would fire the request a second time when the caller subscribes.
-        const request = source$.pipe(
-            tap(result => {
-                options?.onSuccess?.(result);
+        if (parameters?.['min'] === null) {
+            return `${errorCode}-max`;
+        }
 
-                if (options?.successToast) {
-                    this.toastService.showSuccess({ message: options.successToast });
-                }
-            }),
-            catchError((error: HttpErrorResponse) => {
-                if (options?.handleError) {
-                    options.handleError(error);
-                } else {
-                    const { message, title, messageParameters } = this.resolveErrorMessage(error);
-                    this.modalService.openError({ message, title, messageParameters });
-                }
+        if (parameters?.['max'] === null) {
+            return `${errorCode}-min`;
+        }
 
-                options?.onError?.(error);
+        return errorCode;
+    }
 
-                return EMPTY;
-            }),
-            finalize(() => {
-                if (options?.loading) {
-                    this.loadingService.hide();
-                }
-            }),
-            shareReplay(1)
-        );
+    private showError(error: HttpErrorResponse, options?: HttpRequestOptions): void {
+        if (options?.handleError) {
+            options.handleError(error);
 
-        request.subscribe();
+            return;
+        }
 
-        return request;
+        const { message, title, messageParameters } = this.resolveErrorMessage(error);
+
+        this.modalService.openError({ message, title, messageParameters });
     }
 }

@@ -16,6 +16,22 @@ Make sure all peer dependencies are installed in the consuming app:
 
 ## Quick start
 
+One provider registers what every app needs: the HTTP client with the session interceptor (extra `interceptors` run
+after it), the environment, the session, the modal, the toast and ngx-translate loading `<translationsPath><lang>.json`
+(`./assets/i18n/` by default). `provideRouter`, `provideAnimationsAsync` and `provideZoneChangeDetection` stay in the
+app.
+
+```ts
+export const appConfig: ApplicationConfig = {
+    providers: [
+        provideZoneChangeDetection({ eventCoalescing: true }),
+        provideRouter(routes),
+        provideAnimationsAsync(),
+        provideBeyApp({ environment, session: { loginRoute: '/login' } })
+    ]
+};
+```
+
 ```ts
 import {
     BeyFormConfig,
@@ -67,7 +83,20 @@ const form = new BeyFormConfig({
 
 The interactive style guide ships as `@beyonda-labs/angular-components/style-guide`, a secondary entry point:
 `import { BeyStyleGuideComponent } from '@beyonda-labs/angular-components/style-guide'`. Importing a component
-never pulls the demo in. Its sources live in `style-guide/src/<module>/`, one folder per module.
+never pulls the demo in. Its sources live in `style-guide/src/<module>/`, one folder per module. `bey-style-guide`
+loads its own texts from `assets/angular-components/i18n-style-guide/` for the current language and every change:
+copy that folder in `angular.json` (`input: node_modules/@beyonda-labs/angular-components/assets/i18n-style-guide`,
+`output: assets/angular-components/i18n-style-guide`) and render the component.
+
+The specs of a consuming app take their helpers from `@beyonda-labs/angular-components/testing`, a second
+secondary entry point that only specs import: `provideBeyTesting(config?)`, the test counterpart of
+`provideBeyApp` (`HttpTestingController`, in-memory session, translations without a loader), the fakes that stand
+for `BeyModalService`, `BeyToastService`, `BeyModalFormService`, `BeyFilePreviewService` and `BeyStorageService`,
+and the DOM helpers the library's own specs use (`beyRenderComponent`, `beySettle`, `beyButtonByName`, …). Its
+sources live in `testing/src/`; see the [testing README](testing/docs/testing-readme.md).
+
+Two plain functions are public so an app builds the same texts and keys as the library: `beyFormatBytes` and
+`beyToKeySegment`.
 
 Component documentation:
 
@@ -75,6 +104,14 @@ Component documentation:
 -   [Header](src/lib/components/header/docs/header-readme.md)
 -   [Left Menu](src/lib/components/left-menu/docs/left-menu-readme.md)
 -   [Table](src/lib/components/table/docs/table-readme.md)
+
+Service documentation:
+
+-   [App](src/lib/services/app/docs/app-readme.md)
+-   [Environment](src/lib/services/environment/docs/environment-readme.md)
+-   [Http](src/lib/services/http/docs/http-readme.md)
+-   [Session](src/lib/services/session/docs/session-readme.md)
+-   [Theme](src/lib/services/theme/docs/theme-readme.md)
 
 ---
 

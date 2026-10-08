@@ -6,7 +6,7 @@
 
 .bey-form-sections {
     max-height: var(--bey-form-sections-max-height);
-    overflow-y: auto;
+    overflow: hidden auto;
 }
 
 .bey-form-buttons {
@@ -16,7 +16,9 @@
     margin-top: var(--bey-space-sm);
 }
 
-.bey-form-buttons--stretch {
-    align-items: stretch;
-    flex-direction: column;
+.bey-form-buttons--stretch bey-button {
+    --bey-button-inline-gap: 0;
+    --bey-button-width: 100%;
+
+    flex: 1 1 0;
 }

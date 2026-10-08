@@ -1,19 +1,3 @@
-export interface PdfViewerToolbarButtonsParameters {
-    downloadButton?: boolean;
-    findButton?: boolean;
-    handToolButton?: boolean;
-    openFileButton?: boolean;
-    pagingButtons?: boolean;
-    presentationModeButton?: boolean;
-    printButton?: boolean;
-    propertiesButton?: boolean;
-    rotateButton?: boolean;
-    secondaryToolbarButton?: boolean;
-    sidebarButton?: boolean;
-    zoomButtons?: boolean;
-    zoomDropdown?: boolean;
-}
-
 export class PdfViewerToolbarButtons {
     downloadButton: boolean;
     findButton: boolean;
@@ -58,4 +42,20 @@ export class PdfViewerToolbarButtons {
         this.zoomButtons = zoomButtons;
         this.zoomDropdown = zoomDropdown;
     }
+}
+
+export interface PdfViewerToolbarButtonsParameters {
+    downloadButton?: boolean;
+    findButton?: boolean;
+    handToolButton?: boolean;
+    openFileButton?: boolean;
+    pagingButtons?: boolean;
+    presentationModeButton?: boolean;
+    printButton?: boolean;
+    propertiesButton?: boolean;
+    rotateButton?: boolean;
+    secondaryToolbarButton?: boolean;
+    sidebarButton?: boolean;
+    zoomButtons?: boolean;
+    zoomDropdown?: boolean;
 }

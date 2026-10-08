@@ -17,7 +17,6 @@
     justify-content: flex-end;
 }
 
-/* ─── Main search input ─────────────────────────────────────────────────── */
 .bey-search-box {
     min-width: 14rem;
     position: relative;
@@ -46,7 +45,6 @@
     font-size: var(--bey-font-size-sm);
 }
 
-/* ─── Filters toggle ────────────────────────────────────────────────────── */
 .bey-search-filters {
     position: relative;
 }
@@ -83,7 +81,6 @@
     transform: rotate(180deg);
 }
 
-/* ─── Filters panel ─────────────────────────────────────────────────────── */
 .bey-search-panel {
     background: var(--bey-search-surface);
     border: var(--bey-border-width) solid var(--bey-search-border);
@@ -125,9 +122,7 @@
     gap: var(--bey-space-sm);
 }
 
-/* stylelint-disable selector-class-pattern -- .form-select and .form-control are Bootstrap's, sized for the panel. */
-.bey-search-row .form-select,
-.bey-search-row .form-control {
+.bey-search-row .bey-search-control {
     border-radius: var(--bey-radius-sm);
     color: var(--bey-search-fg);
     font-size: var(--bey-font-size-sm);
@@ -136,11 +131,10 @@
     padding-top: var(--bey-space-xs);
 }
 
-.bey-search-row .form-control::placeholder {
+.bey-search-row .bey-search-control::placeholder {
     color: var(--bey-search-placeholder);
     font-size: var(--bey-font-size-sm);
 }
-/* stylelint-enable selector-class-pattern */
 
 .bey-search-field {
     flex: 1 1 9rem;
@@ -154,7 +148,6 @@
     flex: 1.4 1 10rem;
 }
 
-/* Range (between): two inputs that read as a single grouped field */
 .bey-search-range {
     align-items: center;
     background: var(--bey-search-surface);
@@ -207,7 +200,6 @@
     color: var(--bey-search-fg);
 }
 
-/* ─── Panel footer ──────────────────────────────────────────────────────── */
 .bey-search-panel-footer {
     align-items: center;
     border-top: var(--bey-border-width) solid var(--bey-search-border);

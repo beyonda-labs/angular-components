@@ -1,8 +1,9 @@
 import { PdfViewerConfig } from './pdf-viewer-config.model';
 import { PdfViewerToolbarButtons } from './pdf-viewer-toolbar-buttons.model';
+import { PdfViewerToolbar } from './pdf-viewer-value.model';
 
 describe('PdfViewerConfig', () => {
-    it('should apply default values', () => {
+    it('applies the default values', () => {
         const config = new PdfViewerConfig({ src: 'invoice.pdf' });
 
         expect(config.backgroundColor).toBe('var(--bey-bg-surface)');
@@ -11,18 +12,19 @@ describe('PdfViewerConfig', () => {
         expect(config.minZoom).toBe(0.1);
         expect(config.page).toBe(1);
         expect(config.rotation).toBe(0);
-        expect(config.showToolbar).toBe(false);
+        expect(config.toolbar).toBe(PdfViewerToolbar.None);
         expect(config.zoom).toBe('auto');
+        expect(config.zoomStep).toBe(0.1);
         expect(config.toolbarButtons).toBeInstanceOf(PdfViewerToolbarButtons);
     });
 
-    it('should let a consumer override the default background color', () => {
+    it('lets a consumer override the default background color', () => {
         const config = new PdfViewerConfig({ src: 'invoice.pdf', backgroundColor: '#123456' });
 
         expect(config.backgroundColor).toBe('#123456');
     });
 
-    it('should reuse a provided PdfViewerToolbarButtons instance instead of rebuilding it', () => {
+    it('reuses a provided PdfViewerToolbarButtons instance instead of rebuilding it', () => {
         const toolbarButtons = new PdfViewerToolbarButtons({ printButton: false });
         const config = new PdfViewerConfig({ src: 'invoice.pdf', toolbarButtons });
 

@@ -1,3 +1,6 @@
+import { IconDefinition } from '@fortawesome/angular-fontawesome';
+import { faDatabase } from '@fortawesome/free-solid-svg-icons';
+
 export enum PropertyVariableType {
     Array = 'array',
     Boolean = 'boolean',
@@ -7,25 +10,15 @@ export enum PropertyVariableType {
     String = 'string'
 }
 
-export interface PropertyVariableParameters {
-    id: string;
-    path: string;
-
-    children?: PropertyVariable[];
-    description?: string;
-    example?: unknown;
-    label?: string;
-    type?: PropertyVariableType;
-}
-
 export class PropertyVariable {
     children: PropertyVariable[];
     description: string;
-    example?: unknown;
     id: string;
     label: string;
     path: string;
     type: PropertyVariableType;
+
+    example?: unknown;
 
     constructor({
         children = [],
@@ -45,3 +38,16 @@ export class PropertyVariable {
         this.type = type;
     }
 }
+
+export interface PropertyVariableParameters {
+    id: string;
+    path: string;
+
+    children?: PropertyVariable[];
+    description?: string;
+    example?: unknown;
+    label?: string;
+    type?: PropertyVariableType;
+}
+
+export const PROPERTY_VARIABLE_ICON: IconDefinition = faDatabase;

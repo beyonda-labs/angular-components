@@ -1,80 +1,131 @@
+import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { mock, MockProxy } from 'jest-mock-extended';
-import { of } from 'rxjs';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { FakeToastService } from '@testing/services/fake-toast.service';
 
-import { HttpService } from '../../../services/http/http.service';
 import { PageItemType } from '../models/page-categories.model';
 import { PageHttpService } from './page-http.service';
-import { PageUrlService } from './page-url.service';
 
 describe('PageHttpService', () => {
+    let httpTesting: HttpTestingController;
     let service: PageHttpService;
-    let httpService: MockProxy<HttpService>;
+    let toast: FakeToastService;
 
     const trashItems = [{ id: 1, type: PageItemType.Item }];
 
+    function answer(method: string, url: string): TestRequest {
+        const request = httpTesting.expectOne(
+            current => current.method === method && current.url === `https://api.test/api${url}`
+        );
+
+        request.flush({});
+
+        return request;
+    }
+
     beforeEach(() => {
-        httpService = mock<HttpService>();
-        httpService.get.mockReturnValue(of({}));
-        httpService.post.mockReturnValue(of({}));
-        httpService.put.mockReturnValue(of());
-        httpService.delete.mockReturnValue(of());
+        TestBed.configureTestingModule({ providers: [provideBeyTesting()] });
 
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: HttpService, useValue: httpService },
-                { provide: PageUrlService, useValue: { resolve: (path: string) => `https://api${path}` } }
-            ]
-        });
-
+        httpTesting = TestBed.inject(HttpTestingController);
         service = TestBed.inject(PageHttpService);
+        toast = TestBed.inject(FakeToastService);
+    });
+
+    afterEach(() => {
+        httpTesting.verify();
     });
 
     it('reads the list, the trash, a category path and the category tree from their endpoints', () => {
-        service.load('/items', { search: 'x' });
-        service.loadTrash('/items', { search: 'y' });
-        service.loadCategoryPath('/items', 7);
-        service.loadCategoryTree('/items');
+        service.load('/items', { search: 'x' }).subscribe();
+        service.loadTrash('/items', { search: 'y' }).subscribe();
+        service.loadCategoryPath('/items', 7).subscribe();
+        service.loadCategoryTree('/items').subscribe();
 
-        expect(httpService.get.mock.calls).toEqual([
-            ['https://api/items', { queryParams: { search: 'x' } }],
-            ['https://api/items/trash', { queryParams: { search: 'y' } }],
-            ['https://api/items/categories/7/path'],
-            ['https://api/items/categories/tree']
-        ]);
+        expect(answer('GET', '/items').request.params.toString()).toBe('search=x');
+        expect(answer('GET', '/items/trash').request.params.toString()).toBe('search=y');
+        answer('GET', '/items/categories/7/path');
+        answer('GET', '/items/categories/tree');
     });
 
     it('creates and edits items and categories with the success toast', () => {
-        service.create('/items', { name: 'a' }, 'created');
-        service.createCategory('/items', { name: 'b' }, 'category-created');
-        service.edit('/items', 1, { name: 'c' }, 'edited');
-        service.editCategory('/items', 2, { name: 'd' }, 'category-edited');
+        service.create('/items', { name: 'a' }, 'created').subscribe();
+        service.createCategory('/items', { name: 'b' }, 'category-created').subscribe();
+        service.edit('/items', 1, { name: 'c' }, 'edited').subscribe();
+        service.editCategory('/items', 2, { name: 'd' }, 'category-edited').subscribe();
 
-        expect(httpService.post.mock.calls).toEqual([
-            ['https://api/items', { name: 'a' }, { successToast: 'created' }],
-            ['https://api/items/categories', { name: 'b' }, { successToast: 'category-created' }]
-        ]);
-        expect(httpService.put.mock.calls).toEqual([
-            ['https://api/items/1', { name: 'c' }, { successToast: 'edited' }],
-            ['https://api/items/categories/2', { name: 'd' }, { successToast: 'category-edited' }]
+        expect(answer('POST', '/items').request.body).toEqual({ name: 'a' });
+        expect(answer('POST', '/items/categories').request.body).toEqual({ name: 'b' });
+        expect(answer('PUT', '/items/1').request.body).toEqual({ name: 'c' });
+        expect(answer('PUT', '/items/categories/2').request.body).toEqual({ name: 'd' });
+        expect(toast.successes()).toEqual([
+            { message: 'created' },
+            { message: 'category-created' },
+            { message: 'edited' },
+            { message: 'category-edited' }
         ]);
     });
 
-    it('deletes, moves and restores in bulk with the ids or the typed items as body', () => {
-        service.deleteItems('/items', [1, 2], 'deleted');
-        service.deleteCategories('/items', [3], 'categories-deleted');
-        service.deleteTrashItems('/items', trashItems, 'trash-deleted');
-        service.moveItems('/items', trashItems, null, 'moved');
-        service.restoreTrashItems('/items', trashItems, 'restored');
+    it('answers the items a restore renamed, and none from a backend that answers no body', () => {
+        const renamed = [{ field: 'name', from: 'Offer', id: '1', to: 'Offer 2', type: 'item' }];
+        const answers: unknown[] = [];
 
-        expect(httpService.delete.mock.calls).toEqual([
-            ['https://api/items', { ids: [1, 2] }, { successToast: 'deleted' }],
-            ['https://api/items/categories', { ids: [3] }, { successToast: 'categories-deleted' }],
-            ['https://api/items/trash', { items: trashItems }, { successToast: 'trash-deleted' }]
+        service.restoreTrashItems('/items', trashItems, 'restored').subscribe(value => answers.push(value));
+        httpTesting.expectOne('https://api.test/api/items/trash').flush({ renamed });
+        service.restoreTrashItems('/items', trashItems, 'restored').subscribe(value => answers.push(value));
+        httpTesting.expectOne('https://api.test/api/items/trash').flush(null);
+
+        expect(answers).toEqual([renamed, []]);
+    });
+
+    it('deletes, moves and restores in bulk with the ids or the typed items as body', () => {
+        service.deleteItems('/items', [1, 2], 'deleted').subscribe();
+        service.deleteCategories('/items', [3], 'categories-deleted').subscribe();
+        service.deleteTrashItems('/items', trashItems, 'trash-deleted').subscribe();
+        service.moveItems('/items', trashItems, null, 'moved').subscribe();
+        service.restoreTrashItems('/items', trashItems, 'restored').subscribe();
+
+        expect(answer('DELETE', '/items').request.body).toEqual({ ids: [1, 2] });
+        expect(answer('DELETE', '/items/categories').request.body).toEqual({ ids: [3] });
+        expect(answer('DELETE', '/items/trash').request.body).toEqual({ items: trashItems });
+        expect(answer('PUT', '/items/move').request.body).toEqual({ items: trashItems, targetId: null });
+        expect(answer('PUT', '/items/trash').request.body).toEqual({ items: trashItems });
+        expect(toast.successes()).toEqual([
+            { message: 'deleted' },
+            { message: 'categories-deleted' },
+            { message: 'trash-deleted' },
+            { message: 'moved' },
+            { message: 'restored' }
         ]);
-        expect(httpService.put.mock.calls).toEqual([
-            ['https://api/items/move', { items: trashItems, targetId: null }, { successToast: 'moved' }],
-            ['https://api/items/trash', { items: trashItems }, { successToast: 'restored' }]
-        ]);
+    });
+
+    it('duplicates a row and changes its status with the body and the success toast', () => {
+        service.duplicate('/items', 1, { name: 'Copy' }, 'duplicated').subscribe();
+        service.changeStatus('/items', 2, { status: 'published' }, 'status-changed').subscribe();
+
+        expect(answer('POST', '/items/1/duplicate').request.body).toEqual({ name: 'Copy' });
+        expect(answer('POST', '/items/2/status').request.body).toEqual({ status: 'published' });
+        expect(toast.successes()).toEqual([{ message: 'duplicated' }, { message: 'status-changed' }]);
+    });
+
+    it('asks for the usages of several rows at once and answers their list', () => {
+        let usages: unknown;
+
+        service.findUsages('/items', ['a', 7]).subscribe(answered => {
+            usages = answered;
+        });
+
+        const request = httpTesting.expectOne(current => current.url === 'https://api.test/api/items/usages');
+
+        request.flush({ usages: [{ id: 'a', total: 0, users: [] }] });
+
+        expect(request.request.params.toString()).toBe('ids=a,7');
+        expect(usages).toEqual([{ id: 'a', total: 0, users: [] }]);
+    });
+
+    it('empties the trash with the success toast', () => {
+        service.emptyTrash('/items', 'emptied').subscribe();
+
+        answer('DELETE', '/items/trash/all');
+        expect(toast.successes()).toEqual([{ message: 'emptied' }]);
     });
 });

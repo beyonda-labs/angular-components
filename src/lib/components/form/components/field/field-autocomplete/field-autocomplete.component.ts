@@ -17,7 +17,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { FormAutocompleteField } from '../../../models/fields/form-autocomplete-field.model';
 import { FormFieldOption } from '../../../models/form-field.model';
-import { trackControl } from '../control-state';
+import { trackControl } from '../functions/control-state';
 
 const EMPTY_KEY = 'angular-components.form.autocomplete-field.empty';
 const PANEL_GAP_PX = 2;
@@ -32,41 +32,43 @@ const PANEL_MAX_HEIGHT_PX = 208;
     templateUrl: './field-autocomplete.component.html'
 })
 export class FormAutocompleteFieldComponent {
+    private readonly renderer = inject(Renderer2);
+    private readonly translateService = inject(TranslateService);
+
     readonly control = input.required<FormControl<string | null>>();
     readonly field = input.required<FormAutocompleteField>();
+    readonly isRequired = input(false);
     readonly options = input<FormFieldOption[]>([]);
     readonly prefix = input.required<string>();
 
     readonly activeIndex = signal(-1);
+    readonly clearIcon = faXmark;
     readonly controlState = trackControl(this.control);
-    readonly isOpen = signal(false);
-    readonly query = signal('');
-
     readonly emptyKey = computed(() => this.field().emptyKey ?? EMPTY_KEY);
     readonly filteredOptions = computed(() => {
-        const term = this.query().trim().toLowerCase();
+        const term = this.hasTyped() ? this.query().trim().toLowerCase() : '';
 
         return term
             ? this.options().filter(option => this.optionLabel(option).toLowerCase().includes(term))
             : this.options();
     });
+    readonly hasTyped = signal(false);
+    readonly isOpen = signal(false);
+    readonly isPanelVisible = computed(
+        () => this.isOpen() && (this.filteredOptions().length > 0 || !this.field().isFreeTextAllowed)
+    );
     readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
-
-    readonly clearIcon = faXmark;
+    readonly query = signal('');
     readonly toggleIcon = faChevronDown;
 
-    private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
-    private readonly queryInput = viewChild.required<ElementRef<HTMLInputElement>>('queryInput');
-
-    private readonly renderer = inject(Renderer2);
-    private readonly translateService = inject(TranslateService);
-
-    private readonly onWindowResize = (): void => this.positionPanel();
     private readonly onAncestorScroll = (event: Event): void => {
         if (!this.panel()?.nativeElement.contains(event.target as Node)) {
             this.close();
         }
     };
+    private readonly onWindowResize = (): void => this.positionPanel();
+    private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
+    private readonly queryInput = viewChild.required<ElementRef<HTMLInputElement>>('queryInput');
 
     constructor() {
         effect(onCleanup => {
@@ -90,7 +92,11 @@ export class FormAutocompleteFieldComponent {
     }
 
     displayValue(): string {
-        return this.isOpen() ? this.query() : this.selectedLabel();
+        if (this.isOpen() && (this.hasTyped() || !this.field().isFreeTextAllowed)) {
+            return this.query();
+        }
+
+        return this.selectedLabel();
     }
 
     hasValue(): boolean {
@@ -147,6 +153,8 @@ export class FormAutocompleteFieldComponent {
 
             if (option) {
                 this.onOptionPicked(option);
+            } else if (this.field().isFreeTextAllowed) {
+                this.close();
             }
         }
     }
@@ -163,9 +171,16 @@ export class FormAutocompleteFieldComponent {
     }
 
     onQueryInput(event: Event): void {
-        this.query.set((event.target as HTMLInputElement).value);
+        const { value } = event.target as HTMLInputElement;
+
+        this.query.set(value);
+        this.hasTyped.set(true);
         this.activeIndex.set(-1);
         this.isOpen.set(true);
+
+        if (this.field().isFreeTextAllowed) {
+            this.select(value);
+        }
     }
 
     onToggle(): void {
@@ -186,6 +201,7 @@ export class FormAutocompleteFieldComponent {
     private close(): void {
         this.isOpen.set(false);
         this.query.set('');
+        this.hasTyped.set(false);
         this.activeIndex.set(-1);
     }
 
@@ -210,6 +226,7 @@ export class FormAutocompleteFieldComponent {
     private open(): void {
         this.isOpen.set(true);
         this.query.set('');
+        this.hasTyped.set(false);
         this.activeIndex.set(-1);
     }
 
@@ -252,8 +269,13 @@ export class FormAutocompleteFieldComponent {
     }
 
     private selectedLabel(): string {
-        const selected = this.options().find(option => option.value === this.controlState.value());
+        const value = this.controlState.value();
+        const selected = this.options().find(option => option.value === value);
 
-        return selected ? this.optionLabel(selected) : '';
+        if (selected) {
+            return this.optionLabel(selected);
+        }
+
+        return this.field().isFreeTextAllowed ? (value ?? '') : '';
     }
 }

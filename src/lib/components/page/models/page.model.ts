@@ -1,60 +1,94 @@
+import { Observable } from 'rxjs';
+
+import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { PageViewMode } from './page-categories.model';
 import { PageFormConfig } from './page-form.model';
 import { PageHeaderConfig } from './page-header.model';
 import { PageItem } from './page-item.model';
+import { PageDuplicationConfig, PageStatusConfig } from './page-lifecycle.model';
 import { PageSearch } from './page-search.model';
 import { PageTableConfig } from './page-table.model';
+import { PageUsagesConfig } from './page-usages.model';
+import { PageView } from './page-view.model';
 
-export interface PageBackendResponse {
+export interface PageBackendResponse<TRow extends PageItem = PageItem> {
     globalActions: string[];
-    results: PageItem[];
+    results: TRow[];
 
     search?: PageSearch;
 }
 
-export interface PageHandle {
-    openCategory(item: PageItem): void;
+export interface PageHandle<TItem extends PageItem = PageItem, TCategory extends PageItem = TItem> {
+    openCategory(category: TCategory): void;
+    openEdit(row: TItem | TCategory): void;
+    openForm<TValue>(config: ModalFormConfig<TValue>, submit: (value: TValue) => Observable<unknown>): void;
     refresh(): void;
-    selected(): PageItem[];
+    selected(): (TItem | TCategory)[];
     viewMode(): PageViewMode;
 }
 
-export class PageConfig {
+export class PageConfig<
+    TValue = unknown,
+    TItem extends PageItem = PageItem,
+    TCategory extends PageItem = TItem,
+    TCategoryValue = unknown
+> {
     prefix: string;
+    views: PageView[];
 
     baseUrl?: string;
-    formConfig?: PageFormConfig;
-    headerConfig?: PageHeaderConfig;
-    onDataLoaded?: (response: PageBackendResponse) => void;
-    onReady?: (handle: PageHandle) => void;
-    tableConfig?: PageTableConfig;
+    duplicationConfig?: PageDuplicationConfig;
+    formConfig?: PageFormConfig<TValue, TItem>;
+    headerConfig?: PageHeaderConfig<TItem>;
+    onDataLoaded?: (response: PageBackendResponse<TItem | TCategory>) => void;
+    onReady?: (handle: PageHandle<TItem, TCategory>) => void;
+    statusConfig?: PageStatusConfig;
+    tableConfig?: PageTableConfig<TItem, TCategory, TCategoryValue>;
+    usagesConfig?: PageUsagesConfig;
 
     constructor({
-        prefix,
         baseUrl,
+        duplicationConfig,
         formConfig,
         headerConfig,
         onDataLoaded,
         onReady,
-        tableConfig
-    }: PageConfigParameters) {
+        prefix,
+        statusConfig,
+        tableConfig,
+        usagesConfig,
+        views = []
+    }: PageConfigParameters<TValue, TItem, TCategory, TCategoryValue>) {
         this.baseUrl = baseUrl;
+        this.duplicationConfig = duplicationConfig;
         this.formConfig = formConfig;
         this.headerConfig = headerConfig;
         this.onDataLoaded = onDataLoaded;
         this.onReady = onReady;
         this.prefix = prefix;
+        this.statusConfig = statusConfig;
         this.tableConfig = tableConfig;
+        this.usagesConfig = usagesConfig;
+        this.views = views;
     }
 }
 
-export interface PageConfigParameters {
+export interface PageConfigParameters<
+    TValue = unknown,
+    TItem extends PageItem = PageItem,
+    TCategory extends PageItem = TItem,
+    TCategoryValue = unknown
+> {
     prefix: string;
 
     baseUrl?: string;
-    formConfig?: PageFormConfig;
-    headerConfig?: PageHeaderConfig;
-    onDataLoaded?: (response: PageBackendResponse) => void;
-    onReady?: (handle: PageHandle) => void;
-    tableConfig?: PageTableConfig;
+    duplicationConfig?: PageDuplicationConfig;
+    formConfig?: PageFormConfig<TValue, TItem>;
+    headerConfig?: PageHeaderConfig<TItem>;
+    onDataLoaded?: (response: PageBackendResponse<TItem | TCategory>) => void;
+    onReady?: (handle: PageHandle<TItem, TCategory>) => void;
+    statusConfig?: PageStatusConfig;
+    tableConfig?: PageTableConfig<TItem, TCategory, TCategoryValue>;
+    usagesConfig?: PageUsagesConfig;
+    views?: PageView[];
 }

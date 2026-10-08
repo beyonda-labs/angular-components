@@ -28,6 +28,7 @@ const search = new BeySearchConfig({
 | `prefix`          | yes      |                        | i18n prefix the field labels are built from                 |
 | `fields`          | yes      |                        | What can be filtered, and how                               |
 | `mainField`       | no       | none                   | Key of the field the quick search box writes to             |
+| `filters`         | no       | `[]`                   | The filters the box and the panel start from                |
 | `placeholder`     | no       | the library's default  | Placeholder of the quick search box                         |
 | `onFiltersChange` | no       |                        | Called with the complete filters whenever they change       |
 
@@ -39,8 +40,13 @@ const search = new BeySearchConfig({
 | `type`    | yes      | `Text`, `Number`, `Boolean`, `Select` or `Tags`; decides the operators      |
 | `options` | no       | Required by `Select`: the values offered                                    |
 
+The label of a field uses its key as a kebab-case segment: `createdBy` reads `<prefix>.fields.created-by`,
+while the filter keeps reporting `createdBy` as its `field`.
+
 Each type brings its own operators: text compares and matches, number adds ranges and `Between`, boolean and
 select only equality, and tags match a whole element of an array rather than a substring.
+`beySearchFieldOperators(field)` returns them in the order the panel offers them; a new row starts with the
+first.
 
 ## Behaviour
 
@@ -51,6 +57,10 @@ Rows built in the panel are reported when Apply is used, and only those that are
 operator and a value that fits the type. Clear empties the box, the rows and the reported filters at once.
 
 The panel closes on Apply, on Escape and on a click outside.
+
+A new config starts again from its `filters`: the box shows the value of the one on `mainField`, the panel one row
+per filter, and nothing is reported until the user changes them. A screen that keeps the search while it rebuilds
+the config passes the filters in force, as `bey-page` does when it comes back to a search.
 
 ## Theming
 

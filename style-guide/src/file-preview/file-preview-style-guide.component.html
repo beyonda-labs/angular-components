@@ -1,0 +1,17 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.file-preview.example' | translate }}
+</p>
+
+<div class="d-flex flex-wrap gap-2 mt-3 bey-style-guide-actions">
+    <span class="bey-style-guide-action-slot">
+        <button class="btn btn-sm btn-dark" type="button" (click)="previewPdf()">
+            {{ 'angular-components-style-guide.file-preview.buttons.pdf' | translate }}
+        </button>
+    </span>
+
+    <span class="bey-style-guide-action-slot">
+        <button class="btn btn-sm btn-outline-dark" type="button" (click)="previewImage()">
+            {{ 'angular-components-style-guide.file-preview.buttons.image' | translate }}
+        </button>
+    </span>
+</div>

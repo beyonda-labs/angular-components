@@ -5,6 +5,7 @@ import { faChevronDown, faChevronRight, IconDefinition } from '@fortawesome/free
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { toKeySegment } from '../../../../utilities/key-segment';
 import { LeftMenuAction } from '../../models/left-menu.model';
 
 @Component({
@@ -18,22 +19,19 @@ import { LeftMenuAction } from '../../models/left-menu.model';
 export class ActionListComponent {
     readonly actions = input.required<LeftMenuAction[]>();
     readonly expanded = input.required<boolean>();
-    readonly prefix = input.required<string>();
     readonly groupKey = input('group');
+    readonly prefix = input.required<string>();
 
     readonly actionTriggered = output<void>();
 
-    /* Which branches the accordion has open. Reseeded from the active action whenever the inputs change. */
+    readonly activeFlyoutPath = signal<string | null>(null);
+    readonly chevronDownIcon = faChevronDown;
+    readonly chevronRightIcon = faChevronRight;
     readonly openPaths = linkedSignal<Set<string>>(() => {
         const activePath = this.expanded() ? this.findFirstActivePath(this.actions(), this.groupKey()) : null;
 
         return new Set(activePath ? this.getPathHierarchy(activePath) : []);
     });
-
-    readonly activeFlyoutPath = signal<string | null>(null);
-
-    readonly chevronDownIcon = faChevronDown;
-    readonly chevronRightIcon = faChevronRight;
 
     buildPath(parentPath: string, key: string): string {
         return parentPath ? `${parentPath}.${key}` : key;
@@ -53,6 +51,14 @@ export class ActionListComponent {
         return this.isSubmenuOpen(path, forceExpanded) ? this.chevronDownIcon : this.chevronRightIcon;
     }
 
+    getExpandedState(action: LeftMenuAction, path: string, forceExpanded = false): boolean | null {
+        if (!this.hasSubActions(action) || this.hasSubmenuToggle(action, forceExpanded)) {
+            return null;
+        }
+
+        return this.isSubmenuOpen(path, forceExpanded);
+    }
+
     getLabel(action: LeftMenuAction): string {
         return this.resolveActionText(action, 'label');
     }
@@ -67,6 +73,10 @@ export class ActionListComponent {
 
     hasSubmenuSelection(action: LeftMenuAction): boolean {
         return !action.active && this.hasActiveDescendant(action);
+    }
+
+    hasSubmenuToggle(action: LeftMenuAction, forceExpanded = false): boolean {
+        return this.isInlineExpanded(forceExpanded) && this.hasSubActions(action) && Boolean(action.action);
     }
 
     isActionActive(action: LeftMenuAction): boolean {
@@ -124,6 +134,10 @@ export class ActionListComponent {
         }
     }
 
+    onSubmenuToggleClick(path: string, forceExpanded = false): void {
+        this.toggleSubmenu(path, forceExpanded);
+    }
+
     shouldShowFlyout(action: LeftMenuAction, path: string, forceExpanded = false): boolean {
         return !this.isInlineExpanded(forceExpanded) && this.hasSubActions(action) && this.activeFlyoutPath() === path;
     }
@@ -167,7 +181,7 @@ export class ActionListComponent {
         const defaultValue = `${action.key}.${field}`;
 
         if (!value || value === defaultValue) {
-            return `${this.prefix()}.actions.${defaultValue}`;
+            return `${this.prefix()}.actions.${toKeySegment(action.key)}.${field}`;
         }
 
         return value;

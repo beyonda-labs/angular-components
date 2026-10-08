@@ -28,6 +28,14 @@ export class ToastService {
         return this.show({ ...config, type: ToastType.Warning });
     }
 
+    private scheduleRemoval(toastId: number, duration: number): void {
+        this.ngZone.runOutsideAngular(() => {
+            setTimeout(() => {
+                this.ngZone.run(() => this.toastrService.remove(toastId));
+            }, duration);
+        });
+    }
+
     private show(config: ToastConfigParameters): ActiveToast<unknown> {
         const parsedConfig = new ToastConfig(config);
         const { duration, type } = parsedConfig;
@@ -58,13 +66,5 @@ export class ToastService {
         this.scheduleRemoval(toast.toastId, duration);
 
         return toast;
-    }
-
-    private scheduleRemoval(toastId: number, duration: number): void {
-        this.ngZone.runOutsideAngular(() => {
-            setTimeout(() => {
-                this.ngZone.run(() => this.toastrService.remove(toastId));
-            }, duration);
-        });
     }
 }

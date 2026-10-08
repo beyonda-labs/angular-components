@@ -5,6 +5,32 @@ export enum TabsVariant {
     Underline = 'underline'
 }
 
+export class Tab {
+    isDisabled: boolean;
+    key: string;
+    label: string;
+    tooltip: string;
+
+    icon?: IconDefinition;
+    labelParameters?: Record<string, unknown>;
+
+    constructor({
+        icon,
+        isDisabled = false,
+        key,
+        label = `${key}.label`,
+        labelParameters,
+        tooltip = ''
+    }: TabParameters) {
+        this.icon = icon;
+        this.isDisabled = isDisabled;
+        this.key = key;
+        this.label = label;
+        this.labelParameters = labelParameters;
+        this.tooltip = tooltip;
+    }
+}
+
 export class TabsConfig {
     activeTab: string;
     prefix: string;
@@ -13,38 +39,12 @@ export class TabsConfig {
 
     onTabChange?: (key: string) => void;
 
-    constructor({ activeTab, prefix, tabs, onTabChange, variant = TabsVariant.Underline }: TabsConfigParameters) {
+    constructor({ activeTab, onTabChange, prefix, tabs, variant = TabsVariant.Underline }: TabsConfigParameters) {
+        this.activeTab = activeTab ?? tabs[0]?.key ?? '';
+        this.onTabChange = onTabChange;
         this.prefix = prefix;
         this.tabs = tabs;
-        this.onTabChange = onTabChange;
         this.variant = variant;
-        this.activeTab = activeTab ?? this.tabs[0]?.key ?? '';
-    }
-}
-
-export interface TabsConfigParameters {
-    prefix: string;
-    tabs: Tab[];
-
-    activeTab?: string;
-    onTabChange?: (key: string) => void;
-    variant?: TabsVariant;
-}
-
-export class Tab {
-    key: string;
-    label: string;
-    tooltip: string;
-    isDisabled: boolean;
-
-    icon?: IconDefinition;
-
-    constructor({ key, icon, isDisabled = false, label = `${key}.label`, tooltip = '' }: TabParameters) {
-        this.icon = icon;
-        this.isDisabled = isDisabled;
-        this.key = key;
-        this.label = label;
-        this.tooltip = tooltip;
     }
 }
 
@@ -54,5 +54,15 @@ export interface TabParameters {
     icon?: IconDefinition;
     isDisabled?: boolean;
     label?: string;
+    labelParameters?: Record<string, unknown>;
     tooltip?: string;
+}
+
+export interface TabsConfigParameters {
+    prefix: string;
+    tabs: Tab[];
+
+    activeTab?: string;
+    onTabChange?: (key: string) => void;
+    variant?: TabsVariant;
 }

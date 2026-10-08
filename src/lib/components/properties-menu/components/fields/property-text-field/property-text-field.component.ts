@@ -5,11 +5,11 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { OptionPickerOption } from '../../../../../internal/option-picker/models/option-picker-option.model';
 import { OptionPickerComponent } from '../../../../../internal/option-picker/option-picker.component';
+import { findVariable, toVariableExpression, toVariableOptions } from '../../../functions/property-variable-options';
 import { PropertyTextField } from '../../../models/fields/property-text-field.model';
-import { PropertyVariable } from '../../../models/property-variable.model';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
+import { PROPERTY_VARIABLE_ICON, PropertyVariable } from '../../../models/property-variable.model';
 import { PropertiesMenuService } from '../../../services/properties-menu.service';
-import { PROPERTY_VARIABLE_ICON } from '../../../utils/property-variable-icon.util';
-import { findVariable, toVariableExpression, toVariableOptions } from '../../../utils/property-variable-options.util';
 
 export interface PropertyTextFieldActionTrigger {
     key: string;
@@ -33,25 +33,24 @@ type TextControl = HTMLInputElement | HTMLTextAreaElement;
     templateUrl: './property-text-field.component.html'
 })
 export class PropertyTextFieldComponent {
-    readonly field = input.required<PropertyTextField>();
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
+
     readonly actionButtonTooltipKey = input<string>('');
+    readonly field = input.required<PropertyTextField>();
+    readonly labelling = input.required<PropertyFieldLabelling>();
 
     readonly actionTriggered = output<PropertyTextFieldActionTrigger>();
     readonly valueChange = output<string>();
     readonly variableInserted = output<PropertyTextFieldVariableInsertion>();
 
-    readonly pickerOpen = signal(false);
-
     readonly hasSelection = computed(
         () => this.selectionStart() !== null && this.selectionStart() !== this.selectionEnd()
     );
-    readonly showsActions = computed(() => this.field().acceptsVariable || Boolean(this.field().actionButton));
-    readonly variableOptions = computed(() => toVariableOptions(this.propertiesMenuService.variables()));
-
     readonly insertLabel = 'angular-components.properties-menu.text-field.insert-variable';
+    readonly pickerOpen = signal(false);
+    readonly showsActions = computed(() => this.field().acceptsVariable || Boolean(this.field().actionButton));
     readonly variableIcon = PROPERTY_VARIABLE_ICON;
-
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
+    readonly variableOptions = computed(() => toVariableOptions(this.propertiesMenuService.variables()));
 
     private readonly selectionEnd = signal<number | null>(null);
     private readonly selectionStart = signal<number | null>(null);

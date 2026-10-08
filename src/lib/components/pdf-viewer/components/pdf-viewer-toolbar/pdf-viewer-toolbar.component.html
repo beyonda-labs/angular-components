@@ -1,0 +1,37 @@
+<div class="bey-pdf-viewer-toolbar">
+    <div class="bey-pdf-viewer-toolbar-status">
+        <ng-content></ng-content>
+    </div>
+
+    <div class="bey-pdf-viewer-toolbar-controls">
+        <bey-button [button]="zoomOutButton()"></bey-button>
+
+        <span class="bey-pdf-viewer-toolbar-zoom" aria-live="polite">{{ zoomPercent() }}%</span>
+
+        <bey-button [button]="zoomInButton()"></bey-button>
+
+        @if (hasPages()) {
+            <input
+                #pageField
+                class="bey-pdf-viewer-toolbar-page form-control form-control-sm"
+                inputmode="numeric"
+                min="1"
+                type="number"
+                [attr.aria-label]="'angular-components.pdf-viewer.toolbar.page' | translate"
+                [max]="pagesCount()"
+                [value]="page()"
+                (change)="onPageInput(pageField)"
+            />
+
+            <span class="bey-pdf-viewer-toolbar-pages">/ {{ pagesCount() }}</span>
+        }
+
+        @if (config().isSearchable) {
+            <bey-button #searchButtonHost [button]="searchButton()"></bey-button>
+        }
+
+        @if (config().isDownloadable) {
+            <bey-button [button]="downloadButton"></bey-button>
+        }
+    </div>
+</div>

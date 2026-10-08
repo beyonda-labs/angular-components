@@ -6,6 +6,11 @@
         "breadcrumb": {
             "label": "Breadcrumb"
         },
+        "file-preview": {
+            "cancel": "Cancel",
+            "close": "Close preview",
+            "type": "Preview"
+        },
         "floating-preferences": {
             "dark": "Dark",
             "language": "Language",
@@ -70,6 +75,16 @@
         },
         "http": {
             "error": {
+                "action-unavailable": "This action is not available for the item. Reload the page and try again.",
+                "attachments": {
+                    "content-already-set": "This attachment already has its file.",
+                    "content-not-set": "This attachment has no file to replace yet.",
+                    "content-too-large": "The file is larger than the maximum size allowed.",
+                    "duplicate-content": "This file is already uploaded as \"{{name}}\".",
+                    "empty-content": "The file is empty.",
+                    "replace-type-mismatch": "Replace the file with another {{fileType}}.",
+                    "unsupported-type": "Files of type \"{{mimeType}}\" are not supported."
+                },
                 "bad-gateway": "The server received an invalid response. Please try again later.",
                 "bad-request": "The request could not be processed. Please check the submitted data.",
                 "conflict": "A conflict occurred with the current state of the resource.",
@@ -101,6 +116,7 @@
                 "invalid-field-range-min": "The field \"{{fieldName}}\" must be at least {{min}}.",
                 "invalid-field-type": "The field \"{{fieldName}}\" must be of type \"{{expectedType}}\".",
                 "invalid-field-value": "The field \"{{fieldName}}\" has an invalid value.",
+                "invalid-transition": "The status cannot change from \"{{from}}\" to \"{{to}}\".",
                 "login": {
                     "existing-user": "An account with this email already exists.",
                     "invalid-credentials": "Invalid email or password.",
@@ -136,6 +152,16 @@
                 }
             },
             "title": {
+                "action-unavailable": "Action not available",
+                "attachments": {
+                    "content-already-set": "File already uploaded",
+                    "content-not-set": "No file",
+                    "content-too-large": "File too large",
+                    "duplicate-content": "Duplicate file",
+                    "empty-content": "Empty file",
+                    "replace-type-mismatch": "Wrong type of file",
+                    "unsupported-type": "Unsupported file"
+                },
                 "bad-gateway": "Connection error",
                 "bad-request": "Invalid request",
                 "conflict": "Conflict",
@@ -164,6 +190,7 @@
                 "invalid-field-range": "Value out of range",
                 "invalid-field-type": "Invalid field type",
                 "invalid-field-value": "Invalid value",
+                "invalid-transition": "Invalid status change",
                 "login": {
                     "existing-user": "Account already exists",
                     "invalid-credentials": "Authentication failed",
@@ -191,7 +218,8 @@
             "sections": {
                 "main": "Main",
                 "others": "Others"
-            }
+            },
+            "submenu": "{{label}} submenu"
         },
         "loading": {
             "label": "Loading"
@@ -258,6 +286,12 @@
                 "error": "Error",
                 "info": "Information",
                 "warning": "Warning"
+            },
+            "unsaved-changes": {
+                "leave": "Leave without saving",
+                "message": "You have unsaved changes. If you leave now, they will be lost.",
+                "stay": "Keep editing",
+                "title": "Unsaved changes"
             }
         },
         "option-picker": {
@@ -267,9 +301,16 @@
             "search": "Search"
         },
         "page": {
+            "count": {
+                "many": "({{count}} items)",
+                "one": "({{count}} item)"
+            },
             "form": {
                 "cancel": "Cancel",
                 "submit": "Save"
+            },
+            "toast": {
+                "restored-renamed": "Restored with a new name, since another item already has the old one: {{names}}"
             }
         },
         "pagination": {
@@ -281,6 +322,23 @@
             "page-size": "Page size",
             "previous-page": "Go to previous page",
             "results-range": "Showing {{ start }}-{{ end }} of {{ total }} results"
+        },
+        "pdf-viewer": {
+            "search": {
+                "close": "Close search",
+                "field": "Search in the document",
+                "next-match": "Next match",
+                "no-matches": "No matches",
+                "previous-match": "Previous match"
+            },
+            "toolbar": {
+                "download": "Download",
+                "page": "Page",
+                "search": "Search in the document",
+                "search-tooltip": "Search in the document (Ctrl+F)",
+                "zoom-in": "Zoom in",
+                "zoom-out": "Zoom out"
+            }
         },
         "properties-menu": {
             "attachment-field": {
@@ -294,10 +352,12 @@
             },
             "close": "Close",
             "color-field": {
-                "clear": "Clear"
+                "clear": "Clear",
+                "hex-value": "{{label}} hex value"
             },
             "file-field": {
                 "choose": "Choose file",
+                "choose-for": "Choose file for {{label}}",
                 "clear": "Clear",
                 "file-selected": "File selected",
                 "no-file-selected": "No file selected",
@@ -311,7 +371,9 @@
                 "expand": "Expand"
             },
             "number-array-field": {
-                "add": "Add"
+                "add": "Add",
+                "entry": "{{label}}, entry {{position}}",
+                "remove-entry": "Remove {{label}}, entry {{position}}"
             },
             "remove": "Remove",
             "select-field": {
@@ -330,6 +392,10 @@
             },
             "text-field": {
                 "insert-variable": "Insert variable"
+            },
+            "tree": {
+                "collapse": "Collapse",
+                "expand": "Expand"
             }
         },
         "search": {
@@ -367,6 +433,10 @@
             }
         },
         "table": {
+            "columns": {
+                "label": "Columns",
+                "reset": "Restore the default columns"
+            },
             "select-all": "Select all rows",
             "select-row": "Select row"
         },

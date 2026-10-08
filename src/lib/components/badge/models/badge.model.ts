@@ -13,22 +13,21 @@ export enum BadgeVariant {
     Warning = 'warning'
 }
 
+export class BadgeConfig {
+    isTranslated: boolean;
+    label: string;
+    variant: BadgeVariant;
+
+    constructor({ isTranslated = true, label, variant = BadgeVariant.Neutral }: BadgeConfigParameters) {
+        this.isTranslated = isTranslated;
+        this.label = label;
+        this.variant = variant;
+    }
+}
+
 export interface BadgeConfigParameters {
     label: string;
 
-    /** Run the label through the translate pipe; on by default. */
-    translate?: boolean;
+    isTranslated?: boolean;
     variant?: BadgeVariant;
-}
-
-export class BadgeConfig {
-    label: string;
-    translate: boolean;
-    variant: BadgeVariant;
-
-    constructor({ label, translate = true, variant = BadgeVariant.Neutral }: BadgeConfigParameters) {
-        this.label = label;
-        this.translate = translate;
-        this.variant = variant;
-    }
 }

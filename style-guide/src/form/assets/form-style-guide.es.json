@@ -81,8 +81,8 @@
             },
             "section-chips": {
                 "chips1": {
-                    "label": "Chips básico",
-                    "placeholder": "Escriba y pulse Enter"
+                    "label": "Chips en minúsculas",
+                    "placeholder": "Solo etiquetas en minúsculas"
                 },
                 "chips2": {
                     "label": "Chips obligatorio (máx. 5)",
@@ -92,7 +92,7 @@
                     "label": "Chips deshabilitado"
                 },
                 "label": "Campos de chips",
-                "tooltip": "Variantes de chips con estado básico, obligatorio con maxItems, y deshabilitado"
+                "tooltip": "Variantes de chips con validador propio, obligatorio con maxItems, y deshabilitado"
             },
             "section-date": {
                 "date1": {
@@ -107,6 +107,32 @@
                 "label": "Campos de fecha",
                 "tooltip": "Campos de fecha con rango, obligatorio y deshabilitado"
             },
+            "section-dependent": {
+                "label": "Campos dependientes",
+                "load-regions": "Cargar las regiones",
+                "plan": {
+                    "label": "Plan",
+                    "options": {
+                        "free": "Gratuito",
+                        "pro": "Pro"
+                    },
+                    "placeholder": "Elige un plan"
+                },
+                "region": {
+                    "label": "Región",
+                    "options": {
+                        "asia": "Asia",
+                        "eu": "Europa",
+                        "us": "Estados Unidos"
+                    },
+                    "placeholder": "Carga las regiones y elige una"
+                },
+                "seats": {
+                    "label": "Puestos",
+                    "placeholder": "Obligatorio en el plan Pro"
+                },
+                "tooltip": "Los puestos solo son obligatorios en el plan Pro; las regiones llegan después de construir el formulario y se borra la región que el nuevo plan no ofrece"
+            },
             "section-info": {
                 "info1": {
                     "label": "Versión"
@@ -115,7 +141,14 @@
                     "label": "Creada el"
                 },
                 "label": "Campos de información",
-                "tooltip": "Pares de icono/etiqueta de solo lectura — sin estilo de input, sin FormControl"
+                "list1": {
+                    "label": "Usado en"
+                },
+                "list2": {
+                    "label": "Lista vacía",
+                    "placeholder": "Nada que listar todavía"
+                },
+                "tooltip": "Pares de icono/etiqueta y listas con scroll de solo lectura — sin estilo de input, sin FormControl"
             },
             "section-number": {
                 "label": "Campos numéricos",
@@ -136,8 +169,8 @@
             "section-password": {
                 "label": "Campos de contraseña",
                 "password1": {
-                    "label": "Contraseña",
-                    "placeholder": "Ingrese su contraseña"
+                    "label": "Contraseña (mín. 8)",
+                    "placeholder": "Al menos 8 caracteres"
                 },
                 "password2": {
                     "label": "Contraseña obligatoria",
@@ -151,7 +184,7 @@
                     "label": "Contraseña sin toggle",
                     "placeholder": "Sin toggle de visibilidad"
                 },
-                "tooltip": "Campos de contraseña con toggle, obligatorio y deshabilitado"
+                "tooltip": "Campos de contraseña con validador de longitud, toggle, obligatorio y deshabilitado"
             },
             "section-radio": {
                 "label": "Campos de radio",

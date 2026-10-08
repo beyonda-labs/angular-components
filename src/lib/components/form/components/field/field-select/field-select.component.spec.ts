@@ -39,4 +39,14 @@ describe('FormSelectFieldComponent', () => {
 
         expect(control.value).toBe('lead');
     });
+
+    it('empties the field again when the placeholder is picked', () => {
+        const select = fixture.nativeElement.querySelector('select') as HTMLSelectElement;
+
+        control.setValue('lead');
+        select.value = '';
+        select.dispatchEvent(new Event('change'));
+
+        expect(control.value).toBe('');
+    });
 });

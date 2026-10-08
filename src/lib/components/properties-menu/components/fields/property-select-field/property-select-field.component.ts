@@ -5,12 +5,12 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { OptionPickerOption } from '../../../../../internal/option-picker/models/option-picker-option.model';
 import { OptionPickerComponent } from '../../../../../internal/option-picker/option-picker.component';
+import { toVariableOptions } from '../../../functions/property-variable-options';
 import { PropertySelectField } from '../../../models/fields/property-select-field.model';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 import { PropertyOption } from '../../../models/property-option.model';
-import { PROPERTY_VARIABLE_ICON } from '../../../utils/property-variable-icon.util';
-import { toVariableOptions } from '../../../utils/property-variable-options.util';
+import { PROPERTY_VARIABLE_ICON } from '../../../models/property-variable.model';
 
-/** A native select, or a filter box with its own option panel when the field is searchable. */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, OptionPickerComponent, TooltipModule, TranslateModule],
@@ -20,13 +20,12 @@ import { toVariableOptions } from '../../../utils/property-variable-options.util
     templateUrl: './property-select-field.component.html'
 })
 export class PropertySelectFieldComponent {
+    private readonly translateService = inject(TranslateService);
+
     readonly field = input.required<PropertySelectField>();
+    readonly labelling = input.required<PropertyFieldLabelling>();
 
     readonly valueChange = output<unknown>();
-
-    readonly isOpen = signal(false);
-    readonly pickerOpen = signal(false);
-    readonly query = signal('');
 
     readonly filteredOptions = computed(() => {
         const term = this.query().trim().toLowerCase();
@@ -36,18 +35,19 @@ export class PropertySelectFieldComponent {
             ? options.filter(option => this.translateService.instant(option.label).toLowerCase().includes(term))
             : options;
     });
+    readonly inputValue = computed(() => (this.isOpen() ? this.query() : this.selectedLabel()));
+    readonly isOpen = signal(false);
+    readonly optionsId = computed(() => `${this.labelling().controlId}-options`);
+    readonly pickerOpen = signal(false);
+    readonly query = signal('');
     readonly selectedLabel = computed(() => {
         const { options, value } = this.field();
         const selected = options.find(option => option.value === value);
 
         return selected ? this.translateService.instant(selected.label) : '';
     });
-    readonly inputValue = computed(() => (this.isOpen() ? this.query() : this.selectedLabel()));
-    readonly variableOptions = computed(() => toVariableOptions(this.field().variables));
-
     readonly variableIcon = PROPERTY_VARIABLE_ICON;
-
-    private readonly translateService = inject(TranslateService);
+    readonly variableOptions = computed(() => toVariableOptions(this.field().variables));
 
     close(): void {
         this.isOpen.set(false);

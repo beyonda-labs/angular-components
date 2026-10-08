@@ -6,6 +6,7 @@ import {
     HostListener,
     inject,
     input,
+    linkedSignal,
     signal
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -16,6 +17,8 @@ import { debounceTime, Subject } from 'rxjs';
 
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
+import { toKeySegment } from '../../utilities/key-segment';
+import { searchFieldOperators } from './functions/search-field-operators';
 import { SearchConfig, SearchField, SearchFieldOption, SearchFieldType } from './models/search.model';
 import {
     BooleanFilter,
@@ -47,23 +50,38 @@ interface SearchDraftRow {
     templateUrl: './search.component.html'
 })
 export class SearchComponent {
+    private readonly elementRef = inject(ElementRef<HTMLElement>);
+
     readonly config = input.required<SearchConfig>();
 
-    readonly appliedFilters = signal<SearchFilter[]>([]);
-    readonly isPanelOpen = signal(false);
-    readonly rows = signal<SearchDraftRow[]>([]);
-    readonly searchTerm = signal('');
-
-    readonly placeholder = computed(() => this.config().placeholder ?? DEFAULT_PLACEHOLDER);
-
     readonly addIcon = faPlus;
+    readonly addButton = new ButtonConfig({
+        action: () => this.addRow(),
+        icon: this.addIcon,
+        label: 'angular-components.search.add',
+        type: ButtonType.Secondary
+    });
+    readonly appliedFilters = linkedSignal<SearchFilter[]>(() => [...this.config().filters]);
+    readonly applyButton = new ButtonConfig({
+        action: () => this.applyFilters(),
+        label: 'angular-components.search.apply',
+        type: ButtonType.Primary
+    });
     readonly chevronIcon = faChevronDown;
+    readonly clearButton = new ButtonConfig({
+        action: () => this.clearFilters(),
+        label: 'angular-components.search.clear',
+        type: ButtonType.Secondary
+    });
     readonly fieldTypes = SearchFieldType;
     readonly filterIcon = faFilter;
+    readonly isPanelOpen = signal(false);
+    readonly placeholder = computed(() => this.config().placeholder ?? DEFAULT_PLACEHOLDER);
     readonly removeIcon = faXmark;
+    readonly rows = linkedSignal<SearchDraftRow[]>(() => this.config().filters.map(filter => toDraftRow(filter)));
     readonly searchIcon = faMagnifyingGlass;
+    readonly searchTerm = linkedSignal(() => findMainTerm(this.config()));
 
-    private readonly elementRef = inject(ElementRef<HTMLElement>);
     private readonly searchTerm$ = new Subject<void>();
 
     constructor() {
@@ -72,32 +90,6 @@ export class SearchComponent {
             this.applyRows(false);
         });
     }
-
-    @HostListener('document:click', ['$event'])
-    onDocumentClick(event: MouseEvent): void {
-        if (this.isPanelOpen() && !(this.elementRef.nativeElement as HTMLElement).contains(event.target as Node)) {
-            this.isPanelOpen.set(false);
-        }
-    }
-
-    readonly addButton = new ButtonConfig({
-        action: () => this.addRow(),
-        icon: this.addIcon,
-        label: 'angular-components.search.add',
-        type: ButtonType.Secondary
-    });
-
-    readonly applyButton = new ButtonConfig({
-        action: () => this.applyFilters(),
-        label: 'angular-components.search.apply',
-        type: ButtonType.Primary
-    });
-
-    readonly clearButton = new ButtonConfig({
-        action: () => this.clearFilters(),
-        label: 'angular-components.search.clear',
-        type: ButtonType.Secondary
-    });
 
     addRow(): void {
         this.rows.update(rows => [...rows, { fieldKey: '', operator: '', value: '', valueTo: '' }]);
@@ -116,7 +108,7 @@ export class SearchComponent {
     }
 
     getFieldLabel(field: SearchField): string {
-        return `${this.config().prefix}.fields.${field.key}`;
+        return `${this.config().prefix}.fields.${toKeySegment(field.key)}`;
     }
 
     getFieldOptions(row: SearchDraftRow): SearchFieldOption[] {
@@ -124,13 +116,13 @@ export class SearchComponent {
     }
 
     getOperatorLabel(operator: SearchFilterOperator): string {
-        const key = operator.replaceAll(/[A-Z]/gu, letter => `-${letter.toLowerCase()}`);
-
-        return `angular-components.search.operators.${key}`;
+        return `angular-components.search.operators.${toKeySegment(operator)}`;
     }
 
     getOperators(row: SearchDraftRow): SearchFilterOperator[] {
-        return this.getField(row)?.getOperators() ?? [];
+        const field = this.getField(row);
+
+        return field ? searchFieldOperators(field) : [];
     }
 
     getRowType(row: SearchDraftRow): SearchFieldType | null {
@@ -141,6 +133,13 @@ export class SearchComponent {
         return row.operator === SearchFilterOperator.Between;
     }
 
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent): void {
+        if (this.isPanelOpen() && !(this.elementRef.nativeElement as HTMLElement).contains(event.target as Node)) {
+            this.isPanelOpen.set(false);
+        }
+    }
+
     onFieldChange(index: number, event: Event): void {
         const fieldKey = (event.target as HTMLSelectElement).value;
         const field = this.config().fields.find(current => current.key === fieldKey);
@@ -148,7 +147,7 @@ export class SearchComponent {
         this.rows.update(rows =>
             rows.map((row, currentIndex) =>
                 currentIndex === index
-                    ? { fieldKey, operator: field ? field.getOperators()[0] : '', value: '', valueTo: '' }
+                    ? { fieldKey, operator: field ? searchFieldOperators(field)[0] : '', value: '', valueTo: '' }
                     : row
             )
         );
@@ -205,60 +204,14 @@ export class SearchComponent {
         this.config().onFiltersChange?.([...this.appliedFilters()]);
     }
 
+    private getField(row: SearchDraftRow): SearchField | undefined {
+        return this.config().fields.find(current => current.key === row.fieldKey);
+    }
+
     private getMainRow(): SearchDraftRow | undefined {
         const { mainField } = this.config();
 
         return mainField ? this.rows().find(row => row.fieldKey === mainField) : undefined;
-    }
-
-    private syncMainRow(): void {
-        const { mainField } = this.config();
-
-        if (!mainField) {
-            return;
-        }
-
-        const term = this.searchTerm().trim();
-        const index = this.rows().findIndex(row => row.fieldKey === mainField);
-
-        if (!term) {
-            if (index !== -1) {
-                this.rows.update(rows => rows.filter((_, currentIndex) => currentIndex !== index));
-            }
-
-            return;
-        }
-
-        if (index === -1) {
-            const field = this.config().fields.find(current => current.key === mainField);
-
-            this.rows.update(rows => [
-                ...rows,
-                { fieldKey: mainField, operator: field?.getOperators()[0] ?? '', value: term, valueTo: '' }
-            ]);
-
-            return;
-        }
-
-        this.rows.update(rows =>
-            rows.map((row, currentIndex) => (currentIndex === index ? { ...row, value: term } : row))
-        );
-    }
-
-    private syncSearchTermFromMainRow(): void {
-        if (!this.config().mainField) {
-            return;
-        }
-
-        const mainRow = this.getMainRow();
-        const rowType = mainRow ? this.getRowType(mainRow) : null;
-        const isDropdownType = rowType === SearchFieldType.Boolean || rowType === SearchFieldType.Select;
-
-        this.searchTerm.set(mainRow && !isDropdownType ? mainRow.value : '');
-    }
-
-    private getField(row: SearchDraftRow): SearchField | undefined {
-        return this.config().fields.find(current => current.key === row.fieldKey);
     }
 
     private isNumeric(value: string): boolean {
@@ -288,6 +241,52 @@ export class SearchComponent {
         }
     }
 
+    private syncMainRow(): void {
+        const { mainField } = this.config();
+
+        if (!mainField) {
+            return;
+        }
+
+        const term = this.searchTerm().trim();
+        const index = this.rows().findIndex(row => row.fieldKey === mainField);
+
+        if (!term) {
+            if (index !== -1) {
+                this.rows.update(rows => rows.filter((_, currentIndex) => currentIndex !== index));
+            }
+
+            return;
+        }
+
+        if (index === -1) {
+            const field = this.config().fields.find(current => current.key === mainField);
+
+            this.rows.update(rows => [
+                ...rows,
+                { fieldKey: mainField, operator: field ? searchFieldOperators(field)[0] : '', value: term, valueTo: '' }
+            ]);
+
+            return;
+        }
+
+        this.rows.update(rows =>
+            rows.map((row, currentIndex) => (currentIndex === index ? { ...row, value: term } : row))
+        );
+    }
+
+    private syncSearchTermFromMainRow(): void {
+        if (!this.config().mainField) {
+            return;
+        }
+
+        const mainRow = this.getMainRow();
+        const rowType = mainRow ? this.getRowType(mainRow) : null;
+        const isDropdownType = rowType === SearchFieldType.Boolean || rowType === SearchFieldType.Select;
+
+        this.searchTerm.set(mainRow && !isDropdownType ? mainRow.value : '');
+    }
+
     private toFilter(row: SearchDraftRow): SearchFilter {
         const field = this.getField(row)!;
 
@@ -314,4 +313,21 @@ export class SearchComponent {
                 });
         }
     }
+}
+
+function findMainTerm({ fields, filters, mainField }: SearchConfig): string {
+    const field = fields.find(current => current.key === mainField);
+    const filter = filters.find(current => current.field === mainField);
+
+    if (!field || !filter || field.type === SearchFieldType.Boolean || field.type === SearchFieldType.Select) {
+        return '';
+    }
+
+    return String(filter.value ?? '');
+}
+
+function toDraftRow({ field, operator, value }: SearchFilter): SearchDraftRow {
+    const [from, to] = Array.isArray(value) ? value : [value, ''];
+
+    return { fieldKey: field, operator, value: String(from ?? ''), valueTo: String(to ?? '') };
 }

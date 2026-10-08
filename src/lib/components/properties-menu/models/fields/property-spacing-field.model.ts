@@ -1,10 +1,6 @@
-import { PropertyFieldType } from '../../types/property-field-type';
-import { PropertySpacingValue } from '../../types/property-value';
 import { PropertyField, PropertyFieldParameters } from '../property-field.model';
-
-export interface PropertySpacingFieldParameters extends Omit<PropertyFieldParameters<PropertySpacingValue>, 'type'> {
-    readonly?: boolean;
-}
+import { PropertyFieldType } from '../property-field-type.model';
+import { PropertySpacingValue } from '../property-value.model';
 
 export class PropertySpacingField extends PropertyField<PropertySpacingValue> {
     readonly: boolean;
@@ -14,4 +10,8 @@ export class PropertySpacingField extends PropertyField<PropertySpacingValue> {
 
         this.readonly = readonly;
     }
+}
+
+export interface PropertySpacingFieldParameters extends Omit<PropertyFieldParameters<PropertySpacingValue>, 'type'> {
+    readonly?: boolean;
 }

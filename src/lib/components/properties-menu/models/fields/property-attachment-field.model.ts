@@ -1,13 +1,29 @@
-import { PropertyFieldType } from '../../types/property-field-type';
 import { PropertyField, PropertyFieldParameters } from '../property-field.model';
+import { PropertyFieldType } from '../property-field-type.model';
 import { PropertyVariable } from '../property-variable.model';
 
-export interface PropertyAttachmentOptionParameters {
-    id: string;
-    label: string;
+export class PropertyAttachmentField extends PropertyField<string> {
+    options: PropertyAttachmentOption[];
+    variables: PropertyVariable[];
 
-    description?: string;
-    disabled?: boolean;
+    accept?: string;
+    maxSizeBytes?: number;
+
+    constructor({ accept, maxSizeBytes, options = [], variables = [], ...base }: PropertyAttachmentFieldParameters) {
+        super({ ...base, type: PropertyFieldType.Attachment });
+        this.accept = accept;
+        this.maxSizeBytes = maxSizeBytes;
+        this.options = options;
+        this.variables = variables;
+    }
+
+    get holdsVariable(): boolean {
+        return (this.value ?? '').trim().startsWith('{{');
+    }
+
+    get selectedOption(): PropertyAttachmentOption | undefined {
+        return this.options.find(option => option.id === this.value);
+    }
 }
 
 export class PropertyAttachmentOption {
@@ -32,26 +48,10 @@ export interface PropertyAttachmentFieldParameters extends Omit<PropertyFieldPar
     variables?: PropertyVariable[];
 }
 
-export class PropertyAttachmentField extends PropertyField<string> {
-    options: PropertyAttachmentOption[];
-    variables: PropertyVariable[];
+export interface PropertyAttachmentOptionParameters {
+    id: string;
+    label: string;
 
-    accept?: string;
-    maxSizeBytes?: number;
-
-    constructor({ accept, maxSizeBytes, options = [], variables = [], ...base }: PropertyAttachmentFieldParameters) {
-        super({ ...base, type: PropertyFieldType.Attachment });
-        this.accept = accept;
-        this.maxSizeBytes = maxSizeBytes;
-        this.options = options;
-        this.variables = variables;
-    }
-
-    get holdsVariable(): boolean {
-        return (this.value ?? '').trim().startsWith('{{');
-    }
-
-    get selectedOption(): PropertyAttachmentOption | undefined {
-        return this.options.find(option => option.id === this.value);
-    }
+    description?: string;
+    disabled?: boolean;
 }

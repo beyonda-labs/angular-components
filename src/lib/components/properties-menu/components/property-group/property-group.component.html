@@ -9,12 +9,14 @@
         <button
             class="bey-property-group-header"
             type="button"
-            [attr.aria-controls]="'property-group-' + current.id"
+            [attr.aria-controls]="bodyId"
             [attr.aria-expanded]="current.expanded"
             [disabled]="current.disabled"
             (click)="toggle()"
         >
-            <span class="bey-property-group-label" [title]="labelKey() | translate">{{ labelKey() | translate }}</span>
+            <span class="bey-property-group-label" [title]="labelKey() | translate: current.labelParameters">
+                {{ labelKey() | translate: current.labelParameters }}
+            </span>
 
             @if (current.removable) {
                 <span
@@ -36,7 +38,7 @@
     }
 
     @if (current.expanded) {
-        <div class="bey-property-group-body" [id]="'property-group-' + current.id">
+        <div class="bey-property-group-body" [id]="bodyId">
             @if (fieldsContent()) {
                 @for (field of visibleFields(); track field.id) {
                     <bey-property-field
@@ -61,7 +63,7 @@
                             @if (tab.icon) {
                                 <fa-icon [icon]="tab.icon"></fa-icon>
                             }
-                            <span>{{ contentTabLabelKey(tab) | translate }}</span>
+                            <span>{{ contentTabLabelKey(tab) | translate: tab.labelParameters }}</span>
                         </button>
                     }
                 </div>

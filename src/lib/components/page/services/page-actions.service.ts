@@ -1,32 +1,33 @@
 import { inject, Injectable } from '@angular/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { Observable } from 'rxjs';
+import { isObservable, map, Observable, of, switchMap } from 'rxjs';
 
 import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
+import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { FormHandle } from '../../form/models/form.model';
 import { HeaderAction } from '../../header/models/header.model';
+import { ConfirmationModalConfig } from '../../modal/models/modal.model';
 import { ModalService } from '../../modal/services/modal.service';
 import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
 import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
-import { TreeNode } from '../../tree/models/tree.model';
+import { buildMoveTargetNodes } from '../functions/page-move-targets';
+import { isActionVisible, isCategoryRow, toHandlerItems, toTrashItems } from '../functions/page-row';
 import { PageConfig } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
-import { PageCategoriesConfig, PageItemType, PageTrashItem } from '../models/page-categories.model';
+import { PageCategoriesConfig, PageMoveTarget } from '../models/page-categories.model';
 import { PageFormConfig } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
 import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
-
-interface MoveTargetData {
-    id: string | number | null;
-}
+import { PageLifecycleActionsService } from './page-lifecycle-actions.service';
+import { PageUsagesService } from './page-usages.service';
 
 export interface PageActionsContext {
     config: PageConfig;
     getCurrentCategoryId: () => string | number | null;
+    onCategoryDeleted: () => void;
     onCategoryFormModalOpened: (reference: BsModalRef<ModalFormDialogComponent>) => void;
     onCategorySaved: () => void;
-    onCategoryDeleted: () => void;
     onDeleted: () => void;
     onFormModalOpened: (reference: BsModalRef<ModalFormDialogComponent>) => void;
     onMoved: () => void;
@@ -44,11 +45,12 @@ interface BulkActionOptions<T> {
 }
 
 interface SaveEntityOptions {
-    afterCreate?: (created: PageItem) => Observable<unknown> | undefined;
     create: (baseUrl: string, value: unknown, successToast: string) => Observable<unknown>;
     edit: (baseUrl: string, id: string | number, value: unknown, successToast: string) => Observable<unknown>;
     entitySuffix: string;
     onSaved: () => void;
+
+    afterCreate?: (created: PageItem) => Observable<unknown> | undefined;
 }
 
 @Injectable({
@@ -59,15 +61,21 @@ export class PageActionsService {
     private readonly modalTreeService = inject(ModalTreeService);
     private readonly pageFormService = inject(PageFormService);
     private readonly pageHttpService = inject(PageHttpService);
+    private readonly pageLifecycleActionsService = inject(PageLifecycleActionsService);
+    private readonly pageUsagesService = inject(PageUsagesService);
 
-    private readonly actionHandlers: Record<string, (context: PageActionsContext) => void> = {
+    private readonly actionHandlers: Record<string, (context: PageActionsContext, action: PageAction) => void> = {
+        [PageStandardAction.ChangeStatus]: context => this.executeChangeStatus(context),
         [PageStandardAction.Create]: context => this.executeCreate(context),
         [PageStandardAction.CreateCategory]: context => this.executeCreateCategory(context),
-        [PageStandardAction.Delete]: context => this.executeDelete(context),
-        [PageStandardAction.DeleteCategory]: context => this.executeDeleteCategory(context),
-        [PageStandardAction.DeleteTrashItem]: context => this.executeDeleteTrashItem(context),
+        [PageStandardAction.Delete]: (context, action) => this.executeDelete(context, action),
+        [PageStandardAction.DeleteCategory]: (context, action) => this.executeDeleteCategory(context, action),
+        [PageStandardAction.DeleteTrashItem]: (context, action) => this.executeDeleteTrashItem(context, action),
+        [PageStandardAction.Duplicate]: context => this.executeDuplicate(context),
         [PageStandardAction.Edit]: context => this.executeEdit(context),
         [PageStandardAction.EditCategory]: context => this.executeEditCategory(context),
+        [PageStandardAction.EmptyTrash]: (context, action) =>
+            this.pageLifecycleActionsService.emptyTrash(context.config, action, () => context.onTrashItemDeleted()),
         [PageStandardAction.Move]: context => this.executeMove(context),
         [PageStandardAction.RestoreTrashItem]: context => this.executeRestoreTrashItem(context)
     };
@@ -105,27 +113,39 @@ export class PageActionsService {
 
     executeAction(action: PageAction, context: PageActionsContext): void {
         if (action.handler) {
-            action.handler(action.scope === PageActionScope.Item ? context.selectedItems() : undefined);
+            action.handler(
+                toHandlerItems(action, context.selectedItems(), context.config.tableConfig?.categoriesConfig)
+            );
 
             return;
         }
 
-        this.actionHandlers[action.key]?.(context);
+        this.actionHandlers[action.key]?.(context, action);
     }
 
-    filterVisibleActions(actions: PageAction[], allowedKeys: string[] | null, selectedItems: PageItem[]): PageAction[] {
+    filterVisibleActions(
+        actions: PageAction[],
+        allowedKeys: string[] | null,
+        selectedItems: PageItem[],
+        categoriesConfig?: PageCategoriesConfig
+    ): PageAction[] {
         const visible: PageAction[] = [];
 
         for (const action of actions) {
             if (action.scope !== PageActionScope.Group) {
-                if (this.isActionVisible(action, allowedKeys, selectedItems)) {
+                if (isActionVisible(action, allowedKeys, selectedItems, categoriesConfig)) {
                     visible.push(action);
                 }
 
                 continue;
             }
 
-            const visibleSubActions = this.filterVisibleActions(action.subActions ?? [], allowedKeys, selectedItems);
+            const visibleSubActions = this.filterVisibleActions(
+                action.subActions ?? [],
+                allowedKeys,
+                selectedItems,
+                categoriesConfig
+            );
 
             if (visibleSubActions.length > 0) {
                 visible.push(new PageAction({ ...action, subActions: visibleSubActions }));
@@ -135,20 +155,96 @@ export class PageActionsService {
         return visible;
     }
 
-    private isActionVisible(action: PageAction, allowedKeys: string[] | null, selectedItems: PageItem[]): boolean {
-        if (action.scope === PageActionScope.Global) {
-            return allowedKeys?.includes(action.key) ?? false;
+    moveItems(
+        context: PageActionsContext,
+        items: PageItem[],
+        targetId: string | number | null,
+        onMoved?: () => void
+    ): void {
+        const { baseUrl, prefix } = context.config;
+
+        if (items.length === 0 || !baseUrl) {
+            return;
         }
 
-        if (selectedItems.length === 0) {
-            return false;
+        this.pageHttpService
+            .moveItems(baseUrl, toTrashItems(items), targetId, `${prefix}.toast.move-success`)
+            .subscribe(() => {
+                onMoved?.();
+                context.onMoved();
+            });
+    }
+
+    openEditForm(context: PageActionsContext, row: PageItem): void {
+        if (isCategoryRow(row, context.config.tableConfig?.categoriesConfig)) {
+            this.openCategoryForm(context, row);
+        } else {
+            this.openForm(context, row);
+        }
+    }
+
+    openRequestForm<TValue>(
+        config: ModalFormConfig<TValue>,
+        submit: (value: TValue) => Observable<unknown>,
+        onSaved: () => void
+    ): void {
+        this.pageFormService.openWithRequest(config, submit, onSaved);
+    }
+
+    private completeSave(handle: FormHandle, options: SaveEntityOptions): void {
+        handle.close();
+        options.onSaved();
+    }
+
+    private executeBulkAction<T>(
+        context: PageActionsContext,
+        options: BulkActionOptions<T>,
+        action?: PageAction
+    ): void {
+        const items = context.selectedItems();
+        const { baseUrl, prefix } = context.config;
+
+        if (items.length === 0 || !baseUrl) {
+            return;
         }
 
-        if (action.key === PageStandardAction.Edit && selectedItems.length !== 1) {
-            return false;
+        const run = (): void => {
+            options
+                .request(baseUrl, options.mapPayload(items), `${prefix}.toast.${options.key}-success`)
+                .subscribe(() => options.onComplete());
+        };
+
+        if (!options.confirm) {
+            run();
+
+            return;
         }
 
-        return selectedItems.every(item => item.actions?.includes(action.key));
+        const confirmation: ConfirmationModalConfig = {
+            message: `${prefix}.modal.${options.key}.message`,
+            messageParameters: { count: items.length },
+            title: `${prefix}.modal.${options.key}.title`
+        };
+
+        this.pageUsagesService
+            .confirmInUse(context.config, options.key, items, confirmation)
+            .pipe(
+                switchMap(config => toObservable(action?.confirmation?.(items, config) ?? config)),
+                switchMap(config => this.modalService.openConfirmation(config))
+            )
+            .subscribe(confirmed => {
+                if (confirmed) {
+                    run();
+                }
+            });
+    }
+
+    private executeChangeStatus(context: PageActionsContext): void {
+        const items = context.selectedItems();
+
+        if (items.length === 1) {
+            this.pageLifecycleActionsService.changeStatus(context.config, items[0], () => context.onSaved());
+        }
     }
 
     private executeCreate(context: PageActionsContext): void {
@@ -159,35 +255,56 @@ export class PageActionsService {
         this.openCategoryForm(context);
     }
 
-    private executeDelete(context: PageActionsContext): void {
-        this.executeBulkAction(context, {
-            confirm: true,
-            key: 'delete',
-            mapPayload: items => items.map(item => item.id),
-            onComplete: () => context.onDeleted(),
-            request: (baseUrl, ids, successToast) => this.pageHttpService.deleteItems(baseUrl, ids, successToast)
-        });
+    private executeDelete(context: PageActionsContext, action: PageAction): void {
+        this.executeBulkAction(
+            context,
+            {
+                confirm: true,
+                key: 'delete',
+                mapPayload: items => items.map(item => item.id),
+                onComplete: () => context.onDeleted(),
+                request: (baseUrl, ids, successToast) => this.pageHttpService.deleteItems(baseUrl, ids, successToast)
+            },
+            action
+        );
     }
 
-    private executeDeleteCategory(context: PageActionsContext): void {
-        this.executeBulkAction(context, {
-            confirm: true,
-            key: 'delete-category',
-            mapPayload: items => items.map(item => item.id),
-            onComplete: () => context.onCategoryDeleted(),
-            request: (baseUrl, ids, successToast) => this.pageHttpService.deleteCategories(baseUrl, ids, successToast)
-        });
+    private executeDeleteCategory(context: PageActionsContext, action: PageAction): void {
+        this.executeBulkAction(
+            context,
+            {
+                confirm: true,
+                key: 'delete-category',
+                mapPayload: items => items.map(item => item.id),
+                onComplete: () => context.onCategoryDeleted(),
+                request: (baseUrl, ids, successToast) =>
+                    this.pageHttpService.deleteCategories(baseUrl, ids, successToast)
+            },
+            action
+        );
     }
 
-    private executeDeleteTrashItem(context: PageActionsContext): void {
-        this.executeBulkAction(context, {
-            confirm: true,
-            key: 'delete-trash-item',
-            mapPayload: toTrashItems,
-            onComplete: () => context.onTrashItemDeleted(),
-            request: (baseUrl, items, successToast) =>
-                this.pageHttpService.deleteTrashItems(baseUrl, items, successToast)
-        });
+    private executeDeleteTrashItem(context: PageActionsContext, action: PageAction): void {
+        this.executeBulkAction(
+            context,
+            {
+                confirm: true,
+                key: 'delete-trash-item',
+                mapPayload: toTrashItems,
+                onComplete: () => context.onTrashItemDeleted(),
+                request: (baseUrl, items, successToast) =>
+                    this.pageHttpService.deleteTrashItems(baseUrl, items, successToast)
+            },
+            action
+        );
+    }
+
+    private executeDuplicate(context: PageActionsContext): void {
+        const items = context.selectedItems();
+
+        if (items.length === 1) {
+            this.pageLifecycleActionsService.duplicate(context.config, items[0], () => context.onSaved());
+        }
     }
 
     private executeEdit(context: PageActionsContext): void {
@@ -216,23 +333,13 @@ export class PageActionsService {
         }
 
         this.pageHttpService.loadCategoryTree(baseUrl).subscribe(categories => {
-            const treeConfig = new ModalTreeConfig<MoveTargetData>({
-                nodes: this.buildMoveTreeNodes(prefix, categories, categoriesConfig, items),
-                prefix: `${prefix}.move`,
-                title: `${prefix}.move.title`,
-                onConfirm: node => {
-                    const targetId = node?.data?.id ?? null;
-
-                    this.pageHttpService
-                        .moveItems(baseUrl, toTrashItems(items), targetId, `${prefix}.toast.move-success`)
-                        .subscribe(() => {
-                            treeConfig.close();
-                            context.onMoved();
-                        });
-                }
-            });
-
-            this.modalTreeService.open(treeConfig);
+            const reference = this.modalTreeService.open(
+                new ModalTreeConfig<PageMoveTarget>({
+                    nodes: buildMoveTargetNodes(prefix, categories, categoriesConfig, items),
+                    prefix: `${prefix}.move`,
+                    onConfirm: node => this.moveItems(context, items, node?.data?.id ?? null, () => reference.hide())
+                })
+            );
         });
     }
 
@@ -243,41 +350,23 @@ export class PageActionsService {
             mapPayload: toTrashItems,
             onComplete: () => context.onSaved(),
             request: (baseUrl, items, successToast) =>
-                this.pageHttpService.restoreTrashItems(baseUrl, items, successToast)
+                this.pageHttpService
+                    .restoreTrashItems(baseUrl, items, successToast)
+                    .pipe(map(renamed => this.pageLifecycleActionsService.reportRenamed(renamed)))
         });
     }
 
-    private executeBulkAction<T>(context: PageActionsContext, options: BulkActionOptions<T>): void {
-        const items = context.selectedItems();
-        const { baseUrl, prefix } = context.config;
+    private mergeParentField(context: PageActionsContext, value: unknown, original?: PageItem): unknown {
+        const categoriesConfig = context.config.tableConfig?.categoriesConfig;
 
-        if (items.length === 0 || !baseUrl) {
-            return;
+        if (original || !categoriesConfig) {
+            return value;
         }
 
-        const run = (): void => {
-            options
-                .request(baseUrl, options.mapPayload(items), `${prefix}.toast.${options.key}-success`)
-                .subscribe(() => options.onComplete());
+        return {
+            ...(value as Record<string, unknown>),
+            [categoriesConfig.parentField]: context.getCurrentCategoryId()
         };
-
-        if (!options.confirm) {
-            run();
-
-            return;
-        }
-
-        this.modalService
-            .openConfirmation({
-                message: `${prefix}.modal.${options.key}.message`,
-                messageParameters: { count: items.length },
-                title: `${prefix}.modal.${options.key}.title`
-            })
-            .subscribe(confirmed => {
-                if (confirmed) {
-                    run();
-                }
-            });
     }
 
     private openCategoryForm(context: PageActionsContext, item?: PageItem): void {
@@ -314,79 +403,6 @@ export class PageActionsService {
         this.openEntityForm(context, context.config.formConfig, context.config.prefix, item, (value, handle) =>
             this.save(context, value, handle, item)
         );
-    }
-
-    private buildMoveTreeNodes(
-        prefix: string,
-        categories: PageItem[],
-        categoriesConfig: PageCategoriesConfig,
-        selectedItems: PageItem[]
-    ): TreeNode<MoveTargetData>[] {
-        const { nameField, parentField } = categoriesConfig;
-        const childrenByParent = new Map<string | number | null, PageItem[]>();
-
-        for (const category of categories) {
-            const parentId =
-                ((category as unknown as Record<string, unknown>)[parentField] as string | number | null) ?? null;
-            const siblings = childrenByParent.get(parentId) ?? [];
-
-            siblings.push(category);
-            childrenByParent.set(parentId, siblings);
-        }
-
-        const blockedIds = new Set<string | number>(
-            selectedItems.filter(item => (item as PageTrashItem).type === PageItemType.Category).map(item => item.id)
-        );
-        let frontier = [...blockedIds];
-
-        while (frontier.length > 0) {
-            const next: (string | number)[] = [];
-
-            for (const id of frontier) {
-                for (const child of childrenByParent.get(id) ?? []) {
-                    if (!blockedIds.has(child.id)) {
-                        blockedIds.add(child.id);
-                        next.push(child.id);
-                    }
-                }
-            }
-
-            frontier = next;
-        }
-
-        const buildLevel = (parentId: string | number | null): TreeNode<MoveTargetData>[] =>
-            (childrenByParent.get(parentId) ?? []).map(
-                category =>
-                    new TreeNode<MoveTargetData>({
-                        key: String(category.id),
-                        label: String((category as unknown as Record<string, unknown>)[nameField] ?? ''),
-                        isDisabled: blockedIds.has(category.id),
-                        data: { id: category.id },
-                        children: buildLevel(category.id)
-                    })
-            );
-
-        return [
-            new TreeNode<MoveTargetData>({
-                key: '__root__',
-                label: `${prefix}.categories.root`,
-                data: { id: null },
-                children: buildLevel(null)
-            })
-        ];
-    }
-
-    private mergeParentField(context: PageActionsContext, value: unknown, original?: PageItem): unknown {
-        const categoriesConfig = context.config.tableConfig?.categoriesConfig;
-
-        if (original || !categoriesConfig) {
-            return value;
-        }
-
-        return {
-            ...(value as Record<string, unknown>),
-            [categoriesConfig.parentField]: context.getCurrentCategoryId()
-        };
     }
 
     private save(context: PageActionsContext, value: unknown, handle: FormHandle, original?: PageItem): void {
@@ -444,17 +460,8 @@ export class PageActionsService {
             followUp.subscribe(() => this.completeSave(handle, options));
         });
     }
-
-    private completeSave(handle: FormHandle, options: SaveEntityOptions): void {
-        handle.close();
-        options.onSaved();
-    }
 }
 
-function toTrashItems(items: PageItem[]): PageTrashItem[] {
-    return items.map(item => {
-        const { id, type } = item as PageTrashItem;
-
-        return { id, type };
-    });
+function toObservable<T>(value: T | Observable<T>): Observable<T> {
+    return isObservable(value) ? value : of(value);
 }

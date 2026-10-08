@@ -29,11 +29,10 @@ import { PropertyTreeDragService } from './services/property-tree-drag.service';
     templateUrl: './properties-menu.component.html'
 })
 export class PropertiesMenuComponent {
-    readonly config = input.required<PropertiesMenuConfig>();
-    /** Variables offered by the fields that accept one (`acceptsVariable`). */
-    readonly variables = input<PropertyVariable[]>([]);
-
     private readonly propertiesMenuService = inject(PropertiesMenuService);
+
+    readonly config = input.required<PropertiesMenuConfig>();
+    readonly variables = input<PropertyVariable[]>([]);
 
     readonly activeTab = computed(() => {
         const activeTabId = this.propertiesMenuService.activeTabId();
@@ -62,7 +61,6 @@ export class PropertiesMenuComponent {
         effect(() => this.propertiesMenuService.setConfig(this.config()));
         effect(() => this.propertiesMenuService.setVariables(this.variables()));
 
-        // The body is a single element reused across tabs, so the browser would keep its previous scrollTop.
         effect(() => {
             this.propertiesMenuService.activeTabId();
 

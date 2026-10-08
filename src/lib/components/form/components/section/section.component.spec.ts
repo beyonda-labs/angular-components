@@ -8,7 +8,7 @@ import { FormTextField } from '../../models/fields/form-text-field.model';
 import { FormRow, FormSection, FormSectionParameters } from '../../models/form.model';
 import { FormSectionComponent } from './section.component';
 
-const VISIBLE: FormFieldState = { isDisabled: false, isHidden: false, isValid: true, options: [] };
+const VISIBLE: FormFieldState = { isDisabled: false, isHidden: false, isRequired: false, isValid: true, options: [] };
 const HIDDEN: FormFieldState = { ...VISIBLE, isHidden: true };
 const ALL_VISIBLE: Record<string, FormFieldState> = { 'contact.name': VISIBLE, 'contact.email': VISIBLE };
 
@@ -47,11 +47,25 @@ describe('FormSectionComponent', () => {
         expect(fixture.nativeElement.querySelectorAll('input')).toHaveLength(2);
     });
 
+    it('shows the title it is given instead of the one of its prefix', async () => {
+        await render({ label: 'Customer data' });
+
+        expect(fixture.nativeElement.textContent).toContain('Customer data');
+        expect(fixture.nativeElement.textContent).not.toContain('demo.contact.label');
+    });
+
     it('resolves the texts from its own prefix when the section names one', async () => {
         await render({ prefix: 'person' });
 
         expect(fixture.nativeElement.textContent).toContain('demo.person.label');
         expect(fixture.nativeElement.textContent).toContain('demo.person.name.label');
+    });
+
+    it('reads the texts of a camelCase section key from its kebab-case segment', async () => {
+        await render({ key: 'contactDetails' }, { 'contactDetails.name': VISIBLE, 'contactDetails.email': VISIBLE });
+
+        expect(fixture.nativeElement.textContent).toContain('demo.contact-details.label');
+        expect(fixture.nativeElement.textContent).toContain('demo.contact-details.name.label');
     });
 
     it('hides the title when asked, and skips a row with no visible field', async () => {

@@ -1,5 +1,3 @@
-/* Shared by every field: the control row, the inputs and the square action buttons beside them. */
-
 :host {
     --bey-property-field-accent: var(--bey-primary);
     --bey-property-field-border: var(--bey-border-default);

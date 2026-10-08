@@ -4,6 +4,7 @@ import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertyNumberArrayField } from '../../../models/fields/property-number-array-field.model';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -15,18 +16,18 @@ import { PropertyNumberArrayField } from '../../../models/fields/property-number
 })
 export class PropertyNumberArrayFieldComponent {
     readonly field = input.required<PropertyNumberArrayField>();
+    readonly labelling = input.required<PropertyFieldLabelling>();
 
     readonly valueChange = output<number[]>();
 
-    readonly entries = computed(() => this.field().value ?? []);
+    readonly addIcon = faPlus;
     readonly canAdd = computed(() => {
         const { maxLength } = this.field();
 
         return maxLength === undefined || this.entries().length < maxLength;
     });
     readonly canRemove = computed(() => this.entries().length > this.field().minLength);
-
-    readonly addIcon = faPlus;
+    readonly entries = computed(() => this.field().value ?? []);
     readonly removeIcon = faTrash;
 
     onAdd(): void {

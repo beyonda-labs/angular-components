@@ -1,5 +1,11 @@
 import { FormField, FormRule } from './form-field.model';
 
+export enum FormButtonType {
+    Cancel = 'cancel',
+    Secondary = 'secondary',
+    Submit = 'submit'
+}
+
 export type FormButtonLayout = 'end' | 'stretch';
 
 export interface FormHandle<TValue = unknown> {
@@ -10,6 +16,23 @@ export interface FormHandle<TValue = unknown> {
     requestClose(): void;
     reset(): void;
     value(): TValue;
+}
+
+export class FormButton {
+    isHidden: boolean;
+    label: string;
+    tooltip: string;
+    type: FormButtonType;
+
+    action?: (handle: FormHandle) => void;
+
+    constructor({ label, type, action, isHidden = false, tooltip = '' }: FormButtonParameters) {
+        this.action = action;
+        this.isHidden = isHidden;
+        this.label = label;
+        this.tooltip = tooltip;
+        this.type = type;
+    }
 }
 
 export class FormConfig<TValue = unknown> {
@@ -57,6 +80,65 @@ export class FormConfig<TValue = unknown> {
     }
 }
 
+export class FormRow {
+    alignment: 'start' | 'end';
+    fields: FormField[];
+
+    constructor({ fields, alignment = 'start' }: FormRowParameters) {
+        this.alignment = alignment;
+        this.fields = fields;
+    }
+}
+
+export class FormSection {
+    isHidden: FormRule<boolean>;
+    isTitleVisible: boolean;
+    isTooltipVisible: boolean;
+    key: string;
+    prefix: string;
+    rows: FormRow[];
+
+    label?: string;
+
+    constructor({
+        key,
+        rows,
+
+        isHidden = false,
+        isTitleVisible = true,
+        isTooltipVisible = false,
+        label,
+        prefix = key
+    }: FormSectionParameters) {
+        this.isHidden = isHidden;
+        this.isTitleVisible = isTitleVisible;
+        this.isTooltipVisible = isTooltipVisible;
+        this.key = key;
+        this.label = label;
+        this.prefix = prefix;
+        this.rows = rows;
+    }
+}
+
+export class FormStep {
+    key: string;
+    sections: string[];
+
+    constructor({ key, sections }: FormStepParameters) {
+        this.key = key;
+        this.sections = sections;
+    }
+}
+
+export interface FormButtonParameters {
+    label: string;
+    type: FormButtonType;
+
+    action?: (handle: FormHandle) => void;
+    isHidden?: boolean;
+    tooltip?: string;
+}
+
 export interface FormConfigParameters<TValue = unknown> {
     prefix: string;
     sections: FormSection[];
@@ -73,30 +155,10 @@ export interface FormConfigParameters<TValue = unknown> {
     steps?: FormStep[];
 }
 
-export class FormSection {
-    isHidden: FormRule<boolean>;
-    isTitleVisible: boolean;
-    isTooltipVisible: boolean;
-    key: string;
-    prefix: string;
-    rows: FormRow[];
+export interface FormRowParameters {
+    fields: FormField[];
 
-    constructor({
-        key,
-        rows,
-
-        isHidden = false,
-        isTitleVisible = true,
-        isTooltipVisible = false,
-        prefix = key
-    }: FormSectionParameters) {
-        this.isHidden = isHidden;
-        this.isTitleVisible = isTitleVisible;
-        this.isTooltipVisible = isTooltipVisible;
-        this.key = key;
-        this.prefix = prefix;
-        this.rows = rows;
-    }
+    alignment?: 'start' | 'end';
 }
 
 export interface FormSectionParameters {
@@ -106,68 +168,11 @@ export interface FormSectionParameters {
     isHidden?: FormRule<boolean>;
     isTitleVisible?: boolean;
     isTooltipVisible?: boolean;
+    label?: string;
     prefix?: string;
-}
-
-export class FormRow {
-    alignment: 'start' | 'end';
-    fields: FormField[];
-
-    constructor({ fields, alignment = 'start' }: FormRowParameters) {
-        this.alignment = alignment;
-        this.fields = fields;
-    }
-}
-
-export interface FormRowParameters {
-    fields: FormField[];
-
-    alignment?: 'start' | 'end';
-}
-
-export class FormStep {
-    key: string;
-    sections: string[];
-
-    constructor({ key, sections }: FormStepParameters) {
-        this.key = key;
-        this.sections = sections;
-    }
 }
 
 export interface FormStepParameters {
     key: string;
     sections: string[];
-}
-
-export class FormButton {
-    isHidden: boolean;
-    label: string;
-    tooltip: string;
-    type: FormButtonType;
-
-    action?: (handle: FormHandle) => void;
-
-    constructor({ label, type, action, isHidden = false, tooltip = '' }: FormButtonParameters) {
-        this.action = action;
-        this.isHidden = isHidden;
-        this.label = label;
-        this.tooltip = tooltip;
-        this.type = type;
-    }
-}
-
-export interface FormButtonParameters {
-    label: string;
-    type: FormButtonType;
-
-    action?: (handle: FormHandle) => void;
-    isHidden?: boolean;
-    tooltip?: string;
-}
-
-export enum FormButtonType {
-    Cancel = 'cancel',
-    Secondary = 'secondary',
-    Submit = 'submit'
 }

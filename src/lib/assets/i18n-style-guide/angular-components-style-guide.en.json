@@ -72,6 +72,7 @@
                     "label": "Home"
                 },
                 "product": {
+                    "detail": "({{count}} variants)",
                     "label": "Product"
                 }
             },
@@ -105,6 +106,21 @@
         "breadcrumbs": "Breadcrumbs",
         "components": "Components",
         "compound": "Compound",
+        "file-preview": {
+            "buttons": {
+                "image": "Preview an image",
+                "pdf": "Preview a PDF"
+            },
+            "example": "A dialog that previews a PDF or an image from a blob or a URL, opened with one call to the service. An object URL it creates for a blob is released when the dialog closes.",
+            "image": {
+                "alt": "A dark circle on a light grey background",
+                "title": "Sample image"
+            },
+            "pdf": {
+                "title": "Sample document"
+            }
+        },
+        "file-preview-section": "File Preview",
         "floating-preferences": {
             "example": "Self-contained language and theme selectors. Reads and writes state directly via TranslateService and BeyThemeService — no callbacks required.",
             "examples": {
@@ -209,8 +225,8 @@
             },
             "section-chips": {
                 "chips1": {
-                    "label": "Basic Chips",
-                    "placeholder": "Type and press Enter"
+                    "label": "Lowercase Chips",
+                    "placeholder": "Lowercase tags only"
                 },
                 "chips2": {
                     "label": "Required Chips (max. 5)",
@@ -220,7 +236,7 @@
                     "label": "Disabled Chips"
                 },
                 "label": "Chips Fields",
-                "tooltip": "Chips variants with basic, required with maxItems, and disabled states"
+                "tooltip": "Chips variants with a custom validator, required with maxItems, and disabled states"
             },
             "section-date": {
                 "date1": {
@@ -235,6 +251,32 @@
                 "label": "Date Fields",
                 "tooltip": "Date fields with range, required and disabled states"
             },
+            "section-dependent": {
+                "label": "Dependent Fields",
+                "load-regions": "Load the regions",
+                "plan": {
+                    "label": "Plan",
+                    "options": {
+                        "free": "Free",
+                        "pro": "Pro"
+                    },
+                    "placeholder": "Choose a plan"
+                },
+                "region": {
+                    "label": "Region",
+                    "options": {
+                        "asia": "Asia",
+                        "eu": "Europe",
+                        "us": "United States"
+                    },
+                    "placeholder": "Load the regions, then pick one"
+                },
+                "seats": {
+                    "label": "Seats",
+                    "placeholder": "Required on the Pro plan"
+                },
+                "tooltip": "Seats are required on the Pro plan only; the regions arrive after the form is built, and a region the new plan does not offer is cleared"
+            },
             "section-info": {
                 "info1": {
                     "label": "Version"
@@ -243,7 +285,14 @@
                     "label": "Created On"
                 },
                 "label": "Info Fields",
-                "tooltip": "Read-only icon/label pairs — no input styling, no FormControl"
+                "list1": {
+                    "label": "Used In"
+                },
+                "list2": {
+                    "label": "Empty List",
+                    "placeholder": "Nothing to list yet"
+                },
+                "tooltip": "Read-only icon/label pairs and scrollable lists — no input styling, no FormControl"
             },
             "section-number": {
                 "label": "Number Fields",
@@ -264,8 +313,8 @@
             "section-password": {
                 "label": "Password Fields",
                 "password1": {
-                    "label": "Password",
-                    "placeholder": "Enter your password"
+                    "label": "Password (min. 8)",
+                    "placeholder": "At least 8 characters"
                 },
                 "password2": {
                     "label": "Required Password",
@@ -279,7 +328,7 @@
                     "label": "Password Without Toggle",
                     "placeholder": "No visibility toggle"
                 },
-                "tooltip": "Password fields with toggle, required and disabled states"
+                "tooltip": "Password fields with a length validator, toggle, required and disabled states"
             },
             "section-radio": {
                 "label": "Radio Fields",
@@ -482,7 +531,7 @@
         "list": {
             "empty": "No employees found",
             "empty-example": "Empty state (no items):",
-            "example": "Vertical list of cards with fully custom HTML per card, keeping a consistent shell (spacing, border, hover). Click a card to log it to the console.",
+            "example": "Vertical list of cards with fully custom HTML per card, keeping a consistent shell (spacing, border, hover). Click a card to select it.",
             "selected": "Employee selected:"
         },
         "lists": "Lists",
@@ -556,6 +605,19 @@
                     "message": "The record was queued for archive and the process will finish in the background.",
                     "title": "Action confirmed"
                 }
+            },
+            "unsaved-changes": {
+                "example": "A route guard over tracked signals: tick the box to pretend there are unsaved changes, then try to leave. While it is ticked, closing or reloading the tab asks as well.",
+                "leave": "Leave this page",
+                "left": {
+                    "message": "Nothing held the navigation back.",
+                    "title": "Page left"
+                },
+                "stayed": {
+                    "message": "The changes are still here.",
+                    "title": "Still on the page"
+                },
+                "toggle": "There are unsaved changes"
             }
         },
         "modals": "Modals",
@@ -574,7 +636,38 @@
                     "tooltip": "Edit the selected product"
                 }
             },
-            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form.",
+            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form. The Available tab is a view: the same list with a filter of its own, searchable too. The headers sort the list and the columns menu hides the category or the price.",
+            "folders": {
+                "actions": {
+                    "move": {
+                        "label": "Move to...",
+                        "tooltip": "Move the selected rows to another folder"
+                    }
+                },
+                "categories": {
+                    "root": "All products"
+                },
+                "example": "With categories the page browses folders, and the last node of the breadcrumb counts what the folder holds, folders and products across every page. Leaving for a route under the page and coming back keeps the folder, the search, the page and the selection. Drag a product, or the selected rows, onto a folder to move them there; the Move to... action does the same from the keyboard. The headers sort the list on the backend.",
+                "heading": "Folders",
+                "move": {
+                    "title": "Move to"
+                },
+                "table": {
+                    "columns": {
+                        "name": "Name",
+                        "price": "Price"
+                    },
+                    "empty": "This folder is empty",
+                    "tooltips": {
+                        "name": "Products and folders by name",
+                        "price": "Unit price"
+                    }
+                },
+                "title": "Products by folder",
+                "toast": {
+                    "move-success": "Moved"
+                }
+            },
             "form": {
                 "create": {
                     "title": "New product"
@@ -624,6 +717,14 @@
                     "price": "Unit price"
                 }
             },
+            "tabs": {
+                "available": {
+                    "label": "Available"
+                },
+                "table": {
+                    "label": "All"
+                }
+            },
             "title": "Products",
             "toast": {
                 "create-success": "Product created",
@@ -642,17 +743,22 @@
         },
         "pagination-section": "Pagination",
         "pdf-viewer": {
-            "example": "PDF preview built on ngx-extended-pdf-viewer with its native toolbar hidden and a fully custom toolbar driven through the viewer's imperative API and events."
+            "compact-example": "The same viewer with the compact toolbar of the library: zoom within the configured limits, the current page and a slot on the left for the consumer's status.",
+            "example": "PDF preview built on ngx-extended-pdf-viewer with its native toolbar hidden and a fully custom toolbar driven through the viewer's imperative API and events.",
+            "status": "Up to date"
         },
         "pdf-viewer-section": "PDF Viewer",
         "properties-menu": {
             "example": "Property inspector for a selected editor block, with tabs, collapsible groups and variable insertion.",
-            "provide-variables": "Provide variables"
+            "provide-variables": "Provide variables",
+            "tree": {
+                "page": "Page {{number}}"
+            }
         },
         "properties-menu-section": "Properties Menu",
         "search": {
             "applied": "Applied filters",
-            "example": "Quick search box plus a panel of typed filter rows. Every change is reported through onFiltersChange; the consumer runs the query.",
+            "example": "Quick search box plus a panel of typed filter rows. It starts from the filters of its config, here the editor role; every change is reported through onFiltersChange and the consumer runs the query.",
             "fields": {
                 "active": "Active",
                 "age": "Age",
@@ -668,19 +774,23 @@
         "simple": "Simple",
         "table": {
             "actions": {
+                "dropped": "Rows dropped",
                 "open": "Open",
                 "opened": "Row action executed"
             },
             "columns": {
                 "action": "Action",
+                "joined-at": "Joined",
                 "name": "Name",
                 "role": "Role",
                 "skills": "Skills",
-                "status": "Status"
+                "status": "Status",
+                "team": "Team"
             },
             "empty": "No rows available for this example.",
-            "example": "Data table with sorting, row selection, and customizable columns via model configuration.",
+            "example": "Data table with sorting from the headers, row selection, a columns menu remembered per table and rows that can be dragged onto other rows.",
             "examples": {
+                "drag": "Drag a person onto a team to move them there, or the selected people at once",
                 "empty": "Same table without rows",
                 "filled": "Same table with rows"
             },
@@ -691,8 +801,9 @@
                 "review": "In review"
             },
             "tooltips": {
+                "joined-at": "Date cells format the value with the locale of the app",
                 "name": "Primary identity column",
-                "skills": "Badge cells accept a list, rendering more than one badge per row",
+                "skills": "Tags cells show plain strings as outline badges, never translated",
                 "status": "Status cells can be translated and tooltip-enabled"
             }
         },

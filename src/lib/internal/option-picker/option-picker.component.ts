@@ -23,10 +23,6 @@ import { OptionPickerOption } from './models/option-picker-option.model';
 const PANEL_MAX_HEIGHT_PX = 256;
 const PANEL_GAP_PX = 4;
 
-/**
- * Floating list of options anchored to an element. The host node is moved to `<body>` and positioned
- * with fixed coordinates so it escapes any scrollable ancestor (a modal body, a side panel).
- */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, TooltipModule, TranslateModule],
@@ -36,6 +32,10 @@ const PANEL_GAP_PX = 4;
     templateUrl: './option-picker.component.html'
 })
 export class OptionPickerComponent {
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+    private readonly renderer = inject(Renderer2);
+
     readonly anchor = input.required<HTMLElement>();
     readonly options = input.required<OptionPickerOption[]>();
     readonly searchable = input(true);
@@ -43,9 +43,6 @@ export class OptionPickerComponent {
     readonly closed = output<void>();
     readonly selected = output<OptionPickerOption>();
 
-    readonly searchTerm = signal('');
-
-    readonly isFiltering = computed(() => this.searchTerm().trim().length > 0);
     readonly visibleOptions = computed(() => {
         const term = this.searchTerm().trim().toLowerCase();
 
@@ -56,20 +53,17 @@ export class OptionPickerComponent {
             : this.options();
     });
     readonly activeIndex = linkedSignal({ source: this.visibleOptions, computation: () => 0 });
-
     readonly closeIcon = faXmark;
+    readonly isFiltering = computed(() => this.searchTerm().trim().length > 0);
     readonly searchIcon = faMagnifyingGlass;
+    readonly searchTerm = signal('');
 
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
-    private readonly renderer = inject(Renderer2);
-
-    private readonly onWindowResize = (): void => this.position();
     private readonly onAncestorScroll = (event: Event): void => {
         if (!this.elementRef.nativeElement.contains(event.target as Node)) {
             this.closed.emit();
         }
     };
+    private readonly onWindowResize = (): void => this.position();
 
     constructor() {
         afterNextRender(() => {
@@ -83,6 +77,10 @@ export class OptionPickerComponent {
             window.removeEventListener('resize', this.onWindowResize);
             document.removeEventListener('scroll', this.onAncestorScroll, { capture: true });
         });
+    }
+
+    indent(option: OptionPickerOption): number {
+        return this.isFiltering() ? 0 : (option.depth ?? 0);
     }
 
     @HostListener('document:click', ['$event'])
@@ -122,11 +120,6 @@ export class OptionPickerComponent {
             default:
                 break;
         }
-    }
-
-    /** Nested options are indented while browsing; a search result is a flat list. */
-    indent(option: OptionPickerOption): number {
-        return this.isFiltering() ? 0 : (option.depth ?? 0);
     }
 
     onSearchTermChange(event: Event): void {

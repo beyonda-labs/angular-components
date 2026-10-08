@@ -8,6 +8,7 @@ import { SearchComponent } from '../search/search.component';
 import { TableComponent } from '../table/table.component';
 import { TabsComponent } from '../tabs/tabs.component';
 import { PageConfig } from './models/page.model';
+import { PageItem } from './models/page-item.model';
 import { PageService } from './services/page.service';
 
 @Component({
@@ -27,10 +28,15 @@ import { PageService } from './services/page.service';
     styleUrls: ['./page.component.css'],
     templateUrl: './page.component.html'
 })
-export class PageComponent {
-    readonly config = input.required<PageConfig>();
-
+export class PageComponent<
+    TValue = unknown,
+    TItem extends PageItem = PageItem,
+    TCategory extends PageItem = TItem,
+    TCategoryValue = unknown
+> {
     readonly service = inject(PageService);
+
+    readonly config = input.required<PageConfig<TValue, TItem, TCategory, TCategoryValue>>();
 
     readonly hasToolbar = computed(() => Boolean(this.service.viewToggleConfig() || this.service.searchConfig()));
 

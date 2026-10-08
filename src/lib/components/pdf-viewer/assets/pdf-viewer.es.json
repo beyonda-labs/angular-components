@@ -1,0 +1,21 @@
+{
+    "angular-components": {
+        "pdf-viewer": {
+            "search": {
+                "close": "Cerrar búsqueda",
+                "field": "Buscar en el documento",
+                "next-match": "Coincidencia siguiente",
+                "no-matches": "Sin resultados",
+                "previous-match": "Coincidencia anterior"
+            },
+            "toolbar": {
+                "download": "Descargar",
+                "page": "Página",
+                "search": "Buscar en el documento",
+                "search-tooltip": "Buscar en el documento (Ctrl+F)",
+                "zoom-in": "Ampliar",
+                "zoom-out": "Reducir"
+            }
+        }
+    }
+}

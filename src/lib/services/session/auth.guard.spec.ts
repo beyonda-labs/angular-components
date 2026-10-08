@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, provideRouter, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { TestingConfig } from '@testing/models/testing.model';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { authGuard } from './auth.guard';
-import { DEFAULT_SESSION_CONFIG, SESSION_CONFIG, SessionUser } from './models/session.model';
-import { SessionService } from './session.service';
+import { SessionUser } from './models/session.model';
 
 function runGuard(path: string) {
     const route = { routeConfig: { path } } as unknown as ActivatedRouteSnapshot;
@@ -12,16 +13,11 @@ function runGuard(path: string) {
     return TestBed.runInInjectionContext(() => authGuard(route, state));
 }
 
+function redirection(result: ReturnType<typeof runGuard>): string {
+    return TestBed.inject(Router).serializeUrl(result as UrlTree);
+}
+
 describe('authGuard', () => {
-    const sessionService = {
-        getUser: jest.fn(),
-        isAuthenticated: jest.fn()
-    };
-
-    const router = {
-        createUrlTree: jest.fn()
-    };
-
     const mockUser: SessionUser = {
         allowedPaths: ['/dashboard', '/settings'],
         email: 'john@example.com',
@@ -31,87 +27,51 @@ describe('authGuard', () => {
         surname: 'Doe'
     };
 
-    beforeEach(() => {
-        jest.resetAllMocks();
-        router.createUrlTree.mockReturnValue({} as UrlTree);
-
-        TestBed.configureTestingModule({
-            providers: [
-                { provide: SessionService, useValue: sessionService },
-                { provide: Router, useValue: router },
-                { provide: SESSION_CONFIG, useValue: DEFAULT_SESSION_CONFIG }
-            ]
-        });
-    });
+    function configure(config?: TestingConfig): void {
+        TestBed.configureTestingModule({ providers: [provideRouter([]), provideBeyTesting(config)] });
+    }
 
     describe('authentication check', () => {
-        it('should redirect to loginRoute when not authenticated', () => {
-            sessionService.isAuthenticated.mockReturnValue(false);
+        it('redirects to the login route when not authenticated', () => {
+            configure();
 
-            runGuard('dashboard');
-
-            expect(router.createUrlTree).toHaveBeenCalledWith(['/login']);
+            expect(redirection(runGuard('dashboard'))).toBe('/login');
         });
 
-        it('should redirect to loginRoute when authenticated but no user data', () => {
-            sessionService.isAuthenticated.mockReturnValue(true);
-            sessionService.getUser.mockReturnValue(null);
+        it('redirects to the login route when authenticated without a user', () => {
+            configure({ token: 'opaque-token' });
 
-            runGuard('dashboard');
-
-            expect(router.createUrlTree).toHaveBeenCalledWith(['/login']);
+            expect(redirection(runGuard('dashboard'))).toBe('/login');
         });
     });
 
     describe('authorization check', () => {
-        it('should allow access when route is in allowedPaths', () => {
-            sessionService.isAuthenticated.mockReturnValue(true);
-            sessionService.getUser.mockReturnValue(mockUser);
+        beforeEach(() => {
+            configure({ user: mockUser });
+        });
 
+        it('allows a route listed in allowedPaths', () => {
             const result = runGuard('dashboard');
 
             expect(result).toBe(true);
         });
 
-        it('should allow access for sub-paths of allowedPaths', () => {
-            sessionService.isAuthenticated.mockReturnValue(true);
-            sessionService.getUser.mockReturnValue(mockUser);
-
+        it('allows the sub-paths of a route in allowedPaths', () => {
             const result = runGuard('settings/profile');
 
             expect(result).toBe(true);
         });
 
-        it('should redirect to redirectPath when route is not in allowedPaths', () => {
-            sessionService.isAuthenticated.mockReturnValue(true);
-            sessionService.getUser.mockReturnValue(mockUser);
-
-            runGuard('admin/users');
-
-            expect(router.createUrlTree).toHaveBeenCalledWith(['/dashboard']);
+        it('redirects to redirectPath when the route is not in allowedPaths', () => {
+            expect(redirection(runGuard('admin/users'))).toBe('/dashboard');
         });
     });
 
     describe('custom config', () => {
-        it('should use custom loginRoute from config', () => {
-            TestBed.resetTestingModule();
-            TestBed.configureTestingModule({
-                providers: [
-                    { provide: SessionService, useValue: sessionService },
-                    { provide: Router, useValue: router },
-                    {
-                        provide: SESSION_CONFIG,
-                        useValue: { ...DEFAULT_SESSION_CONFIG, loginRoute: '/auth/signin' }
-                    }
-                ]
-            });
+        it('redirects to the login route given in the config', () => {
+            configure({ session: { loginRoute: '/auth/signin' } });
 
-            sessionService.isAuthenticated.mockReturnValue(false);
-            router.createUrlTree.mockReturnValue({} as UrlTree);
-
-            runGuard('dashboard');
-
-            expect(router.createUrlTree).toHaveBeenCalledWith(['/auth/signin']);
+            expect(redirection(runGuard('dashboard'))).toBe('/auth/signin');
         });
     });
 });

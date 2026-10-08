@@ -12,15 +12,18 @@ export const MODAL_FORM_CLOSE_CONFIRMATION_MESSAGE = 'angular-components.form.mo
 export const MODAL_FORM_CLOSE_CONFIRMATION_TITLE = 'angular-components.form.modal.close-confirmation.title';
 
 export enum ModalFormSize {
-    Small = 'modal-sm',
-    Medium = '',
+    ExtraLarge = 'modal-xl',
     Large = 'modal-lg',
-    ExtraLarge = 'modal-xl'
+    Medium = '',
+    Small = 'modal-sm'
 }
 
 export class ModalFormConfig<TValue = unknown> extends FormConfig<TValue> {
     size: ModalFormSize;
     title: string;
+
+    cancelLabel?: string;
+    submitLabel?: string;
 
     constructor({
         cancelLabel,
@@ -43,7 +46,9 @@ export class ModalFormConfig<TValue = unknown> extends FormConfig<TValue> {
             prefix
         });
 
+        this.cancelLabel = cancelLabel;
         this.size = size;
+        this.submitLabel = submitLabel;
         this.title = title;
     }
 }

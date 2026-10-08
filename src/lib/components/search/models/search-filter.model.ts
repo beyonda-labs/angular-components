@@ -53,13 +53,6 @@ export class BooleanFilter extends SearchFilter {
     }
 }
 
-export interface BooleanFilterParameters {
-    field: string;
-
-    operator?: BooleanFilterOperator;
-    value?: boolean;
-}
-
 export class NumberFilter extends SearchFilter {
     declare operator: NumberFilterOperator;
 
@@ -70,13 +63,6 @@ export class NumberFilter extends SearchFilter {
     }
 }
 
-export interface NumberFilterParameters {
-    field: string;
-
-    operator?: NumberFilterOperator;
-    value?: number | [number, number];
-}
-
 export class StringFilter extends SearchFilter {
     declare operator: StringFilterOperator;
 
@@ -85,6 +71,20 @@ export class StringFilter extends SearchFilter {
     constructor({ field, operator = SearchFilterOperator.Contains, value }: StringFilterParameters) {
         super(field, operator, value);
     }
+}
+
+export interface BooleanFilterParameters {
+    field: string;
+
+    operator?: BooleanFilterOperator;
+    value?: boolean;
+}
+
+export interface NumberFilterParameters {
+    field: string;
+
+    operator?: NumberFilterOperator;
+    value?: number | [number, number];
 }
 
 export interface StringFilterParameters {

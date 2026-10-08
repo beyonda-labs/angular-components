@@ -24,14 +24,13 @@ import { InternalModalConfig, ModalType } from '../models/modal.model';
     templateUrl: './modal-dialog.component.html'
 })
 export class ModalDialogComponent implements OnDestroy {
+    private readonly bsModalReference = inject<BsModalRef<ModalDialogComponent>>(BsModalRef);
+
+    readonly closed = new ReplaySubject<boolean>(1);
     config!: InternalModalConfig;
     result = false;
 
-    readonly closed = new ReplaySubject<boolean>(1);
-
     private resolved = false;
-
-    private readonly bsModalReference = inject<BsModalRef<ModalDialogComponent>>(BsModalRef);
 
     ngOnDestroy(): void {
         if (!this.resolved) {
@@ -65,8 +64,8 @@ export class ModalDialogComponent implements OnDestroy {
         });
     }
 
-    getTypeLabel(): string {
-        return `angular-components.modal.types.${this.config.type}`;
+    getSecondaryActionLabel(): string {
+        return this.config.secondaryActionLabel ?? '';
     }
 
     getSecondaryButton(): ButtonConfig {
@@ -77,12 +76,12 @@ export class ModalDialogComponent implements OnDestroy {
         });
     }
 
-    hasSecondaryAction(): boolean {
-        return this.isConfirmation() && Boolean(this.config.secondaryActionLabel);
+    getTypeLabel(): string {
+        return `angular-components.modal.types.${this.config.type}`;
     }
 
-    getSecondaryActionLabel(): string {
-        return this.config.secondaryActionLabel ?? '';
+    hasSecondaryAction(): boolean {
+        return this.isConfirmation() && Boolean(this.config.secondaryActionLabel);
     }
 
     onPrimaryAction(): void {

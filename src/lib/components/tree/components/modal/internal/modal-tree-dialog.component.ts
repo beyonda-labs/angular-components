@@ -6,6 +6,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 
 import { ButtonComponent } from '../../../../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../../../../internal/button/models/button-config.model';
+import { findNodeByKey } from '../../../functions/tree-node-search';
 import { TreeConfig } from '../../../models/tree.model';
 import { TreeComponent } from '../../../tree.component';
 import { ModalTreeConfig } from '../models/modal-tree.model';
@@ -19,57 +20,52 @@ import { ModalTreeConfig } from '../models/modal-tree.model';
     templateUrl: './modal-tree-dialog.component.html'
 })
 export class ModalTreeDialogComponent implements OnInit {
-    config!: ModalTreeConfig;
-
-    readonly titleIcon = faFolderTree;
-
-    /* The dialog owns the selection so the tree repaints; the config keeps it for `confirm()`. */
-    readonly selectedKey = signal<string>('');
-
-    readonly treeConfig = computed<TreeConfig>(
-        () =>
-            new TreeConfig({
-                expandedKeys: this.config.treeConfig.expandedKeys,
-                nodes: this.config.treeConfig.nodes,
-                onNodeSelect: node => this.select(node.key),
-                prefix: this.config.treeConfig.prefix,
-                selectedKey: this.selectedKey() || undefined
-            })
-    );
+    private readonly bsModalReference: BsModalRef<ModalTreeDialogComponent> = inject(BsModalRef);
 
     readonly cancelButton = new ButtonConfig({
         action: () => this.dismiss(),
         label: 'angular-components.modal.actions.cancel',
         type: ButtonType.Secondary
     });
-
+    config!: ModalTreeConfig;
     readonly confirmButton = computed(
         () =>
             new ButtonConfig({
-                action: () => this.config.confirm(),
+                action: () => this.confirm(),
                 isDisabled: !this.selectedKey(),
                 label: 'angular-components.modal.actions.confirm',
                 type: ButtonType.Primary
             })
     );
-
-    private readonly bsModalReference: BsModalRef<ModalTreeDialogComponent> = inject(BsModalRef);
+    readonly expandedKeys = signal<string[]>([]);
+    readonly selectedKey = signal<string>('');
+    readonly titleIcon = faFolderTree;
+    readonly treeConfig = computed<TreeConfig>(
+        () =>
+            new TreeConfig({
+                expandedKeys: this.expandedKeys(),
+                nodes: this.config.treeConfig.nodes,
+                onNodeSelect: node => this.selectedKey.set(node.key),
+                onNodeToggle: (node, expanded) => this.toggle(node.key, expanded),
+                prefix: this.config.treeConfig.prefix,
+                selectedKey: this.selectedKey() || undefined
+            })
+    );
 
     ngOnInit(): void {
-        this.config.closeHandler = () => this.bsModalReference.hide();
+        this.expandedKeys.set(this.config.treeConfig.expandedKeys ?? []);
         this.selectedKey.set(this.config.treeConfig.selectedKey ?? '');
     }
 
     dismiss(): void {
-        this.config.close();
+        this.bsModalReference.hide();
     }
 
-    getTitle(): string {
-        return this.config.getTitle();
+    private confirm(): void {
+        this.config.onConfirm?.(findNodeByKey(this.config.treeConfig.nodes, this.selectedKey()));
     }
 
-    private select(key: string): void {
-        this.selectedKey.set(key);
-        this.config.treeConfig.selectedKey = key;
+    private toggle(key: string, expanded: boolean): void {
+        this.expandedKeys.update(keys => (expanded ? [...keys, key] : keys.filter(current => current !== key)));
     }
 }

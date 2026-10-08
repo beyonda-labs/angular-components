@@ -1,39 +1,27 @@
+import { TableCell } from '../../table/models/table-cell.model';
 import { PageFormConfig } from './page-form.model';
-
-export class PageCategoriesConfig {
-    nameField: string;
-    parentField: string;
-    typeField: string;
-    useTrash: boolean;
-
-    formConfig?: PageFormConfig;
-
-    constructor({
-        formConfig,
-        nameField = 'name',
-        parentField = 'parentId',
-        typeField = 'type',
-        useTrash = false
-    }: PageCategoriesConfigParameters) {
-        this.formConfig = formConfig;
-        this.nameField = nameField;
-        this.parentField = parentField;
-        this.typeField = typeField;
-        this.useTrash = useTrash;
-    }
-}
-
-export interface PageCategoriesConfigParameters {
-    formConfig?: PageFormConfig;
-    nameField?: string;
-    parentField?: string;
-    typeField?: string;
-    useTrash?: boolean;
-}
+import { PageItem } from './page-item.model';
 
 export enum PageItemType {
     Category = 'category',
     Item = 'item'
+}
+
+export enum PageViewMode {
+    Table = 'table',
+    Trash = 'trash'
+}
+
+export interface PageMoveTarget {
+    id: string | number | null;
+}
+
+export interface PageRestoredRename {
+    field: string;
+    from: string;
+    id: string | number;
+    to: string;
+    type: PageItemType;
 }
 
 export interface PageTrashItem {
@@ -41,7 +29,37 @@ export interface PageTrashItem {
     type: PageItemType;
 }
 
-export enum PageViewMode {
-    Table = 'table',
-    Trash = 'trash'
+export class PageCategoriesConfig<TCategory extends PageItem = PageItem, TCategoryValue = unknown> {
+    nameField: string;
+    parentField: string;
+    parentPathField: string;
+    typeField: string;
+
+    formConfig?: PageFormConfig<TCategoryValue, TCategory>;
+    loadRow?: (category: TCategory, viewMode: PageViewMode) => TableCell[];
+
+    constructor({
+        formConfig,
+        loadRow,
+        nameField = 'name',
+        parentField = 'parentId',
+        parentPathField = 'parentPath',
+        typeField = 'type'
+    }: PageCategoriesConfigParameters<TCategory, TCategoryValue>) {
+        this.formConfig = formConfig;
+        this.loadRow = loadRow;
+        this.nameField = nameField;
+        this.parentField = parentField;
+        this.parentPathField = parentPathField;
+        this.typeField = typeField;
+    }
+}
+
+export interface PageCategoriesConfigParameters<TCategory extends PageItem = PageItem, TCategoryValue = unknown> {
+    formConfig?: PageFormConfig<TCategoryValue, TCategory>;
+    loadRow?: (category: TCategory, viewMode: PageViewMode) => TableCell[];
+    nameField?: string;
+    parentField?: string;
+    parentPathField?: string;
+    typeField?: string;
 }

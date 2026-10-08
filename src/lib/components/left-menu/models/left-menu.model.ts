@@ -1,5 +1,40 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
+export class LeftMenuAction {
+    active: boolean;
+    disabled: boolean;
+    key: string;
+    label: string;
+    subActions: LeftMenuAction[];
+    tooltip: string;
+
+    action?: () => void;
+    icon?: IconDefinition;
+    route?: string;
+
+    constructor({
+        key,
+        action,
+        active = false,
+        disabled = false,
+        icon,
+        label = `${key}.label`,
+        route,
+        subActions = [],
+        tooltip = `${key}.tooltip`
+    }: LeftMenuActionParameters) {
+        this.action = action;
+        this.active = active;
+        this.disabled = disabled;
+        this.icon = icon;
+        this.label = label;
+        this.route = route;
+        this.subActions = subActions;
+        this.key = key;
+        this.tooltip = tooltip;
+    }
+}
+
 export class LeftMenuConfig {
     bottomActions: LeftMenuAction[];
     expanded: boolean;
@@ -29,18 +64,6 @@ export class LeftMenuConfig {
     }
 }
 
-export interface LeftMenuConfigParameters {
-    prefix: string;
-    title: LeftMenuTitle;
-
-    bottomActions?: LeftMenuAction[];
-    expanded?: boolean;
-    /** Run when the user expands or collapses the menu. */
-    onExpandedChange?: (expanded: boolean) => void;
-    topActions?: LeftMenuAction[];
-    userInfo?: LeftMenuUserInfo;
-}
-
 export class LeftMenuTitle {
     icon: string;
     title: string;
@@ -49,11 +72,6 @@ export class LeftMenuTitle {
         this.icon = icon;
         this.title = title;
     }
-}
-
-export interface LeftMenuTitleParameters {
-    icon?: string;
-    title?: string;
 }
 
 export class LeftMenuUserInfo {
@@ -77,49 +95,6 @@ export class LeftMenuUserInfo {
     }
 }
 
-export interface LeftMenuUserInfoParameters {
-    name: string;
-
-    email?: string;
-    initials?: string;
-    surname?: string;
-}
-
-export class LeftMenuAction {
-    active: boolean;
-    disabled: boolean;
-    label: string;
-    subActions: LeftMenuAction[];
-    key: string;
-    route?: string;
-    tooltip: string;
-
-    action?: () => void;
-    icon?: IconDefinition;
-
-    constructor({
-        key,
-        action,
-        active = false,
-        disabled = false,
-        icon,
-        label = `${key}.label`,
-        route,
-        subActions = [],
-        tooltip = `${key}.tooltip`
-    }: LeftMenuActionParameters) {
-        this.action = action;
-        this.active = active;
-        this.disabled = disabled;
-        this.icon = icon;
-        this.label = label;
-        this.route = route;
-        this.subActions = subActions;
-        this.key = key;
-        this.tooltip = tooltip;
-    }
-}
-
 export interface LeftMenuActionParameters {
     key: string;
 
@@ -131,4 +106,28 @@ export interface LeftMenuActionParameters {
     route?: string;
     subActions?: LeftMenuAction[];
     tooltip?: string;
+}
+
+export interface LeftMenuConfigParameters {
+    prefix: string;
+    title: LeftMenuTitle;
+
+    bottomActions?: LeftMenuAction[];
+    expanded?: boolean;
+    onExpandedChange?: (expanded: boolean) => void;
+    topActions?: LeftMenuAction[];
+    userInfo?: LeftMenuUserInfo;
+}
+
+export interface LeftMenuTitleParameters {
+    icon?: string;
+    title?: string;
+}
+
+export interface LeftMenuUserInfoParameters {
+    name: string;
+
+    email?: string;
+    initials?: string;
+    surname?: string;
 }

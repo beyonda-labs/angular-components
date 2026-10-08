@@ -3,6 +3,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { PropertySegmentedField } from '../../../models/fields/property-segmented-field.model';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 import { PropertyOption } from '../../../models/property-option.model';
 
 @Component({
@@ -14,13 +15,14 @@ import { PropertyOption } from '../../../models/property-option.model';
     templateUrl: './property-segmented-field.component.html'
 })
 export class PropertySegmentedFieldComponent {
+    private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+
     readonly field = input.required<PropertySegmentedField>();
+    readonly labelling = input.required<PropertyFieldLabelling>();
 
     readonly valueChange = output<unknown>();
 
     readonly enabledOptions = computed(() => this.field().options.filter(option => !option.disabled));
-
-    private readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
 
     isActive(option: PropertyOption): boolean {
         return this.field().value === option.value;

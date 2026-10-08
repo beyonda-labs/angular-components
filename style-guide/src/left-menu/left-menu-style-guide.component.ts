@@ -32,10 +32,9 @@ const BRAND_ICON =
     templateUrl: './left-menu-style-guide.component.html'
 })
 export class LeftMenuStyleGuideComponent {
-    lastDocumentsClick: 'label' | null = null;
-
     collapsedConfig = this.buildConfig(false);
     expandedConfig = this.buildConfig(true);
+    lastDocumentsClick: 'label' | null = null;
 
     private buildConfig(expanded: boolean): BeyLeftMenuConfig {
         return new BeyLeftMenuConfig({

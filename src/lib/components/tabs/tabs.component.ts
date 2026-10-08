@@ -12,13 +12,15 @@ import {
     linkedSignal,
     NgZone,
     signal,
-    viewChild
+    viewChild,
+    viewChildren
 } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEllipsis } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { toKeySegment } from '../../utilities/key-segment';
 import { Tab, TabsConfig, TabsVariant } from './models/tabs.model';
 
 const OVERFLOW_TRIGGER_ESTIMATED_WIDTH = 40;
@@ -33,27 +35,25 @@ const TAB_GAP_ESTIMATED_WIDTH = 4;
     templateUrl: './tabs.component.html'
 })
 export class TabsComponent implements AfterViewInit {
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly elementReference = inject<ElementRef<HTMLElement>>(ElementRef);
+    private readonly ngZone = inject(NgZone);
+
     readonly config = input.required<TabsConfig>();
 
     readonly activeTabKey = linkedSignal(() => this.config().activeTab);
     readonly isOverflowMenuOpen = signal(false);
-    readonly visibleCount = linkedSignal(() => this.config().tabs.length);
-
     readonly isSegmented = computed(() => this.config().variant === TabsVariant.Segmented);
-    readonly overflowTabs = computed(() => this.config().tabs.slice(this.visibleCount()));
-    readonly visibleTabs = computed(() => this.config().tabs.slice(0, this.visibleCount()));
-
     readonly overflowIcon = faEllipsis;
+    readonly overflowTabs = computed(() => this.config().tabs.slice(this.visibleCount()));
+    readonly visibleCount = linkedSignal(() => this.config().tabs.length);
+    readonly visibleTabs = computed(() => this.config().tabs.slice(0, this.visibleCount()));
 
     private cachedTabWidths: number[] = [];
     private previousContainerWidth = 0;
     private resizeObserver?: ResizeObserver;
-
+    private readonly tabButtons = viewChildren<ElementRef<HTMLButtonElement>>('tabButton');
     private readonly tabsRow = viewChild<ElementRef<HTMLElement>>('tabsRow');
-
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly elementReference = inject<ElementRef<HTMLElement>>(ElementRef);
-    private readonly ngZone = inject(NgZone);
 
     constructor() {
         effect(() => {
@@ -62,32 +62,23 @@ export class TabsComponent implements AfterViewInit {
             this.scheduleRecalculate();
         });
 
+        effect(() => this.observeResize(this.tabButtons()));
+
         this.destroyRef.onDestroy(() => this.resizeObserver?.disconnect());
     }
 
     ngAfterViewInit(): void {
-        this.observeResize();
+        this.resizeObserver = new ResizeObserver(entries => this.ngZone.run(() => this.handleResize(entries)));
+        this.observeResize(this.tabButtons());
         this.recalculate();
         this.scheduleRecalculate();
-    }
-
-    @HostListener('document:click', ['$event'])
-    onDocumentClick(event: MouseEvent): void {
-        if (!this.elementReference.nativeElement.contains(event.target as Node)) {
-            this.isOverflowMenuOpen.set(false);
-        }
-    }
-
-    @HostListener('document:keydown.escape')
-    onEscape(): void {
-        this.isOverflowMenuOpen.set(false);
     }
 
     getTabLabel(tab: Tab): string {
         const defaultValue = `${tab.key}.label`;
 
         if (tab.label === defaultValue) {
-            return `${this.config().prefix}.tabs.${defaultValue}`;
+            return `${this.config().prefix}.tabs.${toKeySegment(tab.key)}.label`;
         }
 
         return tab.label;
@@ -101,7 +92,7 @@ export class TabsComponent implements AfterViewInit {
         const defaultValue = `${tab.key}.tooltip`;
 
         if (tab.tooltip === defaultValue) {
-            return `${this.config().prefix}.tabs.${defaultValue}`;
+            return `${this.config().prefix}.tabs.${toKeySegment(tab.key)}.tooltip`;
         }
 
         return tab.tooltip;
@@ -113,6 +104,18 @@ export class TabsComponent implements AfterViewInit {
 
     isActiveInOverflow(): boolean {
         return this.overflowTabs().some(tab => this.isActive(tab));
+    }
+
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent): void {
+        if (!this.elementReference.nativeElement.contains(event.target as Node)) {
+            this.isOverflowMenuOpen.set(false);
+        }
+    }
+
+    @HostListener('document:keydown.escape')
+    onEscape(): void {
+        this.isOverflowMenuOpen.set(false);
     }
 
     onKeydown(event: KeyboardEvent): void {
@@ -163,11 +166,60 @@ export class TabsComponent implements AfterViewInit {
         this.isOverflowMenuOpen.update(isOpen => !isOpen);
     }
 
+    private countTabsThatFit(widths: number[], containerWidth: number, tabs: Tab[]): number {
+        const overflowReserve = OVERFLOW_TRIGGER_ESTIMATED_WIDTH + TAB_GAP_ESTIMATED_WIDTH;
+        let budget = containerWidth - overflowReserve;
+        let count = 0;
+
+        for (const width of widths) {
+            const needed = width + (count > 0 ? TAB_GAP_ESTIMATED_WIDTH : 0);
+
+            if (budget - needed < 0) {
+                break;
+            }
+
+            budget -= needed;
+            count++;
+        }
+
+        count = Math.max(count, 1);
+
+        const activeIndex = tabs.findIndex(tab => tab.key === this.activeTabKey());
+
+        return activeIndex >= count ? activeIndex + 1 : count;
+    }
+
     private focusTab(key: string): void {
         const buttons = this.elementReference.nativeElement.querySelectorAll<HTMLButtonElement>('[role="tab"]');
         const index = this.config().tabs.findIndex(tab => tab.key === key);
 
         buttons[index]?.focus();
+    }
+
+    private handleResize(entries: ResizeObserverEntry[]): void {
+        const host = this.elementReference.nativeElement;
+
+        if (entries.some(entry => entry.target !== host) && this.hasStaleTabWidths()) {
+            this.cachedTabWidths = [];
+            this.visibleCount.set(this.config().tabs.length);
+            this.scheduleRecalculate();
+
+            return;
+        }
+
+        const width = entries.find(entry => entry.target === host)?.contentRect.width;
+
+        if (width !== undefined && Math.abs(width - this.previousContainerWidth) > 1) {
+            this.recalculate();
+        }
+    }
+
+    private hasStaleTabWidths(): boolean {
+        return this.measureTabWidths().some((width, index) => {
+            const cached = this.cachedTabWidths[index];
+
+            return cached !== undefined && Math.abs(width - cached) > 1;
+        });
     }
 
     private measureTabWidths(): number[] {
@@ -184,15 +236,17 @@ export class TabsComponent implements AfterViewInit {
         return [...buttons].map(button => button.offsetWidth);
     }
 
-    private observeResize(): void {
-        this.resizeObserver = new ResizeObserver(entries => {
-            const width = entries[0]?.contentRect.width ?? 0;
+    private observeResize(buttons: readonly ElementRef<HTMLButtonElement>[]): void {
+        if (!this.resizeObserver) {
+            return;
+        }
 
-            if (Math.abs(width - this.previousContainerWidth) > 1) {
-                this.ngZone.run(() => this.recalculate());
-            }
-        });
+        this.resizeObserver.disconnect();
         this.resizeObserver.observe(this.elementReference.nativeElement);
+
+        for (const button of buttons) {
+            this.resizeObserver.observe(button.nativeElement);
+        }
     }
 
     private recalculate(): void {
@@ -234,29 +288,6 @@ export class TabsComponent implements AfterViewInit {
         }
 
         this.visibleCount.set(this.countTabsThatFit(widths, containerWidth, tabs));
-    }
-
-    private countTabsThatFit(widths: number[], containerWidth: number, tabs: Tab[]): number {
-        const overflowReserve = OVERFLOW_TRIGGER_ESTIMATED_WIDTH + TAB_GAP_ESTIMATED_WIDTH;
-        let budget = containerWidth - overflowReserve;
-        let count = 0;
-
-        for (const width of widths) {
-            const needed = width + (count > 0 ? TAB_GAP_ESTIMATED_WIDTH : 0);
-
-            if (budget - needed < 0) {
-                break;
-            }
-
-            budget -= needed;
-            count++;
-        }
-
-        count = Math.max(count, 1);
-
-        const activeIndex = tabs.findIndex(tab => tab.key === this.activeTabKey());
-
-        return activeIndex >= count ? activeIndex + 1 : count;
     }
 
     private scheduleRecalculate(): void {

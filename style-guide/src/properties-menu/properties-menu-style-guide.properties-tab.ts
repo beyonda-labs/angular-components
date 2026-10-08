@@ -24,7 +24,6 @@ import {
     faCircleInfo
 } from '@fortawesome/free-solid-svg-icons';
 
-/** The properties tab of the demo: every field type across a few groups, including tabbed and half-width ones. */
 export function buildPropertiesTab(): BeyPropertyTab {
     return new BeyPropertyTab({
         id: 'properties',

@@ -1,12 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryAll, renderComponent, settle } from '@testing/dom';
 import { mock, MockProxy } from 'jest-mock-extended';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 
 import { TableColumn } from '../table/models/table.model';
-import { TextTableCell } from '../table/models/table-cell.model';
+import { TableCell, TextTableCell } from '../table/models/table-cell.model';
+import { pageStandardAction } from './functions/page-standard-actions';
 import { PageBackendResponse, PageConfig, PageConfigParameters } from './models/page.model';
+import { PageStandardAction } from './models/page-action.model';
+import { PageCategoriesConfig, PageItemType, PageViewMode } from './models/page-categories.model';
+import { PageHeaderConfig } from './models/page-header.model';
 import { PageItem } from './models/page-item.model';
 import { PageTableConfig, PageTableSearchConfig } from './models/page-table.model';
 import { PageComponent } from './page.component';
@@ -17,32 +21,61 @@ interface Person extends PageItem {
     name: string;
 }
 
+interface Team extends PageItem {
+    title: string;
+    type: PageItemType;
+}
+
 const PEOPLE: Person[] = [
     { id: 1, name: 'Ada' },
     { id: 2, name: 'Grace' }
 ];
+const STAFF: Team = { id: 'staff', title: 'Staff', type: PageItemType.Category };
 
-function buildResponse(results: Person[] = PEOPLE, total = results.length): PageBackendResponse {
+function buildResponse(
+    results: (Person | Team)[] = PEOPLE,
+    total = results.length
+): PageBackendResponse<Person | Team> {
     return { globalActions: [], results, search: { filters: [], page: 1, size: 25, total } };
 }
 
 describe('PageComponent', () => {
     let fixture: ComponentFixture<PageComponent>;
+    let pageActionsService: MockProxy<PageActionsService>;
     let pageHttpService: MockProxy<PageHttpService>;
 
-    function buildConfig(overrides: Partial<PageConfigParameters> = {}): PageConfig {
-        return new PageConfig({
+    function buildConfig(overrides: Partial<PageConfigParameters<unknown, Person>> = {}): PageConfig<unknown, Person> {
+        return new PageConfig<unknown, Person>({
             baseUrl: '/people',
             prefix: 'demo',
             tableConfig: new PageTableConfig({
                 columns: [new TableColumn({ key: 'name' })],
-                loadRow: item => [new TextTableCell({ content: (item as Person).name })]
+                loadRow: person => [new TextTableCell({ content: person.name })]
             }),
             ...overrides
         });
     }
 
-    async function render(config: PageConfig = buildConfig()): Promise<void> {
+    function buildTeamsConfig(
+        loadTeamRow?: (team: Team, viewMode: PageViewMode) => TableCell[]
+    ): PageConfig<unknown, Person, Team> {
+        return new PageConfig<unknown, Person, Team>({
+            baseUrl: '/people',
+            prefix: 'demo',
+            tableConfig: new PageTableConfig({
+                categoriesConfig: new PageCategoriesConfig({ loadRow: loadTeamRow, nameField: 'title' }),
+                columns: [new TableColumn({ key: 'name' }), new TableColumn({ key: 'role' })],
+                loadRow: person => [
+                    new TextTableCell({ content: person.name }),
+                    new TextTableCell({ content: 'Member' })
+                ]
+            })
+        });
+    }
+
+    async function render(
+        config: PageConfig<unknown, Person> | PageConfig<unknown, Person, Team> = buildConfig()
+    ): Promise<void> {
         fixture = await renderComponent(PageComponent, { config });
     }
 
@@ -50,8 +83,14 @@ describe('PageComponent', () => {
         return fixture.nativeElement.textContent;
     }
 
+    function dispatchOnRow(name: string, type: string): void {
+        queryAll(fixture, '[role="row"]')
+            .find(row => row.textContent?.includes(name))
+            ?.dispatchEvent(new Event(type, { bubbles: true, cancelable: true }));
+    }
+
     beforeEach(async () => {
-        const pageActionsService = mock<PageActionsService>();
+        pageActionsService = mock<PageActionsService>();
         pageActionsService.filterVisibleActions.mockReturnValue([]);
         pageActionsService.buildHeaderActions.mockReturnValue([]);
         pageHttpService = mock<PageHttpService>();
@@ -109,5 +148,81 @@ describe('PageComponent', () => {
 
         expect(text()).toContain('Linus');
         expect(text()).not.toContain('Ada');
+    });
+
+    it('shows the rows of the newest load when an older one answers last', async () => {
+        const older = new Subject<PageBackendResponse<Person | Team>>();
+        const newer = new Subject<PageBackendResponse<Person | Team>>();
+        const onReady = jest.fn();
+        pageHttpService.load.mockReturnValueOnce(older).mockReturnValueOnce(newer);
+        await render(buildConfig({ onReady }));
+
+        onReady.mock.calls[0][0].refresh();
+        await settle(fixture);
+        newer.next(buildResponse([{ id: 3, name: 'Linus' }]));
+        newer.complete();
+        older.next(buildResponse());
+        older.complete();
+        await settle(fixture);
+
+        expect(text()).toContain('Linus');
+        expect(text()).not.toContain('Ada');
+    });
+
+    it('renders the category rows through the loadRow of the categories config', async () => {
+        pageHttpService.load.mockReturnValue(of(buildResponse([STAFF, PEOPLE[0]])));
+        await render(buildTeamsConfig(team => [new TextTableCell({ content: `Team ${team.title}` })]));
+
+        expect(text()).toContain('Team Staff');
+        expect(text()).toContain('Ada');
+    });
+
+    it('opens a category from the link its default row shows', async () => {
+        pageHttpService.load.mockReturnValue(of(buildResponse([STAFF])));
+        pageHttpService.loadCategoryPath.mockReturnValue(of([STAFF]));
+        await render(buildTeamsConfig());
+
+        buttonByName(fixture, 'Staff').click();
+        await settle(fixture);
+
+        expect(pageHttpService.load).toHaveBeenLastCalledWith('/people', { parentId: 'staff' });
+    });
+
+    it('sorts the list from the header of a sortable column, from the first page', async () => {
+        await render(
+            buildConfig({
+                tableConfig: new PageTableConfig({
+                    columns: [new TableColumn({ isSortable: true, key: 'name' })],
+                    loadRow: person => [new TextTableCell({ content: person.name })]
+                })
+            })
+        );
+
+        buttonByName(fixture, 'demo.table.columns.name').click();
+        await settle(fixture);
+        const [, query] = pageHttpService.load.mock.calls[pageHttpService.load.mock.calls.length - 1];
+
+        expect(JSON.parse(atob(String(query['search'])))).toMatchObject({
+            page: 1,
+            sort: { direction: 'asc', field: 'name' }
+        });
+    });
+
+    it('moves a row dropped onto a folder through the move of the page', async () => {
+        const ada = { ...PEOPLE[0], actions: ['move'] };
+        pageHttpService.load.mockReturnValue(of(buildResponse([{ ...STAFF, actions: ['move'] }, ada])));
+        await render(
+            new PageConfig<unknown, Person, Team>({
+                ...buildTeamsConfig(),
+                headerConfig: new PageHeaderConfig({ actions: [pageStandardAction(PageStandardAction.Move)] })
+            })
+        );
+
+        dispatchOnRow('Ada', 'dragstart');
+        await settle(fixture);
+        dispatchOnRow('Staff', 'dragover');
+        dispatchOnRow('Staff', 'drop');
+
+        expect(pageActionsService.moveItems).toHaveBeenCalledWith(expect.anything(), [ada], 'staff');
     });
 });

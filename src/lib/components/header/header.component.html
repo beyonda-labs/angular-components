@@ -10,7 +10,7 @@
             </h1>
         }
 
-        @if (config().badge; as badge) {
+        @for (badge of config().badges; track $index) {
             <bey-badge class="bey-header-badge" [config]="badge"></bey-badge>
         }
     </div>

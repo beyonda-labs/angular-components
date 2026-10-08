@@ -4,19 +4,19 @@ import { faFileArrowUp, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { isAcceptedMimeType } from '../../../../../internal/file/accept-pattern.util';
+import { isAcceptedMimeType } from '../../../../../internal/file/accept-pattern';
 import { OptionPickerOption } from '../../../../../internal/option-picker/models/option-picker-option.model';
 import { OptionPickerComponent } from '../../../../../internal/option-picker/option-picker.component';
+import { toVariableOptions } from '../../../functions/property-variable-options';
 import {
     PropertyAttachmentField,
     PropertyAttachmentOption
 } from '../../../models/fields/property-attachment-field.model';
-import { PROPERTY_VARIABLE_ICON } from '../../../utils/property-variable-icon.util';
-import { toVariableOptions } from '../../../utils/property-variable-options.util';
+import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
+import { PROPERTY_VARIABLE_ICON } from '../../../models/property-variable.model';
 
 const BYTES_PER_MB = 1024 * 1024;
 
-/** Picks an existing attachment from a filterable list, uploads a new one, or references a variable. */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, OptionPickerComponent, TooltipModule, TranslateModule],
@@ -27,33 +27,33 @@ const BYTES_PER_MB = 1024 * 1024;
 })
 export class PropertyAttachmentFieldComponent {
     readonly field = input.required<PropertyAttachmentField>();
+    readonly labelling = input.required<PropertyFieldLabelling>();
 
     readonly uploadRequested = output<File>();
     readonly valueChange = output<string>();
 
-    readonly hasTypeError = signal(false);
-    readonly isOpen = signal(false);
-    readonly pickerOpen = signal(false);
-    readonly query = signal('');
-    readonly sizeErrorMaxSizeMB = signal<number | null>(null);
-
+    readonly attachmentsId = computed(() => `${this.labelling().controlId}-attachments`);
+    readonly clearIcon = faXmark;
     readonly filteredOptions = computed(() => {
         const term = this.query().trim().toLowerCase();
         const { options } = this.field();
 
         return term ? options.filter(option => option.label.toLowerCase().includes(term)) : options;
     });
+    readonly hasTypeError = signal(false);
+    readonly inputValue = computed(() => (this.isOpen() ? this.query() : this.selectedLabel()));
+    readonly isOpen = signal(false);
+    readonly pickerOpen = signal(false);
+    readonly query = signal('');
     readonly selectedLabel = computed(() => {
         const field = this.field();
 
         return field.selectedOption?.label ?? field.value ?? '';
     });
-    readonly inputValue = computed(() => (this.isOpen() ? this.query() : this.selectedLabel()));
-    readonly variableOptions = computed(() => toVariableOptions(this.field().variables));
-
-    readonly clearIcon = faXmark;
+    readonly sizeErrorMaxSizeMB = signal<number | null>(null);
     readonly uploadIcon = faFileArrowUp;
     readonly variableIcon = PROPERTY_VARIABLE_ICON;
+    readonly variableOptions = computed(() => toVariableOptions(this.field().variables));
 
     close(): void {
         this.isOpen.set(false);

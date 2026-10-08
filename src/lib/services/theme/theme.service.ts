@@ -9,16 +9,17 @@ const STORAGE_KEY = 'bey-theme';
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
     private readonly document = inject(DOCUMENT);
+
     private readonly themeSubject = new BehaviorSubject<Theme>(this.loadTheme());
 
     readonly theme$ = this.themeSubject.asObservable();
 
-    get currentTheme(): Theme {
-        return this.themeSubject.value;
-    }
-
     constructor() {
         this.applyToBody(this.themeSubject.value);
+    }
+
+    get currentTheme(): Theme {
+        return this.themeSubject.value;
     }
 
     setTheme(theme: Theme): void {
@@ -39,11 +40,13 @@ export class ThemeService {
         }
     }
 
-    private saveTheme(theme: Theme): void {
+    private saveTheme(theme: Theme): boolean {
         try {
             localStorage.setItem(STORAGE_KEY, theme);
+
+            return true;
         } catch {
-            /* SSR o modo privado */
+            return false;
         }
     }
 }

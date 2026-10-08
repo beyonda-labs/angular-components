@@ -2,7 +2,7 @@
     <div class="bey-form-field-header">
         <label class="bey-form-field-label" [for]="field().key">{{ label() | translate }}</label>
 
-        @if (field().isRequired) {
+        @if (state().isRequired) {
             <span class="bey-form-field-required" aria-hidden="true" [class.is-invalid]="!state().isValid">*</span>
         }
 
@@ -19,6 +19,8 @@
 
 @if (type() === fieldType.Info) {
     <bey-form-info-field [field]="$any(field())"></bey-form-info-field>
+} @else if (type() === fieldType.List) {
+    <bey-form-list-field [field]="$any(field())" [label]="label()" [prefix]="fieldPrefix()"></bey-form-list-field>
 } @else if (formControl()) {
     @let control = formControl()!;
 
@@ -27,6 +29,7 @@
             <bey-form-text-field
                 [control]="control"
                 [field]="$any(field())"
+                [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
             ></bey-form-text-field>
         }
@@ -34,6 +37,7 @@
             <bey-form-text-variable-field
                 [control]="control"
                 [field]="$any(field())"
+                [isRequired]="state().isRequired"
                 [options]="state().options"
                 [prefix]="fieldPrefix()"
             ></bey-form-text-variable-field>
@@ -42,6 +46,7 @@
             <bey-form-date-field
                 [control]="control"
                 [field]="$any(field())"
+                [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
             ></bey-form-date-field>
         }
@@ -49,6 +54,7 @@
             <bey-form-number-field
                 [control]="control"
                 [field]="$any(field())"
+                [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
             ></bey-form-number-field>
         }
@@ -56,6 +62,7 @@
             <bey-form-password-field
                 [control]="control"
                 [field]="$any(field())"
+                [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
             ></bey-form-password-field>
         }
@@ -63,6 +70,7 @@
             <bey-form-textarea-field
                 [control]="control"
                 [field]="$any(field())"
+                [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
             ></bey-form-textarea-field>
         }
@@ -70,6 +78,7 @@
             <bey-form-autocomplete-field
                 [control]="control"
                 [field]="$any(field())"
+                [isRequired]="state().isRequired"
                 [options]="state().options"
                 [prefix]="fieldPrefix()"
             ></bey-form-autocomplete-field>
@@ -78,6 +87,7 @@
             <bey-form-select-field
                 [control]="control"
                 [field]="$any(field())"
+                [isRequired]="state().isRequired"
                 [options]="state().options"
                 [prefix]="fieldPrefix()"
             ></bey-form-select-field>
@@ -86,6 +96,7 @@
             <bey-form-radio-field
                 [control]="control"
                 [field]="$any(field())"
+                [isRequired]="state().isRequired"
                 [options]="state().options"
                 [prefix]="fieldPrefix()"
             ></bey-form-radio-field>
@@ -94,6 +105,7 @@
             <bey-form-checkbox-field
                 [control]="control"
                 [field]="$any(field())"
+                [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
             ></bey-form-checkbox-field>
         }
@@ -101,6 +113,7 @@
             <bey-form-chips-field
                 [control]="control"
                 [field]="$any(field())"
+                [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
             ></bey-form-chips-field>
         }
@@ -108,8 +121,15 @@
             <bey-form-file-field
                 [control]="control"
                 [field]="$any(field())"
+                [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
             ></bey-form-file-field>
         }
+    }
+
+    @if (error(); as error) {
+        <div class="bey-form-field-error" role="alert">
+            {{ error.messageKey | translate: error.messageParameters }}
+        </div>
     }
 }

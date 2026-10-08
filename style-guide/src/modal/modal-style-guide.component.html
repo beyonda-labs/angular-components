@@ -51,3 +51,28 @@
         </button>
     </span>
 </div>
+
+<p class="bey-style-guide-description text-muted mt-4 mb-3">
+    {{ 'angular-components-style-guide.modal.unsaved-changes.example' | translate }}
+</p>
+
+<div class="d-flex flex-wrap align-items-center gap-3 bey-style-guide-actions">
+    <div class="form-check mb-0">
+        <input
+            id="bey-modal-style-guide-changes"
+            class="form-check-input"
+            type="checkbox"
+            [checked]="hasChanges()"
+            (change)="toggleChanges()"
+        />
+        <label class="form-check-label" for="bey-modal-style-guide-changes">
+            {{ 'angular-components-style-guide.modal.unsaved-changes.toggle' | translate }}
+        </label>
+    </div>
+
+    <span class="bey-style-guide-action-slot">
+        <button class="btn btn-sm btn-outline-dark" type="button" (click)="leave()">
+            {{ 'angular-components-style-guide.modal.unsaved-changes.leave' | translate }}
+        </button>
+    </span>
+</div>

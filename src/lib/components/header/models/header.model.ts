@@ -2,48 +2,16 @@ import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
 import { BadgeConfig } from '../../badge/models/badge.model';
 
-export class HeaderConfig {
-    leftActions: HeaderAction[] = [];
-    menuActions: HeaderAction[] = [];
-    rightActions: HeaderAction[] = [];
-    prefix: string;
-    title: string;
-    variant: HeaderVariant;
-
-    backAction?: HeaderAction;
-    badge?: BadgeConfig;
-
-    constructor({
-        backAction,
-        badge,
-        prefix,
-        title = '',
-        leftActions = [],
-        menuActions = [],
-        rightActions = [],
-        variant = HeaderVariant.Page
-    }: HeaderConfigParameters) {
-        this.backAction = backAction;
-        this.badge = badge;
-        this.leftActions = leftActions;
-        this.menuActions = menuActions;
-        this.prefix = prefix;
-        this.rightActions = rightActions;
-        this.title = title;
-        this.variant = variant;
-    }
+export enum HeaderActionType {
+    Icon = 'icon',
+    PrimaryButton = 'primary-button',
+    SecondaryButton = 'secondary-button',
+    Text = 'text'
 }
 
-export interface HeaderConfigParameters {
-    prefix: string;
-
-    backAction?: HeaderAction;
-    badge?: BadgeConfig;
-    leftActions?: HeaderAction[];
-    menuActions?: HeaderAction[];
-    rightActions?: HeaderAction[];
-    title?: string;
-    variant?: HeaderVariant;
+export enum HeaderVariant {
+    Page = 'page',
+    SubPage = 'subpage'
 }
 
 export class HeaderAction {
@@ -78,6 +46,38 @@ export class HeaderAction {
     }
 }
 
+export class HeaderConfig {
+    badges: BadgeConfig[] = [];
+    leftActions: HeaderAction[] = [];
+    menuActions: HeaderAction[] = [];
+    prefix: string;
+    rightActions: HeaderAction[] = [];
+    title: string;
+    variant: HeaderVariant;
+
+    backAction?: HeaderAction;
+
+    constructor({
+        backAction,
+        badges = [],
+        prefix,
+        title = '',
+        leftActions = [],
+        menuActions = [],
+        rightActions = [],
+        variant = HeaderVariant.Page
+    }: HeaderConfigParameters) {
+        this.backAction = backAction;
+        this.badges = badges;
+        this.leftActions = leftActions;
+        this.menuActions = menuActions;
+        this.prefix = prefix;
+        this.rightActions = rightActions;
+        this.title = title;
+        this.variant = variant;
+    }
+}
+
 export interface HeaderActionParameters {
     key: string;
     type: HeaderActionType;
@@ -90,14 +90,14 @@ export interface HeaderActionParameters {
     tooltip?: string;
 }
 
-export enum HeaderActionType {
-    Icon = 'icon',
-    PrimaryButton = 'primary-button',
-    SecondaryButton = 'secondary-button',
-    Text = 'text'
-}
+export interface HeaderConfigParameters {
+    prefix: string;
 
-export enum HeaderVariant {
-    Page = 'page',
-    SubPage = 'subpage'
+    backAction?: HeaderAction;
+    badges?: BadgeConfig[];
+    leftActions?: HeaderAction[];
+    menuActions?: HeaderAction[];
+    rightActions?: HeaderAction[];
+    title?: string;
+    variant?: HeaderVariant;
 }

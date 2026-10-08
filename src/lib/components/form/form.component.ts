@@ -9,14 +9,16 @@ import {
     untracked
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { FormGroup } from '@angular/forms';
+import { AbstractControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { debounceTime, map, startWith, switchMap } from 'rxjs';
 
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
 import { FormSectionComponent } from './components/section/section.component';
+import { resolveRule } from './functions/form-rule-resolution';
+import { FormAutocompleteField } from './models/fields/form-autocomplete-field.model';
 import { FormButton, FormButtonType, FormConfig, FormHandle, FormSection } from './models/form.model';
-import { FormFieldOption, FormValue, resolveRule } from './models/form-field.model';
+import { FormField, FormFieldOption, FormFieldType, FormValue } from './models/form-field.model';
 import { FORM_HOST } from './models/form-host.model';
 import { FormService } from './services/form.service';
 
@@ -25,15 +27,23 @@ const BACK_LABEL = 'angular-components.form.steps.back';
 const INVALID_TOOLTIP = 'angular-components.form.submit.invalid';
 const WITHOUT_CHANGES_TOOLTIP = 'angular-components.form.submit.without-changes';
 const CANCEL_WITHOUT_CHANGES_TOOLTIP = 'angular-components.form.cancel.without-changes';
+const OPTION_FIELD_TYPES: ReadonlySet<FormFieldType> = new Set([
+    FormFieldType.Autocomplete,
+    FormFieldType.Radio,
+    FormFieldType.Select
+]);
 
 export interface FormFieldState {
     isDisabled: boolean;
     isHidden: boolean;
+    isRequired: boolean;
     isValid: boolean;
     options: FormFieldOption[];
 }
 
 export type FormFieldStates = ReadonlyMap<string, FormFieldState>;
+
+type FormValidatorErrors = ReadonlyMap<string, ValidationErrors | null>;
 
 interface FormState {
     isDirty: boolean;
@@ -41,14 +51,9 @@ interface FormState {
     value: FormValue;
 }
 
-export function fieldStateKey(sectionKey: string, fieldKey: string): string {
-    return `${sectionKey}.${fieldKey}`;
-}
-
-function noop(): void {}
-
-function readState(formGroup: FormGroup): FormState {
-    return { isDirty: formGroup.dirty, isValid: formGroup.valid, value: formGroup.getRawValue() as FormValue };
+interface FormSync {
+    fieldStates: FormFieldStates;
+    validatorErrors: FormValidatorErrors;
 }
 
 @Component({
@@ -60,46 +65,11 @@ function readState(formGroup: FormGroup): FormState {
     templateUrl: './form.component.html'
 })
 export class FormComponent<TValue = unknown> {
+    private readonly formHost = inject(FORM_HOST, { optional: true });
+    private readonly formService = inject(FormService);
+
     readonly config = input.required<FormConfig<TValue>>();
 
-    readonly formGroup = computed(() => this.formService.buildFormGroup(this.config()));
-    readonly state = linkedSignal(() => readState(this.formGroup()));
-    readonly currentStepKey = linkedSignal<string | null>(() => this.config().steps[0]?.key ?? null);
-
-    readonly fieldStates = computed<FormFieldStates>(() => {
-        const { value } = this.state();
-        const formGroup = this.formGroup();
-        const states = new Map<string, FormFieldState>();
-
-        for (const section of this.config().sections) {
-            for (const field of section.rows.flatMap(row => row.fields)) {
-                const control = formGroup.get([section.key, field.key]);
-                const options = 'options' in field ? (field as { options: unknown }).options : [];
-
-                states.set(fieldStateKey(section.key, field.key), {
-                    isDisabled: resolveRule(field.isDisabled, value),
-                    isHidden: resolveRule(field.isHidden, value),
-                    isValid: control?.valid ?? true,
-                    options: resolveRule(options as FormFieldOption[], value)
-                });
-            }
-        }
-
-        return states;
-    });
-    readonly visibleSections = computed(() => {
-        const { sections, steps } = this.config();
-        const step = steps.find(current => current.key === this.currentStepKey());
-        const { value } = this.state();
-        const fieldStates = this.fieldStates();
-
-        return sections.filter(
-            section =>
-                (!step || step.sections.includes(section.key)) &&
-                !resolveRule(section.isHidden, value) &&
-                this.hasVisibleField(section, fieldStates)
-        );
-    });
     readonly buttons = computed<ButtonConfig[]>(() => {
         const { buttons, steps } = this.config();
         const index = steps.findIndex(step => step.key === this.currentStepKey());
@@ -134,7 +104,34 @@ export class FormComponent<TValue = unknown> {
 
         return [...stepButtons, ...buttons.filter(button => !button.isHidden).map(button => this.buildButton(button))];
     });
+    readonly currentStepKey = linkedSignal<string | null>(() => this.config().steps[0]?.key ?? null);
+    readonly fieldStates = computed<FormFieldStates>(() => {
+        const { value } = this.state();
+        const formGroup = this.formGroup();
+        const states = new Map<string, FormFieldState>();
 
+        for (const section of this.config().sections) {
+            for (const field of fieldsOf(section)) {
+                const control = formGroup.get([section.key, field.key]);
+                const options = 'options' in field ? (field as { options: unknown }).options : [];
+
+                states.set(fieldStateKey(section.key, field.key), {
+                    isDisabled: resolveRule(field.isDisabled, value),
+                    isHidden: resolveRule(field.isHidden, value),
+                    isRequired: resolveRule(field.isRequired, value),
+                    isValid: control?.valid ?? true,
+                    options: resolveRule(options as FormFieldOption[], value)
+                });
+            }
+        }
+
+        return states;
+    });
+    readonly formGroup = computed(() => {
+        const config = this.config();
+
+        return untracked(() => this.formService.buildFormGroup(config));
+    });
     readonly handle: FormHandle<TValue> = {
         close: () => this.formHost?.close(),
         goToStep: key => this.goToStep(key),
@@ -144,9 +141,44 @@ export class FormComponent<TValue = unknown> {
         reset: () => this.reset(),
         value: () => this.formGroup().getRawValue() as TValue
     };
+    readonly state = linkedSignal(() => readState(this.formGroup()));
+    readonly visibleSections = computed(() => {
+        const { sections, steps } = this.config();
+        const step = steps.find(current => current.key === this.currentStepKey());
+        const { value } = this.state();
+        const fieldStates = this.fieldStates();
 
-    private readonly formHost = inject(FORM_HOST, { optional: true });
-    private readonly formService = inject(FormService);
+        return sections.filter(
+            section =>
+                (!step || step.sections.includes(section.key)) &&
+                !resolveRule(section.isHidden, value) &&
+                this.hasVisibleField(section, fieldStates)
+        );
+    });
+
+    private readonly lastSync = linkedSignal<FormGroup, FormSync | null>({
+        computation: () => null,
+        source: this.formGroup
+    });
+    private readonly validatorErrors = computed<FormValidatorErrors>(() => {
+        this.state();
+
+        const formGroup = this.formGroup();
+        const errors = new Map<string, ValidationErrors | null>();
+
+        for (const section of this.config().sections) {
+            for (const field of fieldsOf(section)) {
+                const control = formGroup.get([section.key, field.key]);
+                const validate = this.formService.getCustomValidator(field);
+
+                if (control && validate) {
+                    errors.set(fieldStateKey(section.key, field.key), validate(control));
+                }
+            }
+        }
+
+        return errors;
+    });
 
     constructor() {
         const formGroup$ = toObservable(this.formGroup);
@@ -178,9 +210,12 @@ export class FormComponent<TValue = unknown> {
 
         effect(() => {
             const formGroup = this.formGroup();
-            const fieldStates = this.fieldStates();
+            const sync: FormSync = { fieldStates: this.fieldStates(), validatorErrors: this.validatorErrors() };
 
-            untracked(() => this.syncControls(formGroup, fieldStates));
+            untracked(() => {
+                this.syncControls(formGroup, sync, this.lastSync());
+                this.lastSync.set(sync);
+            });
         });
     }
 
@@ -234,6 +269,27 @@ export class FormComponent<TValue = unknown> {
         this.config().onCancel?.();
     }
 
+    private dropUnlistedValue(
+        control: AbstractControl,
+        field: FormField,
+        state: FormFieldState,
+        previous: FormFieldState | undefined
+    ): void {
+        const emptyValue = this.formService.emptyValue(field.type);
+        const { value } = control;
+
+        if (
+            previous &&
+            value !== null &&
+            value !== undefined &&
+            value !== emptyValue &&
+            !haveSameOptions(previous.options, state.options) &&
+            !state.options.some(option => option.value === value)
+        ) {
+            control.setValue(emptyValue);
+        }
+    }
+
     private goToStep(key: string): void {
         if (this.config().steps.some(step => step.key === key) && key !== this.currentStepKey()) {
             this.currentStepKey.set(key);
@@ -242,7 +298,7 @@ export class FormComponent<TValue = unknown> {
     }
 
     private hasVisibleField(section: FormSection, fieldStates: FormFieldStates): boolean {
-        const fields = section.rows.flatMap(row => row.fields);
+        const fields = fieldsOf(section);
 
         return (
             fields.length === 0 ||
@@ -268,18 +324,96 @@ export class FormComponent<TValue = unknown> {
         }
     }
 
-    private syncControls(formGroup: FormGroup, fieldStates: FormFieldStates): void {
-        for (const [key, state] of fieldStates) {
-            const control = formGroup.get(key.split('.'));
-            const shouldDisable = state.isDisabled || state.isHidden;
+    private syncControls(formGroup: FormGroup, sync: FormSync, previous: FormSync | null): void {
+        for (const section of this.config().sections) {
+            for (const field of fieldsOf(section)) {
+                const key = fieldStateKey(section.key, field.key);
+                const control = formGroup.get([section.key, field.key]);
+                const state = sync.fieldStates.get(key);
 
-            if (control && control.disabled !== shouldDisable) {
-                if (shouldDisable) {
-                    control.disable();
-                } else {
-                    control.enable();
+                if (control && state) {
+                    syncDisabled(control, state);
+                    syncRequired(control, state.isRequired);
+
+                    if (sync.validatorErrors.has(key)) {
+                        syncValidatorErrors(
+                            control,
+                            sync.validatorErrors.get(key) ?? null,
+                            previous?.validatorErrors.get(key) ?? null
+                        );
+                    }
+
+                    if (OPTION_FIELD_TYPES.has(field.type) && !isFreeText(field)) {
+                        this.dropUnlistedValue(control, field, state, previous?.fieldStates.get(key));
+                    }
                 }
             }
         }
+    }
+}
+
+export function fieldStateKey(sectionKey: string, fieldKey: string): string {
+    return `${sectionKey}.${fieldKey}`;
+}
+
+function fieldsOf(section: FormSection): FormField[] {
+    return section.rows.flatMap(row => row.fields);
+}
+
+function haveSameOptions(previous: FormFieldOption[], current: FormFieldOption[]): boolean {
+    return (
+        previous.length === current.length && previous.every((option, index) => option.value === current[index].value)
+    );
+}
+
+function isFreeText(field: FormField): boolean {
+    return field.type === FormFieldType.Autocomplete && (field as FormAutocompleteField).isFreeTextAllowed;
+}
+
+function noop(): void {}
+
+function readState(formGroup: FormGroup): FormState {
+    return { isDirty: formGroup.dirty, isValid: formGroup.valid, value: formGroup.getRawValue() as FormValue };
+}
+
+function syncDisabled(control: AbstractControl, state: FormFieldState): void {
+    const shouldDisable = state.isDisabled || state.isHidden;
+
+    if (control.disabled === shouldDisable) {
+        return;
+    }
+
+    if (shouldDisable) {
+        control.disable();
+    } else {
+        control.enable();
+    }
+}
+
+function syncRequired(control: AbstractControl, isRequired: boolean): void {
+    if (control.hasValidator(Validators.required) === isRequired) {
+        return;
+    }
+
+    if (isRequired) {
+        control.addValidators(Validators.required);
+    } else {
+        control.removeValidators(Validators.required);
+    }
+
+    control.updateValueAndValidity();
+}
+
+function syncValidatorErrors(
+    control: AbstractControl,
+    errors: ValidationErrors | null,
+    previous: ValidationErrors | null
+): void {
+    const current = Object.keys(errors ?? {});
+    const cleared = Object.keys(previous ?? {}).filter(key => !current.includes(key));
+    const isApplied = current.every(key => control.hasError(key)) && cleared.every(key => !control.hasError(key));
+
+    if (control.enabled && !isApplied) {
+        control.updateValueAndValidity();
     }
 }

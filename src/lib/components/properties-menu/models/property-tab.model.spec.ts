@@ -2,7 +2,7 @@ import { PropertyGroup } from './property-group.model';
 import { PropertyTab } from './property-tab.model';
 
 describe('PropertyTab', () => {
-    it('should apply default values', () => {
+    it('applies the defaults', () => {
         const tab = new PropertyTab({ id: 'properties', label: 'Propiedades' });
 
         expect(tab.disabled).toBe(false);
@@ -11,19 +11,19 @@ describe('PropertyTab', () => {
         expect(tab.addLabel).toBeUndefined();
     });
 
-    it('should default the label to a translation key sentinel based on the id', () => {
+    it('defaults the label to the key sentinel of its id', () => {
         const tab = new PropertyTab({ id: 'properties' });
 
         expect(tab.label).toBe('properties.label');
     });
 
-    it('should default groups to an empty array', () => {
+    it('defaults to no groups', () => {
         const tab = new PropertyTab({ id: 'properties' });
 
         expect(tab.groups).toEqual([]);
     });
 
-    it('should keep already-instantiated PropertyGroup instances', () => {
+    it('keeps the PropertyGroup instances it is given', () => {
         const tab = new PropertyTab({
             id: 'properties',
             label: 'Propiedades',
@@ -33,7 +33,7 @@ describe('PropertyTab', () => {
         expect(tab.groups[0]).toBeInstanceOf(PropertyGroup);
     });
 
-    it('should order groups by the order property', () => {
+    it('orders the groups by their order', () => {
         const tab = new PropertyTab({
             id: 'properties',
             label: 'Propiedades',

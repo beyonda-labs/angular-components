@@ -5,24 +5,6 @@ import { AppLayoutBreadcrumbItem } from '../models/app-layout.model';
 
 const STORAGE_KEY = 'bey-left-menu-expanded';
 
-function loadExpanded(): boolean {
-    try {
-        const stored = localStorage.getItem(STORAGE_KEY);
-
-        return stored === null ? true : stored === 'true';
-    } catch {
-        return true;
-    }
-}
-
-function saveExpanded(value: boolean): void {
-    try {
-        localStorage.setItem(STORAGE_KEY, String(value));
-    } catch {
-        /* storage unavailable: the state still lives in the signal */
-    }
-}
-
 @Injectable({
     providedIn: 'root'
 })
@@ -66,5 +48,25 @@ export class AppLayoutService {
     setExpanded(value: boolean): void {
         this._expanded.set(value);
         saveExpanded(value);
+    }
+}
+
+function loadExpanded(): boolean {
+    try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+
+        return stored === null ? true : stored === 'true';
+    } catch {
+        return true;
+    }
+}
+
+function saveExpanded(value: boolean): boolean {
+    try {
+        localStorage.setItem(STORAGE_KEY, String(value));
+
+        return true;
+    } catch {
+        return false;
     }
 }

@@ -7,9 +7,9 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { BadgeComponent } from '../../../badge/badge.component';
 import { ListComponent } from '../../../list/list.component';
 import { ListConfig } from '../../../list/models/list.model';
+import { resolvePropertyLabelKey } from '../../functions/property-i18n';
 import { PropertyListItem } from '../../models/property-list-item.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
-import { resolvePropertyLabelKey } from '../../utils/property-i18n.util';
 import { PropertyFieldComponent } from '../property-field/property-field.component';
 
 const COPIED_FEEDBACK_MS = 1500;
@@ -24,12 +24,18 @@ const EMPTY_VALUE = '—';
     templateUrl: './property-list.component.html'
 })
 export class PropertyListComponent {
+    private readonly destroyRef = inject(DestroyRef);
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
+
     readonly groupId = input.required<string>();
     readonly items = input.required<PropertyListItem[]>();
     readonly tabId = input.required<string>();
 
+    readonly chevronIcon = faChevronDown;
+    readonly copiedIcon = faCheck;
     readonly copiedItemId = signal<string | null>(null);
-
+    readonly copyIcon = faCopy;
+    readonly emptyValue = EMPTY_VALUE;
     readonly listConfig = computed(
         () =>
             new ListConfig<unknown>({
@@ -39,15 +45,7 @@ export class PropertyListComponent {
                 prefix: 'angular-components.properties-menu.list'
             })
     );
-
-    readonly chevronIcon = faChevronDown;
-    readonly copiedIcon = faCheck;
-    readonly copyIcon = faCopy;
-    readonly emptyValue = EMPTY_VALUE;
     readonly removeIcon = faTrash;
-
-    private readonly destroyRef = inject(DestroyRef);
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
 
     private copiedTimeoutId?: ReturnType<typeof setTimeout>;
 
@@ -67,12 +65,6 @@ export class PropertyListComponent {
 
     labelKey(item: PropertyListItem): string {
         return resolvePropertyLabelKey(this.propertiesMenuService.config().prefix, 'list', item.id, item.label);
-    }
-
-    toggleLabelKey(item: PropertyListItem): string {
-        return item.expanded
-            ? 'angular-components.properties-menu.list.collapse'
-            : 'angular-components.properties-menu.list.expand';
     }
 
     onAction(event: Event, item: PropertyListItem, key: string): void {
@@ -112,6 +104,12 @@ export class PropertyListComponent {
     onToggle(event: Event, item: PropertyListItem): void {
         event.stopPropagation();
         this.propertiesMenuService.toggleListItem(this.tabId(), this.groupId(), item.id);
+    }
+
+    toggleLabelKey(item: PropertyListItem): string {
+        return item.expanded
+            ? 'angular-components.properties-menu.list.collapse'
+            : 'angular-components.properties-menu.list.expand';
     }
 
     private onItemClick(item: PropertyListItem): void {

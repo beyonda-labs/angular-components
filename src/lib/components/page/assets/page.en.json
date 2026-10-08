@@ -1,9 +1,16 @@
 {
     "angular-components": {
         "page": {
+            "count": {
+                "many": "({{count}} items)",
+                "one": "({{count}} item)"
+            },
             "form": {
                 "cancel": "Cancel",
                 "submit": "Save"
+            },
+            "toast": {
+                "restored-renamed": "Restored with a new name, since another item already has the old one: {{names}}"
             }
         }
     }

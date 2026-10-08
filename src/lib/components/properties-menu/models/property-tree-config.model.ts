@@ -1,12 +1,5 @@
 import { PropertyTreeNode } from './property-tree-node.model';
 
-export interface PropertyTreeConfigParameters {
-    acceptsRootDrop?: boolean;
-    addBlockLabel?: string;
-    nodes?: PropertyTreeNode[];
-    showEmptyStateAddBlock?: boolean;
-}
-
 export class PropertyTreeConfig {
     acceptsRootDrop: boolean;
     nodes: PropertyTreeNode[];
@@ -25,4 +18,11 @@ export class PropertyTreeConfig {
         this.nodes = nodes;
         this.showEmptyStateAddBlock = showEmptyStateAddBlock;
     }
+}
+
+export interface PropertyTreeConfigParameters {
+    acceptsRootDrop?: boolean;
+    addBlockLabel?: string;
+    nodes?: PropertyTreeNode[];
+    showEmptyStateAddBlock?: boolean;
 }

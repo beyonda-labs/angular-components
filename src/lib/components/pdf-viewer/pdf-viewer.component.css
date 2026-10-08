@@ -1,22 +1,41 @@
 :host {
+    --bey-pdf-viewer-match-bg: var(--bey-highlight);
+    --bey-pdf-viewer-match-bg-current: var(--bey-highlight-strong);
+
     display: block;
     height: 100%;
     width: 100%;
 }
 
 .bey-pdf-viewer {
+    display: flex;
+    flex-direction: column;
     height: 100%;
     width: 100%;
 }
 
-/* `[showBorders]="false"` (pdf-viewer.component.html) switches pdf.js to its `removePageBorders`
-   layout: a positive margin-bottom between pages instead of the negative one it uses to make room for
-   its own border-image shadow — without that switch, the next page's canvas overlaps and hides
-   whatever border we draw here. That variant also sets `border: none`, at the same selector
-   specificity as the rule below and order-dependent on the vendor's own stylesheet — `!important`
-   makes the outcome deterministic instead of relying on import order. A thin bottom border on every
-   page but the last replaces the shadow as the page-break cue, since pages have no border by default. */
-/* stylelint-disable selector-class-pattern, declaration-no-important -- pdf.js owns these classes, and its own stylesheet has to be beaten deterministically; the reason is spelled out above. */
+.bey-pdf-viewer-body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    position: relative;
+}
+
+.bey-pdf-viewer-search-popup {
+    max-width: calc(100% - 2 * var(--bey-space-lg));
+    position: absolute;
+    right: var(--bey-space-lg);
+    top: var(--bey-space-sm);
+    z-index: var(--bey-z-raised);
+}
+
+.bey-pdf-viewer-frame {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* stylelint-disable selector-class-pattern, declaration-no-important -- pdf.js owns these classes and its stylesheet has to be beaten deterministically; see the module README. */
 ::ng-deep .bey-pdf-viewer .pdfViewer .page {
     border: none !important;
     border-bottom: var(--bey-border-width) solid var(--bey-border-default) !important;
@@ -27,13 +46,16 @@
 ::ng-deep .bey-pdf-viewer .pdfViewer .page:last-child {
     border-bottom: none !important;
 }
+
+::ng-deep .bey-pdf-viewer .textLayer .highlight {
+    background-color: var(--bey-pdf-viewer-match-bg) !important;
+}
+
+::ng-deep .bey-pdf-viewer .textLayer .highlight.selected {
+    background-color: var(--bey-pdf-viewer-match-bg-current) !important;
+}
 /* stylelint-enable selector-class-pattern, declaration-no-important */
 
-/* Background is handled by `PdfViewerConfig.backgroundColor` (bound to the viewer's own
-   `[style.backgroundColor]`, see pdf-viewer-config.model.ts) — only the scrollbar needs overriding
-   here. Mirrors `.bey-thin-scroll` (overrides.css): `scrollbar-color` alone lets Chromium fall back to
-   its hover-only overlay thumb, so the `::-webkit-scrollbar*` rules are what keep the thumb always
-   visible, same as every other scrollable panel in the app. */
 ::ng-deep .bey-pdf-viewer #viewerContainer {
     scrollbar-color: var(--bey-thin-scroll-thumb) var(--bey-thin-scroll-track);
     scrollbar-width: thin;

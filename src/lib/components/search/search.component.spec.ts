@@ -160,6 +160,26 @@ describe('SearchComponent', () => {
         ]);
     }));
 
+    it('labels a camelCase field key and operator from their kebab-case segments and reports the key', fakeAsync(() => {
+        render(buildConfig({ fields: [new SearchField({ key: 'createdBy', type: SearchFieldType.Text })] }));
+        openPanel();
+        clickByLabel('add');
+
+        const [field, operator] = selectsOf(rows()[0]);
+        const option = [...field.options].find(entry => entry.value === 'createdBy');
+        type(field, 'createdBy');
+        const operatorLabels = [...operator.options].map(entry => entry.textContent?.trim());
+        type(operator, SearchFilterOperator.StartsWith);
+        type(rows()[0].querySelector('input') as HTMLInputElement, 'ada');
+        clickByLabel('apply');
+
+        expect(option?.textContent?.trim()).toBe('demo.fields.created-by');
+        expect(operatorLabels).toContain('angular-components.search.operators.starts-with');
+        expect(lastFilters()).toEqual([
+            new StringFilter({ field: 'createdBy', operator: SearchFilterOperator.StartsWith, value: 'ada' })
+        ]);
+    }));
+
     it('reports a between filter only once both bounds are there', fakeAsync(() => {
         render();
         openPanel();
@@ -228,6 +248,24 @@ describe('SearchComponent', () => {
 
         expect(toggle().textContent).toContain('1');
     }));
+
+    it('starts from the filters of its config, in the box and in the panel, without reporting them', () => {
+        render(
+            buildConfig({
+                filters: [
+                    new StringFilter({ field: 'name', operator: SearchFilterOperator.Contains, value: 'ada' }),
+                    new NumberFilter({ field: 'age', operator: SearchFilterOperator.Between, value: [30, 40] })
+                ]
+            })
+        );
+        openPanel();
+
+        expect(mainInput().value).toBe('ada');
+        expect(toggle().textContent).toContain('2');
+        expect(rows().map(row => selectsOf(row)[0].value)).toEqual(['name', 'age']);
+        expect(queryAll<HTMLInputElement>(rows()[1], 'input').map(input => input.value)).toEqual(['30', '40']);
+        expect(onFiltersChange).not.toHaveBeenCalled();
+    });
 
     it('closes the panel on a click outside', fakeAsync(() => {
         render();

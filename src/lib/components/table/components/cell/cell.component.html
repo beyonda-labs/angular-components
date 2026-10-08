@@ -3,13 +3,22 @@
     boundariesElement="viewport"
     container="body"
     placement="top"
+    [attr.aria-sort]="sortState()"
     [attr.role]="isHeader() ? 'columnheader' : 'cell'"
     [class.bey-table-cell--header]="isHeader()"
-    [tooltip]="tooltip() | translate"
+    [tooltip]="tooltipItems().length > 0 ? tooltipList : (tooltip() | translate)"
 >
-    @if (isLink()) {
-        <button class="bey-table-cell-link bey-table-cell-content" type="button" (click)="onLinkClick($event)">
-            {{ cell().translate ? (content() | translate) : content() }}
+    @if (sortState()) {
+        <button class="bey-table-cell-sort" type="button" [class.is-sorted]="isSorted()" (click)="onSortClick($event)">
+            <span class="bey-table-cell-content">{{ cell().translate ? (content() | translate) : content() }}</span>
+            <fa-icon class="bey-table-cell-sort-icon" [icon]="sortIcon()"></fa-icon>
+        </button>
+    } @else if (isLink()) {
+        <button class="bey-table-cell-link" type="button" (click)="onLinkClick($event)">
+            @if (icon(); as icon) {
+                <fa-icon class="bey-table-cell-icon" [icon]="icon"></fa-icon>
+            }
+            <span class="bey-table-cell-content">{{ cell().translate ? (content() | translate) : content() }}</span>
         </button>
     } @else if (isBadge()) {
         <span class="bey-table-cell-content bey-table-cell-badges">
@@ -18,6 +27,13 @@
             }
         </span>
     } @else {
+        @if (icon(); as icon) {
+            <fa-icon class="bey-table-cell-icon" [icon]="icon"></fa-icon>
+        }
         <span class="bey-table-cell-content">{{ cell().translate ? (content() | translate) : content() }}</span>
     }
 </div>
+
+<ng-template #tooltipList>
+    <bey-tooltip-list [items]="tooltipItems()" [title]="tooltip()"></bey-tooltip-list>
+</ng-template>

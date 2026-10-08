@@ -4,8 +4,9 @@
     <input
         class="bey-property-field-input"
         type="number"
-        [attr.aria-label]="current.label"
+        [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
         [disabled]="current.disabled"
+        [id]="labelling().controlId"
         [max]="current.max"
         [min]="current.min"
         [placeholder]="current.placeholder"

@@ -12,10 +12,12 @@
             },
             "close": "Close",
             "color-field": {
-                "clear": "Clear"
+                "clear": "Clear",
+                "hex-value": "{{label}} hex value"
             },
             "file-field": {
                 "choose": "Choose file",
+                "choose-for": "Choose file for {{label}}",
                 "clear": "Clear",
                 "file-selected": "File selected",
                 "no-file-selected": "No file selected",
@@ -29,7 +31,9 @@
                 "expand": "Expand"
             },
             "number-array-field": {
-                "add": "Add"
+                "add": "Add",
+                "entry": "{{label}}, entry {{position}}",
+                "remove-entry": "Remove {{label}}, entry {{position}}"
             },
             "remove": "Remove",
             "select-field": {
@@ -48,6 +52,10 @@
             },
             "text-field": {
                 "insert-variable": "Insert variable"
+            },
+            "tree": {
+                "collapse": "Collapse",
+                "expand": "Expand"
             }
         }
     }

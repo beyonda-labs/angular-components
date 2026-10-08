@@ -52,6 +52,9 @@ const menu = new BeyLeftMenuConfig({
 | `subActions` | no       | `[]`            | Nested actions, to any depth                             |
 | `action`     | no       |                 | Run when the action is used                              |
 
+A default text uses the key as a kebab-case segment: `userSettings` reads
+`<prefix>.actions.user-settings.label`. A `label` or `tooltip` given in the config is used as it is.
+
 ## Expanding and collapsing
 
 The menu owns its own state from `expanded` onwards and reports every change through `onExpandedChange`. The
@@ -63,7 +66,9 @@ from it, as `bey-app-layout` does.
 Expanded, a branch opens in place and opening one closes the previous, so only one path is ever open. The
 branch holding the active action opens by itself whenever the actions change. A branch that has its own
 `action` runs it when its label is used and opens only from the chevron; one without runs nothing and just
-opens.
+opens. The chevron of a branch with its own `action` is also a button of its own, laid over it, so the keyboard
+and assistive technology can open the branch without running the action; it carries `aria-expanded` and is
+named with `angular-components.left-menu.submenu`.
 
 Collapsed, branches open as a flyout on hover or click instead, and the labels give way to the icons.
 

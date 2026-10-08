@@ -11,54 +11,19 @@ export enum PropertyGroupContentType {
     TREE = 'tree'
 }
 
-export interface PropertyFieldsContentParameters {
-    fields?: PropertyField[];
-}
+export type PropertyGroupContent =
+    | PropertyFieldsContent
+    | PropertyListContent
+    | PropertyTabsContent
+    | PropertyTreeContent;
 
 export class PropertyFieldsContent {
-    readonly type = PropertyGroupContentType.FIELDS;
-
     fields: PropertyField[];
+    readonly type = PropertyGroupContentType.FIELDS;
 
     constructor({ fields = [] }: PropertyFieldsContentParameters) {
         this.fields = fields;
     }
-}
-
-export interface PropertyListContentParameters {
-    list?: PropertyListItem[];
-}
-
-export class PropertyListContent {
-    readonly type = PropertyGroupContentType.LIST;
-
-    list: PropertyListItem[];
-
-    constructor({ list = [] }: PropertyListContentParameters) {
-        this.list = list;
-    }
-}
-
-export interface PropertyTreeContentParameters {
-    tree?: PropertyTreeConfig;
-}
-
-export class PropertyTreeContent {
-    readonly type = PropertyGroupContentType.TREE;
-
-    tree: PropertyTreeConfig;
-
-    constructor({ tree = new PropertyTreeConfig({}) }: PropertyTreeContentParameters) {
-        this.tree = tree;
-    }
-}
-
-export interface PropertyGroupTabParameters {
-    id: string;
-
-    fields?: PropertyField[];
-    icon?: IconDefinition;
-    label?: string;
 }
 
 export class PropertyGroupTab {
@@ -67,25 +32,30 @@ export class PropertyGroupTab {
     label: string;
 
     icon?: IconDefinition;
+    labelParameters?: Record<string, unknown>;
 
-    constructor({ fields = [], icon, id, label = `${id}.label` }: PropertyGroupTabParameters) {
+    constructor({ fields = [], icon, id, label = `${id}.label`, labelParameters }: PropertyGroupTabParameters) {
         this.fields = fields;
         this.icon = icon;
         this.id = id;
         this.label = label;
+        this.labelParameters = labelParameters;
     }
 }
 
-export interface PropertyTabsContentParameters {
-    activeTabId?: string;
-    tabs?: PropertyGroupTab[];
+export class PropertyListContent {
+    list: PropertyListItem[];
+    readonly type = PropertyGroupContentType.LIST;
+
+    constructor({ list = [] }: PropertyListContentParameters) {
+        this.list = list;
+    }
 }
 
 export class PropertyTabsContent {
-    readonly type = PropertyGroupContentType.TABS;
-
     activeTabId: string;
     tabs: PropertyGroupTab[];
+    readonly type = PropertyGroupContentType.TABS;
 
     constructor({ activeTabId, tabs = [] }: PropertyTabsContentParameters) {
         this.tabs = tabs;
@@ -93,8 +63,37 @@ export class PropertyTabsContent {
     }
 }
 
-export type PropertyGroupContent =
-    | PropertyFieldsContent
-    | PropertyListContent
-    | PropertyTabsContent
-    | PropertyTreeContent;
+export class PropertyTreeContent {
+    tree: PropertyTreeConfig;
+    readonly type = PropertyGroupContentType.TREE;
+
+    constructor({ tree = new PropertyTreeConfig({}) }: PropertyTreeContentParameters) {
+        this.tree = tree;
+    }
+}
+
+export interface PropertyFieldsContentParameters {
+    fields?: PropertyField[];
+}
+
+export interface PropertyGroupTabParameters {
+    id: string;
+
+    fields?: PropertyField[];
+    icon?: IconDefinition;
+    label?: string;
+    labelParameters?: Record<string, unknown>;
+}
+
+export interface PropertyListContentParameters {
+    list?: PropertyListItem[];
+}
+
+export interface PropertyTabsContentParameters {
+    activeTabId?: string;
+    tabs?: PropertyGroupTab[];
+}
+
+export interface PropertyTreeContentParameters {
+    tree?: PropertyTreeConfig;
+}

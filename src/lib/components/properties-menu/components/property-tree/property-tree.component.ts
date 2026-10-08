@@ -4,12 +4,13 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { PropertyTreeNode } from '../../models/property-tree-node.model';
+import { resolvePropertyLabelKey } from '../../functions/property-i18n';
+import { findTreeNode, isDropAllowed } from '../../functions/property-tree-drop';
+import { PropertyTreeDropPosition, PropertyTreeNode } from '../../models/property-tree-node.model';
 import { PropertiesMenuService } from '../../services/properties-menu.service';
 import { PropertyTreeDragService } from '../../services/property-tree-drag.service';
-import { resolvePropertyLabelKey } from '../../utils/property-i18n.util';
-import { findTreeNode, isDropAllowed, PropertyTreeDropPosition } from '../../utils/property-tree-drop.util';
 
+const ACTIVATION_KEYS = new Set(['Enter', ' ']);
 const AUTO_EXPAND_DELAY_MS = 600;
 const AUTO_SCROLL_EDGE_PX = 24;
 const AUTO_SCROLL_STEP_PX = 8;
@@ -23,11 +24,6 @@ interface DragCandidate {
     y: number;
 }
 
-/**
- * Nested rows with pointer-based drag and drop: a press on a draggable row becomes a drag after a few
- * pixels, the row under the pointer is split in before/inside/after zones, a collapsed target opens after
- * a pause and the scrollable ancestor scrolls near its edges.
- */
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, NgTemplateOutlet, TranslateModule],
@@ -37,34 +33,30 @@ interface DragCandidate {
     templateUrl: './property-tree.component.html'
 })
 export class PropertyTreeComponent {
-    readonly groupId = input.required<string>();
-    readonly nodes = input.required<PropertyTreeNode[]>();
-    readonly tabId = input.required<string>();
-    readonly acceptsRootDrop = input(false);
-    readonly addBlockLabel = input<string>();
-
-    readonly visibleNodes = computed(() => this.nodes().filter(node => !node.hidden));
-
-    readonly addIcon = faPlus;
-    readonly chevronIcon = faChevronDown;
-
     private readonly destroyRef = inject(DestroyRef);
     private readonly hostElement = inject<ElementRef<HTMLElement>>(ElementRef);
     private readonly propertiesMenuService = inject(PropertiesMenuService);
     private readonly propertyTreeDragService = inject(PropertyTreeDragService);
 
+    readonly acceptsRootDrop = input(false);
+    readonly addBlockLabel = input<string>();
+    readonly groupId = input.required<string>();
+    readonly nodes = input.required<PropertyTreeNode[]>();
+    readonly tabId = input.required<string>();
+
+    readonly addIcon = faPlus;
+    readonly chevronIcon = faChevronDown;
+    readonly visibleNodes = computed(() => this.nodes().filter(node => !node.hidden));
+
     private autoExpandNodeId: string | null = null;
     private autoExpandTimer?: ReturnType<typeof setTimeout>;
     private dragCandidate?: DragCandidate;
-    private draggedRecently = false;
-
     private readonly handleKeyDown = (event: KeyboardEvent): void => {
         if (event.key === 'Escape') {
             this.propertyTreeDragService.cancel(this.tabId(), this.groupId());
             this.detachPointerListeners();
         }
     };
-
     private readonly handlePointerMove = (event: PointerEvent): void => {
         const candidate = this.dragCandidate;
 
@@ -77,7 +69,7 @@ export class PropertyTreeComponent {
                 return;
             }
 
-            this.draggedRecently = true;
+            this.ignoresClickEndingDrag = true;
             this.propertyTreeDragService.start(this.tabId(), this.groupId(), candidate.node);
         }
 
@@ -85,7 +77,6 @@ export class PropertyTreeComponent {
         this.autoScroll(event.clientY);
         this.updateDropTarget(event, candidate.node);
     };
-
     private readonly handlePointerUp = (): void => {
         if (this.propertyTreeDragService.dragging()) {
             this.propertyTreeDragService.drop(this.tabId(), this.groupId());
@@ -93,6 +84,7 @@ export class PropertyTreeComponent {
 
         this.detachPointerListeners();
     };
+    private ignoresClickEndingDrag = false;
 
     constructor() {
         this.destroyRef.onDestroy(() => {
@@ -125,20 +117,35 @@ export class PropertyTreeComponent {
         return resolvePropertyLabelKey(this.propertiesMenuService.config().prefix, 'tree', node.id, node.label);
     }
 
-    visibleChildren(node: PropertyTreeNode): PropertyTreeNode[] {
-        return node.children.filter(child => !child.hidden);
-    }
-
     onAddBlockClick(): void {
         this.propertiesMenuService.triggerTreeAddBlock(this.tabId(), this.groupId());
     }
 
     onNodeClick(node: PropertyTreeNode): void {
-        if (node.disabled || this.draggedRecently) {
+        if (node.disabled || this.ignoresClickEndingDrag) {
             return;
         }
 
         this.propertiesMenuService.selectTreeNode(this.tabId(), this.groupId(), node.id);
+    }
+
+    onRowKeyDown(event: KeyboardEvent, node: PropertyTreeNode): void {
+        if (ACTIVATION_KEYS.has(event.key) && event.target === event.currentTarget) {
+            event.preventDefault();
+            this.onNodeClick(node);
+
+            return;
+        }
+
+        const opens = event.key === 'ArrowRight' && !node.expanded;
+        const closes = event.key === 'ArrowLeft' && node.expanded;
+
+        if (!this.hasVisibleChildren(node) || (!opens && !closes)) {
+            return;
+        }
+
+        event.preventDefault();
+        this.propertiesMenuService.toggleTreeNode(this.tabId(), this.groupId(), node.id);
     }
 
     onRowPointerDown(event: PointerEvent, node: PropertyTreeNode): void {
@@ -147,7 +154,7 @@ export class PropertyTreeComponent {
         }
 
         this.dragCandidate = { node, x: event.clientX, y: event.clientY };
-        this.draggedRecently = false;
+        this.ignoresClickEndingDrag = false;
 
         document.addEventListener('pointermove', this.handlePointerMove);
         document.addEventListener('pointerup', this.handlePointerUp);
@@ -158,6 +165,16 @@ export class PropertyTreeComponent {
     onToggleClick(event: Event, node: PropertyTreeNode): void {
         event.stopPropagation();
         this.propertiesMenuService.toggleTreeNode(this.tabId(), this.groupId(), node.id);
+    }
+
+    toggleLabelKey(node: PropertyTreeNode): string {
+        return node.expanded
+            ? 'angular-components.properties-menu.tree.collapse'
+            : 'angular-components.properties-menu.tree.expand';
+    }
+
+    visibleChildren(node: PropertyTreeNode): PropertyTreeNode[] {
+        return node.children.filter(child => !child.hidden);
     }
 
     private autoScroll(clientY: number): void {
@@ -191,9 +208,8 @@ export class PropertyTreeComponent {
         document.removeEventListener('pointercancel', this.handlePointerUp);
         document.removeEventListener('keydown', this.handleKeyDown);
 
-        // The click that ends a drag must not select the row.
         setTimeout(() => {
-            this.draggedRecently = false;
+            this.ignoresClickEndingDrag = false;
         });
     }
 

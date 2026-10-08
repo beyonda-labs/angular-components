@@ -74,7 +74,6 @@ export const EXAMPLE_VARIABLES: BeyPropertyVariable[] = [
     })
 ];
 
-/** The demo config: a heading block with the properties, structure and add tabs. */
 export function buildPropertiesMenuConfig(
     callbacks: Pick<
         BeyPropertiesMenuConfigParameters,
@@ -103,9 +102,11 @@ export function buildPropertiesMenuConfig(
                                     new BeyPropertyTreeNode({
                                         icon: faFile,
                                         id: 'page-1',
-                                        label: 'Page 1',
+                                        label: 'angular-components-style-guide.properties-menu.tree.page',
+                                        labelParameters: { number: 1 },
                                         children: [
                                             new BeyPropertyTreeNode({
+                                                expanded: false,
                                                 icon: faLayerGroup,
                                                 id: 'header',
                                                 label: 'Heading',
@@ -123,6 +124,7 @@ export function buildPropertiesMenuConfig(
                                                 ]
                                             }),
                                             new BeyPropertyTreeNode({
+                                                expanded: false,
                                                 icon: faLayerGroup,
                                                 id: 'invoice-section',
                                                 label: 'Section',
@@ -145,11 +147,13 @@ export function buildPropertiesMenuConfig(
                                                 ]
                                             }),
                                             new BeyPropertyTreeNode({
+                                                expanded: false,
                                                 icon: faLayerGroup,
                                                 id: 'totals-section',
                                                 label: 'Section',
                                                 children: [
                                                     new BeyPropertyTreeNode({
+                                                        active: true,
                                                         icon: faCalculator,
                                                         id: 'totals',
                                                         label: 'Totals'
@@ -157,6 +161,7 @@ export function buildPropertiesMenuConfig(
                                                 ]
                                             }),
                                             new BeyPropertyTreeNode({
+                                                expanded: false,
                                                 icon: faFileLines,
                                                 id: 'footer',
                                                 label: 'Footer',

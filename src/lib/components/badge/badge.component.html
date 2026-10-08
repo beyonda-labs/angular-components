@@ -1,5 +1,5 @@
 @let current = config();
 
 <span class="bey-badge" [class]="variantClass()">
-    {{ current.translate ? (current.label | translate) : current.label }}
+    {{ current.isTranslated ? (current.label | translate) : current.label }}
 </span>

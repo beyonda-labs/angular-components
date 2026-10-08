@@ -113,8 +113,10 @@ Eight modules used those shared classes without importing the stylesheet, so the
 -   [x] No spec locates an element by class any more: every locator is a role, an `aria-*` attribute or visible
         text, and the templates gained the ARIA they lacked (`table` / `row` / `cell`, `list` / `listitem`, `tree` /
         `treeitem`, `searchbox`, `aria-expanded` on submenus and groups)
--   [ ] The submenu chevron of `left-menu` and the toggle of the property tree are spans with a click handler inside
-        the row button, so they are decorative for assistive technology; each should become a sibling button
+-   [x] The submenu chevron of `left-menu` and the toggle of the property tree were decorative for assistive
+        technology: a `left-menu` branch with its own action gets a sibling toggle button laid over its chevron,
+        and a tree row expands and collapses with `ArrowRight` / `ArrowLeft`, as the ARIA tree pattern expects (a
+        button beside a `treeitem` would not be a valid child of the `tree`). The look is unchanged
 
 What the pilot cost, and what it changed beyond the plan:
 
@@ -164,12 +166,84 @@ the change-log lists every break.
         Test stage already runs; `verify` stays as the local shortcut
 -   [x] Change-log: `[Unreleased]` completed with every S6 break and renamed to `[1.2.0]`; `[1.1.0]` dated
 -   [x] Coverage thresholds raised to just under today's numbers (90 / 77 / 85 / 90), as S2 intended
--   [ ] `release/1.2.0`, version bump, merge to `main` and `develop`, tag `v1.2.0` (the repo has no tags today)
+-   [x] `release/1.2.0`, version bump, merge to `main` and `develop`, tag `v1.2.0`
 -   [x] Consumers adapted: `document-builder-front` and `angular-components-demo` build and pass their tests
         against 1.2.0; `page` gained `onValueChange` and `left-menu` a title size variable for what they needed
 
 Publishing already runs on Jenkins, configured on the server — there is no `Jenkinsfile` in the repo by design.
 Snapshots per branch, `latest` from `main`, as described in the README.
+
+### After 1.2.0
+
+-   [x] `check-translations`: a key segment that is not kebab-case fails, and the translation scripts are the same
+        in every repo: `bey-check-translations`, `bey-sort-translations` and `bey-merge-translations` from
+        `@beyonda-labs/base-config`
+-   [x] `BeyPageConfig` generic over the form value, so a typed `BeyPageFormConfig<T>` fits without a cast
+-   [x] `*.model.ts` holds contracts and definitions only: `resolveRule` and the tree searches of the tree dialog
+        moved to function modules with their specs, the default action type of a page zone is a table, the
+        `types/` folders of `pdf-viewer` and `properties-menu` became model files, and `**/*.model.ts` is out of the
+        coverage, with the thresholds set again on what remains (88 / 74 / 84 / 88)
+-   [x] `eslint-plugin-perfectionist` through base-config (`eslint.sort-declarations` and `eslint.model-files`, no
+        skip left): `sort-modules`, `sort-interfaces`, `sort-object-types` and `sort-enums` everywhere and
+        `sort-classes` in model files. No enum with implicit values was reordered and no `Object.values` depended
+        on the order
+-   [x] `sort-classes` for the order inside a component, a directive or a service through base-config
+        (`eslint.class-order`): inputs, outputs, public properties, private state, injected dependencies,
+        constructor, lifecycle hooks, public methods, private methods
+-   [x] `ModalTreeConfig` is plain data: the dialog owns the selection and the open branches, and the caller closes
+        it through the `BsModalRef` that `open` returns
+-   [x] Function modules have no technical suffix and live next to what they work on, as
+        `rules/model-library/function-module.md` names them: `properties-menu/utils` moved into its `models/`, the drop
+        position type and the variable icon into model files, and every module has its spec
+
+### Front review
+
+What `document-builder-front` did by hand that belongs in the library.
+
+-   [x] `BeyPageConfig` typed by its rows, the `Single` action scope, category rows with their own `loadRow`, and rows
+        completed with empty cells
+-   [x] Date and tags table cells
+-   [x] `beyFormatBytes` and `beyToKeySegment` public, in the new `utilities` layer
+-   [x] File preview dialog, compact PDF toolbar and unsaved-changes guard
+-   [x] `app-layout` navigates to `route` by itself
+-   [x] `properties-menu` keeps the user's state across config replacements, and labels take translation parameters
+-   [x] Form rules for `isRequired`, signal rules and validators, and option fields that drop an unlisted value
+-   [x] `provideBeyApp` and the style guide loading its own translations
+-   [x] The categories form value typed by a fourth generic on `BeyPageConfig`, `BeyPageTableConfig` and
+        `BeyPageCategoriesConfig`
+-   [x] `labelParameters` on `BeyTab` and on the top-level tabs of `properties-menu`
+-   [x] `validators` on autocomplete, chips, file and password fields, typed as custom validators where the value is
+        not text
+-   [x] `ariaLabel` on `ButtonConfig`, so icon-only header actions, the header overflow toggle and the login
+        providers have an accessible name
+-   [x] The compact PDF toolbar uses `bey-button`s with `ButtonType.IconOutline`, a bordered, fixed-size icon square
+        with the toolbar's colours
+-   [x] Every `bey-button` type and the Bootstrap radius utilities follow the `--bey-radius-*` tokens
+-   [x] `properties-menu` fields are named by their translated label, through a `<label for>` tied to a unique id
+-   [x] The library's own specs take `provideBeyTesting` and the fakes of the testing entry, or the real service over
+        them; only a module's own internals (page, login) and the ngx-bootstrap / ngx-toastr layer under the service a
+        spec tests stay mocked
+-   ~~`BeyModalTreeService` has no fake, so `page-actions.service.spec.ts` still mocks it by hand~~ — decided
+    against: it only changes how specs are written, and a `BeyFakeModalTreeService` would reverse the choice that
+    `provideBeyTesting` opens the tree dialog for real
+-   [x] A `getBlob` error showed `unknown`, since its body is a Blob: the service now reads it as JSON. The other odd
+        texts stay as they are, by decision: a `message` without translation shows its raw key, a range with both
+        limits null reads `-max`, and an unknown `errorCode` gets the default title while an empty body or a network
+        error gets `unknown`
+-   [x] The session, theme, app and environment services have no `docs/<module>-readme.md`
+-   [x] `SearchField.getOperators()` moved out of the model into `beySearchFieldOperators(field)`, and
+        `BadgeConfig.translate` renamed to `isTranslated`
+-   [x] The tree chevron has no role or name (it is mouse only), so the specs reach it through its markup
+-   [x] `search.component.css` dropped its `stylelint-disable`: the filter row styles its own `bey-search-control`
+        class instead of Bootstrap's `.form-select` and `.form-control`, which keep the base look
+-   [x] `BeyHttpService` as one typed, cold channel: the request leaves on subscribe and is cancelled on
+        unsubscribe, emits `T`, and propagates the error after the modal; `onSuccess` / `onError` are gone,
+        `handleError`, `successToast` and `loading` stay, `provideBeyHttp` (inside `provideBeyApp` and
+        `provideBeyTesting`) silences the unhandled HTTP errors the modal already showed, and the page loads through
+        `switchMap`, so a stale response never overwrites a newer one
+-   [x] `isRouteBreadcrumbEnabled` turns the route breadcrumb off
+-   [x] `BeyAppLayoutConfig` keeps the footer fields as its own, so a spread copies it whole, and `icon` is optional
+        on the app-layout actions
 
 ---
 
@@ -188,19 +262,36 @@ Snapshots per branch, `latest` from `main`, as described in the README.
 -   [ ] Feedback: `alert`, `progress bar`
 -   [x] Modals (info, warning, error, confirmation via service)
 -   [ ] Drawers
+-   [x] Pdf viewer: find text in the document from the compact toolbar, with its own search field, next and previous
+        match and a match count; the find bar of pdf.js is off outside its full toolbar
+-   [x] File preview dialog (`BeyFilePreviewService`): laid out like a modal form, with a cancel button in its footer;
+        a PDF shows the compact toolbar with a download button and an image fits without a scrollbar
 
 ### Data and navigation
 
--   [ ] `page`: remember the search and the selection when the user comes back to a page (the old
-        registry was removed unfinished)
+-   [x] `page`: remember the folder, the search, the sort and the selection when the user comes back from a route
+        under the page; any other route drops them
 
--   [x] Table / grid (configurable columns, sorting, row selection)
+-   [x] Table / grid (configurable columns, row selection)
+-   [x] Table: sort by clicking the header of a column, sent as the `sort` of the search
+-   [x] Table: show and hide columns from a columns menu, each column defined visible or not and with its width
 -   [ ] Table / grid: filters
 -   [x] Pagination
 -   [x] Tabs
 -   [x] Breadcrumb
 -   [x] Sidebar (`left-menu` with grouped actions, sub-actions and collapse)
 -   [x] Header (configurable left / right actions)
+
+### Page
+
+-   [x] The trash names, as the tooltip of each row, the folder a restore puts it back in
+-   [x] Warn before deleting rows other rows use, from the usages the backend answers (`usagesConfig`)
+-   [x] Move rows by dragging them onto a folder
+-   [x] The number of rows of the folder, in the last node of the breadcrumb
+-   [x] Saved views: tabs that apply a search with its filters (templates / blocks)
+-   ~~Search every folder at once, naming the folder of each result~~ — decided against
+-   ~~Undo right after a delete, from its toast~~ — decided against
+-   [ ] _(very low priority)_ Favourite and recent rows
 
 ### Rich interactions
 

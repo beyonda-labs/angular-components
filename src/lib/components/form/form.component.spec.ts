@@ -1,8 +1,11 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { buttonByName, renderComponent, settle } from '@testing/dom';
 
 import { FormComponent } from './form.component';
+import { FormAutocompleteField } from './models/fields/form-autocomplete-field.model';
+import { FormRadioField } from './models/fields/form-radio-field.model';
 import { FormSelectField } from './models/fields/form-select-field.model';
 import { FormTextField } from './models/fields/form-text-field.model';
 import {
@@ -15,6 +18,8 @@ import {
     FormSection,
     FormStep
 } from './models/form.model';
+import { FormField, FormFieldOption, FormRule } from './models/form-field.model';
+import { FormFieldCustomValidator } from './models/form-field-validator.model';
 import { FORM_HOST, FormHost } from './models/form-host.model';
 
 interface DemoValue {
@@ -45,6 +50,16 @@ describe('FormComponent', () => {
                     ]
                 })
             ],
+            ...overrides
+        });
+    }
+
+    function buildContactConfig(
+        fields: FormField[],
+        overrides: Partial<FormConfigParameters<DemoValue>> = {}
+    ): FormConfig<DemoValue> {
+        return buildConfig({
+            sections: [new FormSection({ key: 'contact', rows: [new FormRow({ fields })] })],
             ...overrides
         });
     }
@@ -293,6 +308,231 @@ describe('FormComponent', () => {
 
             await type('name', 'Ada');
             expect(text()).toContain('demo.extra.label');
+        });
+    });
+
+    describe('required rules', () => {
+        it('requires a field, and marks it as required, only while its rule says so', async () => {
+            await render(
+                buildContactConfig([
+                    new FormTextField({ key: 'name' }),
+                    new FormTextField({ key: 'email', isRequired: value => value['contact']['name'] === 'Ada' })
+                ])
+            );
+
+            await type('name', 'Grace');
+            expect(input('email')?.getAttribute('aria-required')).toBeNull();
+            expect(text()).not.toContain('*');
+            expect(button('demo.submit').disabled).toBe(false);
+
+            await type('name', 'Ada');
+            expect(input('email')?.getAttribute('aria-required')).toBe('true');
+            expect(text()).toContain('*');
+            expect(button('demo.submit').disabled).toBe(true);
+
+            await type('email', 'ada@example.com');
+            expect(button('demo.submit').disabled).toBe(false);
+        });
+
+        it('follows a required rule given as a signal', async () => {
+            const isRequired = signal(false);
+            await render(
+                buildContactConfig([
+                    new FormTextField({ key: 'name', isRequired }),
+                    new FormTextField({ key: 'email' })
+                ])
+            );
+
+            await type('email', 'ada@example.com');
+            expect(button('demo.submit').disabled).toBe(false);
+
+            isRequired.set(true);
+            await settle(fixture);
+
+            expect(input('name')?.getAttribute('aria-required')).toBe('true');
+            expect(button('demo.submit').disabled).toBe(true);
+        });
+    });
+
+    describe('data that arrives after the config', () => {
+        it('shows the options a signal delivers once they arrive', async () => {
+            const catalog = signal<FormFieldOption[]>([]);
+            await render(
+                buildContactConfig([
+                    new FormTextField({ key: 'name' }),
+                    new FormSelectField({
+                        key: 'email',
+                        options: value => catalog().filter(option => option.value !== value['contact']['name'])
+                    })
+                ])
+            );
+            expect(text()).not.toContain('Work address');
+
+            catalog.set([{ label: 'Work address', value: 'work' }]);
+            await settle(fixture);
+
+            expect(text()).toContain('Work address');
+        });
+
+        it('validates a field again when a signal its custom validator reads changes', async () => {
+            const takenNames = signal(new Set<string>());
+            await render(
+                buildContactConfig([
+                    new FormTextField({
+                        key: 'name',
+                        validators: [
+                            new FormFieldCustomValidator(control =>
+                                takenNames().has(control.value as string) ? { taken: true } : null
+                            )
+                        ]
+                    }),
+                    new FormTextField({ key: 'email' })
+                ])
+            );
+
+            await type('name', 'Ada');
+            expect(button('demo.submit').disabled).toBe(false);
+
+            takenNames.set(new Set(['Ada']));
+            await settle(fixture);
+            expect(button('demo.submit').disabled).toBe(true);
+
+            takenNames.set(new Set());
+            await settle(fixture);
+            expect(button('demo.submit').disabled).toBe(false);
+        });
+
+        it('keeps what was typed when a signal a validator reads changes', async () => {
+            const takenNames = signal(new Set<string>());
+            await render(
+                buildContactConfig([
+                    new FormTextField({
+                        key: 'name',
+                        validators: [
+                            new FormFieldCustomValidator(control =>
+                                takenNames().has(control.value as string) ? { taken: true } : null
+                            )
+                        ]
+                    })
+                ])
+            );
+
+            await type('name', 'Ada');
+            takenNames.set(new Set(['Grace']));
+            await settle(fixture);
+
+            expect(input('name')?.value).toBe('Ada');
+            expect(button('demo.cancel').disabled).toBe(false);
+        });
+
+        it('validates a field again when another field its custom validator reads changes', async () => {
+            await render(
+                buildContactConfig([
+                    new FormTextField({ key: 'name' }),
+                    new FormTextField({
+                        key: 'email',
+                        validators: [
+                            new FormFieldCustomValidator(control =>
+                                control.value && control.value === control.parent?.get('name')?.value
+                                    ? { sameAsName: true }
+                                    : null
+                            )
+                        ]
+                    })
+                ])
+            );
+
+            await type('name', 'ada');
+            await type('email', 'grace');
+            expect(button('demo.submit').disabled).toBe(false);
+
+            await type('name', 'grace');
+            expect(button('demo.submit').disabled).toBe(true);
+        });
+    });
+
+    describe('options that change', () => {
+        const WORK: FormFieldOption = { label: 'Work', value: 'work' };
+        const HOME: FormFieldOption = { label: 'Home', value: 'home' };
+        const optionsByName: FormRule<FormFieldOption[]> = value =>
+            value['contact']['name'] === 'Ada' ? [WORK, HOME] : [WORK];
+
+        it.each([
+            { kind: 'a select', field: new FormSelectField({ key: 'email', options: optionsByName }) },
+            { kind: 'a radio', field: new FormRadioField({ key: 'email', options: optionsByName }) },
+            { kind: 'an autocomplete', field: new FormAutocompleteField({ key: 'email', options: optionsByName }) }
+        ])('drops the value of $kind field once its options no longer list it', async ({ field }) => {
+            const onReady = jest.fn();
+            const onValueChange = jest.fn();
+            await render(
+                buildContactConfig([new FormTextField({ key: 'name' }), field], {
+                    initialValue: { contact: { email: 'home', name: 'Ada' } },
+                    onReady,
+                    onValueChange
+                })
+            );
+
+            await type('name', 'Grace');
+
+            expect((onReady.mock.calls[0][0] as FormHandle<DemoValue>).value()).toEqual({
+                contact: { email: '', name: 'Grace' }
+            });
+            expect(onValueChange).toHaveBeenLastCalledWith(
+                { contact: { email: '', name: 'Grace' } },
+                expect.anything()
+            );
+        });
+
+        it('keeps the value of an autocomplete that allows free text, listed or not', async () => {
+            const onReady = jest.fn();
+            await render(
+                buildContactConfig(
+                    [
+                        new FormTextField({ key: 'name' }),
+                        new FormAutocompleteField({ key: 'email', isFreeTextAllowed: true, options: optionsByName })
+                    ],
+                    { initialValue: { contact: { email: 'home', name: 'Ada' } }, onReady }
+                )
+            );
+
+            await type('name', 'Grace');
+
+            expect((onReady.mock.calls[0][0] as FormHandle<DemoValue>).value().contact.email).toBe('home');
+        });
+
+        it('keeps a value its new options still list', async () => {
+            const onReady = jest.fn();
+            await render(
+                buildContactConfig(
+                    [new FormTextField({ key: 'name' }), new FormSelectField({ key: 'email', options: optionsByName })],
+                    { initialValue: { contact: { email: 'work', name: 'Ada' } }, onReady }
+                )
+            );
+
+            await type('name', 'Grace');
+
+            expect((onReady.mock.calls[0][0] as FormHandle<DemoValue>).value().contact.email).toBe('work');
+        });
+
+        it('keeps the initial value while the options that list it are still loading', async () => {
+            const catalog = signal<FormFieldOption[]>([]);
+            const onReady = jest.fn();
+            await render(
+                buildContactConfig(
+                    [new FormTextField({ key: 'name' }), new FormSelectField({ key: 'email', options: catalog })],
+                    { initialValue: { contact: { email: 'home', name: 'Ada' } }, onReady }
+                )
+            );
+            const handle = onReady.mock.calls[0][0] as FormHandle<DemoValue>;
+            expect(handle.value().contact.email).toBe('home');
+
+            catalog.set([WORK, HOME]);
+            await settle(fixture);
+            expect(handle.value().contact.email).toBe('home');
+
+            catalog.set([WORK]);
+            await settle(fixture);
+            expect(handle.value().contact.email).toBe('');
         });
     });
 

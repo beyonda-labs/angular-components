@@ -16,13 +16,12 @@ import { PropertyGroupComponent } from '../property-group/property-group.compone
     templateUrl: './property-tab.component.html'
 })
 export class PropertyTabComponent {
+    private readonly propertiesMenuService = inject(PropertiesMenuService);
+
     readonly tab = input.required<PropertyTab>();
 
-    readonly visibleGroups = computed(() => this.tab().groups.filter(group => !group.hidden));
-
     readonly addIcon = faPlus;
-
-    private readonly propertiesMenuService = inject(PropertiesMenuService);
+    readonly visibleGroups = computed(() => this.tab().groups.filter(group => !group.hidden));
 
     onTabAddClick(): void {
         this.propertiesMenuService.triggerTabAdd(this.tab().id);

@@ -12,7 +12,7 @@ function configure(environmentConfig: EnvironmentConfig): PageUrlService {
 }
 
 describe('PageUrlService', () => {
-    it('should resolve a relative path against baseUrl and webApiPath', () => {
+    it('resolves a relative path against baseUrl', () => {
         const service = configure({
             accessControlUrl: 'http://localhost:3000/auth',
             appName: 'Test',
@@ -24,7 +24,7 @@ describe('PageUrlService', () => {
         expect(service.resolve('/products')).toBe('http://localhost:3000/products');
     });
 
-    it('should include webApiPath when present', () => {
+    it('puts webApiPath between baseUrl and the path when present', () => {
         const service = configure({
             accessControlUrl: 'http://localhost:3000/api/auth',
             appName: 'Test',

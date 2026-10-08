@@ -1,4 +1,5 @@
 import { FormField, FormFieldBaseParameters, FormFieldType } from '../form-field.model';
+import { FormFieldCustomValidator } from '../form-field-validator.model';
 
 export class FormFileField extends FormField {
     accept: string[];
@@ -16,6 +17,7 @@ export class FormFileField extends FormField {
 export interface FormFileFieldParameters extends FormFieldBaseParameters {
     accept?: string[];
     maxSizeBytes?: number;
+    validators?: FormFieldCustomValidator[];
 }
 
-export { matchesAcceptPattern } from '../../../../internal/file/accept-pattern.util';
+export { matchesAcceptPattern } from '../../../../internal/file/accept-pattern';

@@ -3,11 +3,10 @@ import {
     PdfViewerLoadingFailed,
     PdfViewerPageRendered,
     PdfViewerRotationChange
-} from '../types/pdf-viewer-events';
-import { PdfViewerRotation, PdfViewerSource, PdfViewerZoom } from '../types/pdf-viewer-value';
+} from './pdf-viewer-events.model';
 import { PdfViewerToolbarButtons } from './pdf-viewer-toolbar-buttons.model';
+import { PdfViewerRotation, PdfViewerSource, PdfViewerToolbar, PdfViewerZoom } from './pdf-viewer-value.model';
 
-/** What the consumer can do to the live viewer, delivered through `onReady`. */
 export interface PdfViewerHandle {
     currentPage(): number;
     currentRotation(): PdfViewerRotation;
@@ -17,46 +16,20 @@ export interface PdfViewerHandle {
     setZoom(zoom: PdfViewerZoom): void;
 }
 
-export interface PdfViewerConfigParameters {
-    src: PdfViewerSource;
-
-    backgroundColor?: string;
-    filenameForDownload?: string;
-    height?: string;
-    maxZoom?: number;
-    minZoom?: number;
-    onClick?: (event: MouseEvent) => void;
-    onLoaded?: (event: PdfViewerLoaded) => void;
-    onLoadingFailed?: (event: PdfViewerLoadingFailed) => void;
-    onPageChange?: (page: number) => void;
-    onPageRendered?: (event: PdfViewerPageRendered) => void;
-    onReady?: (handle: PdfViewerHandle) => void;
-    onRotationChange?: (event: PdfViewerRotationChange) => void;
-    /** The zoom factor the viewer settles on, as a fraction. */
-    onZoomChange?: (zoom: number) => void;
-    page?: number;
-    password?: string;
-    rotation?: PdfViewerRotation;
-    showToolbar?: boolean;
-    toolbarButtons?: PdfViewerToolbarButtons;
-    zoom?: PdfViewerZoom;
-}
-
-// pdf.js themes its own background off the OS `prefers-color-scheme`, not this app's `body.dark` toggle;
-// a token as the default keeps the viewer in sync with the theme, and a literal colour still overrides it.
-const DEFAULT_BACKGROUND_COLOR = 'var(--bey-bg-surface)';
-
 export class PdfViewerConfig {
     backgroundColor: string;
     height: string;
+    isDownloadable: boolean;
+    isSearchable: boolean;
     maxZoom: number;
     minZoom: number;
     page: number;
     rotation: PdfViewerRotation;
-    showToolbar: boolean;
     src: PdfViewerSource;
+    toolbar: PdfViewerToolbar;
     toolbarButtons: PdfViewerToolbarButtons;
     zoom: PdfViewerZoom;
+    zoomStep: number;
 
     filenameForDownload?: string;
     onClick?: (event: MouseEvent) => void;
@@ -70,32 +43,65 @@ export class PdfViewerConfig {
     password?: string;
 
     constructor({
-        backgroundColor = DEFAULT_BACKGROUND_COLOR,
+        backgroundColor = 'var(--bey-bg-surface)',
         filenameForDownload,
         height = '100%',
+        isDownloadable = false,
+        isSearchable = false,
         maxZoom = 10,
         minZoom = 0.1,
         page = 1,
         password,
         rotation = 0,
-        showToolbar = false,
         src,
+        toolbar = PdfViewerToolbar.None,
         toolbarButtons = new PdfViewerToolbarButtons(),
         zoom = 'auto',
+        zoomStep = 0.1,
         ...callbacks
     }: PdfViewerConfigParameters) {
         Object.assign(this, callbacks);
         this.backgroundColor = backgroundColor;
         this.filenameForDownload = filenameForDownload;
         this.height = height;
+        this.isDownloadable = isDownloadable;
+        this.isSearchable = isSearchable;
         this.maxZoom = maxZoom;
         this.minZoom = minZoom;
         this.page = page;
         this.password = password;
         this.rotation = rotation;
-        this.showToolbar = showToolbar;
         this.src = src;
+        this.toolbar = toolbar;
         this.toolbarButtons = toolbarButtons;
         this.zoom = zoom;
+        this.zoomStep = zoomStep;
     }
+}
+
+export interface PdfViewerConfigParameters {
+    src: PdfViewerSource;
+
+    backgroundColor?: string;
+    filenameForDownload?: string;
+    height?: string;
+    isDownloadable?: boolean;
+    isSearchable?: boolean;
+    maxZoom?: number;
+    minZoom?: number;
+    onClick?: (event: MouseEvent) => void;
+    onLoaded?: (event: PdfViewerLoaded) => void;
+    onLoadingFailed?: (event: PdfViewerLoadingFailed) => void;
+    onPageChange?: (page: number) => void;
+    onPageRendered?: (event: PdfViewerPageRendered) => void;
+    onReady?: (handle: PdfViewerHandle) => void;
+    onRotationChange?: (event: PdfViewerRotationChange) => void;
+    onZoomChange?: (zoom: number) => void;
+    page?: number;
+    password?: string;
+    rotation?: PdfViewerRotation;
+    toolbar?: PdfViewerToolbar;
+    toolbarButtons?: PdfViewerToolbarButtons;
+    zoom?: PdfViewerZoom;
+    zoomStep?: number;
 }

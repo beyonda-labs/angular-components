@@ -1,9 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { buttonByName, queryButton, settle } from '@testing/dom';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
 import { InternalModalConfig, ModalType } from '../models/modal.model';
 import { ModalDialogComponent } from './modal-dialog.component';
+
+const CLOSE_LABEL = 'angular-components.modal.actions.close';
 
 const createConfig = (overrides?: Partial<InternalModalConfig>): InternalModalConfig => ({
     message: 'message',
@@ -14,10 +17,22 @@ const createConfig = (overrides?: Partial<InternalModalConfig>): InternalModalCo
 });
 
 describe('ModalDialogComponent', () => {
-    let component: ModalDialogComponent;
     let fixture: ComponentFixture<ModalDialogComponent>;
 
     const hide = jest.fn();
+
+    async function render(config: InternalModalConfig): Promise<void> {
+        fixture.componentInstance.config = config;
+        await settle(fixture);
+    }
+
+    function closedValues(): jest.Mock {
+        const next = jest.fn();
+
+        fixture.componentInstance.closed.subscribe(next);
+
+        return next;
+    }
 
     beforeEach(async () => {
         hide.mockReset();
@@ -33,52 +48,45 @@ describe('ModalDialogComponent', () => {
         }).compileComponents();
 
         fixture = TestBed.createComponent(ModalDialogComponent);
-        component = fixture.componentInstance;
     });
 
-    it('should create', () => {
-        component.config = createConfig();
+    it('shows the type, the title and the message of the config', async () => {
+        await render(createConfig({ message: 'demo.message', title: 'demo.title', type: ModalType.Error }));
 
-        fixture.detectChanges();
-
-        expect(component).toBeTruthy();
+        expect(fixture.nativeElement.querySelector('h2').textContent.trim()).toBe('demo.title');
+        expect(fixture.nativeElement.textContent).toContain('angular-components.modal.types.error');
+        expect(fixture.nativeElement.textContent).toContain('demo.message');
     });
 
-    it('should show secondary action for confirmation modals', () => {
-        component.config = createConfig({
-            secondaryActionLabel: 'cancel',
-            type: ModalType.Confirmation
-        });
+    it('offers the secondary action on a confirmation modal', async () => {
+        await render(createConfig({ secondaryActionLabel: 'cancel', type: ModalType.Confirmation }));
 
-        expect(component.hasSecondaryAction()).toBe(true);
+        expect(queryButton(fixture, 'cancel')).not.toBeNull();
     });
 
-    it('should NOT show secondary action for info modals', () => {
-        component.config = createConfig({ type: ModalType.Info });
+    it('does not offer the secondary action on an info modal', async () => {
+        await render(createConfig({ secondaryActionLabel: 'cancel', type: ModalType.Info }));
 
-        expect(component.hasSecondaryAction()).toBe(false);
+        expect(queryButton(fixture, 'cancel')).toBeNull();
     });
 
-    it('should emit true on primary action', () => {
-        component.config = createConfig({ type: ModalType.Warning });
-        const next = jest.fn();
-        component.closed.subscribe(next);
+    it('emits true and hides when the primary action is clicked', async () => {
+        await render(createConfig({ type: ModalType.Warning }));
+        const next = closedValues();
 
-        component.onPrimaryAction();
+        buttonByName(fixture, 'primary').click();
+        await settle(fixture);
 
         expect(next).toHaveBeenCalledWith(true);
         expect(hide).toHaveBeenCalledTimes(1);
     });
 
-    it('should emit false on dismiss for confirmation modals', () => {
-        component.config = createConfig({
-            secondaryActionLabel: 'cancel',
-            type: ModalType.Confirmation
-        });
-        const next = jest.fn();
-        component.closed.subscribe(next);
+    it('emits false and hides when a confirmation modal is closed', async () => {
+        await render(createConfig({ secondaryActionLabel: 'cancel', type: ModalType.Confirmation }));
+        const next = closedValues();
 
-        component.dismiss();
+        buttonByName(fixture, CLOSE_LABEL).click();
+        await settle(fixture);
 
         expect(next).toHaveBeenCalledWith(false);
         expect(hide).toHaveBeenCalledTimes(1);

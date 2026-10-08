@@ -19,24 +19,10 @@ import { StyleGuideButton } from '../models/style-guide-button.model';
     templateUrl: './loading-style-guide.component.html'
 })
 export class LoadingStyleGuideComponent {
-    readonly LoadingSize = BeyLoadingSize;
-    readonly showFullscreenOverlay = signal(false);
-
     private readonly loadingService = inject(BeyLoadingService);
 
-    get toggleFullscreenButton(): StyleGuideButton {
-        return {
-            action: () => this.toggleFullscreen(),
-            label: 'angular-components-style-guide.loading.toggle-fullscreen'
-        };
-    }
-
-    get toggleServiceButton(): StyleGuideButton {
-        return {
-            action: () => this.toggleService(),
-            label: 'angular-components-style-guide.loading.toggle-service'
-        };
-    }
+    readonly LoadingSize = BeyLoadingSize;
+    readonly showFullscreenOverlay = signal(false);
 
     toggleFullscreen(): void {
         this.showFullscreenOverlay.update(isOpen => !isOpen);
@@ -46,9 +32,23 @@ export class LoadingStyleGuideComponent {
         }
     }
 
+    get toggleFullscreenButton(): StyleGuideButton {
+        return {
+            action: () => this.toggleFullscreen(),
+            label: 'angular-components-style-guide.loading.toggle-fullscreen'
+        };
+    }
+
     toggleService(): void {
         this.loadingService.show();
 
         setTimeout(() => this.loadingService.hide(), 3000);
+    }
+
+    get toggleServiceButton(): StyleGuideButton {
+        return {
+            action: () => this.toggleService(),
+            label: 'angular-components-style-guide.loading.toggle-service'
+        };
     }
 }

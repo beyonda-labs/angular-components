@@ -1,6 +1,10 @@
 {
     "angular-components": {
         "table": {
+            "columns": {
+                "label": "Columns",
+                "reset": "Restore the default columns"
+            },
             "select-all": "Select all rows",
             "select-row": "Select row"
         }
