@@ -19,15 +19,16 @@ save(contact: Contact): void {
 
 ## BeyHttpService
 
-| Method                         | Meaning                                                       |
-| ------------------------------ | ------------------------------------------------------------- |
-| `get(url, options?)`           | `GET`, the body read as JSON                                  |
-| `getBlob(url, options?)`       | `GET`, the body read as a `Blob`                              |
-| `post(url, body, options?)`    | `POST`                                                        |
-| `put(url, body, options?)`     | `PUT`                                                         |
-| `patch(url, body, options?)`   | `PATCH`                                                       |
-| `delete(url, body, options?)`  | `DELETE` with a body                                          |
-| `upload(url, bytes, options?)` | `PUT` of an `ArrayBuffer` or a `Blob`, reporting its progress |
+| Method                          | Meaning                                                       |
+| ------------------------------- | ------------------------------------------------------------- |
+| `get(url, options?)`            | `GET`, the body read as JSON                                  |
+| `getBlob(url, options?)`        | `GET`, the body read as a `Blob`                              |
+| `post(url, body, options?)`     | `POST`                                                        |
+| `postBlob(url, body, options?)` | `POST`, the response read as a `Blob`                         |
+| `put(url, body, options?)`      | `PUT`                                                         |
+| `patch(url, body, options?)`    | `PATCH`                                                       |
+| `delete(url, body, options?)`   | `DELETE` with a body                                          |
+| `upload(url, bytes, options?)`  | `PUT` of an `ArrayBuffer` or a `Blob`, reporting its progress |
 
 ## BeyHttpRequestOptions
 
@@ -56,6 +57,6 @@ its default. An app that does not use `provideBeyApp` adds `provideBeyHttp()` to
 The reason the modal shows comes from the error body express-components sends,
 `{ errorCode, messageKey, messageParameters, details, timestamp }`: `angular-components.http.error.<messageKey>`
 when the body names one, the text of its `errorCode` otherwise, and the unknown error when neither is translated.
-A failed `getBlob` answers that body as a `Blob`; the service reads it as JSON first, so a download shows the reason
-too, and the unknown error only when the body is not JSON.
+A failed `getBlob` or `postBlob` answers that body as a `Blob`; the service reads it as JSON first, so a download shows
+the reason too, and the unknown error only when the body is not JSON.
 `details` stays on the `HttpErrorResponse` for a `handleError` or a subscriber that shows it.

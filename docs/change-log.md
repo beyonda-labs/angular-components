@@ -1,5 +1,12 @@
 # Change Log
 
+## [Unreleased]
+
+### Added
+
+-   HTTP service: `postBlob(url, body, options?)` sends a `POST` and reads the response as a `Blob`, such as a PDF the
+    server draws from the body; a failed one shows its reason like `getBlob`.
+
 ## [1.3.0] - 2026-10-09
 
 ### Added
