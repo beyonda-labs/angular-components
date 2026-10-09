@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { queryAll, renderComponent, settle } from '@testing/dom';
+import { controlByName, queryAll, renderComponent, settle } from '@testing/dom';
 import { of } from 'rxjs';
 
 import { FormFieldState } from '../../form.component';
 import { FormAutocompleteField } from '../../models/fields/form-autocomplete-field.model';
 import { FormCheckboxField } from '../../models/fields/form-checkbox-field.model';
+import { FormCheckboxGroupField } from '../../models/fields/form-checkbox-group-field.model';
 import { FormChipsField } from '../../models/fields/form-chips-field.model';
 import { FormFileField } from '../../models/fields/form-file-field.model';
 import { FormPasswordField } from '../../models/fields/form-password-field.model';
@@ -91,6 +92,26 @@ describe('FormFieldComponent', () => {
 
         expect(fixture.nativeElement.querySelectorAll('label')).toHaveLength(1);
         expect(fixture.nativeElement.querySelector('input[type="checkbox"]')).not.toBeNull();
+    });
+
+    it('names a checkbox group by its label, and holds a required one back until an option is checked', async () => {
+        const field = new FormCheckboxGroupField({ isRequired: true, key: 'roles' });
+        const control = TestBed.inject(FormService).initFieldControl(field) as FormControl<string[]>;
+        fixture = await renderComponent(FormFieldComponent, {
+            control,
+            field,
+            prefix: 'demo.contact',
+            state: { ...VALID, isRequired: true, options: [{ label: 'Admin', value: 'admin' }] }
+        });
+
+        expect(controlByName(fixture, 'demo.contact.roles.label').getAttribute('role')).toBe('group');
+        expect(control.valid).toBe(false);
+
+        controlByName(fixture, 'Admin').click();
+        await settle(fixture);
+
+        expect(control.value).toEqual(['admin']);
+        expect(control.valid).toBe(true);
     });
 
     describe('validators of each field type', () => {

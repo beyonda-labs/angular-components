@@ -37,6 +37,8 @@ export { FormAutocompleteField as BeyFormAutocompleteField } from './models/fiel
 export { FormTextField as BeyFormTextField } from './models/fields/form-text-field.model';
 export { FormTextVariableField as BeyFormTextVariableField } from './models/fields/form-text-variable-field.model';
 export { FormCheckboxField as BeyFormCheckboxField } from './models/fields/form-checkbox-field.model';
+export { FormCheckboxGroupField as BeyFormCheckboxGroupField } from './models/fields/form-checkbox-group-field.model';
+export type { FormCheckboxGroupFieldParameters as BeyFormCheckboxGroupFieldParameters } from './models/fields/form-checkbox-group-field.model';
 export { FormChipsField as BeyFormChipsField } from './models/fields/form-chips-field.model';
 export { FormDateField as BeyFormDateField } from './models/fields/form-date-field.model';
 export { FormFileField as BeyFormFileField } from './models/fields/form-file-field.model';

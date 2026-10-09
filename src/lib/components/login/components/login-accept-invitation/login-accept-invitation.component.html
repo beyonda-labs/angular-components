@@ -1,0 +1,22 @@
+<bey-login-shell [config]="config()" [title]="title()">
+    <div aria-live="polite" role="status">
+        @if (loadingMessage(); as message) {
+            <p class="mb-0">{{ message | translate }}</p>
+        }
+    </div>
+
+    @if (errorReason(); as reason) {
+        <bey-login-link-error
+            beyLoginAutofocus
+            flow="accept-invitation"
+            [config]="config()"
+            [reason]="reason"
+            (retryClick)="load()"
+        />
+    } @else {
+        @if (formConfig(); as formConfig) {
+            <p class="small mb-3">{{ intro() | translate: introParameters() }}</p>
+            <bey-form beyLoginAutofocus [config]="formConfig" />
+        }
+    }
+</bey-login-shell>

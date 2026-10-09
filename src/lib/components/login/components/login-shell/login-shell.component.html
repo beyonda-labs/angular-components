@@ -1,0 +1,26 @@
+<div class="bey-login d-flex flex-column">
+    <div class="bey-login-body flex-grow-1" [style.background-image]="backgroundImage()">
+        <main class="bey-login-main w-100 h-100 d-flex align-items-center justify-content-center">
+            <div class="bey-login-cards d-flex">
+                <div class="bey-login-card d-flex flex-column">
+                    <div class="bey-login-org d-inline-flex align-items-center text-uppercase fw-medium">
+                        <img class="bey-login-org-icon flex-shrink-0" alt="" [src]="config().iconSrc" />
+                        <span>{{ config().orgName }}</span>
+                    </div>
+                    <h1 class="bey-login-product fw-semibold my-2">{{ config().productName | translate }}</h1>
+                    <p class="bey-login-pitch mb-0">{{ config().productDescription | translate }}</p>
+
+                    <ng-content select="[aside]" />
+                </div>
+
+                <section class="bey-login-card d-flex flex-column">
+                    <h1 class="bey-login-title fw-semibold mb-4">{{ title() | translate }}</h1>
+
+                    <ng-content />
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <bey-footer [config]="config().footerConfig" />
+</div>

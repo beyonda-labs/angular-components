@@ -5,6 +5,7 @@ import { FormFieldAsyncValidator, FormFieldValidator } from './form-field-valida
 export enum FormFieldType {
     Autocomplete = 'autocomplete',
     Checkbox = 'checkbox',
+    CheckboxGroup = 'checkboxGroup',
     Chips = 'chips',
     Date = 'date',
     File = 'file',
@@ -45,6 +46,7 @@ export abstract class FormField {
     type: FormFieldType;
     validators: FormFieldValidator[];
 
+    autocomplete?: string;
     label?: string;
     placeholder?: string;
 
@@ -53,6 +55,7 @@ export abstract class FormField {
         type,
 
         asyncValidators = [],
+        autocomplete,
         columns = 12,
         isDisabled = false,
         isHidden = false,
@@ -64,6 +67,7 @@ export abstract class FormField {
         validators = []
     }: FormFieldParameters) {
         this.asyncValidators = asyncValidators;
+        this.autocomplete = autocomplete;
         this.columns = columns;
         this.isDisabled = isDisabled;
         this.isHidden = isHidden;
@@ -82,6 +86,7 @@ export interface FormFieldBaseParameters {
     key: string;
 
     asyncValidators?: FormFieldAsyncValidator[];
+    autocomplete?: string;
     columns?: FormFieldColumn;
     isDisabled?: FormRule<boolean>;
     isHidden?: FormRule<boolean>;

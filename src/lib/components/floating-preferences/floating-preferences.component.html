@@ -3,11 +3,11 @@
         <span class="bey-floating-preferences-control">
             <select
                 [attr.aria-label]="'angular-components.floating-preferences.language' | translate"
-                [value]="language()"
                 (change)="onLangChange($any($event.target).value)"
             >
-                <option value="es">Español</option>
-                <option value="en">English</option>
+                @for (option of languages; track option.code) {
+                    <option [selected]="option.code === language()" [value]="option.code">{{ option.name }}</option>
+                }
             </select>
             <span class="bey-floating-preferences-chevron" aria-hidden="true">
                 <fa-icon [icon]="chevronIcon"></fa-icon>

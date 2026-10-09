@@ -175,6 +175,22 @@ the transitions on the front only choose what the form offers.
 `tableConfig.search` takes the `fields` of the filters panel and a `mainField` for the text box. Every
 change goes back to the first page and reloads; the whole query travels in the `search` parameter.
 
+A filter on a field of the backend matches that field alone. To match several at once, as the `text` of
+express-components' base-entity does over its searchable fields, `textField` names a text field whose value the page
+sends as the `text` of the query instead of as a filter, whatever its operator; the search box and the panel keep it
+as they do any other field, and a blank one sends nothing.
+
+```ts
+search: new BeyPageTableSearchConfig({
+    fields: [
+        new BeySearchField({ key: 'text', type: BeySearchFieldType.Text }),
+        new BeySearchField({ key: 'status', type: BeySearchFieldType.Select, options: STATUS_OPTIONS })
+    ],
+    mainField: 'text',
+    textField: 'text'
+});
+```
+
 ## Views
 
 `views` adds a tab per `BeyPageView` between the main tab and the trash, each one the same list with the `filters`

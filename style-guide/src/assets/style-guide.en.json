@@ -1,5 +1,6 @@
 {
     "angular-components-style-guide": {
+        "account-section": "Account",
         "app-layout-section": "App Layouts",
         "badge-section": "Badges",
         "breadcrumbs": "Breadcrumbs",
@@ -22,6 +23,7 @@
         "tables": "Tables",
         "tabs-section": "Tabs",
         "title": "Beyonda Labs - Angular Components - Style Guide",
-        "toasts": "Toasts"
+        "toasts": "Toasts",
+        "users-section": "Users"
     }
 }

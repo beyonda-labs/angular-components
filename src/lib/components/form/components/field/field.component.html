@@ -109,6 +109,16 @@
                 [prefix]="fieldPrefix()"
             ></bey-form-checkbox-field>
         }
+        @case (fieldType.CheckboxGroup) {
+            <bey-form-checkbox-group-field
+                [control]="control"
+                [field]="$any(field())"
+                [isRequired]="state().isRequired"
+                [label]="label()"
+                [options]="state().options"
+                [prefix]="fieldPrefix()"
+            ></bey-form-checkbox-group-field>
+        }
         @case (fieldType.Chips) {
             <bey-form-chips-field
                 [control]="control"

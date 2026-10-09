@@ -1,5 +1,46 @@
 {
     "angular-components": {
+        "account": {
+            "password": {
+                "current-password": {
+                    "label": "Contraseña actual",
+                    "placeholder": "Escribe tu contraseña actual"
+                },
+                "no-password": "Tu cuenta no tiene contraseña, porque entras con otro proveedor. Para crear una, cierra la sesión y usa \"¿Has olvidado tu contraseña?\" en la página de inicio de sesión.",
+                "password": {
+                    "label": "Nueva contraseña",
+                    "placeholder": "Escribe la nueva contraseña"
+                },
+                "password2": {
+                    "label": "Confirma la nueva contraseña",
+                    "mismatch": "Las contraseñas no coinciden.",
+                    "placeholder": "Vuelve a escribir la nueva contraseña"
+                },
+                "save": "Cambiar contraseña",
+                "title": "Contraseña"
+            },
+            "profile": {
+                "cancel": "Descartar cambios",
+                "email": {
+                    "label": "Correo electrónico"
+                },
+                "name": {
+                    "label": "Nombre",
+                    "placeholder": "Escribe tu nombre"
+                },
+                "save": "Guardar perfil",
+                "surname": {
+                    "label": "Apellidos",
+                    "placeholder": "Escribe tus apellidos"
+                },
+                "title": "Perfil"
+            },
+            "title": "Mi cuenta",
+            "toast": {
+                "password-success": "Contraseña cambiada. Tendrás que volver a iniciar sesión en tus otros dispositivos.",
+                "profile-success": "Perfil guardado"
+            }
+        },
         "app-layout": {
             "main-content": "Contenido principal"
         },
@@ -75,6 +116,11 @@
         },
         "http": {
             "error": {
+                "account": {
+                    "no-password": "Tu cuenta aún no tiene contraseña. Crea una con \"¿Has olvidado tu contraseña?\" en la página de inicio de sesión.",
+                    "token-invalid": "Este enlace no es válido, ya se ha usado o ha caducado.",
+                    "wrong-password": "La contraseña actual no es correcta."
+                },
                 "action-unavailable": "Esta acción no está disponible para el elemento. Recarga la página y vuelve a intentarlo.",
                 "attachments": {
                     "content-already-set": "Este adjunto ya tiene su archivo.",
@@ -118,7 +164,9 @@
                 "invalid-field-value": "El campo \"{{fieldName}}\" tiene un valor no válido.",
                 "invalid-transition": "El estado no puede pasar de \"{{from}}\" a \"{{to}}\".",
                 "login": {
+                    "account-inactive": "Esta cuenta está desactivada. Ponte en contacto con un administrador si necesitas volver a acceder.",
                     "account-locked": "La cuenta está bloqueada tras demasiados intentos fallidos. Vuelve a intentarlo en {{minutes}} minuto(s).",
+                    "email-not-verified": "Verifica tu correo electrónico antes de iniciar sesión. Abre el enlace que te enviamos a {{email}} o pide uno nuevo.",
                     "existing-user": "Ya existe una cuenta con este correo electrónico.",
                     "invalid-credentials": "Email o contraseña incorrectos.",
                     "invalid-origin": "La petición llegó desde otro sitio y se ha rechazado.",
@@ -138,7 +186,16 @@
                 "title": "Error",
                 "too-many-requests": "Demasiadas solicitudes. Por favor, inténtelo de nuevo más tarde.",
                 "unauthorized": "Su sesión ha expirado o no está autenticado. Por favor, inicie sesión de nuevo.",
-                "unknown": "Se produjo un error inesperado. Por favor, inténtelo de nuevo más tarde."
+                "unknown": "Se produjo un error inesperado. Por favor, inténtelo de nuevo más tarde.",
+                "users": {
+                    "existing-user": "Ya hay una cuenta con el correo {{email}}.",
+                    "last-superadmin": "Este cambio dejaría sin ningún superadministrador activo.",
+                    "not-found": "Este usuario no existe. Recarga la página y vuelve a intentarlo.",
+                    "not-invited": "Esta cuenta ya no está pendiente de una invitación.",
+                    "own-account": "No puedes desactivar tu propia cuenta ni cambiar tus propios roles.",
+                    "superadmin-only": "Solo un superadministrador puede dar o quitar el rol de superadministrador, o cambiar la cuenta de un superadministrador.",
+                    "unknown-role": "El rol \"{{role}}\" no existe."
+                }
             },
             "field": {
                 "login": {
@@ -154,6 +211,11 @@
                 }
             },
             "title": {
+                "account": {
+                    "no-password": "Sin contraseña",
+                    "token-invalid": "Enlace no válido",
+                    "wrong-password": "Contraseña incorrecta"
+                },
                 "action-unavailable": "Acción no disponible",
                 "attachments": {
                     "content-already-set": "Archivo ya subido",
@@ -194,7 +256,9 @@
                 "invalid-field-value": "Valor no permitido",
                 "invalid-transition": "Cambio de estado no válido",
                 "login": {
+                    "account-inactive": "Cuenta desactivada",
                     "account-locked": "Cuenta bloqueada",
+                    "email-not-verified": "Correo electrónico sin verificar",
                     "existing-user": "Cuenta ya existente",
                     "invalid-credentials": "Autenticación fallida",
                     "invalid-origin": "Petición rechazada",
@@ -213,7 +277,16 @@
                 "service-unavailable": "Servicio no disponible",
                 "too-many-requests": "Demasiadas solicitudes",
                 "unauthorized": "Autenticación requerida",
-                "unknown": "Error inesperado"
+                "unknown": "Error inesperado",
+                "users": {
+                    "existing-user": "La cuenta ya existe",
+                    "last-superadmin": "Último superadministrador",
+                    "not-found": "Usuario no encontrado",
+                    "not-invited": "Sin invitación pendiente",
+                    "own-account": "Tu propia cuenta",
+                    "superadmin-only": "Solo para superadministradores",
+                    "unknown-role": "Rol desconocido"
+                }
             }
         },
         "left-menu": {
@@ -229,6 +302,48 @@
             "label": "Cargando"
         },
         "login": {
+            "accept-invitation": {
+                "button": {
+                    "accept": "Activar cuenta"
+                },
+                "intro": "Te han invitado con la dirección {{email}}. Completa tus datos y elige una contraseña para activar tu cuenta.",
+                "invalid-hint": "Pide a quien te invitó que te envíe una invitación nueva.",
+                "loading": "Cargando tu invitación…",
+                "name": {
+                    "label": "Nombre",
+                    "placeholder": "Tu nombre"
+                },
+                "password": {
+                    "label": "Contraseña",
+                    "placeholder": "Elige una contraseña"
+                },
+                "password2": {
+                    "label": "Confirmar contraseña",
+                    "placeholder": "Repite tu contraseña"
+                },
+                "surname": {
+                    "label": "Apellido",
+                    "placeholder": "Tu apellido"
+                }
+            },
+            "back-to-sign-in": "Volver a iniciar sesión",
+            "forgot-password": {
+                "button": {
+                    "send": "Enviar enlace"
+                },
+                "email": {
+                    "label": "Correo electrónico",
+                    "placeholder": "tu@correo.com"
+                },
+                "intro": "Escribe el correo electrónico de tu cuenta y te enviaremos un enlace para elegir una contraseña nueva.",
+                "sent": "Si existe una cuenta con esa dirección, te hemos enviado un enlace para elegir una contraseña nueva. Revisa tu bandeja de entrada."
+            },
+            "link-error": {
+                "failed": "No hemos podido abrir este enlace ahora mismo. Vuelve a intentarlo dentro de un momento.",
+                "invalid": "Este enlace no es válido, ya se ha usado o ha caducado.",
+                "request-new-link": "Solicitar un enlace nuevo",
+                "retry": "Volver a intentarlo"
+            },
             "login": {
                 "button": {
                     "login": "Iniciar sesión"
@@ -237,11 +352,17 @@
                     "label": "Correo electrónico",
                     "placeholder": "Escribe tu correo"
                 },
+                "forgot-password": "¿Has olvidado tu contraseña?",
                 "password": {
                     "label": "Contraseña",
                     "placeholder": "Escribe tu contraseña"
                 },
-                "signin-with": "Continuar con"
+                "signin-with": "Continuar con",
+                "unverified": {
+                    "message": "{{email}} aún no está verificado. Podemos enviarte un enlace de verificación nuevo.",
+                    "resend": "Reenviar el correo de verificación",
+                    "sent": "Si {{email}} sigue pendiente de verificar, te hemos enviado un enlace nuevo. Revisa tu bandeja de entrada."
+                }
             },
             "provider": {
                 "facebook": "Facebook",
@@ -274,9 +395,40 @@
                     "placeholder": "Tu apellido"
                 }
             },
+            "registered": {
+                "message": "Te hemos enviado un enlace a tu correo electrónico. Ábrelo para activar tu cuenta y después inicia sesión."
+            },
+            "reset-password": {
+                "button": {
+                    "save": "Guardar contraseña"
+                },
+                "invalid-hint": "Solicita un enlace nuevo para restablecer tu contraseña.",
+                "password": {
+                    "label": "Contraseña nueva",
+                    "placeholder": "Escribe tu contraseña nueva"
+                },
+                "password2": {
+                    "label": "Confirmar contraseña",
+                    "placeholder": "Repite tu contraseña nueva"
+                }
+            },
             "title": {
+                "accept-invitation": "Acepta tu invitación",
+                "forgot-password": "Restablece tu contraseña",
+                "invalid-link": "Este enlace ya no es válido",
                 "login": "Bienvenido de vuelta",
-                "register": "Crea tu cuenta"
+                "register": "Crea tu cuenta",
+                "registered": "Revisa tu bandeja de entrada",
+                "reset-password": "Elige una contraseña nueva",
+                "verify-email": "Verifica tu correo electrónico"
+            },
+            "validation": {
+                "passwords-not-match": "Las contraseñas no coinciden."
+            },
+            "verify-email": {
+                "invalid-hint": "Inicia sesión con tu correo electrónico y tu contraseña para recibir un enlace nuevo.",
+                "progress": "Verificando tu correo electrónico…",
+                "success": "Tu correo electrónico está verificado. Iniciando sesión…"
             }
         },
         "modal": {
@@ -459,6 +611,111 @@
         "tree": {
             "collapse": "Contraer",
             "expand": "Expandir"
+        },
+        "users": {
+            "actions": {
+                "change-status": {
+                    "label": "Cambiar estado",
+                    "tooltip": "Activa o desactiva el usuario seleccionado"
+                },
+                "create": {
+                    "label": "Invitar usuario",
+                    "tooltip": "Invita a alguien a crear su cuenta"
+                },
+                "edit": {
+                    "label": "Editar",
+                    "tooltip": "Edita el usuario seleccionado"
+                },
+                "resend-invitation": {
+                    "label": "Reenviar invitación",
+                    "tooltip": "Vuelve a enviar el correo de invitación"
+                }
+            },
+            "change-status": {
+                "buttons": {
+                    "cancel": "Cancelar",
+                    "submit": "Cambiar"
+                },
+                "main": {
+                    "status": {
+                        "label": "Nuevo estado",
+                        "placeholder": "Elige un estado"
+                    }
+                },
+                "title": "Cambiar estado"
+            },
+            "form": {
+                "create": {
+                    "title": "Invitar usuario"
+                },
+                "edit": {
+                    "title": "Editar usuario"
+                },
+                "main": {
+                    "email": {
+                        "label": "Correo electrónico",
+                        "placeholder": "Escribe el correo de la persona"
+                    },
+                    "language": {
+                        "label": "Idioma de la invitación",
+                        "placeholder": "Idioma por defecto"
+                    },
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Escribe el nombre"
+                    },
+                    "roles": {
+                        "label": "Roles"
+                    },
+                    "surname": {
+                        "label": "Apellidos",
+                        "placeholder": "Escribe los apellidos"
+                    }
+                }
+            },
+            "roles": {
+                "superadmin": "Superadministrador"
+            },
+            "search": {
+                "fields": {
+                    "role": "Rol",
+                    "status": "Estado",
+                    "text": "Nombre o correo"
+                }
+            },
+            "status": {
+                "active": "Activo",
+                "inactive": "Inactivo",
+                "invited": "Invitado",
+                "unverified": "Sin verificar"
+            },
+            "table": {
+                "columns": {
+                    "created-at": "Creado",
+                    "email": "Correo electrónico",
+                    "last-login-at": "Último acceso",
+                    "name": "Nombre",
+                    "roles": "Roles",
+                    "status": "Estado"
+                },
+                "empty": "Ningún usuario coincide con la búsqueda",
+                "no-name": "Sin nombre",
+                "tooltips": {
+                    "created-at": "Cuándo se creó la cuenta",
+                    "email": "El correo con el que entra el usuario",
+                    "last-login-at": "La última vez que el usuario inició sesión",
+                    "name": "Nombre y apellidos del usuario",
+                    "roles": "Lo que el usuario puede hacer",
+                    "status": "Si el usuario puede iniciar sesión"
+                }
+            },
+            "title": "Usuarios",
+            "toast": {
+                "change-status-success": "Estado cambiado",
+                "create-success": "Invitación enviada",
+                "edit-success": "Usuario guardado",
+                "resend-invitation-success": "Invitación reenviada"
+            }
         }
     }
 }

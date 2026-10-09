@@ -17,6 +17,7 @@ Every field extends `BeyFormField` and takes the same base parameters; each type
 | `placeholder`           |         | Overrides `<prefix>.<key>.placeholder`                          |
 | `validators`            | `[]`    | Sync validators; which ones depends on the value, see below     |
 | `asyncValidators`       | `[]`    | `BeyFormFieldAsyncValidator` instances                          |
+| `autocomplete`          |         | Autofill hint of a text or password field, such as `email`      |
 
 ## Fields
 
@@ -31,6 +32,7 @@ Every field extends `BeyFormField` and takes the same base parameters; each type
 | `BeyFormRadioField`        | `string`   | `options`, a value or a rule                                                                                                                 |
 | `BeyFormAutocompleteField` | `string`   | `options`, a value or a rule; `emptyKey`; `isFreeTextAllowed` (`false`)                                                                      |
 | `BeyFormCheckboxField`     | `boolean`  | `isSwitch` (`false`)                                                                                                                         |
+| `BeyFormCheckboxGroupField` | `string[]` | `options`, a value or a rule; one checkbox per option, the value lists the checked ones in the order they were checked                      |
 | `BeyFormChipsField`        | `string[]` | `maxItems`, `allowDuplicates` (`false`)                                                                                                      |
 | `BeyFormFileField`         | `File`     | `accept` (`[]`), `maxSizeBytes`, both validated                                                                                              |
 | `BeyFormTextVariableField` | `string`   | `options`, a value or a rule, inserted as `{{ value }}`                                                                                      |
@@ -89,15 +91,15 @@ Which validators a field takes depends on its value:
 | Value                                   | Fields                                                                     | Validators                         |
 | --------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------- |
 | `string`                                | text, textarea, password, date, select, radio, autocomplete, text variable | All of them                        |
-| `number`, `boolean`, `string[]`, `File` | number, checkbox, chips, file                                              | `BeyFormFieldCustomValidator` only |
+| `number`, `boolean`, `string[]`, `File` | number, checkbox, checkbox group, chips, file                              | `BeyFormFieldCustomValidator` only |
 
 The length, pattern, email and url validators are written for text. On the other values they would do nothing
 (a length on a number or a `File`), count something else (a length on the chips counts the chips, which
-`maxItems` already covers) or fail every time (an email on a boolean). So the parameters of those four fields
+`maxItems` already covers) or fail every time (an email on a boolean). So the parameters of those five fields
 type `validators` as `BeyFormFieldCustomValidator[]`, and passing any other validator does not compile; a
-custom validator receives the whole value: the number, the boolean, the array of chips or the `File`. On a
-select, a radio or an autocomplete, the validators check the `value` of the chosen option, never its label nor
-the text typed to filter.
+custom validator receives the whole value: the number, the boolean, the array of chips or of checked values, or the
+`File`. A required checkbox group needs at least one option checked. On a select, a radio or an autocomplete, the
+validators check the `value` of the chosen option, never its label nor the text typed to filter.
 
 The checks a field brings with it (`min` and `max`, `minDate` and `maxDate`, `maxItems`, `accept` and
 `maxSizeBytes`) run together with its validators, and the field is valid only when all of them pass. The info

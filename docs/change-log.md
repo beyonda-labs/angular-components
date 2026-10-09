@@ -13,6 +13,29 @@
 -   Session service: `logout()` signs the user out at `accessControlUrl/logout`, then clears the session and goes to
     `loginRoute`, also when the request fails.
 -   Login module: `login.account-locked` (with its `minutes`) and `login.invalid-origin` errors and titles.
+-   Login module: a "Forgot your password?" view behind `isPasswordResetEnabled` on `BeyLoginConfig`, which sends
+    `accessControlUrl/password/forgot` and confirms in neutral words; `?view=forgot-password` on the login route opens
+    it.
+-   Login module: `BeyLoginResetPasswordComponent`, `BeyLoginVerifyEmailComponent` and
+    `BeyLoginAcceptInvitationComponent`, the pages of the emailed links in the look of the login; each reads `?token=`
+    and opens the session the server answers.
+-   Login module: a sign-in refused with `login.email-not-verified` offers to resend the verification email, and a
+    registration answered with `{ verificationRequired: true }` asks to check the inbox; errors and titles for
+    `login.account-inactive`, `login.email-not-verified` and `account.token-invalid`.
+-   Login module: `BeyLoginConfigParameters` is exported.
+-   Account module: `bey-account`, the signed-in user's own account: the profile through `PUT /account`, the password
+    through `PUT /account/password`, which opens the session it answers, or how to set a password without one.
+-   Users module: `bey-users`, the users page on `bey-page` over the users module of express-components: invite, edit,
+    change the status and resend the invitation, with roles labelled from `rolePrefix`.
+-   Account and users modules: the texts of the `account.wrong-password`, `account.no-password` and `users.*` errors.
+-   Preferences service: `BeyPreferencesService` and `provideBeyPreferences` start the app in the remembered, the
+    browser or the default language, apply the language and theme saved on the account when a session opens, and
+    save what a signed-in user picks.
+-   App service: `preferences` on `BeyAppConfig`.
+-   Session service: `language` and `theme` on `BeySessionUser`, read from the token.
+-   Form module: `BeyFormCheckboxGroupField`, one checkbox per option, valued with the checked ones.
+-   Form module: `autocomplete` on the base field parameters, the autofill hint of a text or password field.
+-   Page module: `textField` on `BeyPageTableSearchConfig` sends that field as the `text` of the search.
 
 ### Changed
 
@@ -25,6 +48,11 @@
     registration, the refresh or the logout.
 -   Login module (breaking): `BeyLoginResponse` is `{ accessToken }`; sign-in and registration are sent with the
     credentials, and the OAuth callback restores the session through the cookie instead of reading tokens in the URL.
+-   Login module: each view focuses its first field, and the sign-in form carries the autofill hints `email` and
+    `current-password`.
+-   App service: `provideBeyApp` starts the app in its language; an app no longer sets it in its `AppComponent`.
+-   Floating preferences module: lists the `languages` of the preferences, each named in itself, and saves a signed-in
+    user's choice; it needs `provideBeyApp`, or `provideBeyTesting` in specs.
 
 ### Fixed
 

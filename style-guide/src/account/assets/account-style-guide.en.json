@@ -1,0 +1,7 @@
+{
+    "angular-components-style-guide": {
+        "account": {
+            "example": "The account page of the signed-in user, read from the demo backend: the email to read, the name and surname to save, and the password to change, or how to set one for an account without it."
+        }
+    }
+}

@@ -110,7 +110,9 @@ function decodeJwtUser(token: string): SessionUser | null {
             redirectPath: allowedPaths[0] ?? '',
             roles: (payload['roles'] as string[] | undefined) ?? [],
             name: payload['name'] as string | undefined,
-            surname: payload['surname'] as string | undefined
+            surname: payload['surname'] as string | undefined,
+            language: payload['language'] as string | undefined,
+            theme: payload['theme'] as string | undefined
         };
     } catch {
         return null;

@@ -2,8 +2,9 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { faGear, faHome } from '@fortawesome/free-solid-svg-icons';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { buttonByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { config as rxjsConfig } from 'rxjs';
 
 import { LeftMenuTitle, LeftMenuUserInfo } from '../left-menu/models/left-menu.model';
@@ -72,8 +73,8 @@ describe('AppLayoutComponent', () => {
         localStorage.clear();
 
         await TestBed.configureTestingModule({
-            imports: [AppLayoutComponent, HostComponent, TranslateModule.forRoot()],
-            providers: [provideRouter([{ path: '**', component: EmptyPageComponent }])]
+            imports: [AppLayoutComponent, HostComponent],
+            providers: [provideRouter([{ path: '**', component: EmptyPageComponent }]), provideBeyTesting()]
         }).compileComponents();
 
         service = TestBed.inject(AppLayoutService);
