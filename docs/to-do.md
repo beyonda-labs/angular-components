@@ -266,6 +266,10 @@ What `document-builder-front` did by hand that belongs in the library.
         match and a match count; the find bar of pdf.js is off outside its full toolbar
 -   [x] File preview dialog (`BeyFilePreviewService`): laid out like a modal form, with a cancel button in its footer;
         a PDF shows the compact toolbar with a download button and an image fits without a scrollbar
+-   [x] Pdf viewer: starts under a Content Security Policy sent as a header (`useInlineScripts` off)
+-   [x] HTTP service: `postBlob`, for a PDF the server draws from the body of the request
+-   [ ] `monaco-editor` and `ngx-monaco-editor-v2` are peer dependencies, so every app installs them, but no module
+        uses them: drop them, or keep them only once the text editor exists
 
 ### Data and navigation
 
