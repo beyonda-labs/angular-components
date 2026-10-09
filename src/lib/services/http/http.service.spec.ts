@@ -43,11 +43,19 @@ function failWithRange(errorCode: string, min: number | null, max: number | null
 const ERROR_CASES: ErrorCase[] = [
     {
         name: 'a message key with its own title',
-        respond: failWith(401, { errorCode: 'invalid-credentials', messageKey: 'login.invalid-credentials' }),
+        respond: failWith(400, { errorCode: 'invalid-credentials', messageKey: 'login.invalid-credentials' }),
         title: `${TITLE}login.invalid-credentials`,
         message: `${ERROR}login.invalid-credentials`,
         messageParameters: {},
         texts: ['Authentication failed', 'Invalid email or password.']
+    },
+    {
+        name: 'a message key with a number among its parameters',
+        respond: failWith(429, { messageKey: 'login.account-locked', messageParameters: { minutes: 15 } }),
+        title: `${TITLE}login.account-locked`,
+        message: `${ERROR}login.account-locked`,
+        messageParameters: { minutes: '15' },
+        texts: ['Account locked', 'This account is locked after too many failed attempts. Try again in 15 minute(s).']
     },
     {
         name: 'a message key without a title',
@@ -372,6 +380,22 @@ describe('HttpService', () => {
             expect(params.get('page')).toBe('1');
             expect(headers.get('X-Custom')).toBe('value');
         });
+
+        it.each([...METHOD_CASES, ...DOWNLOAD_CASES])(
+            'sends a $name with the credentials only when asked',
+            ({ method, send }) => {
+                const sent = [{}, { withCredentials: true }].map(options => {
+                    const subscription = send(service, options).subscribe();
+                    const { withCredentials } = expectRequest(method).request;
+
+                    subscription.unsubscribe();
+
+                    return withCredentials;
+                });
+
+                expect(sent).toEqual([false, true]);
+            }
+        );
     });
 
     describe('subscription', () => {
