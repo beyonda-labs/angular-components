@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { AccountStyleGuideComponent } from './account/account-style-guide.component';
+import { AccountDataStyleGuideComponent } from './account-data/account-data-style-guide.component';
 import { AppLayoutStyleGuideComponent } from './app-layout/app-layout-style-guide.component';
 import { BadgeStyleGuideComponent } from './badge/badge-style-guide.component';
 import { BreadcrumbStyleGuideComponent } from './breadcrumb/breadcrumb-style-guide.component';
@@ -19,6 +19,7 @@ import { LoginStyleGuideComponent } from './login/login-style-guide.component';
 import { ModalStyleGuideComponent } from './modal/modal-style-guide.component';
 import { PageStyleGuideComponent } from './page/page-style-guide.component';
 import { PaginationStyleGuideComponent } from './pagination/pagination-style-guide.component';
+import { PasswordChangeStyleGuideComponent } from './password-change/password-change-style-guide.component';
 import { PdfViewerStyleGuideComponent } from './pdf-viewer/pdf-viewer-style-guide.component';
 import { PropertiesMenuStyleGuideComponent } from './properties-menu/properties-menu-style-guide.component';
 import { SearchStyleGuideComponent } from './search/search-style-guide.component';
@@ -34,7 +35,7 @@ import { UsersStyleGuideComponent } from './users/users-style-guide.component';
     imports: [
         TranslateModule,
         StyleGuideSectionComponent,
-        AccountStyleGuideComponent,
+        AccountDataStyleGuideComponent,
         AppLayoutStyleGuideComponent,
         BadgeStyleGuideComponent,
         BreadcrumbStyleGuideComponent,
@@ -47,6 +48,7 @@ import { UsersStyleGuideComponent } from './users/users-style-guide.component';
         ListStyleGuideComponent,
         FormStyleGuideComponent,
         PaginationStyleGuideComponent,
+        PasswordChangeStyleGuideComponent,
         PdfViewerStyleGuideComponent,
         PropertiesMenuStyleGuideComponent,
         SearchStyleGuideComponent,

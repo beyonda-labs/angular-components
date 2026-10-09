@@ -1,9 +1,13 @@
 {
     "angular-components-style-guide": {
-        "account": {
-            "example": "La página de la cuenta del usuario que ha iniciado sesión, leída del backend de demostración: el correo para consultar, el nombre y los apellidos para guardar, y la contraseña para cambiar, o cómo crear una en una cuenta que no la tiene."
+        "account-data": {
+            "example": "El perfil del usuario que ha iniciado sesión, leído del backend de demostración: el correo para consultar y el nombre y los apellidos para guardar. Los campos a medida muestran el nombre, obligatorio, y el correo a media anchura, sin los apellidos.",
+            "examples": {
+                "custom": "Campos a medida",
+                "default": "Campos por defecto"
+            }
         },
-        "account-section": "Cuenta",
+        "account-data-section": "Datos de la cuenta",
         "app-layout": {
             "actions": {
                 "dashboard": {
@@ -529,7 +533,8 @@
                 "menu": "Menú",
                 "others": "Otros"
             },
-            "title": "Beyonda Labs"
+            "title": "Beyonda Labs",
+            "user-hint": "El usuario al pie de los dos menús enlaza con una ruta, aquí la página en la que está la demo, y se marca mientras es la página actual."
         },
         "left-menu-section": "Menús laterales",
         "list": {
@@ -746,6 +751,10 @@
             }
         },
         "pagination-section": "Paginación",
+        "password-change": {
+            "example": "La contraseña del usuario que ha iniciado sesión, leída del backend de demostración: la actual, la nueva y su confirmación, o cómo crear una en una cuenta que no la tiene."
+        },
+        "password-change-section": "Cambio de contraseña",
         "pdf-viewer": {
             "compact-example": "El mismo visor con la toolbar compacta de la librería: zoom dentro de los límites configurados, la página actual y un hueco a la izquierda para el estado del consumidor.",
             "example": "Previsualizador de PDF construido sobre ngx-extended-pdf-viewer con su toolbar nativa oculta y una toolbar propia controlada mediante la API imperativa y los eventos del visor.",

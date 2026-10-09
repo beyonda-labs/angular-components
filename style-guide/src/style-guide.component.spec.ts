@@ -1,5 +1,6 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { renderComponent, settle } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
@@ -14,7 +15,7 @@ describe('StyleGuideComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [StyleGuideComponent],
-            providers: [provideBeyTesting()]
+            providers: [provideRouter([]), provideBeyTesting()]
         }).compileComponents();
 
         httpTesting = TestBed.inject(HttpTestingController);

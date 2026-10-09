@@ -1,6 +1,6 @@
 {
     "angular-components-style-guide": {
-        "account-section": "Cuenta",
+        "account-data-section": "Datos de la cuenta",
         "app-layout-section": "Diseños de aplicación",
         "badge-section": "Etiquetas",
         "breadcrumbs": "Breadcrumbs",
@@ -16,6 +16,7 @@
         "login-section": "Login",
         "modals": "Modales",
         "page-section": "Página",
+        "password-change-section": "Cambio de contraseña",
         "pdf-viewer-section": "Visor de PDF",
         "properties-menu-section": "Menú de propiedades",
         "search-section": "Búsqueda",

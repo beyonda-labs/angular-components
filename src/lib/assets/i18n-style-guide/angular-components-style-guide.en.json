@@ -1,9 +1,13 @@
 {
     "angular-components-style-guide": {
-        "account": {
-            "example": "The account page of the signed-in user, read from the demo backend: the email to read, the name and surname to save, and the password to change, or how to set one for an account without it."
+        "account-data": {
+            "example": "The profile of the signed-in user, read from the demo backend: the email to read and the name and surname to save. The custom fields show the name, required, and the email at half width, without the surname.",
+            "examples": {
+                "custom": "Custom fields",
+                "default": "Default fields"
+            }
         },
-        "account-section": "Account",
+        "account-data-section": "Account data",
         "app-layout": {
             "actions": {
                 "dashboard": {
@@ -529,7 +533,8 @@
                 "menu": "Menu",
                 "others": "Others"
             },
-            "title": "Beyonda Labs"
+            "title": "Beyonda Labs",
+            "user-hint": "The user at the foot of both menus links to a route, here the page the demo is on, and is marked while it is the current page."
         },
         "left-menu-section": "Left Menus",
         "list": {
@@ -746,6 +751,10 @@
             }
         },
         "pagination-section": "Pagination",
+        "password-change": {
+            "example": "The password of the signed-in user, read from the demo backend: the current one, the new one and its confirmation, or how to set one for an account without it."
+        },
+        "password-change-section": "Password change",
         "pdf-viewer": {
             "compact-example": "The same viewer with the compact toolbar of the library: zoom within the configured limits, the current page and a slot on the left for the consumer's status.",
             "example": "PDF preview built on ngx-extended-pdf-viewer with its native toolbar hidden and a fully custom toolbar driven through the viewer's imperative API and events.",
