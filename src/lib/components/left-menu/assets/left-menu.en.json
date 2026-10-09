@@ -3,6 +3,7 @@
         "left-menu": {
             "collapse": "Collapse menu",
             "expand": "Expand menu",
+            "open-account": "Open my account",
             "sections": {
                 "main": "Main",
                 "others": "Others"

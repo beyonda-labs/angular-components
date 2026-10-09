@@ -25,7 +25,7 @@ readonly config = new BeyAppLayoutConfig({
         new BeyAppLayoutBottomAction({ key: 'settings', icon: faGear, route: '/settings' }),
         new BeyAppLayoutBottomAction({ key: 'logout', icon: faRightFromBracket, action: () => this.logout() })
     ],
-    userInfo: new BeyLeftMenuUserInfo({ name: 'Ada', surname: 'Lovelace', email: 'ada@example.com' })
+    userInfo: new BeyLeftMenuUserInfo({ name: 'Ada', surname: 'Lovelace', email: 'ada@example.com', route: '/account' })
 });
 ```
 
@@ -48,7 +48,7 @@ readonly config = new BeyAppLayoutConfig({
 | `breadcrumb`               | no       | `[]`             | Items the breadcrumb starts with                          |
 | `isRouteBreadcrumbEnabled` | no       | `true`           | Builds the breadcrumb from the route, see Routes          |
 | `useBodyPadding`           | no       | `true`           | Pads the projected content                                |
-| `userInfo`                 | no       | none             | Shows the signed-in user at the foot of the menu          |
+| `userInfo`                 | no       | none             | Shows the signed-in user at the foot, a link with `route` |
 | `orgName`                  | no       | `'Beyonda Labs'` | Organisation name in the footer                           |
 | `privacyUrl`               | no       | none             | Route of the privacy link in the footer                   |
 | `termsUrl`                 | no       | none             | Route of the terms link in the footer                     |
@@ -98,7 +98,8 @@ its own: on every navigation it activates the deepest action whose route is the 
 builds the breadcrumb from the labels of that path, translated on the spot and again whenever the language
 changes, and calls `onRouteActivated`. A url no action claims clears both. Using a routed action from the
 menu activates it at once, and a navigation that a guard cancels, or that fails, brings the menu back to the
-page the router stays on.
+page the router stays on. The `route` of `userInfo` is a link of the menu, not an action: its page activates no
+action and, like any url no action claims, clears the route breadcrumb.
 
 With `isRouteBreadcrumbEnabled: false` the breadcrumb is yours: the layout still activates the action a
 route claims, clears it on a url no action claims and calls `onRouteActivated`, but it never sets nor clears

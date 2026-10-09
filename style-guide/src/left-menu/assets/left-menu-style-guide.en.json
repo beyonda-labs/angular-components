@@ -54,7 +54,8 @@
                 "menu": "Menu",
                 "others": "Others"
             },
-            "title": "Beyonda Labs"
+            "title": "Beyonda Labs",
+            "user-hint": "The user at the foot of both menus links to a route, here the page the demo is on, and is marked while it is the current page."
         }
     }
 }

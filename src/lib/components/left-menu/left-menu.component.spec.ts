@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 
@@ -10,6 +11,8 @@ import {
     LeftMenuTitle,
     LeftMenuUserInfo
 } from './models/left-menu.model';
+
+const OPEN_ACCOUNT = 'angular-components.left-menu.open-account';
 
 describe('LeftMenuComponent', () => {
     let fixture: ComponentFixture<LeftMenuComponent>;
@@ -38,9 +41,18 @@ describe('LeftMenuComponent', () => {
         return textsOf(queryAll(fixture, 'bey-left-menu-action-list button'));
     }
 
+    function accountLink(): HTMLAnchorElement | undefined {
+        return queryAll<HTMLAnchorElement>(fixture, 'a').find(link => link.getAttribute('aria-label') === OPEN_ACCOUNT);
+    }
+
+    function buildUser(route?: string): LeftMenuUserInfo {
+        return new LeftMenuUserInfo({ email: 'ada@example.com', name: 'Ada', route, surname: 'Lovelace' });
+    }
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [LeftMenuComponent, TranslateModule.forRoot()]
+            imports: [LeftMenuComponent, TranslateModule.forRoot()],
+            providers: [provideRouter([{ children: [], path: 'account' }])]
         }).compileComponents();
     });
 
@@ -88,6 +100,33 @@ describe('LeftMenuComponent', () => {
         );
 
         expect(fixture.nativeElement.querySelector('footer').textContent).toContain('Ada Lovelace');
+    });
+
+    it('keeps the user as plain text when the config gives it no route', async () => {
+        await render(buildConfig({ userInfo: buildUser() }));
+
+        expect(accountLink()).toBeUndefined();
+    });
+
+    it('opens the route of the user from a link named for assistive technology, marked once it is the page', async () => {
+        await render(buildConfig({ userInfo: buildUser('/account') }));
+        const link = accountLink();
+
+        expect(link?.getAttribute('href')).toBe('/account');
+        expect(link?.textContent).toContain('Ada Lovelace');
+        expect(link?.hasAttribute('aria-current')).toBe(false);
+
+        link?.click();
+        await settle(fixture);
+
+        expect(TestBed.inject(Router).url).toBe('/account');
+        expect(accountLink()?.getAttribute('aria-current')).toBe('page');
+    });
+
+    it('keeps the link to the route of the user while collapsed', async () => {
+        await render(buildConfig({ expanded: false, userInfo: buildUser('/account') }));
+
+        expect(accountLink()?.getAttribute('href')).toBe('/account');
     });
 
     it('shows no user area when the config carries no user', async () => {

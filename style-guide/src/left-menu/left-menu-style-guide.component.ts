@@ -95,6 +95,7 @@ export class LeftMenuStyleGuideComponent {
             userInfo: new BeyLeftMenuUserInfo({
                 email: 'rustam@gmail.com',
                 name: 'Abdulaev',
+                route: '.',
                 surname: 'Rustam'
             })
         });
