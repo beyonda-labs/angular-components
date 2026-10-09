@@ -41,16 +41,7 @@ export class HttpService {
     getBlob(url: string, options?: HttpRequestOptions): Observable<Blob> {
         const { headers, params } = this.buildHttpOptions(options);
 
-        return this.request(
-            this.httpClient
-                .get(url, { headers, params, responseType: 'blob' })
-                .pipe(
-                    catchError((error: HttpErrorResponse) =>
-                        readBlobError(error).pipe(mergeMap(readable => throwError(() => readable)))
-                    )
-                ),
-            options
-        );
+        return this.requestBlob(this.httpClient.get(url, { headers, params, responseType: 'blob' }), options);
     }
 
     patch<T>(url: string, body: unknown, options?: HttpRequestOptions): Observable<T> {
@@ -59,6 +50,12 @@ export class HttpService {
 
     post<T>(url: string, body: unknown, options?: HttpRequestOptions): Observable<T> {
         return this.request(this.httpClient.post<T>(url, body, this.buildHttpOptions(options)), options);
+    }
+
+    postBlob(url: string, body: unknown, options?: HttpRequestOptions): Observable<Blob> {
+        const { headers, params } = this.buildHttpOptions(options);
+
+        return this.requestBlob(this.httpClient.post(url, body, { headers, params, responseType: 'blob' }), options);
     }
 
     put<T>(url: string, body: unknown, options?: HttpRequestOptions): Observable<T> {
@@ -138,6 +135,17 @@ export class HttpService {
                 })
             );
         });
+    }
+
+    private requestBlob(source$: Observable<Blob>, options?: HttpRequestOptions): Observable<Blob> {
+        return this.request(
+            source$.pipe(
+                catchError((error: HttpErrorResponse) =>
+                    readBlobError(error).pipe(mergeMap(readable => throwError(() => readable)))
+                )
+            ),
+            options
+        );
     }
 
     private resolveErrorMessage(error: HttpErrorResponse): {

@@ -244,6 +244,10 @@ const METHOD_CASES: MethodCase[] = [
     { name: 'delete', method: 'DELETE', send: (service, options) => service.delete(URL, { ids: [1] }, options) },
     { name: 'upload', method: 'PUT', send: (service, options) => service.upload(URL, new Blob(['bytes']), options) }
 ];
+const DOWNLOAD_CASES: MethodCase[] = [
+    { name: 'getBlob', method: 'GET', send: (service, options) => service.getBlob(URL, options) },
+    { name: 'postBlob', method: 'POST', send: (service, options) => service.postBlob(URL, { a: 1 }, options) }
+];
 
 describe('HttpService', () => {
     let httpTesting: HttpTestingController;
@@ -257,9 +261,9 @@ describe('HttpService', () => {
         return httpTesting.expectOne(request => request.method === method && request.url === URL);
     }
 
-    function downloadFailure(options?: HttpRequestOptions): Promise<unknown> {
+    function downloadFailure({ send }: MethodCase, options: HttpRequestOptions = {}): Promise<unknown> {
         return new Promise(resolve => {
-            service.getBlob(URL, options).subscribe({ error: resolve });
+            send(service, options).subscribe({ error: resolve });
         });
     }
 
@@ -316,6 +320,19 @@ describe('HttpService', () => {
             const request = expectRequest('GET');
             request.flush(content);
 
+            expect(request.request.responseType).toBe('blob');
+            expect(received).toHaveBeenCalledWith(content);
+        });
+
+        it('sends the body of postBlob and reads its response as a Blob', () => {
+            const content = new Blob(['%PDF-'], { type: 'application/pdf' });
+            const received = jest.fn();
+
+            service.postBlob(URL, { sections: [] }).subscribe(received);
+            const request = expectRequest('POST');
+            request.flush(content);
+
+            expect(request.request.body).toEqual({ sections: [] });
             expect(request.request.responseType).toBe('blob');
             expect(received).toHaveBeenCalledWith(content);
         });
@@ -489,13 +506,13 @@ describe('HttpService', () => {
             ]);
         });
 
-        it('reads the reason of a failed download from its Blob body', async () => {
-            const failed = downloadFailure({ loading: true });
+        it.each(DOWNLOAD_CASES)('reads the reason of a failed $name from its Blob body', async download => {
+            const failed = downloadFailure(download, { loading: true });
 
             failWith(
                 404,
                 new Blob([JSON.stringify({ errorCode: 'not-found' })], { type: 'application/json' })
-            )(expectRequest('GET'));
+            )(expectRequest(download.method));
             await failed;
 
             expect(modal.errors()).toEqual([
@@ -504,16 +521,19 @@ describe('HttpService', () => {
             expect(loading.isLoading()).toBe(false);
         });
 
-        it('opens the unknown error modal when a failed download has no readable reason', async () => {
-            const failed = downloadFailure();
+        it.each(DOWNLOAD_CASES)(
+            'opens the unknown error modal when a failed $name has no readable reason',
+            async download => {
+                const failed = downloadFailure(download);
 
-            failWith(502, new Blob(['Bad gateway'], { type: 'text/plain' }))(expectRequest('GET'));
-            await failed;
+                failWith(502, new Blob(['Bad gateway'], { type: 'text/plain' }))(expectRequest(download.method));
+                await failed;
 
-            expect(modal.errors()).toEqual([
-                { message: `${ERROR}unknown`, messageParameters: {}, title: `${TITLE}unknown` }
-            ]);
-        });
+                expect(modal.errors()).toEqual([
+                    { message: `${ERROR}unknown`, messageParameters: {}, title: `${TITLE}unknown` }
+                ]);
+            }
+        );
     });
 
     describe('errors', () => {
