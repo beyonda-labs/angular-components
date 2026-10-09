@@ -4,6 +4,7 @@ import { provideRouter, Router } from '@angular/router';
 import { faGear, faHome } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { buttonByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
+import { config as rxjsConfig } from 'rxjs';
 
 import { LeftMenuTitle, LeftMenuUserInfo } from '../left-menu/models/left-menu.model';
 import { AppLayoutComponent } from './app-layout.component';
@@ -364,6 +365,28 @@ describe('AppLayoutComponent', () => {
             expect(run).toHaveBeenCalled();
             expect(onMenuActionClick).toHaveBeenCalledWith('home');
             expect(router.url).toBe('/start');
+        });
+
+        it('leaves a navigation that ends before its config arrives to the start, which activates the route', async () => {
+            const previousHandler = rxjsConfig.onUnhandledError;
+            const unhandled = jest.fn();
+
+            rxjsConfig.onUnhandledError = unhandled;
+
+            try {
+                fixture = TestBed.createComponent(AppLayoutComponent);
+                await TestBed.inject(Router).navigateByUrl('/home');
+                fixture.componentRef.setInput('config', buildConfig({ topActions: routed() }));
+                await settle(fixture);
+                await new Promise(resolve => {
+                    setTimeout(resolve);
+                });
+            } finally {
+                rxjsConfig.onUnhandledError = previousHandler;
+            }
+
+            expect(unhandled).not.toHaveBeenCalled();
+            expect(buttonOf('demo.actions.home.label').getAttribute('aria-current')).toBe('page');
         });
 
         it('keeps the current page active when a guard cancels the navigation', async () => {
