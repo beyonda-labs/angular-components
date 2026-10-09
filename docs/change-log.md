@@ -7,6 +7,13 @@
 -   HTTP service: `postBlob(url, body, options?)` sends a `POST` and reads the response as a `Blob`, such as a PDF the
     server draws from the body; a failed one shows its reason like `getBlob`.
 
+### Fixed
+
+-   Pdf viewer module: pdf.js starts under a Content Security Policy sent as a header; the viewer checks the browser
+    with `op-chaining-support.js` instead of an inline script the policy refused, which left it waiting forever.
+-   App layout module: a navigation that ends while the layout is being created no longer reads its config before
+    the input arrives (NG0950); the start of the layout activates the route instead.
+
 ## [1.3.0] - 2026-10-09
 
 ### Added
