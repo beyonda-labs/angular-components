@@ -1,4 +1,6 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, linkedSignal } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faAnglesLeft, faAnglesRight } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
@@ -9,7 +11,15 @@ import { LeftMenuConfig } from './models/left-menu.model';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [ActionListComponent, FontAwesomeModule, TooltipModule, TranslateModule],
+    imports: [
+        ActionListComponent,
+        FontAwesomeModule,
+        NgTemplateOutlet,
+        RouterLink,
+        RouterLinkActive,
+        TooltipModule,
+        TranslateModule
+    ],
     selector: 'bey-left-menu',
     standalone: true,
     styleUrls: ['./left-menu.component.css'],

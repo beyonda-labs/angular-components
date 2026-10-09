@@ -1,0 +1,13 @@
+<section class="bey-settings-section" [attr.aria-labelledby]="titleId">
+    <div class="bey-settings-section-intro">
+        <h2 class="bey-settings-section-title" [id]="titleId">{{ titleKey() | translate }}</h2>
+
+        @if (descriptionKey()) {
+            <p class="bey-settings-section-description">{{ descriptionKey() | translate }}</p>
+        }
+    </div>
+
+    <div class="bey-settings-section-body">
+        <ng-content></ng-content>
+    </div>
+</section>

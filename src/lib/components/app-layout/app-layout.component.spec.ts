@@ -109,6 +109,17 @@ describe('AppLayoutComponent', () => {
         expect(fixture.nativeElement.querySelector('aside').textContent).toContain('Ada Lovelace');
     });
 
+    it('passes the route of the signed-in user to the menu, which links to it', async () => {
+        await render(
+            buildConfig({ userInfo: new LeftMenuUserInfo({ name: 'Ada', route: '/account', surname: 'Lovelace' }) })
+        );
+        const link = queryAll<HTMLAnchorElement>(fixture, 'a').find(
+            anchor => anchor.getAttribute('aria-label') === 'angular-components.left-menu.open-account'
+        );
+
+        expect(link?.getAttribute('href')).toBe('/account');
+    });
+
     it('keeps the footer of a config copied with a spread, with the overrides of the copy', async () => {
         const original = buildConfig({ orgName: 'Acme', termsUrl: '/terms' });
 

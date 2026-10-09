@@ -1,0 +1,44 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.bey-settings-section {
+    background: var(--bey-bg-surface);
+    border: var(--bey-border-width) solid var(--bey-border-subtle);
+    border-radius: var(--bey-radius-md);
+    display: grid;
+    gap: var(--bey-space-lg) var(--bey-space-2xl);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    padding: var(--bey-space-xl);
+}
+
+.bey-settings-section-intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bey-space-xs);
+}
+
+.bey-settings-section-title {
+    color: var(--bey-text-primary);
+    font-size: var(--bey-font-size-lg);
+    font-weight: var(--bey-font-weight-semibold);
+    margin: 0;
+}
+
+.bey-settings-section-description {
+    color: var(--bey-text-muted);
+    font-size: var(--bey-font-size-sm);
+    line-height: var(--bey-line-height-loose);
+    margin: 0;
+}
+
+.bey-settings-section-body {
+    min-width: 0;
+}
+
+@media (max-width: 991.98px) {
+    .bey-settings-section {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

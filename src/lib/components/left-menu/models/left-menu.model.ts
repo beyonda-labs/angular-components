@@ -80,10 +80,13 @@ export class LeftMenuUserInfo {
     name: string;
     surname: string;
 
-    constructor({ email = '', initials = '', name, surname = '' }: LeftMenuUserInfoParameters) {
+    route?: string;
+
+    constructor({ email = '', initials = '', name, route, surname = '' }: LeftMenuUserInfoParameters) {
         this.email = email;
         this.initials = initials || this.getInitials(name, surname);
         this.name = name;
+        this.route = route;
         this.surname = surname;
     }
 
@@ -129,5 +132,6 @@ export interface LeftMenuUserInfoParameters {
 
     email?: string;
     initials?: string;
+    route?: string;
     surname?: string;
 }

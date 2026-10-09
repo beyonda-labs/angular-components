@@ -10,7 +10,7 @@ export * from './lib/components/tabs/public-api';
 export * from './lib/components/tree/public-api';
 
 /* composites — coordinate other modules or the application shell */
-export * from './lib/components/account/public-api';
+export * from './lib/components/account-data/public-api';
 export * from './lib/components/app-layout/public-api';
 export * from './lib/components/floating-preferences/public-api';
 export * from './lib/components/form/public-api';
@@ -18,6 +18,7 @@ export * from './lib/components/header/public-api';
 export * from './lib/components/left-menu/public-api';
 export * from './lib/components/login/public-api';
 export * from './lib/components/modal/public-api';
+export * from './lib/components/password-change/public-api';
 export * from './lib/components/table/public-api';
 export * from './lib/components/toast/public-api';
 export * from './lib/components/users/public-api';
@@ -29,6 +30,7 @@ export * from './lib/components/pdf-viewer/public-api';
 export * from './lib/components/properties-menu/public-api';
 
 /* services */
+export * from './lib/services/account/public-api';
 export * from './lib/services/app/public-api';
 export * from './lib/services/environment/public-api';
 export * from './lib/services/http/public-api';

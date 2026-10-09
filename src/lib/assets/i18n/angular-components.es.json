@@ -1,26 +1,8 @@
 {
     "angular-components": {
-        "account": {
-            "password": {
-                "current-password": {
-                    "label": "Contraseña actual",
-                    "placeholder": "Escribe tu contraseña actual"
-                },
-                "no-password": "Tu cuenta no tiene contraseña, porque entras con otro proveedor. Para crear una, cierra la sesión y usa \"¿Has olvidado tu contraseña?\" en la página de inicio de sesión.",
-                "password": {
-                    "label": "Nueva contraseña",
-                    "placeholder": "Escribe la nueva contraseña"
-                },
-                "password2": {
-                    "label": "Confirma la nueva contraseña",
-                    "mismatch": "Las contraseñas no coinciden.",
-                    "placeholder": "Vuelve a escribir la nueva contraseña"
-                },
-                "save": "Cambiar contraseña",
-                "title": "Contraseña"
-            },
+        "account-data": {
+            "description": "Tu nombre tal como lo ve el resto del equipo. El correo es con el que inicias sesión.",
             "profile": {
-                "cancel": "Descartar cambios",
                 "email": {
                     "label": "Correo electrónico"
                 },
@@ -28,17 +10,15 @@
                     "label": "Nombre",
                     "placeholder": "Escribe tu nombre"
                 },
-                "save": "Guardar perfil",
                 "surname": {
                     "label": "Apellidos",
                     "placeholder": "Escribe tus apellidos"
-                },
-                "title": "Perfil"
+                }
             },
-            "title": "Mi cuenta",
+            "save": "Guardar perfil",
+            "title": "Perfil",
             "toast": {
-                "password-success": "Contraseña cambiada. Tendrás que volver a iniciar sesión en tus otros dispositivos.",
-                "profile-success": "Perfil guardado"
+                "success": "Perfil guardado"
             }
         },
         "app-layout": {
@@ -296,6 +276,7 @@
         "left-menu": {
             "collapse": "Colapsar menú",
             "expand": "Expandir menú",
+            "open-account": "Abrir mi cuenta",
             "sections": {
                 "main": "Principales",
                 "others": "Otros"
@@ -482,6 +463,30 @@
             "page-size": "Tamaño de página",
             "previous-page": "Ir a la página anterior",
             "results-range": "Mostrando {{ start }}-{{ end }} de {{ total }} resultados"
+        },
+        "password-change": {
+            "description": "Al menos 8 caracteres. Al cambiarla, se cierra la sesión en tus otros dispositivos.",
+            "no-password": "Tu cuenta no tiene contraseña, porque entras con otro proveedor. Para crear una, cierra la sesión y usa \"¿Has olvidado tu contraseña?\" en la página de inicio de sesión.",
+            "password": {
+                "current-password": {
+                    "label": "Contraseña actual",
+                    "placeholder": "Escribe tu contraseña actual"
+                },
+                "password": {
+                    "label": "Nueva contraseña",
+                    "placeholder": "Escribe la nueva contraseña"
+                },
+                "password2": {
+                    "label": "Confirma la nueva contraseña",
+                    "mismatch": "Las contraseñas no coinciden.",
+                    "placeholder": "Vuelve a escribir la nueva contraseña"
+                }
+            },
+            "save": "Cambiar contraseña",
+            "title": "Contraseña",
+            "toast": {
+                "success": "Contraseña cambiada. Tendrás que volver a iniciar sesión en tus otros dispositivos."
+            }
         },
         "pdf-viewer": {
             "search": {

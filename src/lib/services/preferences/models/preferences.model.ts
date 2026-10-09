@@ -1,9 +1,8 @@
 import { InjectionToken } from '@angular/core';
 
-export interface AccountPreferences {
-    language?: string;
-    theme?: string;
-}
+import { AccountProfileUpdate } from '../../account/models/account.model';
+
+export type AccountPreferences = Pick<AccountProfileUpdate, 'language' | 'theme'>;
 
 export interface PreferencesConfig {
     accountUrl?: string;

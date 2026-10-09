@@ -1,26 +1,8 @@
 {
     "angular-components": {
-        "account": {
-            "password": {
-                "current-password": {
-                    "label": "Current password",
-                    "placeholder": "Type your current password"
-                },
-                "no-password": "Your account has no password, since you sign in with another provider. To set one, sign out and use \"Forgot your password?\" on the sign-in page.",
-                "password": {
-                    "label": "New password",
-                    "placeholder": "Type the new password"
-                },
-                "password2": {
-                    "label": "Confirm the new password",
-                    "mismatch": "The passwords do not match.",
-                    "placeholder": "Type the new password again"
-                },
-                "save": "Change password",
-                "title": "Password"
-            },
+        "account-data": {
+            "description": "Your name as the rest of the team sees it. The email is the one you sign in with.",
             "profile": {
-                "cancel": "Discard changes",
                 "email": {
                     "label": "Email"
                 },
@@ -28,17 +10,15 @@
                     "label": "Name",
                     "placeholder": "Type your name"
                 },
-                "save": "Save profile",
                 "surname": {
                     "label": "Surname",
                     "placeholder": "Type your surname"
-                },
-                "title": "Profile"
+                }
             },
-            "title": "My account",
+            "save": "Save profile",
+            "title": "Profile",
             "toast": {
-                "password-success": "Password changed. Your other devices will have to sign in again.",
-                "profile-success": "Profile saved"
+                "success": "Profile saved"
             }
         },
         "app-layout": {
@@ -296,6 +276,7 @@
         "left-menu": {
             "collapse": "Collapse menu",
             "expand": "Expand menu",
+            "open-account": "Open my account",
             "sections": {
                 "main": "Main",
                 "others": "Others"
@@ -482,6 +463,30 @@
             "page-size": "Page size",
             "previous-page": "Go to previous page",
             "results-range": "Showing {{ start }}-{{ end }} of {{ total }} results"
+        },
+        "password-change": {
+            "description": "At least 8 characters. Changing it signs you out on your other devices.",
+            "no-password": "Your account has no password, since you sign in with another provider. To set one, sign out and use \"Forgot your password?\" on the sign-in page.",
+            "password": {
+                "current-password": {
+                    "label": "Current password",
+                    "placeholder": "Type your current password"
+                },
+                "password": {
+                    "label": "New password",
+                    "placeholder": "Type the new password"
+                },
+                "password2": {
+                    "label": "Confirm the new password",
+                    "mismatch": "The passwords do not match.",
+                    "placeholder": "Type the new password again"
+                }
+            },
+            "save": "Change password",
+            "title": "Password",
+            "toast": {
+                "success": "Password changed. Your other devices will have to sign in again."
+            }
         },
         "pdf-viewer": {
             "search": {

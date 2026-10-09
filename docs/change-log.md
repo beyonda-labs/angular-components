@@ -23,12 +23,18 @@
     registration answered with `{ verificationRequired: true }` asks to check the inbox; errors and titles for
     `login.account-inactive`, `login.email-not-verified`, `login.verification-not-sent` and `account.token-invalid`.
 -   Login module: `BeyLoginConfigParameters` is exported.
--   Account module: `bey-account`, the signed-in user's own account: the profile through `PUT /account`, the password
-    through `PUT /account/password`, which opens the session it answers, or how to set a password without one.
+-   Account data module: `bey-account-data`, the profile block of an app's account page: the email read-only and the
+    name and surname saved with `PUT /account`, laid out by `fields` (`BeyAccountDataField`, `BeyAccountDataFieldKey`).
+-   Password change module: `bey-password-change`, the password block of an app's account page, sent with
+    `PUT /account/password`, which opens the session it answers, or how to set a password for an account without one.
+-   Account service: the profile behind both blocks, asked for once while a request is on its way and again by every
+    new block; `BeyAccountProfile` is exported.
+-   Left menu module: `route` on `BeyLeftMenuUserInfo` turns the user at the foot of the menu into a link to it, named
+    `angular-components.left-menu.open-account` and marked while it is the page; `bey-app-layout` passes it through.
 -   Users module: `bey-users`, the users page on `bey-page` over the users module of express-components: invite, edit,
     change the status and resend the invitation, with roles labelled from `rolePrefix`.
--   Account and users modules: the texts of the `account.wrong-password`, `account.no-password` and `users.*` errors,
-    `users.invitation-not-sent` among them.
+-   Password change and users modules: the texts of the `account.wrong-password`, `account.no-password` and `users.*`
+    errors, `users.invitation-not-sent` among them.
 -   Preferences service: `BeyPreferencesService` and `provideBeyPreferences` start the app in the remembered, the
     browser or the default language, apply the language and theme saved on the account when a session opens, and
     save what a signed-in user picks.

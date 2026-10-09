@@ -77,22 +77,49 @@
 
         @if (config().userInfo; as userInfo) {
             <footer class="bey-left-menu-footer">
-                <div
-                    class="bey-left-menu-user"
-                    boundariesElement="viewport"
-                    container="body"
-                    [tooltip]="!expanded() ? userTooltip() : ''"
-                >
-                    <div class="bey-left-menu-user-avatar">{{ userInfo.initials }}</div>
-
-                    @if (expanded()) {
-                        <div class="bey-left-menu-user-copy">
-                            <div class="bey-left-menu-user-name">{{ userFullName() }}</div>
-                            <div class="bey-left-menu-user-email">{{ userInfo.email }}</div>
-                        </div>
-                    }
-                </div>
+                @if (userInfo.route) {
+                    <a
+                        #accountLink="routerLinkActive"
+                        class="bey-left-menu-user bey-left-menu-user--link"
+                        ariaCurrentWhenActive="page"
+                        boundariesElement="viewport"
+                        container="body"
+                        routerLinkActive=""
+                        [attr.aria-label]="'angular-components.left-menu.open-account' | translate"
+                        [class.is-active]="accountLink.isActive"
+                        [routerLink]="userInfo.route"
+                        [tooltip]="!expanded() ? userTooltip() : ''"
+                    >
+                        <ng-container
+                            [ngTemplateOutlet]="userContent"
+                            [ngTemplateOutletContext]="{ $implicit: userInfo }"
+                        ></ng-container>
+                    </a>
+                } @else {
+                    <div
+                        class="bey-left-menu-user"
+                        boundariesElement="viewport"
+                        container="body"
+                        [tooltip]="!expanded() ? userTooltip() : ''"
+                    >
+                        <ng-container
+                            [ngTemplateOutlet]="userContent"
+                            [ngTemplateOutletContext]="{ $implicit: userInfo }"
+                        ></ng-container>
+                    </div>
+                }
             </footer>
         }
     </div>
 </aside>
+
+<ng-template #userContent let-userInfo>
+    <div class="bey-left-menu-user-avatar">{{ userInfo.initials }}</div>
+
+    @if (expanded()) {
+        <div class="bey-left-menu-user-copy">
+            <div class="bey-left-menu-user-name">{{ userFullName() }}</div>
+            <div class="bey-left-menu-user-email">{{ userInfo.email }}</div>
+        </div>
+    }
+</ng-template>

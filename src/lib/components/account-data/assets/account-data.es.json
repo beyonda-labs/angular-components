@@ -1,0 +1,25 @@
+{
+    "angular-components": {
+        "account-data": {
+            "description": "Tu nombre tal como lo ve el resto del equipo. El correo es con el que inicias sesión.",
+            "profile": {
+                "email": {
+                    "label": "Correo electrónico"
+                },
+                "name": {
+                    "label": "Nombre",
+                    "placeholder": "Escribe tu nombre"
+                },
+                "surname": {
+                    "label": "Apellidos",
+                    "placeholder": "Escribe tus apellidos"
+                }
+            },
+            "save": "Guardar perfil",
+            "title": "Perfil",
+            "toast": {
+                "success": "Perfil guardado"
+            }
+        }
+    }
+}
