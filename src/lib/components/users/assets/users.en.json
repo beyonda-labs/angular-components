@@ -4,6 +4,7 @@
             "error": {
                 "users": {
                     "existing-user": "There is already an account with the email {{email}}.",
+                    "invitation-not-sent": "The user {{email}} was created, but the invitation email could not be sent. Use \"Resend invitation\" to try again.",
                     "last-superadmin": "This change would leave no active superadmin.",
                     "not-found": "This user does not exist. Reload the page and try again.",
                     "not-invited": "This account is no longer waiting for an invitation.",
@@ -15,6 +16,7 @@
             "title": {
                 "users": {
                     "existing-user": "Account already exists",
+                    "invitation-not-sent": "Invitation not sent",
                     "last-superadmin": "Last superadmin",
                     "not-found": "User not found",
                     "not-invited": "No pending invitation",

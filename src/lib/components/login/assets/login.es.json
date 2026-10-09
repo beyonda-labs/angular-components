@@ -19,7 +19,8 @@
                     "oauth-token-exchange": "No se pudo conectar con {{provider}}. Por favor, inténtelo de nuevo.",
                     "oauth-user-info-not-found": "No se pudo obtener información del usuario de {{provider}}. Por favor, inténtelo de nuevo.",
                     "passwords-not-match": "Las contraseñas no coinciden.",
-                    "provider-not-found": "El proveedor {{provider}} no está disponible."
+                    "provider-not-found": "El proveedor {{provider}} no está disponible.",
+                    "verification-not-sent": "Tu cuenta se ha creado, pero no se ha podido enviar el correo de verificación a {{email}}. Inicia sesión para pedir uno nuevo."
                 }
             },
             "field": {
@@ -49,7 +50,8 @@
                     "oauth-token-exchange": "Error de autenticación",
                     "oauth-user-info-not-found": "Error de autenticación",
                     "passwords-not-match": "Error de contraseña",
-                    "provider-not-found": "Proveedor no disponible"
+                    "provider-not-found": "Proveedor no disponible",
+                    "verification-not-sent": "Correo no enviado"
                 }
             }
         },

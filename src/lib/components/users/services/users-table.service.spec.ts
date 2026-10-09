@@ -46,6 +46,12 @@ describe('UsersTableService', () => {
         expect([(lastLogin as DateTableCell).value, (created as DateTableCell).value]).toEqual([2_000, 1_000]);
     });
 
+    it('lets the table translate the status but not the roles, which arrive translated', () => {
+        const cells = service.loadRow(buildUser(), options);
+
+        expect([cells[2].translate, cells[3].translate]).toEqual([false, true]);
+    });
+
     it('opens the edit form from the name of a user the caller may edit', () => {
         const user = buildUser();
         const [name] = service.loadRow(user, options);
