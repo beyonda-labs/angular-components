@@ -21,13 +21,14 @@
     and opens the session the server answers.
 -   Login module: a sign-in refused with `login.email-not-verified` offers to resend the verification email, and a
     registration answered with `{ verificationRequired: true }` asks to check the inbox; errors and titles for
-    `login.account-inactive`, `login.email-not-verified` and `account.token-invalid`.
+    `login.account-inactive`, `login.email-not-verified`, `login.verification-not-sent` and `account.token-invalid`.
 -   Login module: `BeyLoginConfigParameters` is exported.
 -   Account module: `bey-account`, the signed-in user's own account: the profile through `PUT /account`, the password
     through `PUT /account/password`, which opens the session it answers, or how to set a password without one.
 -   Users module: `bey-users`, the users page on `bey-page` over the users module of express-components: invite, edit,
     change the status and resend the invitation, with roles labelled from `rolePrefix`.
--   Account and users modules: the texts of the `account.wrong-password`, `account.no-password` and `users.*` errors.
+-   Account and users modules: the texts of the `account.wrong-password`, `account.no-password` and `users.*` errors,
+    `users.invitation-not-sent` among them.
 -   Preferences service: `BeyPreferencesService` and `provideBeyPreferences` start the app in the remembered, the
     browser or the default language, apply the language and theme saved on the account when a session opens, and
     save what a signed-in user picks.

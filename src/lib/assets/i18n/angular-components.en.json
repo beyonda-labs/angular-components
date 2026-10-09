@@ -177,7 +177,8 @@
                     "oauth-token-exchange": "Could not connect with {{provider}}. Please try again.",
                     "oauth-user-info-not-found": "Could not retrieve user information from {{provider}}. Please try again.",
                     "passwords-not-match": "Passwords do not match.",
-                    "provider-not-found": "The provider {{provider}} is not available."
+                    "provider-not-found": "The provider {{provider}} is not available.",
+                    "verification-not-sent": "Your account was created, but the verification email to {{email}} could not be sent. Sign in to ask for a new one."
                 },
                 "move-target-unchanged": "The item is already located in this category.",
                 "not-found": "The requested resource was not found.",
@@ -189,6 +190,7 @@
                 "unknown": "An unexpected error occurred. Please try again later.",
                 "users": {
                     "existing-user": "There is already an account with the email {{email}}.",
+                    "invitation-not-sent": "The user {{email}} was created, but the invitation email could not be sent. Use \"Resend invitation\" to try again.",
                     "last-superadmin": "This change would leave no active superadmin.",
                     "not-found": "This user does not exist. Reload the page and try again.",
                     "not-invited": "This account is no longer waiting for an invitation.",
@@ -269,7 +271,8 @@
                     "oauth-token-exchange": "Authentication error",
                     "oauth-user-info-not-found": "Authentication error",
                     "passwords-not-match": "Password error",
-                    "provider-not-found": "Provider unavailable"
+                    "provider-not-found": "Provider unavailable",
+                    "verification-not-sent": "Email not sent"
                 },
                 "move-target-unchanged": "No change",
                 "not-found": "Not found",
@@ -280,6 +283,7 @@
                 "unknown": "Unexpected error",
                 "users": {
                     "existing-user": "Account already exists",
+                    "invitation-not-sent": "Invitation not sent",
                     "last-superadmin": "Last superadmin",
                     "not-found": "User not found",
                     "not-invited": "No pending invitation",

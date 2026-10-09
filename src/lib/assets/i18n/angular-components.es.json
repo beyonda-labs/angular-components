@@ -177,7 +177,8 @@
                     "oauth-token-exchange": "No se pudo conectar con {{provider}}. Por favor, inténtelo de nuevo.",
                     "oauth-user-info-not-found": "No se pudo obtener información del usuario de {{provider}}. Por favor, inténtelo de nuevo.",
                     "passwords-not-match": "Las contraseñas no coinciden.",
-                    "provider-not-found": "El proveedor {{provider}} no está disponible."
+                    "provider-not-found": "El proveedor {{provider}} no está disponible.",
+                    "verification-not-sent": "Tu cuenta se ha creado, pero no se ha podido enviar el correo de verificación a {{email}}. Inicia sesión para pedir uno nuevo."
                 },
                 "move-target-unchanged": "El elemento ya se encuentra en esta categoría.",
                 "not-found": "El recurso solicitado no fue encontrado.",
@@ -189,6 +190,7 @@
                 "unknown": "Se produjo un error inesperado. Por favor, inténtelo de nuevo más tarde.",
                 "users": {
                     "existing-user": "Ya hay una cuenta con el correo {{email}}.",
+                    "invitation-not-sent": "Se ha creado el usuario {{email}}, pero no se ha podido enviar el correo de invitación. Usa «Reenviar invitación» para intentarlo de nuevo.",
                     "last-superadmin": "Este cambio dejaría sin ningún superadministrador activo.",
                     "not-found": "Este usuario no existe. Recarga la página y vuelve a intentarlo.",
                     "not-invited": "Esta cuenta ya no está pendiente de una invitación.",
@@ -269,7 +271,8 @@
                     "oauth-token-exchange": "Error de autenticación",
                     "oauth-user-info-not-found": "Error de autenticación",
                     "passwords-not-match": "Error de contraseña",
-                    "provider-not-found": "Proveedor no disponible"
+                    "provider-not-found": "Proveedor no disponible",
+                    "verification-not-sent": "Correo no enviado"
                 },
                 "move-target-unchanged": "Sin cambios",
                 "not-found": "No encontrado",
@@ -280,6 +283,7 @@
                 "unknown": "Error inesperado",
                 "users": {
                     "existing-user": "La cuenta ya existe",
+                    "invitation-not-sent": "Invitación no enviada",
                     "last-superadmin": "Último superadministrador",
                     "not-found": "Usuario no encontrado",
                     "not-invited": "Sin invitación pendiente",

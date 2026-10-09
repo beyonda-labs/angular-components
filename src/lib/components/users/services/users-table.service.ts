@@ -42,7 +42,8 @@ export class UsersTableService {
                         label: `${prefix}.status.${user.status}`,
                         variant: USER_STATUS_BADGE_VARIANTS[user.status] ?? BadgeVariant.Neutral
                     })
-                ]
+                ],
+                translate: true
             }),
             new DateTableCell({ format: LAST_LOGIN_FORMAT, value: user.lastLoginAt }),
             new DateTableCell({ format: CREATED_FORMAT, value: user.createdAt })
