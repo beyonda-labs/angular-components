@@ -13,6 +13,7 @@ import { FormValidatorService } from './form-validator.service';
 const EMPTY_VALUES: Partial<Record<FormFieldType, unknown>> = {
     [FormFieldType.Autocomplete]: '',
     [FormFieldType.Checkbox]: false,
+    [FormFieldType.CheckboxGroup]: [],
     [FormFieldType.Chips]: [],
     [FormFieldType.Date]: '',
     [FormFieldType.File]: null,

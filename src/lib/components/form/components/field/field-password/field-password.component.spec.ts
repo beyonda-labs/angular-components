@@ -42,4 +42,10 @@ describe('FormPasswordFieldComponent', () => {
 
         expect(fixture.nativeElement.querySelector('button')).toBeNull();
     });
+
+    it('gives the browser the autofill hint of the field', async () => {
+        await render(new FormPasswordField({ autocomplete: 'new-password', key: 'password' }));
+
+        expect(input().getAttribute('autocomplete')).toBe('new-password');
+    });
 });

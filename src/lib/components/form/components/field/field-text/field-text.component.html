@@ -3,6 +3,7 @@
     type="text"
     [attr.aria-invalid]="isInvalid() || null"
     [attr.aria-required]="isRequired() || null"
+    [attr.autocomplete]="field().autocomplete"
     [formControl]="control()"
     [id]="field().key"
     [placeholder]="placeholder() | translate"

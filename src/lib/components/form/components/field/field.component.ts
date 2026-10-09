@@ -12,6 +12,7 @@ import { FormField, FormFieldType } from '../../models/form-field.model';
 import { FormFieldError } from '../../models/form-field-validator.model';
 import { FormAutocompleteFieldComponent } from './field-autocomplete/field-autocomplete.component';
 import { FormCheckboxFieldComponent } from './field-checkbox/field-checkbox.component';
+import { FormCheckboxGroupFieldComponent } from './field-checkbox-group/field-checkbox-group.component';
 import { FormChipsFieldComponent } from './field-chips/field-chips.component';
 import { FormDateFieldComponent } from './field-date/field-date.component';
 import { FormFileFieldComponent } from './field-file/field-file.component';
@@ -31,6 +32,7 @@ import { FormTextareaFieldComponent } from './field-textarea/field-textarea.comp
         FontAwesomeModule,
         FormAutocompleteFieldComponent,
         FormCheckboxFieldComponent,
+        FormCheckboxGroupFieldComponent,
         FormChipsFieldComponent,
         FormDateFieldComponent,
         FormFileFieldComponent,
