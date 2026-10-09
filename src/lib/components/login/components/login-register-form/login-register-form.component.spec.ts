@@ -62,7 +62,7 @@ describe('LoginRegisterFormComponent', () => {
     });
 
     it('walks the steps, gathers every value and registers at the end', async () => {
-        const response = { accessToken: 'access', refreshToken: 'refresh' };
+        const response = { accessToken: 'access' };
         loginHttpService.register.mockReturnValue(of(response));
         await render();
 

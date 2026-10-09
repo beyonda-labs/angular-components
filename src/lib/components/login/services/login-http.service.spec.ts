@@ -37,7 +37,7 @@ describe('LoginHttpService', () => {
     });
 
     it('signs in and registers behind the loading overlay', () => {
-        const response = { accessToken: 'a', refreshToken: 'r' };
+        const response = { accessToken: 'a' };
         const loading = TestBed.inject(LoadingService);
         const received = jest.fn();
 
@@ -55,5 +55,17 @@ describe('LoginHttpService', () => {
         expect(register.request.body).toEqual({ name: 'Ada' });
         expect(received).toHaveBeenCalledWith(response);
         expect(loading.isLoading()).toBe(false);
+    });
+
+    it('signs in and registers with the credentials, so the server can set its refresh cookie', () => {
+        service.login({ email: 'ada@example.com', password: 'secret' }).subscribe();
+        service.register({ name: 'Ada' }).subscribe();
+
+        const login = httpTesting.expectOne('https://auth/login');
+        const register = httpTesting.expectOne('https://auth/register');
+        login.flush({ accessToken: 'a' });
+        register.flush({ accessToken: 'a' });
+
+        expect([login.request.withCredentials, register.request.withCredentials]).toEqual([true, true]);
     });
 });

@@ -3,8 +3,10 @@
         "http": {
             "error": {
                 "login": {
+                    "account-locked": "La cuenta está bloqueada tras demasiados intentos fallidos. Vuelve a intentarlo en {{minutes}} minuto(s).",
                     "existing-user": "Ya existe una cuenta con este correo electrónico.",
                     "invalid-credentials": "Email o contraseña incorrectos.",
+                    "invalid-origin": "La petición llegó desde otro sitio y se ha rechazado.",
                     "invalid-refresh-token": "Tu sesión ha caducado. Inicia sesión de nuevo.",
                     "oauth-invalid-callback": "El callback de autenticación no es válido. Por favor, inténtelo de nuevo.",
                     "oauth-missing-access-token": "No se recibió token de acceso de {{provider}}. Por favor, inténtelo de nuevo.",
@@ -26,8 +28,10 @@
             },
             "title": {
                 "login": {
+                    "account-locked": "Cuenta bloqueada",
                     "existing-user": "Cuenta ya existente",
                     "invalid-credentials": "Autenticación fallida",
+                    "invalid-origin": "Petición rechazada",
                     "invalid-refresh-token": "Sesión caducada",
                     "oauth-invalid-callback": "Error de autenticación",
                     "oauth-missing-access-token": "Error de autenticación",

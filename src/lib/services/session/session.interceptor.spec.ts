@@ -5,10 +5,10 @@ import { provideRouter, Router } from '@angular/router';
 import { TestingConfig } from '@testing/models/testing.model';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
-import { resetSessionInterceptorStateForTesting } from './session.interceptor';
 import { SessionService } from './session.service';
 
-const REFRESH_URL = 'https://api.test/auth/refresh';
+const ACCESS_CONTROL_URL = 'https://api.test/auth';
+const REFRESH_URL = `${ACCESS_CONTROL_URL}/refresh`;
 const UNAUTHORIZED = { status: 401, statusText: 'Unauthorized' };
 
 describe('sessionInterceptor', () => {
@@ -17,22 +17,14 @@ describe('sessionInterceptor', () => {
     let navigate: jest.SpyInstance;
     let session: SessionService;
 
-    function configure(config: TestingConfig = {}, refreshToken?: string): void {
+    function configure(config: TestingConfig = {}): void {
         TestBed.configureTestingModule({ providers: [provideRouter([]), provideBeyTesting(config)] });
 
         httpClient = TestBed.inject(HttpClient);
         httpTesting = TestBed.inject(HttpTestingController);
         navigate = jest.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
         session = TestBed.inject(SessionService);
-
-        if (refreshToken) {
-            session.setRefreshToken(refreshToken);
-        }
     }
-
-    beforeEach(() => {
-        resetSessionInterceptorStateForTesting();
-    });
 
     afterEach(() => {
         httpTesting.verify();
@@ -73,33 +65,9 @@ describe('sessionInterceptor', () => {
         httpTesting.expectNone(REFRESH_URL);
     });
 
-    describe('401 without a refresh token', () => {
-        it('clears the session and redirects to login immediately', () => {
+    describe('401 on a request', () => {
+        it('refreshes through the cookie and retries the request with the new token', () => {
             configure({ token: 'expired-token' });
-            const error = jest.fn();
-
-            httpClient.get('/api/data').subscribe({ error });
-            httpTesting.expectOne('/api/data').flush(null, UNAUTHORIZED);
-
-            expect(error).toHaveBeenCalledWith(expect.objectContaining({ status: 401 }));
-            expect(session.isAuthenticated()).toBe(false);
-            expect(navigate).toHaveBeenCalledWith(['/login']);
-            httpTesting.expectNone(REFRESH_URL);
-        });
-
-        it('uses the configured loginRoute', () => {
-            configure({ session: { loginRoute: '/auth/signin' }, token: 'expired-token' });
-
-            httpClient.get('/api/data').subscribe({ error: jest.fn() });
-            httpTesting.expectOne('/api/data').flush(null, UNAUTHORIZED);
-
-            expect(navigate).toHaveBeenCalledWith(['/auth/signin']);
-        });
-    });
-
-    describe('401 with a refresh token', () => {
-        it('refreshes the token and retries the original request with it', () => {
-            configure({ token: 'expired-token' }, 'my-refresh-token');
             const received = jest.fn();
 
             httpClient.get('/api/data').subscribe(received);
@@ -108,8 +76,9 @@ describe('sessionInterceptor', () => {
             firstAttempt.flush(null, UNAUTHORIZED);
 
             const refresh = httpTesting.expectOne({ method: 'POST', url: REFRESH_URL });
-            expect(refresh.request.body).toEqual({ refreshToken: 'my-refresh-token' });
-            refresh.flush({ accessToken: 'new-token', refreshToken: 'new-refresh-token' });
+            expect(refresh.request.withCredentials).toBe(true);
+            expect(refresh.request.body).toBeNull();
+            refresh.flush({ accessToken: 'new-token' });
 
             const retry = httpTesting.expectOne('/api/data');
             expect(retry.request.headers.get('Authorization')).toBe('Bearer new-token');
@@ -117,25 +86,11 @@ describe('sessionInterceptor', () => {
 
             expect(received).toHaveBeenCalledWith({ id: 1 });
             expect(session.getToken()).toBe('new-token');
-            expect(session.getRefreshToken()).toBe('new-refresh-token');
             expect(navigate).not.toHaveBeenCalled();
         });
 
-        it('clears the session and redirects to login when the refresh request itself fails', () => {
-            configure({ token: 'expired-token' }, 'my-refresh-token');
-            const error = jest.fn();
-
-            httpClient.get('/api/data').subscribe({ error });
-            httpTesting.expectOne('/api/data').flush(null, UNAUTHORIZED);
-            httpTesting.expectOne(REFRESH_URL).flush(null, UNAUTHORIZED);
-
-            expect(error).toHaveBeenCalledWith(expect.any(HttpErrorResponse));
-            expect(session.isAuthenticated()).toBe(false);
-            expect(navigate).toHaveBeenCalledWith(['/login']);
-        });
-
         it('shares a single in-flight refresh across concurrent 401s instead of issuing one per request', () => {
-            configure({ token: 'expired-token' }, 'my-refresh-token');
+            configure({ token: 'expired-token' });
             const resultA = jest.fn();
             const resultB = jest.fn();
 
@@ -144,24 +99,52 @@ describe('sessionInterceptor', () => {
             httpTesting.expectOne('/api/a').flush(null, UNAUTHORIZED);
             httpTesting.expectOne('/api/b').flush(null, UNAUTHORIZED);
 
-            httpTesting.expectOne(REFRESH_URL).flush({ accessToken: 'new-token', refreshToken: 'new-refresh-token' });
+            httpTesting.expectOne(REFRESH_URL).flush({ accessToken: 'new-token' });
             httpTesting.expectOne('/api/a').flush('a');
             httpTesting.expectOne('/api/b').flush('b');
 
             expect(resultA).toHaveBeenCalledWith('a');
             expect(resultB).toHaveBeenCalledWith('b');
         });
+
+        it('clears the session and goes to the login route when the refresh fails', () => {
+            configure({ token: 'expired-token' });
+            const error = jest.fn();
+
+            httpClient.get('/api/data').subscribe({ error });
+            httpTesting.expectOne('/api/data').flush(null, UNAUTHORIZED);
+            httpTesting.expectOne(REFRESH_URL).flush(null, UNAUTHORIZED);
+
+            expect(error).toHaveBeenCalledWith(expect.any(HttpErrorResponse));
+            expect(error).toHaveBeenCalledWith(expect.objectContaining({ url: '/api/data' }));
+            expect(session.isAuthenticated()).toBe(false);
+            expect(navigate).toHaveBeenCalledWith(['/login']);
+        });
+
+        it('uses the configured loginRoute', () => {
+            configure({ session: { loginRoute: '/auth/signin' }, token: 'expired-token' });
+
+            httpClient.get('/api/data').subscribe({ error: jest.fn() });
+            httpTesting.expectOne('/api/data').flush(null, UNAUTHORIZED);
+            httpTesting.expectOne(REFRESH_URL).flush(null, UNAUTHORIZED);
+
+            expect(navigate).toHaveBeenCalledWith(['/auth/signin']);
+        });
     });
 
-    it('propagates a 401 from the refresh request itself without attempting to refresh again', () => {
-        configure({ token: 'some-token' }, 'my-refresh-token');
-        const error = jest.fn();
+    it.each(['login', 'logout', 'refresh', 'register'])(
+        'hands a 401 from %s to the caller without refreshing nor leaving the page',
+        endpoint => {
+            configure({ token: 'some-token' });
+            const error = jest.fn();
 
-        httpClient.post(REFRESH_URL, {}).subscribe({ error });
-        httpTesting.expectOne(REFRESH_URL).flush(null, UNAUTHORIZED);
+            httpClient.post(`${ACCESS_CONTROL_URL}/${endpoint}`, {}).subscribe({ error });
+            httpTesting.expectOne(`${ACCESS_CONTROL_URL}/${endpoint}`).flush(null, UNAUTHORIZED);
 
-        expect(error).toHaveBeenCalledWith(expect.objectContaining({ status: 401 }));
-        expect(session.getToken()).toBe('some-token');
-        httpTesting.expectNone(REFRESH_URL);
-    });
+            expect(error).toHaveBeenCalledWith(expect.objectContaining({ status: 401 }));
+            expect(session.getToken()).toBe('some-token');
+            expect(navigate).not.toHaveBeenCalled();
+            httpTesting.expectNone(REFRESH_URL);
+        }
+    );
 });

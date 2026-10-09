@@ -6,6 +6,25 @@
 
 -   HTTP service: `postBlob(url, body, options?)` sends a `POST` and reads the response as a `Blob`, such as a PDF the
     server draws from the body; a failed one shows its reason like `getBlob`.
+-   HTTP service: `withCredentials` on `BeyHttpRequestOptions` reaches `HttpClient` from every method, for an api on
+    another origin.
+-   Session service: `restore()` asks `accessControlUrl/refresh` for an access token through the refresh cookie,
+    one request at a time and none again once it failed; the guards use it when there is no token.
+-   Session service: `logout()` signs the user out at `accessControlUrl/logout`, then clears the session and goes to
+    `loginRoute`, also when the request fails.
+-   Login module: `login.account-locked` (with its `minutes`) and `login.invalid-origin` errors and titles.
+
+### Changed
+
+-   Session service (breaking, released in a minor on purpose): no token nor user is written to storage any more;
+    the access token lives in memory and the refresh token in an httpOnly cookie the server owns.
+-   Session service (breaking): `BeySessionConfig` keeps only `loginRoute`; `tokenKey`, `refreshTokenKey`, `userKey`,
+    `getRefreshToken()` and `setRefreshToken()` are gone, and the old `bey_*` keys are removed from storage.
+-   Session service (breaking): an app logs out with `logout()`; `clear()` forgets the session in the page only.
+-   Session service: the interceptor refreshes through the cookie on a `401`, and never on one from the sign-in, the
+    registration, the refresh or the logout.
+-   Login module (breaking): `BeyLoginResponse` is `{ accessToken }`; sign-in and registration are sent with the
+    credentials, and the OAuth callback restores the session through the cookie instead of reading tokens in the URL.
 
 ### Fixed
 
