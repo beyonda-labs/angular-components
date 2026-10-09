@@ -291,13 +291,35 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [x] Saved views: tabs that apply a search with its filters (templates / blocks)
 -   ~~Search every folder at once, naming the folder of each result~~ — decided against
 -   ~~Undo right after a delete, from its toast~~ — decided against
+-   [ ] Share a folder with users or groups, to read or to edit, over the sharing of base-entity
+-   [ ] A save that meets a conflict (the row changed since it was opened) says so and offers to reload, instead of
+        the generic error
 -   [ ] _(very low priority)_ Favourite and recent rows
+-   [ ] _(later)_ An empty page shows its action, such as "Create the first template", instead of an empty table
+
+### Accounts and administration
+
+-   [ ] Users page on `bey-page`, over the `users` module of express-components: invite, deactivate, change roles
+-   [ ] Account pages: change the password, recover it from the login, verify the email, and a profile with the name,
+        the language and the theme
+-   [ ] The session keeps the access token in memory and refreshes it through the `httpOnly` cookie of
+        express-components
+-   [ ] Audit viewer: a `bey-page` over the `audit` module, filtered by date, user and entity
+-   [ ] Notifications centre: the unread count in the header and the list of notices, over the `notifications` module
+-   [ ] _(low priority)_ Logging out ends the session on the server, once sessions are revocable
+-   [ ] _(low priority)_ Two-step sign-in: set it up from the profile with a QR, and the code step in the login
+
+### Accessibility
+
+-   [ ] _(low priority)_ WCAG 2.1 AA: the focus stays inside a modal and returns to its trigger when it closes, the
+        tree and the table can be used with the keyboard alone, and the contrast holds in both themes
 
 ### Rich interactions
 
 -   [ ] Text editor
 -   [ ] Drag & drop and reorderable lists
 -   [ ] File board / manager
+-   [ ] _(later)_ Keyboard shortcuts, such as Ctrl+S to save
 
 ### Delivery
 
