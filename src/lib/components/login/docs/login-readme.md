@@ -18,8 +18,10 @@ readonly config = new BeyLoginConfig({
 <bey-login [config]="config" />
 ```
 
-The route the OAuth providers return to renders `BeyLoginOAuthCallbackComponent`, which reads the tokens from
-the query string and opens the session:
+The route the OAuth providers return to renders `BeyLoginOAuthCallbackComponent`. The server lands there once it
+has set the refresh cookie, with no token in the URL, or with `?error=unauthorized` when the provider refused: the
+component goes back to `loginRoute` on an error, and otherwise restores the session through the cookie and goes
+to the `redirectPath` of the user, or to `loginRoute` when nothing can be restored:
 
 ```ts
 { path: 'oauth/callback', component: BeyLoginOAuthCallbackComponent }
@@ -45,14 +47,18 @@ Everything else comes from the access control api at `accessControlUrl` of the e
 | ------------------ | --------------------------------------------------- | ------------------------------------------ |
 | `/providers`       | `{ id, authUrl }[]`, ids among google, microsoft, facebook | The provider buttons under the form  |
 | `/register/fields` | `{ name, type, required?, step? }[]`                | The registration form, one step per `step` |
-| `/login`           | `{ accessToken, refreshToken }`                     | Signing in                                 |
-| `/register`        | `{ accessToken, refreshToken }`                     | Registering                                |
+| `/login`           | `{ accessToken }`, and the refresh cookie           | Signing in                                 |
+| `/register`        | `{ accessToken }`, and the refresh cookie           | Registering                                |
 
 A failing `/providers` or `/register/fields` is not an error: the screen just offers nothing. A provider the
 component has no icon for is skipped.
 
-Once a sign-in, a registration or an OAuth callback succeeds, both tokens go to `BeySessionService` and the
-router goes to the `redirectPath` of the session user, or to the root when there is none.
+`/login` and `/register` are sent with the credentials, so the browser keeps the httpOnly cookie the server sets
+with the refresh token; the front never sees it. Once a sign-in, a registration or an OAuth callback succeeds, the
+access token goes to `BeySessionService` and the router goes to the `redirectPath` of the session user, or to the
+root when there is none. A failed sign-in shows the reason the server gives under
+`angular-components.http.error.login.*`, such as `invalid-credentials`, or `account-locked` with the `minutes` left
+after too many failed attempts; `invalid-origin` is the answer to a refresh or a logout sent from another site.
 
 Each registration step is a fresh `bey-form`: the fields of the form module bind to the control they were
 created with, so a replaced config would leave them writing into a group nobody reads.

@@ -27,10 +27,16 @@ export class LoginHttpService {
     }
 
     login(credentials: LoginCredentials): Observable<LoginResponse> {
-        return this.httpService.post<LoginResponse>(`${this.baseUrl}/login`, credentials, { loading: true });
+        return this.httpService.post<LoginResponse>(`${this.baseUrl}/login`, credentials, {
+            loading: true,
+            withCredentials: true
+        });
     }
 
     register(values: Record<string, unknown>): Observable<LoginResponse> {
-        return this.httpService.post<LoginResponse>(`${this.baseUrl}/register`, values, { loading: true });
+        return this.httpService.post<LoginResponse>(`${this.baseUrl}/register`, values, {
+            loading: true,
+            withCredentials: true
+        });
     }
 }

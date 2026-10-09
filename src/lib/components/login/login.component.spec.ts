@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import { queryButton, renderComponent, settle } from '@testing/dom';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
@@ -45,8 +45,12 @@ describe('LoginComponent', () => {
         loginHttpService.getRegisterFields.mockReturnValue(of([]));
 
         await TestBed.configureTestingModule({
-            imports: [LoginComponent, TranslateModule.forRoot()],
-            providers: [provideRouter([]), { provide: LoginHttpService, useValue: loginHttpService }]
+            imports: [LoginComponent],
+            providers: [
+                provideRouter([]),
+                provideBeyTesting(),
+                { provide: LoginHttpService, useValue: loginHttpService }
+            ]
         }).compileComponents();
     });
 

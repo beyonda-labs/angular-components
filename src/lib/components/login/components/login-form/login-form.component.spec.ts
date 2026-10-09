@@ -59,7 +59,7 @@ describe('LoginFormComponent', () => {
     });
 
     it('signs in with the typed credentials and opens the session', async () => {
-        const response = { accessToken: 'access', refreshToken: 'refresh' };
+        const response = { accessToken: 'access' };
         loginHttpService.login.mockReturnValue(of(response));
         await render();
 

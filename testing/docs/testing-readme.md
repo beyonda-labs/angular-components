@@ -23,8 +23,8 @@ below. Routes stay in the spec, with `provideRouter`.
 
 The HTTP client with the session interceptor and then `interceptors`, backed by `provideHttpClientTesting`, so
 requests are answered with `HttpTestingController`; `provideBeyHttp`, so a failed request whose error modal the
-fake recorded raises nothing in a spec that subscribes without an `error` callback; the environment; the session
-over in-memory storage; ngx-translate without a loader; the ngx-bootstrap modals, so the dialogs of the services
+fake recorded raises nothing in a spec that subscribes without an `error` callback; the environment; the session,
+which lives in memory; ngx-translate without a loader; the ngx-bootstrap modals, so the dialogs of the services
 without a fake (the tree dialog) open for real; and the fakes.
 
 | Field          | Default                              | Meaning                                                  |
@@ -39,6 +39,10 @@ without a fake (the tree dialog) open for real; and the fakes.
 
 The test environment is `accessControlUrl: 'https://api.test/auth'`, `appName: 'test-app'`,
 `baseUrl: 'https://api.test'`, `cookieName: 'test-session'` and `webApiPath: '/api'`.
+
+`user` and `token` sign the session in without a request. Without them, whatever restores the session (the guards,
+the OAuth callback, a `401` the interceptor refreshes) sends `POST https://api.test/auth/refresh`, which the spec
+answers with `HttpTestingController`: `{ accessToken }` to sign in, or a `401` to stay signed out.
 
 ## Fakes
 

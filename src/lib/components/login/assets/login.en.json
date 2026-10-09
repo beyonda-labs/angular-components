@@ -3,8 +3,10 @@
         "http": {
             "error": {
                 "login": {
+                    "account-locked": "This account is locked after too many failed attempts. Try again in {{minutes}} minute(s).",
                     "existing-user": "An account with this email already exists.",
                     "invalid-credentials": "Invalid email or password.",
+                    "invalid-origin": "The request came from another site and was refused.",
                     "invalid-refresh-token": "Your session has expired. Please log in again.",
                     "oauth-invalid-callback": "The authentication callback is invalid. Please try again.",
                     "oauth-missing-access-token": "No access token was received from {{provider}}. Please try again.",
@@ -26,8 +28,10 @@
             },
             "title": {
                 "login": {
+                    "account-locked": "Account locked",
                     "existing-user": "Account already exists",
                     "invalid-credentials": "Authentication failed",
+                    "invalid-origin": "Request refused",
                     "invalid-refresh-token": "Session expired",
                     "oauth-invalid-callback": "Authentication error",
                     "oauth-missing-access-token": "Authentication error",

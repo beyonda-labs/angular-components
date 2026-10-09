@@ -1,92 +1,47 @@
-import { HttpClient, HttpErrorResponse, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
+import { HttpErrorResponse, HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, catchError, filter, switchMap, take, throwError } from 'rxjs';
+import { catchError, switchMap, throwError } from 'rxjs';
 
 import { ENVIRONMENT_CONFIG } from '../environment/models/environment.model';
 import { SESSION_CONFIG } from './models/session.model';
 import { SessionService } from './session.service';
 
+const SESSION_ENDPOINTS = ['login', 'logout', 'refresh', 'register'];
 const UNAUTHORIZED_STATUS = 401;
-
-interface RefreshResponse {
-    accessToken: string;
-    refreshToken: string;
-}
-
-let isRefreshing = false;
-const refreshedToken$ = new BehaviorSubject<string | null>(null);
-
-export function resetSessionInterceptorStateForTesting(): void {
-    isRefreshing = false;
-    refreshedToken$.next(null);
-}
 
 export const sessionInterceptor: HttpInterceptorFn = (request: HttpRequest<unknown>, next: HttpHandlerFn) => {
     const config = inject(SESSION_CONFIG);
     const environmentConfig = inject(ENVIRONMENT_CONFIG);
-    const httpClient = inject(HttpClient);
     const router = inject(Router);
     const sessionService = inject(SessionService);
 
-    const refreshUrl = `${environmentConfig.accessControlUrl}/refresh`;
-    const isRefreshRequest = request.url === refreshUrl;
+    const isSessionRequest = SESSION_ENDPOINTS.some(
+        endpoint => request.url === `${environmentConfig.accessControlUrl}/${endpoint}`
+    );
 
-    const token = sessionService.getToken();
-
-    const authorizedRequest = token ? request.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : request;
-
-    const logout = () => {
-        sessionService.clear();
-        router.navigate([config.loginRoute]);
-    };
-
-    return next(authorizedRequest).pipe(
+    return next(authorize(request, sessionService.getToken())).pipe(
         catchError((error: HttpErrorResponse) => {
-            if (error.status !== UNAUTHORIZED_STATUS || isRefreshRequest) {
+            if (error.status !== UNAUTHORIZED_STATUS || isSessionRequest) {
                 return throwError(() => error);
             }
 
-            const refreshToken = sessionService.getRefreshToken();
-
-            if (!refreshToken) {
-                logout();
-
-                return throwError(() => error);
-            }
-
-            if (!isRefreshing) {
-                isRefreshing = true;
-                refreshedToken$.next(null);
-
-                httpClient.post<RefreshResponse>(refreshUrl, { refreshToken }).subscribe({
-                    next: response => {
-                        sessionService.setToken(response.accessToken);
-                        sessionService.setRefreshToken(response.refreshToken);
-                        isRefreshing = false;
-                        refreshedToken$.next(response.accessToken);
-                    },
-                    error: () => {
-                        isRefreshing = false;
-                        logout();
-                        refreshedToken$.next(null);
-                    }
-                });
-            }
-
-            return refreshedToken$.pipe(
-                filter(accessToken => accessToken !== null || !isRefreshing),
-                take(1),
-                switchMap(accessToken => {
-                    if (!accessToken) {
-                        return throwError(() => error);
+            return sessionService.restore().pipe(
+                switchMap(isRestored => {
+                    if (isRestored) {
+                        return next(authorize(request, sessionService.getToken()));
                     }
 
-                    const retriedRequest = request.clone({ setHeaders: { Authorization: `Bearer ${accessToken}` } });
+                    sessionService.clear();
+                    router.navigate([config.loginRoute]);
 
-                    return next(retriedRequest);
+                    return throwError(() => error);
                 })
             );
         })
     );
 };
+
+function authorize(request: HttpRequest<unknown>, token: string | null): HttpRequest<unknown> {
+    return token ? request.clone({ setHeaders: { Authorization: `Bearer ${token}` } }) : request;
+}
