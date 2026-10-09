@@ -306,8 +306,8 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [ ] Users page on `bey-page`, over the `users` module of express-components: invite, deactivate, change roles
 -   [ ] Account pages: change the password, recover it from the login, verify the email, and a profile with the name,
         the language and the theme
--   [ ] The session keeps the access token in memory and refreshes it through the `httpOnly` cookie of
-        express-components
+-   [x] The session keeps the access token in memory and refreshes it through the `httpOnly` cookie of
+        express-components (`restore`, `logout`)
 -   [ ] Audit viewer: a `bey-page` over the `audit` module, filtered by date, user and entity
 -   [ ] Notifications centre: the unread count in the header and the list of notices, over the `notifications` module
 -   [ ] _(low priority)_ Logging out ends the session on the server, once sessions are revocable
