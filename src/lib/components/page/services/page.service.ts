@@ -350,7 +350,8 @@ export class PageService {
         const viewFilters = viewingTrash ? [] : readViewFilters(config, this.activeView());
         const queryParameters = this.pageSearchService.buildQueryParameters(
             { ...search, filters: [...viewFilters, ...search.filters] },
-            Boolean(config.tableConfig?.search) || viewFilters.length > 0 || hasSortableColumn(config)
+            Boolean(config.tableConfig?.search) || viewFilters.length > 0 || hasSortableColumn(config),
+            config.tableConfig?.search?.textField
         );
 
         if (categoriesConfig && !viewingTrash) {

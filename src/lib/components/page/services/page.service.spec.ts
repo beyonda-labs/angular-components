@@ -4,6 +4,7 @@ import { mock, MockProxy } from 'jest-mock-extended';
 import { of, Subject, throwError } from 'rxjs';
 
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
+import { StringFilter } from '../../search/models/search-filter.model';
 import { TableColumn, TableSortDirection } from '../../table/models/table.model';
 import { pageStandardAction } from '../functions/page-standard-actions';
 import { PageBackendResponse, PageConfig, PageConfigParameters, PageHandle } from '../models/page.model';
@@ -13,7 +14,7 @@ import { PageFormConfig } from '../models/page-form.model';
 import { PageHeaderConfig } from '../models/page-header.model';
 import { PageItem } from '../models/page-item.model';
 import { PageSearch, SearchSortDirection } from '../models/page-search.model';
-import { PageTableConfig } from '../models/page-table.model';
+import { PageTableConfig, PageTableSearchConfig } from '../models/page-table.model';
 import { PageService } from './page.service';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
@@ -252,6 +253,28 @@ describe('PageService', () => {
         service.searchConfig()?.onFiltersChange?.([]);
         flush();
         expect(service.pageSearch().page).toBe(1);
+    });
+
+    it('sends the filter of the text field as the text of the search, and keeps it as a filter for the search box', () => {
+        const text = new StringFilter({ field: 'text', value: 'ada' });
+        service.setConfig(
+            buildConfig({
+                tableConfig: new PageTableConfig({
+                    columns: [],
+                    loadRow: () => [],
+                    search: new PageTableSearchConfig({ fields: [], mainField: 'text', textField: 'text' })
+                })
+            })
+        );
+        flush();
+
+        service.searchConfig()?.onFiltersChange?.([text]);
+        flush();
+
+        expect(JSON.parse(atob(String(lastQuery()['search'])))).toEqual(
+            expect.objectContaining({ filters: [], text: 'ada' })
+        );
+        expect(service.pageSearch().filters).toEqual([text]);
     });
 
     it('offers the header actions the backend, the selection and the categories allow', () => {

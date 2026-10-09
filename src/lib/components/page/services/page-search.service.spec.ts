@@ -44,6 +44,18 @@ describe('PageSearchService', () => {
         expect(decodeBase64(parameters['search'] as string)).toEqual(search);
     });
 
+    it('sends the filter of the text field it is given as the text of the search', () => {
+        const search: PageSearch = {
+            filters: [{ field: 'text', operator: SearchFilterOperator.Contains, value: 'ada' }],
+            page: 1,
+            size: 25
+        };
+
+        const parameters = service.buildQueryParameters(search, true, 'text');
+
+        expect(decodeBase64(parameters['search'] as string)).toEqual({ filters: [], page: 1, size: 25, text: 'ada' });
+    });
+
     it('encodes free text outside Latin-1 without throwing', () => {
         const search: PageSearch = { filters: [], page: 1, size: 25, text: 'café con ñ' };
 

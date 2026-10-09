@@ -54,10 +54,12 @@ export class PageTableSearchConfig {
     fields: SearchField[];
 
     mainField?: string;
+    textField?: string;
 
-    constructor({ fields, mainField }: PageTableSearchConfigParameters) {
+    constructor({ fields, mainField, textField }: PageTableSearchConfigParameters) {
         this.fields = fields;
         this.mainField = mainField;
+        this.textField = textField;
     }
 }
 
@@ -84,4 +86,5 @@ export interface PageTableSearchConfigParameters {
     fields: SearchField[];
 
     mainField?: string;
+    textField?: string;
 }
