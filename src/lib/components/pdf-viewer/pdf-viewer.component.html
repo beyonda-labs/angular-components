@@ -58,6 +58,7 @@
                 [showZoomDropdown]="config().toolbarButtons.zoomDropdown"
                 [src]="config().src"
                 [textLayer]="textLayer()"
+                [useInlineScripts]="false"
                 [zoom]="zoomInput()"
                 (currentZoomFactor)="onZoomFactorChange($event)"
                 (pageChange)="onPageChange($event)"

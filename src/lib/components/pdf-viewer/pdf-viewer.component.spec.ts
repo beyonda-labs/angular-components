@@ -242,6 +242,12 @@ describe('PdfViewerComponent toolbar', () => {
             .compileComponents();
     });
 
+    it('loads pdf.js without an inline script, so a Content Security Policy without unsafe-inline lets it start', async () => {
+        await render();
+
+        expect(pdfViewer().properties['useInlineScripts']).toBe(false);
+    });
+
     it('shows the compact toolbar with the status the consumer projects, and hides the one of pdf.js', async () => {
         await render();
 

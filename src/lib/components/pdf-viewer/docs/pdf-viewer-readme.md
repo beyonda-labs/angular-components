@@ -113,6 +113,15 @@ A searchable viewer always renders the text layer of pdf.js, which draws the hig
 already knows; `currentPage()`, `currentRotation()` and `currentZoom()` read the live state. A new config
 resets the three to its own values.
 
+## Content Security Policy
+
+The viewer binds `[useInlineScripts]="false"`. Before loading pdf.js, `ngx-extended-pdf-viewer` checks what the
+browser supports with a script: inline, unless it finds a policy in a `<meta>` tag. A policy sent as a header, as
+express-components does, goes unnoticed, so the inline script is refused and the viewer waits for its answer
+forever. With the flag it loads `assets/op-chaining-support.js` instead, which `script-src 'self'` allows. pdf.js
+itself needs `'wasm-unsafe-eval'` for its image decoders, `worker-src 'self'` for its worker and `blob:` in
+`connect-src` and `img-src` to open a `Blob`.
+
 ## Styles
 
 pdf.js themes its own background off the operating system's `prefers-color-scheme`, not the `body.dark` class
