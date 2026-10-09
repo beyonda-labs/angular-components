@@ -5,7 +5,8 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 
-import { ThemeService } from '../../services/theme/theme.service';
+import { PreferencesService } from '../../services/preferences/preferences.service';
+import { Theme, ThemeService } from '../../services/theme/theme.service';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,6 +17,7 @@ import { ThemeService } from '../../services/theme/theme.service';
     templateUrl: './floating-preferences.component.html'
 })
 export class FloatingPreferencesComponent {
+    private readonly preferencesService = inject(PreferencesService);
     private readonly themeService = inject(ThemeService);
     private readonly translateService = inject(TranslateService);
 
@@ -25,13 +27,14 @@ export class FloatingPreferencesComponent {
     readonly language = toSignal(this.translateService.onLangChange.pipe(map(event => event.lang)), {
         initialValue: this.translateService.currentLang ?? this.translateService.defaultLang
     });
+    readonly languages = this.preferencesService.languages;
     readonly theme = toSignal(this.themeService.theme$, { initialValue: 'light' as const });
 
     onLangChange(value: string): void {
-        this.translateService.use(value);
+        this.preferencesService.setLanguage(value);
     }
 
     onThemeChange(value: string): void {
-        this.themeService.setTheme(value as 'light' | 'dark');
+        this.preferencesService.setTheme(value as Theme);
     }
 }

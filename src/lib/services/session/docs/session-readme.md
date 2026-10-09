@@ -1,8 +1,8 @@
 # Session
 
 `BeySessionService` keeps the signed-in user of an app: the access token and the user decoded from it (`email`,
-`name`, `surname`, `roles` and `allowedPaths`, whose first entry is the `redirectPath`), in signals and only in
-memory. The refresh token never reaches the front: the server keeps it in an httpOnly cookie it sets on sign-in,
+`name`, `surname`, `roles`, the saved `language` and `theme` when the user has them, and `allowedPaths`, whose first
+entry is the `redirectPath`), in signals and only in memory. The refresh token never reaches the front: the server keeps it in an httpOnly cookie it sets on sign-in,
 registration and OAuth, rotates on every refresh and clears on logout, so a reload opens the session again by
 asking the server for a new access token. `beyAuthGuard` lets a route through only to a signed-in user whose
 `allowedPaths` include it, `beyLoginGuard` sends a signed-in user away from the login, and `beySessionInterceptor`

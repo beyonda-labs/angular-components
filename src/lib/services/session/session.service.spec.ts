@@ -106,6 +106,14 @@ describe('SessionService', () => {
             );
         });
 
+        it('decodes the saved language and theme of the user from the token', () => {
+            service.setToken(
+                `header.${btoa(JSON.stringify({ email: 'ada@example.com', language: 'es', theme: 'dark' }))}.signature`
+            );
+
+            expect(service.getUser()).toEqual(expect.objectContaining({ language: 'es', theme: 'dark' }));
+        });
+
         it('exposes the user it is given as it is', () => {
             service.setUser(mockUser);
 

@@ -14,9 +14,11 @@ export interface SessionUser {
     redirectPath: string;
 
     app?: unknown;
+    language?: string;
     name?: string;
     roles?: string[];
     surname?: string;
+    theme?: string;
 }
 
 export const DEFAULT_SESSION_CONFIG: Required<SessionConfig> = {

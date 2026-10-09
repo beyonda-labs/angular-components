@@ -1,0 +1,7 @@
+{
+    "angular-components-style-guide": {
+        "account": {
+            "example": "La página de la cuenta del usuario que ha iniciado sesión, leída del backend de demostración: el correo para consultar, el nombre y los apellidos para guardar, y la contraseña para cambiar, o cómo crear una en una cuenta que no la tiene."
+        }
+    }
+}

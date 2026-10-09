@@ -1,0 +1,28 @@
+<div class="bey-account">
+    <bey-header [config]="headerConfig()"></bey-header>
+
+    @if (profileForm(); as profileForm) {
+        <div class="row">
+            <div class="col-12 col-xl-8 d-flex flex-column gap-3">
+                <section class="bey-account-section" aria-labelledby="bey-account-profile-title">
+                    <h2 id="bey-account-profile-title" class="bey-account-section-title">
+                        {{ texts().profileTitle | translate }}
+                    </h2>
+                    <bey-form [config]="profileForm"></bey-form>
+                </section>
+
+                <section class="bey-account-section" aria-labelledby="bey-account-password-title">
+                    <h2 id="bey-account-password-title" class="bey-account-section-title">
+                        {{ texts().passwordTitle | translate }}
+                    </h2>
+
+                    @if (hasPassword()) {
+                        <bey-form [config]="passwordForm()"></bey-form>
+                    } @else {
+                        <p class="bey-account-note">{{ texts().noPassword | translate }}</p>
+                    }
+                </section>
+            </div>
+        </div>
+    }
+</div>

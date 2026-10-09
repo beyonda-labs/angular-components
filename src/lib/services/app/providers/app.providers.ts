@@ -7,6 +7,7 @@ import { provideBeyModal } from '../../../components/modal/providers/modal.provi
 import { provideBeyToast } from '../../../components/toast/providers/toast.providers';
 import { provideBeyEnvironment } from '../../environment/providers/environment.providers';
 import { provideBeyHttp } from '../../http/providers/http.providers';
+import { provideBeyPreferences } from '../../preferences/providers/preferences.providers';
 import { provideBeySession } from '../../session/providers/session.providers';
 import { sessionInterceptor } from '../../session/session.interceptor';
 import { AppConfig } from '../models/app.model';
@@ -17,6 +18,7 @@ const TRANSLATIONS_SUFFIX = '.json';
 export function provideBeyApp({
     environment,
     interceptors = [],
+    preferences,
     session,
     translationsPath = DEFAULT_TRANSLATIONS_PATH
 }: AppConfig): EnvironmentProviders {
@@ -34,6 +36,7 @@ export function provideBeyApp({
                     new TranslateHttpLoader(httpClient, translationsPath, TRANSLATIONS_SUFFIX),
                 deps: [HttpClient]
             }
-        })
+        }),
+        provideBeyPreferences(preferences)
     ]);
 }

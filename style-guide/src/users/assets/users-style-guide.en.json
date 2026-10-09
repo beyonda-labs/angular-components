@@ -1,0 +1,11 @@
+{
+    "angular-components-style-guide": {
+        "users": {
+            "example": "The users page on the demo backend: search by name or email, filter by status and role, invite a user, edit their roles, change their status and send their invitation again, as far as the backend allows each row.",
+            "roles": {
+                "admin": "Administrator",
+                "editor": "Editor"
+            }
+        }
+    }
+}

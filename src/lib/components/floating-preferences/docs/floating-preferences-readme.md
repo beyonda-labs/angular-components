@@ -1,7 +1,10 @@
 # Floating preferences
 
-Two selectors, language and theme, that manage themselves. There is no config: the component reads and writes
-`TranslateService` and `BeyThemeService` directly, so a parent never has to hold the state.
+Two selectors, language and theme, that manage themselves. There is no config: the component reads the language of
+`TranslateService` and the theme of `BeyThemeService`, and changes both through `BeyPreferencesService`, so a parent
+never has to hold the state. The language selector lists the `languages` of the
+[preferences](../../../services/preferences/docs/preferences-readme.md), each named in itself (`English`, `Español`),
+and what a signed-in user picks is saved to their account as well.
 
 ## Usage
 
@@ -17,9 +20,9 @@ Two selectors, language and theme, that manage themselves. There is no config: t
 
 ## Theme
 
-Picking a theme calls `BeyThemeService.setTheme`, which toggles the `dark` class on `<body>` and remembers the
-choice in `localStorage`. Mounting the component on another route picks the saved theme back up, so nothing
-else has to remember it.
+Picking a theme calls `BeyPreferencesService.setTheme`, which applies it through `BeyThemeService`: the `dark` class
+on `<body>`, and the choice remembered in `localStorage`. Mounting the component on another route picks the saved
+theme back up, so nothing else has to remember it.
 
 To react to the theme elsewhere, inject `BeyThemeService` and read `theme$`, or write CSS against
 `:host-context(body.dark)`. Which of the two applies is in [tokens.md](../../../../../docs/tokens.md).

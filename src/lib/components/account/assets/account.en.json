@@ -1,0 +1,59 @@
+{
+    "angular-components": {
+        "account": {
+            "password": {
+                "current-password": {
+                    "label": "Current password",
+                    "placeholder": "Type your current password"
+                },
+                "no-password": "Your account has no password, since you sign in with another provider. To set one, sign out and use \"Forgot your password?\" on the sign-in page.",
+                "password": {
+                    "label": "New password",
+                    "placeholder": "Type the new password"
+                },
+                "password2": {
+                    "label": "Confirm the new password",
+                    "mismatch": "The passwords do not match.",
+                    "placeholder": "Type the new password again"
+                },
+                "save": "Change password",
+                "title": "Password"
+            },
+            "profile": {
+                "cancel": "Discard changes",
+                "email": {
+                    "label": "Email"
+                },
+                "name": {
+                    "label": "Name",
+                    "placeholder": "Type your name"
+                },
+                "save": "Save profile",
+                "surname": {
+                    "label": "Surname",
+                    "placeholder": "Type your surname"
+                },
+                "title": "Profile"
+            },
+            "title": "My account",
+            "toast": {
+                "password-success": "Password changed. Your other devices will have to sign in again.",
+                "profile-success": "Profile saved"
+            }
+        },
+        "http": {
+            "error": {
+                "account": {
+                    "no-password": "Your account has no password yet. Set one through \"Forgot your password?\" on the sign-in page.",
+                    "wrong-password": "The current password is not correct."
+                }
+            },
+            "title": {
+                "account": {
+                    "no-password": "No password",
+                    "wrong-password": "Wrong password"
+                }
+            }
+        }
+    }
+}

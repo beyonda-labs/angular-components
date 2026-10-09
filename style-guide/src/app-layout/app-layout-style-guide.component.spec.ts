@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import { buttonByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { AppLayoutStyleGuideComponent } from './app-layout-style-guide.component';
 
@@ -14,8 +14,8 @@ describe('AppLayoutStyleGuideComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [AppLayoutStyleGuideComponent, TranslateModule.forRoot()],
-            providers: [provideRouter([])]
+            imports: [AppLayoutStyleGuideComponent],
+            providers: [provideRouter([]), provideBeyTesting()]
         }).compileComponents();
 
         fixture = await renderComponent(AppLayoutStyleGuideComponent);

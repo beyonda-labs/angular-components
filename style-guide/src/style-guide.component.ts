@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { AccountStyleGuideComponent } from './account/account-style-guide.component';
 import { AppLayoutStyleGuideComponent } from './app-layout/app-layout-style-guide.component';
 import { BadgeStyleGuideComponent } from './badge/badge-style-guide.component';
 import { BreadcrumbStyleGuideComponent } from './breadcrumb/breadcrumb-style-guide.component';
@@ -26,12 +27,14 @@ import { TableStyleGuideComponent } from './table/table-style-guide.component';
 import { TabsStyleGuideComponent } from './tabs/tabs-style-guide.component';
 import { ToastStyleGuideComponent } from './toast/toast-style-guide.component';
 import { TreeStyleGuideComponent } from './tree/tree-style-guide.component';
+import { UsersStyleGuideComponent } from './users/users-style-guide.component';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         TranslateModule,
         StyleGuideSectionComponent,
+        AccountStyleGuideComponent,
         AppLayoutStyleGuideComponent,
         BadgeStyleGuideComponent,
         BreadcrumbStyleGuideComponent,
@@ -53,7 +56,8 @@ import { TreeStyleGuideComponent } from './tree/tree-style-guide.component';
         LoginStyleGuideComponent,
         PageStyleGuideComponent,
         TabsStyleGuideComponent,
-        TreeStyleGuideComponent
+        TreeStyleGuideComponent,
+        UsersStyleGuideComponent
     ],
     selector: 'bey-style-guide',
     standalone: true,
