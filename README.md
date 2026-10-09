@@ -77,15 +77,16 @@ const form = new BeyFormConfig({
 
 ## Components
 
-| Component   | Selector            | Status                      |
-| ----------- | ------------------- | --------------------------- |
-| Account     | `<bey-account>`     | Stable                      |
-| Form        | `<bey-form>`        | Stable                      |
-| Header      | `<bey-header>`      | Stable                      |
-| Left Menu   | `<bey-left-menu>`   | Stable                      |
-| Table       | `<bey-table>`       | Stable                      |
-| Users       | `<bey-users>`       | Stable                      |
-| Style Guide | `<bey-style-guide>` | Demo, secondary entry point |
+| Component       | Selector                | Status                      |
+| --------------- | ----------------------- | --------------------------- |
+| Account data    | `<bey-account-data>`    | Stable                      |
+| Form            | `<bey-form>`            | Stable                      |
+| Header          | `<bey-header>`          | Stable                      |
+| Left Menu       | `<bey-left-menu>`       | Stable                      |
+| Password change | `<bey-password-change>` | Stable                      |
+| Table           | `<bey-table>`           | Stable                      |
+| Users           | `<bey-users>`           | Stable                      |
+| Style Guide     | `<bey-style-guide>`     | Demo, secondary entry point |
 
 The interactive style guide ships as `@beyonda-labs/angular-components/style-guide`, a secondary entry point:
 `import { BeyStyleGuideComponent } from '@beyonda-labs/angular-components/style-guide'`. Importing a component
@@ -106,15 +107,17 @@ Two plain functions are public so an app builds the same texts and keys as the l
 
 Component documentation:
 
--   [Account](src/lib/components/account/docs/account-readme.md)
+-   [Account data](src/lib/components/account-data/docs/account-data-readme.md)
 -   [Form](src/lib/components/form/docs/form-readme.md)
 -   [Header](src/lib/components/header/docs/header-readme.md)
 -   [Left Menu](src/lib/components/left-menu/docs/left-menu-readme.md)
+-   [Password change](src/lib/components/password-change/docs/password-change-readme.md)
 -   [Table](src/lib/components/table/docs/table-readme.md)
 -   [Users](src/lib/components/users/docs/users-readme.md)
 
 Service documentation:
 
+-   [Account](src/lib/services/account/docs/account-readme.md)
 -   [App](src/lib/services/app/docs/app-readme.md)
 -   [Environment](src/lib/services/environment/docs/environment-readme.md)
 -   [Http](src/lib/services/http/docs/http-readme.md)

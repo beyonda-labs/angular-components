@@ -304,6 +304,8 @@ What `document-builder-front` did by hand that belongs in the library.
 ### Accounts and administration
 
 -   [x] Users page on `bey-page`, over the `users` module of express-components: invite, deactivate, change roles
+-   [ ] A modal at the first sign-in that asks to change a default password (the generated superadmin's, or one an
+        admin set), built on `bey-password-change`, and that stays until the password changes
 -   [ ] _(high priority)_ Roles and permissions pages, over the `roles` module of express-components: create a role,
         name it and pick its permissions, grouped by resource. First once the blocks of the enterprise review are done
 -   [x] Account pages: change the password, recover it from the login, verify the email, and a profile with the name,
