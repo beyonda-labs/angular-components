@@ -1,0 +1,10 @@
+:host {
+    --bey-login-card-bg: var(--bey-bg-page);
+    --bey-login-card-border: var(--bey-border-subtle);
+    --bey-login-card-radius: var(--bey-radius-xl);
+    --bey-login-card-shadow: var(--bey-shadow-md);
+    --bey-login-card-width: 20.625rem;
+    --bey-login-overlay: var(--bey-bg-page);
+
+    display: block;
+}

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 
 import { FormComponent } from '../../../form/form.component';
 import { FormDateField } from '../../../form/models/fields/form-date-field.model';
@@ -15,7 +15,7 @@ import {
 } from '../../../form/models/form.model';
 import { FormField, FormValue } from '../../../form/models/form-field.model';
 import { FormFieldEmailValidator } from '../../../form/models/form-field-validator.model';
-import { LoginConfig, RegisterField } from '../../models/login.model';
+import { LoginConfig, RegisterField, RegisterResponse } from '../../models/login.model';
 import { LoginHttpService } from '../../services/login-http.service';
 import { LoginSessionService } from '../../services/login-session.service';
 
@@ -34,6 +34,8 @@ export class LoginRegisterFormComponent {
 
     readonly config = input.required<LoginConfig>();
     readonly registerFields = input.required<RegisterField[]>();
+
+    readonly verificationRequired = output<void>();
 
     readonly formConfig = computed(() => this.buildForm(groupByStep(this.registerFields())));
 
@@ -68,7 +70,17 @@ export class LoginRegisterFormComponent {
     private register(value: FormValue): void {
         const values = Object.assign({}, ...Object.values(value)) as Record<string, unknown>;
 
-        this.loginHttpService.register(values).subscribe(response => this.loginSessionService.open(response));
+        this.loginHttpService.register(values).subscribe(response => this.registered(response));
+    }
+
+    private registered(response: RegisterResponse): void {
+        if ('accessToken' in response) {
+            this.loginSessionService.open(response);
+
+            return;
+        }
+
+        this.verificationRequired.emit();
     }
 }
 
@@ -77,9 +89,9 @@ function buildField(field: RegisterField): FormField {
 
     switch (field.type) {
         case 'email':
-            return new FormTextField({ ...base, validators: [new FormFieldEmailValidator()] });
+            return new FormTextField({ ...base, autocomplete: 'email', validators: [new FormFieldEmailValidator()] });
         case 'password':
-            return new FormPasswordField(base);
+            return new FormPasswordField({ ...base, autocomplete: 'new-password' });
         case 'number':
             return new FormNumberField(base);
         case 'date':

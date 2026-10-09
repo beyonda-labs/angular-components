@@ -2,8 +2,13 @@
     "angular-components": {
         "http": {
             "error": {
+                "account": {
+                    "token-invalid": "Este enlace no es válido, ya se ha usado o ha caducado."
+                },
                 "login": {
+                    "account-inactive": "Esta cuenta está desactivada. Ponte en contacto con un administrador si necesitas volver a acceder.",
                     "account-locked": "La cuenta está bloqueada tras demasiados intentos fallidos. Vuelve a intentarlo en {{minutes}} minuto(s).",
+                    "email-not-verified": "Verifica tu correo electrónico antes de iniciar sesión. Abre el enlace que te enviamos a {{email}} o pide uno nuevo.",
                     "existing-user": "Ya existe una cuenta con este correo electrónico.",
                     "invalid-credentials": "Email o contraseña incorrectos.",
                     "invalid-origin": "La petición llegó desde otro sitio y se ha rechazado.",
@@ -27,8 +32,13 @@
                 }
             },
             "title": {
+                "account": {
+                    "token-invalid": "Enlace no válido"
+                },
                 "login": {
+                    "account-inactive": "Cuenta desactivada",
                     "account-locked": "Cuenta bloqueada",
+                    "email-not-verified": "Correo electrónico sin verificar",
                     "existing-user": "Cuenta ya existente",
                     "invalid-credentials": "Autenticación fallida",
                     "invalid-origin": "Petición rechazada",
@@ -44,6 +54,48 @@
             }
         },
         "login": {
+            "accept-invitation": {
+                "button": {
+                    "accept": "Activar cuenta"
+                },
+                "intro": "Te han invitado con la dirección {{email}}. Completa tus datos y elige una contraseña para activar tu cuenta.",
+                "invalid-hint": "Pide a quien te invitó que te envíe una invitación nueva.",
+                "loading": "Cargando tu invitación…",
+                "name": {
+                    "label": "Nombre",
+                    "placeholder": "Tu nombre"
+                },
+                "password": {
+                    "label": "Contraseña",
+                    "placeholder": "Elige una contraseña"
+                },
+                "password2": {
+                    "label": "Confirmar contraseña",
+                    "placeholder": "Repite tu contraseña"
+                },
+                "surname": {
+                    "label": "Apellido",
+                    "placeholder": "Tu apellido"
+                }
+            },
+            "back-to-sign-in": "Volver a iniciar sesión",
+            "forgot-password": {
+                "button": {
+                    "send": "Enviar enlace"
+                },
+                "email": {
+                    "label": "Correo electrónico",
+                    "placeholder": "tu@correo.com"
+                },
+                "intro": "Escribe el correo electrónico de tu cuenta y te enviaremos un enlace para elegir una contraseña nueva.",
+                "sent": "Si existe una cuenta con esa dirección, te hemos enviado un enlace para elegir una contraseña nueva. Revisa tu bandeja de entrada."
+            },
+            "link-error": {
+                "failed": "No hemos podido abrir este enlace ahora mismo. Vuelve a intentarlo dentro de un momento.",
+                "invalid": "Este enlace no es válido, ya se ha usado o ha caducado.",
+                "request-new-link": "Solicitar un enlace nuevo",
+                "retry": "Volver a intentarlo"
+            },
             "login": {
                 "button": {
                     "login": "Iniciar sesión"
@@ -52,11 +104,17 @@
                     "label": "Correo electrónico",
                     "placeholder": "Escribe tu correo"
                 },
+                "forgot-password": "¿Has olvidado tu contraseña?",
                 "password": {
                     "label": "Contraseña",
                     "placeholder": "Escribe tu contraseña"
                 },
-                "signin-with": "Continuar con"
+                "signin-with": "Continuar con",
+                "unverified": {
+                    "message": "{{email}} aún no está verificado. Podemos enviarte un enlace de verificación nuevo.",
+                    "resend": "Reenviar el correo de verificación",
+                    "sent": "Si {{email}} sigue pendiente de verificar, te hemos enviado un enlace nuevo. Revisa tu bandeja de entrada."
+                }
             },
             "provider": {
                 "facebook": "Facebook",
@@ -89,9 +147,40 @@
                     "placeholder": "Tu apellido"
                 }
             },
+            "registered": {
+                "message": "Te hemos enviado un enlace a tu correo electrónico. Ábrelo para activar tu cuenta y después inicia sesión."
+            },
+            "reset-password": {
+                "button": {
+                    "save": "Guardar contraseña"
+                },
+                "invalid-hint": "Solicita un enlace nuevo para restablecer tu contraseña.",
+                "password": {
+                    "label": "Contraseña nueva",
+                    "placeholder": "Escribe tu contraseña nueva"
+                },
+                "password2": {
+                    "label": "Confirmar contraseña",
+                    "placeholder": "Repite tu contraseña nueva"
+                }
+            },
             "title": {
+                "accept-invitation": "Acepta tu invitación",
+                "forgot-password": "Restablece tu contraseña",
+                "invalid-link": "Este enlace ya no es válido",
                 "login": "Bienvenido de vuelta",
-                "register": "Crea tu cuenta"
+                "register": "Crea tu cuenta",
+                "registered": "Revisa tu bandeja de entrada",
+                "reset-password": "Elige una contraseña nueva",
+                "verify-email": "Verifica tu correo electrónico"
+            },
+            "validation": {
+                "passwords-not-match": "Las contraseñas no coinciden."
+            },
+            "verify-email": {
+                "invalid-hint": "Inicia sesión con tu correo electrónico y tu contraseña para recibir un enlace nuevo.",
+                "progress": "Verificando tu correo electrónico…",
+                "success": "Tu correo electrónico está verificado. Iniciando sesión…"
             }
         }
     }

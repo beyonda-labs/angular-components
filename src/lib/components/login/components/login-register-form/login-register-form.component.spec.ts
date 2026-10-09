@@ -85,6 +85,22 @@ describe('LoginRegisterFormComponent', () => {
         expect(loginSessionService.open).toHaveBeenCalledWith(response);
     });
 
+    it('reports a registration that waits for a verified email instead of opening a session', async () => {
+        const verificationRequired = jest.fn();
+        loginHttpService.register.mockReturnValue(of({ verificationRequired: true }));
+        await render();
+        fixture.componentInstance.verificationRequired.subscribe(verificationRequired);
+
+        await type('name', 'Ada');
+        await press('angular-components.form.steps.next');
+        await type('email', 'ada@example.com');
+        await type('password', 'secret');
+        await press('angular-components.login.register.button.register');
+
+        expect(verificationRequired).toHaveBeenCalled();
+        expect(loginSessionService.open).not.toHaveBeenCalled();
+    });
+
     it('goes back to the previous step without losing what was typed there', async () => {
         await render();
 
