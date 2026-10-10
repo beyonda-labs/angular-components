@@ -12,7 +12,9 @@
     one request at a time and none again once it failed; the guards use it when there is no token.
 -   Session service: `logout()` signs the user out at `accessControlUrl/logout`, then clears the session and goes to
     `loginRoute`, also when the request fails.
--   Login module: `login.account-locked` (with its `minutes`) and `login.invalid-origin` errors and titles.
+-   Login module: `login.account-locked` (with its `minutes`) and `login.invalid-origin` errors and titles, and
+    `login.invalid-credentials-attempts-left` and `account.wrong-password-attempts-left`, which warn with the
+    `attemptsLeft` and the `minutes` before the account locks.
 -   Login module: a "Forgot your password?" view behind `isPasswordResetEnabled` on `BeyLoginConfig`, which sends
     `accessControlUrl/password/forgot` and confirms in neutral words; `?view=forgot-password` on the login route opens
     it.
