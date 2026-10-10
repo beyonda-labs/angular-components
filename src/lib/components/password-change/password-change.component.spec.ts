@@ -1,7 +1,16 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { buttonByName, controlByName, queryAll, queryControl, renderComponent, settle, textsOf } from '@testing/dom';
+import {
+    accessibleDescription,
+    buttonByName,
+    controlByName,
+    queryAll,
+    queryControl,
+    renderComponent,
+    settle,
+    textsOf
+} from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeToastService } from '@testing/services/fake-toast.service';
 
@@ -81,6 +90,15 @@ describe('PasswordChangeComponent', () => {
         expect(controlByName(fixture, CONFIRMATION).value).toBe('');
     });
 
+    it('hints the minimum length under the new password and notes on its button that other devices sign out', async () => {
+        await render();
+
+        expect(accessibleDescription(controlByName(fixture, PASSWORD))).toBe(`${PREFIX}.password.password.hint`);
+        expect(accessibleDescription(controlByName(fixture, CURRENT))).toBe('');
+        expect(text()).toContain(`${PREFIX}.note`);
+        expect(accessibleDescription(saveButton())).toBe(`${PREFIX}.note`);
+    });
+
     it('enables its single button only once the three passwords are valid', async () => {
         await render();
 
@@ -99,6 +117,8 @@ describe('PasswordChangeComponent', () => {
 
         await fill('old-secret', 'seven77');
         expect(saveButton().disabled).toBe(true);
+        expect(controlByName(fixture, PASSWORD).getAttribute('aria-invalid')).toBe('true');
+        expect(accessibleDescription(controlByName(fixture, PASSWORD))).toBe(`${PREFIX}.password.password.hint`);
 
         await fill('old-secret', 'eight888');
         expect(saveButton().disabled).toBe(false);
@@ -135,10 +155,13 @@ describe('PasswordChangeComponent', () => {
         expect(saveButton().disabled).toBe(true);
     });
 
-    it('tells a user without a password how to set one, instead of asking for the current one', async () => {
+    it('tells a user without a password how to set one under its title, instead of asking for the current one', async () => {
         await render(buildProfile({ hasPassword: false }));
 
+        expect(text()).toContain(`${PREFIX}.title`);
+        expect(text()).toContain(`${PREFIX}.description`);
         expect(text()).toContain(`${PREFIX}.no-password`);
+        expect(text()).not.toContain(`${PREFIX}.note`);
         expect(queryControl(fixture, CURRENT)).toBeNull();
     });
 

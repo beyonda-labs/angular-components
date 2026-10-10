@@ -10,15 +10,15 @@ import { TranslateModule } from '@ngx-translate/core';
 import { StyleGuideButton } from '../models/style-guide-button.model';
 
 const BASE_URL = '/style-guide/account';
+const PREFIX = 'angular-components-style-guide.account-data';
 const CUSTOM_CONFIG = new BeyAccountDataConfig({
     baseUrl: BASE_URL,
     fields: [
-        new BeyAccountDataField({ isRequired: true, key: BeyAccountDataFieldKey.Name }),
-        new BeyAccountDataField({ columns: 6, key: BeyAccountDataFieldKey.Email })
+        new BeyAccountDataField({ hint: `${PREFIX}.name-hint`, isRequired: true, key: BeyAccountDataFieldKey.Name }),
+        new BeyAccountDataField({ columns: 6, hint: '', key: BeyAccountDataFieldKey.Email })
     ]
 });
 const DEFAULT_CONFIG = new BeyAccountDataConfig({ baseUrl: BASE_URL });
-const PREFIX = 'angular-components-style-guide.account-data';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,

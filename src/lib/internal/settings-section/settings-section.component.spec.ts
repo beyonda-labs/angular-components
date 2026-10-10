@@ -25,7 +25,7 @@ describe('SettingsSectionComponent', () => {
         }).compileComponents();
     });
 
-    it('names each section after its title, with its description beside what it holds', async () => {
+    it('names each section after its title, with its description over what it holds', async () => {
         const fixture = await renderComponent(SettingsSectionHostComponent);
         const [profile, password] = queryAll(fixture, 'section');
 

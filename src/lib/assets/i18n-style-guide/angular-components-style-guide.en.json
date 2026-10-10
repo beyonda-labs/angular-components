@@ -1,11 +1,12 @@
 {
     "angular-components-style-guide": {
         "account-data": {
-            "example": "The profile of the signed-in user, read from the demo backend: the email to read and the name and surname to save. The custom fields show the name, required, and the email at half width, without the surname.",
+            "example": "The profile of the signed-in user, read from the demo backend: the email to read, with how it is used under it, and the name and surname to save. The custom fields show the name, required and with a hint of its own, and the email at half width without its hint, without the surname.",
             "examples": {
                 "custom": "Custom fields",
                 "default": "Default fields"
-            }
+            },
+            "name-hint": "Shown on the documents you sign"
         },
         "account-data-section": "Account data",
         "app-layout": {
@@ -159,7 +160,10 @@
             },
             "canceled": "The form has been reset",
             "changed": "Form value changed: ",
-            "example": "Model-driven, configuration-based form with validation, conditional fields and responsive layout.",
+            "example": "Model-driven, configuration-based form with validation, conditional fields, hints under the fields, a note next to the buttons and responsive layout.",
+            "footer": {
+                "note": "Submitting only reports the value below; nothing is saved."
+            },
             "modal": {
                 "buttons": {
                     "cancel": "Cancel",
@@ -287,6 +291,7 @@
             },
             "section-info": {
                 "info1": {
+                    "hint": "Read-only, so the hint sits under the value",
                     "label": "Version"
                 },
                 "info2": {
@@ -321,6 +326,7 @@
             "section-password": {
                 "label": "Password Fields",
                 "password1": {
+                    "hint": "Mix letters, numbers and symbols",
                     "label": "Password (min. 8)",
                     "placeholder": "At least 8 characters"
                 },
@@ -398,6 +404,7 @@
                     "tooltip": "Example with 6 columns"
                 },
                 "text3": {
+                    "hint": "Letters only, without spaces or accents",
                     "label": "Letters Only",
                     "placeholder": "Only letters (A-Z)"
                 },
@@ -752,7 +759,7 @@
         },
         "pagination-section": "Pagination",
         "password-change": {
-            "example": "The password of the signed-in user, read from the demo backend: the current one, the new one and its confirmation, or how to set one for an account without it."
+            "example": "The password of the signed-in user, read from the demo backend: the current one, the new one with its minimum length under it, and its confirmation, with a note next to the button on the devices it signs out; or how to set one for an account without it."
         },
         "password-change-section": "Password change",
         "pdf-viewer": {

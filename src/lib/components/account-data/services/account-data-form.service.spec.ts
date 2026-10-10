@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { AccountProfile } from '../../../services/account/models/account.model';
 import { FormInfoField } from '../../form/models/fields/form-info-field.model';
-import { FormConfig, FormHandle } from '../../form/models/form.model';
+import { FormConfig, FormFooter, FormHandle } from '../../form/models/form.model';
 import { AccountDataConfig, AccountDataFormValue } from '../models/account-data.model';
 import { AccountDataField, AccountDataFieldKey } from '../models/account-data-field.model';
 import { AccountDataFormService } from './account-data-form.service';
@@ -15,6 +15,10 @@ describe('AccountDataFormService', () => {
 
     function build(fields?: AccountDataField[], onSubmit = jest.fn()): FormConfig<AccountDataFormValue> {
         return service.buildForm(new AccountDataConfig({ fields, prefix: PREFIX }), PROFILE, onSubmit);
+    }
+
+    function hintsOf(form: FormConfig<AccountDataFormValue>): (string | undefined)[] {
+        return form.sections[0].rows.flatMap(row => row.fields).map(field => field.hint);
     }
 
     function layoutOf(form: FormConfig<AccountDataFormValue>): string[][] {
@@ -33,6 +37,19 @@ describe('AccountDataFormService', () => {
         expect((email as FormInfoField).items).toEqual([{ label: 'ada@example.test' }]);
         expect(form.initialValue).toEqual({ profile: { name: 'Ada', surname: '' } });
         expect(form.buttons.map(button => button.label)).toEqual([`${PREFIX}.save`]);
+        expect(form.footer).toEqual(new FormFooter({ isDivided: true }));
+    });
+
+    it('hints under the email how it is used, and lets a field change its hint or drop it', () => {
+        expect(hintsOf(build())).toEqual([`${PREFIX}.profile.email.hint`, undefined, undefined]);
+        expect(
+            hintsOf(
+                build([
+                    new AccountDataField({ hint: '', key: AccountDataFieldKey.Email }),
+                    new AccountDataField({ hint: 'my-app.name-hint', key: AccountDataFieldKey.Name })
+                ])
+            )
+        ).toEqual([undefined, 'my-app.name-hint']);
     });
 
     it('lays the fields out in the order and the widths of the config, a row filling up to 12 columns', () => {

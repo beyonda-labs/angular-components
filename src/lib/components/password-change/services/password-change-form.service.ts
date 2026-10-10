@@ -3,7 +3,15 @@ import { ValidatorFn } from '@angular/forms';
 
 import { AccountPasswordUpdate } from '../../../services/account/models/account.model';
 import { FormPasswordField } from '../../form/models/fields/form-password-field.model';
-import { FormButton, FormButtonType, FormConfig, FormHandle, FormRow, FormSection } from '../../form/models/form.model';
+import {
+    FormButton,
+    FormButtonType,
+    FormConfig,
+    FormFooter,
+    FormHandle,
+    FormRow,
+    FormSection
+} from '../../form/models/form.model';
 import {
     FormFieldCustomValidator,
     FormFieldLengthValidator,
@@ -24,6 +32,7 @@ export class PasswordChangeFormService {
     ): FormConfig<PasswordChangeFormValue> {
         return new FormConfig<PasswordChangeFormValue>({
             buttons: [new FormButton({ label: `${prefix}.save`, type: FormButtonType.Submit })],
+            footer: new FormFooter({ note: `${prefix}.note` }),
             initialValue: { [PASSWORD_CHANGE_SECTION]: { currentPassword: '', password: '', password2: '' } },
             onSubmit: (value, handle) => onSubmit(value[PASSWORD_CHANGE_SECTION], handle),
             prefix,
@@ -46,6 +55,7 @@ export class PasswordChangeFormService {
                                 new FormPasswordField({
                                     autocomplete: 'new-password',
                                     columns: 6,
+                                    hint: `${prefix}.${PASSWORD_CHANGE_SECTION}.${NEW_PASSWORD_FIELD}.hint`,
                                     isRequired: true,
                                     key: NEW_PASSWORD_FIELD,
                                     validators: [

@@ -1,9 +1,10 @@
 {
     "angular-components": {
         "account-data": {
-            "description": "Tu nombre tal como lo ve el resto del equipo. El correo es con el que inicias sesión.",
+            "description": "Tu nombre tal como lo ve el resto del equipo.",
             "profile": {
                 "email": {
+                    "hint": "Usado para iniciar sesión",
                     "label": "Correo electrónico"
                 },
                 "name": {
@@ -15,7 +16,7 @@
                     "placeholder": "Escribe tus apellidos"
                 }
             },
-            "save": "Guardar perfil",
+            "save": "Guardar cambios",
             "title": "Perfil",
             "toast": {
                 "success": "Perfil guardado"
