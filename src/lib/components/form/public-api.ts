@@ -3,11 +3,16 @@ export {
     FormButton as BeyFormButton,
     FormButtonType as BeyFormButtonType,
     FormConfig as BeyFormConfig,
+    FormFooter as BeyFormFooter,
     FormRow as BeyFormRow,
     FormSection as BeyFormSection,
     FormStep as BeyFormStep
 } from './models/form.model';
-export type { FormButtonLayout as BeyFormButtonLayout, FormHandle as BeyFormHandle } from './models/form.model';
+export type {
+    FormButtonLayout as BeyFormButtonLayout,
+    FormFooterParameters as BeyFormFooterParameters,
+    FormHandle as BeyFormHandle
+} from './models/form.model';
 export {
     ModalFormConfig as BeyModalFormConfig,
     ModalFormSize as BeyModalFormSize
@@ -37,6 +42,8 @@ export { FormAutocompleteField as BeyFormAutocompleteField } from './models/fiel
 export { FormTextField as BeyFormTextField } from './models/fields/form-text-field.model';
 export { FormTextVariableField as BeyFormTextVariableField } from './models/fields/form-text-variable-field.model';
 export { FormCheckboxField as BeyFormCheckboxField } from './models/fields/form-checkbox-field.model';
+export { FormCheckboxGroupField as BeyFormCheckboxGroupField } from './models/fields/form-checkbox-group-field.model';
+export type { FormCheckboxGroupFieldParameters as BeyFormCheckboxGroupFieldParameters } from './models/fields/form-checkbox-group-field.model';
 export { FormChipsField as BeyFormChipsField } from './models/fields/form-chips-field.model';
 export { FormDateField as BeyFormDateField } from './models/fields/form-date-field.model';
 export { FormFileField as BeyFormFileField } from './models/fields/form-file-field.model';

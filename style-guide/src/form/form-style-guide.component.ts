@@ -4,6 +4,7 @@ import {
     BeyFormButtonType,
     BeyFormComponent,
     BeyFormConfig,
+    BeyFormFooter,
     BeyFormRow,
     BeyFormSection,
     BeyFormTextField,
@@ -35,9 +36,16 @@ export class FormStyleGuideComponent {
             new BeyFormButton({ label: `${PREFIX}.button.cancel`, type: BeyFormButtonType.Cancel }),
             new BeyFormButton({ label: `${PREFIX}.button.submit`, type: BeyFormButtonType.Submit })
         ],
+        footer: new BeyFormFooter({ note: `${PREFIX}.footer.note` }),
         initialValue: {
             'section-text': { text1: '', text2: '', text3: '', text4: 'Disabled value', text5: '' },
-            'section-password': { password1: '', password2: '', password3: 'disabledpass', password4: '' },
+            'section-password': {
+                password1: '',
+                password2: '',
+                password3: 'disabledpass',
+                password4: '',
+                password5: ''
+            },
             'section-date': { date1: '', date2: '', date3: '2026-06-15' },
             'section-number': { number1: null, number2: null, number3: 25 },
             'section-select': { select1: '', select2: '', select3: 'option1' },

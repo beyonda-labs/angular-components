@@ -1,10 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 
+import { passwordPolicyValidator } from '../functions/password-rules';
 import { FormChipsField } from '../models/fields/form-chips-field.model';
 import { FormDateField } from '../models/fields/form-date-field.model';
 import { FormFileField, matchesAcceptPattern } from '../models/fields/form-file-field.model';
 import { FormNumberField } from '../models/fields/form-number-field.model';
+import { FormPasswordField } from '../models/fields/form-password-field.model';
 import { FormConfig } from '../models/form.model';
 import { FormField, FormFieldType, FormValue } from '../models/form-field.model';
 import { DateFormatService } from './date-format.service';
@@ -13,6 +15,7 @@ import { FormValidatorService } from './form-validator.service';
 const EMPTY_VALUES: Partial<Record<FormFieldType, unknown>> = {
     [FormFieldType.Autocomplete]: '',
     [FormFieldType.Checkbox]: false,
+    [FormFieldType.CheckboxGroup]: [],
     [FormFieldType.Chips]: [],
     [FormFieldType.Date]: '',
     [FormFieldType.File]: null,
@@ -60,7 +63,10 @@ export class FormService {
     }
 
     getCustomValidator(field: FormField): ValidatorFn | null {
-        return Validators.compose(this.formValidatorService.getCustomValidators(field));
+        return Validators.compose([
+            ...this.formValidatorService.getCustomValidators(field),
+            ...this.getPasswordValidators(field)
+        ]);
     }
 
     initFieldControl(field: FormField, initialValue?: unknown): FormControl | undefined {
@@ -181,6 +187,12 @@ export class FormService {
         return validators;
     }
 
+    private getPasswordValidators(field: FormField): ValidatorFn[] {
+        const { policy } = field as FormPasswordField;
+
+        return field.type === FormFieldType.Password && policy ? [passwordPolicyValidator(policy)] : [];
+    }
+
     private getTypeValidators(field: FormField): ValidatorFn[] {
         switch (field.type) {
             case FormFieldType.Chips:
@@ -191,6 +203,8 @@ export class FormService {
                 return this.getFileValidators(field as FormFileField);
             case FormFieldType.Number:
                 return this.getNumberRangeValidators(field as FormNumberField);
+            case FormFieldType.Password:
+                return this.getPasswordValidators(field);
             default:
                 return [];
         }

@@ -23,8 +23,8 @@ below. Routes stay in the spec, with `provideRouter`.
 
 The HTTP client with the session interceptor and then `interceptors`, backed by `provideHttpClientTesting`, so
 requests are answered with `HttpTestingController`; `provideBeyHttp`, so a failed request whose error modal the
-fake recorded raises nothing in a spec that subscribes without an `error` callback; the environment; the session
-over in-memory storage; ngx-translate without a loader; the ngx-bootstrap modals, so the dialogs of the services
+fake recorded raises nothing in a spec that subscribes without an `error` callback; the environment; the session,
+which lives in memory; ngx-translate without a loader; the ngx-bootstrap modals, so the dialogs of the services
 without a fake (the tree dialog) open for real; and the fakes.
 
 | Field          | Default                              | Meaning                                                  |
@@ -39,6 +39,22 @@ without a fake (the tree dialog) open for real; and the fakes.
 
 The test environment is `accessControlUrl: 'https://api.test/auth'`, `appName: 'test-app'`,
 `baseUrl: 'https://api.test'`, `cookieName: 'test-session'` and `webApiPath: '/api'`.
+
+`user` and `token` sign the session in without a request. Without them, whatever restores the session (the guards,
+the OAuth callback, a `401` the interceptor refreshes) sends `POST https://api.test/auth/refresh`, which the spec
+answers with `HttpTestingController`: `{ accessToken }` to sign in, or a `401` to stay signed out.
+
+The password policy is not faked either. The first time a field with a policy renders (the new password of
+`bey-password-change`, of the reset-password and accept-invitation pages, or the `password` of the registration),
+`BeyPasswordPolicyService` sends `GET https://api.test/auth/password-policy`, once per spec. A spec that calls
+`verify()` answers it, with the policy it wants to check against or with an error to keep the library defaults; one
+that does not call it may leave it pending, and the fields check the defaults, a minimum of 8 characters:
+
+```ts
+TestBed.inject(HttpTestingController)
+    .expectOne('https://api.test/auth/password-policy')
+    .flush({ isDigitRequired: true, isLowercaseRequired: true, isSymbolRequired: true, isUppercaseRequired: true });
+```
 
 ## Fakes
 
@@ -66,6 +82,7 @@ A `BeyQueryScope` is a fixture or an element.
 | `beyControlByName(scope, name)`          | The input, select, textarea or grouping role named `name` by `aria-labelledby`, `aria-label` or its `<label>`; throws |
 | `beyQueryControl(scope, name)`           | The same, or `null`                                                                                                   |
 | `beyAccessibleName(element)`             | The name `beyControlByName` matches against                                                                           |
+| `beyAccessibleDescription(element)`      | The text of what its `aria-describedby` points at, such as the hint or the error of a field; `''` when nothing        |
 | `beyQueryAll(scope, selector)`           | Every match, as an array                                                                                              |
 | `beyTextsOf(elements)`                   | Their trimmed texts                                                                                                   |
 | `beyHostOf(scope)`                       | The element of a fixture, or the element itself                                                                       |

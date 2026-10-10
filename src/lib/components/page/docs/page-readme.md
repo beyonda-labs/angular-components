@@ -91,6 +91,7 @@ infer it from that form, to `BeyPageConfig<UserFormValue, User, Folder, FolderFo
 | Delete    | `DELETE {baseUrl}` with `{ ids }`                                                            |
 | Duplicate | `POST {baseUrl}/{id}/duplicate` with `{ [nameField]: name }`                                 |
 | Status    | `POST {baseUrl}/{id}/status` with `{ [field]: status }`                                      |
+| Owners    | `GET {baseUrl}/owners` for the owner filter, see [Owners](#owners)                           |
 
 The list answers with `{ globalActions, results, search? }`: `globalActions` names the global actions the
 user may see, each result may carry its own `actions`, and `search.total` feeds the paginator and the count of the
@@ -98,7 +99,7 @@ breadcrumb, so it counts every row the list shows across its pages, categories i
 `{ filters, page, size, sort?, text? }`, with the filters of the search module.
 
 With `categoriesConfig` the resource also serves, under `{baseUrl}`: `/categories/{id}/path`,
-`/categories/tree`, `POST` and `PUT /categories`, `DELETE /categories` with `{ ids }`, `PUT /move` with
+`/categories/tree` (`?ownerId=` narrows it to one owner, see [Owners](#owners)), `POST` and `PUT /categories`, `DELETE /categories` with `{ ids }`, `PUT /move` with
 `{ items: [{ id, type }], targetId }`, and `GET`, `PUT` and `DELETE /trash` with `{ items }`. Every call
 goes through `BeyHttpService`, so errors open the standard modal and writes show their success toast. A new
 load of the list cancels the one still out, so a slow answer never replaces a newer list.
@@ -118,7 +119,7 @@ An action has a `key`, a `scope`, a `zone` and optionally an `icon`, a `label`, 
 Zones are `Left` next to the title, `Right` for the main buttons and `Menu` for the kebab. A standard key
 (`create`, `edit`, `delete`, `duplicate`, `change-status`, `move`, `create-category`, `edit-category`,
 `delete-category`, `restore-trash-item`, `delete-trash-item`, `empty-trash`) needs no `handler`; `edit` and `edit-category` need exactly one row
-whatever their scope. A `handler` always receives an array, so a single-row action reads `([user]) => …`; given
+whatever their scope, and `move` rows of a single owner, see [Owners](#owners). A `handler` always receives an array, so a single-row action reads `([user]) => …`; given
 to a standard key it replaces the standard behaviour. The page does no permission logic of its own.
 
 `delete`, `delete-category`, `delete-trash-item` and `empty-trash` ask before sending their request, with
@@ -172,8 +173,25 @@ the transitions on the front only choose what the form offers.
 
 ## Search
 
-`tableConfig.search` takes the `fields` of the filters panel and a `mainField` for the text box. Every
+`tableConfig.search` takes the `fields` of the filters panel, a `mainField` for the text box and
+`isOwnerFilterEnabled`, which adds the owner filter described in [Owners](#owners). Every
 change goes back to the first page and reloads; the whole query travels in the `search` parameter.
+
+A filter on a field of the backend matches that field alone. To match several at once, as the `text` of
+express-components' base-entity does over its searchable fields, `textField` names a text field whose value the page
+sends as the `text` of the query instead of as a filter, whatever its operator; the search box and the panel keep it
+as they do any other field, and a blank one sends nothing.
+
+```ts
+search: new BeyPageTableSearchConfig({
+    fields: [
+        new BeySearchField({ key: 'text', type: BeySearchFieldType.Text }),
+        new BeySearchField({ key: 'status', type: BeySearchFieldType.Select, options: STATUS_OPTIONS })
+    ],
+    mainField: 'text',
+    textField: 'text'
+});
+```
 
 ## Views
 
@@ -232,6 +250,47 @@ tableConfig: new BeyPageTableConfig({
 });
 ```
 
+## Owners
+
+On a backend where every row has an owner, as base-entity of express-components does with `ownership`, each row
+carries `ownerId` and `ownerName`, the display name; a row type extends `BeyPageOwnedItem` to read them. A row nobody
+owns, such as one the system seeds for everyone, has both `null`.
+
+`beyPageOwnerColumn(overrides?)` is the column: key `ownerName`, headed "Owner"
+(`angular-components.page.table.columns.owner-name` and its `.tooltips.owner-name`), sortable by `ownerId`, hideable,
+with a width of `2`; `overrides` changes any of that. `beyPageOwnerCell(row)` is its cell, the display name as text,
+empty for a row nobody owns. The columns of the page config take the column where it should show, and `loadRow` the
+cell at the same place; with categories, a `categoriesConfig.loadRow` adds it too, since folders have owners as well.
+
+```ts
+tableConfig: new BeyPageTableConfig<Contract>({
+    columns: [new BeyTableColumn({ key: 'name', width: 4, isSortable: true, isHideable: false }), beyPageOwnerColumn()],
+    loadRow: contract => [new BeyTextTableCell({ content: contract.name }), beyPageOwnerCell(contract)],
+    search: new BeyPageTableSearchConfig({ fields: [...], isOwnerFilterEnabled: true })
+});
+```
+
+`isOwnerFilterEnabled` on `BeyPageTableSearchConfig` adds an "Owner" field to the filters panel, after the fields of
+the page (`angular-components.page.search.fields.owner-id`). It is requested lazily: the first time the user opens
+the panel, the page asks `GET {baseUrl}/owners`, which answers `{ owners: [{ id, name }] }`, the owners of the rows the
+user may see, and offers them by name in that order. Picking one sends
+`{ field: 'ownerId', operator: 'equals', value: id }`, the only operator the field offers. With one owner or none
+there is nothing to choose and the field does not show, which is what a user who only sees their own rows gets. The
+page asks once per visit and resource; a failed answer shows no error and leaves the field out. A page the user comes
+back to with an owner filter in force asks at once, so the panel shows the filter as it was left.
+
+The owner filter goes with the rest of the search: in a view, in every folder and in the trash, where it narrows the
+trashed rows of every owner to those of one. On base-entity it narrows the folders as well, and since a folder holds
+only rows of its own owner, inside a folder it keeps all of them or none.
+
+A row only sits in a folder of its own owner, so a move never leaves that owner's folders. `move` shows only while
+every selected row has the same `ownerId`, with or without a `handler`: like any action the selection cannot take, it
+is hidden rather than disabled. Its tree picker asks `GET {baseUrl}/categories/tree?ownerId=<id>`, the folders of that
+owner, under the root, which takes the rows of any owner. A dragged row drops only onto a folder with the `ownerId` of
+every dragged row; any other folder is no drop target. A row nobody owns sends no `ownerId`, and base-entity lists no `move` on
+it. Rows without an `ownerId` field move as they always have: the picker asks for the whole tree and every folder takes
+the drop.
+
 ## Categories and trash
 
 `tableConfig.categoriesConfig` turns the table into a drill-down browser, and a breadcrumb starting at
@@ -248,13 +307,14 @@ a restore with `renamed`, the rows that came back with a new name because anothe
 them (`angular-components.page.toast.restored-renamed`). A trashed row that carries `parentPathField` (`parentPath`,
 the names of the categories above it from the root down) shows on the tooltip of its first cell the folder a restore
 puts it back in, `<prefix>.categories.root / Clients / 2026`, in place of the tooltip that cell had. `move` opens
-the tree picker with every category, disabling the selected ones and their descendants.
+the tree picker with every category, or every category of the owner of the rows when they have one, disabling the
+selected ones and their descendants.
 
 When the header lists the standard `move` action, with no `handler` of its own, the rows of the table can also be
 dragged onto a category row to move them there. A row can be dragged while it lists `move` in its `actions`, and
 dragging a selected row drags the whole selection. A category row takes the drop, highlighted while the pointer is
-over it, when every dragged row lists `move`, the category is not one of them nor inside one of them, and the rows
-are not in it already. The drop sends the same `PUT {baseUrl}/move`, shows `<prefix>.toast.move-success`, clears the
+over it, when every dragged row lists `move`, the category is not one of them nor inside one of them, the rows
+are not in it already and, with owners, it has the owner of every dragged row. The breadcrumb takes no drop. The drop sends the same `PUT {baseUrl}/move`, shows `<prefix>.toast.move-success`, clears the
 selection and reloads, as the action does. There is no drag in the trash, and `move` stays the way to do it from the
 keyboard.
 
@@ -321,7 +381,10 @@ that has consequences elsewhere, such as renaming something other records name.
 | `<prefix>.categories.root`, `<prefix>.tabs.table.label`, `<prefix>.tabs.trash.label`, `<prefix>.move.title` | Categories and trash                                   |
 | `<prefix>.tabs.<view>.label`                                                                                | The tab of a view                                      |
 | `angular-components.page.count.one` / `.many`                                                               | The count of the breadcrumb, with `{{count}}`          |
+| `angular-components.page.table.columns.owner-name` / `.tooltips.owner-name`                                 | The owner column, see [Owners](#owners)                |
+| `angular-components.page.search.fields.owner-id`                                                            | The owner filter                                       |
 
 Every `<key>` is the action, column or field key as a kebab-case segment: a column `createdAt` reads
-`<prefix>.table.columns.created-at`. The standard action keys are already kebab-case, so `create-category`
+`<prefix>.table.columns.created-at`. A column with a `label` or a `tooltip` of its own reads those keys instead, as the
+owner column does. The standard action keys are already kebab-case, so `create-category`
 reads `<prefix>.actions.create-category.label` and `<prefix>.toast.create-category-success`.

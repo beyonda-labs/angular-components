@@ -1,5 +1,14 @@
 {
     "angular-components-style-guide": {
+        "account-data": {
+            "example": "El perfil del usuario que ha iniciado sesión, leído del backend de demostración: el correo para consultar, con su uso debajo, y el nombre y los apellidos para guardar. Los campos a medida muestran el nombre, obligatorio y con una pista propia, y el correo a media anchura sin su pista, sin los apellidos.",
+            "examples": {
+                "custom": "Campos a medida",
+                "default": "Campos por defecto"
+            },
+            "name-hint": "Aparece en los documentos que firmas"
+        },
+        "account-data-section": "Datos de la cuenta",
         "app-layout": {
             "actions": {
                 "dashboard": {
@@ -122,7 +131,7 @@
         },
         "file-preview-section": "Vista previa de archivos",
         "floating-preferences": {
-            "example": "Selectores de idioma y tema autogestionados. Lee y escribe el estado directamente a través de TranslateService y BeyThemeService — no requiere callbacks.",
+            "example": "Selectores de idioma y tema autogestionados, que cambian ambos a través de BeyPreferencesService: el navegador los recuerda y lo que elige un usuario con la sesión iniciada se guarda en su cuenta — no requiere callbacks.",
             "examples": {
                 "no-pill": "Sin la píldora (usePill = false), para embeberlo en otro contenedor",
                 "pill": "Por defecto (píldora flotante)"
@@ -151,7 +160,10 @@
             },
             "canceled": "El formulario se ha reiniciado",
             "changed": "Valor del formulario cambiado: ",
-            "example": "Formulario model-driven basado en configuración con validación, campos condicionales y layout responsive.",
+            "example": "Formulario model-driven basado en configuración con validación, campos condicionales, pistas bajo los campos, una nota junto a los botones y layout responsive.",
+            "footer": {
+                "note": "Enviar solo informa del valor debajo; no se guarda nada."
+            },
             "modal": {
                 "buttons": {
                     "cancel": "Cancelar",
@@ -279,6 +291,7 @@
             },
             "section-info": {
                 "info1": {
+                    "hint": "De solo lectura: la pista va bajo el valor",
                     "label": "Versión"
                 },
                 "info2": {
@@ -313,6 +326,7 @@
             "section-password": {
                 "label": "Campos de contraseña",
                 "password1": {
+                    "hint": "Combina letras, números y símbolos",
                     "label": "Contraseña (mín. 8)",
                     "placeholder": "Al menos 8 caracteres"
                 },
@@ -328,7 +342,11 @@
                     "label": "Contraseña sin toggle",
                     "placeholder": "Sin toggle de visibilidad"
                 },
-                "tooltip": "Campos de contraseña con validador de longitud, toggle, obligatorio y deshabilitado"
+                "password5": {
+                    "label": "Contraseña con política",
+                    "placeholder": "Todas las reglas activas"
+                },
+                "tooltip": "Campos de contraseña con validador de longitud, política, toggle, obligatorio y deshabilitado"
             },
             "section-radio": {
                 "label": "Campos de radio",
@@ -390,6 +408,7 @@
                     "tooltip": "Ejemplo con 6 columnas"
                 },
                 "text3": {
+                    "hint": "Solo letras, sin espacios ni tildes",
                     "label": "Solo letras",
                     "placeholder": "Solo letras (A-Z)"
                 },
@@ -525,7 +544,8 @@
                 "menu": "Menú",
                 "others": "Otros"
             },
-            "title": "Beyonda Labs"
+            "title": "Beyonda Labs",
+            "user-hint": "El usuario al pie de los dos menús enlaza con una ruta, aquí la página en la que está la demo, y se marca mientras es la página actual."
         },
         "left-menu-section": "Menús laterales",
         "list": {
@@ -564,7 +584,7 @@
                 "product-description": "Genera, firma y comparte PDFs en segundos. Plantillas, marca y firma electrónica — todo desde tu navegador.",
                 "product-name": "PDF Generator"
             },
-            "example": "Componente de autenticación a pantalla completa con soporte de tema claro/oscuro y proveedores OAuth opcionales obtenidos del backend.",
+            "example": "Componente de autenticación a pantalla completa con soporte de tema claro/oscuro, proveedores OAuth opcionales obtenidos del backend y registro opcional, cuya contraseña muestra las reglas de la política de contraseñas que responde el backend.",
             "examples": {
                 "login": "Login"
             }
@@ -636,7 +656,7 @@
                     "tooltip": "Editar el producto seleccionado"
                 }
             },
-            "example": "Una página autogestionada: acciones de cabecera, búsqueda, tabla y paginación conectadas al backend de demostración, con alta y edición en un formulario modal. La pestaña Disponibles es una vista: la misma lista con un filtro propio, en la que también se puede buscar. Las cabeceras ordenan la lista y el menú de columnas oculta la categoría o el precio.",
+            "example": "Una página autogestionada: acciones de cabecera, búsqueda, tabla y paginación conectadas al backend de demostración, con alta y edición en un formulario modal. La pestaña Disponibles es una vista: la misma lista con un filtro propio, en la que también se puede buscar. Las cabeceras ordenan la lista y el menú de columnas oculta la categoría o el precio. La columna Propietario dice de quién es cada producto, y el panel de filtros permite filtrar por propietario cuando los productos tienen dos propietarios o más.",
             "folders": {
                 "actions": {
                     "move": {
@@ -647,7 +667,7 @@
                 "categories": {
                     "root": "Todos los productos"
                 },
-                "example": "Con categorías la página recorre carpetas, y el último nodo de la ruta cuenta lo que contiene la carpeta, carpetas y productos de todas las páginas. Al ir a una ruta bajo la página y volver se conservan la carpeta, la búsqueda, la página y la selección. Arrastra un producto, o las filas seleccionadas, sobre una carpeta para moverlos allí; la acción Mover a... hace lo mismo desde el teclado. Las cabeceras ordenan la lista en el backend.",
+                "example": "Con categorías la página recorre carpetas, y el último nodo de la ruta cuenta lo que contiene la carpeta, carpetas y productos de todas las páginas. Al ir a una ruta bajo la página y volver se conservan la carpeta, la búsqueda, la página y la selección. Arrastra un producto, o las filas seleccionadas, sobre una carpeta para moverlos allí; la acción Mover a... hace lo mismo desde el teclado. Donde las filas tienen propietario, ambos ofrecen solo las carpetas del propietario de las filas, y una selección de varios propietarios no se puede mover. Las cabeceras ordenan la lista en el backend.",
                 "heading": "Carpetas",
                 "move": {
                     "title": "Mover a"
@@ -742,6 +762,10 @@
             }
         },
         "pagination-section": "Paginación",
+        "password-change": {
+            "example": "La contraseña del usuario que ha iniciado sesión, leída del backend de demostración: la actual, la nueva con las reglas de la política de contraseñas que responde el backend debajo y su confirmación; o cómo crear una en una cuenta que no la tiene."
+        },
+        "password-change-section": "Cambio de contraseña",
         "pdf-viewer": {
             "compact-example": "El mismo visor con la toolbar compacta de la librería: zoom dentro de los límites configurados, la página actual y un hueco a la izquierda para el estado del consumidor.",
             "example": "Previsualizador de PDF construido sobre ngx-extended-pdf-viewer con su toolbar nativa oculta y una toolbar propia controlada mediante la API imperativa y los eventos del visor.",
@@ -922,6 +946,14 @@
             },
             "selected": "Nodo seleccionado:"
         },
-        "trees": "Árboles"
+        "trees": "Árboles",
+        "users": {
+            "example": "La página de usuarios sobre el backend de demostración: busca por nombre o correo, filtra por estado y rol, invita a un usuario, edita sus roles, cambia su estado y vuelve a enviarle la invitación, en la medida en que el backend lo permita en cada fila.",
+            "roles": {
+                "admin": "Administrador",
+                "editor": "Editor"
+            }
+        },
+        "users-section": "Usuarios"
     }
 }

@@ -26,6 +26,10 @@ interface Person extends PageItem {
 }
 
 const SEARCH_DEBOUNCE_MS = 350;
+const OWNERS = [
+    { id: 'u1', name: 'Ada' },
+    { id: 'u2', name: 'Grace' }
+];
 const STAFF: Person = { id: 'staff', name: 'Staff', type: PageItemType.Category };
 
 function buildResponse(results: Person[]): PageBackendResponse<Person> {
@@ -49,6 +53,7 @@ class PeopleComponent {
             loadRow: person => [new TextTableCell({ content: person.name })],
             search: new PageTableSearchConfig({
                 fields: [new SearchField({ key: 'name', type: SearchFieldType.Text })],
+                isOwnerFilterEnabled: true,
                 mainField: 'name'
             })
         })
@@ -98,6 +103,32 @@ describe('PageComponent — coming back from another route', () => {
         harness.detectChanges();
     }
 
+    function filtersToggle(): HTMLButtonElement {
+        return element().querySelector('bey-search [aria-expanded]') as HTMLButtonElement;
+    }
+
+    function panelSelects(): HTMLSelectElement[] {
+        return [...(element().querySelector('[role="group"]')?.querySelectorAll('select') ?? [])];
+    }
+
+    function choose(select: HTMLSelectElement, value: string): void {
+        select.value = value;
+        select.dispatchEvent(new Event('change'));
+        harness.detectChanges();
+    }
+
+    async function filterByOwner(ownerId: string): Promise<void> {
+        filtersToggle().click();
+        harness.detectChanges();
+        buttonByName(element(), 'angular-components.search.add').click();
+        harness.detectChanges();
+        choose(panelSelects()[0], 'ownerId');
+        choose(panelSelects()[2], ownerId);
+        buttonByName(element(), 'angular-components.search.apply').click();
+        await harness.fixture.whenStable();
+        harness.detectChanges();
+    }
+
     beforeEach(async () => {
         const pageActionsService = mock<PageActionsService>();
         pageActionsService.filterVisibleActions.mockReturnValue([]);
@@ -105,6 +136,7 @@ describe('PageComponent — coming back from another route', () => {
         pageHttpService = mock<PageHttpService>();
         pageHttpService.load.mockReturnValue(of(buildResponse([STAFF, { id: 1, name: 'Ada' }])));
         pageHttpService.loadCategoryPath.mockReturnValue(of([STAFF]));
+        pageHttpService.findOwners.mockReturnValue(of(OWNERS));
 
         TestBed.configureTestingModule({
             imports: [TranslateModule.forRoot()],
@@ -143,6 +175,23 @@ describe('PageComponent — coming back from another route', () => {
 
         expect(element().querySelector('[aria-sort]')?.getAttribute('aria-sort')).toBe('ascending');
         expect(lastSearch().sort).toEqual({ direction: 'asc', field: 'name' });
+    });
+
+    it('comes back filtering by owner and asks for the owners at once, so the panel shows that filter', async () => {
+        await filterByOwner('u2');
+
+        await harness.navigateByUrl('/people/1');
+        pageHttpService.findOwners.mockClear();
+        await harness.navigateByUrl('/people');
+
+        expect(pageHttpService.findOwners).toHaveBeenCalledWith('/people');
+        expect(lastSearch().filters).toEqual([{ field: 'ownerId', operator: 'equals', value: 'u2' }]);
+
+        filtersToggle().click();
+        harness.detectChanges();
+
+        expect(panelSelects().map(select => select.value)).toEqual(['ownerId', 'equals', 'u2']);
+        expect(pageHttpService.findOwners).toHaveBeenCalledTimes(1);
     });
 
     it('starts afresh after the user went to a route outside the page', async () => {

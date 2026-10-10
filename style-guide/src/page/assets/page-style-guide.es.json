@@ -15,7 +15,7 @@
                     "tooltip": "Editar el producto seleccionado"
                 }
             },
-            "example": "Una página autogestionada: acciones de cabecera, búsqueda, tabla y paginación conectadas al backend de demostración, con alta y edición en un formulario modal. La pestaña Disponibles es una vista: la misma lista con un filtro propio, en la que también se puede buscar. Las cabeceras ordenan la lista y el menú de columnas oculta la categoría o el precio.",
+            "example": "Una página autogestionada: acciones de cabecera, búsqueda, tabla y paginación conectadas al backend de demostración, con alta y edición en un formulario modal. La pestaña Disponibles es una vista: la misma lista con un filtro propio, en la que también se puede buscar. Las cabeceras ordenan la lista y el menú de columnas oculta la categoría o el precio. La columna Propietario dice de quién es cada producto, y el panel de filtros permite filtrar por propietario cuando los productos tienen dos propietarios o más.",
             "folders": {
                 "actions": {
                     "move": {
@@ -26,7 +26,7 @@
                 "categories": {
                     "root": "Todos los productos"
                 },
-                "example": "Con categorías la página recorre carpetas, y el último nodo de la ruta cuenta lo que contiene la carpeta, carpetas y productos de todas las páginas. Al ir a una ruta bajo la página y volver se conservan la carpeta, la búsqueda, la página y la selección. Arrastra un producto, o las filas seleccionadas, sobre una carpeta para moverlos allí; la acción Mover a... hace lo mismo desde el teclado. Las cabeceras ordenan la lista en el backend.",
+                "example": "Con categorías la página recorre carpetas, y el último nodo de la ruta cuenta lo que contiene la carpeta, carpetas y productos de todas las páginas. Al ir a una ruta bajo la página y volver se conservan la carpeta, la búsqueda, la página y la selección. Arrastra un producto, o las filas seleccionadas, sobre una carpeta para moverlos allí; la acción Mover a... hace lo mismo desde el teclado. Donde las filas tienen propietario, ambos ofrecen solo las carpetas del propietario de las filas, y una selección de varios propietarios no se puede mover. Las cabeceras ordenan la lista en el backend.",
                 "heading": "Carpetas",
                 "move": {
                     "title": "Mover a"

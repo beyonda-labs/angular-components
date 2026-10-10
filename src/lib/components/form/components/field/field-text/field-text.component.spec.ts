@@ -57,4 +57,12 @@ describe('FormTextFieldComponent', () => {
         expect(input().getAttribute('aria-invalid')).toBe('true');
         expect(input().getAttribute('aria-required')).toBe('true');
     });
+
+    it('gives the browser the autofill hint of the field, and none by default', async () => {
+        await render();
+        expect(input().getAttribute('autocomplete')).toBeNull();
+
+        await render(new FormTextField({ autocomplete: 'email', key: 'email' }));
+        expect(input().getAttribute('autocomplete')).toBe('email');
+    });
 });

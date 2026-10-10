@@ -40,6 +40,7 @@ export class TableColumn {
     sortField: string;
     width: number | string;
 
+    label?: string;
     tooltip?: string;
 
     constructor({
@@ -47,6 +48,7 @@ export class TableColumn {
         isSortable = false,
         isVisible = true,
         key,
+        label,
         sortField = key,
         tooltip,
         width = 10
@@ -55,6 +57,7 @@ export class TableColumn {
         this.isSortable = isSortable;
         this.isVisible = isVisible;
         this.key = key;
+        this.label = label;
         this.sortField = sortField;
         this.tooltip = tooltip;
         this.width = width;
@@ -129,6 +132,7 @@ export interface TableColumnParameters {
     isHideable?: boolean;
     isSortable?: boolean;
     isVisible?: boolean;
+    label?: string;
     sortField?: string;
     tooltip?: string;
     width?: number | string;

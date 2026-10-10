@@ -1,5 +1,6 @@
 {
     "angular-components-style-guide": {
+        "account-data-section": "Account data",
         "app-layout-section": "App Layouts",
         "badge-section": "Badges",
         "breadcrumbs": "Breadcrumbs",
@@ -15,6 +16,7 @@
         "login-section": "Login",
         "modals": "Modals",
         "page-section": "Page",
+        "password-change-section": "Password change",
         "pdf-viewer-section": "PDF Viewer",
         "properties-menu-section": "Properties Menu",
         "search-section": "Search",
@@ -22,6 +24,7 @@
         "tables": "Tables",
         "tabs-section": "Tabs",
         "title": "Beyonda Labs - Angular Components - Style Guide",
-        "toasts": "Toasts"
+        "toasts": "Toasts",
+        "users-section": "Users"
     }
 }

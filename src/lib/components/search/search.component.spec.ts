@@ -180,6 +180,44 @@ describe('SearchComponent', () => {
         ]);
     }));
 
+    it('labels a field from its own label key and offers only the operators it narrows its type to', () => {
+        render(
+            buildConfig({
+                fields: [
+                    new SearchField({
+                        key: 'ownerId',
+                        label: 'shared.owner',
+                        operators: [SearchFilterOperator.Equals],
+                        options: [{ label: 'Ada', value: 'u1' }],
+                        type: SearchFieldType.Select
+                    })
+                ]
+            })
+        );
+        openPanel();
+        clickByLabel('add');
+
+        const [field, operator] = selectsOf(rows()[0]);
+        type(field, 'ownerId');
+
+        expect([...field.options].map(entry => entry.textContent?.trim())).toContain('shared.owner');
+        expect([...operator.options].map(entry => entry.value)).toEqual([SearchFilterOperator.Equals]);
+    });
+
+    it('tells the consumer every time the panel opens, and not when it closes', () => {
+        const onPanelOpen = jest.fn();
+        render(buildConfig({ onPanelOpen }));
+
+        openPanel();
+        expect(onPanelOpen).toHaveBeenCalledTimes(1);
+
+        openPanel();
+        expect(onPanelOpen).toHaveBeenCalledTimes(1);
+
+        openPanel();
+        expect(onPanelOpen).toHaveBeenCalledTimes(2);
+    });
+
     it('reports a between filter only once both bounds are there', fakeAsync(() => {
         render();
         openPanel();

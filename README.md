@@ -17,9 +17,9 @@ Make sure all peer dependencies are installed in the consuming app:
 ## Quick start
 
 One provider registers what every app needs: the HTTP client with the session interceptor (extra `interceptors` run
-after it), the environment, the session, the modal, the toast and ngx-translate loading `<translationsPath><lang>.json`
-(`./assets/i18n/` by default). `provideRouter`, `provideAnimationsAsync` and `provideZoneChangeDetection` stay in the
-app.
+after it), the environment, the session, the modal, the toast, ngx-translate loading `<translationsPath><lang>.json`
+(`./assets/i18n/` by default) and the preferences, which start the app in the remembered, the browser or the default
+language. `provideRouter`, `provideAnimationsAsync` and `provideZoneChangeDetection` stay in the app.
 
 ```ts
 export const appConfig: ApplicationConfig = {
@@ -27,7 +27,11 @@ export const appConfig: ApplicationConfig = {
         provideZoneChangeDetection({ eventCoalescing: true }),
         provideRouter(routes),
         provideAnimationsAsync(),
-        provideBeyApp({ environment, session: { loginRoute: '/login' } })
+        provideBeyApp({
+            environment,
+            preferences: { defaultLanguage: 'en', languages: ['en', 'es'] },
+            session: { loginRoute: '/login' }
+        })
     ]
 };
 ```
@@ -73,13 +77,16 @@ const form = new BeyFormConfig({
 
 ## Components
 
-| Component   | Selector            | Status                      |
-| ----------- | ------------------- | --------------------------- |
-| Form        | `<bey-form>`        | Stable                      |
-| Header      | `<bey-header>`      | Stable                      |
-| Left Menu   | `<bey-left-menu>`   | Stable                      |
-| Table       | `<bey-table>`       | Stable                      |
-| Style Guide | `<bey-style-guide>` | Demo, secondary entry point |
+| Component       | Selector                | Status                      |
+| --------------- | ----------------------- | --------------------------- |
+| Account data    | `<bey-account-data>`    | Stable                      |
+| Form            | `<bey-form>`            | Stable                      |
+| Header          | `<bey-header>`          | Stable                      |
+| Left Menu       | `<bey-left-menu>`       | Stable                      |
+| Password change | `<bey-password-change>` | Stable                      |
+| Table           | `<bey-table>`           | Stable                      |
+| Users           | `<bey-users>`           | Stable                      |
+| Style Guide     | `<bey-style-guide>`     | Demo, secondary entry point |
 
 The interactive style guide ships as `@beyonda-labs/angular-components/style-guide`, a secondary entry point:
 `import { BeyStyleGuideComponent } from '@beyonda-labs/angular-components/style-guide'`. Importing a component
@@ -100,16 +107,22 @@ Two plain functions are public so an app builds the same texts and keys as the l
 
 Component documentation:
 
+-   [Account data](src/lib/components/account-data/docs/account-data-readme.md)
 -   [Form](src/lib/components/form/docs/form-readme.md)
 -   [Header](src/lib/components/header/docs/header-readme.md)
 -   [Left Menu](src/lib/components/left-menu/docs/left-menu-readme.md)
+-   [Password change](src/lib/components/password-change/docs/password-change-readme.md)
 -   [Table](src/lib/components/table/docs/table-readme.md)
+-   [Users](src/lib/components/users/docs/users-readme.md)
 
 Service documentation:
 
+-   [Account](src/lib/services/account/docs/account-readme.md)
 -   [App](src/lib/services/app/docs/app-readme.md)
 -   [Environment](src/lib/services/environment/docs/environment-readme.md)
 -   [Http](src/lib/services/http/docs/http-readme.md)
+-   [Password policy](src/lib/services/password-policy/docs/password-policy-readme.md)
+-   [Preferences](src/lib/services/preferences/docs/preferences-readme.md)
 -   [Session](src/lib/services/session/docs/session-readme.md)
 -   [Theme](src/lib/services/theme/docs/theme-readme.md)
 

@@ -1,5 +1,10 @@
 @if (items().length > 0) {
-    <ul class="bey-form-list" [attr.aria-label]="label() | translate" [id]="field().key">
+    <ul
+        class="bey-form-list"
+        [attr.aria-describedby]="describedBy()"
+        [attr.aria-label]="label() | translate"
+        [id]="field().key"
+    >
         @for (item of items(); track $index) {
             <li class="bey-form-list-item">{{ item }}</li>
         }

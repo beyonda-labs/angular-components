@@ -1,34 +1,40 @@
-<div class="bey-login d-flex flex-column">
-    <div class="bey-login-body flex-grow-1" [style.background-image]="backgroundImage()">
-        <main class="bey-login-main w-100 h-100 d-flex align-items-center justify-content-center">
-            <div class="bey-login-cards d-flex">
-                <div class="bey-login-card d-flex flex-column">
-                    <div class="bey-login-org d-inline-flex align-items-center text-uppercase fw-medium">
-                        <img class="bey-login-org-icon flex-shrink-0" alt="" [src]="config().iconSrc" />
-                        <span>{{ config().orgName }}</span>
-                    </div>
-                    <h1 class="bey-login-product fw-semibold my-2">{{ config().productName | translate }}</h1>
-                    <p class="bey-login-pitch mb-0">{{ config().productDescription | translate }}</p>
+<bey-login-shell [config]="config()" [title]="title()">
+    @if (isViewSwitchVisible()) {
+        <div class="bey-login-view-switch" aside>
+            <bey-button [button]="viewButton()" />
+        </div>
+    }
 
-                    @if (canRegister()) {
-                        <div class="bey-login-view-switch">
-                            <bey-button [button]="viewButton()" />
-                        </div>
-                    }
-                </div>
-
-                <section class="bey-login-card d-flex flex-column">
-                    <h1 class="bey-login-title fw-semibold mb-4">{{ title() | translate }}</h1>
-
-                    @if (isRegistering()) {
-                        <bey-login-register-form [config]="config()" [registerFields]="registerFields()" />
-                    } @else {
-                        <bey-login-form [config]="config()" [providers]="providers()" />
-                    }
-                </section>
+    @switch (view()) {
+        @case ('register') {
+            <bey-login-register-form
+                beyLoginAutofocus
+                [config]="config()"
+                [registerFields]="registerFields()"
+                (verificationRequired)="showView('registered')"
+            />
+        }
+        @case ('forgot-password') {
+            <bey-login-forgot-password beyLoginAutofocus [config]="config()" />
+            <div class="bey-login-back">
+                <bey-button [button]="backButton()" />
             </div>
-        </main>
-    </div>
-
-    <bey-footer [config]="config().footerConfig" />
-</div>
+        }
+        @case ('registered') {
+            <div beyLoginAutofocus>
+                <p class="mb-0" aria-live="polite" role="status">{{ registeredMessage() | translate }}</p>
+                <div class="bey-login-back">
+                    <bey-button [button]="backButton()" />
+                </div>
+            </div>
+        }
+        @default {
+            <bey-login-form
+                beyLoginAutofocus
+                [config]="config()"
+                [providers]="providers()"
+                (forgotPasswordClick)="showView('forgot-password')"
+            />
+        }
+    }
+</bey-login-shell>

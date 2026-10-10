@@ -16,14 +16,15 @@ const CONTROL_SELECTOR = [
 ].join(', ');
 const LABELLED_CONTROLS = 'input, select, textarea';
 
+export function accessibleDescription(element: HTMLElement): string {
+    return textOfReferences(element.getAttribute('aria-describedby') ?? '');
+}
+
 export function accessibleName(element: HTMLElement): string {
     const labelledBy = element.getAttribute('aria-labelledby');
 
     if (labelledBy) {
-        return labelledBy
-            .split(' ')
-            .map(id => document.querySelector(`[id="${id}"]`)?.textContent?.trim() ?? '')
-            .join(' ');
+        return textOfReferences(labelledBy);
     }
 
     const labels =
@@ -115,4 +116,12 @@ function labelTextOf(label: HTMLLabelElement): string {
     }
 
     return copy.textContent?.trim() ?? '';
+}
+
+function textOfReferences(ids: string): string {
+    return ids
+        .split(' ')
+        .filter(Boolean)
+        .map(id => document.querySelector(`[id="${id}"]`)?.textContent?.trim() ?? '')
+        .join(' ');
 }

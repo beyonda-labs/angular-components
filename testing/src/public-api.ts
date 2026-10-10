@@ -1,4 +1,5 @@
 export {
+    accessibleDescription as beyAccessibleDescription,
     accessibleName as beyAccessibleName,
     buttonByName as beyButtonByName,
     controlByName as beyControlByName,

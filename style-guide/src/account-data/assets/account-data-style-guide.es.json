@@ -1,0 +1,12 @@
+{
+    "angular-components-style-guide": {
+        "account-data": {
+            "example": "El perfil del usuario que ha iniciado sesión, leído del backend de demostración: el correo para consultar, con su uso debajo, y el nombre y los apellidos para guardar. Los campos a medida muestran el nombre, obligatorio y con una pista propia, y el correo a media anchura sin su pista, sin los apellidos.",
+            "examples": {
+                "custom": "Campos a medida",
+                "default": "Campos por defecto"
+            },
+            "name-hint": "Aparece en los documentos que firmas"
+        }
+    }
+}

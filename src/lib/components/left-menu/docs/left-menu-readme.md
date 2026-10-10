@@ -19,7 +19,8 @@ const menu = new BeyLeftMenuConfig({
             subActions: [new BeyLeftMenuAction({ key: 'daily', action: () => this.go('/reports/daily') })]
         })
     ],
-    bottomActions: [new BeyLeftMenuAction({ key: 'logout', icon: faRightFromBracket, action: () => this.logout() })]
+    bottomActions: [new BeyLeftMenuAction({ key: 'logout', icon: faRightFromBracket, action: () => this.logout() })],
+    userInfo: new BeyLeftMenuUserInfo({ name: 'Ada', surname: 'Lovelace', email: 'ada@example.com', route: '/account' })
 });
 ```
 
@@ -54,6 +55,21 @@ const menu = new BeyLeftMenuConfig({
 
 A default text uses the key as a kebab-case segment: `userSettings` reads
 `<prefix>.actions.user-settings.label`. A `label` or `tooltip` given in the config is used as it is.
+
+## BeyLeftMenuUserInfo
+
+| Field      | Required | Default                   | Meaning                                                      |
+| ---------- | -------- | ------------------------- | ------------------------------------------------------------ |
+| `name`     | yes      |                           | Shown with the surname while the menu is expanded            |
+| `surname`  | no       | `''`                      | Shown after the name                                         |
+| `email`    | no       | `''`                      | Shown under the name, and as the tooltip while collapsed     |
+| `initials` | no       | from the name and surname | The text of the avatar                                       |
+| `route`    | no       | none                      | Turns the user into a link to that route, such as `/account` |
+
+With a `route`, the avatar, the name and the email become one `routerLink`, reachable from the keyboard and named
+`angular-components.left-menu.open-account` ("Open my account"), with a hover and a focus state of its own. While the
+route is the current page the link carries `aria-current="page"` and the active look of the menu actions. Without a
+`route` the user is plain text.
 
 ## Expanding and collapsing
 

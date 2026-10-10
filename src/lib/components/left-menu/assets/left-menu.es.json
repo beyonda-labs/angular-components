@@ -3,6 +3,7 @@
         "left-menu": {
             "collapse": "Colapsar menú",
             "expand": "Expandir menú",
+            "open-account": "Abrir mi cuenta",
             "sections": {
                 "main": "Principales",
                 "others": "Otros"

@@ -254,6 +254,9 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [x] Field types: `select`, `checkbox`, `radio`, `textarea`, `date`, `text`, `number`
 -   [x] Advanced validators (`email`, `url`, `custom sync`, `async`)
 -   [x] Accessibility (`aria-required`, `aria-invalid`, `aria-label`) across all fields
+-   [x] A `hint` under any field, and a `footer` with a divider and a note over the buttons
+-   [ ] Export the `<Name>Parameters` interfaces of the form module (`FormConfigParameters` and the rest), as
+        `library.md` asks; only `BeyFormFooterParameters` is exported today
 
 ### Core UI
 
@@ -266,6 +269,10 @@ What `document-builder-front` did by hand that belongs in the library.
         match and a match count; the find bar of pdf.js is off outside its full toolbar
 -   [x] File preview dialog (`BeyFilePreviewService`): laid out like a modal form, with a cancel button in its footer;
         a PDF shows the compact toolbar with a download button and an image fits without a scrollbar
+-   [x] Pdf viewer: starts under a Content Security Policy sent as a header (`useInlineScripts` off)
+-   [x] HTTP service: `postBlob`, for a PDF the server draws from the body of the request
+-   [ ] `monaco-editor` and `ngx-monaco-editor-v2` are peer dependencies, so every app installs them, but no module
+        uses them: drop them, or keep them only once the text editor exists
 
 ### Data and navigation
 
@@ -291,13 +298,41 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [x] Saved views: tabs that apply a search with its filters (templates / blocks)
 -   ~~Search every folder at once, naming the folder of each result~~ — decided against
 -   ~~Undo right after a delete, from its toast~~ — decided against
+-   [ ] Share a folder with users or groups, to read or to edit, over the sharing of base-entity
+-   [ ] A save that meets a conflict (the row changed since it was opened) says so and offers to reload, instead of
+        the generic error
 -   [ ] _(very low priority)_ Favourite and recent rows
+-   [ ] _(later)_ An empty page shows its action, such as "Create the first template", instead of an empty table
+
+### Accounts and administration
+
+-   [x] Users page on `bey-page`, over the `users` module of express-components: invite, deactivate, change roles
+-   [ ] A modal at the first sign-in that asks to change a default password (the generated superadmin's, or one an
+        admin set), built on `bey-password-change`, and that stays until the password changes
+-   [ ] _(high priority)_ Roles and permissions pages, over the `roles` module of express-components: create a role,
+        name it and pick its permissions, grouped by resource. First once the blocks of the enterprise review are done
+-   [x] Account pages: change the password, recover it from the login, verify the email, and a profile with the name,
+        the language and the theme
+-   [ ] The OAuth callback says why a sign-in failed (`?error=unauthorized`, `?error=account-inactive`) instead of
+        going back to the login in silence
+-   [x] The session keeps the access token in memory and refreshes it through the `httpOnly` cookie of
+        express-components (`restore`, `logout`)
+-   [ ] Audit viewer: a `bey-page` over the `audit` module, filtered by date, user and entity
+-   [ ] Notifications centre: the unread count in the header and the list of notices, over the `notifications` module
+-   [ ] _(low priority)_ Logging out ends the session on the server, once sessions are revocable
+-   [ ] _(low priority)_ Two-step sign-in: set it up from the profile with a QR, and the code step in the login
+
+### Accessibility
+
+-   [ ] _(low priority)_ WCAG 2.1 AA: the focus stays inside a modal and returns to its trigger when it closes, the
+        tree and the table can be used with the keyboard alone, and the contrast holds in both themes
 
 ### Rich interactions
 
 -   [ ] Text editor
 -   [ ] Drag & drop and reorderable lists
 -   [ ] File board / manager
+-   [ ] _(later)_ Keyboard shortcuts, such as Ctrl+S to save
 
 ### Delivery
 

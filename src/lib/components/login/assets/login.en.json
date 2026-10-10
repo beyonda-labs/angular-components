@@ -2,9 +2,17 @@
     "angular-components": {
         "http": {
             "error": {
+                "account": {
+                    "token-invalid": "This link is invalid, has already been used or has expired."
+                },
                 "login": {
+                    "account-inactive": "This account has been deactivated. Contact an administrator if you need access again.",
+                    "account-locked": "This account is locked after too many failed attempts. Try again in {{minutes}} minute(s).",
+                    "email-not-verified": "Verify your email address before signing in. Open the link we sent to {{email}}, or ask for a new one.",
                     "existing-user": "An account with this email already exists.",
                     "invalid-credentials": "Invalid email or password.",
+                    "invalid-credentials-attempts-left": "Invalid email or password. Attempts left before the account is locked for {{minutes}} minutes: {{attemptsLeft}}.",
+                    "invalid-origin": "The request came from another site and was refused.",
                     "invalid-refresh-token": "Your session has expired. Please log in again.",
                     "oauth-invalid-callback": "The authentication callback is invalid. Please try again.",
                     "oauth-missing-access-token": "No access token was received from {{provider}}. Please try again.",
@@ -12,7 +20,8 @@
                     "oauth-token-exchange": "Could not connect with {{provider}}. Please try again.",
                     "oauth-user-info-not-found": "Could not retrieve user information from {{provider}}. Please try again.",
                     "passwords-not-match": "Passwords do not match.",
-                    "provider-not-found": "The provider {{provider}} is not available."
+                    "provider-not-found": "The provider {{provider}} is not available.",
+                    "verification-not-sent": "Your account was created, but the verification email to {{email}} could not be sent. Sign in to ask for a new one."
                 }
             },
             "field": {
@@ -25,9 +34,17 @@
                 }
             },
             "title": {
+                "account": {
+                    "token-invalid": "Invalid link"
+                },
                 "login": {
+                    "account-inactive": "Account deactivated",
+                    "account-locked": "Account locked",
+                    "email-not-verified": "Email not verified",
                     "existing-user": "Account already exists",
                     "invalid-credentials": "Authentication failed",
+                    "invalid-credentials-attempts-left": "Authentication failed",
+                    "invalid-origin": "Request refused",
                     "invalid-refresh-token": "Session expired",
                     "oauth-invalid-callback": "Authentication error",
                     "oauth-missing-access-token": "Authentication error",
@@ -35,11 +52,54 @@
                     "oauth-token-exchange": "Authentication error",
                     "oauth-user-info-not-found": "Authentication error",
                     "passwords-not-match": "Password error",
-                    "provider-not-found": "Provider unavailable"
+                    "provider-not-found": "Provider unavailable",
+                    "verification-not-sent": "Email not sent"
                 }
             }
         },
         "login": {
+            "accept-invitation": {
+                "button": {
+                    "accept": "Activate account"
+                },
+                "intro": "You have been invited as {{email}}. Fill in your details and choose a password to activate your account.",
+                "invalid-hint": "Ask the person who invited you to send a new invitation.",
+                "loading": "Loading your invitation…",
+                "name": {
+                    "label": "Name",
+                    "placeholder": "Your name"
+                },
+                "password": {
+                    "label": "Password",
+                    "placeholder": "Choose a password"
+                },
+                "password2": {
+                    "label": "Confirm password",
+                    "placeholder": "Repeat your password"
+                },
+                "surname": {
+                    "label": "Surname",
+                    "placeholder": "Your surname"
+                }
+            },
+            "back-to-sign-in": "Back to sign in",
+            "forgot-password": {
+                "button": {
+                    "send": "Send link"
+                },
+                "email": {
+                    "label": "Email",
+                    "placeholder": "you@email.com"
+                },
+                "intro": "Type the email address of your account and we will send you a link to choose a new password.",
+                "sent": "If an account exists for that address, we have sent a link to choose a new password. Check your inbox."
+            },
+            "link-error": {
+                "failed": "We could not open this link right now. Try again in a moment.",
+                "invalid": "This link is invalid, has already been used or has expired.",
+                "request-new-link": "Request a new link",
+                "retry": "Try again"
+            },
             "login": {
                 "button": {
                     "login": "Sign in"
@@ -48,11 +108,17 @@
                     "label": "Email",
                     "placeholder": "Type your email"
                 },
+                "forgot-password": "Forgot your password?",
                 "password": {
                     "label": "Password",
                     "placeholder": "Type your password"
                 },
-                "signin-with": "Continue with"
+                "signin-with": "Continue with",
+                "unverified": {
+                    "message": "{{email}} is not verified yet. We can send you a new verification link.",
+                    "resend": "Resend verification email",
+                    "sent": "If {{email}} still needs verifying, we have sent a new link. Check your inbox."
+                }
             },
             "provider": {
                 "facebook": "Facebook",
@@ -85,9 +151,40 @@
                     "placeholder": "Your surname"
                 }
             },
+            "registered": {
+                "message": "We have sent a link to your email address. Open it to activate your account, then sign in."
+            },
+            "reset-password": {
+                "button": {
+                    "save": "Save password"
+                },
+                "invalid-hint": "Ask for a new link to reset your password.",
+                "password": {
+                    "label": "New password",
+                    "placeholder": "Type your new password"
+                },
+                "password2": {
+                    "label": "Confirm password",
+                    "placeholder": "Repeat your new password"
+                }
+            },
             "title": {
+                "accept-invitation": "Accept your invitation",
+                "forgot-password": "Reset your password",
+                "invalid-link": "This link is no longer valid",
                 "login": "Welcome back",
-                "register": "Create your account"
+                "register": "Create your account",
+                "registered": "Check your inbox",
+                "reset-password": "Choose a new password",
+                "verify-email": "Verify your email"
+            },
+            "validation": {
+                "passwords-not-match": "The passwords do not match."
+            },
+            "verify-email": {
+                "invalid-hint": "Sign in with your email and password to get a new link.",
+                "progress": "Verifying your email address…",
+                "success": "Your email address is verified. Signing you in…"
             }
         }
     }

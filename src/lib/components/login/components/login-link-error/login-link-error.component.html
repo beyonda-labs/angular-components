@@ -1,0 +1,19 @@
+<p class="mb-2">{{ message() | translate }}</p>
+
+@if (hint(); as hint) {
+    <p class="small mb-0">{{ hint | translate }}</p>
+}
+
+<div class="d-flex flex-column gap-2 mt-4">
+    @if (isLinkRequestOffered()) {
+        <a class="btn btn-dark btn-sm fw-semibold" [queryParams]="forgotPasswordQuery" [routerLink]="loginRoute">
+            {{ requestLinkLabel() | translate }}
+        </a>
+    }
+
+    @if (isRetryOffered()) {
+        <bey-button [button]="retryButton()" />
+    }
+
+    <a class="btn btn-outline-dark btn-sm fw-semibold" [routerLink]="loginRoute">{{ backLabel() | translate }}</a>
+</div>

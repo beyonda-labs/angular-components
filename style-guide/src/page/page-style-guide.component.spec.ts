@@ -27,7 +27,9 @@ describe('PageStyleGuideComponent', () => {
         http = TestBed.inject(HttpTestingController);
         http.expectOne(request => request.url === 'https://api.test/api/products').flush({
             globalActions: ['create'],
-            results: [{ id: 1, name: 'Keyboard', category: 'Hardware', price: 49.9 }],
+            results: [
+                { id: 1, name: 'Keyboard', category: 'Hardware', ownerId: 'u1', ownerName: 'Ada Lovelace', price: 49.9 }
+            ],
             search: { filters: [], page: 1, size: 25, total: 1 }
         });
         http.expectOne(request => request.url === FOLDERS_URL).flush({
@@ -44,6 +46,15 @@ describe('PageStyleGuideComponent', () => {
     it('lists the products from the demo backend', () => {
         expect(fixture.nativeElement.textContent).toContain('Keyboard');
         expect(fixture.nativeElement.textContent).toContain('49.90 €');
+    });
+
+    it('shows who owns each product, and asks for the owners once its filters panel opens', async () => {
+        expect(fixture.nativeElement.textContent).toContain('Ada Lovelace');
+
+        queryAll<HTMLButtonElement>(queryAll(fixture, 'bey-page')[0], 'bey-search [aria-expanded]')[0].click();
+        await settle(fixture);
+
+        http.expectOne('https://api.test/api/products/owners').flush({ owners: [{ id: 'u1', name: 'Ada Lovelace' }] });
     });
 
     it('offers the available view and counts the rows of the folder in the folders example', () => {

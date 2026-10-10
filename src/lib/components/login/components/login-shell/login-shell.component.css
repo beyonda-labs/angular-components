@@ -1,0 +1,107 @@
+:host {
+    display: block;
+}
+
+.bey-login {
+    height: 100vh;
+    position: relative;
+}
+
+.bey-login-body {
+    background-position: center;
+    background-size: cover;
+    color: var(--bey-text-primary);
+    flex: 1 1 auto;
+    position: relative;
+    transition: background var(--bey-duration-base) var(--bey-easing-standard);
+}
+
+.bey-login-body::before {
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--bey-login-overlay) 40%, transparent) 0%,
+        color-mix(in srgb, var(--bey-login-overlay) 60%, transparent) 50%,
+        color-mix(in srgb, var(--bey-login-overlay) 88%, transparent) 100%
+    );
+    content: '';
+    inset: 0;
+    pointer-events: none;
+    position: absolute;
+}
+
+.bey-login-main {
+    position: relative;
+    z-index: var(--bey-z-base);
+}
+
+.bey-login-cards {
+    gap: var(--bey-space-lg);
+}
+
+.bey-login-card {
+    background: var(--bey-login-card-bg);
+    border: var(--bey-border-width) solid var(--bey-login-card-border);
+    border-radius: var(--bey-login-card-radius);
+    box-shadow: var(--bey-login-card-shadow);
+    padding: var(--bey-space-2xl);
+    width: var(--bey-login-card-width);
+}
+
+.bey-login-org {
+    color: var(--bey-text-muted);
+    font-size: var(--bey-font-size-xs);
+    gap: var(--bey-space-sm);
+}
+
+.bey-login-org-icon {
+    display: block;
+    height: var(--bey-space-xl);
+    width: var(--bey-space-xl);
+}
+
+:host-context(body.dark) .bey-login-org-icon {
+    filter: invert(1);
+}
+
+.bey-login-product {
+    color: var(--bey-text-primary);
+    font-size: var(--bey-font-size-4xl);
+    line-height: var(--bey-line-height-tight);
+}
+
+.bey-login-pitch {
+    color: var(--bey-text-primary);
+    font-size: var(--bey-font-size-lg);
+    line-height: var(--bey-line-height-loose);
+}
+
+.bey-login-title {
+    color: var(--bey-text-primary);
+    font-size: var(--bey-font-size-3xl);
+    line-height: var(--bey-line-height-tight);
+}
+
+@media (max-width: 991.98px) {
+    .bey-login-cards {
+        flex-direction: column;
+    }
+
+    .bey-login-card {
+        padding: var(--bey-space-xl);
+        width: 100%;
+    }
+
+    .bey-login-product {
+        font-size: var(--bey-font-size-3xl);
+    }
+}
+
+@media (max-width: 575.98px) {
+    .bey-login-card {
+        padding: var(--bey-space-lg);
+    }
+
+    .bey-login-product {
+        font-size: var(--bey-font-size-2xl);
+    }
+}

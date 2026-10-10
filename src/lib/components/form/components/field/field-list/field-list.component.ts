@@ -12,6 +12,7 @@ import { FormListField } from '../../../models/fields/form-list-field.model';
     templateUrl: './field-list.component.html'
 })
 export class FormListFieldComponent {
+    readonly describedBy = input<string | null>(null);
     readonly field = input.required<FormListField>();
     readonly label = input.required<string>();
     readonly prefix = input.required<string>();

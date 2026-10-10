@@ -10,6 +10,7 @@ import { ConfirmationModalConfig } from '../../modal/models/modal.model';
 import { ModalService } from '../../modal/services/modal.service';
 import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
 import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
+import { readMoveOwnerId } from '../functions/page-move-owner';
 import { buildMoveTargetNodes } from '../functions/page-move-targets';
 import { isActionVisible, isCategoryRow, toHandlerItems, toTrashItems } from '../functions/page-row';
 import { PageConfig } from '../models/page.model';
@@ -332,7 +333,7 @@ export class PageActionsService {
             return;
         }
 
-        this.pageHttpService.loadCategoryTree(baseUrl).subscribe(categories => {
+        this.pageHttpService.loadCategoryTree(baseUrl, readMoveOwnerId(items)).subscribe(categories => {
             const reference = this.modalTreeService.open(
                 new ModalTreeConfig<PageMoveTarget>({
                     nodes: buildMoveTargetNodes(prefix, categories, categoriesConfig, items),

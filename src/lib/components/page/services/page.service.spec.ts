@@ -4,6 +4,7 @@ import { mock, MockProxy } from 'jest-mock-extended';
 import { of, Subject, throwError } from 'rxjs';
 
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
+import { StringFilter } from '../../search/models/search-filter.model';
 import { TableColumn, TableSortDirection } from '../../table/models/table.model';
 import { pageStandardAction } from '../functions/page-standard-actions';
 import { PageBackendResponse, PageConfig, PageConfigParameters, PageHandle } from '../models/page.model';
@@ -13,10 +14,11 @@ import { PageFormConfig } from '../models/page-form.model';
 import { PageHeaderConfig } from '../models/page-header.model';
 import { PageItem } from '../models/page-item.model';
 import { PageSearch, SearchSortDirection } from '../models/page-search.model';
-import { PageTableConfig } from '../models/page-table.model';
+import { PageTableConfig, PageTableSearchConfig } from '../models/page-table.model';
 import { PageService } from './page.service';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
+import { PageOwnersService } from './page-owners.service';
 
 interface Team extends PageItem {
     title: string;
@@ -82,6 +84,7 @@ describe('PageService', () => {
 
         TestBed.configureTestingModule({
             providers: [
+                PageOwnersService,
                 PageService,
                 provideTranslateService(),
                 { provide: PageActionsService, useValue: pageActionsService },
@@ -237,7 +240,7 @@ describe('PageService', () => {
                 tableConfig: new PageTableConfig({
                     columns: [],
                     loadRow: () => [],
-                    search: { fields: [], mainField: 'name' }
+                    search: new PageTableSearchConfig({ fields: [], mainField: 'name' })
                 })
             })
         );
@@ -252,6 +255,56 @@ describe('PageService', () => {
         service.searchConfig()?.onFiltersChange?.([]);
         flush();
         expect(service.pageSearch().page).toBe(1);
+    });
+
+    it('sends the filter of the text field as the text of the search, and keeps it as a filter for the search box', () => {
+        const text = new StringFilter({ field: 'text', value: 'ada' });
+        service.setConfig(
+            buildConfig({
+                tableConfig: new PageTableConfig({
+                    columns: [],
+                    loadRow: () => [],
+                    search: new PageTableSearchConfig({ fields: [], mainField: 'text', textField: 'text' })
+                })
+            })
+        );
+        flush();
+
+        service.searchConfig()?.onFiltersChange?.([text]);
+        flush();
+
+        expect(JSON.parse(atob(String(lastQuery()['search'])))).toEqual(
+            expect.objectContaining({ filters: [], text: 'ada' })
+        );
+        expect(service.pageSearch().filters).toEqual([text]);
+    });
+
+    it('asks for the owners the first time the filters panel opens, and then offers the owner filter', () => {
+        pageHttpService.findOwners.mockReturnValue(
+            of([
+                { id: 'u1', name: 'Ada' },
+                { id: 'u2', name: 'Grace' }
+            ])
+        );
+        service.setConfig(
+            buildConfig({
+                tableConfig: new PageTableConfig({
+                    columns: [],
+                    loadRow: () => [],
+                    search: new PageTableSearchConfig({ fields: [], isOwnerFilterEnabled: true })
+                })
+            })
+        );
+        flush();
+        expect(service.searchConfig()?.fields).toEqual([]);
+        expect(pageHttpService.findOwners).not.toHaveBeenCalled();
+
+        service.searchConfig()?.onPanelOpen?.();
+        service.searchConfig()?.onPanelOpen?.();
+
+        expect(pageHttpService.findOwners).toHaveBeenCalledTimes(1);
+        expect(pageHttpService.findOwners).toHaveBeenCalledWith('/items');
+        expect(service.searchConfig()?.fields.map(field => field.key)).toEqual(['ownerId']);
     });
 
     it('offers the header actions the backend, the selection and the categories allow', () => {
@@ -508,6 +561,21 @@ describe('PageService', () => {
             flush();
             expect(service.selected()).toEqual([]);
             expect(pageHttpService.load).toHaveBeenCalledTimes(2);
+        });
+
+        it('takes a drop only on a folder of the owner of every dragged row', () => {
+            const adaFolder = { ...FOLDER, id: 'ada-folder', ownerId: 'ada', ownerName: 'Ada' };
+            const graceFolder = { ...FOLDER, id: 'grace-folder', ownerId: 'grace', ownerName: 'Grace' };
+            const adaFile = { ...FILE, id: 'ada-file', ownerId: 'ada', ownerName: 'Ada' };
+            const graceFile = { ...FILE, id: 'grace-file', ownerId: 'grace', ownerName: 'Grace' };
+            pageHttpService.load.mockReturnValue(of(buildResponse([adaFolder, graceFolder, adaFile, graceFile])));
+            service.setConfig(buildMoveConfig([pageStandardAction(PageStandardAction.Move)]));
+            flush();
+            const table = service.tableConfig();
+
+            expect(table?.isDropAllowed?.(adaFolder, [adaFile])).toBe(true);
+            expect(table?.isDropAllowed?.(graceFolder, [adaFile])).toBe(false);
+            expect(table?.isDropAllowed?.(graceFolder, [adaFile, graceFile])).toBe(false);
         });
 
         it('offers no drag without the standard move action, nor in the trash', () => {

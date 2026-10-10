@@ -1,8 +1,10 @@
 <input
     class="form-control form-control-sm bey-form-field-control"
     type="text"
+    [attr.aria-describedby]="describedBy()"
     [attr.aria-invalid]="isInvalid() || null"
     [attr.aria-required]="isRequired() || null"
+    [attr.autocomplete]="field().autocomplete"
     [formControl]="control()"
     [id]="field().key"
     [placeholder]="placeholder() | translate"

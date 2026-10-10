@@ -15,5 +15,6 @@ import { FormInfoField } from '../../../models/fields/form-info-field.model';
     templateUrl: './field-info.component.html'
 })
 export class FormInfoFieldComponent {
+    readonly describedBy = input<string | null>(null);
     readonly field = input.required<FormInfoField>();
 }

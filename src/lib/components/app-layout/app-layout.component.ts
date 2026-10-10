@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NavigationCancel, NavigationEnd, NavigationError, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -55,6 +55,8 @@ export class AppLayoutComponent implements OnInit {
     });
     readonly usesRoutes = computed(() => hasRoutes(this.allActions()));
 
+    private readonly isInitialized = signal(false);
+
     constructor() {
         this.appLayoutService.onBreadcrumbClick$
             .pipe(takeUntilDestroyed())
@@ -64,13 +66,19 @@ export class AppLayoutComponent implements OnInit {
             this.config().onMenuActionClick?.(key);
         });
         this.router.events
-            .pipe(filter(isNavigationOutcome), takeUntilDestroyed())
+            .pipe(
+                filter(isNavigationOutcome),
+                filter(() => this.isInitialized()),
+                takeUntilDestroyed()
+            )
             .subscribe(() => this.activateByUrl(this.router.url));
         this.translateService.onLangChange.pipe(takeUntilDestroyed()).subscribe(() => this.refreshBreadcrumb());
     }
 
     ngOnInit(): void {
         const { breadcrumb, onLayoutInitialized } = this.config();
+
+        this.isInitialized.set(true);
 
         if (breadcrumb.length > 0) {
             this.appLayoutService.setBreadcrumb(breadcrumb);

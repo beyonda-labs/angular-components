@@ -43,11 +43,19 @@ function failWithRange(errorCode: string, min: number | null, max: number | null
 const ERROR_CASES: ErrorCase[] = [
     {
         name: 'a message key with its own title',
-        respond: failWith(401, { errorCode: 'invalid-credentials', messageKey: 'login.invalid-credentials' }),
+        respond: failWith(400, { errorCode: 'invalid-credentials', messageKey: 'login.invalid-credentials' }),
         title: `${TITLE}login.invalid-credentials`,
         message: `${ERROR}login.invalid-credentials`,
         messageParameters: {},
         texts: ['Authentication failed', 'Invalid email or password.']
+    },
+    {
+        name: 'a message key with a number among its parameters',
+        respond: failWith(429, { messageKey: 'login.account-locked', messageParameters: { minutes: 15 } }),
+        title: `${TITLE}login.account-locked`,
+        message: `${ERROR}login.account-locked`,
+        messageParameters: { minutes: '15' },
+        texts: ['Account locked', 'This account is locked after too many failed attempts. Try again in 15 minute(s).']
     },
     {
         name: 'a message key without a title',
@@ -244,6 +252,10 @@ const METHOD_CASES: MethodCase[] = [
     { name: 'delete', method: 'DELETE', send: (service, options) => service.delete(URL, { ids: [1] }, options) },
     { name: 'upload', method: 'PUT', send: (service, options) => service.upload(URL, new Blob(['bytes']), options) }
 ];
+const DOWNLOAD_CASES: MethodCase[] = [
+    { name: 'getBlob', method: 'GET', send: (service, options) => service.getBlob(URL, options) },
+    { name: 'postBlob', method: 'POST', send: (service, options) => service.postBlob(URL, { a: 1 }, options) }
+];
 
 describe('HttpService', () => {
     let httpTesting: HttpTestingController;
@@ -257,9 +269,9 @@ describe('HttpService', () => {
         return httpTesting.expectOne(request => request.method === method && request.url === URL);
     }
 
-    function downloadFailure(options?: HttpRequestOptions): Promise<unknown> {
+    function downloadFailure({ send }: MethodCase, options: HttpRequestOptions = {}): Promise<unknown> {
         return new Promise(resolve => {
-            service.getBlob(URL, options).subscribe({ error: resolve });
+            send(service, options).subscribe({ error: resolve });
         });
     }
 
@@ -320,6 +332,19 @@ describe('HttpService', () => {
             expect(received).toHaveBeenCalledWith(content);
         });
 
+        it('sends the body of postBlob and reads its response as a Blob', () => {
+            const content = new Blob(['%PDF-'], { type: 'application/pdf' });
+            const received = jest.fn();
+
+            service.postBlob(URL, { sections: [] }).subscribe(received);
+            const request = expectRequest('POST');
+            request.flush(content);
+
+            expect(request.request.body).toEqual({ sections: [] });
+            expect(request.request.responseType).toBe('blob');
+            expect(received).toHaveBeenCalledWith(content);
+        });
+
         it('uploads with a PUT, reports the fraction sent and emits the response body', () => {
             const progress: number[] = [];
             const received = jest.fn();
@@ -355,6 +380,22 @@ describe('HttpService', () => {
             expect(params.get('page')).toBe('1');
             expect(headers.get('X-Custom')).toBe('value');
         });
+
+        it.each([...METHOD_CASES, ...DOWNLOAD_CASES])(
+            'sends a $name with the credentials only when asked',
+            ({ method, send }) => {
+                const sent = [{}, { withCredentials: true }].map(options => {
+                    const subscription = send(service, options).subscribe();
+                    const { withCredentials } = expectRequest(method).request;
+
+                    subscription.unsubscribe();
+
+                    return withCredentials;
+                });
+
+                expect(sent).toEqual([false, true]);
+            }
+        );
     });
 
     describe('subscription', () => {
@@ -489,13 +530,13 @@ describe('HttpService', () => {
             ]);
         });
 
-        it('reads the reason of a failed download from its Blob body', async () => {
-            const failed = downloadFailure({ loading: true });
+        it.each(DOWNLOAD_CASES)('reads the reason of a failed $name from its Blob body', async download => {
+            const failed = downloadFailure(download, { loading: true });
 
             failWith(
                 404,
                 new Blob([JSON.stringify({ errorCode: 'not-found' })], { type: 'application/json' })
-            )(expectRequest('GET'));
+            )(expectRequest(download.method));
             await failed;
 
             expect(modal.errors()).toEqual([
@@ -504,16 +545,19 @@ describe('HttpService', () => {
             expect(loading.isLoading()).toBe(false);
         });
 
-        it('opens the unknown error modal when a failed download has no readable reason', async () => {
-            const failed = downloadFailure();
+        it.each(DOWNLOAD_CASES)(
+            'opens the unknown error modal when a failed $name has no readable reason',
+            async download => {
+                const failed = downloadFailure(download);
 
-            failWith(502, new Blob(['Bad gateway'], { type: 'text/plain' }))(expectRequest('GET'));
-            await failed;
+                failWith(502, new Blob(['Bad gateway'], { type: 'text/plain' }))(expectRequest(download.method));
+                await failed;
 
-            expect(modal.errors()).toEqual([
-                { message: `${ERROR}unknown`, messageParameters: {}, title: `${TITLE}unknown` }
-            ]);
-        });
+                expect(modal.errors()).toEqual([
+                    { message: `${ERROR}unknown`, messageParameters: {}, title: `${TITLE}unknown` }
+                ]);
+            }
+        );
     });
 
     describe('errors', () => {

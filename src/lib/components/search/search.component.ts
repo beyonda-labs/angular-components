@@ -108,7 +108,7 @@ export class SearchComponent {
     }
 
     getFieldLabel(field: SearchField): string {
-        return `${this.config().prefix}.fields.${toKeySegment(field.key)}`;
+        return field.label ?? `${this.config().prefix}.fields.${toKeySegment(field.key)}`;
     }
 
     getFieldOptions(row: SearchDraftRow): SearchFieldOption[] {
@@ -183,7 +183,13 @@ export class SearchComponent {
     }
 
     togglePanel(): void {
-        this.isPanelOpen.update(isOpen => !isOpen);
+        const isOpening = !this.isPanelOpen();
+
+        this.isPanelOpen.set(isOpening);
+
+        if (isOpening) {
+            this.config().onPanelOpen?.();
+        }
     }
 
     private applyRows(closePanel: boolean): void {

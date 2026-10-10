@@ -2,8 +2,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { faGear, faHome } from '@fortawesome/free-solid-svg-icons';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { buttonByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { config as rxjsConfig } from 'rxjs';
 
 import { LeftMenuTitle, LeftMenuUserInfo } from '../left-menu/models/left-menu.model';
 import { AppLayoutComponent } from './app-layout.component';
@@ -71,8 +73,8 @@ describe('AppLayoutComponent', () => {
         localStorage.clear();
 
         await TestBed.configureTestingModule({
-            imports: [AppLayoutComponent, HostComponent, TranslateModule.forRoot()],
-            providers: [provideRouter([{ path: '**', component: EmptyPageComponent }])]
+            imports: [AppLayoutComponent, HostComponent],
+            providers: [provideRouter([{ path: '**', component: EmptyPageComponent }]), provideBeyTesting()]
         }).compileComponents();
 
         service = TestBed.inject(AppLayoutService);
@@ -105,6 +107,17 @@ describe('AppLayoutComponent', () => {
         await render(buildConfig({ userInfo: new LeftMenuUserInfo({ name: 'Ada', surname: 'Lovelace' }) }));
 
         expect(fixture.nativeElement.querySelector('aside').textContent).toContain('Ada Lovelace');
+    });
+
+    it('passes the route of the signed-in user to the menu, which links to it', async () => {
+        await render(
+            buildConfig({ userInfo: new LeftMenuUserInfo({ name: 'Ada', route: '/account', surname: 'Lovelace' }) })
+        );
+        const link = queryAll<HTMLAnchorElement>(fixture, 'a').find(
+            anchor => anchor.getAttribute('aria-label') === 'angular-components.left-menu.open-account'
+        );
+
+        expect(link?.getAttribute('href')).toBe('/account');
     });
 
     it('keeps the footer of a config copied with a spread, with the overrides of the copy', async () => {
@@ -364,6 +377,28 @@ describe('AppLayoutComponent', () => {
             expect(run).toHaveBeenCalled();
             expect(onMenuActionClick).toHaveBeenCalledWith('home');
             expect(router.url).toBe('/start');
+        });
+
+        it('leaves a navigation that ends before its config arrives to the start, which activates the route', async () => {
+            const previousHandler = rxjsConfig.onUnhandledError;
+            const unhandled = jest.fn();
+
+            rxjsConfig.onUnhandledError = unhandled;
+
+            try {
+                fixture = TestBed.createComponent(AppLayoutComponent);
+                await TestBed.inject(Router).navigateByUrl('/home');
+                fixture.componentRef.setInput('config', buildConfig({ topActions: routed() }));
+                await settle(fixture);
+                await new Promise(resolve => {
+                    setTimeout(resolve);
+                });
+            } finally {
+                rxjsConfig.onUnhandledError = previousHandler;
+            }
+
+            expect(unhandled).not.toHaveBeenCalled();
+            expect(buttonOf('demo.actions.home.label').getAttribute('aria-current')).toBe('page');
         });
 
         it('keeps the current page active when a guard cancels the navigation', async () => {

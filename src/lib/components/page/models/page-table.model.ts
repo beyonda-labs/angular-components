@@ -52,12 +52,16 @@ export class PageTableConfig<
 
 export class PageTableSearchConfig {
     fields: SearchField[];
+    isOwnerFilterEnabled: boolean;
 
     mainField?: string;
+    textField?: string;
 
-    constructor({ fields, mainField }: PageTableSearchConfigParameters) {
+    constructor({ fields, isOwnerFilterEnabled = false, mainField, textField }: PageTableSearchConfigParameters) {
         this.fields = fields;
+        this.isOwnerFilterEnabled = isOwnerFilterEnabled;
         this.mainField = mainField;
+        this.textField = textField;
     }
 }
 
@@ -83,5 +87,7 @@ export interface PageTableConfigParameters<
 export interface PageTableSearchConfigParameters {
     fields: SearchField[];
 
+    isOwnerFilterEnabled?: boolean;
     mainField?: string;
+    textField?: string;
 }

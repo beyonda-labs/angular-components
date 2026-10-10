@@ -1,5 +1,27 @@
 {
     "angular-components": {
+        "account-data": {
+            "description": "Your name as the rest of the team sees it.",
+            "profile": {
+                "email": {
+                    "hint": "Used to sign in",
+                    "label": "Email"
+                },
+                "name": {
+                    "label": "Name",
+                    "placeholder": "Type your name"
+                },
+                "surname": {
+                    "label": "Surname",
+                    "placeholder": "Type your surname"
+                }
+            },
+            "save": "Save changes",
+            "title": "Profile",
+            "toast": {
+                "success": "Profile saved"
+            }
+        },
         "app-layout": {
             "main-content": "Main content"
         },
@@ -55,6 +77,16 @@
             },
             "password-field": {
                 "hide": "Hide password",
+                "policy": {
+                    "digit": "One digit",
+                    "length": "At least {{min}} characters",
+                    "lowercase": "One lowercase letter",
+                    "met": "met",
+                    "symbol": "One punctuation mark or symbol",
+                    "too-long": "At most {{max}} characters",
+                    "unmet": "not met",
+                    "uppercase": "One uppercase letter"
+                },
                 "show": "Show password"
             },
             "required": "This field is required",
@@ -75,6 +107,12 @@
         },
         "http": {
             "error": {
+                "account": {
+                    "no-password": "Your account has no password yet. Set one through \"Forgot your password?\" on the sign-in page.",
+                    "token-invalid": "This link is invalid, has already been used or has expired.",
+                    "wrong-password": "The current password is not correct.",
+                    "wrong-password-attempts-left": "The current password is not correct. Attempts left before the account is locked for {{minutes}} minutes: {{attemptsLeft}}."
+                },
                 "action-unavailable": "This action is not available for the item. Reload the page and try again.",
                 "attachments": {
                     "content-already-set": "This attachment already has its file.",
@@ -118,8 +156,13 @@
                 "invalid-field-value": "The field \"{{fieldName}}\" has an invalid value.",
                 "invalid-transition": "The status cannot change from \"{{from}}\" to \"{{to}}\".",
                 "login": {
+                    "account-inactive": "This account has been deactivated. Contact an administrator if you need access again.",
+                    "account-locked": "This account is locked after too many failed attempts. Try again in {{minutes}} minute(s).",
+                    "email-not-verified": "Verify your email address before signing in. Open the link we sent to {{email}}, or ask for a new one.",
                     "existing-user": "An account with this email already exists.",
                     "invalid-credentials": "Invalid email or password.",
+                    "invalid-credentials-attempts-left": "Invalid email or password. Attempts left before the account is locked for {{minutes}} minutes: {{attemptsLeft}}.",
+                    "invalid-origin": "The request came from another site and was refused.",
                     "invalid-refresh-token": "Your session has expired. Please log in again.",
                     "oauth-invalid-callback": "The authentication callback is invalid. Please try again.",
                     "oauth-missing-access-token": "No access token was received from {{provider}}. Please try again.",
@@ -127,16 +170,35 @@
                     "oauth-token-exchange": "Could not connect with {{provider}}. Please try again.",
                     "oauth-user-info-not-found": "Could not retrieve user information from {{provider}}. Please try again.",
                     "passwords-not-match": "Passwords do not match.",
-                    "provider-not-found": "The provider {{provider}} is not available."
+                    "provider-not-found": "The provider {{provider}} is not available.",
+                    "verification-not-sent": "Your account was created, but the verification email to {{email}} could not be sent. Sign in to ask for a new one."
                 },
                 "move-target-unchanged": "The item is already located in this category.",
                 "not-found": "The requested resource was not found.",
+                "password": {
+                    "digit-required": "The password must include a digit.",
+                    "lowercase-required": "The password must include a lowercase letter.",
+                    "symbol-required": "The password must include a punctuation mark or a symbol.",
+                    "too-long": "The password must be at most {{max}} characters long.",
+                    "too-short": "The password must be at least {{min}} characters long.",
+                    "uppercase-required": "The password must include an uppercase letter."
+                },
                 "required-field": "The field \"{{fieldName}}\" is required.",
                 "service-unavailable": "The service is temporarily unavailable. Please try again later.",
                 "title": "Error",
                 "too-many-requests": "Too many requests. Please try again later.",
                 "unauthorized": "Your session has expired or you are not authenticated. Please log in again.",
-                "unknown": "An unexpected error occurred. Please try again later."
+                "unknown": "An unexpected error occurred. Please try again later.",
+                "users": {
+                    "existing-user": "There is already an account with the email {{email}}.",
+                    "invitation-not-sent": "The user {{email}} was created, but the invitation email could not be sent. Use \"Resend invitation\" to try again.",
+                    "last-superadmin": "This change would leave no active superadmin.",
+                    "not-found": "This user does not exist. Reload the page and try again.",
+                    "not-invited": "This account is no longer waiting for an invitation.",
+                    "own-account": "You cannot deactivate your own account nor change your own roles.",
+                    "superadmin-only": "Only a superadmin can grant or remove the superadmin role, or change a superadmin account.",
+                    "unknown-role": "The role \"{{role}}\" does not exist."
+                }
             },
             "field": {
                 "login": {
@@ -152,6 +214,12 @@
                 }
             },
             "title": {
+                "account": {
+                    "no-password": "No password",
+                    "token-invalid": "Invalid link",
+                    "wrong-password": "Wrong password",
+                    "wrong-password-attempts-left": "Wrong password"
+                },
                 "action-unavailable": "Action not available",
                 "attachments": {
                     "content-already-set": "File already uploaded",
@@ -192,8 +260,13 @@
                 "invalid-field-value": "Invalid value",
                 "invalid-transition": "Invalid status change",
                 "login": {
+                    "account-inactive": "Account deactivated",
+                    "account-locked": "Account locked",
+                    "email-not-verified": "Email not verified",
                     "existing-user": "Account already exists",
                     "invalid-credentials": "Authentication failed",
+                    "invalid-credentials-attempts-left": "Authentication failed",
+                    "invalid-origin": "Request refused",
                     "invalid-refresh-token": "Session expired",
                     "oauth-invalid-callback": "Authentication error",
                     "oauth-missing-access-token": "Authentication error",
@@ -201,20 +274,40 @@
                     "oauth-token-exchange": "Authentication error",
                     "oauth-user-info-not-found": "Authentication error",
                     "passwords-not-match": "Password error",
-                    "provider-not-found": "Provider unavailable"
+                    "provider-not-found": "Provider unavailable",
+                    "verification-not-sent": "Email not sent"
                 },
                 "move-target-unchanged": "No change",
                 "not-found": "Not found",
+                "password": {
+                    "digit-required": "Digit missing",
+                    "lowercase-required": "Lowercase letter missing",
+                    "symbol-required": "Symbol missing",
+                    "too-long": "Password too long",
+                    "too-short": "Password too short",
+                    "uppercase-required": "Uppercase letter missing"
+                },
                 "required-field": "Required field",
                 "service-unavailable": "Service unavailable",
                 "too-many-requests": "Too many requests",
                 "unauthorized": "Authentication required",
-                "unknown": "Unexpected error"
+                "unknown": "Unexpected error",
+                "users": {
+                    "existing-user": "Account already exists",
+                    "invitation-not-sent": "Invitation not sent",
+                    "last-superadmin": "Last superadmin",
+                    "not-found": "User not found",
+                    "not-invited": "No pending invitation",
+                    "own-account": "Your own account",
+                    "superadmin-only": "Superadmins only",
+                    "unknown-role": "Unknown role"
+                }
             }
         },
         "left-menu": {
             "collapse": "Collapse menu",
             "expand": "Expand menu",
+            "open-account": "Open my account",
             "sections": {
                 "main": "Main",
                 "others": "Others"
@@ -225,6 +318,48 @@
             "label": "Loading"
         },
         "login": {
+            "accept-invitation": {
+                "button": {
+                    "accept": "Activate account"
+                },
+                "intro": "You have been invited as {{email}}. Fill in your details and choose a password to activate your account.",
+                "invalid-hint": "Ask the person who invited you to send a new invitation.",
+                "loading": "Loading your invitation…",
+                "name": {
+                    "label": "Name",
+                    "placeholder": "Your name"
+                },
+                "password": {
+                    "label": "Password",
+                    "placeholder": "Choose a password"
+                },
+                "password2": {
+                    "label": "Confirm password",
+                    "placeholder": "Repeat your password"
+                },
+                "surname": {
+                    "label": "Surname",
+                    "placeholder": "Your surname"
+                }
+            },
+            "back-to-sign-in": "Back to sign in",
+            "forgot-password": {
+                "button": {
+                    "send": "Send link"
+                },
+                "email": {
+                    "label": "Email",
+                    "placeholder": "you@email.com"
+                },
+                "intro": "Type the email address of your account and we will send you a link to choose a new password.",
+                "sent": "If an account exists for that address, we have sent a link to choose a new password. Check your inbox."
+            },
+            "link-error": {
+                "failed": "We could not open this link right now. Try again in a moment.",
+                "invalid": "This link is invalid, has already been used or has expired.",
+                "request-new-link": "Request a new link",
+                "retry": "Try again"
+            },
             "login": {
                 "button": {
                     "login": "Sign in"
@@ -233,11 +368,17 @@
                     "label": "Email",
                     "placeholder": "Type your email"
                 },
+                "forgot-password": "Forgot your password?",
                 "password": {
                     "label": "Password",
                     "placeholder": "Type your password"
                 },
-                "signin-with": "Continue with"
+                "signin-with": "Continue with",
+                "unverified": {
+                    "message": "{{email}} is not verified yet. We can send you a new verification link.",
+                    "resend": "Resend verification email",
+                    "sent": "If {{email}} still needs verifying, we have sent a new link. Check your inbox."
+                }
             },
             "provider": {
                 "facebook": "Facebook",
@@ -270,9 +411,40 @@
                     "placeholder": "Your surname"
                 }
             },
+            "registered": {
+                "message": "We have sent a link to your email address. Open it to activate your account, then sign in."
+            },
+            "reset-password": {
+                "button": {
+                    "save": "Save password"
+                },
+                "invalid-hint": "Ask for a new link to reset your password.",
+                "password": {
+                    "label": "New password",
+                    "placeholder": "Type your new password"
+                },
+                "password2": {
+                    "label": "Confirm password",
+                    "placeholder": "Repeat your new password"
+                }
+            },
             "title": {
+                "accept-invitation": "Accept your invitation",
+                "forgot-password": "Reset your password",
+                "invalid-link": "This link is no longer valid",
                 "login": "Welcome back",
-                "register": "Create your account"
+                "register": "Create your account",
+                "registered": "Check your inbox",
+                "reset-password": "Choose a new password",
+                "verify-email": "Verify your email"
+            },
+            "validation": {
+                "passwords-not-match": "The passwords do not match."
+            },
+            "verify-email": {
+                "invalid-hint": "Sign in with your email and password to get a new link.",
+                "progress": "Verifying your email address…",
+                "success": "Your email address is verified. Signing you in…"
             }
         },
         "modal": {
@@ -309,6 +481,19 @@
                 "cancel": "Cancel",
                 "submit": "Save"
             },
+            "search": {
+                "fields": {
+                    "owner-id": "Owner"
+                }
+            },
+            "table": {
+                "columns": {
+                    "owner-name": "Owner"
+                },
+                "tooltips": {
+                    "owner-name": "The user it belongs to"
+                }
+            },
             "toast": {
                 "restored-renamed": "Restored with a new name, since another item already has the old one: {{names}}"
             }
@@ -322,6 +507,30 @@
             "page-size": "Page size",
             "previous-page": "Go to previous page",
             "results-range": "Showing {{ start }}-{{ end }} of {{ total }} results"
+        },
+        "password-change": {
+            "description": "Update your password to keep your account safe.",
+            "no-password": "Your account has no password, since you sign in with another provider. To set one, sign out and use \"Forgot your password?\" on the sign-in page.",
+            "password": {
+                "current-password": {
+                    "label": "Current password",
+                    "placeholder": "Type your current password"
+                },
+                "password": {
+                    "label": "New password",
+                    "placeholder": "Type the new password"
+                },
+                "password2": {
+                    "label": "Confirm password",
+                    "mismatch": "The passwords do not match.",
+                    "placeholder": "Type the new password again"
+                }
+            },
+            "save": "Change password",
+            "title": "Change password",
+            "toast": {
+                "success": "Password changed"
+            }
         },
         "pdf-viewer": {
             "search": {
@@ -455,6 +664,111 @@
         "tree": {
             "collapse": "Collapse",
             "expand": "Expand"
+        },
+        "users": {
+            "actions": {
+                "change-status": {
+                    "label": "Change status",
+                    "tooltip": "Activate or deactivate the selected user"
+                },
+                "create": {
+                    "label": "Invite user",
+                    "tooltip": "Invite someone to create their account"
+                },
+                "edit": {
+                    "label": "Edit",
+                    "tooltip": "Edit the selected user"
+                },
+                "resend-invitation": {
+                    "label": "Resend invitation",
+                    "tooltip": "Send the invitation email again"
+                }
+            },
+            "change-status": {
+                "buttons": {
+                    "cancel": "Cancel",
+                    "submit": "Change"
+                },
+                "main": {
+                    "status": {
+                        "label": "New status",
+                        "placeholder": "Choose a status"
+                    }
+                },
+                "title": "Change status"
+            },
+            "form": {
+                "create": {
+                    "title": "Invite user"
+                },
+                "edit": {
+                    "title": "Edit user"
+                },
+                "main": {
+                    "email": {
+                        "label": "Email",
+                        "placeholder": "Type the email of the person"
+                    },
+                    "language": {
+                        "label": "Language of the invitation",
+                        "placeholder": "Default language"
+                    },
+                    "name": {
+                        "label": "Name",
+                        "placeholder": "Type the name"
+                    },
+                    "roles": {
+                        "label": "Roles"
+                    },
+                    "surname": {
+                        "label": "Surname",
+                        "placeholder": "Type the surname"
+                    }
+                }
+            },
+            "roles": {
+                "superadmin": "Superadmin"
+            },
+            "search": {
+                "fields": {
+                    "role": "Role",
+                    "status": "Status",
+                    "text": "Name or email"
+                }
+            },
+            "status": {
+                "active": "Active",
+                "inactive": "Inactive",
+                "invited": "Invited",
+                "unverified": "Unverified"
+            },
+            "table": {
+                "columns": {
+                    "created-at": "Created",
+                    "email": "Email",
+                    "last-login-at": "Last sign-in",
+                    "name": "Name",
+                    "roles": "Roles",
+                    "status": "Status"
+                },
+                "empty": "No user matches the search",
+                "no-name": "No name",
+                "tooltips": {
+                    "created-at": "When the account was created",
+                    "email": "The email the user signs in with",
+                    "last-login-at": "When the user last signed in",
+                    "name": "Name and surname of the user",
+                    "roles": "What the user may do",
+                    "status": "Whether the user can sign in"
+                }
+            },
+            "title": "Users",
+            "toast": {
+                "change-status-success": "Status changed",
+                "create-success": "Invitation sent",
+                "edit-success": "User saved",
+                "resend-invitation-success": "Invitation sent again"
+            }
         }
     }
 }

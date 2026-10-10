@@ -1,0 +1,26 @@
+{
+    "angular-components": {
+        "account-data": {
+            "description": "Your name as the rest of the team sees it.",
+            "profile": {
+                "email": {
+                    "hint": "Used to sign in",
+                    "label": "Email"
+                },
+                "name": {
+                    "label": "Name",
+                    "placeholder": "Type your name"
+                },
+                "surname": {
+                    "label": "Surname",
+                    "placeholder": "Type your surname"
+                }
+            },
+            "save": "Save changes",
+            "title": "Profile",
+            "toast": {
+                "success": "Profile saved"
+            }
+        }
+    }
+}

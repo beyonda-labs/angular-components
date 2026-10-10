@@ -9,9 +9,12 @@ export class LoginSessionService {
     private readonly router = inject(Router);
     private readonly sessionService = inject(SessionService);
 
-    open({ accessToken, refreshToken }: LoginResponse): void {
-        this.sessionService.setToken(accessToken);
-        this.sessionService.setRefreshToken(refreshToken);
+    enter(): void {
         this.router.navigate([this.sessionService.user()?.redirectPath || '/']);
+    }
+
+    open({ accessToken }: LoginResponse): void {
+        this.sessionService.setToken(accessToken);
+        this.enter();
     }
 }

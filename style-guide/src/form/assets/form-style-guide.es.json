@@ -7,7 +7,10 @@
             },
             "canceled": "El formulario se ha reiniciado",
             "changed": "Valor del formulario cambiado: ",
-            "example": "Formulario model-driven basado en configuración con validación, campos condicionales y layout responsive.",
+            "example": "Formulario model-driven basado en configuración con validación, campos condicionales, pistas bajo los campos, una nota junto a los botones y layout responsive.",
+            "footer": {
+                "note": "Enviar solo informa del valor debajo; no se guarda nada."
+            },
             "modal": {
                 "buttons": {
                     "cancel": "Cancelar",
@@ -135,6 +138,7 @@
             },
             "section-info": {
                 "info1": {
+                    "hint": "De solo lectura: la pista va bajo el valor",
                     "label": "Versión"
                 },
                 "info2": {
@@ -169,6 +173,7 @@
             "section-password": {
                 "label": "Campos de contraseña",
                 "password1": {
+                    "hint": "Combina letras, números y símbolos",
                     "label": "Contraseña (mín. 8)",
                     "placeholder": "Al menos 8 caracteres"
                 },
@@ -184,7 +189,11 @@
                     "label": "Contraseña sin toggle",
                     "placeholder": "Sin toggle de visibilidad"
                 },
-                "tooltip": "Campos de contraseña con validador de longitud, toggle, obligatorio y deshabilitado"
+                "password5": {
+                    "label": "Contraseña con política",
+                    "placeholder": "Todas las reglas activas"
+                },
+                "tooltip": "Campos de contraseña con validador de longitud, política, toggle, obligatorio y deshabilitado"
             },
             "section-radio": {
                 "label": "Campos de radio",
@@ -246,6 +255,7 @@
                     "tooltip": "Ejemplo con 6 columnas"
                 },
                 "text3": {
+                    "hint": "Solo letras, sin espacios ni tildes",
                     "label": "Solo letras",
                     "placeholder": "Solo letras (A-Z)"
                 },

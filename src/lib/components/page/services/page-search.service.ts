@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 
+import { withSearchText } from '../functions/page-search-text';
 import { PageSearch } from '../models/page-search.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class PageSearchService {
-    buildQueryParameters(search: PageSearch, useSearch: boolean): Record<string, string | number> {
+    buildQueryParameters(search: PageSearch, useSearch: boolean, textField?: string): Record<string, string | number> {
         const parameters: Record<string, string | number> = {};
 
         if (useSearch) {
-            parameters['search'] = this.toBase64(search);
+            parameters['search'] = this.toBase64(withSearchText(search, textField));
         }
 
         return parameters;

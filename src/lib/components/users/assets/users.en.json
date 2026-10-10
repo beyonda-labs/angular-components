@@ -1,0 +1,135 @@
+{
+    "angular-components": {
+        "http": {
+            "error": {
+                "users": {
+                    "existing-user": "There is already an account with the email {{email}}.",
+                    "invitation-not-sent": "The user {{email}} was created, but the invitation email could not be sent. Use \"Resend invitation\" to try again.",
+                    "last-superadmin": "This change would leave no active superadmin.",
+                    "not-found": "This user does not exist. Reload the page and try again.",
+                    "not-invited": "This account is no longer waiting for an invitation.",
+                    "own-account": "You cannot deactivate your own account nor change your own roles.",
+                    "superadmin-only": "Only a superadmin can grant or remove the superadmin role, or change a superadmin account.",
+                    "unknown-role": "The role \"{{role}}\" does not exist."
+                }
+            },
+            "title": {
+                "users": {
+                    "existing-user": "Account already exists",
+                    "invitation-not-sent": "Invitation not sent",
+                    "last-superadmin": "Last superadmin",
+                    "not-found": "User not found",
+                    "not-invited": "No pending invitation",
+                    "own-account": "Your own account",
+                    "superadmin-only": "Superadmins only",
+                    "unknown-role": "Unknown role"
+                }
+            }
+        },
+        "users": {
+            "actions": {
+                "change-status": {
+                    "label": "Change status",
+                    "tooltip": "Activate or deactivate the selected user"
+                },
+                "create": {
+                    "label": "Invite user",
+                    "tooltip": "Invite someone to create their account"
+                },
+                "edit": {
+                    "label": "Edit",
+                    "tooltip": "Edit the selected user"
+                },
+                "resend-invitation": {
+                    "label": "Resend invitation",
+                    "tooltip": "Send the invitation email again"
+                }
+            },
+            "change-status": {
+                "buttons": {
+                    "cancel": "Cancel",
+                    "submit": "Change"
+                },
+                "main": {
+                    "status": {
+                        "label": "New status",
+                        "placeholder": "Choose a status"
+                    }
+                },
+                "title": "Change status"
+            },
+            "form": {
+                "create": {
+                    "title": "Invite user"
+                },
+                "edit": {
+                    "title": "Edit user"
+                },
+                "main": {
+                    "email": {
+                        "label": "Email",
+                        "placeholder": "Type the email of the person"
+                    },
+                    "language": {
+                        "label": "Language of the invitation",
+                        "placeholder": "Default language"
+                    },
+                    "name": {
+                        "label": "Name",
+                        "placeholder": "Type the name"
+                    },
+                    "roles": {
+                        "label": "Roles"
+                    },
+                    "surname": {
+                        "label": "Surname",
+                        "placeholder": "Type the surname"
+                    }
+                }
+            },
+            "roles": {
+                "superadmin": "Superadmin"
+            },
+            "search": {
+                "fields": {
+                    "role": "Role",
+                    "status": "Status",
+                    "text": "Name or email"
+                }
+            },
+            "status": {
+                "active": "Active",
+                "inactive": "Inactive",
+                "invited": "Invited",
+                "unverified": "Unverified"
+            },
+            "table": {
+                "columns": {
+                    "created-at": "Created",
+                    "email": "Email",
+                    "last-login-at": "Last sign-in",
+                    "name": "Name",
+                    "roles": "Roles",
+                    "status": "Status"
+                },
+                "empty": "No user matches the search",
+                "no-name": "No name",
+                "tooltips": {
+                    "created-at": "When the account was created",
+                    "email": "The email the user signs in with",
+                    "last-login-at": "When the user last signed in",
+                    "name": "Name and surname of the user",
+                    "roles": "What the user may do",
+                    "status": "Whether the user can sign in"
+                }
+            },
+            "title": "Users",
+            "toast": {
+                "change-status-success": "Status changed",
+                "create-success": "Invitation sent",
+                "edit-success": "User saved",
+                "resend-invitation-success": "Invitation sent again"
+            }
+        }
+    }
+}

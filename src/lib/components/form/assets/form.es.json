@@ -33,6 +33,16 @@
             },
             "password-field": {
                 "hide": "Ocultar contraseña",
+                "policy": {
+                    "digit": "Un número",
+                    "length": "Mínimo {{min}} caracteres",
+                    "lowercase": "Una letra minúscula",
+                    "met": "cumplida",
+                    "symbol": "Un signo de puntuación o símbolo",
+                    "too-long": "Máximo {{max}} caracteres",
+                    "unmet": "pendiente",
+                    "uppercase": "Una letra mayúscula"
+                },
                 "show": "Mostrar contraseña"
             },
             "required": "Este campo es requerido",

@@ -5,10 +5,13 @@ import { HttpService } from '../../../services/http/http.service';
 import { PageBackendResponse } from '../models/page.model';
 import { PageRestoredRename, PageTrashItem } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
+import { PAGE_OWNER_FIELD, PAGE_OWNERS_PATH, PageOwner, PageOwnersResponse } from '../models/page-owner.model';
 import { PAGE_USAGES_IDS_SEPARATOR, PageUsages, PageUsagesResponse } from '../models/page-usages.model';
 import { PageUrlService } from './page-url.service';
 
 type QueryParameters = Record<string, string | number>;
+
+const ignoreError = (): void => undefined;
 
 @Injectable({
     providedIn: 'root'
@@ -67,6 +70,12 @@ export class PageHttpService {
         return this.httpService.delete<void>(this.url(relativeUrl, '/trash/all'), undefined, { successToast });
     }
 
+    findOwners(relativeUrl: string): Observable<PageOwner[]> {
+        return this.httpService
+            .get<PageOwnersResponse>(this.url(relativeUrl, PAGE_OWNERS_PATH), { handleError: ignoreError })
+            .pipe(map(({ owners }) => owners));
+    }
+
     findUsages(relativeUrl: string, ids: (string | number)[]): Observable<PageUsages[]> {
         return this.httpService
             .get<PageUsagesResponse>(this.url(relativeUrl, '/usages'), {
@@ -83,8 +92,11 @@ export class PageHttpService {
         return this.httpService.get<PageItem[]>(this.url(relativeUrl, `/categories/${categoryId}/path`));
     }
 
-    loadCategoryTree(relativeUrl: string): Observable<PageItem[]> {
-        return this.httpService.get<PageItem[]>(this.url(relativeUrl, '/categories/tree'));
+    loadCategoryTree(relativeUrl: string, ownerId?: string): Observable<PageItem[]> {
+        return this.httpService.get<PageItem[]>(
+            this.url(relativeUrl, '/categories/tree'),
+            ownerId === undefined ? undefined : { queryParams: { [PAGE_OWNER_FIELD]: ownerId } }
+        );
     }
 
     loadTrash(relativeUrl: string, queryParameters: QueryParameters): Observable<PageBackendResponse> {

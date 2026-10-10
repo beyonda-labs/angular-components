@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { AccountDataStyleGuideComponent } from './account-data/account-data-style-guide.component';
 import { AppLayoutStyleGuideComponent } from './app-layout/app-layout-style-guide.component';
 import { BadgeStyleGuideComponent } from './badge/badge-style-guide.component';
 import { BreadcrumbStyleGuideComponent } from './breadcrumb/breadcrumb-style-guide.component';
@@ -18,6 +19,7 @@ import { LoginStyleGuideComponent } from './login/login-style-guide.component';
 import { ModalStyleGuideComponent } from './modal/modal-style-guide.component';
 import { PageStyleGuideComponent } from './page/page-style-guide.component';
 import { PaginationStyleGuideComponent } from './pagination/pagination-style-guide.component';
+import { PasswordChangeStyleGuideComponent } from './password-change/password-change-style-guide.component';
 import { PdfViewerStyleGuideComponent } from './pdf-viewer/pdf-viewer-style-guide.component';
 import { PropertiesMenuStyleGuideComponent } from './properties-menu/properties-menu-style-guide.component';
 import { SearchStyleGuideComponent } from './search/search-style-guide.component';
@@ -26,12 +28,14 @@ import { TableStyleGuideComponent } from './table/table-style-guide.component';
 import { TabsStyleGuideComponent } from './tabs/tabs-style-guide.component';
 import { ToastStyleGuideComponent } from './toast/toast-style-guide.component';
 import { TreeStyleGuideComponent } from './tree/tree-style-guide.component';
+import { UsersStyleGuideComponent } from './users/users-style-guide.component';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         TranslateModule,
         StyleGuideSectionComponent,
+        AccountDataStyleGuideComponent,
         AppLayoutStyleGuideComponent,
         BadgeStyleGuideComponent,
         BreadcrumbStyleGuideComponent,
@@ -44,6 +48,7 @@ import { TreeStyleGuideComponent } from './tree/tree-style-guide.component';
         ListStyleGuideComponent,
         FormStyleGuideComponent,
         PaginationStyleGuideComponent,
+        PasswordChangeStyleGuideComponent,
         PdfViewerStyleGuideComponent,
         PropertiesMenuStyleGuideComponent,
         SearchStyleGuideComponent,
@@ -53,7 +58,8 @@ import { TreeStyleGuideComponent } from './tree/tree-style-guide.component';
         LoginStyleGuideComponent,
         PageStyleGuideComponent,
         TabsStyleGuideComponent,
-        TreeStyleGuideComponent
+        TreeStyleGuideComponent,
+        UsersStyleGuideComponent
     ],
     selector: 'bey-style-guide',
     standalone: true,

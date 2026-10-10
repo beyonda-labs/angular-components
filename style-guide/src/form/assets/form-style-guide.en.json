@@ -7,7 +7,10 @@
             },
             "canceled": "The form has been reset",
             "changed": "Form value changed: ",
-            "example": "Model-driven, configuration-based form with validation, conditional fields and responsive layout.",
+            "example": "Model-driven, configuration-based form with validation, conditional fields, hints under the fields, a note next to the buttons and responsive layout.",
+            "footer": {
+                "note": "Submitting only reports the value below; nothing is saved."
+            },
             "modal": {
                 "buttons": {
                     "cancel": "Cancel",
@@ -135,6 +138,7 @@
             },
             "section-info": {
                 "info1": {
+                    "hint": "Read-only, so the hint sits under the value",
                     "label": "Version"
                 },
                 "info2": {
@@ -169,6 +173,7 @@
             "section-password": {
                 "label": "Password Fields",
                 "password1": {
+                    "hint": "Mix letters, numbers and symbols",
                     "label": "Password (min. 8)",
                     "placeholder": "At least 8 characters"
                 },
@@ -184,7 +189,11 @@
                     "label": "Password Without Toggle",
                     "placeholder": "No visibility toggle"
                 },
-                "tooltip": "Password fields with a length validator, toggle, required and disabled states"
+                "password5": {
+                    "label": "Password With a Policy",
+                    "placeholder": "Every rule on"
+                },
+                "tooltip": "Password fields with a length validator, a policy, toggle, required and disabled states"
             },
             "section-radio": {
                 "label": "Radio Fields",
@@ -246,6 +255,7 @@
                     "tooltip": "Example with 6 columns"
                 },
                 "text3": {
+                    "hint": "Letters only, without spaces or accents",
                     "label": "Letters Only",
                     "placeholder": "Only letters (A-Z)"
                 },

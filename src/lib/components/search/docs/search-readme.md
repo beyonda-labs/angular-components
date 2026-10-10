@@ -31,22 +31,30 @@ const search = new BeySearchConfig({
 | `filters`         | no       | `[]`                   | The filters the box and the panel start from                |
 | `placeholder`     | no       | the library's default  | Placeholder of the quick search box                         |
 | `onFiltersChange` | no       |                        | Called with the complete filters whenever they change       |
+| `onPanelOpen`     | no       |                        | Called every time the filters panel opens                   |
 
 ## BeySearchField
 
-| Field     | Required | Meaning                                                                   |
-| --------- | -------- | ------------------------------------------------------------------------- |
-| `key`     | yes      | Field name, reported as the filter's `field`                               |
-| `type`    | yes      | `Text`, `Number`, `Boolean`, `Select` or `Tags`; decides the operators      |
-| `options` | no       | Required by `Select`: the values offered                                    |
+| Field       | Required | Meaning                                                                         |
+| ----------- | -------- | ------------------------------------------------------------------------------- |
+| `key`       | yes      | Field name, reported as the filter's `field`                                     |
+| `type`      | yes      | `Text`, `Number`, `Boolean`, `Select` or `Tags`; decides the operators            |
+| `options`   | no       | Required by `Select`: the values offered                                          |
+| `label`     | no       | A full translation key for the field, used as it is in place of the prefix one    |
+| `operators` | no       | Narrows the operators of the type to these                                        |
 
 The label of a field uses its key as a kebab-case segment: `createdBy` reads `<prefix>.fields.created-by`,
-while the filter keeps reporting `createdBy` as its `field`.
+while the filter keeps reporting `createdBy` as its `field`. A `label` replaces that key, for a field that the
+screen does not define itself, such as the owner filter `bey-page` adds.
 
 Each type brings its own operators: text compares and matches, number adds ranges and `Between`, boolean and
-select only equality, and tags match a whole element of an array rather than a substring.
-`beySearchFieldOperators(field)` returns them in the order the panel offers them; a new row starts with the
-first.
+select only equality, and tags match a whole element of an array rather than a substring. `operators` keeps only
+the ones it lists, still in the order of the type: `[BeySearchFilterOperator.Equals]` on a select leaves out
+`NotEquals`. `beySearchFieldOperators(field)` returns them in the order the panel offers them; a new row starts with
+the first.
+
+`onPanelOpen` lets a screen fetch what only the panel needs, such as the options of a field, the first time the user
+looks for it. A new config with the new fields keeps the panel open, its rows starting again from its `filters`.
 
 ## Behaviour
 

@@ -1,5 +1,100 @@
 # Change Log
 
+## [1.4.0] - 2026-10-10
+
+### Added
+
+-   HTTP service: `postBlob(url, body, options?)` sends a `POST` and reads the response as a `Blob`, such as a PDF the
+    server draws from the body; a failed one shows its reason like `getBlob`.
+-   HTTP service: `withCredentials` on `BeyHttpRequestOptions` reaches `HttpClient` from every method, for an api on
+    another origin.
+-   Session service: `restore()` asks `accessControlUrl/refresh` for an access token through the refresh cookie,
+    one request at a time and none again once it failed; the guards use it when there is no token.
+-   Session service: `logout()` signs the user out at `accessControlUrl/logout`, then clears the session and goes to
+    `loginRoute`, also when the request fails.
+-   Login module: `login.account-locked` (with its `minutes`) and `login.invalid-origin` errors and titles, and
+    `login.invalid-credentials-attempts-left` and `account.wrong-password-attempts-left`, which warn with the
+    `attemptsLeft` and the `minutes` before the account locks.
+-   Login module: a "Forgot your password?" view behind `isPasswordResetEnabled` on `BeyLoginConfig`, which sends
+    `accessControlUrl/password/forgot` and confirms in neutral words; `?view=forgot-password` on the login route opens
+    it.
+-   Login module: `BeyLoginResetPasswordComponent`, `BeyLoginVerifyEmailComponent` and
+    `BeyLoginAcceptInvitationComponent`, the pages of the emailed links in the look of the login; each reads `?token=`
+    and opens the session the server answers.
+-   Login module: a sign-in refused with `login.email-not-verified` offers to resend the verification email, and a
+    registration answered with `{ verificationRequired: true }` asks to check the inbox; errors and titles for
+    `login.account-inactive`, `login.email-not-verified`, `login.verification-not-sent` and `account.token-invalid`.
+-   Login module: `BeyLoginConfigParameters` is exported.
+-   Account data module: `bey-account-data`, the profile block of an app's account page: the email read-only and the
+    name and surname saved with `PUT /account`, laid out by `fields` (`BeyAccountDataField`, `BeyAccountDataFieldKey`).
+-   Password change module: `bey-password-change`, the password block of an app's account page, sent with
+    `PUT /account/password`, which opens the session it answers, or how to set a password for an account without one.
+-   Account service: the profile behind both blocks, asked for once while a request is on its way and again by every
+    new block; `BeyAccountProfile` is exported.
+-   Left menu module: `route` on `BeyLeftMenuUserInfo` turns the user at the foot of the menu into a link to it, named
+    `angular-components.left-menu.open-account` and marked while it is the page; `bey-app-layout` passes it through.
+-   Users module: `bey-users`, the users page on `bey-page` over the users module of express-components: invite, edit,
+    change the status and resend the invitation, with roles labelled from `rolePrefix`.
+-   Password change and users modules: the texts of the `account.wrong-password`, `account.no-password` and `users.*`
+    errors, `users.invitation-not-sent` among them.
+-   Preferences service: `BeyPreferencesService` and `provideBeyPreferences` start the app in the remembered, the
+    browser or the default language, apply the language and theme saved on the account when a session opens, and
+    save what a signed-in user picks.
+-   App service: `preferences` on `BeyAppConfig`.
+-   Session service: `language` and `theme` on `BeySessionUser`, read from the token.
+-   Form module: `BeyFormCheckboxGroupField`, one checkbox per option, valued with the checked ones.
+-   Form module: `autocomplete` on the base field parameters, the autofill hint of a text or password field.
+-   Form module: `hint` on the base field parameters, a text under any field, info and list included, that describes it
+    through `aria-describedby`; an error message replaces it while it shows.
+-   Form module: `footer` on `BeyFormConfig` and `BeyModalFormConfig`, a `BeyFormFooter` with a divider over the buttons
+    (`isDivided`) and a `note` at the start of their row that describes the submit button.
+-   Testing: `beyAccessibleDescription(element)`, the text of what an element is described by, such as a field's hint.
+-   Page module: `textField` on `BeyPageTableSearchConfig` sends that field as the `text` of the search.
+-   Page module: `beyPageOwnerColumn(overrides?)` and `beyPageOwnerCell(row)` show the `ownerName` of a
+    `BeyPageOwnedItem` under "Owner", sortable by `ownerId`; `BeyPageOwner` is exported.
+-   Page module: `isOwnerFilterEnabled` on `BeyPageTableSearchConfig` adds an "Owner" filter, `ownerId` `equals`, from
+    `GET {baseUrl}/owners` asked the first time the filters panel opens, shown only with two owners or more.
+-   Search module: `label` and `operators` on `BeySearchField`, a full key for its label and the operators of its type
+    it keeps, and `onPanelOpen` on `BeySearchConfig`, run every time the filters panel opens.
+-   Table module: `label` on `BeyTableColumn`, a full key for its header and its entry in the columns menu.
+-   Password policy service: `BeyPasswordPolicyService` reads `accessControlUrl/password-policy` the first time its
+    `policy` signal is read, once for the app; until it answers, or if it fails, it holds the `BeyPasswordPolicy` defaults.
+-   Form module: `policy` on `BeyFormPasswordField`, a `BeyPasswordPolicy` or a signal of one, lists its rules under the
+    field in place of the hint, marks each one met as the user types and validates the password against it.
+-   Login and password change modules: the new password of the reset-password and accept-invitation pages, of the
+    registration and of `bey-password-change` follows the server's policy; texts of the `password.*` errors and titles.
+
+### Changed
+
+-   Session service (breaking, released in a minor on purpose): no token nor user is written to storage any more;
+    the access token lives in memory and the refresh token in an httpOnly cookie the server owns.
+-   Session service (breaking): `BeySessionConfig` keeps only `loginRoute`; `tokenKey`, `refreshTokenKey`, `userKey`,
+    `getRefreshToken()` and `setRefreshToken()` are gone, and the old `bey_*` keys are removed from storage.
+-   Session service (breaking): an app logs out with `logout()`; `clear()` forgets the session in the page only.
+-   Session service: the interceptor refreshes through the cookie on a `401`, and never on one from the sign-in, the
+    registration, the refresh or the logout.
+-   Login module (breaking): `BeyLoginResponse` is `{ accessToken }`; sign-in and registration are sent with the
+    credentials, and the OAuth callback restores the session through the cookie instead of reading tokens in the URL.
+-   Login module: each view focuses its first field, and the sign-in form carries the autofill hints `email` and
+    `current-password`.
+-   App service: `provideBeyApp` starts the app in its language; an app no longer sets it in its `AppComponent`.
+-   Floating preferences module: lists the `languages` of the preferences, each named in itself, and saves a signed-in
+    user's choice; it needs `provideBeyApp`, or `provideBeyTesting` in specs.
+-   Password change module: the new password lists the rules of the password policy instead of
+    `<prefix>.password.password.hint`, which is no longer read.
+-   Page module: a column that brings its own `tooltip` keeps it; only the others read `<prefix>.table.tooltips.<key>`.
+-   Page module: on rows with an `ownerId`, `move` shows only for a selection of one owner and its picker asks
+    `/categories/tree?ownerId=` for that owner's folders; a drag drops only onto a folder of the same owner.
+
+### Fixed
+
+-   Page module: the filters panel opens above the sticky header of the table instead of under it, since the search
+    sits in the dropdown layer.
+-   Pdf viewer module: pdf.js starts under a Content Security Policy sent as a header; the viewer checks the browser
+    with `op-chaining-support.js` instead of an inline script the policy refused, which left it waiting forever.
+-   App layout module: a navigation that ends while the layout is being created no longer reads its config before
+    the input arrives (NG0950); the start of the layout activates the route instead.
+
 ## [1.3.0] - 2026-10-09
 
 ### Added

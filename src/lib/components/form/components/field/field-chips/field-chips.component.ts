@@ -17,6 +17,7 @@ import { trackControl } from '../functions/control-state';
 })
 export class FormChipsFieldComponent {
     readonly control = input.required<FormControl<string[] | null>>();
+    readonly describedBy = input<string | null>(null);
     readonly field = input.required<FormChipsField>();
     readonly isRequired = input(false);
     readonly prefix = input.required<string>();

@@ -5,6 +5,7 @@
                 class="bey-form-checkbox-switch-input"
                 role="switch"
                 type="checkbox"
+                [attr.aria-describedby]="describedBy()"
                 [attr.aria-invalid]="isInvalid() || null"
                 [attr.aria-label]="field().isLabelVisible ? null : (label() | translate)"
                 [attr.aria-required]="isRequired() || null"
@@ -17,6 +18,7 @@
         <input
             class="form-check-input bey-form-field-check-input"
             type="checkbox"
+            [attr.aria-describedby]="describedBy()"
             [attr.aria-invalid]="isInvalid() || null"
             [attr.aria-label]="field().isLabelVisible ? null : (label() | translate)"
             [attr.aria-required]="isRequired() || null"

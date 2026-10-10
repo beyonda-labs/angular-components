@@ -8,10 +8,12 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { toKeySegment } from '../../../../utilities/key-segment';
 import { FormFieldState } from '../../form.component';
 import { fieldErrorOf } from '../../functions/field-error';
+import { FormPasswordField } from '../../models/fields/form-password-field.model';
 import { FormField, FormFieldType } from '../../models/form-field.model';
 import { FormFieldError } from '../../models/form-field-validator.model';
 import { FormAutocompleteFieldComponent } from './field-autocomplete/field-autocomplete.component';
 import { FormCheckboxFieldComponent } from './field-checkbox/field-checkbox.component';
+import { FormCheckboxGroupFieldComponent } from './field-checkbox-group/field-checkbox-group.component';
 import { FormChipsFieldComponent } from './field-chips/field-chips.component';
 import { FormDateFieldComponent } from './field-date/field-date.component';
 import { FormFileFieldComponent } from './field-file/field-file.component';
@@ -25,12 +27,15 @@ import { FormTextFieldComponent } from './field-text/field-text.component';
 import { FormTextVariableFieldComponent } from './field-text-variable/field-text-variable.component';
 import { FormTextareaFieldComponent } from './field-textarea/field-textarea.component';
 
+let messageCount = 0;
+
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         FontAwesomeModule,
         FormAutocompleteFieldComponent,
         FormCheckboxFieldComponent,
+        FormCheckboxGroupFieldComponent,
         FormChipsFieldComponent,
         FormDateFieldComponent,
         FormFileFieldComponent,
@@ -61,14 +66,30 @@ export class FormFieldComponent {
     readonly fieldType = FormFieldType;
     readonly formControl = computed(() => this.control() as FormControl | null);
     readonly hasLabel = computed(() => this.field().isLabelVisible && this.field().type !== FormFieldType.Checkbox);
+    readonly hint = computed(() => (hasPasswordPolicy(this.field()) ? '' : (this.field().hint ?? '')));
     readonly infoIcon = faInfoCircle;
     readonly label = computed(() => this.field().label ?? `${this.fieldPrefix()}.label`);
+    readonly messageId = nextMessageId();
     readonly tooltip = computed(() => `${this.fieldPrefix()}.tooltip`);
     readonly type = computed(() => this.field().type);
+
+    describedBy(): string | null {
+        return this.error() || this.hint() ? this.messageId : null;
+    }
 
     error(): FormFieldError | null {
         const control = this.control();
 
         return control?.touched ? fieldErrorOf(control.errors) : null;
     }
+}
+
+function hasPasswordPolicy(field: FormField): boolean {
+    return field instanceof FormPasswordField && field.policy !== undefined;
+}
+
+function nextMessageId(): string {
+    messageCount += 1;
+
+    return `bey-form-field-message-${messageCount}`;
 }

@@ -2,9 +2,46 @@ import { FooterConfig } from '../../footer/models/footer.model';
 
 export { FooterConfig };
 
+export const LINK_TOKEN_PARAMETER = 'token';
+export const LOGIN_VIEW_PARAMETER = 'view';
+
+export type AccountLinkFlow = 'accept-invitation' | 'reset-password' | 'verify-email';
+
+export type EmailVerificationStatus = 'failed' | 'invalid' | 'verified' | 'verifying';
+
+export type InvitationStatus = 'failed' | 'invalid' | 'loading' | 'ready';
+
+export type LinkErrorReason = 'failed' | 'invalid';
+
 export type LoginProvider = 'google' | 'microsoft' | 'facebook';
 
+export type LoginView = 'forgot-password' | 'login' | 'register' | 'registered';
+
 export type RegisterFieldType = 'date' | 'email' | 'number' | 'password' | 'tel' | 'text';
+
+export type RegisterResponse = LoginResponse | VerificationRequiredResponse;
+
+export interface AcceptInvitationFormValue {
+    'accept-invitation': NewPasswordFormValue & { name: string | null; surname: string | null };
+}
+
+export interface AcceptInvitationRequest extends NewPassword {
+    token: string;
+
+    name?: string;
+    surname?: string;
+}
+
+export interface ForgotPasswordFormValue {
+    'forgot-password': { email: string | null };
+}
+
+export interface Invitation {
+    email: string;
+
+    name?: string;
+    surname?: string;
+}
 
 export interface LoginCredentials {
     email: string;
@@ -18,7 +55,16 @@ export interface LoginProviderConfig {
 
 export interface LoginResponse {
     accessToken: string;
-    refreshToken: string;
+}
+
+export interface NewPassword {
+    password: string;
+    password2: string;
+}
+
+export interface NewPasswordFormValue {
+    password: string | null;
+    password2: string | null;
 }
 
 export interface RegisterField {
@@ -29,9 +75,22 @@ export interface RegisterField {
     step?: number;
 }
 
+export interface ResetPasswordFormValue {
+    'reset-password': NewPasswordFormValue;
+}
+
+export interface ResetPasswordRequest extends NewPassword {
+    token: string;
+}
+
+export interface VerificationRequiredResponse {
+    verificationRequired: true;
+}
+
 export class LoginConfig {
     footerConfig: FooterConfig;
     iconSrc: string;
+    isPasswordResetEnabled: boolean;
     orgName: string;
     prefix: string;
     productDescription: string;
@@ -42,20 +101,14 @@ export class LoginConfig {
 
     constructor({
         iconSrc,
+        isPasswordResetEnabled = false,
         orgName = 'Beyonda Labs',
+        prefix = 'angular-components.login',
         privacyUrl,
         productDescription,
         productName,
-        termsUrl,
-        prefix = 'angular-components.login'
+        termsUrl
     }: LoginConfigParameters) {
-        this.iconSrc = iconSrc;
-        this.orgName = orgName;
-        this.privacyUrl = privacyUrl;
-        this.productDescription = productDescription;
-        this.productName = productName;
-        this.termsUrl = termsUrl;
-        this.prefix = prefix;
         this.footerConfig = new FooterConfig({
             iconSrc,
             orgName,
@@ -63,6 +116,14 @@ export class LoginConfig {
             productName,
             termsUrl
         });
+        this.iconSrc = iconSrc;
+        this.isPasswordResetEnabled = isPasswordResetEnabled;
+        this.orgName = orgName;
+        this.prefix = prefix;
+        this.privacyUrl = privacyUrl;
+        this.productDescription = productDescription;
+        this.productName = productName;
+        this.termsUrl = termsUrl;
     }
 }
 
@@ -71,6 +132,7 @@ export interface LoginConfigParameters {
     productDescription: string;
     productName: string;
 
+    isPasswordResetEnabled?: boolean;
     orgName?: string;
     prefix?: string;
     privacyUrl?: string;

@@ -1,22 +1,33 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { buttonByName, renderComponent, settle } from '@testing/dom';
+import { buttonByName, controlByName, queryButton, renderComponent, settle } from '@testing/dom';
 import { mock, MockProxy } from 'jest-mock-extended';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
-import { LoginConfig, LoginProviderConfig } from '../../models/login.model';
+import { LoginConfig, LoginConfigParameters, LoginProviderConfig } from '../../models/login.model';
 import { LoginHttpService } from '../../services/login-http.service';
 import { LoginSessionService } from '../../services/login-session.service';
 import { LoginFormComponent } from './login-form.component';
+
+const FORGOT_PASSWORD = 'angular-components.login.login.forgot-password';
+const RESEND = 'angular-components.login.login.unverified.resend';
+
+function buildRefusal(messageKey: string, messageParameters: Record<string, unknown> = {}): HttpErrorResponse {
+    return new HttpErrorResponse({ error: { errorCode: 'forbidden', messageKey, messageParameters }, status: 403 });
+}
 
 describe('LoginFormComponent', () => {
     let fixture: ComponentFixture<LoginFormComponent>;
     let loginHttpService: MockProxy<LoginHttpService>;
     let loginSessionService: MockProxy<LoginSessionService>;
 
-    async function render(providers: LoginProviderConfig[] = []): Promise<void> {
+    async function render(
+        providers: LoginProviderConfig[] = [],
+        overrides: Partial<LoginConfigParameters> = {}
+    ): Promise<void> {
         fixture = await renderComponent(LoginFormComponent, {
-            config: new LoginConfig({ iconSrc: '', productDescription: 'Pitch', productName: 'Product' }),
+            config: new LoginConfig({ iconSrc: '', productDescription: 'Pitch', productName: 'Product', ...overrides }),
             providers
         });
     }
@@ -29,8 +40,24 @@ describe('LoginFormComponent', () => {
         await settle(fixture);
     }
 
+    async function signIn(email: string): Promise<void> {
+        await type('email', email);
+        await type('password', 'secret');
+        submitButton().click();
+        await settle(fixture);
+    }
+
+    function status(): string {
+        return fixture.nativeElement.querySelector('[role="status"]')?.textContent?.trim() ?? '';
+    }
+
     function submitButton(): HTMLButtonElement {
         return buttonByName(fixture, 'angular-components.login.login.button.login');
+    }
+
+    async function press(label: string): Promise<void> {
+        buttonByName(fixture, label).click();
+        await settle(fixture);
     }
 
     beforeEach(async () => {
@@ -59,7 +86,7 @@ describe('LoginFormComponent', () => {
     });
 
     it('signs in with the typed credentials and opens the session', async () => {
-        const response = { accessToken: 'access', refreshToken: 'refresh' };
+        const response = { accessToken: 'access' };
         loginHttpService.login.mockReturnValue(of(response));
         await render();
 
@@ -75,5 +102,56 @@ describe('LoginFormComponent', () => {
         await render([{ id: 'google', authUrl: 'https://google' }]);
 
         expect(fixture.nativeElement.textContent).toContain('angular-components.login.login.signin-with');
+    });
+
+    it('lets the browser fill in the saved credentials', async () => {
+        await render();
+
+        expect(controlByName(fixture, 'angular-components.login.login.email.label').getAttribute('autocomplete')).toBe(
+            'email'
+        );
+        expect(
+            controlByName(fixture, 'angular-components.login.login.password.label').getAttribute('autocomplete')
+        ).toBe('current-password');
+    });
+
+    it('offers the forgotten password link only when the config enables it, and reports its click', async () => {
+        const forgotPasswordClick = jest.fn();
+        await render();
+        expect(queryButton(fixture, FORGOT_PASSWORD)).toBeNull();
+
+        await render([], { isPasswordResetEnabled: true });
+        fixture.componentInstance.forgotPasswordClick.subscribe(forgotPasswordClick);
+        buttonByName(fixture, FORGOT_PASSWORD).click();
+
+        expect(forgotPasswordClick).toHaveBeenCalled();
+    });
+
+    it('offers to resend the verification email when the server refuses an unverified one', async () => {
+        loginHttpService.login.mockReturnValue(
+            throwError(() => buildRefusal('login.email-not-verified', { email: 'ada@example.com' }))
+        );
+        loginHttpService.resendVerification.mockReturnValue(of(undefined));
+        await render();
+
+        await signIn('ada@example.com');
+
+        expect(fixture.nativeElement.textContent).toContain('angular-components.login.login.unverified.message');
+        expect(status()).toBe('');
+
+        await press(RESEND);
+
+        expect(loginHttpService.resendVerification).toHaveBeenCalledWith('ada@example.com');
+        expect(status()).toBe('angular-components.login.login.unverified.sent');
+        expect(loginSessionService.open).not.toHaveBeenCalled();
+    });
+
+    it('offers no resend for any other refusal', async () => {
+        loginHttpService.login.mockReturnValue(throwError(() => buildRefusal('login.account-inactive')));
+        await render();
+
+        await signIn('ada@example.com');
+
+        expect(queryButton(fixture, RESEND)).toBeNull();
     });
 });

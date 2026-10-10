@@ -14,6 +14,7 @@ import { FormNumberField } from '../../../models/fields/form-number-field.model'
 })
 export class FormNumberFieldComponent {
     readonly control = input.required<FormControl<number | null>>();
+    readonly describedBy = input<string | null>(null);
     readonly field = input.required<FormNumberField>();
     readonly isRequired = input(false);
     readonly prefix = input.required<string>();

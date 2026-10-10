@@ -1,5 +1,14 @@
 {
     "angular-components-style-guide": {
+        "account-data": {
+            "example": "The profile of the signed-in user, read from the demo backend: the email to read, with how it is used under it, and the name and surname to save. The custom fields show the name, required and with a hint of its own, and the email at half width without its hint, without the surname.",
+            "examples": {
+                "custom": "Custom fields",
+                "default": "Default fields"
+            },
+            "name-hint": "Shown on the documents you sign"
+        },
+        "account-data-section": "Account data",
         "app-layout": {
             "actions": {
                 "dashboard": {
@@ -122,7 +131,7 @@
         },
         "file-preview-section": "File Preview",
         "floating-preferences": {
-            "example": "Self-contained language and theme selectors. Reads and writes state directly via TranslateService and BeyThemeService — no callbacks required.",
+            "example": "Self-contained language and theme selectors, which change both through BeyPreferencesService: the browser remembers them, and what a signed-in user picks is saved to their account — no callbacks required.",
             "examples": {
                 "no-pill": "Without the pill (usePill = false), for embedding in another container",
                 "pill": "Default (floating pill)"
@@ -151,7 +160,10 @@
             },
             "canceled": "The form has been reset",
             "changed": "Form value changed: ",
-            "example": "Model-driven, configuration-based form with validation, conditional fields and responsive layout.",
+            "example": "Model-driven, configuration-based form with validation, conditional fields, hints under the fields, a note next to the buttons and responsive layout.",
+            "footer": {
+                "note": "Submitting only reports the value below; nothing is saved."
+            },
             "modal": {
                 "buttons": {
                     "cancel": "Cancel",
@@ -279,6 +291,7 @@
             },
             "section-info": {
                 "info1": {
+                    "hint": "Read-only, so the hint sits under the value",
                     "label": "Version"
                 },
                 "info2": {
@@ -313,6 +326,7 @@
             "section-password": {
                 "label": "Password Fields",
                 "password1": {
+                    "hint": "Mix letters, numbers and symbols",
                     "label": "Password (min. 8)",
                     "placeholder": "At least 8 characters"
                 },
@@ -328,7 +342,11 @@
                     "label": "Password Without Toggle",
                     "placeholder": "No visibility toggle"
                 },
-                "tooltip": "Password fields with a length validator, toggle, required and disabled states"
+                "password5": {
+                    "label": "Password With a Policy",
+                    "placeholder": "Every rule on"
+                },
+                "tooltip": "Password fields with a length validator, a policy, toggle, required and disabled states"
             },
             "section-radio": {
                 "label": "Radio Fields",
@@ -390,6 +408,7 @@
                     "tooltip": "Example with 6 columns"
                 },
                 "text3": {
+                    "hint": "Letters only, without spaces or accents",
                     "label": "Letters Only",
                     "placeholder": "Only letters (A-Z)"
                 },
@@ -525,7 +544,8 @@
                 "menu": "Menu",
                 "others": "Others"
             },
-            "title": "Beyonda Labs"
+            "title": "Beyonda Labs",
+            "user-hint": "The user at the foot of both menus links to a route, here the page the demo is on, and is marked while it is the current page."
         },
         "left-menu-section": "Left Menus",
         "list": {
@@ -564,7 +584,7 @@
                 "product-description": "Generate, sign and share PDFs in seconds. Templates, branding and e-signature — all from your browser.",
                 "product-name": "PDF Generator"
             },
-            "example": "Full-page authentication component with light/dark theme support, optional OAuth providers (fetched from backend), and optional registration flow.",
+            "example": "Full-page authentication component with light/dark theme support, optional OAuth providers (fetched from backend), and optional registration flow, whose password lists the rules of the password policy the backend answers.",
             "examples": {
                 "login": "Login"
             }
@@ -636,7 +656,7 @@
                     "tooltip": "Edit the selected product"
                 }
             },
-            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form. The Available tab is a view: the same list with a filter of its own, searchable too. The headers sort the list and the columns menu hides the category or the price.",
+            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form. The Available tab is a view: the same list with a filter of its own, searchable too. The headers sort the list and the columns menu hides the category or the price. The Owner column names who each product belongs to, and the filters panel offers to filter by owner once the products have two owners or more.",
             "folders": {
                 "actions": {
                     "move": {
@@ -647,7 +667,7 @@
                 "categories": {
                     "root": "All products"
                 },
-                "example": "With categories the page browses folders, and the last node of the breadcrumb counts what the folder holds, folders and products across every page. Leaving for a route under the page and coming back keeps the folder, the search, the page and the selection. Drag a product, or the selected rows, onto a folder to move them there; the Move to... action does the same from the keyboard. The headers sort the list on the backend.",
+                "example": "With categories the page browses folders, and the last node of the breadcrumb counts what the folder holds, folders and products across every page. Leaving for a route under the page and coming back keeps the folder, the search, the page and the selection. Drag a product, or the selected rows, onto a folder to move them there; the Move to... action does the same from the keyboard. Where rows have owners, both offer only the folders of the owner of the rows, and a selection of several owners cannot move. The headers sort the list on the backend.",
                 "heading": "Folders",
                 "move": {
                     "title": "Move to"
@@ -742,6 +762,10 @@
             }
         },
         "pagination-section": "Pagination",
+        "password-change": {
+            "example": "The password of the signed-in user, read from the demo backend: the current one, the new one with the rules of the password policy the backend answers under it, and its confirmation; or how to set one for an account without it."
+        },
+        "password-change-section": "Password change",
         "pdf-viewer": {
             "compact-example": "The same viewer with the compact toolbar of the library: zoom within the configured limits, the current page and a slot on the left for the consumer's status.",
             "example": "PDF preview built on ngx-extended-pdf-viewer with its native toolbar hidden and a fully custom toolbar driven through the viewer's imperative API and events.",
@@ -922,6 +946,14 @@
             },
             "selected": "Node selected:"
         },
-        "trees": "Trees"
+        "trees": "Trees",
+        "users": {
+            "example": "The users page on the demo backend: search by name or email, filter by status and role, invite a user, edit their roles, change their status and send their invitation again, as far as the backend allows each row.",
+            "roles": {
+                "admin": "Administrator",
+                "editor": "Editor"
+            }
+        },
+        "users-section": "Users"
     }
 }

@@ -1,5 +1,6 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { renderComponent, settle } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
@@ -14,7 +15,7 @@ describe('StyleGuideComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [StyleGuideComponent],
-            providers: [provideBeyTesting()]
+            providers: [provideRouter([]), provideBeyTesting()]
         }).compileComponents();
 
         httpTesting = TestBed.inject(HttpTestingController);
@@ -42,6 +43,18 @@ describe('StyleGuideComponent', () => {
             httpTesting
                 .expectOne(request => request.url === 'https://api.test/api/product-categories')
                 .flush({ globalActions: [], results: [] });
+            httpTesting.expectOne('https://api.test/api/style-guide/account').flush({
+                email: 'ada@example.test',
+                hasPassword: true,
+                id: 'u1',
+                roles: []
+            });
+            httpTesting.expectOne('https://api.test/api/style-guide/users/roles').flush({ roles: [] });
+            fixture.detectChanges();
+            httpTesting
+                .expectOne(request => request.url === 'https://api.test/api/style-guide/users')
+                .flush({ globalActions: [], results: [] });
+            httpTesting.expectOne('https://api.test/auth/password-policy').flush({ minLength: 8 });
 
             expect(fixture.nativeElement.querySelector('h1').textContent).toBe('Style guide');
         },

@@ -15,6 +15,7 @@ const PREFIX = 'angular-components-style-guide.login.demo';
 export class LoginStyleGuideComponent {
     readonly config = new BeyLoginConfig({
         iconSrc: 'assets/angular-components/icons/demo-icon.svg',
+        isPasswordResetEnabled: true,
         orgName: 'Beyonda Labs',
         privacyUrl: '/privacy',
         productDescription: `${PREFIX}.product-description`,

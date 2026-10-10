@@ -1,0 +1,12 @@
+{
+    "angular-components-style-guide": {
+        "account-data": {
+            "example": "The profile of the signed-in user, read from the demo backend: the email to read, with how it is used under it, and the name and surname to save. The custom fields show the name, required and with a hint of its own, and the email at half width without its hint, without the surname.",
+            "examples": {
+                "custom": "Custom fields",
+                "default": "Default fields"
+            },
+            "name-hint": "Shown on the documents you sign"
+        }
+    }
+}

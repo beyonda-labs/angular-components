@@ -33,6 +33,16 @@
             },
             "password-field": {
                 "hide": "Hide password",
+                "policy": {
+                    "digit": "One digit",
+                    "length": "At least {{min}} characters",
+                    "lowercase": "One lowercase letter",
+                    "met": "met",
+                    "symbol": "One punctuation mark or symbol",
+                    "too-long": "At most {{max}} characters",
+                    "unmet": "not met",
+                    "uppercase": "One uppercase letter"
+                },
                 "show": "Show password"
             },
             "required": "This field is required",

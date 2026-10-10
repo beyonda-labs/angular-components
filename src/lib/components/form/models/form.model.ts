@@ -43,6 +43,7 @@ export class FormConfig<TValue = unknown> {
     sections: FormSection[];
     steps: FormStep[];
 
+    footer?: FormFooter;
     initialValue?: TValue;
     onCancel?: () => void;
     onReady?: (handle: FormHandle<TValue>) => void;
@@ -57,6 +58,7 @@ export class FormConfig<TValue = unknown> {
         allowSubmitWithoutChanges = false,
         buttonLayout = 'end',
         buttons = [],
+        footer,
         initialValue,
         onCancel,
         onReady,
@@ -68,6 +70,7 @@ export class FormConfig<TValue = unknown> {
         this.allowSubmitWithoutChanges = allowSubmitWithoutChanges;
         this.buttonLayout = buttonLayout;
         this.buttons = buttons;
+        this.footer = footer;
         this.initialValue = initialValue;
         this.onCancel = onCancel;
         this.onReady = onReady;
@@ -77,6 +80,17 @@ export class FormConfig<TValue = unknown> {
         this.prefix = prefix;
         this.sections = sections;
         this.steps = steps;
+    }
+}
+
+export class FormFooter {
+    isDivided: boolean;
+
+    note?: string;
+
+    constructor({ isDivided = true, note }: FormFooterParameters = {}) {
+        this.isDivided = isDivided;
+        this.note = note;
     }
 }
 
@@ -146,6 +160,7 @@ export interface FormConfigParameters<TValue = unknown> {
     allowSubmitWithoutChanges?: boolean;
     buttonLayout?: FormButtonLayout;
     buttons?: FormButton[];
+    footer?: FormFooter;
     initialValue?: TValue;
     onCancel?: () => void;
     onReady?: (handle: FormHandle<TValue>) => void;
@@ -153,6 +168,11 @@ export interface FormConfigParameters<TValue = unknown> {
     onSubmit?: (value: TValue, handle: FormHandle<TValue>) => void;
     onValueChange?: (value: TValue, handle: FormHandle<TValue>) => void;
     steps?: FormStep[];
+}
+
+export interface FormFooterParameters {
+    isDivided?: boolean;
+    note?: string;
 }
 
 export interface FormRowParameters {

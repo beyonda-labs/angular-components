@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 
+import { PasswordPolicyService } from '../../../../services/password-policy/password-policy.service';
 import { FormComponent } from '../../../form/form.component';
 import { FormDateField } from '../../../form/models/fields/form-date-field.model';
 import { FormNumberField } from '../../../form/models/fields/form-number-field.model';
-import { FormPasswordField } from '../../../form/models/fields/form-password-field.model';
+import { FormPasswordField, FormPasswordPolicy } from '../../../form/models/fields/form-password-field.model';
 import { FormTextField } from '../../../form/models/fields/form-text-field.model';
 import {
     FormButton,
@@ -15,10 +16,11 @@ import {
 } from '../../../form/models/form.model';
 import { FormField, FormValue } from '../../../form/models/form-field.model';
 import { FormFieldEmailValidator } from '../../../form/models/form-field-validator.model';
-import { LoginConfig, RegisterField } from '../../models/login.model';
+import { LoginConfig, RegisterField, RegisterResponse } from '../../models/login.model';
 import { LoginHttpService } from '../../services/login-http.service';
 import { LoginSessionService } from '../../services/login-session.service';
 
+const PASSWORD_FIELD = 'password';
 const SECTION_PREFIX = 'register';
 
 @Component({
@@ -31,9 +33,12 @@ const SECTION_PREFIX = 'register';
 export class LoginRegisterFormComponent {
     private readonly loginHttpService = inject(LoginHttpService);
     private readonly loginSessionService = inject(LoginSessionService);
+    private readonly passwordPolicyService = inject(PasswordPolicyService);
 
     readonly config = input.required<LoginConfig>();
     readonly registerFields = input.required<RegisterField[]>();
+
+    readonly verificationRequired = output<void>();
 
     readonly formConfig = computed(() => this.buildForm(groupByStep(this.registerFields())));
 
@@ -55,7 +60,9 @@ export class LoginRegisterFormComponent {
                         isTitleVisible: false,
                         key: sectionKey(index),
                         prefix: SECTION_PREFIX,
-                        rows: fields.map(field => new FormRow({ fields: [buildField(field)] }))
+                        rows: fields.map(
+                            field => new FormRow({ fields: [buildField(field, this.passwordPolicyService.policy)] })
+                        )
                     })
             ),
             steps:
@@ -68,18 +75,32 @@ export class LoginRegisterFormComponent {
     private register(value: FormValue): void {
         const values = Object.assign({}, ...Object.values(value)) as Record<string, unknown>;
 
-        this.loginHttpService.register(values).subscribe(response => this.loginSessionService.open(response));
+        this.loginHttpService.register(values).subscribe(response => this.registered(response));
+    }
+
+    private registered(response: RegisterResponse): void {
+        if ('accessToken' in response) {
+            this.loginSessionService.open(response);
+
+            return;
+        }
+
+        this.verificationRequired.emit();
     }
 }
 
-function buildField(field: RegisterField): FormField {
+function buildField(field: RegisterField, policy: FormPasswordPolicy): FormField {
     const base = { key: field.name, isRequired: field.required };
 
     switch (field.type) {
         case 'email':
-            return new FormTextField({ ...base, validators: [new FormFieldEmailValidator()] });
+            return new FormTextField({ ...base, autocomplete: 'email', validators: [new FormFieldEmailValidator()] });
         case 'password':
-            return new FormPasswordField(base);
+            return new FormPasswordField({
+                ...base,
+                autocomplete: 'new-password',
+                policy: field.name === PASSWORD_FIELD ? policy : undefined
+            });
         case 'number':
             return new FormNumberField(base);
         case 'date':

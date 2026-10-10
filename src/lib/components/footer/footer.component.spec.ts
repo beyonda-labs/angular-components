@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import { queryAll, renderComponent, settle } from '@testing/dom';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { FooterComponent } from './footer.component';
 import { FooterConfig, FooterConfigParameters } from './models/footer.model';
@@ -23,8 +23,8 @@ describe('FooterComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [FooterComponent, TranslateModule.forRoot()],
-            providers: [provideRouter([])]
+            imports: [FooterComponent],
+            providers: [provideRouter([]), provideBeyTesting()]
         }).compileComponents();
     });
 

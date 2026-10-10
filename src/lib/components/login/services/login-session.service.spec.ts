@@ -22,18 +22,17 @@ describe('LoginSessionService', () => {
         navigate = jest.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
     });
 
-    it('stores both tokens and goes where the user is allowed', () => {
+    it('keeps the access token and goes where the user is allowed', () => {
         const accessToken = buildAccessToken(['/home']);
 
-        service.open({ accessToken, refreshToken: 'refresh' });
+        service.open({ accessToken });
 
         expect(session.getToken()).toBe(accessToken);
-        expect(session.getRefreshToken()).toBe('refresh');
         expect(navigate).toHaveBeenCalledWith(['/home']);
     });
 
     it('goes to the root when the user carries no redirect path', () => {
-        service.open({ accessToken: buildAccessToken([]), refreshToken: 'refresh' });
+        service.open({ accessToken: buildAccessToken([]) });
 
         expect(navigate).toHaveBeenCalledWith(['/']);
     });

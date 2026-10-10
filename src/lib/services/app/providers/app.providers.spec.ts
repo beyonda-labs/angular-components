@@ -8,6 +8,7 @@ import { ModalService } from '../../../components/modal/services/modal.service';
 import { ToastService } from '../../../components/toast/services/toast.service';
 import { ENVIRONMENT_CONFIG, EnvironmentConfig } from '../../environment/models/environment.model';
 import { HttpService } from '../../http/http.service';
+import { DEFAULT_PREFERENCES_CONFIG, PREFERENCES_CONFIG } from '../../preferences/models/preferences.model';
 import { DEFAULT_SESSION_CONFIG, SESSION_CONFIG } from '../../session/models/session.model';
 import { SessionService } from '../../session/session.service';
 import { AppConfig } from '../models/app.model';
@@ -36,20 +37,24 @@ describe('provideBeyApp', () => {
     });
 
     afterEach(() => {
+        httpTesting.match(request => request.url.endsWith('.json')).forEach(request => request.flush({}));
         httpTesting.verify();
     });
 
-    it('provides the environment, and the session with its defaults filled in', () => {
-        setup({ session: { loginRoute: '/sign-in' } });
+    it('provides the environment, and the session and the preferences with their defaults filled in', () => {
+        setup({ preferences: { languages: ['en'] }, session: { loginRoute: '/sign-in' } });
 
         expect(TestBed.inject(ENVIRONMENT_CONFIG)).toBe(environment);
         expect(TestBed.inject(SESSION_CONFIG)).toEqual({ ...DEFAULT_SESSION_CONFIG, loginRoute: '/sign-in' });
+        expect(TestBed.inject(PREFERENCES_CONFIG)).toEqual({ ...DEFAULT_PREFERENCES_CONFIG, languages: ['en'] });
     });
 
     it('sends every request with the session token, through the extra interceptors after it', () => {
         const seenAuthorization: (null | string)[] = [];
         const tagInterceptor: HttpInterceptorFn = (request, next) => {
-            seenAuthorization.push(request.headers.get('Authorization'));
+            if (request.url === '/api/items') {
+                seenAuthorization.push(request.headers.get('Authorization'));
+            }
 
             return next(request.clone({ setHeaders: { 'X-App': 'test-app' } }));
         };
@@ -76,23 +81,24 @@ describe('provideBeyApp', () => {
         expect(handleError).toHaveBeenCalledTimes(1);
     }));
 
-    it('loads the translations of a language from ./assets/i18n/ by default', () => {
+    it('starts in the language of the browser, loaded from ./assets/i18n/ by default', () => {
         setup();
         const translate = TestBed.inject(TranslateService);
 
-        translate.use('en');
         httpTesting.expectOne('./assets/i18n/en.json').flush({ greeting: 'Hello' });
 
+        expect(translate.currentLang).toBe('en');
         expect(translate.instant('greeting')).toBe('Hello');
     });
 
-    it('loads the translations from the path it is given', () => {
-        setup({ translationsPath: '/i18n/' });
+    it('starts in the default language when the browser speaks none of the app, loaded from the path it is given', () => {
+        setup({ preferences: { defaultLanguage: 'es', languages: ['es'] }, translationsPath: '/i18n/' });
         const translate = TestBed.inject(TranslateService);
 
-        translate.use('es');
         httpTesting.expectOne('/i18n/es.json').flush({ greeting: 'Hola' });
 
+        expect(translate.currentLang).toBe('es');
+        expect(translate.getDefaultLang()).toBe('es');
         expect(translate.instant('greeting')).toBe('Hola');
     });
 

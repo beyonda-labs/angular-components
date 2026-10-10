@@ -15,7 +15,7 @@ import { ModalService } from '../../components/modal/services/modal.service';
 import { ToastService } from '../../components/toast/services/toast.service';
 import { readBlobError } from './functions/blob-error';
 import { markAsShown } from './functions/shown-errors';
-import { CustomErrorResponse, HttpRequestOptions, UploadRequestOptions } from './models/http.model';
+import { CustomErrorResponse, HttpClientOptions, HttpRequestOptions, UploadRequestOptions } from './models/http.model';
 
 const TITLE_PREFIX = 'angular-components.http.title.';
 const ERROR_UNKNOWN_KEY = 'angular-components.http.error.unknown';
@@ -39,16 +39,8 @@ export class HttpService {
     }
 
     getBlob(url: string, options?: HttpRequestOptions): Observable<Blob> {
-        const { headers, params } = this.buildHttpOptions(options);
-
-        return this.request(
-            this.httpClient
-                .get(url, { headers, params, responseType: 'blob' })
-                .pipe(
-                    catchError((error: HttpErrorResponse) =>
-                        readBlobError(error).pipe(mergeMap(readable => throwError(() => readable)))
-                    )
-                ),
+        return this.requestBlob(
+            this.httpClient.get(url, { ...this.buildHttpOptions(options), responseType: 'blob' }),
             options
         );
     }
@@ -61,16 +53,21 @@ export class HttpService {
         return this.request(this.httpClient.post<T>(url, body, this.buildHttpOptions(options)), options);
     }
 
+    postBlob(url: string, body: unknown, options?: HttpRequestOptions): Observable<Blob> {
+        return this.requestBlob(
+            this.httpClient.post(url, body, { ...this.buildHttpOptions(options), responseType: 'blob' }),
+            options
+        );
+    }
+
     put<T>(url: string, body: unknown, options?: HttpRequestOptions): Observable<T> {
         return this.request(this.httpClient.put<T>(url, body, this.buildHttpOptions(options)), options);
     }
 
     upload<T>(url: string, body: ArrayBuffer | Blob, options?: UploadRequestOptions): Observable<T> {
-        const { headers, params } = this.buildHttpOptions(options);
         const events$ = this.httpClient.put<T>(url, body, {
-            headers,
+            ...this.buildHttpOptions(options),
             observe: 'events',
-            params,
             reportProgress: true
         });
 
@@ -88,8 +85,8 @@ export class HttpService {
         );
     }
 
-    private buildHttpOptions(options?: HttpRequestOptions): { headers?: HttpHeaders; params?: HttpParams } {
-        const result: { headers?: HttpHeaders; params?: HttpParams } = {};
+    private buildHttpOptions(options?: HttpRequestOptions): HttpClientOptions {
+        const result: HttpClientOptions = {};
 
         if (options?.headers) {
             result.headers = new HttpHeaders(options.headers);
@@ -109,6 +106,10 @@ export class HttpService {
             }
 
             result.params = parameters;
+        }
+
+        if (options?.withCredentials !== undefined) {
+            result.withCredentials = options.withCredentials;
         }
 
         return result;
@@ -138,6 +139,17 @@ export class HttpService {
                 })
             );
         });
+    }
+
+    private requestBlob(source$: Observable<Blob>, options?: HttpRequestOptions): Observable<Blob> {
+        return this.request(
+            source$.pipe(
+                catchError((error: HttpErrorResponse) =>
+                    readBlobError(error).pipe(mergeMap(readable => throwError(() => readable)))
+                )
+            ),
+            options
+        );
     }
 
     private resolveErrorMessage(error: HttpErrorResponse): {
