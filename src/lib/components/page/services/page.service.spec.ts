@@ -18,6 +18,7 @@ import { PageTableConfig, PageTableSearchConfig } from '../models/page-table.mod
 import { PageService } from './page.service';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
+import { PageOwnersService } from './page-owners.service';
 
 interface Team extends PageItem {
     title: string;
@@ -83,6 +84,7 @@ describe('PageService', () => {
 
         TestBed.configureTestingModule({
             providers: [
+                PageOwnersService,
                 PageService,
                 provideTranslateService(),
                 { provide: PageActionsService, useValue: pageActionsService },
@@ -238,7 +240,7 @@ describe('PageService', () => {
                 tableConfig: new PageTableConfig({
                     columns: [],
                     loadRow: () => [],
-                    search: { fields: [], mainField: 'name' }
+                    search: new PageTableSearchConfig({ fields: [], mainField: 'name' })
                 })
             })
         );
@@ -275,6 +277,34 @@ describe('PageService', () => {
             expect.objectContaining({ filters: [], text: 'ada' })
         );
         expect(service.pageSearch().filters).toEqual([text]);
+    });
+
+    it('asks for the owners the first time the filters panel opens, and then offers the owner filter', () => {
+        pageHttpService.findOwners.mockReturnValue(
+            of([
+                { id: 'u1', name: 'Ada' },
+                { id: 'u2', name: 'Grace' }
+            ])
+        );
+        service.setConfig(
+            buildConfig({
+                tableConfig: new PageTableConfig({
+                    columns: [],
+                    loadRow: () => [],
+                    search: new PageTableSearchConfig({ fields: [], isOwnerFilterEnabled: true })
+                })
+            })
+        );
+        flush();
+        expect(service.searchConfig()?.fields).toEqual([]);
+        expect(pageHttpService.findOwners).not.toHaveBeenCalled();
+
+        service.searchConfig()?.onPanelOpen?.();
+        service.searchConfig()?.onPanelOpen?.();
+
+        expect(pageHttpService.findOwners).toHaveBeenCalledTimes(1);
+        expect(pageHttpService.findOwners).toHaveBeenCalledWith('/items');
+        expect(service.searchConfig()?.fields.map(field => field.key)).toEqual(['ownerId']);
     });
 
     it('offers the header actions the backend, the selection and the categories allow', () => {

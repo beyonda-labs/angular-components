@@ -15,6 +15,7 @@ import { PageView } from '../models/page-view.model';
 import { PageService } from './page.service';
 import { PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
+import { PageOwnersService } from './page-owners.service';
 
 interface Template extends PageItem {
     name: string;
@@ -89,6 +90,7 @@ describe('PageService — views, counts and origins', () => {
 
         TestBed.configureTestingModule({
             providers: [
+                PageOwnersService,
                 PageService,
                 provideTranslateService(),
                 { provide: PageActionsService, useValue: pageActionsService },

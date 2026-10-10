@@ -68,6 +68,7 @@ callbacks see `T`, so a table is always built from a typed model, never from a l
 | ------------ | ------- | --------------------------------------------------------------------------------------- |
 | `key`        |         | Names the column; the header reads `<prefix>.columns.<key>` as a kebab-case segment     |
 | `width`      | `10`    | A number is the share of the row the column gets; a string is a CSS track used as it is |
+| `label`      |         | A full translation key for the header and the columns menu, used as it is               |
 | `tooltip`    |         | A full translation key for the header tooltip, used as it is                            |
 | `isSortable` | `false` | Turns the header into a button that sorts by the column                                 |
 | `sortField`  | `key`   | The field the sort of the column names                                                  |
@@ -76,7 +77,8 @@ callbacks see `T`, so a table is always built from a typed model, never from a l
 
 Two columns of width 3 and 1 split the row 75 / 25, and the shares spread over the columns that are shown, so
 hiding one widens the others. A string width (`8rem`, `minmax(6rem, 1fr)`) fixes the track instead. A column
-`createdAt` reads `<prefix>.columns.created-at`.
+`createdAt` reads `<prefix>.columns.created-at`, and one with a `label` reads that key instead, for a column the
+screen does not name itself, such as the owner column of `bey-page`.
 
 ## Cells
 

@@ -91,6 +91,7 @@ infer it from that form, to `BeyPageConfig<UserFormValue, User, Folder, FolderFo
 | Delete    | `DELETE {baseUrl}` with `{ ids }`                                                            |
 | Duplicate | `POST {baseUrl}/{id}/duplicate` with `{ [nameField]: name }`                                 |
 | Status    | `POST {baseUrl}/{id}/status` with `{ [field]: status }`                                      |
+| Owners    | `GET {baseUrl}/owners` for the owner filter, see [Owners](#owners)                           |
 
 The list answers with `{ globalActions, results, search? }`: `globalActions` names the global actions the
 user may see, each result may carry its own `actions`, and `search.total` feeds the paginator and the count of the
@@ -172,7 +173,8 @@ the transitions on the front only choose what the form offers.
 
 ## Search
 
-`tableConfig.search` takes the `fields` of the filters panel and a `mainField` for the text box. Every
+`tableConfig.search` takes the `fields` of the filters panel, a `mainField` for the text box and
+`isOwnerFilterEnabled`, which adds the owner filter described in [Owners](#owners). Every
 change goes back to the first page and reloads; the whole query travels in the `search` parameter.
 
 A filter on a field of the backend matches that field alone. To match several at once, as the `text` of
@@ -247,6 +249,39 @@ tableConfig: new BeyPageTableConfig({
     loadRow
 });
 ```
+
+## Owners
+
+On a backend where every row has an owner, as base-entity of express-components does with `ownership`, each row
+carries `ownerId` and `ownerName`, the display name; a row type extends `BeyPageOwnedItem` to read them. A row nobody
+owns, such as one the system seeds for everyone, has both `null`.
+
+`beyPageOwnerColumn(overrides?)` is the column: key `ownerName`, headed "Owner"
+(`angular-components.page.table.columns.owner-name` and its `.tooltips.owner-name`), sortable by `ownerId`, hideable,
+with a width of `2`; `overrides` changes any of that. `beyPageOwnerCell(row)` is its cell, the display name as text,
+empty for a row nobody owns. The columns of the page config take the column where it should show, and `loadRow` the
+cell at the same place; with categories, a `categoriesConfig.loadRow` adds it too, since folders have owners as well.
+
+```ts
+tableConfig: new BeyPageTableConfig<Contract>({
+    columns: [new BeyTableColumn({ key: 'name', width: 4, isSortable: true, isHideable: false }), beyPageOwnerColumn()],
+    loadRow: contract => [new BeyTextTableCell({ content: contract.name }), beyPageOwnerCell(contract)],
+    search: new BeyPageTableSearchConfig({ fields: [...], isOwnerFilterEnabled: true })
+});
+```
+
+`isOwnerFilterEnabled` on `BeyPageTableSearchConfig` adds an "Owner" field to the filters panel, after the fields of
+the page (`angular-components.page.search.fields.owner-id`). It is requested lazily: the first time the user opens
+the panel, the page asks `GET {baseUrl}/owners`, which answers `{ owners: [{ id, name }] }`, the owners of the rows the
+user may see, and offers them by name in that order. Picking one sends
+`{ field: 'ownerId', operator: 'equals', value: id }`, the only operator the field offers. With one owner or none
+there is nothing to choose and the field does not show, which is what a user who only sees their own rows gets. The
+page asks once per visit and resource; a failed answer shows no error and leaves the field out. A page the user comes
+back to with an owner filter in force asks at once, so the panel shows the filter as it was left.
+
+The owner filter goes with the rest of the search: in a view, in every folder and in the trash, where it narrows the
+trashed rows of every owner to those of one. On base-entity it narrows the folders as well, and since a folder holds
+only rows of its own owner, inside a folder it keeps all of them or none.
 
 ## Categories and trash
 
@@ -337,7 +372,10 @@ that has consequences elsewhere, such as renaming something other records name.
 | `<prefix>.categories.root`, `<prefix>.tabs.table.label`, `<prefix>.tabs.trash.label`, `<prefix>.move.title` | Categories and trash                                   |
 | `<prefix>.tabs.<view>.label`                                                                                | The tab of a view                                      |
 | `angular-components.page.count.one` / `.many`                                                               | The count of the breadcrumb, with `{{count}}`          |
+| `angular-components.page.table.columns.owner-name` / `.tooltips.owner-name`                                 | The owner column, see [Owners](#owners)                |
+| `angular-components.page.search.fields.owner-id`                                                            | The owner filter                                       |
 
 Every `<key>` is the action, column or field key as a kebab-case segment: a column `createdAt` reads
-`<prefix>.table.columns.created-at`. The standard action keys are already kebab-case, so `create-category`
+`<prefix>.table.columns.created-at`. A column with a `label` or a `tooltip` of its own reads those keys instead, as the
+owner column does. The standard action keys are already kebab-case, so `create-category`
 reads `<prefix>.actions.create-category.label` and `<prefix>.toast.create-category-success`.

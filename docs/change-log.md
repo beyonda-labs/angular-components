@@ -50,6 +50,13 @@
     (`isDivided`) and a `note` at the start of their row that describes the submit button.
 -   Testing: `beyAccessibleDescription(element)`, the text of what an element is described by, such as a field's hint.
 -   Page module: `textField` on `BeyPageTableSearchConfig` sends that field as the `text` of the search.
+-   Page module: `beyPageOwnerColumn(overrides?)` and `beyPageOwnerCell(row)` show the `ownerName` of a
+    `BeyPageOwnedItem` under "Owner", sortable by `ownerId`; `BeyPageOwner` is exported.
+-   Page module: `isOwnerFilterEnabled` on `BeyPageTableSearchConfig` adds an "Owner" filter, `ownerId` `equals`, from
+    `GET {baseUrl}/owners` asked the first time the filters panel opens, shown only with two owners or more.
+-   Search module: `label` and `operators` on `BeySearchField`, a full key for its label and the operators of its type
+    it keeps, and `onPanelOpen` on `BeySearchConfig`, run every time the filters panel opens.
+-   Table module: `label` on `BeyTableColumn`, a full key for its header and its entry in the columns menu.
 -   Password policy service: `BeyPasswordPolicyService` reads `accessControlUrl/password-policy` the first time its
     `policy` signal is read, once for the app; until it answers, or if it fails, it holds the `BeyPasswordPolicy` defaults.
 -   Form module: `policy` on `BeyFormPasswordField`, a `BeyPasswordPolicy` or a signal of one, lists its rules under the
@@ -75,6 +82,7 @@
     user's choice; it needs `provideBeyApp`, or `provideBeyTesting` in specs.
 -   Password change module: the new password lists the rules of the password policy instead of
     `<prefix>.password.password.hint`, which is no longer read.
+-   Page module: a column that brings its own `tooltip` keeps it; only the others read `<prefix>.table.tooltips.<key>`.
 
 ### Fixed
 

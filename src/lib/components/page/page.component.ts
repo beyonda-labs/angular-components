@@ -10,6 +10,7 @@ import { TabsComponent } from '../tabs/tabs.component';
 import { PageConfig } from './models/page.model';
 import { PageItem } from './models/page-item.model';
 import { PageService } from './services/page.service';
+import { PageOwnersService } from './services/page-owners.service';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,7 +23,7 @@ import { PageService } from './services/page.service';
         TableComponent,
         TabsComponent
     ],
-    providers: [PageService],
+    providers: [PageOwnersService, PageService],
     selector: 'bey-page',
     standalone: true,
     styleUrls: ['./page.component.css'],
