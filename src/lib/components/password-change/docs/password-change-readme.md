@@ -14,7 +14,9 @@ A divider closes the form above its single button, which is enabled once the thr
 with `BeySessionService.setToken`, confirms with `<prefix>.toast.success` and empties the form. An account without a
 password (`hasPassword: false`), one that only signs in through another provider, is told instead, under the same title
 and description, how to set one: with "Forgot your password?" on the sign-in page, and the policy is not asked for. A
-wrong current password answers `account.wrong-password` and an account without a password `account.no-password`, whose
+wrong current password answers `account.wrong-password`, or `account.wrong-password-attempts-left` with the
+`attemptsLeft` and the `minutes` of the lock when few attempts are left, after which `login.account-locked` answers
+until the lock ends; an account without a password answers `account.no-password`, whose
 texts the module ships under `angular-components.http`; a new password the server refuses answers one of the
 `password.*` errors of the policy, whose texts the password policy service ships.
 
