@@ -8,6 +8,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { toKeySegment } from '../../../../utilities/key-segment';
 import { FormFieldState } from '../../form.component';
 import { fieldErrorOf } from '../../functions/field-error';
+import { FormPasswordField } from '../../models/fields/form-password-field.model';
 import { FormField, FormFieldType } from '../../models/form-field.model';
 import { FormFieldError } from '../../models/form-field-validator.model';
 import { FormAutocompleteFieldComponent } from './field-autocomplete/field-autocomplete.component';
@@ -65,7 +66,7 @@ export class FormFieldComponent {
     readonly fieldType = FormFieldType;
     readonly formControl = computed(() => this.control() as FormControl | null);
     readonly hasLabel = computed(() => this.field().isLabelVisible && this.field().type !== FormFieldType.Checkbox);
-    readonly hint = computed(() => this.field().hint ?? '');
+    readonly hint = computed(() => (hasPasswordPolicy(this.field()) ? '' : (this.field().hint ?? '')));
     readonly infoIcon = faInfoCircle;
     readonly label = computed(() => this.field().label ?? `${this.fieldPrefix()}.label`);
     readonly messageId = nextMessageId();
@@ -81,6 +82,10 @@ export class FormFieldComponent {
 
         return control?.touched ? fieldErrorOf(control.errors) : null;
     }
+}
+
+function hasPasswordPolicy(field: FormField): boolean {
+    return field instanceof FormPasswordField && field.policy !== undefined;
 }
 
 function nextMessageId(): string {

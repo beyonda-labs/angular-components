@@ -5,12 +5,14 @@ import { map, switchMap } from 'rxjs';
 
 export interface ControlState<T> {
     isDisabled: WritableSignal<boolean>;
+    isTouched: WritableSignal<boolean>;
     value: WritableSignal<T>;
 }
 
 export function trackControl<T>(control: Signal<FormControl<T>>): ControlState<T> {
     const state: ControlState<T> = {
         isDisabled: linkedSignal(() => control().disabled),
+        isTouched: linkedSignal(() => control().touched),
         value: linkedSignal(() => control().value)
     };
 
@@ -21,6 +23,7 @@ export function trackControl<T>(control: Signal<FormControl<T>>): ControlState<T
         )
         .subscribe(current => {
             state.isDisabled.set(current.disabled);
+            state.isTouched.set(current.touched);
             state.value.set(current.value);
         });
 

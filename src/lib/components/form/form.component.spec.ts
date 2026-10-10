@@ -3,8 +3,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { accessibleDescription, buttonByName, renderComponent, settle } from '@testing/dom';
 
+import { PasswordPolicy } from '../../services/password-policy/models/password-policy.model';
 import { FormComponent } from './form.component';
 import { FormAutocompleteField } from './models/fields/form-autocomplete-field.model';
+import { FormPasswordField } from './models/fields/form-password-field.model';
 import { FormRadioField } from './models/fields/form-radio-field.model';
 import { FormSelectField } from './models/fields/form-select-field.model';
 import { FormTextField } from './models/fields/form-text-field.model';
@@ -453,6 +455,21 @@ describe('FormComponent', () => {
 
             expect(input('name')?.value).toBe('Ada');
             expect(button('demo.cancel').disabled).toBe(false);
+        });
+
+        it('validates a password again when the policy signal it is given changes', async () => {
+            const policy = signal(new PasswordPolicy());
+            await render(buildContactConfig([new FormPasswordField({ key: 'name', policy })]));
+
+            await type('name', 'abcdefgh');
+            expect(button('demo.submit').disabled).toBe(false);
+
+            policy.set(new PasswordPolicy({ isUppercaseRequired: true }));
+            await settle(fixture);
+            expect(button('demo.submit').disabled).toBe(true);
+
+            await type('name', 'Abcdefgh');
+            expect(button('demo.submit').disabled).toBe(false);
         });
 
         it('validates a field again when another field its custom validator reads changes', async () => {

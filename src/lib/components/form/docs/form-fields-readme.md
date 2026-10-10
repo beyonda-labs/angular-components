@@ -26,7 +26,7 @@ Every field extends `BeyFormField` and takes the same base parameters; each type
 | --------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
 | `BeyFormTextField`          | `string`   |                                                                                                                                              |
 | `BeyFormTextareaField`      | `string`   | `rows` (`3`), `maxHeight`                                                                                                                    |
-| `BeyFormPasswordField`      | `string`   | `showToggle` (`true`)                                                                                                                        |
+| `BeyFormPasswordField`      | `string`   | `showToggle` (`true`); `policy`, a `BeyPasswordPolicy` or a signal of one, see below                                                         |
 | `BeyFormNumberField`        | `number`   | `min`, `max`, both validated and honoured by the spinners                                                                                    |
 | `BeyFormDateField`          | `string`   | `format` (`YYYY-MM-DD`), `minDate`, `maxDate` in that format                                                                                 |
 | `BeyFormSelectField`        | `string`   | `options`, a value or a rule                                                                                                                 |
@@ -153,4 +153,45 @@ While the field shows an error message (see above), the message replaces the hin
 message instead; the hint comes back once the message goes. A validator that fails without a message only flags the
 field, so the hint stays: a minimum length with a hint that states it reads well that way. A field without a hint is
 described by its error message alone, while it shows. The file field writes its size limit under the control as well,
-above the hint.
+above the hint. A password field with a `policy` shows the rules of the policy instead of its hint (see below).
+
+## Password policy
+
+A password field with a `policy` lists the rules of that policy under the control, in place of its `hint`: the
+length always, as `angular-components.form.password-field.policy.length` with the `min` of the policy, and each
+character rule the policy turns on, `uppercase`, `lowercase`, `digit` and `symbol`, in that order. Each rule is marked
+met or not as the user types, with an icon and a status only screen readers read (`.met` / `.unmet`); the list is a
+polite live region, so a rule that changes is announced, and the field is described by it through
+`aria-describedby`. An unmet rule stays neutral until the field is touched, and shows in the error colour after that;
+an empty field that is not required flags nothing.
+
+The field also gets a validator that fails while a rule is unmet, with `{ passwordPolicy: { unmet } }`, so the form
+holds back its submit; it carries no message, since the list already says what is missing. A password longer than
+the `maxLength` of the policy fails with `angular-components.form.password-field.policy.too-long` and its `max`,
+shown under the list. Like the minimum length of Angular, the validator lets an empty value through: `isRequired`
+judges that. A policy given as a signal is read again whenever it changes, and the field is validated again with it.
+
+The character classes are Unicode aware and the length counts characters (code points), exactly as
+express-components checks them:
+
+| Rule      | A character that meets it                               |
+| --------- | ------------------------------------------------------- |
+| Uppercase | An uppercase letter, `\p{Lu}`, such as `A` or `É`       |
+| Lowercase | A lowercase letter, `\p{Ll}`, such as `a` or `ñ`        |
+| Digit     | A decimal digit, `\p{Nd}`, such as `7` or `٣`           |
+| Symbol    | Anything but a letter, a number or a space, such as `¿` |
+
+The library reads the policy of the server with the [password policy service](../../../services/password-policy/docs/password-policy-readme.md)
+and gives it to every password it asks for: `bey-password-change`, the reset-password and accept-invitation pages and
+the registration of the login. An app gives it to a field of its own the same way; a confirmation field takes none.
+
+```ts
+private readonly passwordPolicyService = inject(BeyPasswordPolicyService);
+
+readonly password = new BeyFormPasswordField({
+    autocomplete: 'new-password',
+    isRequired: true,
+    key: 'password',
+    policy: this.passwordPolicyService.policy
+});
+```

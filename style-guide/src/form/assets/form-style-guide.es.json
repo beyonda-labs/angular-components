@@ -189,7 +189,11 @@
                     "label": "Contraseña sin toggle",
                     "placeholder": "Sin toggle de visibilidad"
                 },
-                "tooltip": "Campos de contraseña con validador de longitud, toggle, obligatorio y deshabilitado"
+                "password5": {
+                    "label": "Contraseña con política",
+                    "placeholder": "Todas las reglas activas"
+                },
+                "tooltip": "Campos de contraseña con validador de longitud, política, toggle, obligatorio y deshabilitado"
             },
             "section-radio": {
                 "label": "Campos de radio",
