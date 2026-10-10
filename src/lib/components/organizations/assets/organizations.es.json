@@ -1,0 +1,127 @@
+{
+    "angular-components": {
+        "http": {
+            "error": {
+                "organizations": {
+                    "existing-name": "Ya hay una organización llamada {{name}}.",
+                    "has-superadmin": "Esta organización tiene un superadministrador activo, así que no se puede desactivar.",
+                    "not-found": "Esta organización no existe o está desactivada. Recarga la página y vuelve a intentarlo."
+                }
+            },
+            "title": {
+                "organizations": {
+                    "existing-name": "Nombre ya en uso",
+                    "has-superadmin": "Organización de un superadministrador",
+                    "not-found": "Organización no encontrada"
+                }
+            }
+        },
+        "organizations": {
+            "actions": {
+                "change-status": {
+                    "label": "Cambiar estado",
+                    "tooltip": "Activa o desactiva la organización seleccionada"
+                },
+                "create": {
+                    "label": "Nueva organización",
+                    "tooltip": "Crea una organización"
+                },
+                "edit": {
+                    "label": "Renombrar",
+                    "tooltip": "Cambia el nombre de la organización seleccionada"
+                },
+                "invite-admin": {
+                    "label": "Invitar al administrador",
+                    "tooltip": "Invita al primer administrador de la organización seleccionada"
+                }
+            },
+            "change-status": {
+                "buttons": {
+                    "cancel": "Cancelar",
+                    "submit": "Cambiar"
+                },
+                "main": {
+                    "status": {
+                        "label": "Nuevo estado",
+                        "placeholder": "Elige un estado"
+                    }
+                },
+                "title": "Cambiar estado"
+            },
+            "form": {
+                "create": {
+                    "title": "Nueva organización"
+                },
+                "edit": {
+                    "title": "Renombrar organización"
+                },
+                "main": {
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Escribe el nombre de la organización"
+                    }
+                }
+            },
+            "invite-admin": {
+                "buttons": {
+                    "cancel": "Cancelar",
+                    "submit": "Enviar invitación"
+                },
+                "main": {
+                    "email": {
+                        "label": "Correo electrónico",
+                        "placeholder": "Escribe el correo de la persona"
+                    },
+                    "language": {
+                        "label": "Idioma de la invitación",
+                        "placeholder": "Idioma por defecto"
+                    },
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Escribe el nombre"
+                    },
+                    "organization": {
+                        "label": "Organización"
+                    },
+                    "surname": {
+                        "label": "Apellidos",
+                        "placeholder": "Escribe los apellidos"
+                    }
+                },
+                "title": "Invitar al administrador"
+            },
+            "search": {
+                "fields": {
+                    "status": "Estado",
+                    "text": "Nombre"
+                }
+            },
+            "status": {
+                "active": "Activa",
+                "inactive": "Inactiva"
+            },
+            "table": {
+                "columns": {
+                    "created-at": "Creada",
+                    "name": "Nombre",
+                    "status": "Estado",
+                    "user-count": "Usuarios"
+                },
+                "empty": "Ninguna organización coincide con la búsqueda",
+                "tooltips": {
+                    "created-at": "Cuándo se creó la organización",
+                    "name": "El nombre de la organización",
+                    "status": "Si sus usuarios pueden iniciar sesión",
+                    "user-count": "Cuántos usuarios pertenecen a ella, activos o no"
+                }
+            },
+            "title": "Organizaciones",
+            "toast": {
+                "change-status-success": "Estado cambiado",
+                "create-success": "Organización creada",
+                "edit-success": "Organización renombrada",
+                "invite-admin-success": "Invitación enviada"
+            }
+        }
+    }
+}

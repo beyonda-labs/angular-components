@@ -141,6 +141,19 @@ describe('PageHttpService', () => {
         expect(TestBed.inject(FakeModalService).errors()).toEqual([]);
     });
 
+    it('asks for the organizations of the rows and answers their list, opening no modal when it fails', () => {
+        const answers: unknown[] = [];
+        const url = 'https://api.test/api/items/organizations';
+
+        service.findOrganizations('/items').subscribe(organizations => answers.push(organizations));
+        httpTesting.expectOne(url).flush({ organizations: [{ id: 'o1', name: 'Acme' }] });
+        service.findOrganizations('/items').subscribe({ error: () => answers.push('failed') });
+        httpTesting.expectOne(url).flush(null, { status: 404, statusText: 'Not Found' });
+
+        expect(answers).toEqual([[{ id: 'o1', name: 'Acme' }], 'failed']);
+        expect(TestBed.inject(FakeModalService).errors()).toEqual([]);
+    });
+
     it('empties the trash with the success toast', () => {
         service.emptyTrash('/items', 'emptied').subscribe();
 

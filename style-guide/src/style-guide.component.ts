@@ -17,6 +17,7 @@ import { ListStyleGuideComponent } from './list/list-style-guide.component';
 import { LoadingStyleGuideComponent } from './loading/loading-style-guide.component';
 import { LoginStyleGuideComponent } from './login/login-style-guide.component';
 import { ModalStyleGuideComponent } from './modal/modal-style-guide.component';
+import { OrganizationsStyleGuideComponent } from './organizations/organizations-style-guide.component';
 import { PageStyleGuideComponent } from './page/page-style-guide.component';
 import { PaginationStyleGuideComponent } from './pagination/pagination-style-guide.component';
 import { PasswordChangeStyleGuideComponent } from './password-change/password-change-style-guide.component';
@@ -56,6 +57,7 @@ import { UsersStyleGuideComponent } from './users/users-style-guide.component';
         ToastStyleGuideComponent,
         LoadingStyleGuideComponent,
         LoginStyleGuideComponent,
+        OrganizationsStyleGuideComponent,
         PageStyleGuideComponent,
         TabsStyleGuideComponent,
         TreeStyleGuideComponent,

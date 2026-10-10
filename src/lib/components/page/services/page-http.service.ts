@@ -5,6 +5,11 @@ import { HttpService } from '../../../services/http/http.service';
 import { PageBackendResponse } from '../models/page.model';
 import { PageRestoredRename, PageTrashItem } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
+import {
+    PAGE_ORGANIZATIONS_PATH,
+    PageOrganization,
+    PageOrganizationsResponse
+} from '../models/page-organization.model';
 import { PAGE_OWNER_FIELD, PAGE_OWNERS_PATH, PageOwner, PageOwnersResponse } from '../models/page-owner.model';
 import { PAGE_USAGES_IDS_SEPARATOR, PageUsages, PageUsagesResponse } from '../models/page-usages.model';
 import { PageUrlService } from './page-url.service';
@@ -68,6 +73,14 @@ export class PageHttpService {
 
     emptyTrash(relativeUrl: string, successToast: string): Observable<void> {
         return this.httpService.delete<void>(this.url(relativeUrl, '/trash/all'), undefined, { successToast });
+    }
+
+    findOrganizations(relativeUrl: string): Observable<PageOrganization[]> {
+        return this.httpService
+            .get<PageOrganizationsResponse>(this.url(relativeUrl, PAGE_ORGANIZATIONS_PATH), {
+                handleError: ignoreError
+            })
+            .pipe(map(({ organizations }) => organizations));
     }
 
     findOwners(relativeUrl: string): Observable<PageOwner[]> {

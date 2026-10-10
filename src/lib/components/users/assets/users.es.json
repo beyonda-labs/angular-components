@@ -78,6 +78,10 @@
                         "label": "Nombre",
                         "placeholder": "Escribe el nombre"
                     },
+                    "organization-id": {
+                        "label": "Organización",
+                        "placeholder": "Elige una organización"
+                    },
                     "roles": {
                         "label": "Roles"
                     },
@@ -109,6 +113,7 @@
                     "email": "Correo electrónico",
                     "last-login-at": "Último acceso",
                     "name": "Nombre",
+                    "organization": "Organización",
                     "roles": "Roles",
                     "status": "Estado"
                 },
@@ -119,6 +124,7 @@
                     "email": "El correo con el que entra el usuario",
                     "last-login-at": "La última vez que el usuario inició sesión",
                     "name": "Nombre y apellidos del usuario",
+                    "organization": "La organización a la que pertenece el usuario",
                     "roles": "Lo que el usuario puede hacer",
                     "status": "Si el usuario puede iniciar sesión"
                 }

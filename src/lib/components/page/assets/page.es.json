@@ -11,14 +11,17 @@
             },
             "search": {
                 "fields": {
+                    "organization-id": "Organización",
                     "owner-id": "Propietario"
                 }
             },
             "table": {
                 "columns": {
+                    "organization-name": "Organización",
                     "owner-name": "Propietario"
                 },
                 "tooltips": {
+                    "organization-name": "La organización a la que pertenece",
                     "owner-name": "El usuario al que pertenece"
                 }
             },

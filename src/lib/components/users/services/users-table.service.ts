@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { BadgeConfig, BadgeVariant } from '../../badge/models/badge.model';
+import { pageOrganizationCell } from '../../page/functions/page-organization-column';
 import { PageStandardAction } from '../../page/models/page-action.model';
 import {
     BadgeTableCell,
@@ -22,10 +23,11 @@ const LAST_LOGIN_FORMAT = 'yyyy-MM-dd HH:mm';
 export class UsersTableService {
     private readonly translateService = inject(TranslateService);
 
-    loadRow(user: UserRow, { onEdit, prefix, rolePrefix }: UsersRowOptions): TableCell[] {
+    loadRow(user: UserRow, { isOrganizationShown, onEdit, prefix, rolePrefix }: UsersRowOptions): TableCell[] {
         return [
             this.buildNameCell(user, prefix, onEdit),
             new TextTableCell({ content: user.email, tooltip: user.email }),
+            ...(isOrganizationShown ? [pageOrganizationCell(user)] : []),
             new BadgeTableCell({
                 badges: user.roles.map(
                     role =>

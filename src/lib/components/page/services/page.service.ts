@@ -32,6 +32,7 @@ import { PageCategoryPathEntry } from '../models/page-state.model';
 import { PageTableConfig } from '../models/page-table.model';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
+import { PageOrganizationsService } from './page-organizations.service';
 import { PageOwnersService } from './page-owners.service';
 import { PageSearchService } from './page-search.service';
 import { PageStateService } from './page-state.service';
@@ -48,6 +49,7 @@ export class PageService {
     private readonly destroyRef = inject(DestroyRef);
     private readonly pageActionsService = inject(PageActionsService);
     private readonly pageHttpService = inject(PageHttpService);
+    private readonly pageOrganizationsService = inject(PageOrganizationsService);
     private readonly pageOwnersService = inject(PageOwnersService);
     private readonly pageSearchService = inject(PageSearchService);
     private readonly pageStateService = inject(PageStateService);
@@ -118,8 +120,8 @@ export class PageService {
         const search = this.pageSearch();
 
         return new PaginationConfig({
-            onPageChange: page => this.setPage(page),
-            onPageSizeChange: pageSize => this.setPageSize(pageSize),
+            onPageChange: page => this.pageSearch.update(current => ({ ...current, page })),
+            onPageSizeChange: size => this.pageSearch.update(current => ({ ...current, page: 1, size })),
             page: search.page,
             pageSize: search.size,
             totalItems: this.totalItems()
@@ -132,7 +134,11 @@ export class PageService {
             ? buildPageSearchConfig(config, {
                   filters: untracked(() => this.pageSearch().filters),
                   onFiltersChange: filters => this.setFilters(filters),
-                  onPanelOpen: () => this.pageOwnersService.load(config),
+                  onPanelOpen: () => {
+                      this.pageOrganizationsService.load(config);
+                      this.pageOwnersService.load(config);
+                  },
+                  organizations: this.pageOrganizationsService.organizationsOf(config),
                   owners: this.pageOwnersService.ownersOf(config)
               })
             : null;
@@ -151,9 +157,10 @@ export class PageService {
         const moveAction = findStandardMoveAction(config.headerConfig?.actions ?? []);
         const canMoveByDrop = Boolean(config.baseUrl) && this.viewMode() === PageViewMode.Table;
         const dropMove = moveAction && categoriesConfig && canMoveByDrop ? { categoriesConfig, moveAction } : null;
+        const columns = this.pageOrganizationsService.withoutHidden(config, pageTable.columns);
 
         return new TableConfig<PageItem>({
-            columns: withColumnTooltips(pageTable.columns, tablePrefix),
+            columns: withColumnTooltips(columns, tablePrefix),
             height: pageTable.height,
             isDropAllowed: dropMove
                 ? (target, items) => isMoveDropAllowed(dropMove.moveAction, target, items, dropMove.categoriesConfig)
@@ -163,7 +170,7 @@ export class PageService {
                 : undefined,
             isRowSelected: item => this.selected().some(selected => selected.id === item.id),
             items: this.items(),
-            loadRow: item => this.loadRow(pageTable, item),
+            loadRow: item => this.pageOrganizationsService.withoutHidden(config, this.loadRow(pageTable, item)),
             onRowDrop: dropMove
                 ? (target, items) =>
                       this.pageActionsService.moveItems(this.buildActionsContext(config), items, target.id)
@@ -284,6 +291,7 @@ export class PageService {
             this.restoreState(config);
         }
 
+        this.pageOrganizationsService.loadForPage(config, this.pageSearch().filters);
         config.onReady?.(this.handle);
     }
 
@@ -443,14 +451,6 @@ export class PageService {
                 viewMode: this.viewMode()
             });
         }
-    }
-
-    private setPage(page: number): void {
-        this.pageSearch.update(search => ({ ...search, page }));
-    }
-
-    private setPageSize(size: number): void {
-        this.pageSearch.update(search => ({ ...search, page: 1, size }));
     }
 
     private withCount(items: BreadcrumbItem[]): BreadcrumbItem[] {

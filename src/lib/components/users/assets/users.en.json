@@ -78,6 +78,10 @@
                         "label": "Name",
                         "placeholder": "Type the name"
                     },
+                    "organization-id": {
+                        "label": "Organization",
+                        "placeholder": "Choose an organization"
+                    },
                     "roles": {
                         "label": "Roles"
                     },
@@ -109,6 +113,7 @@
                     "email": "Email",
                     "last-login-at": "Last sign-in",
                     "name": "Name",
+                    "organization": "Organization",
                     "roles": "Roles",
                     "status": "Status"
                 },
@@ -119,6 +124,7 @@
                     "email": "The email the user signs in with",
                     "last-login-at": "When the user last signed in",
                     "name": "Name and surname of the user",
+                    "organization": "The organization the user belongs to",
                     "roles": "What the user may do",
                     "status": "Whether the user can sign in"
                 }

@@ -3,7 +3,8 @@
 The users page of an app, built on [`bey-page`](../../page/docs/page-readme.md) over the users module of
 express-components and meant as the content of an app page inside `bey-app-layout`. It lists every account with its
 name and surname, email, roles, status, last sign-in and creation date (hidden at first), sorted by email, and searches
-them by name or email in the search box and by status and role in the filters. It invites a user, edits one, changes
+them by name or email in the search box and by status and role in the filters; a superadmin of several organizations
+also sees and filters by the organization, see [Organizations](#organizations). It invites a user, edits one, changes
 their status and sends their invitation again. The roles it offers come from `GET {baseUrl}/roles`, read before the
 list shows; when they cannot be read the list shows anyway, with no role to offer. Which actions it offers is up to the
 backend, as on any page: `create` when `globalActions` lists it, and `edit`, `change-status` and `resend-invitation`
@@ -46,7 +47,8 @@ permissions.
 | Action              | Request                                                       | Form                                                         |
 | ------------------- | ------------------------------------------------------------- | ------------------------------------------------------------ |
 | List                | `GET {baseUrl}?search=<base64>`                               |                                                              |
-| Invite (`create`)   | `POST {baseUrl}` `{ email, roles, name?, surname?, language? }` | Email, name, surname, roles and the language of the invitation |
+| Organizations       | `GET {baseUrl}/organizations`, for a superadmin only          |                                                              |
+| Invite (`create`)   | `POST {baseUrl}` `{ email, roles, name?, surname?, language?, organizationId? }` | Email, name, surname, the organization for a superadmin, roles and the language of the invitation |
 | `edit`              | `PUT {baseUrl}/{id}` `{ roles, name?, surname? }`             | The email to read, name, surname and roles                   |
 | `change-status`     | `POST {baseUrl}/{id}/status` `{ status }`                     | The statuses the current one reaches                         |
 | `resend-invitation` | `POST {baseUrl}/{id}/invitation`                              | None                                                         |
@@ -62,6 +64,29 @@ account brought back comes back as `invited`, `unverified` or `active`, as the b
 badge: `active` success, `invited` info, `unverified` warning and `inactive` neutral. Every guard (nobody deactivates
 themselves, only a superadmin touches a superadmin, the last superadmin stays) runs on the server, whose errors the
 module translates under `angular-components.http.error.users`.
+
+## Organizations
+
+Every user belongs to one organization. A manager sees and invites only within their own, and the server strips the
+organization from the rows it answers them, so the page shows nothing about organizations to anyone but a superadmin.
+
+The page knows a superadmin by the roles of the session user (`superadmin`, read from the token by
+[the session](../../../services/session/docs/session-readme.md)), rather than by asking and failing: nobody else sends
+the request. For a superadmin it reads `GET {baseUrl}/organizations`, which answers `{ organizations: [{ id, name }] }`,
+the active organizations sorted by name, together with the roles and before the list shows; a failed answer counts as
+none, with no error. With two organizations or more:
+
+-   every row shows its organization in an "Organization" column after the email (`table.columns.organization`),
+    sortable by `organizationName`;
+-   the filters offer an "Organization" field, `organizationId` `equals`, with those organizations by name;
+-   the invite form asks for the organization, required, starting with the superadmin's own (the `organizationId` of
+    the session user), and sends it as `organizationId`.
+
+With one organization or none, as in an app that never creates a second one, none of that shows, and an invitation
+goes to the superadmin's own organization, as a manager's goes to theirs. The edit form never offers the organization:
+users do not move between organizations. The filter offers only the active organizations, the ones a user can be
+invited into, so the users of a deactivated organization are found through the search box and still show their
+organization in the column.
 
 ## Roles
 

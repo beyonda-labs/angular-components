@@ -114,6 +114,14 @@ describe('SessionService', () => {
             expect(service.getUser()).toEqual(expect.objectContaining({ language: 'es', theme: 'dark' }));
         });
 
+        it('decodes the roles and the organization of the user from the token', () => {
+            const payload = { email: 'ada@example.com', organizationId: 'o1', roles: ['superadmin'] };
+
+            service.setToken(`header.${btoa(JSON.stringify(payload))}.signature`);
+
+            expect(service.getUser()).toEqual(expect.objectContaining({ organizationId: 'o1', roles: ['superadmin'] }));
+        });
+
         it('exposes the user it is given as it is', () => {
             service.setUser(mockUser);
 

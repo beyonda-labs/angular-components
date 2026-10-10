@@ -19,6 +19,7 @@
                     "oauth-missing-email": "{{provider}} no devolvió ninguna dirección de correo. Por favor, inténtelo de nuevo.",
                     "oauth-token-exchange": "No se pudo conectar con {{provider}}. Por favor, inténtelo de nuevo.",
                     "oauth-user-info-not-found": "No se pudo obtener información del usuario de {{provider}}. Por favor, inténtelo de nuevo.",
+                    "organization-inactive": "Tu organización está desactivada. Ponte en contacto con un administrador si necesitas volver a acceder.",
                     "passwords-not-match": "Las contraseñas no coinciden.",
                     "provider-not-found": "El proveedor {{provider}} no está disponible.",
                     "verification-not-sent": "Tu cuenta se ha creado, pero no se ha podido enviar el correo de verificación a {{email}}. Inicia sesión para pedir uno nuevo."
@@ -51,6 +52,7 @@
                     "oauth-missing-email": "Error de autenticación",
                     "oauth-token-exchange": "Error de autenticación",
                     "oauth-user-info-not-found": "Error de autenticación",
+                    "organization-inactive": "Organización desactivada",
                     "passwords-not-match": "Error de contraseña",
                     "provider-not-found": "Proveedor no disponible",
                     "verification-not-sent": "Correo no enviado"
