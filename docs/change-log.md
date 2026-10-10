@@ -22,6 +22,11 @@
 -   Users module: `BeyUserRow` carries `organizationId` and `organizationName` when the server answers them to a
     superadmin.
 
+### Fixed
+
+-   Page module: the menus of the header open over the search toolbar again; the search sits in the new
+    `--bey-z-toolbar` layer, over the sticky header of the table and under the menus.
+
 ## [1.4.0] - 2026-10-10
 
 ### Added

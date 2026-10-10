@@ -176,6 +176,7 @@ Aligned with the Bootstrap scale, so a library panel never lands between two of 
 | `--bey-z-base`     | `1`    | Inside the normal flow                            |
 | `--bey-z-raised`   | `10`   | Anchored elements, chevrons                       |
 | `--bey-z-sticky`   | `20`   | Sticky headers and toolbars                       |
+| `--bey-z-toolbar`  | `30`   | A toolbar whose panels open over sticky headers   |
 | `--bey-z-dropdown` | `1000` | Menus and pickers                                 |
 | `--bey-z-modal`    | `1050` | Dialogs and their backdrop                        |
 | `--bey-z-loading`  | `1070` | The full-screen loading overlay, over the dialogs |
