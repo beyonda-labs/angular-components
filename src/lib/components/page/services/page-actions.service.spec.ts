@@ -500,7 +500,7 @@ describe('PageActionsService', () => {
 
             treeConfig.onConfirm?.(target);
 
-            expect(loadCategoryTree).toHaveBeenCalledWith('/items');
+            expect(loadCategoryTree).toHaveBeenCalledWith('/items', undefined);
             expect(moveItems).toHaveBeenCalledWith(
                 '/items',
                 [{ id: 'item-1', type: PageItemType.Item }],
