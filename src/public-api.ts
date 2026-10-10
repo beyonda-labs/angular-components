@@ -18,6 +18,7 @@ export * from './lib/components/header/public-api';
 export * from './lib/components/left-menu/public-api';
 export * from './lib/components/login/public-api';
 export * from './lib/components/modal/public-api';
+export * from './lib/components/organizations/public-api';
 export * from './lib/components/password-change/public-api';
 export * from './lib/components/table/public-api';
 export * from './lib/components/toast/public-api';

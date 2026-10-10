@@ -1,5 +1,5 @@
 import { BadgeVariant } from '../../badge/models/badge.model';
-import { PageItem } from '../../page/models/page-item.model';
+import { PageOrganization, PageOrganizationItem } from '../../page/models/page-organization.model';
 
 export enum UserStatus {
     Active = 'active',
@@ -14,6 +14,7 @@ export interface UserFormFields {
     email?: string;
     language?: string;
     name?: string;
+    organizationId?: string;
     surname?: string;
 }
 
@@ -25,7 +26,7 @@ export interface UserRolesResponse {
     roles: string[];
 }
 
-export interface UserRow extends PageItem {
+export interface UserRow extends PageOrganizationItem {
     actions: string[];
     createdAt: number;
     email: string;
@@ -39,12 +40,16 @@ export interface UserRow extends PageItem {
 }
 
 export interface UsersFormOptions {
+    organizations: PageOrganization[];
     prefix: string;
     rolePrefix: string;
     roles: string[];
+
+    organizationId?: string;
 }
 
 export interface UsersRowOptions {
+    isOrganizationShown: boolean;
     onEdit: (user: UserRow) => void;
     prefix: string;
     rolePrefix: string;
@@ -96,6 +101,10 @@ export const USER_STATUS_TRANSITIONS: Readonly<Record<UserStatus, readonly UserS
 
 export const USERS_FORM_SECTION = 'main';
 
+export const USERS_ORGANIZATIONS_PATH = '/organizations';
+
 export const USERS_RESEND_INVITATION_ACTION = 'resend-invitation';
 
 export const USERS_ROLES_PATH = '/roles';
+
+export const USERS_SUPERADMIN_ROLE = 'superadmin';

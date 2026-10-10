@@ -39,6 +39,14 @@ export type {
 export type { PageHeaderConfigParameters as BeyPageHeaderConfigParameters } from './models/page-header.model';
 export type { PageItem as BeyPageItem } from './models/page-item.model';
 export {
+    pageOrganizationCell as beyPageOrganizationCell,
+    pageOrganizationColumn as beyPageOrganizationColumn
+} from './functions/page-organization-column';
+export type {
+    PageOrganization as BeyPageOrganization,
+    PageOrganizationItem as BeyPageOrganizationItem
+} from './models/page-organization.model';
+export {
     pageOwnerCell as beyPageOwnerCell,
     pageOwnerColumn as beyPageOwnerColumn
 } from './functions/page-owner-column';

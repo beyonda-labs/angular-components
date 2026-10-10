@@ -641,6 +641,10 @@
             }
         },
         "modals": "Modals",
+        "organizations": {
+            "example": "The organizations page of a superadmin: search by name, filter by status, create and rename an organization, deactivate or reactivate it and invite its first admin, as far as the backend allows each row. The demo backend serves no organizations, so the list stays empty."
+        },
+        "organizations-section": "Organizations",
         "page": {
             "actions": {
                 "create": {
@@ -656,7 +660,7 @@
                     "tooltip": "Edit the selected product"
                 }
             },
-            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form. The Available tab is a view: the same list with a filter of its own, searchable too. The headers sort the list and the columns menu hides the category or the price. The Owner column names who each product belongs to, and the filters panel offers to filter by owner once the products have two owners or more.",
+            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form. The Available tab is a view: the same list with a filter of its own, searchable too. The headers sort the list and the columns menu hides the category or the price. The Owner column names who each product belongs to, and the filters panel offers to filter by owner once the products have two owners or more. The Organization column and its filter show only while the products you see belong to two organizations or more, as a superadmin's do.",
             "folders": {
                 "actions": {
                     "move": {

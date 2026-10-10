@@ -1,0 +1,7 @@
+{
+    "angular-components-style-guide": {
+        "organizations": {
+            "example": "La página de organizaciones de un superadministrador: busca por nombre, filtra por estado, crea y renombra una organización, desactívala o reactívala e invita a su primer administrador, en la medida en que el backend lo permita en cada fila. El backend de demostración no sirve organizaciones, así que la lista se queda vacía."
+        }
+    }
+}

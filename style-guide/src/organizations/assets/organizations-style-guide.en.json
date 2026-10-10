@@ -1,0 +1,7 @@
+{
+    "angular-components-style-guide": {
+        "organizations": {
+            "example": "The organizations page of a superadmin: search by name, filter by status, create and rename an organization, deactivate or reactivate it and invite its first admin, as far as the backend allows each row. The demo backend serves no organizations, so the list stays empty."
+        }
+    }
+}

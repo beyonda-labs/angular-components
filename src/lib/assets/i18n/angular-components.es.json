@@ -169,12 +169,18 @@
                     "oauth-missing-email": "{{provider}} no devolvió ninguna dirección de correo. Por favor, inténtelo de nuevo.",
                     "oauth-token-exchange": "No se pudo conectar con {{provider}}. Por favor, inténtelo de nuevo.",
                     "oauth-user-info-not-found": "No se pudo obtener información del usuario de {{provider}}. Por favor, inténtelo de nuevo.",
+                    "organization-inactive": "Tu organización está desactivada. Ponte en contacto con un administrador si necesitas volver a acceder.",
                     "passwords-not-match": "Las contraseñas no coinciden.",
                     "provider-not-found": "El proveedor {{provider}} no está disponible.",
                     "verification-not-sent": "Tu cuenta se ha creado, pero no se ha podido enviar el correo de verificación a {{email}}. Inicia sesión para pedir uno nuevo."
                 },
                 "move-target-unchanged": "El elemento ya se encuentra en esta categoría.",
                 "not-found": "El recurso solicitado no fue encontrado.",
+                "organizations": {
+                    "existing-name": "Ya hay una organización llamada {{name}}.",
+                    "has-superadmin": "Esta organización tiene un superadministrador activo, así que no se puede desactivar.",
+                    "not-found": "Esta organización no existe o está desactivada. Recarga la página y vuelve a intentarlo."
+                },
                 "password": {
                     "digit-required": "La contraseña debe incluir un número.",
                     "lowercase-required": "La contraseña debe incluir una letra minúscula.",
@@ -273,12 +279,18 @@
                     "oauth-missing-email": "Error de autenticación",
                     "oauth-token-exchange": "Error de autenticación",
                     "oauth-user-info-not-found": "Error de autenticación",
+                    "organization-inactive": "Organización desactivada",
                     "passwords-not-match": "Error de contraseña",
                     "provider-not-found": "Proveedor no disponible",
                     "verification-not-sent": "Correo no enviado"
                 },
                 "move-target-unchanged": "Sin cambios",
                 "not-found": "No encontrado",
+                "organizations": {
+                    "existing-name": "Nombre ya en uso",
+                    "has-superadmin": "Organización de un superadministrador",
+                    "not-found": "Organización no encontrada"
+                },
                 "password": {
                     "digit-required": "Falta un número",
                     "lowercase-required": "Falta una minúscula",
@@ -472,6 +484,113 @@
             "label": "Opciones",
             "search": "Buscar"
         },
+        "organizations": {
+            "actions": {
+                "change-status": {
+                    "label": "Cambiar estado",
+                    "tooltip": "Activa o desactiva la organización seleccionada"
+                },
+                "create": {
+                    "label": "Nueva organización",
+                    "tooltip": "Crea una organización"
+                },
+                "edit": {
+                    "label": "Renombrar",
+                    "tooltip": "Cambia el nombre de la organización seleccionada"
+                },
+                "invite-admin": {
+                    "label": "Invitar al administrador",
+                    "tooltip": "Invita al primer administrador de la organización seleccionada"
+                }
+            },
+            "change-status": {
+                "buttons": {
+                    "cancel": "Cancelar",
+                    "submit": "Cambiar"
+                },
+                "main": {
+                    "status": {
+                        "label": "Nuevo estado",
+                        "placeholder": "Elige un estado"
+                    }
+                },
+                "title": "Cambiar estado"
+            },
+            "form": {
+                "create": {
+                    "title": "Nueva organización"
+                },
+                "edit": {
+                    "title": "Renombrar organización"
+                },
+                "main": {
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Escribe el nombre de la organización"
+                    }
+                }
+            },
+            "invite-admin": {
+                "buttons": {
+                    "cancel": "Cancelar",
+                    "submit": "Enviar invitación"
+                },
+                "main": {
+                    "email": {
+                        "label": "Correo electrónico",
+                        "placeholder": "Escribe el correo de la persona"
+                    },
+                    "language": {
+                        "label": "Idioma de la invitación",
+                        "placeholder": "Idioma por defecto"
+                    },
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Escribe el nombre"
+                    },
+                    "organization": {
+                        "label": "Organización"
+                    },
+                    "surname": {
+                        "label": "Apellidos",
+                        "placeholder": "Escribe los apellidos"
+                    }
+                },
+                "title": "Invitar al administrador"
+            },
+            "search": {
+                "fields": {
+                    "status": "Estado",
+                    "text": "Nombre"
+                }
+            },
+            "status": {
+                "active": "Activa",
+                "inactive": "Inactiva"
+            },
+            "table": {
+                "columns": {
+                    "created-at": "Creada",
+                    "name": "Nombre",
+                    "status": "Estado",
+                    "user-count": "Usuarios"
+                },
+                "empty": "Ninguna organización coincide con la búsqueda",
+                "tooltips": {
+                    "created-at": "Cuándo se creó la organización",
+                    "name": "El nombre de la organización",
+                    "status": "Si sus usuarios pueden iniciar sesión",
+                    "user-count": "Cuántos usuarios pertenecen a ella, activos o no"
+                }
+            },
+            "title": "Organizaciones",
+            "toast": {
+                "change-status-success": "Estado cambiado",
+                "create-success": "Organización creada",
+                "edit-success": "Organización renombrada",
+                "invite-admin-success": "Invitación enviada"
+            }
+        },
         "page": {
             "count": {
                 "many": "({{count}} elementos)",
@@ -483,14 +602,17 @@
             },
             "search": {
                 "fields": {
+                    "organization-id": "Organización",
                     "owner-id": "Propietario"
                 }
             },
             "table": {
                 "columns": {
+                    "organization-name": "Organización",
                     "owner-name": "Propietario"
                 },
                 "tooltips": {
+                    "organization-name": "La organización a la que pertenece",
                     "owner-name": "El usuario al que pertenece"
                 }
             },
@@ -717,6 +839,10 @@
                         "label": "Nombre",
                         "placeholder": "Escribe el nombre"
                     },
+                    "organization-id": {
+                        "label": "Organización",
+                        "placeholder": "Elige una organización"
+                    },
                     "roles": {
                         "label": "Roles"
                     },
@@ -748,6 +874,7 @@
                     "email": "Correo electrónico",
                     "last-login-at": "Último acceso",
                     "name": "Nombre",
+                    "organization": "Organización",
                     "roles": "Roles",
                     "status": "Estado"
                 },
@@ -758,6 +885,7 @@
                     "email": "El correo con el que entra el usuario",
                     "last-login-at": "La última vez que el usuario inició sesión",
                     "name": "Nombre y apellidos del usuario",
+                    "organization": "La organización a la que pertenece el usuario",
                     "roles": "Lo que el usuario puede hacer",
                     "status": "Si el usuario puede iniciar sesión"
                 }

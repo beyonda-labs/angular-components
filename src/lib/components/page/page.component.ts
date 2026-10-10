@@ -10,6 +10,7 @@ import { TabsComponent } from '../tabs/tabs.component';
 import { PageConfig } from './models/page.model';
 import { PageItem } from './models/page-item.model';
 import { PageService } from './services/page.service';
+import { PageOrganizationsService } from './services/page-organizations.service';
 import { PageOwnersService } from './services/page-owners.service';
 
 @Component({
@@ -23,7 +24,7 @@ import { PageOwnersService } from './services/page-owners.service';
         TableComponent,
         TabsComponent
     ],
-    providers: [PageOwnersService, PageService],
+    providers: [PageOrganizationsService, PageOwnersService, PageService],
     selector: 'bey-page',
     standalone: true,
     styleUrls: ['./page.component.css'],

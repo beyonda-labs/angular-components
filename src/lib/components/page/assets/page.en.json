@@ -11,14 +11,17 @@
             },
             "search": {
                 "fields": {
+                    "organization-id": "Organization",
                     "owner-id": "Owner"
                 }
             },
             "table": {
                 "columns": {
+                    "organization-name": "Organization",
                     "owner-name": "Owner"
                 },
                 "tooltips": {
+                    "organization-name": "The organization it belongs to",
                     "owner-name": "The user it belongs to"
                 }
             },

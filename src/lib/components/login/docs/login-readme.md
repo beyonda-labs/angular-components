@@ -22,9 +22,11 @@ readonly config = new BeyLoginConfig({
 ```
 
 The route the OAuth providers return to renders `BeyLoginOAuthCallbackComponent`. The server lands there once it
-has set the refresh cookie, with no token in the URL, or with `?error=unauthorized` when the provider refused: the
-component goes back to `loginRoute` on an error, and otherwise restores the session through the cookie and goes
-to the `redirectPath` of the user, or to `loginRoute` when nothing can be restored:
+has set the refresh cookie, with no token in the URL, or with `?error=unauthorized` when the provider refused,
+`?error=account-inactive` for a deactivated account or `?error=organization-inactive` for a user of a deactivated
+organization: the component goes back to `loginRoute` on any error, without saying which yet, and otherwise restores
+the session through the cookie and goes to the `redirectPath` of the user, or to `loginRoute` when nothing can be
+restored:
 
 ```ts
 { path: 'oauth/callback', component: BeyLoginOAuthCallbackComponent }
@@ -103,9 +105,12 @@ an emailed link succeeds, the access token goes to `BeySessionService` and the r
 of the session user, or to the root when there is none. A failed request shows the reason the server gives under
 `angular-components.http.error.login.*` or `.account.*`, such as `invalid-credentials`,
 `invalid-credentials-attempts-left` with the `attemptsLeft` before the lock and its `minutes`, `account-locked` with the
-`minutes` left after too many failed attempts, `account-inactive` for a deactivated account or `token-invalid` for
-an emailed link that no longer works; `invalid-origin` is the answer to a refresh or a logout sent from another
-site. A new password the server refuses answers `.password.*`, such as `too-short` with its `min`.
+`minutes` left after too many failed attempts, `account-inactive` for a deactivated account, `organization-inactive`
+for a user of a deactivated organization other than a superadmin, both answered only after the right password, or
+`token-invalid` for an emailed link that no longer works; `invalid-origin` is the answer to a refresh or a logout sent
+from another site. A session whose account or organization is deactivated meanwhile ends at its next refresh, which
+the server refuses, and the user lands on `loginRoute`. A new password the server refuses answers `.password.*`, such
+as `too-short` with its `min`.
 
 A registration answered with `{ verificationRequired: true }` opens no session: the screen asks to check the inbox
 instead. A sign-in refused with `login.email-not-verified` offers, under the form, to resend the verification email

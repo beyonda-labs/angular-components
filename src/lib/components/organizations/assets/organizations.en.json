@@ -1,0 +1,127 @@
+{
+    "angular-components": {
+        "http": {
+            "error": {
+                "organizations": {
+                    "existing-name": "There is already an organization named {{name}}.",
+                    "has-superadmin": "This organization holds an active superadmin, so it cannot be deactivated.",
+                    "not-found": "This organization does not exist or has been deactivated. Reload the page and try again."
+                }
+            },
+            "title": {
+                "organizations": {
+                    "existing-name": "Name already in use",
+                    "has-superadmin": "Organization of a superadmin",
+                    "not-found": "Organization not found"
+                }
+            }
+        },
+        "organizations": {
+            "actions": {
+                "change-status": {
+                    "label": "Change status",
+                    "tooltip": "Activate or deactivate the selected organization"
+                },
+                "create": {
+                    "label": "New organization",
+                    "tooltip": "Create an organization"
+                },
+                "edit": {
+                    "label": "Rename",
+                    "tooltip": "Rename the selected organization"
+                },
+                "invite-admin": {
+                    "label": "Invite the admin",
+                    "tooltip": "Invite the first administrator of the selected organization"
+                }
+            },
+            "change-status": {
+                "buttons": {
+                    "cancel": "Cancel",
+                    "submit": "Change"
+                },
+                "main": {
+                    "status": {
+                        "label": "New status",
+                        "placeholder": "Choose a status"
+                    }
+                },
+                "title": "Change status"
+            },
+            "form": {
+                "create": {
+                    "title": "New organization"
+                },
+                "edit": {
+                    "title": "Rename organization"
+                },
+                "main": {
+                    "name": {
+                        "label": "Name",
+                        "placeholder": "Type the name of the organization"
+                    }
+                }
+            },
+            "invite-admin": {
+                "buttons": {
+                    "cancel": "Cancel",
+                    "submit": "Send invitation"
+                },
+                "main": {
+                    "email": {
+                        "label": "Email",
+                        "placeholder": "Type the email of the person"
+                    },
+                    "language": {
+                        "label": "Language of the invitation",
+                        "placeholder": "Default language"
+                    },
+                    "name": {
+                        "label": "Name",
+                        "placeholder": "Type the name"
+                    },
+                    "organization": {
+                        "label": "Organization"
+                    },
+                    "surname": {
+                        "label": "Surname",
+                        "placeholder": "Type the surname"
+                    }
+                },
+                "title": "Invite the admin"
+            },
+            "search": {
+                "fields": {
+                    "status": "Status",
+                    "text": "Name"
+                }
+            },
+            "status": {
+                "active": "Active",
+                "inactive": "Inactive"
+            },
+            "table": {
+                "columns": {
+                    "created-at": "Created",
+                    "name": "Name",
+                    "status": "Status",
+                    "user-count": "Users"
+                },
+                "empty": "No organization matches the search",
+                "tooltips": {
+                    "created-at": "When the organization was created",
+                    "name": "The name of the organization",
+                    "status": "Whether its users can sign in",
+                    "user-count": "How many users belong to it, active or not"
+                }
+            },
+            "title": "Organizations",
+            "toast": {
+                "change-status-success": "Status changed",
+                "create-success": "Organization created",
+                "edit-success": "Organization renamed",
+                "invite-admin-success": "Invitation sent"
+            }
+        }
+    }
+}

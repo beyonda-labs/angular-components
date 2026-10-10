@@ -641,6 +641,10 @@
             }
         },
         "modals": "Modales",
+        "organizations": {
+            "example": "La página de organizaciones de un superadministrador: busca por nombre, filtra por estado, crea y renombra una organización, desactívala o reactívala e invita a su primer administrador, en la medida en que el backend lo permita en cada fila. El backend de demostración no sirve organizaciones, así que la lista se queda vacía."
+        },
+        "organizations-section": "Organizaciones",
         "page": {
             "actions": {
                 "create": {
@@ -656,7 +660,7 @@
                     "tooltip": "Editar el producto seleccionado"
                 }
             },
-            "example": "Una página autogestionada: acciones de cabecera, búsqueda, tabla y paginación conectadas al backend de demostración, con alta y edición en un formulario modal. La pestaña Disponibles es una vista: la misma lista con un filtro propio, en la que también se puede buscar. Las cabeceras ordenan la lista y el menú de columnas oculta la categoría o el precio. La columna Propietario dice de quién es cada producto, y el panel de filtros permite filtrar por propietario cuando los productos tienen dos propietarios o más.",
+            "example": "Una página autogestionada: acciones de cabecera, búsqueda, tabla y paginación conectadas al backend de demostración, con alta y edición en un formulario modal. La pestaña Disponibles es una vista: la misma lista con un filtro propio, en la que también se puede buscar. Las cabeceras ordenan la lista y el menú de columnas oculta la categoría o el precio. La columna Propietario dice de quién es cada producto, y el panel de filtros permite filtrar por propietario cuando los productos tienen dos propietarios o más. La columna Organización y su filtro solo aparecen cuando los productos que ves pertenecen a dos organizaciones o más, como le pasa a un superadministrador.",
             "folders": {
                 "actions": {
                     "move": {

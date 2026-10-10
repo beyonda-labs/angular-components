@@ -16,6 +16,7 @@ export interface SessionUser {
     app?: unknown;
     language?: string;
     name?: string;
+    organizationId?: string;
     roles?: string[];
     surname?: string;
     theme?: string;

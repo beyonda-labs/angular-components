@@ -1,5 +1,27 @@
 # Change Log
 
+## [Unreleased]
+
+### Added
+
+-   Organizations module: `bey-organizations`, the superadmin's page over `/organizations` on `bey-page`: create and
+    rename an organization, deactivate or reactivate it, and invite its first admin with the `adminRole` of the config.
+-   Organizations module: the texts of the `organizations.existing-name`, `.has-superadmin` and `.not-found` errors.
+-   Page module: `beyPageOrganizationColumn(overrides?)` and `beyPageOrganizationCell(row)` show the `organizationName`
+    of a `BeyPageOrganizationItem`, only while `GET {baseUrl}/organizations` names two organizations or more.
+-   Page module: `isOrganizationFilterEnabled` on `BeyPageTableSearchConfig` adds an "Organization" filter,
+    `organizationId` `equals`, from the same answer and shown only with two organizations or more.
+-   Users module: for a superadmin of several organizations, an organization column and filter, and an organization
+    select in the invite form that starts with their own, read from `GET {baseUrl}/organizations`.
+-   Session service: `organizationId` on `BeySessionUser`, read from the token.
+-   Login module: the texts of the `login.organization-inactive` error; the OAuth callback goes back to the login on
+    `?error=organization-inactive`, as on any other error.
+
+### Changed
+
+-   Users module: `BeyUserRow` carries `organizationId` and `organizationName` when the server answers them to a
+    superadmin.
+
 ## [1.4.0] - 2026-10-10
 
 ### Added

@@ -18,6 +18,7 @@ import { PageTableConfig, PageTableSearchConfig } from '../models/page-table.mod
 import { PageService } from './page.service';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
+import { PageOrganizationsService } from './page-organizations.service';
 import { PageOwnersService } from './page-owners.service';
 
 interface Team extends PageItem {
@@ -84,6 +85,7 @@ describe('PageService', () => {
 
         TestBed.configureTestingModule({
             providers: [
+                PageOrganizationsService,
                 PageOwnersService,
                 PageService,
                 provideTranslateService(),

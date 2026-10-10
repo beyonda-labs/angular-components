@@ -1,4 +1,5 @@
 import { SearchFilter } from '../../search/models/search-filter.model';
+import { PageOrganization } from './page-organization.model';
 import { PageOwner } from './page-owner.model';
 
 export enum SearchSortDirection {
@@ -20,6 +21,7 @@ export interface PageSearchConfigOptions {
     filters: SearchFilter[];
     onFiltersChange: (filters: SearchFilter[]) => void;
     onPanelOpen: () => void;
+    organizations: PageOrganization[];
     owners: PageOwner[];
 }
 

@@ -40,6 +40,10 @@ describe('StyleGuideComponent', () => {
             httpTesting
                 .expectOne(request => request.url === 'https://api.test/api/products')
                 .flush({ globalActions: [], results: [] });
+            httpTesting.expectOne('https://api.test/api/products/organizations').flush({ organizations: [] });
+            httpTesting
+                .expectOne(request => request.url === 'https://api.test/api/style-guide/organizations')
+                .flush({ globalActions: [], results: [] });
             httpTesting
                 .expectOne(request => request.url === 'https://api.test/api/product-categories')
                 .flush({ globalActions: [], results: [] });

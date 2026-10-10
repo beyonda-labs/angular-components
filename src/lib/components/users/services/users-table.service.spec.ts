@@ -30,7 +30,7 @@ describe('UsersTableService', () => {
             providers: [provideBeyTesting({ translations: { en: { demo: { roles: { admin: 'Administrator' } } } } })]
         });
 
-        options = { onEdit: jest.fn(), prefix: 'demo.users', rolePrefix: 'demo.roles' };
+        options = { isOrganizationShown: false, onEdit: jest.fn(), prefix: 'demo.users', rolePrefix: 'demo.roles' };
         service = TestBed.inject(UsersTableService);
     });
 
@@ -67,5 +67,13 @@ describe('UsersTableService', () => {
         expect(name).toBeInstanceOf(TextTableCell);
         expect(name.content).toBe('demo.users.table.no-name');
         expect(name.translate).toBe(true);
+    });
+
+    it('shows the organization of the user after the email while the page shows organizations', () => {
+        const user = buildUser({ organizationId: 'o2', organizationName: 'Globex' });
+        const cells = service.loadRow(user, { ...options, isOrganizationShown: true });
+
+        expect(cells.map(cell => cell.content).slice(1, 3)).toEqual(['ada@example.test', 'Globex']);
+        expect(service.loadRow(user, options).map(cell => cell.content)).not.toContain('Globex');
     });
 });

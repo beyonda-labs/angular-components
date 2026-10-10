@@ -92,6 +92,7 @@ infer it from that form, to `BeyPageConfig<UserFormValue, User, Folder, FolderFo
 | Duplicate | `POST {baseUrl}/{id}/duplicate` with `{ [nameField]: name }`                                 |
 | Status    | `POST {baseUrl}/{id}/status` with `{ [field]: status }`                                      |
 | Owners    | `GET {baseUrl}/owners` for the owner filter, see [Owners](#owners)                           |
+| Organizations | `GET {baseUrl}/organizations` for the organization column and filter, see [Organizations](#organizations) |
 
 The list answers with `{ globalActions, results, search? }`: `globalActions` names the global actions the
 user may see, each result may carry its own `actions`, and `search.total` feeds the paginator and the count of the
@@ -174,7 +175,8 @@ the transitions on the front only choose what the form offers.
 ## Search
 
 `tableConfig.search` takes the `fields` of the filters panel, a `mainField` for the text box and
-`isOwnerFilterEnabled`, which adds the owner filter described in [Owners](#owners). Every
+`isOwnerFilterEnabled` and `isOrganizationFilterEnabled`, which add the owner and the organization filters described in
+[Owners](#owners) and [Organizations](#organizations). Every
 change goes back to the first page and reloads; the whole query travels in the `search` parameter.
 
 A filter on a field of the backend matches that field alone. To match several at once, as the `text` of
@@ -291,6 +293,40 @@ every dragged row; any other folder is no drop target. A row nobody owns sends n
 it. Rows without an `ownerId` field move as they always have: the picker asks for the whole tree and every folder takes
 the drop.
 
+## Organizations
+
+On a backend where rows belong to organizations, as base-entity of express-components does with `ownership`, the rows
+answered to a superadmin carry `organizationId` and `organizationName`; everyone else gets them stripped. A row type
+extends `BeyPageOrganizationItem` to read them, both optional, and `null` on a common row. The page shows anything
+about organizations only while the rows the user may see span two organizations or more, so a manager, a normal user
+or an app with a single organization never sees it.
+
+`beyPageOrganizationColumn(overrides?)` is the column: key `organizationName`, headed "Organization"
+(`angular-components.page.table.columns.organization-name` and its `.tooltips.organization-name`), hideable, not
+sortable, since base-entity does not sort by it, with a width of `2`; `overrides` changes any of that.
+`beyPageOrganizationCell(row)` is its cell, the name as text, empty for a common row. The columns take the column and
+`loadRow` the cell at the same place, as for the owner; with categories, `categoriesConfig.loadRow` adds it too.
+
+```ts
+tableConfig: new BeyPageTableConfig<Contract>({
+    columns: [nameColumn, beyPageOwnerColumn(), beyPageOrganizationColumn()],
+    loadRow: contract => [nameCell(contract), beyPageOwnerCell(contract), beyPageOrganizationCell(contract)],
+    search: new BeyPageTableSearchConfig({ fields: [...], isOrganizationFilterEnabled: true, isOwnerFilterEnabled: true })
+});
+```
+
+The page recognises the column by its key. A page with it asks `GET {baseUrl}/organizations` as soon as it opens,
+which answers `{ organizations: [{ id, name }] }`, the organizations of the rows the user may see, common rows left
+out; until the answer names two or more, the page leaves the column and its cell out of the table, and with one or
+none it never shows them. A failed answer shows no error and leaves them out too.
+
+`isOrganizationFilterEnabled` on `BeyPageTableSearchConfig` adds an "Organization" field to the filters panel, after
+the fields of the page and before the owner filter (`angular-components.page.search.fields.organization-id`), with the
+organizations of the same answer by name. Picking one sends `{ field: 'organizationId', operator: 'equals', value: id }`,
+which narrows within what the user may see. It shows only with two organizations or more. A page with the filter and
+without the column asks the first time the filters panel opens, like the owner filter; a page the user comes back to
+with an organization filter in force asks at once. The page asks once per visit and resource.
+
 ## Categories and trash
 
 `tableConfig.categoriesConfig` turns the table into a drill-down browser, and a breadcrumb starting at
@@ -383,6 +419,8 @@ that has consequences elsewhere, such as renaming something other records name.
 | `angular-components.page.count.one` / `.many`                                                               | The count of the breadcrumb, with `{{count}}`          |
 | `angular-components.page.table.columns.owner-name` / `.tooltips.owner-name`                                 | The owner column, see [Owners](#owners)                |
 | `angular-components.page.search.fields.owner-id`                                                            | The owner filter                                       |
+| `angular-components.page.table.columns.organization-name` / `.tooltips.organization-name` | The organization column, see [Organizations](#organizations) |
+| `angular-components.page.search.fields.organization-id` | The organization filter |
 
 Every `<key>` is the action, column or field key as a kebab-case segment: a column `createdAt` reads
 `<prefix>.table.columns.created-at`. A column with a `label` or a `tooltip` of its own reads those keys instead, as the

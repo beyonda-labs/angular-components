@@ -4,6 +4,11 @@ import { UserFormValue, UserRow, UsersConfig, UserStatus } from './models/users.
 import { buildUsersPageConfig, UsersPageConfigOptions } from './users-page-config';
 
 describe('buildUsersPageConfig', () => {
+    const organizations = [
+        { id: 'o1', name: 'Acme' },
+        { id: 'o2', name: 'Globex' }
+    ];
+
     function build(overrides: Partial<UsersPageConfigOptions> = {}): ReturnType<typeof buildUsersPageConfig> {
         return buildUsersPageConfig({
             config: new UsersConfig({ baseUrl: '/staff', prefix: 'demo.users', storageKey: 'staff' }),
@@ -14,6 +19,7 @@ describe('buildUsersPageConfig', () => {
             loadRow: () => [],
             onReady: jest.fn(),
             onResendInvitation: jest.fn(),
+            organizations: [],
             roleOptions: [{ label: 'Editor', value: 'editor' }],
             ...overrides
         });
@@ -52,6 +58,41 @@ describe('buildUsersPageConfig', () => {
             ['status', Object.values(UserStatus)],
             ['role', ['editor']]
         ]);
+    });
+
+    it('shows a superadmin of several organizations the organization after the email, sortable by its name', () => {
+        const columns = build({ organizations }).tableConfig?.columns ?? [];
+
+        expect(columns.map(({ key }) => key)).toEqual([
+            'name',
+            'email',
+            'organization',
+            'roles',
+            'status',
+            'lastLoginAt',
+            'createdAt'
+        ]);
+        expect(columns[2]).toMatchObject({ isSortable: true, sortField: 'organizationName' });
+    });
+
+    it('filters a superadmin of several organizations by organization, with equals only', () => {
+        const fields = build({ organizations }).tableConfig?.search?.fields ?? [];
+
+        expect(fields.at(-1)).toMatchObject({
+            key: 'organizationId',
+            operators: ['equals'],
+            options: [
+                { label: 'Acme', value: 'o1' },
+                { label: 'Globex', value: 'o2' }
+            ]
+        });
+    });
+
+    it('shows nothing about organizations with one organization or none, as a manager gets', () => {
+        const config = build({ organizations: [organizations[0]] });
+
+        expect(config.tableConfig?.columns.map(({ key }) => key)).not.toContain('organization');
+        expect(config.tableConfig?.search?.fields.map(({ key }) => key)).not.toContain('organizationId');
     });
 
     it('offers to invite, edit, change the status and resend the invitation of a user', () => {

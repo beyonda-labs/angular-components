@@ -6,13 +6,24 @@ import { buildPageSearchConfig } from './page-search-config';
 
 describe('buildPageSearchConfig', () => {
     const name = new SearchField({ key: 'name', type: SearchFieldType.Text });
+    const organizations = [
+        { id: 'o1', name: 'Acme' },
+        { id: 'o2', name: 'Globex' }
+    ];
     const owners = [
         { id: 'u1', name: 'Ada' },
         { id: 'u2', name: 'Grace' }
     ];
 
     function buildOptions(overrides: Partial<PageSearchConfigOptions> = {}): PageSearchConfigOptions {
-        return { filters: [], onFiltersChange: jest.fn(), onPanelOpen: jest.fn(), owners, ...overrides };
+        return {
+            filters: [],
+            onFiltersChange: jest.fn(),
+            onPanelOpen: jest.fn(),
+            organizations,
+            owners,
+            ...overrides
+        };
     }
 
     function buildTableConfig(overrides: Partial<PageTableSearchConfigParameters> = {}): PageTableConfig {
@@ -51,6 +62,31 @@ describe('buildPageSearchConfig', () => {
         );
 
         expect(search?.fields).toEqual([name]);
+    });
+
+    it('adds the organization filter before the owner filter, and asks for the organizations when the panel opens', () => {
+        const options = buildOptions();
+        const search = buildPageSearchConfig(
+            {
+                prefix: 'demo',
+                tableConfig: buildTableConfig({ isOrganizationFilterEnabled: true, isOwnerFilterEnabled: true })
+            },
+            options
+        );
+
+        expect(search?.fields.map(field => field.key)).toEqual(['name', 'organizationId', 'ownerId']);
+        expect(search?.onPanelOpen).toBe(options.onPanelOpen);
+    });
+
+    it('leaves the organization filter out until there are two organizations to choose from', () => {
+        const options = buildOptions({ organizations: [organizations[0]] });
+        const search = buildPageSearchConfig(
+            { prefix: 'demo', tableConfig: buildTableConfig({ isOrganizationFilterEnabled: true }) },
+            options
+        );
+
+        expect(search?.fields).toEqual([name]);
+        expect(search?.onPanelOpen).toBe(options.onPanelOpen);
     });
 
     it('builds no search for a table without one', () => {
