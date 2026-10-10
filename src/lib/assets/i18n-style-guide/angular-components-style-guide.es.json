@@ -342,7 +342,11 @@
                     "label": "Contraseña sin toggle",
                     "placeholder": "Sin toggle de visibilidad"
                 },
-                "tooltip": "Campos de contraseña con validador de longitud, toggle, obligatorio y deshabilitado"
+                "password5": {
+                    "label": "Contraseña con política",
+                    "placeholder": "Todas las reglas activas"
+                },
+                "tooltip": "Campos de contraseña con validador de longitud, política, toggle, obligatorio y deshabilitado"
             },
             "section-radio": {
                 "label": "Campos de radio",
@@ -580,7 +584,7 @@
                 "product-description": "Genera, firma y comparte PDFs en segundos. Plantillas, marca y firma electrónica — todo desde tu navegador.",
                 "product-name": "PDF Generator"
             },
-            "example": "Componente de autenticación a pantalla completa con soporte de tema claro/oscuro y proveedores OAuth opcionales obtenidos del backend.",
+            "example": "Componente de autenticación a pantalla completa con soporte de tema claro/oscuro, proveedores OAuth opcionales obtenidos del backend y registro opcional, cuya contraseña muestra las reglas de la política de contraseñas que responde el backend.",
             "examples": {
                 "login": "Login"
             }
@@ -759,7 +763,7 @@
         },
         "pagination-section": "Paginación",
         "password-change": {
-            "example": "La contraseña del usuario que ha iniciado sesión, leída del backend de demostración: la actual, la nueva con su longitud mínima debajo y su confirmación; o cómo crear una en una cuenta que no la tiene."
+            "example": "La contraseña del usuario que ha iniciado sesión, leída del backend de demostración: la actual, la nueva con las reglas de la política de contraseñas que responde el backend debajo y su confirmación; o cómo crear una en una cuenta que no la tiene."
         },
         "password-change-section": "Cambio de contraseña",
         "pdf-viewer": {

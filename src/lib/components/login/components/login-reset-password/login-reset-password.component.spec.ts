@@ -1,7 +1,15 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
-import { buttonByName, controlByName, queryAll, queryControl, renderComponent, settle } from '@testing/dom';
+import {
+    accessibleDescription,
+    buttonByName,
+    controlByName,
+    queryAll,
+    queryControl,
+    renderComponent,
+    settle
+} from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 
@@ -9,10 +17,13 @@ import { SessionService } from '../../../../services/session/session.service';
 import { LoginConfig } from '../../models/login.model';
 import { LoginResetPasswordComponent } from './login-reset-password.component';
 
+const POLICY_URL = 'https://api.test/auth/password-policy';
 const RESET_URL = 'https://api.test/auth/password/reset';
 const PASSWORD = 'angular-components.login.reset-password.password.label';
 const PASSWORD2 = 'angular-components.login.reset-password.password2.label';
 const SAVE = 'angular-components.login.reset-password.button.save';
+const STRICT = { isDigitRequired: true, isLowercaseRequired: true, isSymbolRequired: true, isUppercaseRequired: true };
+const STRONG = 'Correct-h0rse';
 const TOKEN_QUERY = { token: 'reset-token' };
 
 describe('LoginResetPasswordComponent', () => {
@@ -43,6 +54,12 @@ describe('LoginResetPasswordComponent', () => {
                 productName: 'demo.product'
             })
         });
+    }
+
+    async function open(): Promise<void> {
+        await land();
+        httpTesting.expectOne(POLICY_URL).flush(STRICT);
+        await settle(fixture);
     }
 
     function links(): string[] {
@@ -77,7 +94,7 @@ describe('LoginResetPasswordComponent', () => {
     });
 
     it('asks for the new password twice, in the shell of the login, starting on the first field', async () => {
-        await land();
+        await open();
 
         expect(text()).toContain('demo.product');
         expect(text()).toContain('angular-components.login.title.reset-password');
@@ -87,23 +104,36 @@ describe('LoginResetPasswordComponent', () => {
 
     it('saves the new password with the token of the link and opens the session', async () => {
         const accessToken = buildAccessToken(['/home']);
-        await land();
+        await open();
 
-        await save('secret');
+        await save(STRONG);
         const request = httpTesting.expectOne({ method: 'POST', url: RESET_URL });
         request.flush({ accessToken });
 
-        expect(request.request.body).toEqual({ password: 'secret', password2: 'secret', token: 'reset-token' });
+        expect(request.request.body).toEqual({ password: STRONG, password2: STRONG, token: 'reset-token' });
         expect(TestBed.inject(SessionService).getToken()).toBe(accessToken);
         expect(navigate).toHaveBeenCalledWith(['/home']);
     });
 
     it('refuses to save a confirmation that differs from the password', async () => {
-        await land();
+        await open();
 
-        await type(PASSWORD, 'secret');
+        await type(PASSWORD, STRONG);
         await type(PASSWORD2, 'other');
 
+        expect(buttonByName(fixture, SAVE).disabled).toBe(true);
+        httpTesting.expectNone(RESET_URL);
+    });
+
+    it('lists the rules of the policy under the password and refuses to save one that breaks them', async () => {
+        await open();
+
+        await save('correct-horse');
+
+        expect(accessibleDescription(controlByName(fixture, PASSWORD))).toContain(
+            'angular-components.form.password-field.policy.digit'
+        );
+        expect(accessibleDescription(controlByName(fixture, PASSWORD2))).toBe('');
         expect(buttonByName(fixture, SAVE).disabled).toBe(true);
         httpTesting.expectNone(RESET_URL);
     });
@@ -117,12 +147,13 @@ describe('LoginResetPasswordComponent', () => {
             'angular-components.login.back-to-sign-in'
         ]);
         expect(queryControl(fixture, PASSWORD)).toBeNull();
+        httpTesting.expectNone(POLICY_URL);
     });
 
     it('turns to the explanation of the link when the server refuses its token', async () => {
-        await land();
+        await open();
 
-        await save('secret');
+        await save(STRONG);
         httpTesting
             .expectOne(RESET_URL)
             .flush(
@@ -136,18 +167,21 @@ describe('LoginResetPasswordComponent', () => {
         expect(queryControl(fixture, PASSWORD)).toBeNull();
     });
 
-    it('keeps the form when the server refuses something else', async () => {
-        await land();
+    it('keeps the form and shows the reason when the server refuses the password', async () => {
+        await open();
 
-        await save('short');
+        await save(STRONG);
         httpTesting
             .expectOne(RESET_URL)
             .flush(
-                { errorCode: 'invalid-field-length', messageKey: 'invalid-field-length' },
+                { errorCode: 'bad-request', messageKey: 'password.too-short', messageParameters: { min: 16 } },
                 { status: 400, statusText: 'Bad Request' }
             );
         await settle(fixture);
 
+        expect(TestBed.inject(FakeModalService).errors()).toEqual([
+            expect.objectContaining({ message: 'angular-components.http.error.password.too-short' })
+        ]);
         expect(text()).toContain('angular-components.login.title.reset-password');
         expect(queryControl(fixture, PASSWORD)).not.toBeNull();
     });

@@ -1,9 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { accessibleDescription, accessibleName, controlByName, queryAll, renderComponent, settle } from '@testing/dom';
+import {
+    accessibleDescription,
+    accessibleName,
+    controlByName,
+    queryAll,
+    renderComponent,
+    settle,
+    textsOf
+} from '@testing/dom';
 import { of } from 'rxjs';
 
+import { PasswordPolicy } from '../../../../services/password-policy/models/password-policy.model';
 import { FormFieldState } from '../../form.component';
 import { FormAutocompleteField } from '../../models/fields/form-autocomplete-field.model';
 import { FormCheckboxField } from '../../models/fields/form-checkbox-field.model';
@@ -253,6 +262,73 @@ describe('FormFieldComponent', () => {
             await settle(fixture);
 
             expect(accessibleDescription(input)).toBe('demo.contact.secret.empty');
+        });
+    });
+
+    describe('password policy', () => {
+        const HINT = 'demo.contact.secret.hint';
+        const LABEL = 'demo.contact.secret.label';
+        const RULE = 'angular-components.form.password-field.policy';
+
+        async function renderPolicy(policy: PasswordPolicy): Promise<void> {
+            const field = new FormPasswordField({ hint: HINT, isRequired: true, key: 'secret', policy });
+
+            fixture = await renderComponent(FormFieldComponent, {
+                control: TestBed.inject(FormService).initFieldControl(field),
+                field,
+                prefix: 'demo.contact',
+                state: { ...VALID, isRequired: true }
+            });
+        }
+
+        async function type(value: string): Promise<void> {
+            const input = controlByName(fixture, LABEL);
+
+            input.value = value;
+            input.dispatchEvent(new Event('input'));
+            await settle(fixture);
+        }
+
+        async function leave(): Promise<void> {
+            controlByName(fixture, LABEL).dispatchEvent(new Event('blur'));
+            await settle(fixture);
+        }
+
+        it('lists the rules of the policy instead of the hint and describes the control with them', async () => {
+            await renderPolicy(new PasswordPolicy({ isDigitRequired: true }));
+            const description = accessibleDescription(controlByName(fixture, LABEL));
+
+            expect(fixture.nativeElement.textContent).not.toContain(HINT);
+            expect(description).toContain(`${RULE}.length`);
+            expect(description).toContain(`${RULE}.digit`);
+        });
+
+        it('flags a password that breaks its policy only once touched, and keeps the rules instead of an error', async () => {
+            await renderPolicy(new PasswordPolicy({ isDigitRequired: true }));
+            const input = controlByName(fixture, LABEL);
+
+            await type('short');
+            expect(input.hasAttribute('aria-invalid')).toBe(false);
+
+            await leave();
+            expect(input.getAttribute('aria-invalid')).toBe('true');
+            expect(queryAll(fixture, '[role="alert"]')).toEqual([]);
+            expect(accessibleDescription(input)).toContain(`${RULE}.digit`);
+
+            await type('long enough 1');
+            expect(input.hasAttribute('aria-invalid')).toBe(false);
+        });
+
+        it('says when a password is longer than the policy allows, next to the rules', async () => {
+            await renderPolicy(new PasswordPolicy({ maxLength: 10 }));
+
+            await type('much too long');
+            await leave();
+            const description = accessibleDescription(controlByName(fixture, LABEL));
+
+            expect(textsOf(queryAll(fixture, '[role="alert"]'))).toEqual([`${RULE}.too-long`]);
+            expect(description).toContain(`${RULE}.too-long`);
+            expect(description).toContain(`${RULE}.length`);
         });
     });
 

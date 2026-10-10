@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ValidatorFn } from '@angular/forms';
 
 import { AccountPasswordUpdate } from '../../../services/account/models/account.model';
+import { PasswordPolicyService } from '../../../services/password-policy/password-policy.service';
 import { FormPasswordField } from '../../form/models/fields/form-password-field.model';
 import {
     FormButton,
@@ -12,20 +13,17 @@ import {
     FormRow,
     FormSection
 } from '../../form/models/form.model';
-import {
-    FormFieldCustomValidator,
-    FormFieldLengthValidator,
-    FormFieldValidatorType
-} from '../../form/models/form-field-validator.model';
+import { FormFieldCustomValidator } from '../../form/models/form-field-validator.model';
 import { PASSWORD_CHANGE_SECTION, PasswordChangeFormValue } from '../models/password-change.model';
 
 const NEW_PASSWORD_FIELD = 'password';
-const PASSWORD_MIN_LENGTH = 8;
 
 @Injectable({
     providedIn: 'root'
 })
 export class PasswordChangeFormService {
+    private readonly passwordPolicyService = inject(PasswordPolicyService);
+
     buildForm(
         prefix: string,
         onSubmit: (value: AccountPasswordUpdate, handle: FormHandle<PasswordChangeFormValue>) => void
@@ -55,15 +53,9 @@ export class PasswordChangeFormService {
                                 new FormPasswordField({
                                     autocomplete: 'new-password',
                                     columns: 6,
-                                    hint: `${prefix}.${PASSWORD_CHANGE_SECTION}.${NEW_PASSWORD_FIELD}.hint`,
                                     isRequired: true,
                                     key: NEW_PASSWORD_FIELD,
-                                    validators: [
-                                        new FormFieldLengthValidator(
-                                            PASSWORD_MIN_LENGTH,
-                                            FormFieldValidatorType.MinLength
-                                        )
-                                    ]
+                                    policy: this.passwordPolicyService.policy
                                 }),
                                 new FormPasswordField({
                                     autocomplete: 'new-password',

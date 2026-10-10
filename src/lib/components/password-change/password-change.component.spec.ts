@@ -20,7 +20,10 @@ import { PasswordChangeConfig } from './models/password-change.model';
 import { PasswordChangeComponent } from './password-change.component';
 
 const PASSWORD_URL = 'https://api.test/api/account/password';
+const POLICY_URL = 'https://api.test/auth/password-policy';
 const PREFIX = 'angular-components.password-change';
+const RULE = 'angular-components.form.password-field.policy';
+const STRICT = { isDigitRequired: true, isLowercaseRequired: true, isSymbolRequired: true, isUppercaseRequired: true };
 const CURRENT = `${PREFIX}.password.current-password.label`;
 const PASSWORD = `${PREFIX}.password.password.label`;
 const CONFIRMATION = `${PREFIX}.password.password2.label`;
@@ -37,6 +40,11 @@ describe('PasswordChangeComponent', () => {
         fixture = await renderComponent(PasswordChangeComponent, { config });
         httpTesting.expectOne(`https://api.test/api${config.baseUrl}`).flush(profile);
         await settle(fixture);
+
+        if (profile.hasPassword) {
+            httpTesting.expectOne(POLICY_URL).flush(STRICT);
+            await settle(fixture);
+        }
     }
 
     async function type(label: string, value: string): Promise<void> {
@@ -90,11 +98,15 @@ describe('PasswordChangeComponent', () => {
         expect(controlByName(fixture, CONFIRMATION).value).toBe('');
     });
 
-    it('hints the minimum length under the new password and describes nothing else', async () => {
+    it('lists the rules of the policy under the new password alone and describes nothing else', async () => {
         await render();
+        const description = accessibleDescription(controlByName(fixture, PASSWORD));
 
-        expect(accessibleDescription(controlByName(fixture, PASSWORD))).toBe(`${PREFIX}.password.password.hint`);
+        expect(description).toContain(`${RULE}.length`);
+        expect(description).toContain(`${RULE}.uppercase`);
+        expect(description).toContain(`${RULE}.symbol`);
         expect(accessibleDescription(controlByName(fixture, CURRENT))).toBe('');
+        expect(accessibleDescription(controlByName(fixture, CONFIRMATION))).toBe('');
         expect(accessibleDescription(saveButton())).toBe('');
     });
 
@@ -106,27 +118,33 @@ describe('PasswordChangeComponent', () => {
         await type(CURRENT, 'old-secret');
         expect(saveButton().disabled).toBe(true);
 
-        await type(PASSWORD, 'new-secret');
-        await type(CONFIRMATION, 'new-secret');
+        await type(PASSWORD, 'New-secr3t');
+        await type(CONFIRMATION, 'New-secr3t');
         expect(saveButton().disabled).toBe(false);
     });
 
-    it('holds back a new password shorter than 8 characters', async () => {
+    it('holds back a new password while it breaks a rule of the policy the server answers', async () => {
         await render();
 
-        await fill('old-secret', 'seven77');
+        await fill('old-secret', 'new-secret');
         expect(saveButton().disabled).toBe(true);
         expect(controlByName(fixture, PASSWORD).getAttribute('aria-invalid')).toBe('true');
-        expect(accessibleDescription(controlByName(fixture, PASSWORD))).toBe(`${PREFIX}.password.password.hint`);
+        expect(accessibleDescription(controlByName(fixture, PASSWORD))).toContain(`${RULE}.digit ${RULE}.unmet`);
 
-        await fill('old-secret', 'eight888');
+        await fill('old-secret', 'New-secr3t');
         expect(saveButton().disabled).toBe(false);
+    });
+
+    it('asks the server for no policy when the account has no password', async () => {
+        await render(buildProfile({ hasPassword: false }));
+
+        httpTesting.expectNone(POLICY_URL);
     });
 
     it('holds the new password back while its confirmation does not match', async () => {
         await render();
 
-        await fill('old-secret', 'new-secret', 'other-secret');
+        await fill('old-secret', 'New-secr3t', 'Other-secr3t');
 
         expect(textsOf(queryAll(fixture, '[role="alert"]'))).toEqual([`${PREFIX}.password.password2.mismatch`]);
         expect(saveButton().disabled).toBe(true);
@@ -135,7 +153,7 @@ describe('PasswordChangeComponent', () => {
     it('changes the password, confirms it, opens the session it answers and empties the form', async () => {
         await render();
 
-        await fill('old-secret', 'new-secret');
+        await fill('old-secret', 'New-secr3t');
         saveButton().click();
         const request = httpTesting.expectOne(PASSWORD_URL);
         request.flush({ accessToken: 'fresh-token' });
@@ -145,8 +163,8 @@ describe('PasswordChangeComponent', () => {
         expect(request.request.withCredentials).toBe(true);
         expect(request.request.body).toEqual({
             currentPassword: 'old-secret',
-            password: 'new-secret',
-            password2: 'new-secret'
+            password: 'New-secr3t',
+            password2: 'New-secr3t'
         });
         expect(TestBed.inject(SessionService).token()).toBe('fresh-token');
         expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: `${PREFIX}.toast.success` }]);

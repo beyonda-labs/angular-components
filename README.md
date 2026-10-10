@@ -121,6 +121,7 @@ Service documentation:
 -   [App](src/lib/services/app/docs/app-readme.md)
 -   [Environment](src/lib/services/environment/docs/environment-readme.md)
 -   [Http](src/lib/services/http/docs/http-readme.md)
+-   [Password policy](src/lib/services/password-policy/docs/password-policy-readme.md)
 -   [Preferences](src/lib/services/preferences/docs/preferences-readme.md)
 -   [Session](src/lib/services/session/docs/session-readme.md)
 -   [Theme](src/lib/services/theme/docs/theme-readme.md)

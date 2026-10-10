@@ -342,7 +342,11 @@
                     "label": "Password Without Toggle",
                     "placeholder": "No visibility toggle"
                 },
-                "tooltip": "Password fields with a length validator, toggle, required and disabled states"
+                "password5": {
+                    "label": "Password With a Policy",
+                    "placeholder": "Every rule on"
+                },
+                "tooltip": "Password fields with a length validator, a policy, toggle, required and disabled states"
             },
             "section-radio": {
                 "label": "Radio Fields",
@@ -580,7 +584,7 @@
                 "product-description": "Generate, sign and share PDFs in seconds. Templates, branding and e-signature — all from your browser.",
                 "product-name": "PDF Generator"
             },
-            "example": "Full-page authentication component with light/dark theme support, optional OAuth providers (fetched from backend), and optional registration flow.",
+            "example": "Full-page authentication component with light/dark theme support, optional OAuth providers (fetched from backend), and optional registration flow, whose password lists the rules of the password policy the backend answers.",
             "examples": {
                 "login": "Login"
             }
@@ -759,7 +763,7 @@
         },
         "pagination-section": "Pagination",
         "password-change": {
-            "example": "The password of the signed-in user, read from the demo backend: the current one, the new one with its minimum length under it, and its confirmation; or how to set one for an account without it."
+            "example": "The password of the signed-in user, read from the demo backend: the current one, the new one with the rules of the password policy the backend answers under it, and its confirmation; or how to set one for an account without it."
         },
         "password-change-section": "Password change",
         "pdf-viewer": {

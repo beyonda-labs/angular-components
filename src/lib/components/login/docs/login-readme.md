@@ -52,7 +52,11 @@ give the config as route data, `data: { config }`.
 | `BeyLoginAcceptInvitationComponent` | `bey-login-accept-invitation` | Reads the invitation, prefills the name and asks for the details and password |
 
 Each one opens the session the server answers, exactly as a sign-in does, and goes to the `redirectPath` of the
-user. A link without a token, or one the server refuses with `account.token-invalid`, shows why the link no longer
+user. The new password of the reset and of the invitation is checked against the password policy of the server, as is
+the `password` field of the registration: the rules show under the field as the user types, the form holds back a
+password that breaks one, and the confirmation (`password2`) lists none. The
+[password policy service](../../../services/password-policy/docs/password-policy-readme.md) asks for the policy the
+first time one of those fields shows, so the sign-in alone never asks for it. A link without a token, or one the server refuses with `account.token-invalid`, shows why the link no longer
 works and a link back to `loginRoute`; the reset page also links to `loginRoute?view=forgot-password`, which opens
 the login on the forgotten password view when `isPasswordResetEnabled` is set. When the verification or the
 invitation cannot be read for any other reason, the page offers to try again.
@@ -78,6 +82,7 @@ Everything else comes from the access control api at `accessControlUrl` of the e
 | ---------------------------- | ---------------------------------------------------------- | ------------------------------------------ |
 | `GET /providers`             | `{ id, authUrl }[]`, ids among google, microsoft, facebook | The provider buttons under the form        |
 | `GET /register/fields`       | `{ name, type, required?, step? }[]`                       | The registration form, one step per `step` |
+| `GET /password-policy`       | `{ minLength, maxLength, is…Required }`                    | The rules listed under a new password      |
 | `POST /login`                | `{ accessToken }`, and the refresh cookie                  | Signing in                                 |
 | `POST /register`             | `{ accessToken }` and the cookie, or `{ verificationRequired: true }` | Registering                     |
 | `POST /password/forgot`      | `204`, whether the account exists or not                   | Asking for a reset link                    |
@@ -87,7 +92,9 @@ Everything else comes from the access control api at `accessControlUrl` of the e
 | `GET /invitation?token=`     | `{ email, name?, surname? }`                               | Showing an invitation                      |
 | `POST /invitation`           | `{ accessToken }`, and the refresh cookie                  | Accepting it                               |
 
-A failing `/providers` or `/register/fields` is not an error: the screen just offers nothing. A provider the
+A failing `/providers` or `/register/fields` is not an error: the screen just offers nothing. A failing
+`/password-policy` is not one either: the fields check the library defaults, a minimum of 8 characters, and the server
+still refuses what breaks its own policy with one of the `password.*` errors, shown in the error modal. A provider the
 component has no icon for is skipped.
 
 Every request that answers a session is sent with the credentials, so the browser keeps the httpOnly cookie the
@@ -97,7 +104,7 @@ of the session user, or to the root when there is none. A failed request shows t
 `angular-components.http.error.login.*` or `.account.*`, such as `invalid-credentials`, `account-locked` with the
 `minutes` left after too many failed attempts, `account-inactive` for a deactivated account or `token-invalid` for
 an emailed link that no longer works; `invalid-origin` is the answer to a refresh or a logout sent from another
-site.
+site. A new password the server refuses answers `.password.*`, such as `too-short` with its `min`.
 
 A registration answered with `{ verificationRequired: true }` opens no session: the screen asks to check the inbox
 instead. A sign-in refused with `login.email-not-verified` offers, under the form, to resend the verification email
@@ -111,8 +118,9 @@ created with, so a replaced config would leave them writing into a group nobody 
 
 Each view moves the focus to its first field, unless something else holds it already, such as the error modal.
 The fields carry their autofill hints (`email`, `current-password`, `new-password`, `given-name`, `family-name`), the
-confirmation of a new password is refused while it differs from the password, and the progress and the
-confirmations are written into a `role="status"` region.
+confirmation of a new password is refused while it differs from the password, the rules of the password policy are a
+polite live region that describes the new password, and the progress and the confirmations are written into a
+`role="status"` region.
 
 ## Texts
 

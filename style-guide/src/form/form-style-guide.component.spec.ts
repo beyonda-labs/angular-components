@@ -29,4 +29,12 @@ describe('FormStyleGuideComponent', () => {
         );
         expect(accessibleDescription(buttonByName(fixture, `${PREFIX}.button.submit`))).toBe(`${PREFIX}.footer.note`);
     });
+
+    it('lists every rule of a password policy under the field that has one', () => {
+        const description = accessibleDescription(controlByName(fixture, `${PREFIX}.section-password.password5.label`));
+
+        for (const rule of ['length', 'uppercase', 'lowercase', 'digit', 'symbol']) {
+            expect(description).toContain(`angular-components.form.password-field.policy.${rule}`);
+        }
+    });
 });

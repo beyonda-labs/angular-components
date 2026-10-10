@@ -9,11 +9,18 @@ import {
     BeyFormPasswordField,
     BeyFormRow,
     BeyFormSection,
-    BeyFormTextField
+    BeyFormTextField,
+    BeyPasswordPolicy
 } from '@beyonda-labs/angular-components';
 import { faCalendarDays, faUser } from '@fortawesome/free-solid-svg-icons';
 
 const PREFIX = 'angular-components-style-guide.form';
+const STRICT_POLICY = new BeyPasswordPolicy({
+    isDigitRequired: true,
+    isLowercaseRequired: true,
+    isSymbolRequired: true,
+    isUppercaseRequired: true
+});
 
 export function buildInputSections(): BeyFormSection[] {
     return [
@@ -90,6 +97,17 @@ export function buildInputSections(): BeyFormSection[] {
                             key: 'password4',
                             columns: 6,
                             showToggle: false
+                        })
+                    ]
+                }),
+                new BeyFormRow({
+                    fields: [
+                        new BeyFormPasswordField({
+                            key: 'password5',
+                            autocomplete: 'new-password',
+                            columns: 6,
+                            isRequired: true,
+                            policy: STRICT_POLICY
                         })
                     ]
                 })

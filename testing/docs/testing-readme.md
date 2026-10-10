@@ -44,6 +44,18 @@ The test environment is `accessControlUrl: 'https://api.test/auth'`, `appName: '
 the OAuth callback, a `401` the interceptor refreshes) sends `POST https://api.test/auth/refresh`, which the spec
 answers with `HttpTestingController`: `{ accessToken }` to sign in, or a `401` to stay signed out.
 
+The password policy is not faked either. The first time a field with a policy renders (the new password of
+`bey-password-change`, of the reset-password and accept-invitation pages, or the `password` of the registration),
+`BeyPasswordPolicyService` sends `GET https://api.test/auth/password-policy`, once per spec. A spec that calls
+`verify()` answers it, with the policy it wants to check against or with an error to keep the library defaults; one
+that does not call it may leave it pending, and the fields check the defaults, a minimum of 8 characters:
+
+```ts
+TestBed.inject(HttpTestingController)
+    .expectOne('https://api.test/auth/password-policy')
+    .flush({ isDigitRequired: true, isLowercaseRequired: true, isSymbolRequired: true, isUppercaseRequired: true });
+```
+
 ## Fakes
 
 | Fake                        | Stands for              | Records                                                                                                           | Answers                                                                     |

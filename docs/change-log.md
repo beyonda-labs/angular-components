@@ -48,6 +48,12 @@
     (`isDivided`) and a `note` at the start of their row that describes the submit button.
 -   Testing: `beyAccessibleDescription(element)`, the text of what an element is described by, such as a field's hint.
 -   Page module: `textField` on `BeyPageTableSearchConfig` sends that field as the `text` of the search.
+-   Password policy service: `BeyPasswordPolicyService` reads `accessControlUrl/password-policy` the first time its
+    `policy` signal is read, once for the app; until it answers, or if it fails, it holds the `BeyPasswordPolicy` defaults.
+-   Form module: `policy` on `BeyFormPasswordField`, a `BeyPasswordPolicy` or a signal of one, lists its rules under the
+    field in place of the hint, marks each one met as the user types and validates the password against it.
+-   Login and password change modules: the new password of the reset-password and accept-invitation pages, of the
+    registration and of `bey-password-change` follows the server's policy; texts of the `password.*` errors and titles.
 
 ### Changed
 
@@ -65,6 +71,8 @@
 -   App service: `provideBeyApp` starts the app in its language; an app no longer sets it in its `AppComponent`.
 -   Floating preferences module: lists the `languages` of the preferences, each named in itself, and saves a signed-in
     user's choice; it needs `provideBeyApp`, or `provideBeyTesting` in specs.
+-   Password change module: the new password lists the rules of the password policy instead of
+    `<prefix>.password.password.hint`, which is no longer read.
 
 ### Fixed
 

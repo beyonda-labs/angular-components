@@ -189,7 +189,11 @@
                     "label": "Password Without Toggle",
                     "placeholder": "No visibility toggle"
                 },
-                "tooltip": "Password fields with a length validator, toggle, required and disabled states"
+                "password5": {
+                    "label": "Password With a Policy",
+                    "placeholder": "Every rule on"
+                },
+                "tooltip": "Password fields with a length validator, a policy, toggle, required and disabled states"
             },
             "section-radio": {
                 "label": "Radio Fields",

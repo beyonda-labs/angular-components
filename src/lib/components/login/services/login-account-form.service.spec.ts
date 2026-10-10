@@ -1,7 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { FormGroup } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
 
+import { PasswordPolicyService } from '../../../services/password-policy/password-policy.service';
+import { FormPasswordField, FormPasswordPolicy } from '../../form/models/fields/form-password-field.model';
 import { FormConfig, FormHandle } from '../../form/models/form.model';
 import { FormService } from '../../form/services/form.service';
 import { LoginAccountFormService } from './login-account-form.service';
@@ -19,6 +21,18 @@ describe('LoginAccountFormService', () => {
         );
     }
 
+    function policies<T>(config: FormConfig<T>): Record<string, FormPasswordPolicy | undefined> {
+        return Object.fromEntries(
+            config.sections.flatMap(section =>
+                section.rows.flatMap(row =>
+                    row.fields
+                        .filter(field => field instanceof FormPasswordField)
+                        .map(field => [field.key, field.policy])
+                )
+            )
+        );
+    }
+
     function buildGroup<T>(config: FormConfig<T>): FormGroup {
         return TestBed.inject(FormService).buildFormGroup(config as FormConfig);
     }
@@ -28,7 +42,7 @@ describe('LoginAccountFormService', () => {
     }
 
     beforeEach(() => {
-        TestBed.configureTestingModule({ imports: [TranslateModule.forRoot()] });
+        TestBed.configureTestingModule({ providers: [provideBeyTesting()] });
         service = TestBed.inject(LoginAccountFormService);
     });
 
@@ -63,6 +77,17 @@ describe('LoginAccountFormService', () => {
         submit(config, group);
 
         expect(onSave).toHaveBeenCalledWith({ password: 'secret', password2: 'secret' });
+    });
+
+    it('checks the new password of a reset and of an invitation against the policy, never its confirmation', () => {
+        const { policy } = TestBed.inject(PasswordPolicyService);
+        const invitation = service.buildAcceptInvitation(PREFIX, { email: 'ada@example.com' }, jest.fn());
+
+        expect(policies(service.buildResetPassword(PREFIX, jest.fn()))).toEqual({
+            password: policy,
+            password2: undefined
+        });
+        expect(policies(invitation)).toEqual({ password: policy, password2: undefined });
     });
 
     it('prefills the invited name and sends only the names that are not blank', () => {
