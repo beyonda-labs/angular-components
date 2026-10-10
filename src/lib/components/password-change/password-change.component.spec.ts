@@ -90,13 +90,12 @@ describe('PasswordChangeComponent', () => {
         expect(controlByName(fixture, CONFIRMATION).value).toBe('');
     });
 
-    it('hints the minimum length under the new password and notes on its button that other devices sign out', async () => {
+    it('hints the minimum length under the new password and describes nothing else', async () => {
         await render();
 
         expect(accessibleDescription(controlByName(fixture, PASSWORD))).toBe(`${PREFIX}.password.password.hint`);
         expect(accessibleDescription(controlByName(fixture, CURRENT))).toBe('');
-        expect(text()).toContain(`${PREFIX}.note`);
-        expect(accessibleDescription(saveButton())).toBe(`${PREFIX}.note`);
+        expect(accessibleDescription(saveButton())).toBe('');
     });
 
     it('enables its single button only once the three passwords are valid', async () => {
@@ -161,7 +160,6 @@ describe('PasswordChangeComponent', () => {
         expect(text()).toContain(`${PREFIX}.title`);
         expect(text()).toContain(`${PREFIX}.description`);
         expect(text()).toContain(`${PREFIX}.no-password`);
-        expect(text()).not.toContain(`${PREFIX}.note`);
         expect(queryControl(fixture, CURRENT)).toBeNull();
     });
 

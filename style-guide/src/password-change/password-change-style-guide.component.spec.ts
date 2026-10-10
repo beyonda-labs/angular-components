@@ -1,7 +1,7 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { accessibleDescription, buttonByName, controlByName, hostOf, renderComponent, settle } from '@testing/dom';
+import { accessibleDescription, controlByName, hostOf, renderComponent, settle } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { PasswordChangeStyleGuideComponent } from './password-change-style-guide.component';
@@ -32,12 +32,11 @@ describe('PasswordChangeStyleGuideComponent', () => {
         expect(hostOf(fixture).textContent).toContain(`${PREFIX}.no-password`);
     });
 
-    it('asks an account with a password for the new one, with its hint and the note on its button', async () => {
+    it('asks an account with a password for the new one, with its hint', async () => {
         await render(true);
 
         expect(accessibleDescription(controlByName(fixture, `${PREFIX}.password.password.label`))).toBe(
             `${PREFIX}.password.password.hint`
         );
-        expect(accessibleDescription(buttonByName(fixture, `${PREFIX}.save`))).toBe(`${PREFIX}.note`);
     });
 });

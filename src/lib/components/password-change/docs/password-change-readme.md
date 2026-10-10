@@ -6,7 +6,7 @@ whole page. It is a card across the whole width: its title and a short descripti
 across the card. It reads the account through the [account service](../../../services/account/docs/account-readme.md),
 from `GET {baseUrl}`, and asks for the current password, the new one, of at least 8 characters as express-components
 asks, with `<prefix>.password.password.hint` under it, and its confirmation, which must match. A divider closes the
-form, with `<prefix>.note` at the start of the row of its single button, which it describes. The button is enabled
+form above its single button, which is enabled
 once the three are valid, and sends them with `PUT {baseUrl}/password` `{ currentPassword, password, password2 }`; the
 answer is a new session, which the block opens with `BeySessionService.setToken`, confirms with
 `<prefix>.toast.success` and empties the form. An account without a password (`hasPassword: false`), one that only
@@ -41,7 +41,6 @@ readonly passwordChangeConfig = new BeyPasswordChangeConfig();
 | `<prefix>.password.<field>.label` / `.placeholder` | `current-password`, `password`, `password2` |
 | `<prefix>.password.password.hint`                  | Under the new password                      |
 | `<prefix>.password.password2.mismatch`             | Under the confirmation while it differs     |
-| `<prefix>.note`                                    | Next to the button, which it describes      |
 | `<prefix>.save`                                    | The button                                  |
 | `<prefix>.no-password`                             | The text shown instead of the form          |
 | `<prefix>.toast.success`                           | The toast once the password changes         |
