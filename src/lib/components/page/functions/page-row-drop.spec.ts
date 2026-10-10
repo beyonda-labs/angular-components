@@ -1,6 +1,7 @@
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageItemType } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
+import { PageOwnedItem } from '../models/page-owner.model';
 import { findStandardMoveAction, isMoveDragAllowed, isMoveDropAllowed } from './page-row-drop';
 import { pageStandardAction } from './page-standard-actions';
 
@@ -8,6 +9,8 @@ interface Row extends PageItem {
     parentId: string | null;
     type: PageItemType;
 }
+
+interface OwnedRow extends PageOwnedItem, Row {}
 
 const CATEGORIES = new PageCategoriesConfig({});
 const MOVE = pageStandardAction(PageStandardAction.Move);
@@ -58,5 +61,28 @@ describe('isMoveDropAllowed', () => {
 
     it('refuses dropping rows onto the folder they are already in', () => {
         expect(isMoveDropAllowed(MOVE, INVOICES, [NESTED], CATEGORIES)).toBe(false);
+    });
+
+    describe('with owners', () => {
+        const ADA_INVOICES: OwnedRow = { ...INVOICES, ownerId: 'ada', ownerName: 'Ada Lovelace' };
+        const ADA_ARCHIVE: OwnedRow = { ...ARCHIVE, ownerId: 'ada', ownerName: 'Ada Lovelace' };
+        const ADA_OFFER: OwnedRow = { ...OFFER, ownerId: 'ada', ownerName: 'Ada Lovelace' };
+        const GRACE_INVOICES: OwnedRow = { ...INVOICES, id: 'grace-invoices', ownerId: 'grace', ownerName: 'Grace' };
+        const GRACE_OFFER: OwnedRow = { ...OFFER, id: 'grace-offer', ownerId: 'grace', ownerName: 'Grace' };
+        const COMMON: OwnedRow = { ...INVOICES, id: 'common', ownerId: null, ownerName: null };
+
+        it('accepts rows onto a folder of their own owner', () => {
+            expect(isMoveDropAllowed(MOVE, ADA_INVOICES, [ADA_OFFER, ADA_ARCHIVE], CATEGORIES)).toBe(true);
+        });
+
+        it('refuses rows onto a folder of another owner, or onto a folder nobody owns', () => {
+            expect(isMoveDropAllowed(MOVE, GRACE_INVOICES, [ADA_OFFER], CATEGORIES)).toBe(false);
+            expect(isMoveDropAllowed(MOVE, COMMON, [ADA_OFFER], CATEGORIES)).toBe(false);
+        });
+
+        it('refuses rows of several owners onto any folder', () => {
+            expect(isMoveDropAllowed(MOVE, ADA_INVOICES, [ADA_OFFER, GRACE_OFFER], CATEGORIES)).toBe(false);
+            expect(isMoveDropAllowed(MOVE, GRACE_INVOICES, [ADA_OFFER, GRACE_OFFER], CATEGORIES)).toBe(false);
+        });
     });
 });

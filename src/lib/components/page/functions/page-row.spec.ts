@@ -36,6 +36,21 @@ describe('page rows', () => {
         expect(isActionVisible(editCategory, [], [FOLDER, OTHER_FOLDER], CATEGORIES)).toBe(false);
     });
 
+    it('shows move only while the selected rows have a single owner, or none of them has owners', () => {
+        const move = buildAction(PageStandardAction.Move, PageActionScope.Item);
+        const customMove = buildAction(PageStandardAction.Move, PageActionScope.Item, jest.fn());
+        const adaReport = { ...REPORT, actions: [PageStandardAction.Move], ownerId: 'ada' } as PageItem;
+        const adaSummary = { ...SUMMARY, actions: [PageStandardAction.Move], ownerId: 'ada' } as PageItem;
+        const graceSummary = { ...adaSummary, ownerId: 'grace' } as PageItem;
+        const plainReport: Row = { ...REPORT, actions: [PageStandardAction.Move] };
+        const plainSummary: Row = { ...SUMMARY, actions: [PageStandardAction.Move] };
+
+        expect(isActionVisible(move, [], [adaReport, adaSummary])).toBe(true);
+        expect(isActionVisible(move, [], [plainReport, plainSummary])).toBe(true);
+        expect(isActionVisible(move, [], [adaReport, graceSummary])).toBe(false);
+        expect(isActionVisible(customMove, [], [adaReport, graceSummary])).toBe(false);
+    });
+
     it('hides an action with a handler when every selected row is a category, unlike a standard one', () => {
         const custom = buildAction('archive', PageActionScope.Item, jest.fn());
         const standard = buildAction('archive', PageActionScope.Item);

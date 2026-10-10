@@ -5,7 +5,7 @@ import { HttpService } from '../../../services/http/http.service';
 import { PageBackendResponse } from '../models/page.model';
 import { PageRestoredRename, PageTrashItem } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
-import { PAGE_OWNERS_PATH, PageOwner, PageOwnersResponse } from '../models/page-owner.model';
+import { PAGE_OWNER_FIELD, PAGE_OWNERS_PATH, PageOwner, PageOwnersResponse } from '../models/page-owner.model';
 import { PAGE_USAGES_IDS_SEPARATOR, PageUsages, PageUsagesResponse } from '../models/page-usages.model';
 import { PageUrlService } from './page-url.service';
 
@@ -92,8 +92,11 @@ export class PageHttpService {
         return this.httpService.get<PageItem[]>(this.url(relativeUrl, `/categories/${categoryId}/path`));
     }
 
-    loadCategoryTree(relativeUrl: string): Observable<PageItem[]> {
-        return this.httpService.get<PageItem[]>(this.url(relativeUrl, '/categories/tree'));
+    loadCategoryTree(relativeUrl: string, ownerId?: string): Observable<PageItem[]> {
+        return this.httpService.get<PageItem[]>(
+            this.url(relativeUrl, '/categories/tree'),
+            ownerId === undefined ? undefined : { queryParams: { [PAGE_OWNER_FIELD]: ownerId } }
+        );
     }
 
     loadTrash(relativeUrl: string, queryParameters: QueryParameters): Observable<PageBackendResponse> {

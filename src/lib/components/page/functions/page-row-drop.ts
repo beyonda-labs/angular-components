@@ -1,6 +1,7 @@
 import { PageAction, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
+import { isSameOwner } from './page-move-owner';
 import { isActionVisible, isCategoryRow, readRowField } from './page-row';
 
 export function findStandardMoveAction(actions: PageAction[]): PageAction | undefined {
@@ -42,7 +43,7 @@ export function isMoveDropAllowed(
     const targetParentId = readRowField(target, categoriesConfig.parentField) as string | number;
     const isAlreadyThere = items.every(item => readRowField(item, categoriesConfig.parentField) === target.id);
 
-    if (draggedCategoryIds.has(target.id) || draggedCategoryIds.has(targetParentId)) {
+    if (draggedCategoryIds.has(target.id) || draggedCategoryIds.has(targetParentId) || !isSameOwner(target, items)) {
         return false;
     }
 

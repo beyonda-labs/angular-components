@@ -83,6 +83,8 @@
 -   Password change module: the new password lists the rules of the password policy instead of
     `<prefix>.password.password.hint`, which is no longer read.
 -   Page module: a column that brings its own `tooltip` keeps it; only the others read `<prefix>.table.tooltips.<key>`.
+-   Page module: on rows with an `ownerId`, `move` shows only for a selection of one owner and its picker asks
+    `/categories/tree?ownerId=` for that owner's folders; a drag drops only onto a folder of the same owner.
 
 ### Fixed
 

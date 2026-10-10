@@ -99,7 +99,7 @@ breadcrumb, so it counts every row the list shows across its pages, categories i
 `{ filters, page, size, sort?, text? }`, with the filters of the search module.
 
 With `categoriesConfig` the resource also serves, under `{baseUrl}`: `/categories/{id}/path`,
-`/categories/tree`, `POST` and `PUT /categories`, `DELETE /categories` with `{ ids }`, `PUT /move` with
+`/categories/tree` (`?ownerId=` narrows it to one owner, see [Owners](#owners)), `POST` and `PUT /categories`, `DELETE /categories` with `{ ids }`, `PUT /move` with
 `{ items: [{ id, type }], targetId }`, and `GET`, `PUT` and `DELETE /trash` with `{ items }`. Every call
 goes through `BeyHttpService`, so errors open the standard modal and writes show their success toast. A new
 load of the list cancels the one still out, so a slow answer never replaces a newer list.
@@ -119,7 +119,7 @@ An action has a `key`, a `scope`, a `zone` and optionally an `icon`, a `label`, 
 Zones are `Left` next to the title, `Right` for the main buttons and `Menu` for the kebab. A standard key
 (`create`, `edit`, `delete`, `duplicate`, `change-status`, `move`, `create-category`, `edit-category`,
 `delete-category`, `restore-trash-item`, `delete-trash-item`, `empty-trash`) needs no `handler`; `edit` and `edit-category` need exactly one row
-whatever their scope. A `handler` always receives an array, so a single-row action reads `([user]) => …`; given
+whatever their scope, and `move` rows of a single owner, see [Owners](#owners). A `handler` always receives an array, so a single-row action reads `([user]) => …`; given
 to a standard key it replaces the standard behaviour. The page does no permission logic of its own.
 
 `delete`, `delete-category`, `delete-trash-item` and `empty-trash` ask before sending their request, with
@@ -283,6 +283,14 @@ The owner filter goes with the rest of the search: in a view, in every folder an
 trashed rows of every owner to those of one. On base-entity it narrows the folders as well, and since a folder holds
 only rows of its own owner, inside a folder it keeps all of them or none.
 
+A row only sits in a folder of its own owner, so a move never leaves that owner's folders. `move` shows only while
+every selected row has the same `ownerId`, with or without a `handler`: like any action the selection cannot take, it
+is hidden rather than disabled. Its tree picker asks `GET {baseUrl}/categories/tree?ownerId=<id>`, the folders of that
+owner, under the root, which takes the rows of any owner. A dragged row drops only onto a folder with the `ownerId` of
+every dragged row; any other folder is no drop target. A row nobody owns sends no `ownerId`, and base-entity lists no `move` on
+it. Rows without an `ownerId` field move as they always have: the picker asks for the whole tree and every folder takes
+the drop.
+
 ## Categories and trash
 
 `tableConfig.categoriesConfig` turns the table into a drill-down browser, and a breadcrumb starting at
@@ -299,13 +307,14 @@ a restore with `renamed`, the rows that came back with a new name because anothe
 them (`angular-components.page.toast.restored-renamed`). A trashed row that carries `parentPathField` (`parentPath`,
 the names of the categories above it from the root down) shows on the tooltip of its first cell the folder a restore
 puts it back in, `<prefix>.categories.root / Clients / 2026`, in place of the tooltip that cell had. `move` opens
-the tree picker with every category, disabling the selected ones and their descendants.
+the tree picker with every category, or every category of the owner of the rows when they have one, disabling the
+selected ones and their descendants.
 
 When the header lists the standard `move` action, with no `handler` of its own, the rows of the table can also be
 dragged onto a category row to move them there. A row can be dragged while it lists `move` in its `actions`, and
 dragging a selected row drags the whole selection. A category row takes the drop, highlighted while the pointer is
-over it, when every dragged row lists `move`, the category is not one of them nor inside one of them, and the rows
-are not in it already. The drop sends the same `PUT {baseUrl}/move`, shows `<prefix>.toast.move-success`, clears the
+over it, when every dragged row lists `move`, the category is not one of them nor inside one of them, the rows
+are not in it already and, with owners, it has the owner of every dragged row. The breadcrumb takes no drop. The drop sends the same `PUT {baseUrl}/move`, shows `<prefix>.toast.move-success`, clears the
 selection and reloads, as the action does. There is no drag in the trash, and `move` stays the way to do it from the
 keyboard.
 

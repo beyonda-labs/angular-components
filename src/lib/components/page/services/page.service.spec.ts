@@ -563,6 +563,21 @@ describe('PageService', () => {
             expect(pageHttpService.load).toHaveBeenCalledTimes(2);
         });
 
+        it('takes a drop only on a folder of the owner of every dragged row', () => {
+            const adaFolder = { ...FOLDER, id: 'ada-folder', ownerId: 'ada', ownerName: 'Ada' };
+            const graceFolder = { ...FOLDER, id: 'grace-folder', ownerId: 'grace', ownerName: 'Grace' };
+            const adaFile = { ...FILE, id: 'ada-file', ownerId: 'ada', ownerName: 'Ada' };
+            const graceFile = { ...FILE, id: 'grace-file', ownerId: 'grace', ownerName: 'Grace' };
+            pageHttpService.load.mockReturnValue(of(buildResponse([adaFolder, graceFolder, adaFile, graceFile])));
+            service.setConfig(buildMoveConfig([pageStandardAction(PageStandardAction.Move)]));
+            flush();
+            const table = service.tableConfig();
+
+            expect(table?.isDropAllowed?.(adaFolder, [adaFile])).toBe(true);
+            expect(table?.isDropAllowed?.(graceFolder, [adaFile])).toBe(false);
+            expect(table?.isDropAllowed?.(graceFolder, [adaFile, graceFile])).toBe(false);
+        });
+
         it('offers no drag without the standard move action, nor in the trash', () => {
             service.setConfig(buildMoveConfig([pageStandardAction(PageStandardAction.Delete)]));
             flush();

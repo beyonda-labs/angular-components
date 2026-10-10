@@ -26,7 +26,7 @@
                 "categories": {
                     "root": "Todos los productos"
                 },
-                "example": "Con categorías la página recorre carpetas, y el último nodo de la ruta cuenta lo que contiene la carpeta, carpetas y productos de todas las páginas. Al ir a una ruta bajo la página y volver se conservan la carpeta, la búsqueda, la página y la selección. Arrastra un producto, o las filas seleccionadas, sobre una carpeta para moverlos allí; la acción Mover a... hace lo mismo desde el teclado. Las cabeceras ordenan la lista en el backend.",
+                "example": "Con categorías la página recorre carpetas, y el último nodo de la ruta cuenta lo que contiene la carpeta, carpetas y productos de todas las páginas. Al ir a una ruta bajo la página y volver se conservan la carpeta, la búsqueda, la página y la selección. Arrastra un producto, o las filas seleccionadas, sobre una carpeta para moverlos allí; la acción Mover a... hace lo mismo desde el teclado. Donde las filas tienen propietario, ambos ofrecen solo las carpetas del propietario de las filas, y una selección de varios propietarios no se puede mover. Las cabeceras ordenan la lista en el backend.",
                 "heading": "Carpetas",
                 "move": {
                     "title": "Mover a"

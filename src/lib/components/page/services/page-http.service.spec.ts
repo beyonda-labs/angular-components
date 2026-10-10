@@ -45,7 +45,13 @@ describe('PageHttpService', () => {
         expect(answer('GET', '/items').request.params.toString()).toBe('search=x');
         expect(answer('GET', '/items/trash').request.params.toString()).toBe('search=y');
         answer('GET', '/items/categories/7/path');
-        answer('GET', '/items/categories/tree');
+        expect(answer('GET', '/items/categories/tree').request.params.keys()).toEqual([]);
+    });
+
+    it('narrows the category tree to the folders of one owner', () => {
+        service.loadCategoryTree('/items', 'ada').subscribe();
+
+        expect(answer('GET', '/items/categories/tree').request.params.toString()).toBe('ownerId=ada');
     });
 
     it('creates and edits items and categories with the success toast', () => {

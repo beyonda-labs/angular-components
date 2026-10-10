@@ -481,6 +481,19 @@
                 "cancel": "Cancel",
                 "submit": "Save"
             },
+            "search": {
+                "fields": {
+                    "owner-id": "Owner"
+                }
+            },
+            "table": {
+                "columns": {
+                    "owner-name": "Owner"
+                },
+                "tooltips": {
+                    "owner-name": "The user it belongs to"
+                }
+            },
             "toast": {
                 "restored-renamed": "Restored with a new name, since another item already has the old one: {{names}}"
             }
