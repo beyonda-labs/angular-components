@@ -307,14 +307,16 @@ What `document-builder-front` did by hand that belongs in the library.
 ### Accounts and administration
 
 -   [x] Users page on `bey-page`, over the `users` module of express-components: invite, deactivate, change roles
+-   [x] Organizations page for the superadmin, and the organization column and filter of every page and of the users
+        page, shown only while the rows span two organizations or more
 -   [ ] A modal at the first sign-in that asks to change a default password (the generated superadmin's, or one an
         admin set), built on `bey-password-change`, and that stays until the password changes
 -   [ ] _(high priority)_ Roles and permissions pages, over the `roles` module of express-components: create a role,
         name it and pick its permissions, grouped by resource. First once the blocks of the enterprise review are done
 -   [x] Account pages: change the password, recover it from the login, verify the email, and a profile with the name,
         the language and the theme
--   [ ] The OAuth callback says why a sign-in failed (`?error=unauthorized`, `?error=account-inactive`) instead of
-        going back to the login in silence
+-   [ ] The OAuth callback says why a sign-in failed (`?error=unauthorized`, `?error=account-inactive`,
+        `?error=organization-inactive`) instead of going back to the login in silence
 -   [x] The session keeps the access token in memory and refreshes it through the `httpOnly` cookie of
         express-components (`restore`, `logout`)
 -   [ ] Audit viewer: a `bey-page` over the `audit` module, filtered by date, user and entity
