@@ -15,7 +15,7 @@
                     "tooltip": "Edit the selected product"
                 }
             },
-            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form. The Available tab is a view: the same list with a filter of its own, searchable too. The headers sort the list and the columns menu hides the category or the price.",
+            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form. The Available tab is a view: the same list with a filter of its own, searchable too. The headers sort the list and the columns menu hides the category or the price. The Owner column names who each product belongs to, and the filters panel offers to filter by owner once the products have two owners or more.",
             "folders": {
                 "actions": {
                     "move": {

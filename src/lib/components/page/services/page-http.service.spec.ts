@@ -1,6 +1,7 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeToastService } from '@testing/services/fake-toast.service';
 
 import { PageItemType } from '../models/page-categories.model';
@@ -120,6 +121,18 @@ describe('PageHttpService', () => {
 
         expect(request.request.params.toString()).toBe('ids=a,7');
         expect(usages).toEqual([{ id: 'a', total: 0, users: [] }]);
+    });
+
+    it('asks for the owners of the rows and answers their list, opening no modal when it fails', () => {
+        const answers: unknown[] = [];
+
+        service.findOwners('/items').subscribe(owners => answers.push(owners));
+        httpTesting.expectOne('https://api.test/api/items/owners').flush({ owners: [{ id: 'u1', name: 'Ada' }] });
+        service.findOwners('/items').subscribe({ error: () => answers.push('failed') });
+        httpTesting.expectOne('https://api.test/api/items/owners').flush(null, { status: 500, statusText: 'Error' });
+
+        expect(answers).toEqual([[{ id: 'u1', name: 'Ada' }], 'failed']);
+        expect(TestBed.inject(FakeModalService).errors()).toEqual([]);
     });
 
     it('empties the trash with the success toast', () => {

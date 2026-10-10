@@ -4,7 +4,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { catchError, EMPTY, finalize, Observable, Subject, switchMap, tap } from 'rxjs';
 
-import { toKeySegment } from '../../../utilities/key-segment';
 import { BreadcrumbConfig, BreadcrumbItem } from '../../breadcrumb/models/breadcrumb.model';
 import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
@@ -12,13 +11,15 @@ import { HeaderConfig } from '../../header/models/header.model';
 import { PAGINATION_SIZE_DEFAULT, PaginationConfig } from '../../pagination/models/pagination.model';
 import { SearchConfig } from '../../search/models/search.model';
 import { SearchFilter } from '../../search/models/search-filter.model';
-import { TableColumn, TableConfig, TableSort } from '../../table/models/table.model';
+import { TableConfig, TableSort } from '../../table/models/table.model';
 import { LinkTableCell, TableCell, TextTableCell } from '../../table/models/table-cell.model';
 import { TabsConfig } from '../../tabs/models/tabs.model';
 import { buildPageBreadcrumbItems } from '../functions/page-breadcrumb';
+import { withColumnTooltips } from '../functions/page-columns';
 import { withFolderCount } from '../functions/page-folder-count';
 import { isCategoryRow, readRowField } from '../functions/page-row';
 import { findStandardMoveAction, isMoveDragAllowed, isMoveDropAllowed } from '../functions/page-row-drop';
+import { buildPageSearchConfig } from '../functions/page-search-config';
 import { hasSortableColumn, toSearchSort } from '../functions/page-sort';
 import { buildPageTabs, readViewFilters } from '../functions/page-tabs';
 import { readParentPath, withOriginTooltip } from '../functions/page-trash-origin';
@@ -31,6 +32,7 @@ import { PageCategoryPathEntry } from '../models/page-state.model';
 import { PageTableConfig } from '../models/page-table.model';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
+import { PageOwnersService } from './page-owners.service';
 import { PageSearchService } from './page-search.service';
 import { PageStateService } from './page-state.service';
 
@@ -46,6 +48,7 @@ export class PageService {
     private readonly destroyRef = inject(DestroyRef);
     private readonly pageActionsService = inject(PageActionsService);
     private readonly pageHttpService = inject(PageHttpService);
+    private readonly pageOwnersService = inject(PageOwnersService);
     private readonly pageSearchService = inject(PageSearchService);
     private readonly pageStateService = inject(PageStateService);
     private readonly translateService = inject(TranslateService);
@@ -124,19 +127,15 @@ export class PageService {
     });
     readonly searchConfig = computed<SearchConfig | null>(() => {
         const config = this.config();
-        const search = config?.tableConfig?.search;
 
-        if (!config || !search) {
-            return null;
-        }
-
-        return new SearchConfig({
-            fields: search.fields,
-            filters: untracked(() => this.pageSearch().filters),
-            mainField: search.mainField,
-            onFiltersChange: filters => this.setFilters(filters),
-            prefix: `${config.prefix}.search`
-        });
+        return config
+            ? buildPageSearchConfig(config, {
+                  filters: untracked(() => this.pageSearch().filters),
+                  onFiltersChange: filters => this.setFilters(filters),
+                  onPanelOpen: () => this.pageOwnersService.load(config),
+                  owners: this.pageOwnersService.ownersOf(config)
+              })
+            : null;
     });
     readonly selected = signal<PageItem[]>([]);
     readonly tableConfig = computed<TableConfig<PageItem> | null>(() => {
@@ -154,9 +153,7 @@ export class PageService {
         const dropMove = moveAction && categoriesConfig && canMoveByDrop ? { categoriesConfig, moveAction } : null;
 
         return new TableConfig<PageItem>({
-            columns: pageTable.columns.map(
-                column => new TableColumn({ ...column, tooltip: `${tablePrefix}.tooltips.${toKeySegment(column.key)}` })
-            ),
+            columns: withColumnTooltips(pageTable.columns, tablePrefix),
             height: pageTable.height,
             isDropAllowed: dropMove
                 ? (target, items) => isMoveDropAllowed(dropMove.moveAction, target, items, dropMove.categoriesConfig)
@@ -426,6 +423,7 @@ export class PageService {
         this.categoryPath.set(state.categoryPath);
         this.currentCategoryId.set(state.currentCategoryId);
         this.pageSearch.set(state.search);
+        this.pageOwnersService.loadWhenFiltered(config, state.search.filters);
         this.selected.set(state.selected);
         this.tableSort.set(state.sort);
         this.viewMode.set(state.viewMode);

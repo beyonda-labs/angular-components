@@ -9,6 +9,19 @@
                 "cancel": "Cancelar",
                 "submit": "Guardar"
             },
+            "search": {
+                "fields": {
+                    "owner-id": "Propietario"
+                }
+            },
+            "table": {
+                "columns": {
+                    "owner-name": "Propietario"
+                },
+                "tooltips": {
+                    "owner-name": "El usuario al que pertenece"
+                }
+            },
             "toast": {
                 "restored-renamed": "Restaurado con otro nombre, porque otro elemento ya tiene el anterior: {{names}}"
             }

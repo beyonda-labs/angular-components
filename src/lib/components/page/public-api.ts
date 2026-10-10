@@ -38,6 +38,11 @@ export type {
 } from './models/page-lifecycle.model';
 export type { PageHeaderConfigParameters as BeyPageHeaderConfigParameters } from './models/page-header.model';
 export type { PageItem as BeyPageItem } from './models/page-item.model';
+export {
+    pageOwnerCell as beyPageOwnerCell,
+    pageOwnerColumn as beyPageOwnerColumn
+} from './functions/page-owner-column';
+export type { PageOwnedItem as BeyPageOwnedItem, PageOwner as BeyPageOwner } from './models/page-owner.model';
 export { SearchSortDirection as BeySearchSortDirection } from './models/page-search.model';
 export type { PageSearch as BeyPageSearch, SearchSort as BeySearchSort } from './models/page-search.model';
 export {

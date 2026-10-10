@@ -10,7 +10,9 @@ import {
     BeyPageConfig,
     BeyPageFormConfig,
     BeyPageHeaderConfig,
-    BeyPageItem,
+    BeyPageOwnedItem,
+    beyPageOwnerCell,
+    beyPageOwnerColumn,
     BeyPageStandardAction,
     beyPageStandardAction,
     BeyPageTableConfig,
@@ -27,7 +29,7 @@ import { TranslateModule } from '@ngx-translate/core';
 const PREFIX = 'angular-components-style-guide.page';
 const FOLDERS_PREFIX = `${PREFIX}.folders`;
 
-interface Product extends BeyPageItem {
+interface Product extends BeyPageOwnedItem {
     category: string;
     name: string;
     price: number;
@@ -89,7 +91,8 @@ export class PageStyleGuideComponent {
             columns: [
                 new BeyTableColumn({ isHideable: false, isSortable: true, key: 'name', width: 4 }),
                 new BeyTableColumn({ isSortable: true, key: 'category', width: 3 }),
-                new BeyTableColumn({ isSortable: true, key: 'price', width: 2 })
+                new BeyTableColumn({ isSortable: true, key: 'price', width: 2 }),
+                beyPageOwnerColumn()
             ],
             height: '24rem',
             loadRow: product => this.loadRow(product),
@@ -100,6 +103,7 @@ export class PageStyleGuideComponent {
                     new BeySearchField({ key: 'category', type: BeySearchFieldType.Text }),
                     new BeySearchField({ key: 'price', type: BeySearchFieldType.Number })
                 ],
+                isOwnerFilterEnabled: true,
                 mainField: 'name'
             }),
             storageKey: 'style-guide-products'
@@ -131,11 +135,14 @@ export class PageStyleGuideComponent {
         ];
     }
 
-    private loadRow({ category, name, price }: Product): BeyTextTableCell[] {
+    private loadRow(product: Product): BeyTextTableCell[] {
+        const { category, name, price } = product;
+
         return [
             new BeyTextTableCell({ content: name, tooltip: name }),
             new BeyTextTableCell({ content: category, tooltip: category }),
-            new BeyTextTableCell({ content: toPrice(price) })
+            new BeyTextTableCell({ content: toPrice(price) }),
+            beyPageOwnerCell(product)
         ];
     }
 }
