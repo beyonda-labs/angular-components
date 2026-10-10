@@ -110,7 +110,8 @@
                 "account": {
                     "no-password": "Tu cuenta aún no tiene contraseña. Crea una con \"¿Has olvidado tu contraseña?\" en la página de inicio de sesión.",
                     "token-invalid": "Este enlace no es válido, ya se ha usado o ha caducado.",
-                    "wrong-password": "La contraseña actual no es correcta."
+                    "wrong-password": "La contraseña actual no es correcta.",
+                    "wrong-password-attempts-left": "La contraseña actual no es correcta. Intentos restantes antes de bloquear la cuenta {{minutes}} minutos: {{attemptsLeft}}."
                 },
                 "action-unavailable": "Esta acción no está disponible para el elemento. Recarga la página y vuelve a intentarlo.",
                 "attachments": {
@@ -160,6 +161,7 @@
                     "email-not-verified": "Verifica tu correo electrónico antes de iniciar sesión. Abre el enlace que te enviamos a {{email}} o pide uno nuevo.",
                     "existing-user": "Ya existe una cuenta con este correo electrónico.",
                     "invalid-credentials": "Email o contraseña incorrectos.",
+                    "invalid-credentials-attempts-left": "Email o contraseña incorrectos. Intentos restantes antes de bloquear la cuenta {{minutes}} minutos: {{attemptsLeft}}.",
                     "invalid-origin": "La petición llegó desde otro sitio y se ha rechazado.",
                     "invalid-refresh-token": "Tu sesión ha caducado. Inicia sesión de nuevo.",
                     "oauth-invalid-callback": "El callback de autenticación no es válido. Por favor, inténtelo de nuevo.",
@@ -215,7 +217,8 @@
                 "account": {
                     "no-password": "Sin contraseña",
                     "token-invalid": "Enlace no válido",
-                    "wrong-password": "Contraseña incorrecta"
+                    "wrong-password": "Contraseña incorrecta",
+                    "wrong-password-attempts-left": "Contraseña incorrecta"
                 },
                 "action-unavailable": "Acción no disponible",
                 "attachments": {
@@ -262,6 +265,7 @@
                     "email-not-verified": "Correo electrónico sin verificar",
                     "existing-user": "Cuenta ya existente",
                     "invalid-credentials": "Autenticación fallida",
+                    "invalid-credentials-attempts-left": "Autenticación fallida",
                     "invalid-origin": "Petición rechazada",
                     "invalid-refresh-token": "Sesión caducada",
                     "oauth-invalid-callback": "Error de autenticación",

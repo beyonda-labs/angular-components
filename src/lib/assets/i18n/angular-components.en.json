@@ -110,7 +110,8 @@
                 "account": {
                     "no-password": "Your account has no password yet. Set one through \"Forgot your password?\" on the sign-in page.",
                     "token-invalid": "This link is invalid, has already been used or has expired.",
-                    "wrong-password": "The current password is not correct."
+                    "wrong-password": "The current password is not correct.",
+                    "wrong-password-attempts-left": "The current password is not correct. Attempts left before the account is locked for {{minutes}} minutes: {{attemptsLeft}}."
                 },
                 "action-unavailable": "This action is not available for the item. Reload the page and try again.",
                 "attachments": {
@@ -160,6 +161,7 @@
                     "email-not-verified": "Verify your email address before signing in. Open the link we sent to {{email}}, or ask for a new one.",
                     "existing-user": "An account with this email already exists.",
                     "invalid-credentials": "Invalid email or password.",
+                    "invalid-credentials-attempts-left": "Invalid email or password. Attempts left before the account is locked for {{minutes}} minutes: {{attemptsLeft}}.",
                     "invalid-origin": "The request came from another site and was refused.",
                     "invalid-refresh-token": "Your session has expired. Please log in again.",
                     "oauth-invalid-callback": "The authentication callback is invalid. Please try again.",
@@ -215,7 +217,8 @@
                 "account": {
                     "no-password": "No password",
                     "token-invalid": "Invalid link",
-                    "wrong-password": "Wrong password"
+                    "wrong-password": "Wrong password",
+                    "wrong-password-attempts-left": "Wrong password"
                 },
                 "action-unavailable": "Action not available",
                 "attachments": {
@@ -262,6 +265,7 @@
                     "email-not-verified": "Email not verified",
                     "existing-user": "Account already exists",
                     "invalid-credentials": "Authentication failed",
+                    "invalid-credentials-attempts-left": "Authentication failed",
                     "invalid-origin": "Request refused",
                     "invalid-refresh-token": "Session expired",
                     "oauth-invalid-callback": "Authentication error",

@@ -63,34 +63,34 @@ invitation cannot be read for any other reason, the page offers to try again.
 
 ## BeyLoginConfig
 
-| Field                    | Required | Default                      | Meaning                                                   |
-| ------------------------ | -------- | ---------------------------- | --------------------------------------------------------- |
-| `iconSrc`                | yes      |                              | Organisation icon, in the card and in the footer          |
-| `productName`            | yes      |                              | i18n key of the product name                              |
-| `productDescription`     | yes      |                              | i18n key of the pitch under the product name              |
+| Field                    | Required | Default                      | Meaning                                                    |
+| ------------------------ | -------- | ---------------------------- | ---------------------------------------------------------- |
+| `iconSrc`                | yes      |                              | Organisation icon, in the card and in the footer           |
+| `productName`            | yes      |                              | i18n key of the product name                               |
+| `productDescription`     | yes      |                              | i18n key of the pitch under the product name               |
 | `isPasswordResetEnabled` | no       | `false`                      | Offers "Forgot your password?"; the server needs its links |
-| `orgName`                | no       | `'Beyonda Labs'`             | Organisation name, shown as it is                         |
-| `prefix`                 | no       | `'angular-components.login'` | Prefix the titles, labels and buttons resolve from        |
-| `privacyUrl`             | no       | none                         | Route of the privacy link in the footer                   |
-| `termsUrl`               | no       | none                         | Route of the terms link in the footer                     |
+| `orgName`                | no       | `'Beyonda Labs'`             | Organisation name, shown as it is                          |
+| `prefix`                 | no       | `'angular-components.login'` | Prefix the titles, labels and buttons resolve from         |
+| `privacyUrl`             | no       | none                         | Route of the privacy link in the footer                    |
+| `termsUrl`               | no       | none                         | Route of the terms link in the footer                      |
 
 ## What the backend provides
 
 Everything else comes from the access control api at `accessControlUrl` of the environment config:
 
-| Endpoint                     | Gives                                                      | Used for                                   |
-| ---------------------------- | ---------------------------------------------------------- | ------------------------------------------ |
-| `GET /providers`             | `{ id, authUrl }[]`, ids among google, microsoft, facebook | The provider buttons under the form        |
-| `GET /register/fields`       | `{ name, type, required?, step? }[]`                       | The registration form, one step per `step` |
-| `GET /password-policy`       | `{ minLength, maxLength, is…Required }`                    | The rules listed under a new password      |
-| `POST /login`                | `{ accessToken }`, and the refresh cookie                  | Signing in                                 |
-| `POST /register`             | `{ accessToken }` and the cookie, or `{ verificationRequired: true }` | Registering                     |
-| `POST /password/forgot`      | `204`, whether the account exists or not                   | Asking for a reset link                    |
-| `POST /verification/resend`  | `204`, whether a mail left or not                          | Asking for a new verification link         |
-| `POST /password/reset`       | `{ accessToken }`, and the refresh cookie                  | Saving the new password of a reset link    |
-| `POST /verification`         | `{ accessToken }`, and the refresh cookie                  | Verifying an email address                 |
-| `GET /invitation?token=`     | `{ email, name?, surname? }`                               | Showing an invitation                      |
-| `POST /invitation`           | `{ accessToken }`, and the refresh cookie                  | Accepting it                               |
+| Endpoint                    | Gives                                                                 | Used for                                   |
+| --------------------------- | --------------------------------------------------------------------- | ------------------------------------------ |
+| `GET /providers`            | `{ id, authUrl }[]`, ids among google, microsoft, facebook            | The provider buttons under the form        |
+| `GET /register/fields`      | `{ name, type, required?, step? }[]`                                  | The registration form, one step per `step` |
+| `GET /password-policy`      | `{ minLength, maxLength, is…Required }`                               | The rules listed under a new password      |
+| `POST /login`               | `{ accessToken }`, and the refresh cookie                             | Signing in                                 |
+| `POST /register`            | `{ accessToken }` and the cookie, or `{ verificationRequired: true }` | Registering                                |
+| `POST /password/forgot`     | `204`, whether the account exists or not                              | Asking for a reset link                    |
+| `POST /verification/resend` | `204`, whether a mail left or not                                     | Asking for a new verification link         |
+| `POST /password/reset`      | `{ accessToken }`, and the refresh cookie                             | Saving the new password of a reset link    |
+| `POST /verification`        | `{ accessToken }`, and the refresh cookie                             | Verifying an email address                 |
+| `GET /invitation?token=`    | `{ email, name?, surname? }`                                          | Showing an invitation                      |
+| `POST /invitation`          | `{ accessToken }`, and the refresh cookie                             | Accepting it                               |
 
 A failing `/providers` or `/register/fields` is not an error: the screen just offers nothing. A failing
 `/password-policy` is not one either: the fields check the library defaults, a minimum of 8 characters, and the server
@@ -101,7 +101,8 @@ Every request that answers a session is sent with the credentials, so the browse
 server sets with the refresh token; the front never sees it. Once a sign-in, a registration, an OAuth callback or
 an emailed link succeeds, the access token goes to `BeySessionService` and the router goes to the `redirectPath`
 of the session user, or to the root when there is none. A failed request shows the reason the server gives under
-`angular-components.http.error.login.*` or `.account.*`, such as `invalid-credentials`, `account-locked` with the
+`angular-components.http.error.login.*` or `.account.*`, such as `invalid-credentials`,
+`invalid-credentials-attempts-left` with the `attemptsLeft` before the lock and its `minutes`, `account-locked` with the
 `minutes` left after too many failed attempts, `account-inactive` for a deactivated account or `token-invalid` for
 an emailed link that no longer works; `invalid-origin` is the answer to a refresh or a logout sent from another
 site. A new password the server refuses answers `.password.*`, such as `too-short` with its `min`.
