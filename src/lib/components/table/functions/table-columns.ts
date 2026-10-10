@@ -17,7 +17,7 @@ export function buildColumnsMenuEntries(
                 isChecked,
                 isDisabled: isChecked && visible.length === 1,
                 key: column.key,
-                label: `${prefix}.columns.${toKeySegment(column.key)}`
+                label: column.label ?? `${prefix}.columns.${toKeySegment(column.key)}`
             };
         });
 }

@@ -39,6 +39,12 @@ describe('buildColumnsMenuEntries', () => {
         ]);
     });
 
+    it('lists a column with a label of its own under that label', () => {
+        const owner = new TableColumn({ key: 'ownerName', label: 'shared.owner' });
+
+        expect(buildColumnsMenuEntries([ROLE, owner], {}, 'demo.table')[1].label).toBe('shared.owner');
+    });
+
     it('disables the only column left visible', () => {
         const [role] = buildColumnsMenuEntries([ROLE, JOINED], {}, 'demo.table');
 

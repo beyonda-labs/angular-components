@@ -43,13 +43,23 @@ export class SearchConfig {
 
     mainField?: string;
     onFiltersChange?: (filters: SearchFilter[]) => void;
+    onPanelOpen?: () => void;
     placeholder?: string;
 
-    constructor({ fields, filters = [], prefix, mainField, onFiltersChange, placeholder }: SearchConfigParameters) {
+    constructor({
+        fields,
+        filters = [],
+        mainField,
+        onFiltersChange,
+        onPanelOpen,
+        placeholder,
+        prefix
+    }: SearchConfigParameters) {
         this.fields = fields;
         this.filters = filters;
         this.mainField = mainField;
         this.onFiltersChange = onFiltersChange;
+        this.onPanelOpen = onPanelOpen;
         this.placeholder = placeholder;
         this.prefix = prefix;
     }
@@ -59,10 +69,14 @@ export class SearchField {
     key: string;
     type: SearchFieldType;
 
+    label?: string;
+    operators?: SearchFilterOperator[];
     options?: SearchFieldOption[];
 
-    constructor({ key, type, options }: SearchFieldParameters) {
+    constructor({ key, label, operators, options, type }: SearchFieldParameters) {
         this.key = key;
+        this.label = label;
+        this.operators = operators;
         this.options = options;
         this.type = type;
     }
@@ -75,6 +89,7 @@ export interface SearchConfigParameters {
     filters?: SearchFilter[];
     mainField?: string;
     onFiltersChange?: (filters: SearchFilter[]) => void;
+    onPanelOpen?: () => void;
     placeholder?: string;
 }
 
@@ -82,5 +97,7 @@ export interface SearchFieldParameters {
     key: string;
     type: SearchFieldType;
 
+    label?: string;
+    operators?: SearchFilterOperator[];
     options?: SearchFieldOption[];
 }

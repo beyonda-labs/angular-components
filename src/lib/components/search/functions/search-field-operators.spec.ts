@@ -40,6 +40,15 @@ describe('searchFieldOperators', () => {
         ]);
     });
 
+    it('narrows the operators of the type to the ones the field lists, in the order of the type', () => {
+        expect(
+            searchFieldOperators({
+                operators: [SearchFilterOperator.EndsWith, SearchFilterOperator.Contains, SearchFilterOperator.Between],
+                type: SearchFieldType.Text
+            })
+        ).toEqual([SearchFilterOperator.Contains, SearchFilterOperator.EndsWith]);
+    });
+
     it('returns a new list each time, so changing it leaves the next call intact', () => {
         const first = searchFieldOperators({ type: SearchFieldType.Boolean });
 

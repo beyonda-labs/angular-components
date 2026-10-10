@@ -205,7 +205,7 @@ export class TableComponent<T> {
 
     private buildHeaderCell(column: TableColumn): TextTableCell {
         return new TextTableCell({
-            content: `${this.config().prefix}.columns.${toKeySegment(column.key)}`,
+            content: column.label ?? `${this.config().prefix}.columns.${toKeySegment(column.key)}`,
             tooltip: column.tooltip,
             translate: true
         });

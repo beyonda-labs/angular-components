@@ -112,6 +112,18 @@ describe('TableComponent', () => {
         expect(fixture.nativeElement.textContent).toContain('demo.table.columns.created-at');
     });
 
+    it('reads the header of a column with a label of its own from that key', async () => {
+        await render(
+            buildConfig({
+                columns: [new TableColumn({ key: 'ownerName', label: 'shared.owner' })],
+                loadRow: item => [new TextTableCell({ content: item.name })]
+            })
+        );
+
+        expect(headerTexts()).toContain('shared.owner');
+        expect(fixture.nativeElement.textContent).not.toContain('demo.table.columns.owner-name');
+    });
+
     it('shows the empty message when there are no items', async () => {
         await render(buildConfig({ items: [] }));
 
