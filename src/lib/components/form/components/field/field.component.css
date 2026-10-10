@@ -1,17 +1,12 @@
 :host {
     --bey-form-field-error: var(--bey-danger);
+    --bey-form-field-hint: var(--bey-text-muted);
     --bey-form-field-label: var(--bey-text-muted);
     --bey-form-field-required: var(--bey-text-disabled);
     --bey-form-field-required-invalid: var(--bey-danger);
 
     display: block;
     min-width: 0;
-}
-
-.bey-form-field-error {
-    color: var(--bey-form-field-error);
-    font-size: var(--bey-font-size-xs);
-    margin-top: var(--bey-space-2xs);
 }
 
 .bey-form-field-header {
@@ -46,4 +41,17 @@
     font-size: var(--bey-font-size-2xs);
     line-height: var(--bey-line-height-none);
     margin-left: var(--bey-space-2xs);
+}
+
+.bey-form-field-error {
+    color: var(--bey-form-field-error);
+    font-size: var(--bey-font-size-xs);
+    margin-top: var(--bey-space-2xs);
+}
+
+.bey-form-field-hint {
+    color: var(--bey-form-field-hint);
+    font-size: var(--bey-font-size-xs);
+    line-height: var(--bey-line-height-base);
+    margin-top: var(--bey-space-2xs);
 }

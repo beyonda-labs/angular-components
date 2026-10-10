@@ -25,6 +25,7 @@ export class FormDateFieldComponent {
     private readonly translateService = inject(TranslateService);
 
     readonly control = input.required<FormControl<string | null>>();
+    readonly describedBy = input<string | null>(null);
     readonly field = input.required<FormDateField>();
     readonly isRequired = input(false);
     readonly prefix = input.required<string>();

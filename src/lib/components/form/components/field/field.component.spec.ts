@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { controlByName, queryAll, renderComponent, settle } from '@testing/dom';
+import { accessibleDescription, accessibleName, controlByName, queryAll, renderComponent, settle } from '@testing/dom';
 import { of } from 'rxjs';
 
 import { FormFieldState } from '../../form.component';
@@ -9,9 +9,17 @@ import { FormAutocompleteField } from '../../models/fields/form-autocomplete-fie
 import { FormCheckboxField } from '../../models/fields/form-checkbox-field.model';
 import { FormCheckboxGroupField } from '../../models/fields/form-checkbox-group-field.model';
 import { FormChipsField } from '../../models/fields/form-chips-field.model';
+import { FormDateField } from '../../models/fields/form-date-field.model';
 import { FormFileField } from '../../models/fields/form-file-field.model';
+import { FormInfoField } from '../../models/fields/form-info-field.model';
+import { FormListField } from '../../models/fields/form-list-field.model';
+import { FormNumberField } from '../../models/fields/form-number-field.model';
 import { FormPasswordField } from '../../models/fields/form-password-field.model';
+import { FormRadioField } from '../../models/fields/form-radio-field.model';
+import { FormSelectField } from '../../models/fields/form-select-field.model';
 import { FormTextField } from '../../models/fields/form-text-field.model';
+import { FormTextVariableField } from '../../models/fields/form-text-variable-field.model';
+import { FormTextareaField } from '../../models/fields/form-textarea-field.model';
 import { FormField, FormFieldOption } from '../../models/form-field.model';
 import {
     FormFieldAsyncValidator,
@@ -112,6 +120,140 @@ describe('FormFieldComponent', () => {
 
         expect(control.value).toEqual(['admin']);
         expect(control.valid).toBe(true);
+    });
+
+    describe('hint', () => {
+        const HINT = 'demo.contact.secret.hint';
+        const LABEL = 'demo.contact.secret.label';
+
+        async function renderHinted(field: FormField, options: FormFieldOption[] = []): Promise<void> {
+            fixture = await renderComponent(FormFieldComponent, {
+                control: TestBed.inject(FormService).initFieldControl(field),
+                field,
+                prefix: 'demo.contact',
+                state: { ...VALID, options }
+            });
+        }
+
+        function text(): string {
+            return fixture.nativeElement.textContent;
+        }
+
+        it.each<[string, FormField]>([
+            ['text', new FormTextField({ hint: HINT, key: 'secret' })],
+            ['textarea', new FormTextareaField({ hint: HINT, key: 'secret' })],
+            ['password', new FormPasswordField({ hint: HINT, key: 'secret' })],
+            ['number', new FormNumberField({ hint: HINT, key: 'secret' })],
+            ['date', new FormDateField({ hint: HINT, key: 'secret' })],
+            ['select', new FormSelectField({ hint: HINT, key: 'secret' })],
+            ['autocomplete', new FormAutocompleteField({ hint: HINT, key: 'secret' })],
+            ['text variable', new FormTextVariableField({ hint: HINT, key: 'secret' })],
+            ['chips', new FormChipsField({ hint: HINT, key: 'secret' })],
+            ['file', new FormFileField({ hint: HINT, key: 'secret' })],
+            ['checkbox', new FormCheckboxField({ hint: HINT, key: 'secret' })],
+            ['checkbox group', new FormCheckboxGroupField({ hint: HINT, key: 'secret' })]
+        ])('shows the hint of a %s field under it and describes the control with it', async (_type, field) => {
+            await renderHinted(field);
+
+            expect(text()).toContain(HINT);
+            expect(accessibleDescription(controlByName(fixture, LABEL))).toBe(HINT);
+        });
+
+        it('describes the group of a radio field with its hint', async () => {
+            await renderHinted(new FormRadioField({ hint: HINT, key: 'secret' }), [{ label: 'Yes', value: 'yes' }]);
+            const [group] = queryAll(fixture, '[role="radiogroup"]');
+
+            expect(accessibleDescription(group)).toBe(HINT);
+        });
+
+        it('shows the hint of a read-only info or list field under it and describes what it shows with it', async () => {
+            await renderHinted(
+                new FormInfoField({ hint: HINT, items: [{ label: 'ada@example.test' }], key: 'secret' })
+            );
+            const [info] = queryAll(fixture, '[aria-describedby]');
+
+            expect(text()).toContain(HINT);
+            expect(info.textContent).toContain('ada@example.test');
+            expect(accessibleDescription(info)).toBe(HINT);
+
+            await renderHinted(new FormListField({ hint: HINT, items: ['Invoice'], key: 'secret' }));
+            const [list] = queryAll(fixture, '[aria-describedby]');
+
+            expect(accessibleName(list)).toBe(LABEL);
+            expect(accessibleDescription(list)).toBe(HINT);
+        });
+
+        it('shows the error instead of the hint while it fails, and describes the control with what is shown', async () => {
+            await renderHinted(
+                new FormPasswordField({
+                    hint: HINT,
+                    key: 'secret',
+                    validators: [
+                        new FormFieldCustomValidator(current =>
+                            current.value === 'secret'
+                                ? { obvious: { messageKey: 'demo.contact.secret.obvious' } }
+                                : null
+                        )
+                    ]
+                })
+            );
+            const input = controlByName(fixture, LABEL);
+
+            input.value = 'secret';
+            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new Event('blur'));
+            await settle(fixture);
+
+            expect(text()).not.toContain(HINT);
+            expect(accessibleDescription(input)).toBe('demo.contact.secret.obvious');
+
+            input.value = 'long enough';
+            input.dispatchEvent(new Event('input'));
+            await settle(fixture);
+
+            expect(text()).toContain(HINT);
+            expect(accessibleDescription(input)).toBe(HINT);
+        });
+
+        it('keeps the hint while a validator without a message fails', async () => {
+            await renderHinted(
+                new FormPasswordField({
+                    hint: HINT,
+                    key: 'secret',
+                    validators: [new FormFieldLengthValidator(8, FormFieldValidatorType.MinLength)]
+                })
+            );
+            const input = controlByName(fixture, LABEL);
+
+            input.value = 'short';
+            input.dispatchEvent(new Event('input'));
+            input.dispatchEvent(new Event('blur'));
+            await settle(fixture);
+
+            expect(input.getAttribute('aria-invalid')).toBe('true');
+            expect(accessibleDescription(input)).toBe(HINT);
+        });
+
+        it('describes a field without a hint by nothing until it shows an error', async () => {
+            await renderHinted(
+                new FormTextField({
+                    key: 'secret',
+                    validators: [
+                        new FormFieldCustomValidator(current =>
+                            current.value ? null : { empty: { messageKey: 'demo.contact.secret.empty' } }
+                        )
+                    ]
+                })
+            );
+            const input = controlByName(fixture, LABEL);
+
+            expect(input.hasAttribute('aria-describedby')).toBe(false);
+
+            input.dispatchEvent(new Event('blur'));
+            await settle(fixture);
+
+            expect(accessibleDescription(input)).toBe('demo.contact.secret.empty');
+        });
     });
 
     describe('validators of each field type', () => {

@@ -7,6 +7,7 @@
             role="combobox"
             type="text"
             [attr.aria-controls]="field().key + '-options'"
+            [attr.aria-describedby]="describedBy()"
             [attr.aria-expanded]="isPanelVisible()"
             [attr.aria-invalid]="isInvalid() || null"
             [attr.aria-required]="isRequired() || null"

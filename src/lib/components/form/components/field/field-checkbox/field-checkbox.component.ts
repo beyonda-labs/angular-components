@@ -14,6 +14,7 @@ import { FormCheckboxField } from '../../../models/fields/form-checkbox-field.mo
 })
 export class FormCheckboxFieldComponent {
     readonly control = input.required<FormControl<boolean | null>>();
+    readonly describedBy = input<string | null>(null);
     readonly field = input.required<FormCheckboxField>();
     readonly isRequired = input(false);
     readonly prefix = input.required<string>();

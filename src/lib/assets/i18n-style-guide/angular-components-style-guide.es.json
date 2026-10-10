@@ -1,11 +1,12 @@
 {
     "angular-components-style-guide": {
         "account-data": {
-            "example": "El perfil del usuario que ha iniciado sesión, leído del backend de demostración: el correo para consultar y el nombre y los apellidos para guardar. Los campos a medida muestran el nombre, obligatorio, y el correo a media anchura, sin los apellidos.",
+            "example": "El perfil del usuario que ha iniciado sesión, leído del backend de demostración: el correo para consultar, con su uso debajo, y el nombre y los apellidos para guardar. Los campos a medida muestran el nombre, obligatorio y con una pista propia, y el correo a media anchura sin su pista, sin los apellidos.",
             "examples": {
                 "custom": "Campos a medida",
                 "default": "Campos por defecto"
-            }
+            },
+            "name-hint": "Aparece en los documentos que firmas"
         },
         "account-data-section": "Datos de la cuenta",
         "app-layout": {
@@ -159,7 +160,10 @@
             },
             "canceled": "El formulario se ha reiniciado",
             "changed": "Valor del formulario cambiado: ",
-            "example": "Formulario model-driven basado en configuración con validación, campos condicionales y layout responsive.",
+            "example": "Formulario model-driven basado en configuración con validación, campos condicionales, pistas bajo los campos, una nota junto a los botones y layout responsive.",
+            "footer": {
+                "note": "Enviar solo informa del valor debajo; no se guarda nada."
+            },
             "modal": {
                 "buttons": {
                     "cancel": "Cancelar",
@@ -287,6 +291,7 @@
             },
             "section-info": {
                 "info1": {
+                    "hint": "De solo lectura: la pista va bajo el valor",
                     "label": "Versión"
                 },
                 "info2": {
@@ -321,6 +326,7 @@
             "section-password": {
                 "label": "Campos de contraseña",
                 "password1": {
+                    "hint": "Combina letras, números y símbolos",
                     "label": "Contraseña (mín. 8)",
                     "placeholder": "Al menos 8 caracteres"
                 },
@@ -398,6 +404,7 @@
                     "tooltip": "Ejemplo con 6 columnas"
                 },
                 "text3": {
+                    "hint": "Solo letras, sin espacios ni tildes",
                     "label": "Solo letras",
                     "placeholder": "Solo letras (A-Z)"
                 },
@@ -752,7 +759,7 @@
         },
         "pagination-section": "Paginación",
         "password-change": {
-            "example": "La contraseña del usuario que ha iniciado sesión, leída del backend de demostración: la actual, la nueva y su confirmación, o cómo crear una en una cuenta que no la tiene."
+            "example": "La contraseña del usuario que ha iniciado sesión, leída del backend de demostración: la actual, la nueva con su longitud mínima debajo y su confirmación, con una nota junto al botón sobre los dispositivos en los que se cierra la sesión; o cómo crear una en una cuenta que no la tiene."
         },
         "password-change-section": "Cambio de contraseña",
         "pdf-viewer": {

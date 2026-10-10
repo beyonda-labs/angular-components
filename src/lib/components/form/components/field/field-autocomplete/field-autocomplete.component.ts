@@ -36,6 +36,7 @@ export class FormAutocompleteFieldComponent {
     private readonly translateService = inject(TranslateService);
 
     readonly control = input.required<FormControl<string | null>>();
+    readonly describedBy = input<string | null>(null);
     readonly field = input.required<FormAutocompleteField>();
     readonly isRequired = input(false);
     readonly options = input<FormFieldOption[]>([]);

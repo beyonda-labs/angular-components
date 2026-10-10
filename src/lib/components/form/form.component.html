@@ -11,7 +11,19 @@
     </div>
 
     @if (buttons().length > 0) {
-        <div class="bey-form-buttons" [class.bey-form-buttons--stretch]="config().buttonLayout === 'stretch'">
+        <div
+            class="bey-form-buttons"
+            [class.bey-form-buttons--divided]="isFooterDivided()"
+            [class.bey-form-buttons--footer]="hasFooter()"
+            [class.bey-form-buttons--stretch]="config().buttonLayout === 'stretch'"
+        >
+            @if (footerNote(); as note) {
+                <p class="bey-form-buttons-note" [id]="noteId">
+                    <fa-icon class="bey-form-buttons-note-icon" aria-hidden="true" [icon]="noteIcon"></fa-icon>
+                    <span>{{ note | translate }}</span>
+                </p>
+            }
+
             @for (button of buttons(); track button.label) {
                 <bey-button [button]="button"></bey-button>
             }

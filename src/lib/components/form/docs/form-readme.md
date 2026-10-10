@@ -42,6 +42,7 @@ readonly form = new BeyFormConfig<ContactValue>({
 | `sections`                  | yes      |         | The sections, in order                                                   |
 | `buttons`                   | no       | `[]`    | Buttons under the form                                                   |
 | `buttonLayout`              | no       | `end`   | `end` lines them up to the right, `stretch` shares the whole width       |
+| `footer`                    | no       |         | A `BeyFormFooter`: a divider and a note with the buttons, see below      |
 | `initialValue`              | no       |         | Value the form starts from and cancel goes back to                       |
 | `allowSubmitWithoutChanges` | no       | `false` | Lets a valid but untouched form be submitted                             |
 | `steps`                     | no       | `[]`    | Turns the form into a stepper, see below                                 |
@@ -69,6 +70,25 @@ receives the handle, `isHidden` and `tooltip`.
 | `Secondary` | Runs its own `action` with the handle                                               |
 
 A button with an `action` of its own is never disabled by the form, whatever its type.
+
+## Footer
+
+`footer` closes the form above its buttons: a divider line over the row of buttons, and a note at the start of that
+row, after an info icon, while the buttons stay at its end. When the row is too narrow for both, the buttons wrap
+under the note; with `buttonLayout: 'stretch'` the note takes a line of its own. The note describes the `Submit`
+buttons through `aria-describedby`, so it is read with them. Without `footer`, the row holds the buttons alone.
+
+```ts
+footer: new BeyFormFooter({ note: 'myApp.account.password.note' });
+```
+
+| Field       | Default | Meaning                                                        |
+| ----------- | ------- | -------------------------------------------------------------- |
+| `isDivided` | `true`  | Draws the divider line over the buttons                        |
+| `note`      |         | Translation key of the note, used as given; no note without it |
+
+The footer belongs to the row of buttons: a form without a visible button shows neither, and a stepper shows it on
+every step.
 
 ## The handle
 
@@ -164,12 +184,13 @@ section `prefix` (or its `key`) and the field `key` become kebab-case segments, 
 section `mainData` reads `myApp.contact.main-data.value-string.label`. A run of capitals is one word
 (`pdfURL` is `pdf-url`) and a digit stays with the word before it (`line2Height` is `line2-height`). The key
 itself does not change: the control, its `id` and the form value keep `valueString`. Anything the config gives
-as a full translation key, such as `placeholder`, a button `label` or an option `label`, is used as it is.
+as a full translation key, such as `placeholder`, `hint`, a button `label`, an option `label` or the footer `note`,
+is used as it is.
 
 ## Modal form
 
 `BeyModalFormService.open(config)` shows the same form inside a modal. `BeyModalFormConfig` takes everything
-`BeyFormConfig` does except `buttons`, which it builds itself, plus:
+`BeyFormConfig` does, `footer` among it, except `buttons`, which it builds itself, plus:
 
 | Field         | Default                   | Meaning                    |
 | ------------- | ------------------------- | -------------------------- |
@@ -199,4 +220,5 @@ See [form-fields-readme.md](./form-fields-readme.md).
 | `--bey-form-field-placeholder`     | `--bey-text-disabled` |
 | `--bey-form-field-control-height`  | `2.125rem`            |
 | `--bey-form-field-label`           | `--bey-text-muted`    |
+| `--bey-form-field-hint`            | `--bey-text-muted`    |
 | `--bey-modal-form-body-max-height` | `min(70vh, 34rem)`    |

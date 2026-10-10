@@ -17,6 +17,7 @@ import { FormFieldOption } from '../../../models/form-field.model';
 })
 export class FormSelectFieldComponent {
     readonly control = input.required<FormControl<string | null>>();
+    readonly describedBy = input<string | null>(null);
     readonly field = input.required<FormSelectField>();
     readonly isRequired = input(false);
     readonly options = input<FormFieldOption[]>([]);

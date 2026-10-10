@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { queryButton, renderComponent } from '@testing/dom';
+import { accessibleDescription, buttonByName, controlByName, queryButton, renderComponent } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { FormStyleGuideComponent } from './form-style-guide.component';
+
+const PREFIX = 'angular-components-style-guide.form';
 
 describe('FormStyleGuideComponent', () => {
     let fixture: ComponentFixture<FormStyleGuideComponent>;
@@ -17,7 +19,14 @@ describe('FormStyleGuideComponent', () => {
     });
 
     it('shows the form example and the button that opens the modal form', () => {
-        expect(fixture.nativeElement.textContent).toContain('angular-components-style-guide.form.example');
-        expect(queryButton(fixture, 'angular-components-style-guide.form.modal.open')).not.toBeNull();
+        expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.example`);
+        expect(queryButton(fixture, `${PREFIX}.modal.open`)).not.toBeNull();
+    });
+
+    it('shows a hint under a field and a note next to the buttons, which describes the submit button', () => {
+        expect(accessibleDescription(controlByName(fixture, `${PREFIX}.section-password.password1.label`))).toBe(
+            `${PREFIX}.section-password.password1.hint`
+        );
+        expect(accessibleDescription(buttonByName(fixture, `${PREFIX}.button.submit`))).toBe(`${PREFIX}.footer.note`);
     });
 });

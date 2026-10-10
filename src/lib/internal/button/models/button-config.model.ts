@@ -22,6 +22,7 @@ export class ButtonConfig {
     ariaLabel?: string;
     customClass?: string;
     customStyles?: string;
+    describedBy?: string;
     icon?: IconDefinition;
     tooltipPlacement?: TooltipPlacement;
 
@@ -30,6 +31,7 @@ export class ButtonConfig {
         ariaLabel,
         customClass,
         customStyles,
+        describedBy,
         icon,
         isDisabled = false,
         isHidden = false,
@@ -43,6 +45,7 @@ export class ButtonConfig {
         this.ariaLabel = ariaLabel;
         this.customClass = customClass;
         this.customStyles = customStyles;
+        this.describedBy = describedBy;
         this.icon = icon;
         this.isDisabled = isDisabled;
         this.isHidden = isHidden;
@@ -60,6 +63,7 @@ export interface ButtonParameters {
     ariaLabel?: string;
     customClass?: string;
     customStyles?: string;
+    describedBy?: string;
     icon?: IconDefinition;
     isDisabled?: boolean;
     isHidden?: boolean;

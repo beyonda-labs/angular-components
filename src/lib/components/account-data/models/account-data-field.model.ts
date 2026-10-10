@@ -11,8 +11,11 @@ export class AccountDataField {
     isRequired: boolean;
     key: AccountDataFieldKey;
 
-    constructor({ columns, isRequired = false, key }: AccountDataFieldParameters) {
+    hint?: string;
+
+    constructor({ columns, hint, isRequired = false, key }: AccountDataFieldParameters) {
         this.columns = columns ?? ACCOUNT_DATA_FIELD_COLUMNS[key];
+        this.hint = hint;
         this.isRequired = isRequired;
         this.key = key;
     }
@@ -22,6 +25,7 @@ export interface AccountDataFieldParameters {
     key: AccountDataFieldKey;
 
     columns?: FormFieldColumn;
+    hint?: string;
     isRequired?: boolean;
 }
 
@@ -30,3 +34,5 @@ export const ACCOUNT_DATA_FIELD_COLUMNS: Readonly<Record<AccountDataFieldKey, Fo
     [AccountDataFieldKey.Name]: 6,
     [AccountDataFieldKey.Surname]: 6
 };
+
+export const ACCOUNT_DATA_HINTED_FIELDS: ReadonlySet<AccountDataFieldKey> = new Set([AccountDataFieldKey.Email]);

@@ -26,6 +26,8 @@ import { FormTextFieldComponent } from './field-text/field-text.component';
 import { FormTextVariableFieldComponent } from './field-text-variable/field-text-variable.component';
 import { FormTextareaFieldComponent } from './field-textarea/field-textarea.component';
 
+let messageCount = 0;
+
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -63,14 +65,26 @@ export class FormFieldComponent {
     readonly fieldType = FormFieldType;
     readonly formControl = computed(() => this.control() as FormControl | null);
     readonly hasLabel = computed(() => this.field().isLabelVisible && this.field().type !== FormFieldType.Checkbox);
+    readonly hint = computed(() => this.field().hint ?? '');
     readonly infoIcon = faInfoCircle;
     readonly label = computed(() => this.field().label ?? `${this.fieldPrefix()}.label`);
+    readonly messageId = nextMessageId();
     readonly tooltip = computed(() => `${this.fieldPrefix()}.tooltip`);
     readonly type = computed(() => this.field().type);
+
+    describedBy(): string | null {
+        return this.error() || this.hint() ? this.messageId : null;
+    }
 
     error(): FormFieldError | null {
         const control = this.control();
 
         return control?.touched ? fieldErrorOf(control.errors) : null;
     }
+}
+
+function nextMessageId(): string {
+    messageCount += 1;
+
+    return `bey-form-field-message-${messageCount}`;
 }

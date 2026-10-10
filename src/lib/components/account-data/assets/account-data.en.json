@@ -1,9 +1,10 @@
 {
     "angular-components": {
         "account-data": {
-            "description": "Your name as the rest of the team sees it. The email is the one you sign in with.",
+            "description": "Your name as the rest of the team sees it.",
             "profile": {
                 "email": {
+                    "hint": "Used to sign in",
                     "label": "Email"
                 },
                 "name": {
@@ -15,7 +16,7 @@
                     "placeholder": "Type your surname"
                 }
             },
-            "save": "Save profile",
+            "save": "Save changes",
             "title": "Profile",
             "toast": {
                 "success": "Profile saved"

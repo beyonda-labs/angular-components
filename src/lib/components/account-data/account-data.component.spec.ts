@@ -2,7 +2,15 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { buttonByName, controlByName, queryControl, renderComponent, settle } from '@testing/dom';
+import {
+    accessibleDescription,
+    buttonByName,
+    controlByName,
+    queryAll,
+    queryControl,
+    renderComponent,
+    settle
+} from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeToastService } from '@testing/services/fake-toast.service';
 
@@ -108,6 +116,30 @@ describe('AccountDataComponent', () => {
         expect(queryControl(fixture, `${PREFIX}.profile.email.label`)).toBeNull();
         expect(controlByName(fixture, NAME).value).toBe('Ada');
         expect(controlByName(fixture, SURNAME).value).toBe('Lovelace');
+    });
+
+    it('tells under the email that it is the one to sign in with, and gives the names no hint', async () => {
+        await render();
+        const [email] = queryAll(fixture, '[aria-describedby]');
+
+        expect(email.textContent).toContain('ada@example.test');
+        expect(accessibleDescription(email)).toBe(`${PREFIX}.profile.email.hint`);
+        expect(accessibleDescription(controlByName(fixture, NAME))).toBe('');
+        expect(accessibleDescription(controlByName(fixture, SURNAME))).toBe('');
+    });
+
+    it('shows the hint a field of the config gives instead, or none', async () => {
+        await render(
+            buildConfig({
+                fields: [
+                    new AccountDataField({ hint: '', key: AccountDataFieldKey.Email }),
+                    new AccountDataField({ hint: 'my-app.account.name-hint', key: AccountDataFieldKey.Name })
+                ]
+            })
+        );
+
+        expect(text()).not.toContain(`${PREFIX}.profile.email.hint`);
+        expect(accessibleDescription(controlByName(fixture, NAME))).toBe('my-app.account.name-hint');
     });
 
     it('enables its single button only once there is a valid change', async () => {

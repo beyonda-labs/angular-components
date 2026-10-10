@@ -70,6 +70,7 @@ A `BeyQueryScope` is a fixture or an element.
 | `beyControlByName(scope, name)`          | The input, select, textarea or grouping role named `name` by `aria-labelledby`, `aria-label` or its `<label>`; throws |
 | `beyQueryControl(scope, name)`           | The same, or `null`                                                                                                   |
 | `beyAccessibleName(element)`             | The name `beyControlByName` matches against                                                                           |
+| `beyAccessibleDescription(element)`      | The text of what its `aria-describedby` points at, such as the hint or the error of a field; `''` when nothing        |
 | `beyQueryAll(scope, selector)`           | Every match, as an array                                                                                              |
 | `beyTextsOf(elements)`                   | Their trimmed texts                                                                                                   |
 | `beyHostOf(scope)`                       | The element of a fixture, or the element itself                                                                       |

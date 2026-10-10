@@ -1,9 +1,10 @@
 {
     "angular-components": {
         "account-data": {
-            "description": "Tu nombre tal como lo ve el resto del equipo. El correo es con el que inicias sesión.",
+            "description": "Tu nombre tal como lo ve el resto del equipo.",
             "profile": {
                 "email": {
+                    "hint": "Usado para iniciar sesión",
                     "label": "Correo electrónico"
                 },
                 "name": {
@@ -15,7 +16,7 @@
                     "placeholder": "Escribe tus apellidos"
                 }
             },
-            "save": "Guardar perfil",
+            "save": "Guardar cambios",
             "title": "Perfil",
             "toast": {
                 "success": "Perfil guardado"
@@ -465,25 +466,27 @@
             "results-range": "Mostrando {{ start }}-{{ end }} de {{ total }} resultados"
         },
         "password-change": {
-            "description": "Al menos 8 caracteres. Al cambiarla, se cierra la sesión en tus otros dispositivos.",
+            "description": "Actualiza tu contraseña para proteger tu cuenta.",
             "no-password": "Tu cuenta no tiene contraseña, porque entras con otro proveedor. Para crear una, cierra la sesión y usa \"¿Has olvidado tu contraseña?\" en la página de inicio de sesión.",
+            "note": "Al cambiarla, se cerrará la sesión en tus otros dispositivos.",
             "password": {
                 "current-password": {
                     "label": "Contraseña actual",
                     "placeholder": "Escribe tu contraseña actual"
                 },
                 "password": {
+                    "hint": "Mínimo 8 caracteres",
                     "label": "Nueva contraseña",
                     "placeholder": "Escribe la nueva contraseña"
                 },
                 "password2": {
-                    "label": "Confirma la nueva contraseña",
+                    "label": "Confirmar contraseña",
                     "mismatch": "Las contraseñas no coinciden.",
                     "placeholder": "Vuelve a escribir la nueva contraseña"
                 }
             },
             "save": "Cambiar contraseña",
-            "title": "Contraseña",
+            "title": "Cambiar contraseña",
             "toast": {
                 "success": "Contraseña cambiada. Tendrás que volver a iniciar sesión en tus otros dispositivos."
             }

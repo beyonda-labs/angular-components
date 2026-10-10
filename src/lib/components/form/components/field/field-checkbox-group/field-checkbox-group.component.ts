@@ -16,6 +16,7 @@ import { trackControl } from '../functions/control-state';
 })
 export class FormCheckboxGroupFieldComponent {
     readonly control = input.required<FormControl<string[] | null>>();
+    readonly describedBy = input<string | null>(null);
     readonly field = input.required<FormCheckboxGroupField>();
     readonly isRequired = input(false);
     readonly label = input.required<string>();

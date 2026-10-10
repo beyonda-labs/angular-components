@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { FormHandle } from '../../form/models/form.model';
+import { FormFooter, FormHandle } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
 import { FormFieldCustomValidator } from '../../form/models/form-field-validator.model';
 import { PasswordChangeFormValue } from '../models/password-change.model';
@@ -26,6 +26,17 @@ describe('PasswordChangeFormService', () => {
         expect(fieldsOf(form.sections).map(field => field.key)).toEqual(['currentPassword', 'password', 'password2']);
         expect(form.initialValue).toEqual({ password: { currentPassword: '', password: '', password2: '' } });
         expect(form.buttons.map(button => button.label)).toEqual([`${PREFIX}.save`]);
+    });
+
+    it('hints the minimum length under the new password and notes that other devices sign out', () => {
+        const form = service.buildForm(PREFIX, jest.fn());
+
+        expect(fieldsOf(form.sections).map(field => field.hint)).toEqual([
+            undefined,
+            `${PREFIX}.password.password.hint`,
+            undefined
+        ]);
+        expect(form.footer).toEqual(new FormFooter({ isDivided: true, note: `${PREFIX}.note` }));
     });
 
     it('asks for a confirmation that matches the new password', () => {
