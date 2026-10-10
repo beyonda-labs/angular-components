@@ -32,7 +32,7 @@ export class PasswordChangeFormService {
     ): FormConfig<PasswordChangeFormValue> {
         return new FormConfig<PasswordChangeFormValue>({
             buttons: [new FormButton({ label: `${prefix}.save`, type: FormButtonType.Submit })],
-            footer: new FormFooter({ note: `${prefix}.note` }),
+            footer: new FormFooter(),
             initialValue: { [PASSWORD_CHANGE_SECTION]: { currentPassword: '', password: '', password2: '' } },
             onSubmit: (value, handle) => onSubmit(value[PASSWORD_CHANGE_SECTION], handle),
             prefix,

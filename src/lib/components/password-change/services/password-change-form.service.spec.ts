@@ -28,7 +28,7 @@ describe('PasswordChangeFormService', () => {
         expect(form.buttons.map(button => button.label)).toEqual([`${PREFIX}.save`]);
     });
 
-    it('hints the minimum length under the new password and notes that other devices sign out', () => {
+    it('hints the minimum length under the new password and divides the button from the form', () => {
         const form = service.buildForm(PREFIX, jest.fn());
 
         expect(fieldsOf(form.sections).map(field => field.hint)).toEqual([
@@ -36,7 +36,7 @@ describe('PasswordChangeFormService', () => {
             `${PREFIX}.password.password.hint`,
             undefined
         ]);
-        expect(form.footer).toEqual(new FormFooter({ isDivided: true, note: `${PREFIX}.note` }));
+        expect(form.footer).toEqual(new FormFooter({ isDivided: true }));
     });
 
     it('asks for a confirmation that matches the new password', () => {

@@ -468,7 +468,6 @@
         "password-change": {
             "description": "Actualiza tu contraseña para proteger tu cuenta.",
             "no-password": "Tu cuenta no tiene contraseña, porque entras con otro proveedor. Para crear una, cierra la sesión y usa \"¿Has olvidado tu contraseña?\" en la página de inicio de sesión.",
-            "note": "Al cambiarla, se cerrará la sesión en tus otros dispositivos.",
             "password": {
                 "current-password": {
                     "label": "Contraseña actual",
@@ -488,7 +487,7 @@
             "save": "Cambiar contraseña",
             "title": "Cambiar contraseña",
             "toast": {
-                "success": "Contraseña cambiada. Tendrás que volver a iniciar sesión en tus otros dispositivos."
+                "success": "Contraseña cambiada"
             }
         },
         "pdf-viewer": {
