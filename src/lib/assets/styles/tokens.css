@@ -126,6 +126,7 @@
     --bey-z-base: 1;
     --bey-z-raised: 10;
     --bey-z-sticky: 20;
+    --bey-z-toolbar: 30;
     --bey-z-dropdown: 1000;
     --bey-z-modal: 1050;
     --bey-z-loading: 1070;
