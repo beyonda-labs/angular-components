@@ -13,6 +13,8 @@ import {
 } from '@beyonda-labs/angular-components';
 import { faCalendarDays, faUser } from '@fortawesome/free-solid-svg-icons';
 
+const PREFIX = 'angular-components-style-guide.form';
+
 export function buildInputSections(): BeyFormSection[] {
     return [
         new BeyFormSection({
@@ -38,6 +40,7 @@ export function buildInputSections(): BeyFormSection[] {
                         new BeyFormTextField({
                             key: 'text3',
                             columns: 6,
+                            hint: `${PREFIX}.section-text.text3.hint`,
                             validators: [new BeyFormFieldPatternValidator(/^[A-Za-z]+$/u)]
                         })
                     ]
@@ -66,6 +69,7 @@ export function buildInputSections(): BeyFormSection[] {
                         new BeyFormPasswordField({
                             key: 'password1',
                             columns: 6,
+                            hint: `${PREFIX}.section-password.password1.hint`,
                             validators: [new BeyFormFieldLengthValidator(8, BeyFormFieldValidatorType.MinLength)]
                         }),
                         new BeyFormPasswordField({
@@ -130,6 +134,7 @@ export function buildInputSections(): BeyFormSection[] {
                         new BeyFormInfoField({
                             key: 'info1',
                             columns: 6,
+                            hint: `${PREFIX}.section-info.info1.hint`,
                             items: [{ label: '1.0' }]
                         }),
                         new BeyFormInfoField({

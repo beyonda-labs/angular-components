@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import {
+    accessibleDescription,
     buttonByName,
     controlByName,
     hostOf,
@@ -25,7 +26,8 @@ import {
         <button aria-label="Close" type="button">x</button>
         <span role="button">Toggle</span>
         <label for="probe-title">Title</label>
-        <input id="probe-title" type="text" />
+        <input id="probe-title" aria-describedby="probe-title-hint" type="text" />
+        <span id="probe-title-hint">Shown on the cover</span>
         <label>
             Size
             <select>
@@ -83,6 +85,13 @@ describe('testing/dom', () => {
         expect(controlByName<HTMLSelectElement>(fixture, 'Size').tagName).toBe('SELECT');
         expect(controlByName(fixture, 'Search').type).toBe('search');
         expect(controlByName(fixture, 'Column widths').getAttribute('role')).toBe('group');
+    });
+
+    it('reads the description of a control from the elements it is described by, or none', async () => {
+        const fixture = await renderComponent(DomProbeComponent);
+
+        expect(accessibleDescription(controlByName(fixture, 'Title'))).toBe('Shown on the cover');
+        expect(accessibleDescription(controlByName(fixture, 'Search'))).toBe('');
     });
 
     it('reports a missing control as null, or throws when one is required', async () => {

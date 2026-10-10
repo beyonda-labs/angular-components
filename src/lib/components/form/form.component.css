@@ -16,9 +16,39 @@
     margin-top: var(--bey-space-sm);
 }
 
+.bey-form-buttons--footer {
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.bey-form-buttons--divided {
+    border-top: var(--bey-border-width) solid var(--bey-border-subtle);
+    margin-top: var(--bey-space-md);
+    padding-top: var(--bey-space-lg);
+}
+
 .bey-form-buttons--stretch bey-button {
     --bey-button-inline-gap: 0;
     --bey-button-width: 100%;
 
     flex: 1 1 0;
+}
+
+.bey-form-buttons-note {
+    align-items: baseline;
+    color: var(--bey-text-muted);
+    display: flex;
+    flex: 1 1 auto;
+    font-size: var(--bey-font-size-sm);
+    gap: var(--bey-space-xs);
+    line-height: var(--bey-line-height-base);
+    margin: 0;
+}
+
+.bey-form-buttons--stretch .bey-form-buttons-note {
+    flex-basis: 100%;
+}
+
+.bey-form-buttons-note-icon {
+    flex-shrink: 0;
 }

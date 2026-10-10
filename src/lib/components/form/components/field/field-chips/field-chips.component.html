@@ -23,6 +23,7 @@
     <input
         class="bey-form-chips-input"
         type="text"
+        [attr.aria-describedby]="describedBy()"
         [disabled]="isDisabled() || isMaxItemsReached()"
         [id]="field().key"
         [placeholder]="(chips().length ? '' : placeholder()) | translate"

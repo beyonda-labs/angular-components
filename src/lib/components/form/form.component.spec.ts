@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { buttonByName, renderComponent, settle } from '@testing/dom';
+import { accessibleDescription, buttonByName, renderComponent, settle } from '@testing/dom';
 
 import { FormComponent } from './form.component';
 import { FormAutocompleteField } from './models/fields/form-autocomplete-field.model';
@@ -13,6 +13,7 @@ import {
     FormButtonType,
     FormConfig,
     FormConfigParameters,
+    FormFooter,
     FormHandle,
     FormRow,
     FormSection,
@@ -181,6 +182,35 @@ describe('FormComponent', () => {
         button('demo.other').click();
 
         expect(action).toHaveBeenCalledWith(expect.objectContaining({ patchValue: expect.any(Function) }));
+    });
+
+    describe('footer', () => {
+        it('shows no note and describes no button without a footer', async () => {
+            await render();
+
+            expect(text()).not.toContain('demo.note');
+            expect(button('demo.submit').hasAttribute('aria-describedby')).toBe(false);
+        });
+
+        it('shows the note of the footer with the buttons and describes the submit button with it', async () => {
+            await render(buildConfig({ footer: new FormFooter({ note: 'demo.note' }) }));
+
+            expect(text()).toContain('demo.note');
+            expect(accessibleDescription(button('demo.submit'))).toBe('demo.note');
+            expect(button('demo.cancel').hasAttribute('aria-describedby')).toBe(false);
+        });
+
+        it('describes no button when the footer has no note', async () => {
+            await render(buildConfig({ footer: new FormFooter() }));
+
+            expect(button('demo.submit').hasAttribute('aria-describedby')).toBe(false);
+        });
+
+        it('shows the footer only with the buttons', async () => {
+            await render(buildConfig({ buttons: [], footer: new FormFooter({ note: 'demo.note' }) }));
+
+            expect(text()).not.toContain('demo.note');
+        });
     });
 
     it('lets the handle patch the value and close its host', async () => {

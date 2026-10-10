@@ -10,6 +10,9 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { TranslateModule } from '@ngx-translate/core';
 import { debounceTime, map, startWith, switchMap } from 'rxjs';
 
 import { ButtonComponent } from '../../internal/button/button.component';
@@ -32,6 +35,8 @@ const OPTION_FIELD_TYPES: ReadonlySet<FormFieldType> = new Set([
     FormFieldType.Radio,
     FormFieldType.Select
 ]);
+
+let noteCount = 0;
 
 export interface FormFieldState {
     isDisabled: boolean;
@@ -58,7 +63,7 @@ interface FormSync {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [ButtonComponent, FormSectionComponent],
+    imports: [ButtonComponent, FontAwesomeModule, FormSectionComponent, TranslateModule],
     selector: 'bey-form',
     standalone: true,
     styleUrls: ['./form.component.css'],
@@ -127,6 +132,7 @@ export class FormComponent<TValue = unknown> {
 
         return states;
     });
+    readonly footerNote = computed(() => this.config().footer?.note ?? '');
     readonly formGroup = computed(() => {
         const config = this.config();
 
@@ -141,6 +147,10 @@ export class FormComponent<TValue = unknown> {
         reset: () => this.reset(),
         value: () => this.formGroup().getRawValue() as TValue
     };
+    readonly hasFooter = computed(() => this.config().footer !== undefined);
+    readonly isFooterDivided = computed(() => this.config().footer?.isDivided ?? false);
+    readonly noteIcon = faCircleInfo;
+    readonly noteId = nextNoteId();
     readonly state = linkedSignal(() => readState(this.formGroup()));
     readonly visibleSections = computed(() => {
         const { sections, steps } = this.config();
@@ -226,7 +236,12 @@ export class FormComponent<TValue = unknown> {
     private buildButton(button: FormButton): ButtonConfig {
         const { isDirty, isValid } = this.state();
         const { allowSubmitWithoutChanges } = this.config();
-        const base = { label: button.label, tooltip: button.tooltip };
+        const isDescribedByNote = button.type === FormButtonType.Submit && this.footerNote() !== '';
+        const base = {
+            describedBy: isDescribedByNote ? this.noteId : undefined,
+            label: button.label,
+            tooltip: button.tooltip
+        };
 
         if (button.action) {
             const { action } = button;
@@ -368,6 +383,12 @@ function haveSameOptions(previous: FormFieldOption[], current: FormFieldOption[]
 
 function isFreeText(field: FormField): boolean {
     return field.type === FormFieldType.Autocomplete && (field as FormAutocompleteField).isFreeTextAllowed;
+}
+
+function nextNoteId(): string {
+    noteCount += 1;
+
+    return `bey-form-note-${noteCount}`;
 }
 
 function noop(): void {}

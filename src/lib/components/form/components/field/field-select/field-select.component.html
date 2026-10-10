@@ -1,5 +1,6 @@
 <select
     class="form-select form-select-sm bey-form-field-control"
+    [attr.aria-describedby]="describedBy()"
     [attr.aria-invalid]="isInvalid() || null"
     [attr.aria-required]="isRequired() || null"
     [class.is-placeholder]="isPlaceholderShown()"

@@ -50,6 +50,14 @@ describe('ButtonComponent', () => {
         expect(buttonByName(fixture, 'Save').hasAttribute('aria-label')).toBe(false);
     });
 
+    it('is described by the element the config points at, and by nothing otherwise', async () => {
+        await render(buildButton({ describedBy: 'demo-note' }));
+        expect(buttonByName(fixture, 'Save').getAttribute('aria-describedby')).toBe('demo-note');
+
+        await render();
+        expect(buttonByName(fixture, 'Save').hasAttribute('aria-describedby')).toBe(false);
+    });
+
     it('renders nothing when hidden', async () => {
         await render(buildButton({ isHidden: true }));
 

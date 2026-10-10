@@ -1,4 +1,4 @@
-<div class="bey-form-info">
+<div class="bey-form-info" [attr.aria-describedby]="describedBy()">
     @for (item of field().items; track $index) {
         <span
             class="bey-form-info-item"

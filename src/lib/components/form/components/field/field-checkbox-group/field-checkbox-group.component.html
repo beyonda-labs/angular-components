@@ -1,5 +1,6 @@
 <div
     role="group"
+    [attr.aria-describedby]="describedBy()"
     [attr.aria-invalid]="isInvalid() || null"
     [attr.aria-label]="label() | translate"
     [attr.aria-required]="isRequired() || null"

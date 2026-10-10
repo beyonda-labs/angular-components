@@ -3,11 +3,16 @@ export {
     FormButton as BeyFormButton,
     FormButtonType as BeyFormButtonType,
     FormConfig as BeyFormConfig,
+    FormFooter as BeyFormFooter,
     FormRow as BeyFormRow,
     FormSection as BeyFormSection,
     FormStep as BeyFormStep
 } from './models/form.model';
-export type { FormButtonLayout as BeyFormButtonLayout, FormHandle as BeyFormHandle } from './models/form.model';
+export type {
+    FormButtonLayout as BeyFormButtonLayout,
+    FormFooterParameters as BeyFormFooterParameters,
+    FormHandle as BeyFormHandle
+} from './models/form.model';
 export {
     ModalFormConfig as BeyModalFormConfig,
     ModalFormSize as BeyModalFormSize

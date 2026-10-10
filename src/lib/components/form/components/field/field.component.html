@@ -18,9 +18,14 @@
 }
 
 @if (type() === fieldType.Info) {
-    <bey-form-info-field [field]="$any(field())"></bey-form-info-field>
+    <bey-form-info-field [describedBy]="describedBy()" [field]="$any(field())"></bey-form-info-field>
 } @else if (type() === fieldType.List) {
-    <bey-form-list-field [field]="$any(field())" [label]="label()" [prefix]="fieldPrefix()"></bey-form-list-field>
+    <bey-form-list-field
+        [describedBy]="describedBy()"
+        [field]="$any(field())"
+        [label]="label()"
+        [prefix]="fieldPrefix()"
+    ></bey-form-list-field>
 } @else if (formControl()) {
     @let control = formControl()!;
 
@@ -28,6 +33,7 @@
         @case (fieldType.Text) {
             <bey-form-text-field
                 [control]="control"
+                [describedBy]="describedBy()"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
@@ -36,6 +42,7 @@
         @case (fieldType.TextVariable) {
             <bey-form-text-variable-field
                 [control]="control"
+                [describedBy]="describedBy()"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [options]="state().options"
@@ -45,6 +52,7 @@
         @case (fieldType.Date) {
             <bey-form-date-field
                 [control]="control"
+                [describedBy]="describedBy()"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
@@ -53,6 +61,7 @@
         @case (fieldType.Number) {
             <bey-form-number-field
                 [control]="control"
+                [describedBy]="describedBy()"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
@@ -61,6 +70,7 @@
         @case (fieldType.Password) {
             <bey-form-password-field
                 [control]="control"
+                [describedBy]="describedBy()"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
@@ -69,6 +79,7 @@
         @case (fieldType.Textarea) {
             <bey-form-textarea-field
                 [control]="control"
+                [describedBy]="describedBy()"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
@@ -77,6 +88,7 @@
         @case (fieldType.Autocomplete) {
             <bey-form-autocomplete-field
                 [control]="control"
+                [describedBy]="describedBy()"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [options]="state().options"
@@ -86,6 +98,7 @@
         @case (fieldType.Select) {
             <bey-form-select-field
                 [control]="control"
+                [describedBy]="describedBy()"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [options]="state().options"
@@ -95,6 +108,7 @@
         @case (fieldType.Radio) {
             <bey-form-radio-field
                 [control]="control"
+                [describedBy]="describedBy()"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [options]="state().options"
@@ -104,6 +118,7 @@
         @case (fieldType.Checkbox) {
             <bey-form-checkbox-field
                 [control]="control"
+                [describedBy]="describedBy()"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
@@ -112,6 +127,7 @@
         @case (fieldType.CheckboxGroup) {
             <bey-form-checkbox-group-field
                 [control]="control"
+                [describedBy]="describedBy()"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [label]="label()"
@@ -122,6 +138,7 @@
         @case (fieldType.Chips) {
             <bey-form-chips-field
                 [control]="control"
+                [describedBy]="describedBy()"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
@@ -130,16 +147,19 @@
         @case (fieldType.File) {
             <bey-form-file-field
                 [control]="control"
+                [describedBy]="describedBy()"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [prefix]="fieldPrefix()"
             ></bey-form-file-field>
         }
     }
+}
 
-    @if (error(); as error) {
-        <div class="bey-form-field-error" role="alert">
-            {{ error.messageKey | translate: error.messageParameters }}
-        </div>
-    }
+@if (error(); as error) {
+    <div class="bey-form-field-error" role="alert" [id]="messageId">
+        {{ error.messageKey | translate: error.messageParameters }}
+    </div>
+} @else if (hint()) {
+    <div class="bey-form-field-hint" [id]="messageId">{{ hint() | translate }}</div>
 }

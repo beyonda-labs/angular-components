@@ -47,6 +47,7 @@ export abstract class FormField {
     validators: FormFieldValidator[];
 
     autocomplete?: string;
+    hint?: string;
     label?: string;
     placeholder?: string;
 
@@ -57,6 +58,7 @@ export abstract class FormField {
         asyncValidators = [],
         autocomplete,
         columns = 12,
+        hint,
         isDisabled = false,
         isHidden = false,
         isLabelTooltipVisible = false,
@@ -69,6 +71,7 @@ export abstract class FormField {
         this.asyncValidators = asyncValidators;
         this.autocomplete = autocomplete;
         this.columns = columns;
+        this.hint = hint;
         this.isDisabled = isDisabled;
         this.isHidden = isHidden;
         this.isLabelTooltipVisible = isLabelTooltipVisible;
@@ -88,6 +91,7 @@ export interface FormFieldBaseParameters {
     asyncValidators?: FormFieldAsyncValidator[];
     autocomplete?: string;
     columns?: FormFieldColumn;
+    hint?: string;
     isDisabled?: FormRule<boolean>;
     isHidden?: FormRule<boolean>;
     isLabelTooltipVisible?: boolean;

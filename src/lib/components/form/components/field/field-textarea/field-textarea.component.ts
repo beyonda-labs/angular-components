@@ -14,6 +14,7 @@ import { FormTextareaField } from '../../../models/fields/form-textarea-field.mo
 })
 export class FormTextareaFieldComponent {
     readonly control = input.required<FormControl<string | null>>();
+    readonly describedBy = input<string | null>(null);
     readonly field = input.required<FormTextareaField>();
     readonly isRequired = input(false);
     readonly prefix = input.required<string>();

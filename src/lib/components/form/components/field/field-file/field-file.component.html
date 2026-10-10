@@ -5,6 +5,7 @@
         tabindex="-1"
         type="file"
         [attr.accept]="accept()"
+        [attr.aria-describedby]="describedBy()"
         [disabled]="isDisabled()"
         [id]="field().key"
         (change)="onFileSelected($event)"

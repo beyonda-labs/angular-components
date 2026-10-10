@@ -1,6 +1,7 @@
 <div
     class="bey-form-radio"
     role="radiogroup"
+    [attr.aria-describedby]="describedBy()"
     [attr.aria-invalid]="isInvalid() || null"
     [attr.aria-required]="isRequired() || null"
 >

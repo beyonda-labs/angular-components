@@ -4,40 +4,41 @@ Every field extends `BeyFormField` and takes the same base parameters; each type
 
 ## Base parameters
 
-| Parameter               | Default | Meaning                                                         |
-| ----------------------- | ------- | --------------------------------------------------------------- |
-| `key`                   |         | Name of the control; in kebab-case, the segment of its texts    |
-| `columns`               | `12`    | Width in the twelve-column row                                  |
-| `isRequired`            | `false` | Value or rule; adds the required validator and the label marker |
-| `isDisabled`            | `false` | Value or rule, see the form README                              |
-| `isHidden`              | `false` | Value or rule; a hidden field is disabled as well               |
-| `isLabelVisible`        | `true`  | Shows the label above the control                               |
-| `isLabelTooltipVisible` | `false` | Shows an info icon with `<prefix>.<key>.tooltip`                |
-| `label`                 |         | Overrides `<prefix>.<key>.label`, for a label built from data   |
-| `placeholder`           |         | Overrides `<prefix>.<key>.placeholder`                          |
-| `validators`            | `[]`    | Sync validators; which ones depends on the value, see below     |
-| `asyncValidators`       | `[]`    | `BeyFormFieldAsyncValidator` instances                          |
-| `autocomplete`          |         | Autofill hint of a text or password field, such as `email`      |
+| Parameter               | Default | Meaning                                                          |
+| ----------------------- | ------- | ---------------------------------------------------------------- |
+| `key`                   |         | Name of the control; in kebab-case, the segment of its texts     |
+| `columns`               | `12`    | Width in the twelve-column row                                   |
+| `isRequired`            | `false` | Value or rule; adds the required validator and the label marker  |
+| `isDisabled`            | `false` | Value or rule, see the form README                               |
+| `isHidden`              | `false` | Value or rule; a hidden field is disabled as well                |
+| `isLabelVisible`        | `true`  | Shows the label above the control                                |
+| `isLabelTooltipVisible` | `false` | Shows an info icon with `<prefix>.<key>.tooltip`                 |
+| `label`                 |         | Overrides `<prefix>.<key>.label`, for a label built from data    |
+| `placeholder`           |         | Overrides `<prefix>.<key>.placeholder`                           |
+| `hint`                  |         | Translation key of a short text shown under the field, see below |
+| `validators`            | `[]`    | Sync validators; which ones depends on the value, see below      |
+| `asyncValidators`       | `[]`    | `BeyFormFieldAsyncValidator` instances                           |
+| `autocomplete`          |         | Autofill hint of a text or password field, such as `email`       |
 
 ## Fields
 
-| Field                      | Value      | Extra parameters                                                                                                                             |
-| -------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| `BeyFormTextField`         | `string`   |                                                                                                                                              |
-| `BeyFormTextareaField`     | `string`   | `rows` (`3`), `maxHeight`                                                                                                                    |
-| `BeyFormPasswordField`     | `string`   | `showToggle` (`true`)                                                                                                                        |
-| `BeyFormNumberField`       | `number`   | `min`, `max`, both validated and honoured by the spinners                                                                                    |
-| `BeyFormDateField`         | `string`   | `format` (`YYYY-MM-DD`), `minDate`, `maxDate` in that format                                                                                 |
-| `BeyFormSelectField`       | `string`   | `options`, a value or a rule                                                                                                                 |
-| `BeyFormRadioField`        | `string`   | `options`, a value or a rule                                                                                                                 |
-| `BeyFormAutocompleteField` | `string`   | `options`, a value or a rule; `emptyKey`; `isFreeTextAllowed` (`false`)                                                                      |
-| `BeyFormCheckboxField`     | `boolean`  | `isSwitch` (`false`)                                                                                                                         |
-| `BeyFormCheckboxGroupField` | `string[]` | `options`, a value or a rule; one checkbox per option, the value lists the checked ones in the order they were checked                      |
-| `BeyFormChipsField`        | `string[]` | `maxItems`, `allowDuplicates` (`false`)                                                                                                      |
-| `BeyFormFileField`         | `File`     | `accept` (`[]`), `maxSizeBytes`, both validated                                                                                              |
-| `BeyFormTextVariableField` | `string`   | `options`, a value or a rule, inserted as `{{ value }}`                                                                                      |
-| `BeyFormInfoField`         | none       | `items: { label, icon?, tooltip?, tooltipItems? }[]`, shows text without a control, with a tooltip that lists `tooltipItems` under `tooltip` |
-| `BeyFormListField`         | none       | `items`, a list of texts or a signal of one; shows its placeholder while empty                                                               |
+| Field                       | Value      | Extra parameters                                                                                                                             |
+| --------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `BeyFormTextField`          | `string`   |                                                                                                                                              |
+| `BeyFormTextareaField`      | `string`   | `rows` (`3`), `maxHeight`                                                                                                                    |
+| `BeyFormPasswordField`      | `string`   | `showToggle` (`true`)                                                                                                                        |
+| `BeyFormNumberField`        | `number`   | `min`, `max`, both validated and honoured by the spinners                                                                                    |
+| `BeyFormDateField`          | `string`   | `format` (`YYYY-MM-DD`), `minDate`, `maxDate` in that format                                                                                 |
+| `BeyFormSelectField`        | `string`   | `options`, a value or a rule                                                                                                                 |
+| `BeyFormRadioField`         | `string`   | `options`, a value or a rule                                                                                                                 |
+| `BeyFormAutocompleteField`  | `string`   | `options`, a value or a rule; `emptyKey`; `isFreeTextAllowed` (`false`)                                                                      |
+| `BeyFormCheckboxField`      | `boolean`  | `isSwitch` (`false`)                                                                                                                         |
+| `BeyFormCheckboxGroupField` | `string[]` | `options`, a value or a rule; one checkbox per option, the value lists the checked ones in the order they were checked                       |
+| `BeyFormChipsField`         | `string[]` | `maxItems`, `allowDuplicates` (`false`)                                                                                                      |
+| `BeyFormFileField`          | `File`     | `accept` (`[]`), `maxSizeBytes`, both validated                                                                                              |
+| `BeyFormTextVariableField`  | `string`   | `options`, a value or a rule, inserted as `{{ value }}`                                                                                      |
+| `BeyFormInfoField`          | none       | `items: { label, icon?, tooltip?, tooltipItems? }[]`, shows text without a control, with a tooltip that lists `tooltipItems` under `tooltip` |
+| `BeyFormListField`          | none       | `items`, a list of texts or a signal of one; shows its placeholder while empty                                                               |
 
 An option is `{ label, value, badge?, isDisabled? }`; `label` and `badge` are translation keys. When the options
 of a select, a radio or an autocomplete change and no longer list its value, the form clears it. An autocomplete with
@@ -136,3 +137,20 @@ new BeyFormFileField({
     ]
 });
 ```
+
+## Hints
+
+A field with a `hint` shows that text under it, every type alike, the info and list fields included, and the field
+is described by it through `aria-describedby`: the control, the group of a radio or a checkbox group, the list, or
+the value of an info field. The key is used as given, like `placeholder`; there is none by default, and an empty one
+shows none.
+
+```ts
+new BeyFormPasswordField({ hint: 'myApp.account.password.password.hint', key: 'password' });
+```
+
+While the field shows an error message (see above), the message replaces the hint and the field is described by the
+message instead; the hint comes back once the message goes. A validator that fails without a message only flags the
+field, so the hint stays: a minimum length with a hint that states it reads well that way. A field without a hint is
+described by its error message alone, while it shows. The file field writes its size limit under the control as well,
+above the hint.

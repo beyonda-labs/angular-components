@@ -19,6 +19,7 @@ import { trackControl } from '../functions/control-state';
 })
 export class FormFileFieldComponent {
     readonly control = input.required<FormControl<File | null>>();
+    readonly describedBy = input<string | null>(null);
     readonly field = input.required<FormFileField>();
     readonly isRequired = input(false);
     readonly prefix = input.required<string>();

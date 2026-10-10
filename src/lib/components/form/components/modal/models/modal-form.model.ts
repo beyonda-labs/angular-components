@@ -3,6 +3,7 @@ import {
     FormButtonLayout,
     FormButtonType,
     FormConfig,
+    FormFooter,
     FormHandle,
     FormSection,
     FormStep
@@ -60,6 +61,7 @@ export interface ModalFormConfigParameters<TValue = unknown> {
     allowSubmitWithoutChanges?: boolean;
     buttonLayout?: FormButtonLayout;
     cancelLabel?: string;
+    footer?: FormFooter;
     initialValue?: TValue;
     onReady?: (handle: FormHandle<TValue>) => void;
     onStepChange?: (key: string) => void;
