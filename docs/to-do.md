@@ -254,6 +254,9 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [x] Field types: `select`, `checkbox`, `radio`, `textarea`, `date`, `text`, `number`
 -   [x] Advanced validators (`email`, `url`, `custom sync`, `async`)
 -   [x] Accessibility (`aria-required`, `aria-invalid`, `aria-label`) across all fields
+-   [x] A `hint` under any field, and a `footer` with a divider and a note over the buttons
+-   [ ] Export the `<Name>Parameters` interfaces of the form module (`FormConfigParameters` and the rest), as
+        `library.md` asks; only `BeyFormFooterParameters` is exported today
 
 ### Core UI
 

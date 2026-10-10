@@ -42,6 +42,11 @@
 -   Session service: `language` and `theme` on `BeySessionUser`, read from the token.
 -   Form module: `BeyFormCheckboxGroupField`, one checkbox per option, valued with the checked ones.
 -   Form module: `autocomplete` on the base field parameters, the autofill hint of a text or password field.
+-   Form module: `hint` on the base field parameters, a text under any field, info and list included, that describes it
+    through `aria-describedby`; an error message replaces it while it shows.
+-   Form module: `footer` on `BeyFormConfig` and `BeyModalFormConfig`, a `BeyFormFooter` with a divider over the buttons
+    (`isDivided`) and a `note` at the start of their row that describes the submit button.
+-   Testing: `beyAccessibleDescription(element)`, the text of what an element is described by, such as a field's hint.
 -   Page module: `textField` on `BeyPageTableSearchConfig` sends that field as the `text` of the search.
 
 ### Changed
