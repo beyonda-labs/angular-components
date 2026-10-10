@@ -88,6 +88,8 @@
 
 ### Fixed
 
+-   Page module: the filters panel opens above the sticky header of the table instead of under it, since the search
+    sits in the dropdown layer.
 -   Pdf viewer module: pdf.js starts under a Content Security Policy sent as a header; the viewer checks the browser
     with `op-chaining-support.js` instead of an inline script the policy refused, which left it waiting forever.
 -   App layout module: a navigation that ends while the layout is being created no longer reads its config before
