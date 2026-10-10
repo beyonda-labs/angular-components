@@ -5,7 +5,7 @@
                 "product-description": "Generate, sign and share PDFs in seconds. Templates, branding and e-signature — all from your browser.",
                 "product-name": "PDF Generator"
             },
-            "example": "Full-page authentication component with light/dark theme support, optional OAuth providers (fetched from backend), and optional registration flow.",
+            "example": "Full-page authentication component with light/dark theme support, optional OAuth providers (fetched from backend), and optional registration flow, whose password lists the rules of the password policy the backend answers.",
             "examples": {
                 "login": "Login"
             }

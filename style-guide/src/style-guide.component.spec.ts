@@ -54,6 +54,7 @@ describe('StyleGuideComponent', () => {
             httpTesting
                 .expectOne(request => request.url === 'https://api.test/api/style-guide/users')
                 .flush({ globalActions: [], results: [] });
+            httpTesting.expectOne('https://api.test/auth/password-policy').flush({ minLength: 8 });
 
             expect(fixture.nativeElement.querySelector('h1').textContent).toBe('Style guide');
         },

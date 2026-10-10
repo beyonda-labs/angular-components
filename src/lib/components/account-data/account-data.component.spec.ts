@@ -226,6 +226,7 @@ describe('AccountDataComponent', () => {
         fixture = await renderComponent(AccountPageHostComponent);
         httpTesting.expectOne(ACCOUNT_URL).flush(buildProfile());
         await settle(fixture);
+        httpTesting.expectOne('https://api.test/auth/password-policy').flush({ minLength: 8 });
 
         expect(controlByName(fixture, NAME).value).toBe('Ada');
         expect(

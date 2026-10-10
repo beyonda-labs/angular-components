@@ -1,6 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@angular/forms';
+import { provideBeyTesting } from '@testing/providers/testing.providers';
 
+import { PasswordPolicyService } from '../../../services/password-policy/password-policy.service';
+import { FormPasswordField } from '../../form/models/fields/form-password-field.model';
 import { FormFooter, FormHandle } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
 import { FormFieldCustomValidator } from '../../form/models/form-field-validator.model';
@@ -17,6 +20,7 @@ describe('PasswordChangeFormService', () => {
     }
 
     beforeEach(() => {
+        TestBed.configureTestingModule({ providers: [provideBeyTesting()] });
         service = TestBed.inject(PasswordChangeFormService);
     });
 
@@ -28,12 +32,12 @@ describe('PasswordChangeFormService', () => {
         expect(form.buttons.map(button => button.label)).toEqual([`${PREFIX}.save`]);
     });
 
-    it('hints the minimum length under the new password and divides the button from the form', () => {
+    it('checks the new password alone against the password policy and divides the button from the form', () => {
         const form = service.buildForm(PREFIX, jest.fn());
 
-        expect(fieldsOf(form.sections).map(field => field.hint)).toEqual([
+        expect(fieldsOf(form.sections).map(field => (field as FormPasswordField).policy)).toEqual([
             undefined,
-            `${PREFIX}.password.password.hint`,
+            TestBed.inject(PasswordPolicyService).policy,
             undefined
         ]);
         expect(form.footer).toEqual(new FormFooter({ isDivided: true }));

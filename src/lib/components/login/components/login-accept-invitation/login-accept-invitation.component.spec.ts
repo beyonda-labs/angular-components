@@ -1,7 +1,14 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
-import { buttonByName, controlByName, queryControl, renderComponent, settle } from '@testing/dom';
+import {
+    accessibleDescription,
+    buttonByName,
+    controlByName,
+    queryControl,
+    renderComponent,
+    settle
+} from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { SessionService } from '../../../../services/session/session.service';
@@ -13,6 +20,9 @@ const INVITATION_URL = 'https://api.test/auth/invitation';
 const NAME = 'angular-components.login.accept-invitation.name.label';
 const PASSWORD = 'angular-components.login.accept-invitation.password.label';
 const PASSWORD2 = 'angular-components.login.accept-invitation.password2.label';
+const POLICY_URL = 'https://api.test/auth/password-policy';
+const STRICT = { isDigitRequired: true, isLowercaseRequired: true, isSymbolRequired: true, isUppercaseRequired: true };
+const STRONG = 'Correct-h0rse';
 const SURNAME = 'angular-components.login.accept-invitation.surname.label';
 const INVITATION = { email: 'ada@example.com', name: 'Ada', surname: 'Lovelace' };
 const TOKEN_INVALID = { errorCode: 'bad-request', messageKey: 'account.token-invalid' };
@@ -28,6 +38,11 @@ describe('LoginAcceptInvitationComponent', () => {
 
     function buildAccessToken(allowedPaths: string[]): string {
         return `header.${btoa(JSON.stringify({ allowedPaths, email: 'ada@example.com' }))}.signature`;
+    }
+
+    async function answerPolicy(): Promise<void> {
+        httpTesting.expectOne(POLICY_URL).flush(STRICT);
+        await settle(fixture);
     }
 
     function expectInvitationRead(): TestRequest {
@@ -61,6 +76,7 @@ describe('LoginAcceptInvitationComponent', () => {
         await land();
         expectInvitationRead().flush(invitation);
         await settle(fixture);
+        await answerPolicy();
     }
 
     function status(): string {
@@ -80,8 +96,8 @@ describe('LoginAcceptInvitationComponent', () => {
     }
 
     async function accept(): Promise<void> {
-        await type(PASSWORD, 'secret');
-        await type(PASSWORD2, 'secret');
+        await type(PASSWORD, STRONG);
+        await type(PASSWORD2, STRONG);
         buttonByName(fixture, 'angular-components.login.accept-invitation.button.accept').click();
         await settle(fixture);
     }
@@ -101,6 +117,7 @@ describe('LoginAcceptInvitationComponent', () => {
 
         expectInvitationRead().flush(INVITATION);
         await settle(fixture);
+        await answerPolicy();
 
         expect(status()).toBe('');
         expect(text()).toContain('angular-components.login.title.accept-invitation');
@@ -121,12 +138,25 @@ describe('LoginAcceptInvitationComponent', () => {
 
         expect(request.request.body).toEqual({
             name: 'Ada',
-            password: 'secret',
-            password2: 'secret',
+            password: STRONG,
+            password2: STRONG,
             token: 'invite-token'
         });
         expect(TestBed.inject(SessionService).getToken()).toBe(accessToken);
         expect(navigate).toHaveBeenCalledWith(['/home']);
+    });
+
+    it('lists the rules of the policy under the password and holds back one that breaks them', async () => {
+        await open();
+
+        await type(PASSWORD, 'correct-horse');
+        await type(PASSWORD2, 'correct-horse');
+
+        expect(accessibleDescription(controlByName(fixture, PASSWORD))).toContain(
+            'angular-components.form.password-field.policy.uppercase'
+        );
+        expect(accessibleDescription(controlByName(fixture, PASSWORD2))).toBe('');
+        expect(buttonByName(fixture, 'angular-components.login.accept-invitation.button.accept').disabled).toBe(true);
     });
 
     it('explains a link without token without asking the server', async () => {
@@ -168,6 +198,7 @@ describe('LoginAcceptInvitationComponent', () => {
         await settle(fixture);
         expectInvitationRead().flush({ email: 'ada@example.com' });
         await settle(fixture);
+        await answerPolicy();
 
         expect(queryControl(fixture, PASSWORD)).not.toBeNull();
     });

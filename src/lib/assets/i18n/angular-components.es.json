@@ -77,6 +77,16 @@
             },
             "password-field": {
                 "hide": "Ocultar contraseña",
+                "policy": {
+                    "digit": "Un número",
+                    "length": "Mínimo {{min}} caracteres",
+                    "lowercase": "Una letra minúscula",
+                    "met": "cumplida",
+                    "symbol": "Un signo de puntuación o símbolo",
+                    "too-long": "Máximo {{max}} caracteres",
+                    "unmet": "pendiente",
+                    "uppercase": "Una letra mayúscula"
+                },
                 "show": "Mostrar contraseña"
             },
             "required": "Este campo es requerido",
@@ -163,6 +173,14 @@
                 },
                 "move-target-unchanged": "El elemento ya se encuentra en esta categoría.",
                 "not-found": "El recurso solicitado no fue encontrado.",
+                "password": {
+                    "digit-required": "La contraseña debe incluir un número.",
+                    "lowercase-required": "La contraseña debe incluir una letra minúscula.",
+                    "symbol-required": "La contraseña debe incluir un signo de puntuación o un símbolo.",
+                    "too-long": "La contraseña debe tener como máximo {{max}} caracteres.",
+                    "too-short": "La contraseña debe tener al menos {{min}} caracteres.",
+                    "uppercase-required": "La contraseña debe incluir una letra mayúscula."
+                },
                 "required-field": "El campo \"{{fieldName}}\" es obligatorio.",
                 "service-unavailable": "El servicio no está disponible temporalmente. Por favor, inténtelo de nuevo más tarde.",
                 "title": "Error",
@@ -257,6 +275,14 @@
                 },
                 "move-target-unchanged": "Sin cambios",
                 "not-found": "No encontrado",
+                "password": {
+                    "digit-required": "Falta un número",
+                    "lowercase-required": "Falta una minúscula",
+                    "symbol-required": "Falta un símbolo",
+                    "too-long": "Contraseña demasiado larga",
+                    "too-short": "Contraseña demasiado corta",
+                    "uppercase-required": "Falta una mayúscula"
+                },
                 "required-field": "Campo obligatorio",
                 "service-unavailable": "Servicio no disponible",
                 "too-many-requests": "Demasiadas solicitudes",
@@ -474,7 +500,6 @@
                     "placeholder": "Escribe tu contraseña actual"
                 },
                 "password": {
-                    "hint": "Mínimo 8 caracteres",
                     "label": "Nueva contraseña",
                     "placeholder": "Escribe la nueva contraseña"
                 },

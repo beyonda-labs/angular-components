@@ -17,10 +17,10 @@ downloadPdf(id: string): Observable<DocumentPdf> {
 
 ## BeyEnvironmentConfig
 
-| Field              | Required | Meaning                                                                      |
-| ------------------ | -------- | ---------------------------------------------------------------------------- |
-| `accessControlUrl` | yes      | Base URL of the authentication routes: login, register, OAuth and `/refresh` |
-| `baseUrl`          | yes      | Origin of the API of the app                                                 |
-| `webApiPath`       | yes      | Path of the API under `baseUrl`, such as `/api`                              |
-| `appName`          | yes      | Name of the app; the library does not read it                                |
-| `cookieName`       | yes      | Name of the session cookie; the library does not read it                     |
+| Field              | Required | Meaning                                                                                          |
+| ------------------ | -------- | ------------------------------------------------------------------------------------------------ |
+| `accessControlUrl` | yes      | Base URL of the authentication routes: login, register, OAuth, `/refresh` and `/password-policy` |
+| `baseUrl`          | yes      | Origin of the API of the app                                                                     |
+| `webApiPath`       | yes      | Path of the API under `baseUrl`, such as `/api`                                                  |
+| `appName`          | yes      | Name of the app; the library does not read it                                                    |
+| `cookieName`       | yes      | Name of the session cookie; the library does not read it                                         |

@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 
-import { FormPasswordField } from '../../form/models/fields/form-password-field.model';
+import { PasswordPolicyService } from '../../../services/password-policy/password-policy.service';
+import { FormPasswordField, FormPasswordPolicy } from '../../form/models/fields/form-password-field.model';
 import { FormTextField } from '../../form/models/fields/form-text-field.model';
 import { FormButton, FormButtonType, FormConfig, FormRow, FormSection } from '../../form/models/form.model';
 import { FormFieldCustomValidator, FormFieldEmailValidator } from '../../form/models/form-field-validator.model';
@@ -21,6 +22,8 @@ const RESET_PASSWORD = 'reset-password';
 
 @Injectable({ providedIn: 'root' })
 export class LoginAccountFormService {
+    private readonly passwordPolicyService = inject(PasswordPolicyService);
+
     buildAcceptInvitation(
         prefix: string,
         invitation: Invitation,
@@ -47,7 +50,7 @@ export class LoginAccountFormService {
                 buildSection(ACCEPT_INVITATION, [
                     new FormRow({ fields: [new FormTextField({ autocomplete: 'given-name', key: 'name' })] }),
                     new FormRow({ fields: [new FormTextField({ autocomplete: 'family-name', key: 'surname' })] }),
-                    ...buildNewPasswordRows(prefix)
+                    ...buildNewPasswordRows(prefix, this.passwordPolicyService.policy)
                 ])
             ]
         });
@@ -82,15 +85,15 @@ export class LoginAccountFormService {
             buttons: [submitButton(`${prefix}.${RESET_PASSWORD}.button.save`)],
             onSubmit: value => onSave(toNewPassword(value[RESET_PASSWORD])),
             prefix,
-            sections: [buildSection(RESET_PASSWORD, buildNewPasswordRows(prefix))]
+            sections: [buildSection(RESET_PASSWORD, buildNewPasswordRows(prefix, this.passwordPolicyService.policy))]
         });
     }
 }
 
-function buildNewPasswordRows(prefix: string): FormRow[] {
+function buildNewPasswordRows(prefix: string, policy: FormPasswordPolicy): FormRow[] {
     return [
         new FormRow({
-            fields: [new FormPasswordField({ autocomplete: 'new-password', isRequired: true, key: 'password' })]
+            fields: [new FormPasswordField({ autocomplete: 'new-password', isRequired: true, key: 'password', policy })]
         }),
         new FormRow({
             fields: [

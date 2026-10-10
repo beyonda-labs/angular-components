@@ -34,6 +34,7 @@ export * from './lib/services/account/public-api';
 export * from './lib/services/app/public-api';
 export * from './lib/services/environment/public-api';
 export * from './lib/services/http/public-api';
+export * from './lib/services/password-policy/public-api';
 export * from './lib/services/preferences/public-api';
 export * from './lib/services/session/public-api';
 export * from './lib/services/theme/public-api';

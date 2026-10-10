@@ -6,7 +6,9 @@ import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { PasswordChangeStyleGuideComponent } from './password-change-style-guide.component';
 
+const POLICY_URL = 'https://api.test/auth/password-policy';
 const PREFIX = 'angular-components.password-change';
+const STRICT = { isDigitRequired: true, isLowercaseRequired: true, isSymbolRequired: true, isUppercaseRequired: true };
 
 describe('PasswordChangeStyleGuideComponent', () => {
     let fixture: ComponentFixture<PasswordChangeStyleGuideComponent>;
@@ -17,6 +19,10 @@ describe('PasswordChangeStyleGuideComponent', () => {
             .expectOne('https://api.test/api/style-guide/account')
             .flush({ email: 'ada@example.test', hasPassword, id: 'u1', roles: [] });
         await settle(fixture);
+    }
+
+    function answerPolicy(): void {
+        TestBed.inject(HttpTestingController).expectOne(POLICY_URL).flush(STRICT);
     }
 
     beforeEach(async () => {
@@ -32,11 +38,13 @@ describe('PasswordChangeStyleGuideComponent', () => {
         expect(hostOf(fixture).textContent).toContain(`${PREFIX}.no-password`);
     });
 
-    it('asks an account with a password for the new one, with its hint', async () => {
+    it('asks an account with a password for the new one, with the rules of the policy the backend answers', async () => {
         await render(true);
+        answerPolicy();
+        await settle(fixture);
 
-        expect(accessibleDescription(controlByName(fixture, `${PREFIX}.password.password.label`))).toBe(
-            `${PREFIX}.password.password.hint`
+        expect(accessibleDescription(controlByName(fixture, `${PREFIX}.password.password.label`))).toContain(
+            'angular-components.form.password-field.policy.symbol'
         );
     });
 });
