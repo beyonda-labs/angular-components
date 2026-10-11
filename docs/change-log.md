@@ -91,6 +91,8 @@
 
 ### Fixed
 
+-   Header module: the header keeps the new `--bey-control-height` token, the height of a text button, as its least
+    height, so its title no longer moves when the actions of a selection show or hide.
 -   Page module: the trash origin on the tooltip of a row ends with the row's own name, so it reads as the place of
     that row.
 -   Page module: the menus of the header open over the search toolbar again; the search sits in the new

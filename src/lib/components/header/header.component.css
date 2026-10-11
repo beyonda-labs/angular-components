@@ -18,6 +18,7 @@
     align-items: center;
     display: flex;
     gap: var(--bey-space-md);
+    min-height: var(--bey-control-height);
     min-width: 0;
 }
 

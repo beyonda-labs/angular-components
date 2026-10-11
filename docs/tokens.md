@@ -157,10 +157,14 @@ not `p-4`.
 | `--bey-dialog-margin`         | `--bey-space-2xl`                              | Space a dialog keeps above and below it           |
 | `--bey-dialog-max-height`     | `calc(100dvh - 2 * var(--bey-dialog-margin))`  | Tallest a dialog grows; its body scrolls past it  |
 | `--bey-grid-column-min-width` | `10rem`                                        | Narrowest column of a grid that fits its width    |
+| `--bey-control-height`        | the height of a text button                    | Least height of a row that may hold buttons       |
 
 Every dialog of the library, a form or not, stops at `--bey-dialog-max-height`: its header and its buttons stay
 in place and its body scrolls. The height reads the dynamic viewport, so the toolbars of a phone browser never hide
 its buttons.
+
+`--bey-control-height` is the height of a text button (its text, its padding and its border). The header of a page
+keeps it as its least height, so its title stays in place whether actions show or not.
 
 ## Borders, elevation and motion
 
