@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { LinkTableCell, TableCell, TextTableCell } from '../../table/models/table-cell.model';
 import { isCategoryRow, readRowField } from '../functions/page-row';
-import { readParentPath, withOriginTooltip } from '../functions/page-trash-origin';
+import { readItemName, readParentPath, withOriginTooltip } from '../functions/page-trash-origin';
 import { PageConfig } from '../models/page.model';
 import { PageCategoriesConfig, PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
@@ -46,7 +46,10 @@ export class PageTableService {
         const parentPath = readParentPath(item, categoriesConfig.parentPathField);
 
         return parentPath
-            ? withOriginTooltip(cells, this.translateService.instant(`${prefix}.categories.root`), parentPath)
+            ? withOriginTooltip(cells, this.translateService.instant(`${prefix}.categories.root`), [
+                  ...parentPath,
+                  ...readItemName(item, categoriesConfig.nameField)
+              ])
             : cells;
     }
 }

@@ -353,8 +353,9 @@ switches to the flat trash view, where the
 the `globalActions` of the trash, deletes everything in it with `DELETE {baseUrl}/trash/all`. When the backend answers
 a restore with `renamed`, the rows that came back with a new name because another row had theirs, an info toast lists
 them (`angular-components.page.toast.restored-renamed`). A trashed row that carries `parentPathField` (`parentPath`,
-the names of the categories above it from the root down) shows on the tooltip of its first cell the folder a restore
-puts it back in, `<prefix>.categories.root / Clients / 2026`, in place of the tooltip that cell had. `move` opens
+the names of the categories above it from the root down) shows on the tooltip of its first cell where a restore
+puts it back, ending with the row itself (its `nameField`), `<prefix>.categories.root / Clients / 2026 / Offer`, in
+place of the tooltip that cell had. `move` opens
 the tree picker with every category, or every category of the owner of the rows when they have one, disabling the
 selected ones and their descendants.
 
