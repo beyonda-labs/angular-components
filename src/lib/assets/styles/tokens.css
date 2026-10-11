@@ -110,6 +110,9 @@
     --bey-dialog-margin: var(--bey-space-2xl);
     --bey-dialog-max-height: calc(100dvh - 2 * var(--bey-dialog-margin));
     --bey-grid-column-min-width: 10rem;
+    --bey-control-height: calc(
+        var(--bey-font-size-sm) * var(--bey-line-height-tight) + 2 * var(--bey-space-sm) + 2 * var(--bey-border-width)
+    );
 
     /* Elevation */
     --bey-shadow-rgb: var(--bey-black-rgb);
