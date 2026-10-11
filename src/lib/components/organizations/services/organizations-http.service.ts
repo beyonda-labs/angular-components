@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 import { HttpService } from '../../../services/http/http.service';
 import { PageUrlService } from '../../page/services/page-url.service';
-import { OrganizationAdminInvitation } from '../models/organizations.model';
+import { OrganizationDetail, OrganizationEditRequest, OrganizationRow } from '../models/organizations.model';
 
 @Injectable({
     providedIn: 'root'
@@ -12,7 +12,20 @@ export class OrganizationsHttpService {
     private readonly httpService = inject(HttpService);
     private readonly pageUrlService = inject(PageUrlService);
 
-    inviteAdmin(usersUrl: string, invitation: OrganizationAdminInvitation, successToast: string): Observable<unknown> {
-        return this.httpService.post(this.pageUrlService.resolve(usersUrl), invitation, { successToast });
+    edit(
+        baseUrl: string,
+        id: string,
+        request: OrganizationEditRequest,
+        successToast: string
+    ): Observable<OrganizationRow> {
+        return this.httpService.put<OrganizationRow>(this.url(baseUrl, id), request, { successToast });
+    }
+
+    loadOrganization(baseUrl: string, id: string): Observable<OrganizationDetail> {
+        return this.httpService.get<OrganizationDetail>(this.url(baseUrl, id));
+    }
+
+    private url(baseUrl: string, id: string): string {
+        return `${this.pageUrlService.resolve(baseUrl)}/${id}`;
     }
 }

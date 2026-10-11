@@ -13,7 +13,7 @@ import { FormSelectField } from '../form/models/fields/form-select-field.model';
 import { FormHandle } from '../form/models/form.model';
 import { FormField } from '../form/models/form-field.model';
 import { PageSearch } from '../page/models/page-search.model';
-import { UserRolesResponse, UserRow, UsersConfig, UserStatus } from './models/users.model';
+import { UserEditableField, UserRolesResponse, UserRow, UsersConfig, UserStatus } from './models/users.model';
 import { UsersComponent } from './users.component';
 
 const BASE_ROLES: UserRolesResponse = { roles: ['admin', 'editor'] };
@@ -28,7 +28,7 @@ describe('UsersComponent', () => {
 
     function buildUser(overrides: Partial<UserRow> = {}): UserRow {
         return {
-            actions: ['edit', 'change-status'],
+            actions: ['edit', 'resend-invitation'],
             createdAt: Date.UTC(2026, 0, 2),
             email: 'ada@example.test',
             id: 'u1',
@@ -211,21 +211,45 @@ describe('UsersComponent', () => {
         expect(request.request.body).toEqual({ name: 'Ada', roles: ['admin', 'editor'], surname: 'Byron' });
     });
 
-    it('changes the status of a user to one its current status reaches', async () => {
-        await render([buildUser({ status: UserStatus.Unverified })]);
+    it('changes the status of a user in the edit form, sending only what the row lets change', async () => {
+        await render([buildUser({ editableFields: [UserEditableField.Name, UserEditableField.Status] })]);
 
-        await useMenuAction('ada@example.test', 'change-status');
+        buttonByName(fixture, 'Ada Lovelace').click();
+        await settle(fixture);
         const form = modalForms.forms().at(-1);
-        form?.onSubmit?.({ main: { status: 'inactive' } }, buildHandle());
-        const request = httpTesting.expectOne(`${USERS_URL}/u1/status`);
+        form?.onSubmit?.(
+            { main: { name: 'Ada', roles: ['admin'], status: 'inactive', surname: 'Lovelace' } },
+            buildHandle()
+        );
+        const request = httpTesting.expectOne(`${USERS_URL}/u1`);
         request.flush(buildUser({ status: UserStatus.Inactive }));
         await settle(fixture);
         reload().flush({ globalActions: [], results: [] });
 
-        expect((fieldsOf(form)[0] as FormSelectField).options).toEqual([
-            { label: `${PREFIX}.status.inactive`, value: 'inactive' }
-        ]);
-        expect(request.request.body).toEqual({ status: 'inactive' });
+        expect(fieldsOf(form).find(({ key }) => key === 'status')).toMatchObject({
+            isDisabled: false,
+            options: [
+                { label: `${PREFIX}.status.active`, value: 'active' },
+                { label: `${PREFIX}.status.inactive`, value: 'inactive' }
+            ]
+        });
+        expect(form?.initialValue).toEqual({
+            main: { name: 'Ada', roles: ['editor'], status: 'active', surname: 'Lovelace' }
+        });
+        expect(request.request.method).toBe('PUT');
+        expect(request.request.body).toEqual({ name: 'Ada', status: 'inactive' });
+    });
+
+    it('offers no status change action of its own, the status being part of the edit', async () => {
+        await render();
+
+        rowWith('ada@example.test').click();
+        await settle(fixture);
+        buttonByName(fixture, 'angular-components.header.menu').click();
+        await settle(fixture);
+
+        expect(queryButton(fixture, `${PREFIX}.actions.change-status.label`)).toBeNull();
+        expect(queryButton(fixture, `${PREFIX}.actions.resend-invitation.label`)).not.toBeNull();
     });
 
     it('sends the invitation again to an invited user', async () => {

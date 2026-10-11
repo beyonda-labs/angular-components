@@ -1,19 +1,16 @@
 import { pageStandardAction } from '../page/functions/page-standard-actions';
 import { PageConfig, PageHandle } from '../page/models/page.model';
-import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../page/models/page-action.model';
+import { PageStandardAction } from '../page/models/page-action.model';
 import { PageFormConfig } from '../page/models/page-form.model';
 import { PageHeaderConfig } from '../page/models/page-header.model';
-import { PageStatusConfig } from '../page/models/page-lifecycle.model';
 import { SearchSort, SearchSortDirection } from '../page/models/page-search.model';
 import { PageTableConfig, PageTableSearchConfig } from '../page/models/page-table.model';
 import { SearchField, SearchFieldOption, SearchFieldType } from '../search/models/search.model';
 import { TableColumn } from '../table/models/table.model';
 import { TableCell } from '../table/models/table-cell.model';
 import {
-    ORGANIZATION_STATUS_TRANSITIONS,
     OrganizationFormValue,
     OrganizationRow,
-    ORGANIZATIONS_INVITE_ADMIN_ACTION,
     OrganizationsConfig,
     OrganizationStatus
 } from './models/organizations.model';
@@ -31,7 +28,7 @@ export interface OrganizationsPageConfigOptions {
     config: OrganizationsConfig;
     formConfig: PageFormConfig<OrganizationFormValue, OrganizationRow>;
     loadRow: (organization: OrganizationRow) => TableCell[];
-    onInviteAdmin: (organization: OrganizationRow) => void;
+    onEdit: (organization: OrganizationRow) => void;
     onReady: (handle: PageHandle<OrganizationRow>) => void;
 }
 
@@ -39,7 +36,7 @@ export function buildOrganizationsPageConfig({
     config,
     formConfig,
     loadRow,
-    onInviteAdmin,
+    onEdit,
     onReady
 }: OrganizationsPageConfigOptions): PageConfig<OrganizationFormValue, OrganizationRow> {
     const { baseUrl, height, prefix, storageKey } = config;
@@ -50,20 +47,14 @@ export function buildOrganizationsPageConfig({
         headerConfig: new PageHeaderConfig<OrganizationRow>({
             actions: [
                 pageStandardAction<OrganizationRow>(PageStandardAction.Create),
-                pageStandardAction<OrganizationRow>(PageStandardAction.Edit),
-                pageStandardAction<OrganizationRow>(PageStandardAction.ChangeStatus),
-                new PageAction<OrganizationRow>({
-                    handler: ([organization]) => onInviteAdmin(organization),
-                    key: ORGANIZATIONS_INVITE_ADMIN_ACTION,
-                    scope: PageActionScope.Single,
-                    zone: PageActionZone.Menu
+                pageStandardAction<OrganizationRow>(PageStandardAction.Edit, {
+                    handler: ([organization]) => onEdit(organization)
                 })
             ],
             title: `${prefix}.title`
         }),
         onReady,
         prefix,
-        statusConfig: new PageStatusConfig({ transitions: ORGANIZATION_STATUS_TRANSITIONS }),
         tableConfig: new PageTableConfig<OrganizationRow>({
             columns: COLUMNS,
             height,

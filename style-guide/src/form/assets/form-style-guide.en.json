@@ -82,6 +82,59 @@
                 "label": "Checkbox Fields",
                 "tooltip": "Checkbox variants with basic, required, disabled and switch states"
             },
+            "section-checkbox-sections": {
+                "documents": {
+                    "label": "Documents"
+                },
+                "documents-create": {
+                    "description": "Can fill in a template to make a document.",
+                    "label": "Create"
+                },
+                "documents-delete": {
+                    "label": "Delete"
+                },
+                "documents-read": {
+                    "description": "Can see the documents.",
+                    "label": "See"
+                },
+                "folders": {
+                    "label": "Folders"
+                },
+                "folders-read": {
+                    "description": "Can see the folders and what they hold.",
+                    "label": "See"
+                },
+                "folders-share": {
+                    "description": "Can share a folder with groups and users.",
+                    "label": "Share"
+                },
+                "label": "Checkbox Sections",
+                "sections1": {
+                    "label": "Permissions:"
+                },
+                "sections2": {
+                    "label": "Permissions of a base role (read-only):"
+                },
+                "templates": {
+                    "label": "Templates"
+                },
+                "templates-delete": {
+                    "label": "Delete"
+                },
+                "templates-edit": {
+                    "description": "Can change the templates.",
+                    "label": "Edit"
+                },
+                "templates-publish": {
+                    "description": "Can make a template available to everyone.",
+                    "label": "Publish"
+                },
+                "templates-read": {
+                    "description": "Can see the templates.",
+                    "label": "See"
+                },
+                "tooltip": "Long checklists folded by section, with a counter, select all and a description per checkbox"
+            },
             "section-chips": {
                 "chips1": {
                     "label": "Lowercase Chips",

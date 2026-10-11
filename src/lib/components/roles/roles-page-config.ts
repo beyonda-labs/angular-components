@@ -16,7 +16,8 @@ const LEADING_COLUMNS = [
     new TableColumn({ isHideable: false, key: 'name', width: 3 }),
     new TableColumn({ key: 'type', width: 2 }),
     new TableColumn({ key: 'permissionCount', width: 2 }),
-    new TableColumn({ key: 'memberCount', width: 2 })
+    new TableColumn({ key: 'memberCount', width: 2 }),
+    new TableColumn({ key: 'groupCount', width: 2 })
 ];
 const ORGANIZATION_COLUMN = new TableColumn({ key: 'organization', width: 2 });
 const TEXT_FIELD = 'text';

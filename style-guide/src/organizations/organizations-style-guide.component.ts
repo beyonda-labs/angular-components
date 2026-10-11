@@ -14,7 +14,6 @@ export class OrganizationsStyleGuideComponent {
     readonly config = new BeyOrganizationsConfig({
         baseUrl: '/style-guide/organizations',
         height: '24rem',
-        storageKey: 'style-guide-organizations',
-        usersUrl: '/style-guide/users'
+        storageKey: 'style-guide-organizations'
     });
 }

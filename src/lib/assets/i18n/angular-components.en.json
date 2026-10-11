@@ -80,6 +80,13 @@
             "cancel": {
                 "without-changes": "No changes have been made to the form."
             },
+            "checkbox-sections": {
+                "clear-all": "Clear all",
+                "clear-all-in": "Clear all in {{section}}",
+                "count": "{{checked}} of {{total}} checked",
+                "select-all": "Select all",
+                "select-all-in": "Select all in {{section}}"
+            },
             "chips": {
                 "remove": "Remove"
             },
@@ -140,12 +147,8 @@
                     "tooltip": "Delete the selected groups"
                 },
                 "edit": {
-                    "label": "Rename",
-                    "tooltip": "Rename the selected group"
-                },
-                "members": {
-                    "label": "Members",
-                    "tooltip": "Choose who belongs to the selected group"
+                    "label": "Edit",
+                    "tooltip": "Edit the name, the members and the additional roles of the selected group"
                 }
             },
             "form": {
@@ -153,9 +156,12 @@
                     "title": "New group"
                 },
                 "edit": {
-                    "title": "Rename group"
+                    "title": "Edit group"
                 },
                 "main": {
+                    "extra-role-ids": {
+                        "label": "Additional roles"
+                    },
                     "name": {
                         "label": "Name",
                         "placeholder": "Type the name of the group"
@@ -163,24 +169,12 @@
                     "organization-id": {
                         "label": "Organization",
                         "placeholder": "Choose an organization"
-                    }
-                }
-            },
-            "members": {
-                "buttons": {
-                    "cancel": "Cancel",
-                    "submit": "Save"
-                },
-                "main": {
-                    "group": {
-                        "label": "Group"
                     },
                     "user-ids": {
                         "empty": "The organization of the group has no users yet.",
                         "label": "Members"
                     }
-                },
-                "title": "Members"
+                }
             },
             "modal": {
                 "delete": {
@@ -196,6 +190,7 @@
             "table": {
                 "columns": {
                     "created-at": "Created",
+                    "extra-role-count": "Roles",
                     "member-count": "Members",
                     "name": "Name",
                     "organization": "Organization"
@@ -203,6 +198,7 @@
                 "empty": "No group matches the search",
                 "tooltips": {
                     "created-at": "When the group was created",
+                    "extra-role-count": "How many additional roles it gives its members",
                     "member-count": "How many users belong to it",
                     "name": "The name of the group",
                     "organization": "The organization the group belongs to"
@@ -212,8 +208,7 @@
             "toast": {
                 "create-success": "Group created",
                 "delete-success": "Groups deleted",
-                "edit-success": "Group renamed",
-                "members-success": "Members saved"
+                "edit-success": "Group saved"
             }
         },
         "header": {
@@ -267,6 +262,7 @@
                 "forbidden": "You do not have permission to perform this action.",
                 "groups": {
                     "existing-name": "There is already a group named {{name}} in this organization.",
+                    "invalid-extra-roles": "Some of the additional roles chosen do not belong to the organization of the group or no longer exist. Reload the page and try again.",
                     "invalid-members": "Some of the people chosen cannot join this group: they belong to another organization or no longer exist. Reload the page and try again.",
                     "not-found": "This group does not exist or is out of your reach. Reload the page and try again."
                 },
@@ -337,7 +333,7 @@
                     "last-superadmin": "This change would leave no active superadmin.",
                     "not-found": "This user does not exist. Reload the page and try again.",
                     "not-invited": "This account is no longer waiting for an invitation.",
-                    "own-account": "You cannot deactivate your own account nor change your own roles.",
+                    "own-account": "You cannot change your own account here: neither its status, its roles nor its name. Change your name on your account page.",
                     "superadmin-only": "Only a superadmin can change a superadmin account.",
                     "superadmin-role-fixed": "The superadmin role cannot be granted nor removed.",
                     "unknown-role": "The role \"{{role}}\" does not exist."
@@ -404,6 +400,7 @@
                 "forbidden": "Access denied",
                 "groups": {
                     "existing-name": "Name already in use",
+                    "invalid-extra-roles": "Additional roles not valid",
                     "invalid-members": "Members not valid",
                     "not-found": "Group not found"
                 },
@@ -646,77 +643,37 @@
         },
         "organizations": {
             "actions": {
-                "change-status": {
-                    "label": "Change status",
-                    "tooltip": "Activate or deactivate the selected organization"
-                },
                 "create": {
                     "label": "New organization",
                     "tooltip": "Create an organization"
                 },
                 "edit": {
-                    "label": "Rename",
-                    "tooltip": "Rename the selected organization"
-                },
-                "invite-admin": {
-                    "label": "Invite the admin",
-                    "tooltip": "Invite the first administrator of the selected organization"
+                    "label": "Edit",
+                    "tooltip": "Edit the name and the status of the selected organization"
                 }
-            },
-            "change-status": {
-                "buttons": {
-                    "cancel": "Cancel",
-                    "submit": "Change"
-                },
-                "main": {
-                    "status": {
-                        "label": "New status",
-                        "placeholder": "Choose a status"
-                    }
-                },
-                "title": "Change status"
             },
             "form": {
                 "create": {
                     "title": "New organization"
                 },
                 "edit": {
-                    "title": "Rename organization"
+                    "title": "Edit organization"
+                },
+                "groups": {
+                    "empty": "This organization has no groups yet.",
+                    "label": "Groups",
+                    "no-members": "No members yet"
                 },
                 "main": {
                     "name": {
                         "label": "Name",
                         "placeholder": "Type the name of the organization"
+                    },
+                    "status": {
+                        "label": "Status",
+                        "placeholder": "Choose a status"
                     }
                 }
-            },
-            "invite-admin": {
-                "buttons": {
-                    "cancel": "Cancel",
-                    "submit": "Send invitation"
-                },
-                "main": {
-                    "email": {
-                        "label": "Email",
-                        "placeholder": "Type the email of the person"
-                    },
-                    "language": {
-                        "label": "Language of the invitation",
-                        "placeholder": "Default language"
-                    },
-                    "name": {
-                        "label": "Name",
-                        "placeholder": "Type the name"
-                    },
-                    "organization": {
-                        "label": "Organization"
-                    },
-                    "surname": {
-                        "label": "Surname",
-                        "placeholder": "Type the surname"
-                    }
-                },
-                "title": "Invite the admin"
             },
             "search": {
                 "fields": {
@@ -745,10 +702,8 @@
             },
             "title": "Organizations",
             "toast": {
-                "change-status-success": "Status changed",
                 "create-success": "Organization created",
-                "edit-success": "Organization renamed",
-                "invite-admin-success": "Invitation sent"
+                "edit-success": "Organization saved"
             }
         },
         "page": {
@@ -782,6 +737,7 @@
                     "label": "Access inherited from the folders above",
                     "user": "{{name}}: {{access}}, from {{folder}}"
                 },
+                "intro": "Sharing decides where people can work. What they can do there still depends on their permissions.",
                 "targets": {
                     "label": "Share with"
                 },
@@ -954,7 +910,7 @@
                 },
                 "permissions": {
                     "empty": "There are no permissions you can give.",
-                    "label": "Permissions"
+                    "label": "Permissions:"
                 }
             },
             "modal": {
@@ -966,18 +922,36 @@
             "permissions": {
                 "organization": {
                     "label": "Organization",
-                    "manage": "Manage the organization"
+                    "manage": {
+                        "description": "Can manage the groups of the organization and reach everything its members create.",
+                        "label": "Manage the organization"
+                    }
                 },
                 "roles": {
                     "label": "Roles",
-                    "manage": "Manage roles and permissions"
+                    "manage": {
+                        "description": "Can create, edit and delete the additional roles of the organization.",
+                        "label": "Manage roles and permissions"
+                    }
                 },
                 "users": {
-                    "change-status": "Activate and deactivate users",
-                    "edit": "Edit users",
-                    "invite": "Invite users",
+                    "change-status": {
+                        "description": "Can activate and deactivate the accounts of the users.",
+                        "label": "Activate and deactivate users"
+                    },
+                    "edit": {
+                        "description": "Can change the names and the roles of the users.",
+                        "label": "Edit users"
+                    },
+                    "invite": {
+                        "description": "Can invite people to join the organization.",
+                        "label": "Invite users"
+                    },
                     "label": "Users",
-                    "read": "See users"
+                    "read": {
+                        "description": "Can see the users of the organization.",
+                        "label": "See users"
+                    }
                 }
             },
             "search": {
@@ -988,6 +962,7 @@
             "table": {
                 "columns": {
                     "description": "Description",
+                    "group-count": "Groups",
                     "member-count": "Users",
                     "name": "Name",
                     "organization": "Organization",
@@ -998,7 +973,8 @@
                 "every-organization": "All",
                 "tooltips": {
                     "description": "What the role is for",
-                    "member-count": "How many users hold it",
+                    "group-count": "How many groups hold it",
+                    "member-count": "How many users hold it directly",
                     "name": "The name of the role",
                     "organization": "The organization the role belongs to",
                     "permission-count": "How many permissions it gives",
@@ -1030,7 +1006,7 @@
                 },
                 "permissions": {
                     "empty": "This role gives no permissions.",
-                    "label": "Permissions"
+                    "label": "Permissions:"
                 },
                 "title": "Permissions of the role"
             }
@@ -1095,10 +1071,6 @@
         },
         "users": {
             "actions": {
-                "change-status": {
-                    "label": "Change status",
-                    "tooltip": "Activate or deactivate the selected user"
-                },
                 "create": {
                     "label": "Invite user",
                     "tooltip": "Invite someone to create their account"
@@ -1111,19 +1083,6 @@
                     "label": "Resend invitation",
                     "tooltip": "Send the invitation email again"
                 }
-            },
-            "change-status": {
-                "buttons": {
-                    "cancel": "Cancel",
-                    "submit": "Change"
-                },
-                "main": {
-                    "status": {
-                        "label": "New status",
-                        "placeholder": "Choose a status"
-                    }
-                },
-                "title": "Change status"
             },
             "form": {
                 "create": {
@@ -1154,6 +1113,10 @@
                     },
                     "roles": {
                         "label": "Roles"
+                    },
+                    "status": {
+                        "label": "Status",
+                        "placeholder": "Choose a status"
                     },
                     "surname": {
                         "label": "Surname",
@@ -1202,7 +1165,6 @@
             },
             "title": "Users",
             "toast": {
-                "change-status-success": "Status changed",
                 "create-success": "Invitation sent",
                 "edit-success": "User saved",
                 "resend-invitation-success": "Invitation sent again"

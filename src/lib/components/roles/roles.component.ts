@@ -34,7 +34,7 @@ export class RolesComponent {
         const isSuperadmin = this.userOrganizationsService.isSuperadmin();
         const organizations = this.userOrganizationsService.organizations();
         const permissions = this.rolePermissionsService.permissions();
-        const { permissionPrefix, prefix, rolePrefix } = config;
+        const { groupIcons, permissionPrefix, prefix, rolePrefix } = config;
 
         if (!organizations || !permissions) {
             return null;
@@ -45,6 +45,7 @@ export class RolesComponent {
         return buildRolesPageConfig({
             config,
             formConfig: this.rolesFormService.buildFormConfig({
+                groupIcons,
                 isOrganizationAsked: isSuperadmin,
                 organizations,
                 permissionPrefix,
@@ -58,7 +59,7 @@ export class RolesComponent {
                     onEdit: edited => this.page?.openEdit(edited),
                     onView: viewed =>
                         this.rolesActionsService.viewPermissions(
-                            { permissionPrefix, permissions, prefix, rolePrefix },
+                            { groupIcons, permissionPrefix, permissions, prefix, rolePrefix },
                             viewed
                         ),
                     prefix,

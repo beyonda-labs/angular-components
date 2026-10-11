@@ -80,6 +80,13 @@
             "cancel": {
                 "without-changes": "No se han realizado cambios en el formulario."
             },
+            "checkbox-sections": {
+                "clear-all": "Desmarcar todos",
+                "clear-all-in": "Desmarcar todos en {{section}}",
+                "count": "{{checked}} de {{total}} marcados",
+                "select-all": "Marcar todos",
+                "select-all-in": "Marcar todos en {{section}}"
+            },
             "chips": {
                 "remove": "Eliminar"
             },
@@ -140,12 +147,8 @@
                     "tooltip": "Elimina los grupos seleccionados"
                 },
                 "edit": {
-                    "label": "Renombrar",
-                    "tooltip": "Cambia el nombre del grupo seleccionado"
-                },
-                "members": {
-                    "label": "Miembros",
-                    "tooltip": "Elige quién pertenece al grupo seleccionado"
+                    "label": "Editar",
+                    "tooltip": "Edita el nombre, los miembros y los roles adicionales del grupo seleccionado"
                 }
             },
             "form": {
@@ -153,9 +156,12 @@
                     "title": "Nuevo grupo"
                 },
                 "edit": {
-                    "title": "Renombrar grupo"
+                    "title": "Editar grupo"
                 },
                 "main": {
+                    "extra-role-ids": {
+                        "label": "Roles adicionales"
+                    },
                     "name": {
                         "label": "Nombre",
                         "placeholder": "Escribe el nombre del grupo"
@@ -163,24 +169,12 @@
                     "organization-id": {
                         "label": "Organización",
                         "placeholder": "Elige una organización"
-                    }
-                }
-            },
-            "members": {
-                "buttons": {
-                    "cancel": "Cancelar",
-                    "submit": "Guardar"
-                },
-                "main": {
-                    "group": {
-                        "label": "Grupo"
                     },
                     "user-ids": {
                         "empty": "La organización del grupo todavía no tiene usuarios.",
                         "label": "Miembros"
                     }
-                },
-                "title": "Miembros"
+                }
             },
             "modal": {
                 "delete": {
@@ -196,6 +190,7 @@
             "table": {
                 "columns": {
                     "created-at": "Creado",
+                    "extra-role-count": "Roles",
                     "member-count": "Miembros",
                     "name": "Nombre",
                     "organization": "Organización"
@@ -203,6 +198,7 @@
                 "empty": "Ningún grupo coincide con la búsqueda",
                 "tooltips": {
                     "created-at": "Cuándo se creó el grupo",
+                    "extra-role-count": "Cuántos roles adicionales da a sus miembros",
                     "member-count": "Cuántos usuarios pertenecen a él",
                     "name": "El nombre del grupo",
                     "organization": "La organización a la que pertenece el grupo"
@@ -212,8 +208,7 @@
             "toast": {
                 "create-success": "Grupo creado",
                 "delete-success": "Grupos eliminados",
-                "edit-success": "Grupo renombrado",
-                "members-success": "Miembros guardados"
+                "edit-success": "Grupo guardado"
             }
         },
         "header": {
@@ -267,6 +262,7 @@
                 "forbidden": "No tiene permisos para realizar esta acción.",
                 "groups": {
                     "existing-name": "Ya hay un grupo llamado {{name}} en esta organización.",
+                    "invalid-extra-roles": "Algunos de los roles adicionales elegidos no pertenecen a la organización del grupo o ya no existen. Recarga la página y vuelve a intentarlo.",
                     "invalid-members": "Algunas de las personas elegidas no pueden unirse a este grupo: pertenecen a otra organización o ya no existen. Recarga la página y vuelve a intentarlo.",
                     "not-found": "Este grupo no existe o está fuera de tu alcance. Recarga la página y vuelve a intentarlo."
                 },
@@ -337,7 +333,7 @@
                     "last-superadmin": "Este cambio dejaría sin ningún superadministrador activo.",
                     "not-found": "Este usuario no existe. Recarga la página y vuelve a intentarlo.",
                     "not-invited": "Esta cuenta ya no está pendiente de una invitación.",
-                    "own-account": "No puedes desactivar tu propia cuenta ni cambiar tus propios roles.",
+                    "own-account": "No puedes cambiar tu propia cuenta desde aquí: ni su estado, ni sus roles, ni tu nombre. Cambia tu nombre en la página de tu cuenta.",
                     "superadmin-only": "Solo un superadministrador puede cambiar la cuenta de un superadministrador.",
                     "superadmin-role-fixed": "El rol de superadministrador no se puede asignar ni quitar.",
                     "unknown-role": "El rol \"{{role}}\" no existe."
@@ -404,6 +400,7 @@
                 "forbidden": "Acceso denegado",
                 "groups": {
                     "existing-name": "Nombre ya en uso",
+                    "invalid-extra-roles": "Roles adicionales no válidos",
                     "invalid-members": "Miembros no válidos",
                     "not-found": "Grupo no encontrado"
                 },
@@ -646,77 +643,37 @@
         },
         "organizations": {
             "actions": {
-                "change-status": {
-                    "label": "Cambiar estado",
-                    "tooltip": "Activa o desactiva la organización seleccionada"
-                },
                 "create": {
                     "label": "Nueva organización",
                     "tooltip": "Crea una organización"
                 },
                 "edit": {
-                    "label": "Renombrar",
-                    "tooltip": "Cambia el nombre de la organización seleccionada"
-                },
-                "invite-admin": {
-                    "label": "Invitar al administrador",
-                    "tooltip": "Invita al primer administrador de la organización seleccionada"
+                    "label": "Editar",
+                    "tooltip": "Edita el nombre y el estado de la organización seleccionada"
                 }
-            },
-            "change-status": {
-                "buttons": {
-                    "cancel": "Cancelar",
-                    "submit": "Cambiar"
-                },
-                "main": {
-                    "status": {
-                        "label": "Nuevo estado",
-                        "placeholder": "Elige un estado"
-                    }
-                },
-                "title": "Cambiar estado"
             },
             "form": {
                 "create": {
                     "title": "Nueva organización"
                 },
                 "edit": {
-                    "title": "Renombrar organización"
+                    "title": "Editar organización"
+                },
+                "groups": {
+                    "empty": "Esta organización aún no tiene grupos.",
+                    "label": "Grupos",
+                    "no-members": "Todavía no tiene miembros"
                 },
                 "main": {
                     "name": {
                         "label": "Nombre",
                         "placeholder": "Escribe el nombre de la organización"
+                    },
+                    "status": {
+                        "label": "Estado",
+                        "placeholder": "Elige un estado"
                     }
                 }
-            },
-            "invite-admin": {
-                "buttons": {
-                    "cancel": "Cancelar",
-                    "submit": "Enviar invitación"
-                },
-                "main": {
-                    "email": {
-                        "label": "Correo electrónico",
-                        "placeholder": "Escribe el correo de la persona"
-                    },
-                    "language": {
-                        "label": "Idioma de la invitación",
-                        "placeholder": "Idioma por defecto"
-                    },
-                    "name": {
-                        "label": "Nombre",
-                        "placeholder": "Escribe el nombre"
-                    },
-                    "organization": {
-                        "label": "Organización"
-                    },
-                    "surname": {
-                        "label": "Apellidos",
-                        "placeholder": "Escribe los apellidos"
-                    }
-                },
-                "title": "Invitar al administrador"
             },
             "search": {
                 "fields": {
@@ -745,10 +702,8 @@
             },
             "title": "Organizaciones",
             "toast": {
-                "change-status-success": "Estado cambiado",
                 "create-success": "Organización creada",
-                "edit-success": "Organización renombrada",
-                "invite-admin-success": "Invitación enviada"
+                "edit-success": "Organización guardada"
             }
         },
         "page": {
@@ -782,6 +737,7 @@
                     "label": "Acceso heredado de las carpetas superiores",
                     "user": "{{name}}: {{access}}, desde {{folder}}"
                 },
+                "intro": "Compartir decide dónde puede trabajar cada persona; lo que puede hacer ahí sigue dependiendo de sus permisos.",
                 "targets": {
                     "label": "Compartir con"
                 },
@@ -954,7 +910,7 @@
                 },
                 "permissions": {
                     "empty": "No hay permisos que puedas dar.",
-                    "label": "Permisos"
+                    "label": "Permisos:"
                 }
             },
             "modal": {
@@ -966,18 +922,36 @@
             "permissions": {
                 "organization": {
                     "label": "Organización",
-                    "manage": "Gestionar la organización"
+                    "manage": {
+                        "description": "Puede gestionar los grupos de la organización y acceder a todo lo que crean sus miembros.",
+                        "label": "Gestionar la organización"
+                    }
                 },
                 "roles": {
                     "label": "Roles",
-                    "manage": "Gestionar roles y permisos"
+                    "manage": {
+                        "description": "Puede crear, editar y eliminar los roles adicionales de la organización.",
+                        "label": "Gestionar roles y permisos"
+                    }
                 },
                 "users": {
-                    "change-status": "Activar y desactivar usuarios",
-                    "edit": "Editar usuarios",
-                    "invite": "Invitar usuarios",
+                    "change-status": {
+                        "description": "Puede activar y desactivar las cuentas de los usuarios.",
+                        "label": "Activar y desactivar usuarios"
+                    },
+                    "edit": {
+                        "description": "Puede cambiar los nombres y los roles de los usuarios.",
+                        "label": "Editar usuarios"
+                    },
+                    "invite": {
+                        "description": "Puede invitar a personas a unirse a la organización.",
+                        "label": "Invitar usuarios"
+                    },
                     "label": "Usuarios",
-                    "read": "Ver usuarios"
+                    "read": {
+                        "description": "Puede ver los usuarios de la organización.",
+                        "label": "Ver usuarios"
+                    }
                 }
             },
             "search": {
@@ -988,6 +962,7 @@
             "table": {
                 "columns": {
                     "description": "Descripción",
+                    "group-count": "Grupos",
                     "member-count": "Usuarios",
                     "name": "Nombre",
                     "organization": "Organización",
@@ -998,7 +973,8 @@
                 "every-organization": "Todas",
                 "tooltips": {
                     "description": "Para qué sirve el rol",
-                    "member-count": "Cuántos usuarios lo tienen",
+                    "group-count": "Cuántos grupos lo tienen",
+                    "member-count": "Cuántos usuarios lo tienen asignado directamente",
                     "name": "El nombre del rol",
                     "organization": "La organización a la que pertenece el rol",
                     "permission-count": "Cuántos permisos da",
@@ -1030,7 +1006,7 @@
                 },
                 "permissions": {
                     "empty": "Este rol no da ningún permiso.",
-                    "label": "Permisos"
+                    "label": "Permisos:"
                 },
                 "title": "Permisos del rol"
             }
@@ -1095,10 +1071,6 @@
         },
         "users": {
             "actions": {
-                "change-status": {
-                    "label": "Cambiar estado",
-                    "tooltip": "Activa o desactiva el usuario seleccionado"
-                },
                 "create": {
                     "label": "Invitar usuario",
                     "tooltip": "Invita a alguien a crear su cuenta"
@@ -1111,19 +1083,6 @@
                     "label": "Reenviar invitación",
                     "tooltip": "Vuelve a enviar el correo de invitación"
                 }
-            },
-            "change-status": {
-                "buttons": {
-                    "cancel": "Cancelar",
-                    "submit": "Cambiar"
-                },
-                "main": {
-                    "status": {
-                        "label": "Nuevo estado",
-                        "placeholder": "Elige un estado"
-                    }
-                },
-                "title": "Cambiar estado"
             },
             "form": {
                 "create": {
@@ -1154,6 +1113,10 @@
                     },
                     "roles": {
                         "label": "Roles"
+                    },
+                    "status": {
+                        "label": "Estado",
+                        "placeholder": "Elige un estado"
                     },
                     "surname": {
                         "label": "Apellidos",
@@ -1202,7 +1165,6 @@
             },
             "title": "Usuarios",
             "toast": {
-                "change-status-success": "Estado cambiado",
                 "create-success": "Invitación enviada",
                 "edit-success": "Usuario guardado",
                 "resend-invitation-success": "Invitación reenviada"

@@ -43,6 +43,7 @@
                     "label": "Acceso heredado de las carpetas superiores",
                     "user": "{{name}}: {{access}}, desde {{folder}}"
                 },
+                "intro": "Compartir decide dónde puede trabajar cada persona; lo que puede hacer ahí sigue dependiendo de sus permisos.",
                 "targets": {
                     "label": "Compartir con"
                 },

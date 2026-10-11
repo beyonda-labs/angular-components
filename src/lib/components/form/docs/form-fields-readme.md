@@ -34,6 +34,7 @@ Every field extends `BeyFormField` and takes the same base parameters; each type
 | `BeyFormAutocompleteField`  | `string`   | `options`, a value or a rule; `emptyKey`; `isFreeTextAllowed` (`false`)                                                                      |
 | `BeyFormCheckboxField`      | `boolean`  | `isSwitch` (`false`)                                                                                                                         |
 | `BeyFormCheckboxGroupField` | `string[]` | `options`, a value or a rule; one checkbox per option, the value lists the checked ones in the order they were checked                       |
+| `BeyFormCheckboxSectionsField` | `string[]` | `sections`, a `BeyFormCheckboxSection[]`; one foldable card of checkboxes per section, the value lists every checked one, see below |
 | `BeyFormChipsField`         | `string[]` | `maxItems`, `allowDuplicates` (`false`)                                                                                                      |
 | `BeyFormFileField`          | `File`     | `accept` (`[]`), `maxSizeBytes`, both validated                                                                                              |
 | `BeyFormTextVariableField`  | `string`   | `options`, a value or a rule, inserted as `{{ value }}`                                                                                      |
@@ -52,6 +53,60 @@ after the form opens. Like the info field, it has no control.
 The date field keeps the value as text in `format` and shows a datepicker in the current language. The
 autocomplete and the variable picker float above their ancestors, so a scrolling modal cannot clip them.
 The chips field adds a chip on Enter, comma or blur and removes the last one with Backspace on an empty input.
+
+## Checkbox sections
+
+`BeyFormCheckboxSectionsField` lays a long list of checkboxes out in foldable cards, one per section, such as the
+permissions of a role grouped by resource. A section is `{ key, label, icon?, options }` and an option
+`{ value, label, description?, isDisabled? }`; `label` and `description` are translation keys or literals, and
+`icon` an `IconDefinition` shown before the label of the section.
+
+```ts
+new BeyFormCheckboxSectionsField({
+    isRequired: true,
+    key: 'permissions',
+    label: 'myApp.roles.form.permissions.label',
+    sections: [
+        {
+            icon: faFileLines,
+            key: 'templates',
+            label: 'myApp.permissions.templates.label',
+            options: [
+                { description: 'myApp.permissions.templates.read.description', label: 'myApp.permissions.templates.read.label', value: 'templates.read' },
+                { label: 'myApp.permissions.templates.edit.label', value: 'templates.edit' }
+            ]
+        }
+    ]
+});
+```
+
+-   **The value** is one array with every checked value, whatever its section, in the order of the sections and their
+    options. A value no option offers is kept, after the others.
+-   **The header** of each card is a button that folds and unfolds it, `aria-expanded`, with the icon, the label and a
+    counter of the checked options, "3/6", that screen readers read as
+    `angular-components.form.checkbox-sections.count` ("3 of 6 checked"). The chevron at its end folds it too.
+-   **Select all.** Next to the counter, `select-all` checks every enabled option of the section and turns into
+    `clear-all` once they all are, which unchecks them; a disabled option keeps its state. Screen readers name it with
+    the section, `select-all-in` and `clear-all-in`.
+-   **Folding.** A section starts folded unless one of its options is checked when the form opens, so an edit form
+    opens on what the record holds.
+-   **The body** is a grid of checkboxes, as many per row as fit, four at most (`--bey-form-checkbox-sections-columns`),
+    none narrower than `--bey-grid-column-min-width`. Each checkbox has its label in bold and, under it, its description
+    in a muted text, which describes the checkbox through `aria-describedby`; an option without one shows none.
+-   **Disabled**, the field reads as a list: every checkbox is disabled, no section offers select all, the labels keep
+    their colour and the sections still fold.
+-   **Required** means at least one option checked, as in a checkbox group. Once touched without one, the group sets
+    `aria-invalid` and the cards take the error colour.
+
+The whole field is a `group` named by its label. The texts of the field live under
+`angular-components.form.checkbox-sections`, in English and Spanish.
+
+| Variable                                | Default             |
+| --------------------------------------- | ------------------- |
+| `--bey-form-checkbox-sections-surface`  | `--bey-bg-page`     |
+| `--bey-form-checkbox-sections-border`   | `--bey-border-subtle` |
+| `--bey-form-checkbox-sections-link`     | `--bey-primary`     |
+| `--bey-form-checkbox-sections-columns`  | `4`                 |
 
 ## Validators
 
@@ -92,11 +147,11 @@ Which validators a field takes depends on its value:
 | Value                                   | Fields                                                                     | Validators                         |
 | --------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------- |
 | `string`                                | text, textarea, password, date, select, radio, autocomplete, text variable | All of them                        |
-| `number`, `boolean`, `string[]`, `File` | number, checkbox, checkbox group, chips, file                              | `BeyFormFieldCustomValidator` only |
+| `number`, `boolean`, `string[]`, `File` | number, checkbox, checkbox group, checkbox sections, chips, file           | `BeyFormFieldCustomValidator` only |
 
 The length, pattern, email and url validators are written for text. On the other values they would do nothing
 (a length on a number or a `File`), count something else (a length on the chips counts the chips, which
-`maxItems` already covers) or fail every time (an email on a boolean). So the parameters of those five fields
+`maxItems` already covers) or fail every time (an email on a boolean). So the parameters of those six fields
 type `validators` as `BeyFormFieldCustomValidator[]`, and passing any other validator does not compile; a
 custom validator receives the whole value: the number, the boolean, the array of chips or of checked values, or the
 `File`. A required checkbox group needs at least one option checked. On a select, a radio or an autocomplete, the

@@ -150,6 +150,18 @@ not `p-4`.
 | `--bey-line-height-base`  | `1.35` | UI text              |
 | `--bey-line-height-loose` | `1.6`  | Paragraphs           |
 
+## Layout
+
+| Token                         | Value                                          | Used for                                          |
+| ----------------------------- | ---------------------------------------------- | ------------------------------------------------- |
+| `--bey-dialog-margin`         | `--bey-space-2xl`                              | Space a dialog keeps above and below it           |
+| `--bey-dialog-max-height`     | `calc(100dvh - 2 * var(--bey-dialog-margin))`  | Tallest a dialog grows; its body scrolls past it  |
+| `--bey-grid-column-min-width` | `10rem`                                        | Narrowest column of a grid that fits its width    |
+
+Every dialog of the library, a form or not, stops at `--bey-dialog-max-height`: its header and its buttons stay
+in place and its body scrolls. The height reads the dynamic viewport, so the toolbars of a phone browser never hide
+its buttons.
+
 ## Borders, elevation and motion
 
 | Token                      | Light                                           | Dark                 |

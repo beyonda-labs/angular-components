@@ -42,6 +42,9 @@ this.modal.openConfirmation({ title: 'myPage.delete.title', message: 'myPage.del
 A confirmation resolves to `false` when it is dismissed with the close button, the backdrop or Escape, so the
 caller never has to handle those cases separately.
 
+A dialog is at most `--bey-modal-max-height` high, by default the `--bey-dialog-max-height` token: the window height
+minus a margin. Its title and its buttons stay in place, and a message longer than that scrolls between them.
+
 ## Unsaved changes
 
 `BeyUnsavedChangesService.track(hasChanges, config?)` registers a `Signal<boolean>` for as long as its caller
@@ -86,5 +89,6 @@ form module, which covers open modal forms; a route can list both.
 | `--bey-modal-fg-muted`       | `--bey-text-muted`     |
 | `--bey-modal-fg-message`     | `--bey-text-secondary` |
 | `--bey-modal-close-hover-bg` | `--bey-bg-active`      |
+| `--bey-modal-max-height`     | `--bey-dialog-max-height` |
 
 Each kind sets its own `--bey-modal-accent` and a soft variant of it for the icon background.

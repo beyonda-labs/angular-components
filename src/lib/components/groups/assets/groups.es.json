@@ -11,12 +11,8 @@
                     "tooltip": "Elimina los grupos seleccionados"
                 },
                 "edit": {
-                    "label": "Renombrar",
-                    "tooltip": "Cambia el nombre del grupo seleccionado"
-                },
-                "members": {
-                    "label": "Miembros",
-                    "tooltip": "Elige quién pertenece al grupo seleccionado"
+                    "label": "Editar",
+                    "tooltip": "Edita el nombre, los miembros y los roles adicionales del grupo seleccionado"
                 }
             },
             "form": {
@@ -24,9 +20,12 @@
                     "title": "Nuevo grupo"
                 },
                 "edit": {
-                    "title": "Renombrar grupo"
+                    "title": "Editar grupo"
                 },
                 "main": {
+                    "extra-role-ids": {
+                        "label": "Roles adicionales"
+                    },
                     "name": {
                         "label": "Nombre",
                         "placeholder": "Escribe el nombre del grupo"
@@ -34,24 +33,12 @@
                     "organization-id": {
                         "label": "Organización",
                         "placeholder": "Elige una organización"
-                    }
-                }
-            },
-            "members": {
-                "buttons": {
-                    "cancel": "Cancelar",
-                    "submit": "Guardar"
-                },
-                "main": {
-                    "group": {
-                        "label": "Grupo"
                     },
                     "user-ids": {
                         "empty": "La organización del grupo todavía no tiene usuarios.",
                         "label": "Miembros"
                     }
-                },
-                "title": "Miembros"
+                }
             },
             "modal": {
                 "delete": {
@@ -67,6 +54,7 @@
             "table": {
                 "columns": {
                     "created-at": "Creado",
+                    "extra-role-count": "Roles",
                     "member-count": "Miembros",
                     "name": "Nombre",
                     "organization": "Organización"
@@ -74,6 +62,7 @@
                 "empty": "Ningún grupo coincide con la búsqueda",
                 "tooltips": {
                     "created-at": "Cuándo se creó el grupo",
+                    "extra-role-count": "Cuántos roles adicionales da a sus miembros",
                     "member-count": "Cuántos usuarios pertenecen a él",
                     "name": "El nombre del grupo",
                     "organization": "La organización a la que pertenece el grupo"
@@ -83,14 +72,14 @@
             "toast": {
                 "create-success": "Grupo creado",
                 "delete-success": "Grupos eliminados",
-                "edit-success": "Grupo renombrado",
-                "members-success": "Miembros guardados"
+                "edit-success": "Grupo guardado"
             }
         },
         "http": {
             "error": {
                 "groups": {
                     "existing-name": "Ya hay un grupo llamado {{name}} en esta organización.",
+                    "invalid-extra-roles": "Algunos de los roles adicionales elegidos no pertenecen a la organización del grupo o ya no existen. Recarga la página y vuelve a intentarlo.",
                     "invalid-members": "Algunas de las personas elegidas no pueden unirse a este grupo: pertenecen a otra organización o ya no existen. Recarga la página y vuelve a intentarlo.",
                     "not-found": "Este grupo no existe o está fuera de tu alcance. Recarga la página y vuelve a intentarlo."
                 }
@@ -98,6 +87,7 @@
             "title": {
                 "groups": {
                     "existing-name": "Nombre ya en uso",
+                    "invalid-extra-roles": "Roles adicionales no válidos",
                     "invalid-members": "Miembros no válidos",
                     "not-found": "Grupo no encontrado"
                 }

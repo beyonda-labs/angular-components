@@ -4,11 +4,11 @@ The users page of an app, built on [`bey-page`](../../page/docs/page-readme.md) 
 express-components and meant as the content of an app page inside `bey-app-layout`. It lists every account with its
 name and surname, email, roles and extra roles, status, last sign-in and creation date (hidden at first), sorted by email, and searches
 them by name or email in the search box and by status and role in the filters; a superadmin also sees the organization
-of each user and filters by it, see [Organizations](#organizations). It invites a user, edits one, changes
-their status and sends their invitation again. The roles it offers come from `GET {baseUrl}/roles`, read before the
+of each user and filters by it, see [Organizations](#organizations). It invites a user, edits one, their status
+included, and sends their invitation again. The roles it offers come from `GET {baseUrl}/roles`, read before the
 list shows; when they cannot be read the list shows anyway, with no role to offer. Which actions it offers is up to the
-backend, as on any page: `create` when `globalActions` lists it, and `edit`, `change-status` and `resend-invitation`
-for the rows whose `actions` list them. A user's name opens the edit form when the row lists `edit`.
+backend, as on any page: `create` when `globalActions` lists it, and `edit` and `resend-invitation` for the rows whose
+`actions` list them. A user's name opens the edit form when the row lists `edit`.
 
 ## Usage
 
@@ -49,8 +49,7 @@ permissions.
 | List                | `GET {baseUrl}?search=<base64>`                               |                                                              |
 | Organizations       | `GET {baseUrl}/organizations`, for a superadmin only          |                                                              |
 | Invite (`create`)   | `POST {baseUrl}` `{ email, roles, extraRoleIds?, name?, surname?, language?, organizationId? }` | Email, name, surname, the organization for a superadmin (required), roles, extra roles and the language of the invitation |
-| `edit`              | `PUT {baseUrl}/{id}` `{ roles, extraRoleIds?, name?, surname? }` | The email to read, name, surname, roles and extra roles   |
-| `change-status`     | `POST {baseUrl}/{id}/status` `{ status }`                     | The statuses the current one reaches                         |
+| `edit`              | `PUT {baseUrl}/{id}` `{ name?, surname?, status?, roles?, extraRoleIds? }` | The email to read, name, surname, status, roles and extra roles, see [Editable fields](#editable-fields) |
 | `resend-invitation` | `POST {baseUrl}/{id}/invitation`                              | None                                                         |
 
 A name, a surname or a language left empty is not sent, and at least one role must be checked. The search box sends its
@@ -59,12 +58,27 @@ text as the `text` of the search, which the backend matches against the email, t
 of the invitation are the `languages` of the [preferences](../../../services/preferences/docs/preferences-readme.md),
 and none picked sends the invitation in the default language of the mail.
 
-The status changes `active → inactive`, `invited → inactive`, `unverified → inactive` and `inactive → active`; an
-account brought back comes back as `invited`, `unverified` or `active`, as the backend decides. Each status has its
-badge: `active` success, `invited` info, `unverified` warning and `inactive` neutral. Every guard (nobody deactivates
-themselves, only a superadmin touches a superadmin, the last superadmin stays, nobody grants or removes the superadmin
-role) runs on the server, whose errors the module translates under `angular-components.http.error.users`, such as
-`superadmin-role-fixed`.
+Each status has its badge: `active` success, `invited` info, `unverified` warning and `inactive` neutral. Every guard
+(nobody deactivates themselves, only a superadmin touches a superadmin, the last superadmin stays, nobody grants or
+removes the superadmin role) runs on the server, whose errors the module translates under
+`angular-components.http.error.users`, such as `superadmin-role-fixed`.
+
+## Editable fields
+
+There is one action to change a user, `edit`, and its form shows every field: the email to read, the name and the
+surname, the status ("Status", `form.main.status`, "Active" or "Inactive"), the roles and the extra roles. Each row
+says which of them its caller may change as `editableFields`, a subset of `name`, `surname`, `roles`, `extraRoleIds`
+and `status` (`BeyUserEditableField`); every field the row leaves out shows disabled, never hidden, and the request
+sends only the fields the row names, the status only when it changes. The server checks every field again.
+
+-   **Another superadmin**, seen by a superadmin, lets only its `status` change.
+-   **An invited or unverified user** shows its status disabled, as it stands: only an account that signed in is active
+    or inactive, and the invitation is what brings it in.
+-   **The own row** lists no `edit`: names are changed on the account page.
+
+A row without `editableFields`, from a server before express-components 1.3.0, keeps every field enabled and shows no
+status, as before. The change of a status follows the server: `active → inactive` and `inactive → active`, an account
+brought back coming back as `invited`, `unverified` or `active`, as the backend decides.
 
 ## Organizations
 
@@ -97,10 +111,10 @@ none, with no error.
     succeed.
 
 The edit form never offers the organization: users do not move between organizations. Nor does the page ever offer
-the superadmin role, which is fixed and comes from the seeding only: `GET {baseUrl}/roles` never lists it, a
-superadmin's row never lists `edit`, and the server refuses an invitation or an edit that grants or removes it with
-`users.superadmin-role-fixed`. The row of another superadmin still lists `change-status` to a superadmin; the own row
-lists nothing.
+the superadmin role, which is fixed and comes from the seeding only: `GET {baseUrl}/roles` never lists it, the row of
+a superadmin never lets its roles change, and the server refuses an invitation or an edit that grants or removes it
+with `users.superadmin-role-fixed`. The row of another superadmin lists `edit` to a superadmin, with only its status to
+change; the own row lists nothing.
 
 ## Roles
 
@@ -146,5 +160,4 @@ roles of a user reaches them at the next refresh of their session, within the li
 Every text follows [the page](../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.no-name` (the name of a user who has
 none), `table.system` (the organization of a superadmin), `search.fields.<key>`, `status.<status>`,
-`form.create.title`, `form.edit.title`, `form.main.<field>.label` and `.placeholder`, `change-status.*` and
-`toast.<key>-success`. The module ships all of them in English and Spanish.
+`form.create.title`, `form.edit.title`, `form.main.<field>.label` and `.placeholder`, and `toast.<key>-success`. The module ships all of them in English and Spanish.

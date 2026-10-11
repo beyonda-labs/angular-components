@@ -1,7 +1,7 @@
 {
     "angular-components-style-guide": {
         "users": {
-            "example": "La página de usuarios sobre el backend de demostración: busca por nombre o correo, filtra por estado y rol, invita a un usuario, edita sus roles, cambia su estado y vuelve a enviarle la invitación, en la medida en que el backend lo permita en cada fila.",
+            "example": "La página de usuarios sobre el backend de demostración: busca por nombre o correo, filtra por estado y rol, invita a un usuario, edita su nombre, sus roles y su estado, cada campo activo solo cuando la fila deja cambiarlo, y vuelve a enviarle la invitación, en la medida en que el backend lo permita en cada fila.",
             "roles": {
                 "admin": "Administrador",
                 "editor": "Editor"

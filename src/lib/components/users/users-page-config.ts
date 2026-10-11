@@ -4,21 +4,13 @@ import { PageConfig, PageHandle } from '../page/models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../page/models/page-action.model';
 import { PageFormConfig } from '../page/models/page-form.model';
 import { PageHeaderConfig } from '../page/models/page-header.model';
-import { PageStatusConfig } from '../page/models/page-lifecycle.model';
 import { PageOrganization } from '../page/models/page-organization.model';
 import { SearchSort, SearchSortDirection } from '../page/models/page-search.model';
 import { PageTableConfig, PageTableSearchConfig } from '../page/models/page-table.model';
 import { SearchField, SearchFieldOption, SearchFieldType } from '../search/models/search.model';
 import { TableColumn } from '../table/models/table.model';
 import { TableCell } from '../table/models/table-cell.model';
-import {
-    USER_STATUS_TRANSITIONS,
-    UserFormValue,
-    UserRow,
-    USERS_RESEND_INVITATION_ACTION,
-    UsersConfig,
-    UserStatus
-} from './models/users.model';
+import { UserFormValue, UserRow, USERS_RESEND_INVITATION_ACTION, UsersConfig, UserStatus } from './models/users.model';
 
 const LEADING_COLUMNS = [
     new TableColumn({ isHideable: false, isSortable: true, key: 'name', width: 3 }),
@@ -70,7 +62,6 @@ export function buildUsersPageConfig({
             actions: [
                 pageStandardAction<UserRow>(PageStandardAction.Create),
                 pageStandardAction<UserRow>(PageStandardAction.Edit),
-                pageStandardAction<UserRow>(PageStandardAction.ChangeStatus),
                 new PageAction<UserRow>({
                     handler: ([user]) => onResendInvitation(user),
                     key: USERS_RESEND_INVITATION_ACTION,
@@ -82,7 +73,6 @@ export function buildUsersPageConfig({
         }),
         onReady,
         prefix,
-        statusConfig: new PageStatusConfig({ transitions: USER_STATUS_TRANSITIONS }),
         tableConfig: new PageTableConfig<UserRow>({
             columns: [...LEADING_COLUMNS, ...(isOrganizationShown ? [ORGANIZATION_COLUMN] : []), ...TRAILING_COLUMNS],
             height,

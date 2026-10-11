@@ -13,6 +13,7 @@ describe('RolesTableService', () => {
         return {
             actions: ['edit', 'delete'],
             description: 'Review the templates',
+            groupCount: 3,
             id: 'r1',
             isBase: false,
             memberCount: 4,
@@ -53,17 +54,25 @@ describe('RolesTableService', () => {
         service = TestBed.inject(RolesTableService);
     });
 
-    it('fills a cell per column: name, type, permission count, member count and description', () => {
-        const [name, type, permissionCount, memberCount, description, ...rest] = service.loadRow(buildRole(), options);
+    it('fills a cell per column: name, type, permission, member and group counts, and description', () => {
+        const [name, type, permissionCount, memberCount, groupCount, description, ...rest] = service.loadRow(
+            buildRole(),
+            options
+        );
 
         expect(name.content).toBe('Reviewers');
         expect((type as BadgeTableCell).badges.map(({ label }) => label)).toEqual(['demo.roles.type.extra']);
-        expect([permissionCount.content, memberCount.content, description.content]).toEqual([
+        expect([permissionCount.content, memberCount.content, groupCount.content, description.content]).toEqual([
             '2',
             '4',
+            '3',
             'Review the templates'
         ]);
         expect(rest).toEqual([]);
+    });
+
+    it('counts no group for a role of a server that answers no group count', () => {
+        expect(service.loadRow(buildRole({ groupCount: undefined }), options)[4].content).toBe('0');
     });
 
     it('labels a base role from the role prefix and types it as a base role', () => {
@@ -93,11 +102,11 @@ describe('RolesTableService', () => {
         expect(options.onEdit).not.toHaveBeenCalled();
     });
 
-    it('shows the organization after the member count when it is shown, every one for a base role', () => {
+    it('shows the organization after the group count when it is shown, every one for a base role', () => {
         const shown = { ...options, isOrganizationShown: true };
 
-        expect(service.loadRow(buildRole(), shown)[4].content).toBe('Globex');
-        expect(service.loadRow(buildBase(), shown)[4]).toMatchObject({
+        expect(service.loadRow(buildRole(), shown)[5].content).toBe('Globex');
+        expect(service.loadRow(buildBase(), shown)[5]).toMatchObject({
             content: 'demo.roles.table.every-organization',
             translate: true
         });

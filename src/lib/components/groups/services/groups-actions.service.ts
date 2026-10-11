@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { forkJoin } from 'rxjs';
 
 import { PageHandle } from '../../page/models/page.model';
-import { GroupRow, GroupsConfig } from '../models/groups.model';
+import { GroupEditFields, GroupRow, GroupsConfig } from '../models/groups.model';
 import { GroupsFormService } from './groups-form.service';
 import { GroupsHttpService } from './groups-http.service';
 
@@ -13,18 +13,25 @@ export class GroupsActionsService {
     private readonly groupsFormService = inject(GroupsFormService);
     private readonly groupsHttpService = inject(GroupsHttpService);
 
-    editMembers({ baseUrl, prefix }: GroupsConfig, group: GroupRow, page?: PageHandle<GroupRow>): void {
+    edit({ baseUrl, prefix }: GroupsConfig, group: GroupRow, page?: PageHandle<GroupRow>): void {
         if (!page) {
             return;
         }
 
         forkJoin([
+            this.groupsHttpService.loadGroup(baseUrl, group.id),
             this.groupsHttpService.loadMemberOptions(baseUrl, group.id),
-            this.groupsHttpService.loadMembers(baseUrl, group.id)
-        ]).subscribe(([options, members]) =>
-            page.openForm(this.groupsFormService.buildMembersFormConfig(prefix, group, options, members), ({ main }) =>
-                this.groupsHttpService.setMembers(baseUrl, group.id, main.userIds, `${prefix}.toast.members-success`)
+            this.groupsHttpService.loadRoleOptions(baseUrl, group.id)
+        ]).subscribe(([detail, memberOptions, roleOptions]) =>
+            page.openForm(
+                this.groupsFormService.buildEditFormConfig({ detail, memberOptions, prefix, roleOptions }),
+                ({ main }) =>
+                    this.groupsHttpService.edit(baseUrl, group.id, toEditRequest(main), `${prefix}.toast.edit-success`)
             )
         );
     }
+}
+
+function toEditRequest({ extraRoleIds, name, userIds }: GroupEditFields): GroupEditFields {
+    return { name: name.trim(), userIds, ...(extraRoleIds ? { extraRoleIds } : {}) };
 }

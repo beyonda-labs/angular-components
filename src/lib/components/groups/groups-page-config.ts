@@ -1,7 +1,7 @@
 import { buildPageOrganizationField } from '../page/functions/page-organization-filter';
 import { pageStandardAction } from '../page/functions/page-standard-actions';
 import { PageConfig, PageHandle } from '../page/models/page.model';
-import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../page/models/page-action.model';
+import { PageStandardAction } from '../page/models/page-action.model';
 import { PageFormConfig } from '../page/models/page-form.model';
 import { PageHeaderConfig } from '../page/models/page-header.model';
 import { PageOrganization } from '../page/models/page-organization.model';
@@ -10,12 +10,13 @@ import { PageTableConfig, PageTableSearchConfig } from '../page/models/page-tabl
 import { SearchField, SearchFieldType } from '../search/models/search.model';
 import { TableColumn } from '../table/models/table.model';
 import { TableCell } from '../table/models/table-cell.model';
-import { GroupFormValue, GroupRow, GROUPS_MEMBERS_ACTION, GroupsConfig } from './models/groups.model';
+import { GroupFormValue, GroupRow, GroupsConfig } from './models/groups.model';
 
 const CREATED_AT_COLUMN = new TableColumn({ isSortable: true, key: 'createdAt', width: 2 });
 const LEADING_COLUMNS = [
     new TableColumn({ isHideable: false, isSortable: true, key: 'name', width: 5 }),
-    new TableColumn({ isSortable: true, key: 'memberCount', width: 2 })
+    new TableColumn({ isSortable: true, key: 'memberCount', width: 2 }),
+    new TableColumn({ isSortable: true, key: 'extraRoleCount', width: 2 })
 ];
 const ORDER: SearchSort = { direction: SearchSortDirection.Asc, field: 'name' };
 const ORGANIZATION_COLUMN = new TableColumn({
@@ -31,7 +32,7 @@ export interface GroupsPageConfigOptions {
     formConfig: PageFormConfig<GroupFormValue, GroupRow>;
     isOrganizationShown: boolean;
     loadRow: (group: GroupRow) => TableCell[];
-    onEditMembers: (group: GroupRow) => void;
+    onEdit: (group: GroupRow) => void;
     onReady: (handle: PageHandle<GroupRow>) => void;
     organizations: PageOrganization[];
 }
@@ -41,7 +42,7 @@ export function buildGroupsPageConfig({
     formConfig,
     isOrganizationShown,
     loadRow,
-    onEditMembers,
+    onEdit,
     onReady,
     organizations
 }: GroupsPageConfigOptions): PageConfig<GroupFormValue, GroupRow> {
@@ -54,13 +55,7 @@ export function buildGroupsPageConfig({
         headerConfig: new PageHeaderConfig<GroupRow>({
             actions: [
                 pageStandardAction<GroupRow>(PageStandardAction.Create),
-                pageStandardAction<GroupRow>(PageStandardAction.Edit),
-                new PageAction<GroupRow>({
-                    handler: ([group]) => onEditMembers(group),
-                    key: GROUPS_MEMBERS_ACTION,
-                    scope: PageActionScope.Single,
-                    zone: PageActionZone.Menu
-                }),
+                pageStandardAction<GroupRow>(PageStandardAction.Edit, { handler: ([group]) => onEdit(group) }),
                 pageStandardAction<GroupRow>(PageStandardAction.Delete)
             ],
             title: `${prefix}.title`

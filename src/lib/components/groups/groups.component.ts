@@ -50,9 +50,9 @@ export class GroupsComponent {
             loadRow: group =>
                 this.groupsTableService.loadRow(group, {
                     isOrganizationShown,
-                    onEdit: edited => this.page?.openEdit(edited)
+                    onEdit: edited => this.groupsActionsService.edit(config, edited, this.page)
                 }),
-            onEditMembers: group => this.groupsActionsService.editMembers(config, group, this.page),
+            onEdit: group => this.groupsActionsService.edit(config, group, this.page),
             onReady: handle => (this.page = handle),
             organizations
         });

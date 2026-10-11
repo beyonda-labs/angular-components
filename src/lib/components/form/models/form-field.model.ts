@@ -6,6 +6,7 @@ export enum FormFieldType {
     Autocomplete = 'autocomplete',
     Checkbox = 'checkbox',
     CheckboxGroup = 'checkboxGroup',
+    CheckboxSections = 'checkboxSections',
     Chips = 'chips',
     Date = 'date',
     File = 'file',

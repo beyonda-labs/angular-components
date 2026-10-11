@@ -4,14 +4,16 @@
 
 ### Added
 
--   Organizations module: `bey-organizations`, the superadmin's page over `/organizations` on `bey-page`: create and
-    rename an organization, deactivate or reactivate it, and invite its first admin with the `adminRole` of the config.
+-   Organizations module: `bey-organizations`, the superadmin's page over `/organizations` on `bey-page`: create an
+    organization, and edit its name and its status in one form that shows its groups and their members read-only.
 -   Organizations module: the texts of the `organizations.existing-name` and `.not-found` errors.
--   Groups module: `bey-groups`, the page of the groups of users of an organization over `/groups` on `bey-page`, for
-    its managers and the superadmin: create, rename and delete a group (confirmed), and set its members.
+-   Groups module: `bey-groups`, the groups of users of an organization over `/groups` on `bey-page`, for its managers
+    and the superadmin: create and delete (confirmed) a group, and edit its name, members and extra roles in one form.
 -   Groups module: for a superadmin, the organization of the create form (required, chosen already when only one is
     active), and with two active organizations or more an organization column and filter, from `/users/organizations`.
--   Groups module: the texts of the `groups.existing-name`, `.invalid-members` and `.not-found` errors.
+-   Groups module: a "Roles" column with the `extraRoleCount` of each group, the extra roles its members all get.
+-   Groups module: the texts of the `groups.existing-name`, `.invalid-members`, `.invalid-extra-roles` and `.not-found`
+    errors.
 -   Page module: `beyPageOrganizationColumn(overrides?)` and `beyPageOrganizationCell(row)` show the `organizationName`
     of a `BeyPageOrganizationItem`, only while `GET {baseUrl}/organizations` names two organizations or more.
 -   Page module: `isOrganizationFilterEnabled` on `BeyPageTableSearchConfig` adds an "Organization" filter,
@@ -41,14 +43,20 @@
     lists `GET {baseUrl}/shared` and opens its folders as usual, its breadcrumb starting at the shared folder.
 -   Page module: `BeyPageStandardAction.Share` on a folder sets no access, view or edit per group and user of
     `/categories/{id}/share-targets`, above what the folder inherits, with `PUT /categories/{id}/shares`.
+-   Page module: the share form opens with `share.intro`, a line saying that sharing decides where people can work and
+    their permissions what they can do there.
 -   Page module: the texts of the `sharing.invalid-grantees` error, and `BeyPageShare`, `BeyPageInheritedShare`,
     `BeyPageShareTarget`, `BeyPageShareAccess` and `BeyPageShareGranteeType` for the answers of the share routes.
 -   Properties menu module: `isUploadEnabled` on `BeyPropertyAttachmentField`, `true` by default; with `false` the field
     shows no upload button and its existing attachments stay selectable.
 -   Roles module: `bey-roles`, the roles and permissions page over `/roles` on `bey-page`: the base roles read-only and
     the extra roles of the organization, created, edited and deleted (confirmed) with a checklist of permissions.
--   Roles module: the checklist groups `GET /roles/permissions` by resource, labelled from `permissionPrefix` with the
-    library's own keys and a readable name as fallbacks; the name of a base role opens its permissions read-only.
+-   Roles module: the permissions of `GET /roles/permissions` in a foldable section per resource, each labelled
+    `<permissionPrefix>.<group>.<action>.label` and described by `.description`, the library's keys as fallbacks.
+-   Roles module: `groupIcons` on `BeyRolesConfig`, the icon of the section of each permission group; the library's own
+    groups have theirs and any other one `faRectangleList`.
+-   Roles module: the name of a base role opens its permissions read-only, in the same sections disabled; a "Groups"
+    column shows the `groupCount` of each role.
 -   Roles module: for a superadmin, the organization of the create form and, with two active organizations or more, an
     organization column and filter; the texts of the `roles.existing-name`, `.invalid-permissions`, `.not-found` and
     `.base-role` errors.
@@ -59,6 +67,14 @@
 -   Session service: `extraPermissions` on `BeySessionUser`, read from the token; absent when the extra roles of the
     user add none.
 -   Form module: `isSubmitHidden` on `BeyModalFormConfig` leaves only the cancel button, for a form that only shows.
+-   Form module: `BeyFormCheckboxSectionsField`, checkboxes in a foldable card per `BeyFormCheckboxSection`, each with a
+    counter and select all, and a description under each option; its value lists every checked one.
+-   Users module: `editableFields` on `BeyUserRow` (`BeyUserEditableField`); the edit form disables every field the row
+    leaves out and sends only those it names.
+-   Users module: the edit form asks for the status, "Active" or "Inactive", sent as `status` with
+    `PUT {baseUrl}/{id}` only when it changes.
+-   Page module: `toItem` of `BeyPageFormConfig` receives the row an edit started from as its second argument.
+-   Styles: the `--bey-dialog-margin`, `--bey-dialog-max-height` and `--bey-grid-column-min-width` tokens.
 
 ### Changed
 
@@ -70,6 +86,8 @@
     of its user; a server that answers no `extraRoles` counts as one without extra roles.
 -   Page module: with `usagesConfig` and categories, `delete-category` asks `GET {baseUrl}/categories/usages?ids=` and
     warns with `<prefix>.modal.delete-category-in-use.title` and `.message` when what the folders hold is in use.
+-   Modal, form, tree and file preview modules: every dialog is at most `--bey-dialog-max-height` high, its title and
+    buttons fixed while its body scrolls, so a long form no longer makes the page scroll.
 
 ### Fixed
 
@@ -81,6 +99,13 @@
     fails the form stays open and the table reloads, and sending the form again creates the row anew.
 -   Form module: a form of `openWithRequest`, also in `BeyFakeModalFormService`, stays open without an unhandled error
     when its request fails.
+
+### Removed
+
+-   Users module: the `change-status` action, with its `change-status.*` and `toast.change-status-success` texts; the
+    status is changed in the edit form.
+-   Form module: `--bey-modal-form-body-max-height`, which never took effect; `--bey-modal-form-max-height` caps the
+    whole dialog.
 
 ## [1.4.0] - 2026-10-10
 

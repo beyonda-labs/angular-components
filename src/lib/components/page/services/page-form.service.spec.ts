@@ -121,6 +121,19 @@ describe('PageFormService', () => {
         expect(onEdit).toHaveBeenCalledWith(currentValue, handle);
     });
 
+    it('maps an edit through toItem with the item it started from', () => {
+        const onSave = jest.fn();
+        const item: PageItem = { id: 7 };
+        const pageForm = buildPageForm();
+        const currentValue: TestFormValue = { section1: { text1: 'value' } };
+
+        pageForm.toItem = (value, original) => ({ id: original?.id, text: value.section1.text1 });
+        service.open(pageForm, item, 'testPage', onSave);
+        getOpenedConfig().onSubmit?.(currentValue, {} as FormHandle<TestFormValue>);
+
+        expect(onSave).toHaveBeenCalledWith({ id: 7, text: 'value' }, expect.anything());
+    });
+
     it('asks with the confirmation of confirmSave before saving, and saves only once confirmed', () => {
         const modal = TestBed.inject(FakeModalService);
         const onSave = jest.fn();

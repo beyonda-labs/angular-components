@@ -1,7 +1,9 @@
 import { inject, Injectable } from '@angular/core';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { TranslateService } from '@ngx-translate/core';
 
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
+import { FormInfoField } from '../../form/models/fields/form-info-field.model';
 import { FormListField } from '../../form/models/fields/form-list-field.model';
 import { FormSelectField } from '../../form/models/fields/form-select-field.model';
 import { FormRow, FormSection } from '../../form/models/form.model';
@@ -41,6 +43,7 @@ export class PageShareFormService {
             initialValue: toShareFormValue(choices),
             prefix: PREFIX,
             sections: [
+                this.buildIntroSection(),
                 ...(inherited.length > 0 ? [this.buildInheritedSection(inherited)] : []),
                 ...(choiceSections.length > 0 ? choiceSections : [buildEmptySection()])
             ],
@@ -100,6 +103,24 @@ export class PageShareFormService {
                             items,
                             key: 'inherited',
                             label: `${PREFIX}.inherited.label`
+                        })
+                    ]
+                })
+            ]
+        });
+    }
+
+    private buildIntroSection(): FormSection {
+        return new FormSection({
+            isTitleVisible: false,
+            key: 'intro',
+            rows: [
+                new FormRow({
+                    fields: [
+                        new FormInfoField({
+                            isLabelVisible: false,
+                            items: [{ icon: faCircleInfo, label: this.translate(`${PREFIX}.intro`) }],
+                            key: 'intro'
                         })
                     ]
                 })

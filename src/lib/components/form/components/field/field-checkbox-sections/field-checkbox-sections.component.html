@@ -1,0 +1,95 @@
+<div
+    class="bey-form-checkbox-sections"
+    role="group"
+    [attr.aria-describedby]="describedBy()"
+    [attr.aria-invalid]="isInvalid() || null"
+    [attr.aria-label]="label() | translate"
+    [attr.aria-required]="isRequired() || null"
+    [class.is-invalid]="isInvalid()"
+    [id]="field().key"
+>
+    @for (section of sections(); track section.key) {
+        <div class="bey-form-checkbox-sections-card">
+            <div class="bey-form-checkbox-sections-header">
+                <button
+                    class="bey-form-checkbox-sections-toggle"
+                    type="button"
+                    [attr.aria-controls]="section.controlsId"
+                    [attr.aria-expanded]="section.isExpanded"
+                    (click)="toggleSection(section.key)"
+                >
+                    @if (section.icon) {
+                        <fa-icon
+                            class="bey-form-checkbox-sections-icon"
+                            aria-hidden="true"
+                            [icon]="section.icon"
+                        ></fa-icon>
+                    }
+                    <span class="bey-form-checkbox-sections-title" [id]="section.titleId">
+                        {{ section.label | translate }}
+                    </span>
+                    <span class="bey-form-checkbox-sections-count" aria-hidden="true">
+                        {{ section.checkedCount }}/{{ section.total }}
+                    </span>
+                    <span class="visually-hidden">
+                        {{ countLabel | translate: section.countParameters }}
+                    </span>
+                </button>
+
+                @if (section.hasToggleAll) {
+                    <button
+                        class="bey-form-checkbox-sections-toggle-all"
+                        type="button"
+                        [attr.aria-label]="section.toggleAllName | translate: { section: (section.label | translate) }"
+                        (click)="toggleAll(section)"
+                    >
+                        {{ section.toggleAllLabel | translate }}
+                    </button>
+                }
+
+                <button
+                    class="bey-form-checkbox-sections-chevron"
+                    aria-hidden="true"
+                    tabindex="-1"
+                    type="button"
+                    [class.is-expanded]="section.isExpanded"
+                    (click)="toggleSection(section.key)"
+                >
+                    <fa-icon [icon]="chevronIcon"></fa-icon>
+                </button>
+            </div>
+
+            @if (section.isExpanded) {
+                <div
+                    class="bey-form-checkbox-sections-body"
+                    role="group"
+                    [attr.aria-labelledby]="section.titleId"
+                    [id]="section.bodyId"
+                >
+                    @for (option of section.options; track option.value) {
+                        <div class="form-check bey-form-checkbox-sections-option">
+                            <input
+                                class="form-check-input bey-form-checkbox-sections-input"
+                                type="checkbox"
+                                [attr.aria-describedby]="option.description ? option.descriptionId : null"
+                                [checked]="option.isChecked"
+                                [disabled]="option.isDisabled"
+                                [id]="option.id"
+                                (blur)="onBlur()"
+                                (change)="toggleOption(option.value, $any($event.target).checked)"
+                            />
+                            <label class="form-check-label bey-form-checkbox-sections-label" [for]="option.id">
+                                {{ option.label | translate }}
+                            </label>
+                            @if (option.description) {
+                                <span class="bey-form-checkbox-sections-description" [id]="option.descriptionId">
+                                    {{ option.description | translate }}
+                                </span>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -56,7 +56,7 @@
                 },
                 "permissions": {
                     "empty": "No hay permisos que puedas dar.",
-                    "label": "Permisos"
+                    "label": "Permisos:"
                 }
             },
             "modal": {
@@ -68,18 +68,36 @@
             "permissions": {
                 "organization": {
                     "label": "Organización",
-                    "manage": "Gestionar la organización"
+                    "manage": {
+                        "description": "Puede gestionar los grupos de la organización y acceder a todo lo que crean sus miembros.",
+                        "label": "Gestionar la organización"
+                    }
                 },
                 "roles": {
                     "label": "Roles",
-                    "manage": "Gestionar roles y permisos"
+                    "manage": {
+                        "description": "Puede crear, editar y eliminar los roles adicionales de la organización.",
+                        "label": "Gestionar roles y permisos"
+                    }
                 },
                 "users": {
-                    "change-status": "Activar y desactivar usuarios",
-                    "edit": "Editar usuarios",
-                    "invite": "Invitar usuarios",
+                    "change-status": {
+                        "description": "Puede activar y desactivar las cuentas de los usuarios.",
+                        "label": "Activar y desactivar usuarios"
+                    },
+                    "edit": {
+                        "description": "Puede cambiar los nombres y los roles de los usuarios.",
+                        "label": "Editar usuarios"
+                    },
+                    "invite": {
+                        "description": "Puede invitar a personas a unirse a la organización.",
+                        "label": "Invitar usuarios"
+                    },
                     "label": "Usuarios",
-                    "read": "Ver usuarios"
+                    "read": {
+                        "description": "Puede ver los usuarios de la organización.",
+                        "label": "Ver usuarios"
+                    }
                 }
             },
             "search": {
@@ -90,6 +108,7 @@
             "table": {
                 "columns": {
                     "description": "Descripción",
+                    "group-count": "Grupos",
                     "member-count": "Usuarios",
                     "name": "Nombre",
                     "organization": "Organización",
@@ -100,7 +119,8 @@
                 "every-organization": "Todas",
                 "tooltips": {
                     "description": "Para qué sirve el rol",
-                    "member-count": "Cuántos usuarios lo tienen",
+                    "group-count": "Cuántos grupos lo tienen",
+                    "member-count": "Cuántos usuarios lo tienen asignado directamente",
                     "name": "El nombre del rol",
                     "organization": "La organización a la que pertenece el rol",
                     "permission-count": "Cuántos permisos da",
@@ -132,7 +152,7 @@
                 },
                 "permissions": {
                     "empty": "Este rol no da ningún permiso.",
-                    "label": "Permisos"
+                    "label": "Permisos:"
                 },
                 "title": "Permisos del rol"
             }

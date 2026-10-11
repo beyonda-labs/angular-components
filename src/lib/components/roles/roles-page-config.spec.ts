@@ -41,11 +41,12 @@ describe('buildRolesPageConfig', () => {
             ['type', false, true],
             ['permissionCount', false, true],
             ['memberCount', false, true],
+            ['groupCount', false, true],
             ['description', false, true]
         ]);
     });
 
-    it('adds the organization after the member count when it is shown', () => {
+    it('adds the organization after the group count when it is shown', () => {
         const columns = build({ isOrganizationShown: true }).tableConfig?.columns ?? [];
 
         expect(columns.map(({ key }) => key)).toEqual([
@@ -53,6 +54,7 @@ describe('buildRolesPageConfig', () => {
             'type',
             'permissionCount',
             'memberCount',
+            'groupCount',
             'organization',
             'description'
         ]);

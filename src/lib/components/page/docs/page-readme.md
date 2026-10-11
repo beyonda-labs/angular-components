@@ -432,6 +432,8 @@ grants to its owner, the managers of its organization and the superadmin. It ask
 `GET {baseUrl}/categories/{id}/shares`, `{ shares, inherited }`, and `GET {baseUrl}/categories/{id}/share-targets`,
 `{ users, groups }`, and opens a form titled after the folder:
 
+-   **A line on what sharing means** (`angular-components.page.share.intro`): it decides where people can work, while
+    what they can do there still depends on their permissions.
 -   **What it inherits**: the shares of the folders above that already reach it, as a list of who, with which access
     and from which folder.
 -   **A select per group, then per user**, named after it, with the email of a user as hint: "No access", "View" or
@@ -457,9 +459,10 @@ those answers for a `handler` of its own.
 ## Forms
 
 `BeyPageFormConfig<TValue, TItem>` takes `prefix`, `buildSections(item?)`, and optionally `toFormValue(item?)`,
-`toItem(value)`, `onReady(handle)`, `onValueChange(value, handle)`, `onCreate(value, handle)`,
+`toItem(value, item?)`, `onReady(handle)`, `onValueChange(value, handle)`, `onCreate(value, handle)`,
 `onEdit(value, handle)`, `afterCreate(created)`, `confirmSave(value, item?)`, `allowSubmitWithoutChanges` and `size`
-(a `BeyModalFormSize`, `Large` by default). `onValueChange` runs on every
+(a `BeyModalFormSize`, `Large` by default). `toItem` builds the body of the request and receives the row an edit
+started from, so it can send only what that row lets the user change. `onValueChange` runs on every
 change of the open form, so a field can fill another through `handle.patchValue`. Create and edit open a modal form from the form
 module; on success the modal closes and the table reloads, on error it stays open, the reason shown by the error
 modal of the HTTP service and nothing more reported. `afterCreate` returns an observable the page waits for before

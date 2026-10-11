@@ -1,5 +1,9 @@
 export { UsersComponent as BeyUsersComponent } from './users.component';
-export { UsersConfig as BeyUsersConfig, UserStatus as BeyUserStatus } from './models/users.model';
+export {
+    UserEditableField as BeyUserEditableField,
+    UsersConfig as BeyUsersConfig,
+    UserStatus as BeyUserStatus
+} from './models/users.model';
 export type {
     UserExtraRole as BeyUserExtraRole,
     UserRow as BeyUserRow,

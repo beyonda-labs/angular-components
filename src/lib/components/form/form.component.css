@@ -1,16 +1,28 @@
 :host {
     --bey-form-sections-max-height: none;
 
-    display: block;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.bey-form {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .bey-form-sections {
+    flex: 1 1 auto;
     max-height: var(--bey-form-sections-max-height);
+    min-height: 0;
     overflow: hidden auto;
 }
 
 .bey-form-buttons {
     display: flex;
+    flex-shrink: 0;
     gap: var(--bey-space-sm);
     justify-content: flex-end;
     margin-top: var(--bey-space-sm);

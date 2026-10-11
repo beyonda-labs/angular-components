@@ -1,5 +1,33 @@
 import { PageOrganization, PageOrganizationItem } from '../../page/models/page-organization.model';
 
+export interface GroupDetail extends GroupRow {
+    extraRoles: GroupExtraRole[];
+    members: GroupMember[];
+}
+
+export interface GroupEditFields {
+    name: string;
+    userIds: string[];
+
+    extraRoleIds?: string[];
+}
+
+export interface GroupEditFormValue {
+    main: GroupEditFields;
+}
+
+export interface GroupEditOptions {
+    detail: GroupDetail;
+    memberOptions: GroupMember[];
+    prefix: string;
+    roleOptions: GroupExtraRole[];
+}
+
+export interface GroupExtraRole {
+    id: string;
+    name: string;
+}
+
 export interface GroupFields {
     name: string;
 
@@ -20,16 +48,8 @@ export interface GroupMemberOptionsResponse {
     users: GroupMember[];
 }
 
-export interface GroupMembersFields {
-    userIds: string[];
-}
-
-export interface GroupMembersFormValue {
-    main: GroupMembersFields;
-}
-
-export interface GroupMembersResponse {
-    members: GroupMember[];
+export interface GroupRoleOptionsResponse {
+    extraRoles: GroupExtraRole[];
 }
 
 export interface GroupRow extends PageOrganizationItem {
@@ -38,6 +58,8 @@ export interface GroupRow extends PageOrganizationItem {
     id: string;
     memberCount: number;
     name: string;
+
+    extraRoleCount?: number;
 }
 
 export interface GroupsFormOptions {
@@ -83,10 +105,10 @@ export interface GroupsConfigParameters {
 
 export const GROUP_NAME_MAX_LENGTH = 100;
 
+export const GROUPS_EXTRA_ROLES_FIELD = 'extraRoleIds';
+
 export const GROUPS_FORM_SECTION = 'main';
 
 export const GROUPS_MEMBER_OPTIONS_PATH = '/member-options';
 
-export const GROUPS_MEMBERS_ACTION = 'members';
-
-export const GROUPS_MEMBERS_PATH = '/members';
+export const GROUPS_ROLE_OPTIONS_PATH = '/role-options';

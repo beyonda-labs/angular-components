@@ -18,7 +18,7 @@ export class PageFormConfig<TValue = unknown, TItem extends PageItem = PageItem>
     prefix: string;
     size: ModalFormSize;
     toFormValue: (item?: TItem) => TValue | undefined;
-    toItem: (value: TValue) => unknown;
+    toItem: (value: TValue, item?: TItem) => unknown;
 
     afterCreate?: (created: TItem) => Observable<unknown> | undefined;
     confirmSave?: PageSaveConfirmation<TValue, TItem>;
@@ -69,5 +69,5 @@ export interface PageFormConfigParameters<TValue = unknown, TItem extends PageIt
     onValueChange?: (value: TValue, handle: FormHandle<TValue>) => void;
     size?: ModalFormSize;
     toFormValue?: (item?: TItem) => TValue | undefined;
-    toItem?: (value: TValue) => unknown;
+    toItem?: (value: TValue, item?: TItem) => unknown;
 }

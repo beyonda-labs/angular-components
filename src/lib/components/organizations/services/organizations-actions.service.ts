@@ -2,15 +2,14 @@ import { inject, Injectable } from '@angular/core';
 
 import { PageHandle } from '../../page/models/page.model';
 import {
-    OrganizationAdminFields,
-    OrganizationAdminInvitation,
+    OrganizationDetail,
+    OrganizationEditFields,
+    OrganizationEditRequest,
     OrganizationRow,
     OrganizationsConfig
 } from '../models/organizations.model';
 import { OrganizationsFormService } from './organizations-form.service';
 import { OrganizationsHttpService } from './organizations-http.service';
-
-const OPTIONAL_FIELDS = ['language', 'name', 'surname'] as const;
 
 @Injectable({
     providedIn: 'root'
@@ -19,27 +18,30 @@ export class OrganizationsActionsService {
     private readonly organizationsFormService = inject(OrganizationsFormService);
     private readonly organizationsHttpService = inject(OrganizationsHttpService);
 
-    inviteAdmin(
-        { adminRole, prefix, usersUrl }: OrganizationsConfig,
+    edit(
+        { baseUrl, prefix }: OrganizationsConfig,
         organization: OrganizationRow,
         page?: PageHandle<OrganizationRow>
     ): void {
-        page?.openForm(this.organizationsFormService.buildInviteAdminFormConfig(prefix, organization), ({ main }) =>
-            this.organizationsHttpService.inviteAdmin(
-                usersUrl,
-                toAdminInvitation(main, organization.id, adminRole),
-                `${prefix}.toast.invite-admin-success`
-            )
-        );
+        if (!page) {
+            return;
+        }
+
+        this.organizationsHttpService
+            .loadOrganization(baseUrl, organization.id)
+            .subscribe(detail =>
+                page.openForm(this.organizationsFormService.buildEditFormConfig(prefix, detail), ({ main }) =>
+                    this.organizationsHttpService.edit(
+                        baseUrl,
+                        organization.id,
+                        toEditRequest(main, detail),
+                        `${prefix}.toast.edit-success`
+                    )
+                )
+            );
     }
 }
 
-function toAdminInvitation(
-    fields: OrganizationAdminFields,
-    organizationId: string,
-    adminRole: string
-): OrganizationAdminInvitation {
-    const texts = OPTIONAL_FIELDS.map(key => [key, fields[key]?.trim() ?? ''] as const).filter(([, value]) => value);
-
-    return { email: fields.email.trim(), ...Object.fromEntries(texts), organizationId, roles: [adminRole] };
+function toEditRequest({ name, status }: OrganizationEditFields, current: OrganizationDetail): OrganizationEditRequest {
+    return { name: name.trim(), ...(status !== current.status ? { status } : {}) };
 }

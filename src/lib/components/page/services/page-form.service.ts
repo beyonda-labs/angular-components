@@ -45,7 +45,7 @@ export class PageFormService {
                         next: isConfirmed => {
                             if (isConfirmed) {
                                 callback?.(value, handle);
-                                onSave(pageForm.toItem(value), handle);
+                                onSave(pageForm.toItem(value, item), handle);
                             }
                         }
                     });

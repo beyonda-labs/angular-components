@@ -205,7 +205,9 @@ Submit does not close the dialog: call `handle.close()` once the operation succe
 that request answers, keeping it open when it fails and reporting nothing beyond what the request shows, such as the
 error modal of `BeyHttpService`; the config's own `onSubmit` is replaced. A config spread into a
 new one keeps its labels and `isSubmitHidden`, so it can be copied. A form that only shows, with every field disabled
-or an info field, sets `isSubmitHidden` and names its cancel button "Close" through `cancelLabel`. Cancel, the cross and
+or an info field, sets `isSubmitHidden` and names its cancel button "Close" through `cancelLabel`. The dialog is at most `--bey-modal-form-max-height` high, by default the
+`--bey-dialog-max-height` token: its title and its buttons stay in place and the sections scroll between them, so a
+long form never makes the page scroll, and a short one keeps its own height. Cancel, the cross and
 `handle.requestClose()` ask for confirmation when there are changes. The backdrop and Escape do nothing, so
 the confirmation cannot be skipped. `beyModalFormGuard` on a route closes pristine dialogs on navigation and
 asks before leaving a changed one.
@@ -224,4 +226,4 @@ See [form-fields-readme.md](./form-fields-readme.md).
 | `--bey-form-field-control-height`  | `2.125rem`            |
 | `--bey-form-field-label`           | `--bey-text-muted`    |
 | `--bey-form-field-hint`            | `--bey-text-muted`    |
-| `--bey-modal-form-body-max-height` | `min(70vh, 34rem)`    |
+| `--bey-modal-form-max-height`      | `--bey-dialog-max-height` |

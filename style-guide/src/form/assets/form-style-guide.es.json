@@ -82,6 +82,59 @@
                 "label": "Campos de checkbox",
                 "tooltip": "Variantes de checkbox con estado básico, obligatorio, deshabilitado e interruptor"
             },
+            "section-checkbox-sections": {
+                "documents": {
+                    "label": "Documentos"
+                },
+                "documents-create": {
+                    "description": "Puede rellenar una plantilla para crear un documento.",
+                    "label": "Crear"
+                },
+                "documents-delete": {
+                    "label": "Eliminar"
+                },
+                "documents-read": {
+                    "description": "Puede ver los documentos.",
+                    "label": "Ver"
+                },
+                "folders": {
+                    "label": "Carpetas"
+                },
+                "folders-read": {
+                    "description": "Puede ver las carpetas y lo que contienen.",
+                    "label": "Ver"
+                },
+                "folders-share": {
+                    "description": "Puede compartir una carpeta con grupos y usuarios.",
+                    "label": "Compartir"
+                },
+                "label": "Secciones de casillas",
+                "sections1": {
+                    "label": "Permisos:"
+                },
+                "sections2": {
+                    "label": "Permisos de un rol base (solo lectura):"
+                },
+                "templates": {
+                    "label": "Plantillas"
+                },
+                "templates-delete": {
+                    "label": "Eliminar"
+                },
+                "templates-edit": {
+                    "description": "Puede cambiar las plantillas.",
+                    "label": "Editar"
+                },
+                "templates-publish": {
+                    "description": "Puede poner una plantilla a disposición de todos.",
+                    "label": "Publicar"
+                },
+                "templates-read": {
+                    "description": "Puede ver las plantillas.",
+                    "label": "Ver"
+                },
+                "tooltip": "Listas largas de casillas plegadas por sección, con contador, marcar todos y una descripción por casilla"
+            },
             "section-chips": {
                 "chips1": {
                     "label": "Chips en minúsculas",

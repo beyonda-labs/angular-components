@@ -4,6 +4,7 @@
     --bey-close-hover-bg: var(--bey-bg-hover);
     --bey-modal-tree-scrollbar-thumb: var(--bey-border-default);
     --bey-modal-tree-scrollbar-thumb-hover: var(--bey-border-strong);
+    --bey-modal-tree-max-height: var(--bey-dialog-max-height);
     color: var(--bey-modal-tree-fg);
     color-scheme: light;
 
@@ -23,8 +24,15 @@
     border: var(--bey-border-width) solid var(--bey-modal-tree-border);
     border-radius: var(--bey-radius-md);
     box-shadow: var(--bey-shadow-lg);
+    display: flex;
+    flex-direction: column;
+    max-height: var(--bey-modal-tree-max-height);
     padding: var(--bey-space-xl) var(--bey-space-lg);
     width: 100%;
+}
+
+.bey-modal-tree-header {
+    flex-shrink: 0;
 }
 
 .bey-modal-tree-icon {
@@ -67,7 +75,9 @@
 }
 
 .bey-modal-tree-body {
+    flex: 1 1 auto;
     max-height: min(60vh, 28rem);
+    min-height: 0;
     overflow: auto;
     scrollbar-color: var(--bey-modal-tree-scrollbar-thumb) transparent;
     scrollbar-width: thin;
@@ -89,6 +99,10 @@
 
 .bey-modal-tree-body::-webkit-scrollbar-thumb:hover {
     background-color: var(--bey-modal-tree-scrollbar-thumb-hover);
+}
+
+.bey-modal-tree-actions {
+    flex-shrink: 0;
 }
 
 .bey-modal-tree-action-slot {

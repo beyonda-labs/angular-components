@@ -56,7 +56,7 @@
                 },
                 "permissions": {
                     "empty": "There are no permissions you can give.",
-                    "label": "Permissions"
+                    "label": "Permissions:"
                 }
             },
             "modal": {
@@ -68,18 +68,36 @@
             "permissions": {
                 "organization": {
                     "label": "Organization",
-                    "manage": "Manage the organization"
+                    "manage": {
+                        "description": "Can manage the groups of the organization and reach everything its members create.",
+                        "label": "Manage the organization"
+                    }
                 },
                 "roles": {
                     "label": "Roles",
-                    "manage": "Manage roles and permissions"
+                    "manage": {
+                        "description": "Can create, edit and delete the additional roles of the organization.",
+                        "label": "Manage roles and permissions"
+                    }
                 },
                 "users": {
-                    "change-status": "Activate and deactivate users",
-                    "edit": "Edit users",
-                    "invite": "Invite users",
+                    "change-status": {
+                        "description": "Can activate and deactivate the accounts of the users.",
+                        "label": "Activate and deactivate users"
+                    },
+                    "edit": {
+                        "description": "Can change the names and the roles of the users.",
+                        "label": "Edit users"
+                    },
+                    "invite": {
+                        "description": "Can invite people to join the organization.",
+                        "label": "Invite users"
+                    },
                     "label": "Users",
-                    "read": "See users"
+                    "read": {
+                        "description": "Can see the users of the organization.",
+                        "label": "See users"
+                    }
                 }
             },
             "search": {
@@ -90,6 +108,7 @@
             "table": {
                 "columns": {
                     "description": "Description",
+                    "group-count": "Groups",
                     "member-count": "Users",
                     "name": "Name",
                     "organization": "Organization",
@@ -100,7 +119,8 @@
                 "every-organization": "All",
                 "tooltips": {
                     "description": "What the role is for",
-                    "member-count": "How many users hold it",
+                    "group-count": "How many groups hold it",
+                    "member-count": "How many users hold it directly",
                     "name": "The name of the role",
                     "organization": "The organization the role belongs to",
                     "permission-count": "How many permissions it gives",
@@ -132,7 +152,7 @@
                 },
                 "permissions": {
                     "empty": "This role gives no permissions.",
-                    "label": "Permissions"
+                    "label": "Permissions:"
                 },
                 "title": "Permissions of the role"
             }

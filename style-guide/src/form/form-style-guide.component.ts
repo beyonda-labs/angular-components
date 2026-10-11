@@ -52,6 +52,10 @@ export class FormStyleGuideComponent {
             'section-radio': { radio1: '', radio2: '' },
             'section-textarea': { textarea1: '', textarea2: '', textarea3: 'Disabled long text' },
             'section-checkbox': { checkbox1: false, checkbox2: false, checkbox3: true, checkbox4: false },
+            'section-checkbox-sections': {
+                sections1: ['templates.read'],
+                sections2: ['templates.read', 'templates.edit', 'documents.read']
+            },
             'section-chips': { chips1: [], chips2: [], chips3: ['Angular', 'TypeScript'] },
             'section-dependent': { plan: '', region: '', seats: null }
         },

@@ -1,7 +1,16 @@
 import { toKeySegment } from '../../../utilities/key-segment';
-import { RolePermissionEntry, RolePermissionGroup, ROLES_LIBRARY_PERMISSION_PREFIX } from '../models/roles.model';
+import { FormCheckboxSection } from '../../form/models/fields/form-checkbox-sections-field.model';
+import {
+    RolePermissionEntry,
+    RolePermissionGroup,
+    RolePermissionSectionsOptions,
+    ROLES_DEFAULT_GROUP_ICON,
+    ROLES_LIBRARY_GROUP_ICONS,
+    ROLES_LIBRARY_PERMISSION_PREFIX
+} from '../models/roles.model';
 
-const GROUP_LABEL_KEY = 'label';
+const DESCRIPTION_KEY = 'description';
+const LABEL_KEY = 'label';
 const GROUP_SEPARATOR = '.';
 const WORD_SEPARATORS = /[\s._-]+/u;
 
@@ -20,37 +29,59 @@ export function groupRolePermissions(entries: RolePermissionEntry[], held: strin
         .sort((first, second) => first.group.localeCompare(second.group));
 }
 
+export function rolePermissionDescription(
+    entry: RolePermissionEntry,
+    permissionPrefix: string,
+    translate: (key: string) => unknown
+): string | undefined {
+    return translateFirst([...permissionSegments(entry), DESCRIPTION_KEY], permissionPrefix, translate);
+}
+
 export function rolePermissionGroupLabel(
     group: string,
     permissionPrefix: string,
     translate: (key: string) => unknown
 ): string {
-    return translateFirst([toKeySegment(group), GROUP_LABEL_KEY], permissionPrefix, translate) ?? toReadable(group);
+    return translateFirst([toKeySegment(group), LABEL_KEY], permissionPrefix, translate) ?? toReadable(group);
 }
 
 export function rolePermissionLabel(
-    { group, key }: RolePermissionEntry,
+    entry: RolePermissionEntry,
     permissionPrefix: string,
     translate: (key: string) => unknown
 ): string {
-    const action = key.startsWith(`${group}${GROUP_SEPARATOR}`) ? key.slice(group.length + 1) : key;
-    const segments = [group, ...action.split(GROUP_SEPARATOR)].map(toKeySegment);
-
-    return translateFirst(segments, permissionPrefix, translate) ?? toReadable(action);
+    return (
+        translateFirst([...permissionSegments(entry), LABEL_KEY], permissionPrefix, translate) ??
+        toReadable(actionOf(entry))
+    );
 }
 
-export function toRolePermissions(groups: Record<string, unknown> | undefined): string[] {
-    return [
-        ...new Set(
-            Object.values(groups ?? {}).flatMap(keys =>
-                Array.isArray(keys) ? keys.filter((key): key is string => typeof key === 'string') : []
-            )
-        )
-    ];
+export function rolePermissionSections(
+    groups: RolePermissionGroup[],
+    { groupIcons, permissionPrefix, translate }: RolePermissionSectionsOptions
+): FormCheckboxSection[] {
+    return groups.map(({ entries, group }) => ({
+        icon: groupIcons[group] ?? ROLES_LIBRARY_GROUP_ICONS[group] ?? ROLES_DEFAULT_GROUP_ICON,
+        key: group,
+        label: rolePermissionGroupLabel(group, permissionPrefix, translate),
+        options: entries.map(entry => ({
+            description: rolePermissionDescription(entry, permissionPrefix, translate),
+            label: rolePermissionLabel(entry, permissionPrefix, translate),
+            value: entry.key
+        }))
+    }));
+}
+
+function actionOf({ group, key }: RolePermissionEntry): string {
+    return key.startsWith(`${group}${GROUP_SEPARATOR}`) ? key.slice(group.length + 1) : key;
 }
 
 function permissionGroupOf(key: string): string {
     return key.split(GROUP_SEPARATOR)[0];
+}
+
+function permissionSegments(entry: RolePermissionEntry): string[] {
+    return [entry.group, ...actionOf(entry).split(GROUP_SEPARATOR)].map(toKeySegment);
 }
 
 function toReadable(text: string): string {
