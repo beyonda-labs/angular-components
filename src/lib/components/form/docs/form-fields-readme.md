@@ -87,12 +87,17 @@ new BeyFormCheckboxSectionsField({
     `angular-components.form.checkbox-sections.count` ("3 of 6 checked"). The chevron at its end folds it too.
 -   **Select all.** Next to the counter, `select-all` checks every enabled option of the section and turns into
     `clear-all` once they all are, which unchecks them; a disabled option keeps its state. Screen readers name it with
-    the section, `select-all-in` and `clear-all-in`.
+    the section, `select-all-in` and `clear-all-in`. It reads as a link, in `--bey-form-checkbox-sections-link`, and
+    takes `--bey-form-checkbox-sections-link-hover` and an underline under the pointer and on keyboard focus.
 -   **Folding.** A section starts folded unless one of its options is checked when the form opens, so an edit form
     opens on what the record holds.
 -   **The body** is a grid of checkboxes, as many per row as fit, four at most (`--bey-form-checkbox-sections-columns`),
-    none narrower than `--bey-grid-column-min-width`. Each checkbox has its label in bold and, under it, its description
-    in a muted text, which describes the checkbox through `aria-describedby`; an option without one shows none.
+    none narrower than `--bey-grid-column-min-width`. Each checkbox has its label in bold and, right under it, its
+    description in a muted text, which describes the checkbox through `aria-describedby`; an option without one shows
+    none. Every option sits at the top of its row, and its description keeps the same small gap under its label
+    however tall the other options of the row are.
+-   **The order** of the sections and of their options is the order of `sections` and of each `options`: the field
+    never sorts them.
 -   **Disabled**, the field reads as a list: every checkbox is disabled, no section offers select all, the labels keep
     their colour and the sections still fold.
 -   **Required** means at least one option checked, as in a checkbox group. Once touched without one, the group sets
@@ -101,12 +106,13 @@ new BeyFormCheckboxSectionsField({
 The whole field is a `group` named by its label. The texts of the field live under
 `angular-components.form.checkbox-sections`, in English and Spanish.
 
-| Variable                                | Default             |
-| --------------------------------------- | ------------------- |
-| `--bey-form-checkbox-sections-surface`  | `--bey-bg-page`     |
-| `--bey-form-checkbox-sections-border`   | `--bey-border-subtle` |
-| `--bey-form-checkbox-sections-link`     | `--bey-primary`     |
-| `--bey-form-checkbox-sections-columns`  | `4`                 |
+| Variable                                  | Default                 |
+| ----------------------------------------- | ----------------------- |
+| `--bey-form-checkbox-sections-surface`    | `--bey-bg-page`         |
+| `--bey-form-checkbox-sections-border`     | `--bey-border-subtle`   |
+| `--bey-form-checkbox-sections-link`       | `--bey-text-link`       |
+| `--bey-form-checkbox-sections-link-hover` | `--bey-text-link-hover` |
+| `--bey-form-checkbox-sections-columns`    | `4`                     |
 
 ## Validators
 

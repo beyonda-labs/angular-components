@@ -60,6 +60,8 @@
 -   Roles module: for a superadmin, the organization of the create form and, with two active organizations or more, an
     organization column and filter; the texts of the `roles.existing-name`, `.invalid-permissions`, `.not-found` and
     `.base-role` errors.
+-   Roles module: `groupOrder` and `actionOrder` on `BeyRolesConfig` put the groups and actions they list first, in
+    their order, the rest in server order; `groupOrder` is empty by default, `actionOrder` lists reading first.
 -   Users module: the invite and edit forms offer the extra roles of the organization of the user as "Additional roles"
     and send them as `extraRoleIds`; for a superadmin they follow the organization of the invitation or of the user.
 -   Users module: the extra roles of each user after its roles in the table, and in the role filter by their `id`;
@@ -75,6 +77,7 @@
     `PUT {baseUrl}/{id}` only when it changes.
 -   Page module: `toItem` of `BeyPageFormConfig` receives the row an edit started from as its second argument.
 -   Styles: the `--bey-dialog-margin`, `--bey-dialog-max-height` and `--bey-grid-column-min-width` tokens.
+-   Styles: the `--bey-text-link` and `--bey-text-link-hover` tokens, the colour of a text button that reads as a link.
 -   Style guide: "Expand all" and "Collapse all" at the top, and a hash naming a module (`#tabs`, `#administration`)
     that opens its section and scrolls to it, on arrival or when a link changes it.
 
@@ -109,6 +112,11 @@
     fails the form stays open and the table reloads, and sending the form again creates the row anew.
 -   Form module: a form of `openWithRequest`, also in `BeyFakeModalFormService`, stays open without an unhandled error
     when its request fails.
+-   Form module: every option of a `BeyFormCheckboxSectionsField` sits at the top of its grid row, with its description
+    right under its label, so a short label no longer opens a gap above the description.
+-   Form module: "Select all" and "Clear all" of a `BeyFormCheckboxSectionsField` read as a link, in `--bey-text-link`,
+    with `--bey-form-checkbox-sections-link-hover` and an underline on hover and on keyboard focus.
+-   Roles module: the permission sections no longer come sorted by group; they follow `groupOrder`, then the server.
 
 ### Removed
 

@@ -1,5 +1,6 @@
 import { faFileLines, faRectangleList, faUser } from '@fortawesome/free-regular-svg-icons';
 
+import { RolePermissionGroup, ROLES_DEFAULT_ACTION_ORDER } from '../models/roles.model';
 import {
     groupRolePermissions,
     rolePermissionDescription,
@@ -18,34 +19,82 @@ describe('role permissions', () => {
         'my-app.permissions.templates.label': 'Templates'
     };
     const translate = (key: string): string => translations[key] ?? key;
+    const serverOrder = { actionOrder: [], groupOrder: [] };
+
+    function keysByGroup(groups: RolePermissionGroup[]): [string, string[]][] {
+        return groups.map(({ entries, group }) => [group, entries.map(({ key }) => key)]);
+    }
 
     describe('groupRolePermissions', () => {
-        it('groups the permissions by their group, ordered by group, each in the order given', () => {
-            const groups = groupRolePermissions([
-                { group: 'users', key: 'users.read' },
-                { group: 'templates', key: 'templates.edit' },
-                { group: 'users', key: 'users.invite' }
-            ]);
+        const entries = [
+            { group: 'templates', key: 'templates.share' },
+            { group: 'users', key: 'users.read' },
+            { group: 'templates', key: 'templates.edit' },
+            { group: 'attachments', key: 'attachments.read' },
+            { group: 'templates', key: 'templates.publish' },
+            { group: 'templates', key: 'templates.read' },
+            { group: 'users', key: 'users.invite' }
+        ];
+
+        it('groups the permissions by their group, in the order of the list when nothing orders them', () => {
+            const groups = groupRolePermissions(entries.slice(0, 3), serverOrder);
 
             expect(groups).toEqual([
-                { entries: [{ group: 'templates', key: 'templates.edit' }], group: 'templates' },
                 {
                     entries: [
-                        { group: 'users', key: 'users.read' },
-                        { group: 'users', key: 'users.invite' }
+                        { group: 'templates', key: 'templates.share' },
+                        { group: 'templates', key: 'templates.edit' }
                     ],
-                    group: 'users'
-                }
+                    group: 'templates'
+                },
+                { entries: [{ group: 'users', key: 'users.read' }], group: 'users' }
+            ]);
+        });
+
+        it('puts the groups groupOrder lists first, in its order, and the others after them in the order of the list', () => {
+            const groups = groupRolePermissions(entries, { actionOrder: [], groupOrder: ['users', 'documents'] });
+
+            expect(groups.map(({ group }) => group)).toEqual(['users', 'templates', 'attachments']);
+        });
+
+        it('puts the permissions whose action actionOrder lists first, in its order, and the others after them in the order of the list', () => {
+            const groups = groupRolePermissions(entries, { actionOrder: ['read', 'edit'], groupOrder: [] });
+
+            expect(keysByGroup(groups)).toEqual([
+                ['templates', ['templates.read', 'templates.edit', 'templates.share', 'templates.publish']],
+                ['users', ['users.read', 'users.invite']],
+                ['attachments', ['attachments.read']]
+            ]);
+        });
+
+        it('orders the groups of the library by the same rules, reading first with the default action order', () => {
+            const groups = groupRolePermissions(
+                [
+                    { group: 'organization', key: 'organization.manage' },
+                    { group: 'roles', key: 'roles.manage' },
+                    { group: 'users', key: 'users.change-status' },
+                    { group: 'users', key: 'users.edit' },
+                    { group: 'users', key: 'users.invite' },
+                    { group: 'users', key: 'users.read' }
+                ],
+                { actionOrder: [...ROLES_DEFAULT_ACTION_ORDER], groupOrder: ['users', 'roles'] }
+            );
+
+            expect(keysByGroup(groups)).toEqual([
+                ['users', ['users.read', 'users.edit', 'users.change-status', 'users.invite']],
+                ['roles', ['roles.manage']],
+                ['organization', ['organization.manage']]
             ]);
         });
 
         it('adds the permissions a role holds that the list leaves out, grouped by their prefix', () => {
-            const groups = groupRolePermissions(
-                [{ group: 'templates', key: 'templates.edit' }],
-                ['templates.edit', 'users.read', 'templates.publish']
-            );
+            const groups = groupRolePermissions([{ group: 'templates', key: 'templates.edit' }], serverOrder, [
+                'templates.edit',
+                'users.read',
+                'templates.publish'
+            ]);
 
-            expect(groups.map(({ entries, group }) => [group, entries.map(({ key }) => key)])).toEqual([
+            expect(keysByGroup(groups)).toEqual([
                 ['templates', ['templates.edit', 'templates.publish']],
                 ['users', ['users.read']]
             ]);
@@ -113,20 +162,23 @@ describe('role permissions', () => {
     describe('rolePermissionSections', () => {
         it('makes a section per group, with the icon the app gives it, the library one or the default', () => {
             const sections = rolePermissionSections(
-                groupRolePermissions([
-                    { group: 'templates', key: 'templates.editContent' },
-                    { group: 'users', key: 'users.invite' },
-                    { group: 'documents', key: 'documents.read' }
-                ]),
+                groupRolePermissions(
+                    [
+                        { group: 'templates', key: 'templates.editContent' },
+                        { group: 'users', key: 'users.invite' },
+                        { group: 'documents', key: 'documents.read' }
+                    ],
+                    serverOrder
+                ),
                 { groupIcons: { templates: faFileLines }, permissionPrefix: 'my-app.permissions', translate }
             );
 
             expect(sections.map(({ icon, key, label }) => [key, label, icon])).toEqual([
-                ['documents', 'Documents', faRectangleList],
                 ['templates', 'Templates', faFileLines],
-                ['users', 'Users', faUser]
+                ['users', 'Users', faUser],
+                ['documents', 'Documents', faRectangleList]
             ]);
-            expect(sections[1].options).toEqual([
+            expect(sections[0].options).toEqual([
                 {
                     description: 'Can change what the templates say.',
                     label: 'Edit the content of templates',

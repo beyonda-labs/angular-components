@@ -4,6 +4,7 @@ import {
     RolePermissionEntry,
     RolePermissionGroup,
     RolePermissionSectionsOptions,
+    RolePermissionsOptions,
     ROLES_DEFAULT_GROUP_ICON,
     ROLES_LIBRARY_GROUP_ICONS,
     ROLES_LIBRARY_PERMISSION_PREFIX
@@ -14,7 +15,11 @@ const LABEL_KEY = 'label';
 const GROUP_SEPARATOR = '.';
 const WORD_SEPARATORS = /[\s._-]+/u;
 
-export function groupRolePermissions(entries: RolePermissionEntry[], held: string[] = []): RolePermissionGroup[] {
+export function groupRolePermissions(
+    entries: RolePermissionEntry[],
+    { actionOrder, groupOrder }: Pick<RolePermissionsOptions, 'actionOrder' | 'groupOrder'>,
+    held: string[] = []
+): RolePermissionGroup[] {
     const missing = held
         .filter(key => !entries.some(entry => entry.key === key))
         .map(key => ({ group: permissionGroupOf(key), key }));
@@ -24,9 +29,10 @@ export function groupRolePermissions(entries: RolePermissionEntry[], held: strin
         groups.set(entry.group, [...(groups.get(entry.group) ?? []), entry]);
     }
 
-    return [...groups.entries()]
-        .map(([group, grouped]) => ({ entries: grouped, group }))
-        .sort((first, second) => first.group.localeCompare(second.group));
+    return inOrder([...groups.keys()], groupOrder, group => group).map(group => ({
+        entries: inOrder(groups.get(group) ?? [], actionOrder, actionOf),
+        group
+    }));
 }
 
 export function rolePermissionDescription(
@@ -74,6 +80,16 @@ export function rolePermissionSections(
 
 function actionOf({ group, key }: RolePermissionEntry): string {
     return key.startsWith(`${group}${GROUP_SEPARATOR}`) ? key.slice(group.length + 1) : key;
+}
+
+function inOrder<TItem>(items: TItem[], order: string[], keyOf: (item: TItem) => string): TItem[] {
+    const rankOf = (item: TItem): number => {
+        const index = order.indexOf(keyOf(item));
+
+        return index === -1 ? order.length : index;
+    };
+
+    return [...items].sort((first, second) => rankOf(first) - rankOf(second));
 }
 
 function permissionGroupOf(key: string): string {

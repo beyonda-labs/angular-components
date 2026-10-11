@@ -31,7 +31,9 @@ describe('RolesFormService', () => {
 
     function buildOptions(overrides: Partial<RolesFormOptions> = {}): RolesFormOptions {
         return {
+            actionOrder: [],
             groupIcons: { templates: faFileLines },
+            groupOrder: [],
             isOrganizationAsked: false,
             organizations: [],
             permissionPrefix: 'demo.permissions',
@@ -43,7 +45,9 @@ describe('RolesFormService', () => {
 
     function buildViewOptions(overrides: Partial<RolesViewOptions> = {}): RolesViewOptions {
         return {
+            actionOrder: [],
             groupIcons: {},
+            groupOrder: [],
             permissionPrefix: 'demo.permissions',
             permissions,
             prefix: 'demo.roles',
@@ -62,6 +66,10 @@ describe('RolesFormService', () => {
         const [checklist] = fieldsOf(sections, 'permissions');
 
         return checklist as FormCheckboxSectionsField;
+    }
+
+    function optionsBySection(sections: FormSection[]): [string, string[]][] {
+        return checklistOf(sections).sections.map(({ key, options }) => [key, options.map(({ value }) => value)]);
     }
 
     beforeEach(() => {
@@ -117,12 +125,6 @@ describe('RolesFormService', () => {
         });
         expect(checklist.sections).toEqual([
             {
-                icon: faRectangleList,
-                key: 'documents',
-                label: 'Documents',
-                options: [{ description: undefined, label: 'Read', value: 'documents.read' }]
-            },
-            {
                 icon: faFileLines,
                 key: 'templates',
                 label: 'Templates',
@@ -130,7 +132,32 @@ describe('RolesFormService', () => {
                     { description: 'Can change the templates.', label: 'Edit templates', value: 'templates.edit' },
                     { description: undefined, label: 'Publish', value: 'templates.publish' }
                 ]
+            },
+            {
+                icon: faRectangleList,
+                key: 'documents',
+                label: 'Documents',
+                options: [{ description: undefined, label: 'Read', value: 'documents.read' }]
             }
+        ]);
+    });
+
+    it('orders the sections of the form and of the view by groupOrder and their permissions by actionOrder', () => {
+        const order = { actionOrder: ['publish'], groupOrder: ['users', 'documents'] };
+        const form = service.buildFormConfig(buildOptions(order));
+        const view = service.buildViewConfig(buildViewOptions(order), {
+            ...reviewers,
+            permissions: ['templates.edit', 'users.read']
+        });
+
+        expect(optionsBySection(form.buildSections())).toEqual([
+            ['documents', ['documents.read']],
+            ['templates', ['templates.publish', 'templates.edit']]
+        ]);
+        expect(optionsBySection(view.sections)).toEqual([
+            ['users', ['users.read']],
+            ['documents', ['documents.read']],
+            ['templates', ['templates.publish', 'templates.edit']]
         ]);
     });
 
@@ -154,11 +181,11 @@ describe('RolesFormService', () => {
         const role = { ...reviewers, permissions: ['templates.edit', 'audit.read'] };
 
         expect(checklistOf(form.buildSections(role)).sections.map(({ key }) => key)).toEqual([
-            'audit',
+            'templates',
             'documents',
-            'templates'
+            'audit'
         ]);
-        expect(form.toFormValue(role)?.permissions).toEqual({ permissions: ['audit.read', 'templates.edit'] });
+        expect(form.toFormValue(role)?.permissions).toEqual({ permissions: ['templates.edit', 'audit.read'] });
     });
 
     it('says there is nothing to give when the caller can give no permission', () => {
@@ -229,8 +256,8 @@ describe('RolesFormService', () => {
             label: 'demo.roles.view.permissions.label'
         });
         expect(checklist.sections.map(({ icon, key }) => [key, icon])).toEqual([
-            ['documents', faRectangleList],
             ['templates', faRectangleList],
+            ['documents', faRectangleList],
             ['users', faUser]
         ]);
         expect(view.initialValue?.permissions).toEqual({ permissions: ['templates.edit', 'users.read'] });

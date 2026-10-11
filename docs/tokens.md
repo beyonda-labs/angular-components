@@ -56,13 +56,18 @@ colours as bare channels, for the rules that need `rgba()`.
 
 ### Text
 
-| Token                  | Light            | Dark             | Used for                     |
-| ---------------------- | ---------------- | ---------------- | ---------------------------- |
-| `--bey-text-primary`   | `--bey-gray-900` | `--bey-gray-50`  | Body copy and headings       |
-| `--bey-text-secondary` | `--bey-gray-700` | `--bey-gray-400` | Supporting copy              |
-| `--bey-text-muted`     | `--bey-gray-500` | `--bey-gray-500` | Labels, placeholders, hints  |
-| `--bey-text-disabled`  | `--bey-gray-400` | `--bey-gray-600` | Disabled controls            |
-| `--bey-text-inverse`   | `--bey-white`    | `--bey-gray-900` | Text over an inverse surface |
+| Token                   | Light                           | Dark                            | Used for                               |
+| ----------------------- | ------------------------------- | ------------------------------- | -------------------------------------- |
+| `--bey-text-primary`    | `--bey-gray-900`                | `--bey-gray-50`                 | Body copy and headings                 |
+| `--bey-text-secondary`  | `--bey-gray-700`                | `--bey-gray-400`                | Supporting copy                        |
+| `--bey-text-muted`      | `--bey-gray-500`                | `--bey-gray-500`                | Labels, placeholders, hints            |
+| `--bey-text-disabled`   | `--bey-gray-400`                | `--bey-gray-600`                | Disabled controls                      |
+| `--bey-text-inverse`    | `--bey-white`                   | `--bey-gray-900`                | Text over an inverse surface           |
+| `--bey-text-link`       | `--bey-blue`                    | `--bey-blue`                    | A text button that reads as a link     |
+| `--bey-text-link-hover` | `--bey-blue`, 25% `--bey-black` | `--bey-blue`, 25% `--bey-white` | That link under the pointer or focused |
+
+`--bey-text-link-hover` mixes the blue with black in the light theme and with white in the dark one
+(`color-mix(in srgb, var(--bey-blue) 75%, …)`), so the hover moves away from the page in both.
 
 ### Borders
 

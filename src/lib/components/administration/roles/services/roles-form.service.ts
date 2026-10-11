@@ -35,7 +35,9 @@ export class RolesFormService {
     private readonly translateService = inject(TranslateService);
 
     buildFormConfig({
+        actionOrder,
         groupIcons,
+        groupOrder,
         isOrganizationAsked,
         organizations,
         permissionPrefix,
@@ -44,6 +46,7 @@ export class RolesFormService {
     }: RolesFormOptions): PageFormConfig<RoleFormValue, RoleRow> {
         const organizationOptions = isOrganizationAsked ? toOrganizationOptions(organizations) : null;
         const initialOrganizationId = organizationOptions?.length === 1 ? organizationOptions[0].value : undefined;
+        const order = { actionOrder, groupOrder };
 
         return new PageFormConfig<RoleFormValue, RoleRow>({
             buildSections: role => [
@@ -82,7 +85,7 @@ export class RolesFormService {
                     ]
                 }),
                 this.buildPermissionsSection(
-                    groupRolePermissions(permissions, role?.permissions),
+                    groupRolePermissions(permissions, order, role?.permissions),
                     { groupIcons, permissionPrefix },
                     `${prefix}.form`,
                     false
@@ -91,17 +94,17 @@ export class RolesFormService {
             prefix: `${prefix}.form`,
             toFormValue: role =>
                 role
-                    ? toRoleValue(role, groupRolePermissions(permissions, role.permissions))
+                    ? toRoleValue(role, groupRolePermissions(permissions, order, role.permissions))
                     : toCreateValue(initialOrganizationId),
             toItem: value => toRoleRequest(value)
         });
     }
 
     buildViewConfig(
-        { groupIcons, permissionPrefix, permissions, prefix, rolePrefix }: RolesViewOptions,
+        { actionOrder, groupIcons, groupOrder, permissionPrefix, permissions, prefix, rolePrefix }: RolesViewOptions,
         role: RoleRow
     ): ModalFormConfig<RoleFormValue> {
-        const groups = groupRolePermissions(permissions, role.permissions);
+        const groups = groupRolePermissions(permissions, { actionOrder, groupOrder }, role.permissions);
         const name = roleLabel(role, rolePrefix, key => this.translateService.instant(key) as string);
 
         return new ModalFormConfig<RoleFormValue>({

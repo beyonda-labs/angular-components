@@ -37,7 +37,9 @@ export interface RolePermissionsFields {
 }
 
 export interface RolePermissionsOptions {
+    actionOrder: string[];
     groupIcons: Readonly<Record<string, IconDefinition>>;
+    groupOrder: string[];
     permissionPrefix: string;
     permissions: RolePermissionEntry[];
 }
@@ -86,8 +88,10 @@ export interface RolesViewOptions extends RolePermissionsOptions {
 }
 
 export class RolesConfig {
+    actionOrder: string[];
     baseUrl: string;
     groupIcons: Record<string, IconDefinition>;
+    groupOrder: string[];
     height: string;
     permissionPrefix: string;
     prefix: string;
@@ -96,8 +100,10 @@ export class RolesConfig {
     usersUrl: string;
 
     constructor({
+        actionOrder = [...ROLES_DEFAULT_ACTION_ORDER],
         baseUrl = '/roles',
         groupIcons = {},
+        groupOrder = [],
         height = 'calc(100vh - 220px)',
         permissionPrefix = ROLES_LIBRARY_PERMISSION_PREFIX,
         prefix = 'angular-components.roles',
@@ -105,8 +111,10 @@ export class RolesConfig {
         storageKey = 'roles',
         usersUrl = '/users'
     }: RolesConfigParameters = {}) {
+        this.actionOrder = actionOrder;
         this.baseUrl = baseUrl;
         this.groupIcons = groupIcons;
+        this.groupOrder = groupOrder;
         this.height = height;
         this.permissionPrefix = permissionPrefix;
         this.prefix = prefix;
@@ -117,8 +125,10 @@ export class RolesConfig {
 }
 
 export interface RolesConfigParameters {
+    actionOrder?: string[];
     baseUrl?: string;
     groupIcons?: Record<string, IconDefinition>;
+    groupOrder?: string[];
     height?: string;
     permissionPrefix?: string;
     prefix?: string;
@@ -128,6 +138,34 @@ export interface RolesConfigParameters {
 }
 
 export const ROLE_NAME_MAX_LENGTH = 60;
+
+export const ROLES_DEFAULT_ACTION_ORDER: readonly string[] = [
+    'read',
+    'read-definition',
+    'create',
+    'edit',
+    'edit-definition',
+    'delete',
+    'duplicate',
+    'complete',
+    'download',
+    'change-status',
+    'convert-to-block',
+    'convert-to-template',
+    'replace-content',
+    'export',
+    'import',
+    'share',
+    'create-category',
+    'edit-category',
+    'delete-category',
+    'move',
+    'restore-trash-item',
+    'delete-trash-item',
+    'empty-trash',
+    'invite',
+    'manage'
+];
 
 export const ROLES_DEFAULT_GROUP_ICON: IconDefinition = faRectangleList;
 

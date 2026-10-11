@@ -20,6 +20,7 @@ and to groups on [the groups page](../../groups/docs/groups-readme.md), whose me
 readonly layoutConfig = this.appShellService.buildConfig();
 readonly rolesConfig = new BeyRolesConfig({
     groupIcons: { documents: faFileLines, templates: faFolderOpen },
+    groupOrder: ['templates', 'documents'],
     permissionPrefix: 'myApp.permissions',
     rolePrefix: 'myApp.roles'
 });
@@ -48,6 +49,8 @@ The route must be in the `allowedPaths` of whoever holds `roles.manage`, which t
 | `rolePrefix`       | `'angular-components.users.roles'`       | i18n prefix the labels of the base roles are read from, the `rolePrefix` of the users page |
 | `permissionPrefix` | `'angular-components.roles.permissions'` | i18n prefix the labels of the permissions are read from, see [Permissions](#permissions) |
 | `groupIcons`       | `{}`                                     | The icon of the section of each permission group, by group, see [Permissions](#permissions) |
+| `groupOrder`       | `[]`                                     | The groups whose sections come first, in this order; the others follow in the order of the server, see [Order](#order) |
+| `actionOrder`      | The default order of [Order](#order)     | The actions whose permissions come first in each section, in this order; the others follow in the order of the server |
 | `storageKey`       | `'roles'`                                | Key under which the table remembers the columns the user hid                       |
 | `height`           | `'calc(100vh - 220px)'`                  | Height of the table                                                                |
 
@@ -95,8 +98,7 @@ a change or a delete of a base role.
 
 The checklist is a [`BeyFormCheckboxSectionsField`](../../../form/docs/form-fields-readme.md#checkbox-sections) under the
 label `form.permissions.label` ("Permissions:"): a foldable section per `group` of the answer, the resource the
-permission belongs to, in the order of the groups, with the permissions of each group in the order the server gives
-them. Each section shows its icon, its label, how many of its permissions are checked ("3/6") and "Select all", which
+permission belongs to, with the permissions of each group, both ordered as [Order](#order) says. Each section shows its icon, its label, how many of its permissions are checked ("3/6") and "Select all", which
 turns into "Clear all" once they all are; its body is a grid of checkboxes, each with its label and, under it, its
 description. The sections start folded, except those holding a permission of the role, so an edit opens on what the
 role gives. A permission the role holds that the answer leaves out, such as one the editor does not hold, is offered
@@ -134,6 +136,31 @@ other group shows `faRectangleList`.
 
 The module ships the labels and descriptions of the library's own permissions: `users.read`, `users.invite`,
 `users.edit`, `users.change-status`, `organization.manage` and `roles.manage`, with the labels of their groups.
+
+### Order
+
+The sections follow `groupOrder`: the groups it lists come first, in its order, and every other group after them, in
+the order the server answers them. `groupOrder` is empty by default, so the sections keep the order of the server.
+Inside a section the permissions follow `actionOrder`, matched on the action of each key (`templates.read` is `read`,
+`templates.category.create` is `category.create`): the ones it lists come first, in its order, and the others after
+them, in the order of the server. A permission the role holds that the answer leaves out is ordered by the same rule,
+as if the server had answered it last. The library's own groups, `users`, `organization` and `roles`, follow both
+lists like any other. Nothing else sorts them on the way: neither the request nor the checklist. The roles module of
+express-components answers the permissions sorted by group and key, so without either list they read in that order.
+
+The default `actionOrder` puts reading first, then the changes of an item, then its folders and its trash, and the
+administration last: `read`, `read-definition`, `create`, `edit`, `edit-definition`, `delete`, `duplicate`,
+`complete`, `download`, `change-status`, `convert-to-block`, `convert-to-template`, `replace-content`, `export`,
+`import`, `share`, `create-category`, `edit-category`, `delete-category`, `move`, `restore-trash-item`,
+`delete-trash-item`, `empty-trash`, `invite` and `manage`. An `actionOrder` of the app replaces the whole list, and
+`[]` keeps the order of the server.
+
+```ts
+new BeyRolesConfig({
+    actionOrder: ['read', 'edit', 'publish'],
+    groupOrder: ['templates', 'documents', 'global-variables', 'attachments']
+});
+```
 
 ## Organizations
 
