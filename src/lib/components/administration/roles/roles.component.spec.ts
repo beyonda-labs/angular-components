@@ -10,6 +10,7 @@ import { FakeToastService } from '@testing/services/fake-toast.service';
 
 import { SessionUser } from '../../../services/session/models/session.model';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
+import { FormCheckboxSectionsField } from '../../form/models/fields/form-checkbox-sections-field.model';
 import { FormHandle } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
 import rolesEn from './assets/roles.en.json';
@@ -24,8 +25,8 @@ const MANAGER: SessionUser = {
     roles: ['adminuser']
 };
 const PERMISSIONS: RolePermissionEntry[] = [
-    { group: 'templates', key: 'templates.edit' },
     { group: 'templates', key: 'templates.publish' },
+    { group: 'templates', key: 'templates.edit' },
     { group: 'documents', key: 'documents.read' }
 ];
 const PERMISSIONS_URL = 'https://api.test/api/roles/permissions';
@@ -113,6 +114,12 @@ describe('RolesComponent', () => {
         );
     }
 
+    function permissionsOffered(): [string, string[]][] {
+        const [checklist] = fieldsOf(modalForms.forms().at(-1), 'permissions') as FormCheckboxSectionsField[];
+
+        return checklist.sections.map(({ key, options }) => [key, options.map(({ value }) => value)]);
+    }
+
     async function click(button: HTMLElement): Promise<void> {
         button.click();
         await settle(fixture);
@@ -193,6 +200,28 @@ describe('RolesComponent', () => {
             permissions: ['documents.read']
         });
         expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: `${PREFIX}.toast.create-success` }]);
+    });
+
+    it('offers the permissions by group in the order of the server, each group in the default order of the actions', async () => {
+        await render();
+
+        await click(buttonByName(fixture, `${PREFIX}.actions.create.label`));
+
+        expect(permissionsOffered()).toEqual([
+            ['templates', ['templates.edit', 'templates.publish']],
+            ['documents', ['documents.read']]
+        ]);
+    });
+
+    it('offers the permissions in the order of the groups and the actions the config gives', async () => {
+        await render(undefined, undefined, new RolesConfig({ actionOrder: ['publish'], groupOrder: ['documents'] }));
+
+        await click(buttonByName(fixture, `${PREFIX}.actions.create.label`));
+
+        expect(permissionsOffered()).toEqual([
+            ['documents', ['documents.read']],
+            ['templates', ['templates.publish', 'templates.edit']]
+        ]);
     });
 
     it('edits an extra role from its name, with its permissions checked', async () => {

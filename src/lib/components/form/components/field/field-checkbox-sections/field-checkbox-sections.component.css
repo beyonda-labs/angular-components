@@ -1,7 +1,8 @@
 :host {
     --bey-form-checkbox-sections-border: var(--bey-border-subtle);
     --bey-form-checkbox-sections-columns: 4;
-    --bey-form-checkbox-sections-link: var(--bey-primary);
+    --bey-form-checkbox-sections-link: var(--bey-text-link);
+    --bey-form-checkbox-sections-link-hover: var(--bey-text-link-hover);
     --bey-form-checkbox-sections-surface: var(--bey-bg-page);
 
     display: block;
@@ -47,8 +48,7 @@
     text-align: left;
 }
 
-.bey-form-checkbox-sections-toggle:focus-visible,
-.bey-form-checkbox-sections-toggle-all:focus-visible {
+.bey-form-checkbox-sections-toggle:focus-visible {
     outline: var(--bey-border-width-thick) solid var(--bey-primary);
     outline-offset: var(--bey-space-3xs);
 }
@@ -90,9 +90,19 @@
     font-weight: var(--bey-font-weight-semibold);
     line-height: var(--bey-line-height-base);
     padding: var(--bey-space-2xs) var(--bey-space-xs);
+    text-underline-offset: var(--bey-space-3xs);
+    transition: color var(--bey-duration-fast) var(--bey-easing-standard);
 }
 
 .bey-form-checkbox-sections-toggle-all:hover {
+    color: var(--bey-form-checkbox-sections-link-hover);
+    text-decoration: underline;
+}
+
+.bey-form-checkbox-sections-toggle-all:focus-visible {
+    color: var(--bey-form-checkbox-sections-link-hover);
+    outline: var(--bey-border-width-thick) solid var(--bey-form-checkbox-sections-link);
+    outline-offset: var(--bey-space-3xs);
     text-decoration: underline;
 }
 
@@ -126,6 +136,7 @@
 }
 
 .bey-form-checkbox-sections-body {
+    align-items: start;
     border-top: var(--bey-border-width) solid var(--bey-form-checkbox-sections-border);
     display: grid;
     gap: var(--bey-space-md) var(--bey-space-lg);
@@ -146,6 +157,7 @@
 }
 
 .bey-form-checkbox-sections-option {
+    align-content: start;
     align-items: start;
     display: grid;
     gap: var(--bey-space-3xs) var(--bey-space-sm);
