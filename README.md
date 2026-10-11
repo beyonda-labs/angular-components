@@ -82,6 +82,7 @@ const form = new BeyFormConfig({
 | Account data     | `<bey-account-data>`     | Stable                      |
 | Edit lock notice | `<bey-edit-lock-notice>` | Stable                      |
 | Form             | `<bey-form>`             | Stable                      |
+| Groups           | `<bey-groups>`           | Stable                      |
 | Header           | `<bey-header>`           | Stable                      |
 | Left Menu        | `<bey-left-menu>`        | Stable                      |
 | Notice           | `<bey-notice>`           | Stable                      |
@@ -113,6 +114,7 @@ Component documentation:
 -   [Account data](src/lib/components/account-data/docs/account-data-readme.md)
 -   [Edit lock notice](src/lib/components/edit-lock-notice/docs/edit-lock-notice-readme.md)
 -   [Form](src/lib/components/form/docs/form-readme.md)
+-   [Groups](src/lib/components/groups/docs/groups-readme.md)
 -   [Header](src/lib/components/header/docs/header-readme.md)
 -   [Left Menu](src/lib/components/left-menu/docs/left-menu-readme.md)
 -   [Notice](src/lib/components/notice/docs/notice-readme.md)

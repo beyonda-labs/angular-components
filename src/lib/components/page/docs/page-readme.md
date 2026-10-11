@@ -340,7 +340,11 @@ with an organization filter in force asks at once. The page asks once per visit 
 of the list (`angular-components.page.count.one` or `.many`, with `{{count}}`), once the folder has answered.
 `nameField`, `parentField`, `parentPathField` and `typeField` name the fields the page reads. A row whose
 `typeField` says `category` is drawn by `categoriesConfig.loadRow(category, viewMode)` instead of the table's
-`loadRow`; without one it shows its name as a link that opens it, as plain text in the trash. A custom cell opens
+`loadRow`; without one it shows its name as a link that opens it, as plain text in the trash. Every other value, or
+none, makes it an item. The entries the page sends to move rows, restore them or delete them from the trash are
+always `{ id, type }`, with the `type` read from `typeField`, so rows that have a `type` field of their own (the type
+of a variable) name another one, `typeField: 'entryType'`, as base-entity of express-components does with the
+`typeField` of its categories. Without categories every entry is an `item`. A custom cell opens
 a category through `handle.openCategory(category)`. With `tableConfig.isTrashEnabled`, with or without categories, a segmented toggle
 switches to the flat trash view, where the
 `restore-trash-item` and `delete-trash-item` actions apply, and `empty-trash`, shown while the backend lists it in

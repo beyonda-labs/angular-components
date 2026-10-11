@@ -311,6 +311,8 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [x] Users page on `bey-page`, over the `users` module of express-components: invite, deactivate, change roles
 -   [x] Organizations page for the superadmin, and the organization column and filter of every page and of the users
         page, shown only while the rows span two organizations or more
+-   [x] Groups page for the managers of an organization and the superadmin, over the `groups` module of
+        express-components: create, rename and delete a group and set its members, the targets of the folder sharing
 -   [ ] A modal at the first sign-in that asks to change a default password (the generated superadmin's, or one an
         admin set), built on `bey-password-change`, and that stays until the password changes
 -   [ ] _(high priority)_ Roles and permissions pages, over the `roles` module of express-components: create a role,

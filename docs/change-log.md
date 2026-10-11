@@ -7,6 +7,11 @@
 -   Organizations module: `bey-organizations`, the superadmin's page over `/organizations` on `bey-page`: create and
     rename an organization, deactivate or reactivate it, and invite its first admin with the `adminRole` of the config.
 -   Organizations module: the texts of the `organizations.existing-name` and `.not-found` errors.
+-   Groups module: `bey-groups`, the page of the groups of users of an organization over `/groups` on `bey-page`, for
+    its managers and the superadmin: create, rename and delete a group (confirmed), and set its members.
+-   Groups module: for a superadmin, the organization of the create form (required, chosen already when only one is
+    active), and with two active organizations or more an organization column and filter, from `/users/organizations`.
+-   Groups module: the texts of the `groups.existing-name`, `.invalid-members` and `.not-found` errors.
 -   Page module: `beyPageOrganizationColumn(overrides?)` and `beyPageOrganizationCell(row)` show the `organizationName`
     of a `BeyPageOrganizationItem`, only while `GET {baseUrl}/organizations` names two organizations or more.
 -   Page module: `isOrganizationFilterEnabled` on `BeyPageTableSearchConfig` adds an "Organization" filter,
@@ -44,6 +49,8 @@
 
 -   Page module: the menus of the header open over the search toolbar again; the search sits in the new
     `--bey-z-toolbar` layer, over the sticky header of the table and under the menus.
+-   Page module: the entries of a move and of the trash read their type from the `typeField` of the categories, still
+    sent as `{ id, type }`, so rows may keep a `type` field of their own; without categories every entry is an `item`.
 
 ## [1.4.0] - 2026-10-10
 
