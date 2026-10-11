@@ -25,6 +25,8 @@ import { PageLifecycleActionsService } from './page-lifecycle-actions.service';
 import { PageShareActionsService } from './page-share-actions.service';
 import { PageUsagesService } from './page-usages.service';
 
+const ignoreError = (): void => undefined;
+
 export interface PageActionsContext {
     config: PageConfig;
     getCurrentCategoryId: () => string | number | null;
@@ -441,16 +443,19 @@ export class PageActionsService {
             ? options.edit(baseUrl, original.id, value, successToast)
             : options.create(baseUrl, value, successToast);
 
-        request.subscribe(created => {
-            const followUp = original ? undefined : options.afterCreate?.(created as PageItem);
+        request.subscribe({
+            error: ignoreError,
+            next: created => {
+                const followUp = original ? undefined : options.afterCreate?.(created as PageItem);
 
-            if (!followUp) {
-                this.completeSave(handle, options);
+                if (!followUp) {
+                    this.completeSave(handle, options);
 
-                return;
+                    return;
+                }
+
+                followUp.subscribe({ error: () => options.onSaved(), next: () => this.completeSave(handle, options) });
             }
-
-            followUp.subscribe(() => this.completeSave(handle, options));
         });
     }
 }

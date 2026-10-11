@@ -14,6 +14,8 @@ import { PageItem } from '../models/page-item.model';
 const CANCEL_LABEL_KEY = 'angular-components.page.form.cancel';
 const SUBMIT_LABEL_KEY = 'angular-components.page.form.submit';
 
+const ignoreError = (): void => undefined;
+
 @Injectable({
     providedIn: 'root'
 })
@@ -38,10 +40,13 @@ export class PageFormService {
                 onSubmit: (value, handle) => {
                     const callback = item ? pageForm.onEdit : pageForm.onCreate;
 
-                    this.confirmSave(pageForm, value, item).subscribe(isConfirmed => {
-                        if (isConfirmed) {
-                            callback?.(value, handle);
-                            onSave(pageForm.toItem(value), handle);
+                    this.confirmSave(pageForm, value, item).subscribe({
+                        error: ignoreError,
+                        next: isConfirmed => {
+                            if (isConfirmed) {
+                                callback?.(value, handle);
+                                onSave(pageForm.toItem(value), handle);
+                            }
                         }
                     });
                 },
