@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 import { HttpService } from '../../../services/http/http.service';
 import { PageOrganization, PageOrganizationsResponse } from '../../page/models/page-organization.model';
 import { PageUrlService } from '../../page/services/page-url.service';
-import { UserRolesResponse, USERS_ORGANIZATIONS_PATH, USERS_ROLES_PATH } from '../models/users.model';
+import { UserRoles, UserRolesResponse, USERS_ORGANIZATIONS_PATH, USERS_ROLES_PATH } from '../models/users.model';
 
 const ignoreError = (): void => undefined;
 
@@ -23,10 +23,10 @@ export class UsersHttpService {
             .pipe(map(({ organizations }) => organizations));
     }
 
-    loadRoles(baseUrl: string): Observable<string[]> {
+    loadRoles(baseUrl: string): Observable<UserRoles> {
         return this.httpService
             .get<UserRolesResponse>(`${this.pageUrlService.resolve(baseUrl)}${USERS_ROLES_PATH}`)
-            .pipe(map(({ roles }) => roles));
+            .pipe(map(({ extraRoles = [], roles }) => ({ extraRoles, roles })));
     }
 
     resendInvitation(baseUrl: string, id: string, successToast: string): Observable<void> {

@@ -12,7 +12,7 @@ import {
     TextTableCell
 } from '../../table/models/table-cell.model';
 import { userFullName, userRoleLabel } from '../functions/user-labels';
-import { USER_STATUS_BADGE_VARIANTS, UserRow, UsersRowOptions } from '../models/users.model';
+import { USER_STATUS_BADGE_VARIANTS, UserRow, USERS_EXTRA_ROLE_VARIANT, UsersRowOptions } from '../models/users.model';
 
 const CREATED_FORMAT = 'yyyy-MM-dd';
 const LAST_LOGIN_FORMAT = 'yyyy-MM-dd HH:mm';
@@ -29,14 +29,24 @@ export class UsersTableService {
             new TextTableCell({ content: user.email, tooltip: user.email }),
             ...(isOrganizationShown ? [buildOrganizationCell(user, prefix)] : []),
             new BadgeTableCell({
-                badges: user.roles.map(
-                    role =>
-                        new BadgeConfig({
-                            isTranslated: false,
-                            label: userRoleLabel(role, rolePrefix, key => this.translateService.instant(key) as string),
-                            variant: BadgeVariant.Primary
-                        })
-                )
+                badges: [
+                    ...user.roles.map(
+                        role =>
+                            new BadgeConfig({
+                                isTranslated: false,
+                                label: userRoleLabel(
+                                    role,
+                                    rolePrefix,
+                                    key => this.translateService.instant(key) as string
+                                ),
+                                variant: BadgeVariant.Primary
+                            })
+                    ),
+                    ...(user.extraRoles ?? []).map(
+                        ({ name }) =>
+                            new BadgeConfig({ isTranslated: false, label: name, variant: USERS_EXTRA_ROLE_VARIANT })
+                    )
+                ]
             }),
             new BadgeTableCell({
                 badges: [

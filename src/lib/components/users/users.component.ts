@@ -45,11 +45,12 @@ export class UsersComponent {
         return buildUsersPageConfig({
             config,
             formConfig: this.usersFormService.buildFormConfig({
+                extraRoles: roles.extraRoles,
                 isOrganizationAsked: isSuperadmin,
                 organizations,
                 prefix,
                 rolePrefix,
-                roles
+                roles: roles.roles
             }),
             isOrganizationShown,
             loadRow: user =>
@@ -62,7 +63,7 @@ export class UsersComponent {
             onReady: handle => (this.page = handle),
             onResendInvitation: user => this.usersActionsService.resendInvitation(config, user),
             organizations,
-            roleOptions: this.usersFormService.buildRoleOptions(roles, rolePrefix)
+            roleOptions: this.usersFormService.buildRoleFilterOptions(roles, rolePrefix, organizations)
         });
     });
 

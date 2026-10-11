@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { buttonByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 import { FakeToastService } from '@testing/services/fake-toast.service';
 
@@ -11,9 +12,11 @@ import { FormInfoField } from '../form/models/fields/form-info-field.model';
 import { FormSelectField } from '../form/models/fields/form-select-field.model';
 import { FormHandle } from '../form/models/form.model';
 import { FormField } from '../form/models/form-field.model';
-import { UserRow, UsersConfig, UserStatus } from './models/users.model';
+import { PageSearch } from '../page/models/page-search.model';
+import { UserRolesResponse, UserRow, UsersConfig, UserStatus } from './models/users.model';
 import { UsersComponent } from './users.component';
 
+const BASE_ROLES: UserRolesResponse = { roles: ['admin', 'editor'] };
 const PREFIX = 'angular-components.users';
 const SEARCH_DEBOUNCE_MS = 350;
 const USERS_URL = 'https://api.test/api/users';
@@ -52,10 +55,11 @@ describe('UsersComponent', () => {
     async function render(
         users: UserRow[] = [buildUser()],
         globalActions: string[] = ['create'],
-        config = new UsersConfig()
+        config = new UsersConfig(),
+        roles: UserRolesResponse = BASE_ROLES
     ): Promise<void> {
         fixture = await renderComponent(UsersComponent, { config });
-        httpTesting.expectOne(`${USERS_URL}/roles`).flush({ roles: ['admin', 'editor'] });
+        httpTesting.expectOne(`${USERS_URL}/roles`).flush(roles);
         await settle(fixture);
         httpTesting
             .expectOne(request => request.url === USERS_URL)
@@ -246,6 +250,105 @@ describe('UsersComponent', () => {
         expect(queryButton(fixture, `${PREFIX}.actions.create.label`)).toBeNull();
         expect(queryButton(fixture, `${PREFIX}.actions.edit.label`)).toBeNull();
         expect(queryButton(fixture, 'Ada Lovelace')).toBeNull();
+    });
+
+    describe('with extra roles', () => {
+        const ROLES: UserRolesResponse = {
+            extraRoles: [{ id: 'r1', name: 'Reviewers', organizationId: 'o2' }],
+            roles: ['admin', 'editor']
+        };
+
+        async function choose(select: HTMLSelectElement, value: string): Promise<void> {
+            select.value = value;
+            select.dispatchEvent(new Event('change'));
+            await settle(fixture);
+        }
+
+        async function click(button: HTMLElement): Promise<void> {
+            button.click();
+            await settle(fixture);
+        }
+
+        beforeEach(async () => {
+            await render(
+                [buildUser({ extraRoles: [{ id: 'r1', name: 'Reviewers' }] })],
+                ['create'],
+                new UsersConfig(),
+                ROLES
+            );
+        });
+
+        it('shows the extra roles of a user after its roles', () => {
+            expect(rowWith('ada@example.test').textContent).toContain('editor');
+            expect(rowWith('ada@example.test').textContent).toContain('Reviewers');
+        });
+
+        it('invites a user with the extra roles picked among those of the organization', async () => {
+            await click(buttonByName(fixture, `${PREFIX}.actions.create.label`));
+            const form = modalForms.forms().at(-1);
+            form?.onSubmit?.(
+                { main: { email: 'grace@example.test', extraRoleIds: ['r1'], roles: ['editor'] } },
+                buildHandle()
+            );
+            const request = httpTesting.expectOne(current => current.url === USERS_URL && current.method === 'POST');
+            request.flush(buildUser({ email: 'grace@example.test', id: 'u2' }));
+            await settle(fixture);
+            reload().flush({ globalActions: [], results: [] });
+
+            expect(fieldsOf(form).map(field => field.key)).toContain('extraRoleIds');
+            expect(request.request.body).toEqual({
+                email: 'grace@example.test',
+                extraRoleIds: ['r1'],
+                roles: ['editor']
+            });
+        });
+
+        it('edits the extra roles of a user, checked with those it holds', async () => {
+            await click(buttonByName(fixture, 'Ada Lovelace'));
+            const form = modalForms.forms().at(-1);
+            form?.onSubmit?.({ main: { extraRoleIds: [], name: 'Ada', roles: ['editor'] } }, buildHandle());
+            const request = httpTesting.expectOne(`${USERS_URL}/u1`);
+            request.flush(buildUser());
+            await settle(fixture);
+            reload().flush({ globalActions: [], results: [] });
+
+            expect(form?.initialValue).toEqual({
+                main: { extraRoleIds: ['r1'], name: 'Ada', roles: ['editor'], surname: 'Lovelace' }
+            });
+            expect(request.request.body).toEqual({ extraRoleIds: [], name: 'Ada', roles: ['editor'] });
+        });
+
+        it('shows the reason the server gives for extra roles out of the organization of the user', async () => {
+            await click(buttonByName(fixture, 'Ada Lovelace'));
+            modalForms
+                .forms()
+                .at(-1)
+                ?.onSubmit?.({ main: { extraRoleIds: ['r9'], name: 'Ada', roles: ['editor'] } }, buildHandle());
+            httpTesting
+                .expectOne(`${USERS_URL}/u1`)
+                .flush(
+                    { errorCode: 'invalid', messageKey: 'users.invalid-extra-roles' },
+                    { status: 400, statusText: 'Bad Request' }
+                );
+            await settle(fixture);
+
+            expect(TestBed.inject(FakeModalService).errors()).toEqual([
+                expect.objectContaining({ message: 'angular-components.http.error.users.invalid-extra-roles' })
+            ]);
+        });
+
+        it('filters by an extra role, sending its id as the role', async () => {
+            await click(queryAll<HTMLButtonElement>(fixture, 'bey-search [aria-expanded]')[0]);
+            await click(buttonByName(fixture, 'angular-components.search.add'));
+            const selects = (): HTMLSelectElement[] =>
+                queryAll<HTMLSelectElement>(queryAll(fixture, '[role="group"]')[0], 'select');
+            await choose(selects()[0], 'role');
+            await choose(selects()[2], 'r1');
+            await click(buttonByName(fixture, 'angular-components.search.apply'));
+            const search = JSON.parse(atob(reload().request.params.get('search') ?? '')) as PageSearch;
+
+            expect(search.filters).toEqual([{ field: 'role', operator: 'equals', value: 'r1' }]);
+        });
     });
 
     it('still lists the users when the roles cannot be read', async () => {

@@ -21,13 +21,21 @@ describe('UsersHttpService', () => {
         httpTesting.verify();
     });
 
-    it('reads the roles a user may be given', () => {
-        const roles = jest.fn();
+    it('reads the roles and the extra roles a user may be given, with no extra roles from a server without them', () => {
+        const answers: unknown[] = [];
+        const reviewers = { id: 'r1', name: 'Reviewers', organizationId: 'o1' };
 
-        service.loadRoles('/users').subscribe(roles);
-        httpTesting.expectOne('https://api.test/api/users/roles').flush({ roles: ['admin', 'editor'] });
+        service.loadRoles('/users').subscribe(roles => answers.push(roles));
+        httpTesting
+            .expectOne('https://api.test/api/users/roles')
+            .flush({ extraRoles: [reviewers], roles: ['admin', 'editor'] });
+        service.loadRoles('/users').subscribe(roles => answers.push(roles));
+        httpTesting.expectOne('https://api.test/api/users/roles').flush({ roles: ['editor'] });
 
-        expect(roles).toHaveBeenCalledWith(['admin', 'editor']);
+        expect(answers).toEqual([
+            { extraRoles: [reviewers], roles: ['admin', 'editor'] },
+            { extraRoles: [], roles: ['editor'] }
+        ]);
     });
 
     it('reads the organizations a superadmin may invite into, opening no modal when it fails', () => {

@@ -19,15 +19,20 @@ describe('UserRolesService', () => {
         expect(service.roles()).toBeNull();
 
         service.load('/users');
-        httpTesting.expectOne('https://api.test/api/users/roles').flush({ roles: ['editor'] });
+        httpTesting
+            .expectOne('https://api.test/api/users/roles')
+            .flush({ extraRoles: [{ id: 'r1', name: 'Reviewers', organizationId: 'o1' }], roles: ['editor'] });
 
-        expect(service.roles()).toEqual(['editor']);
+        expect(service.roles()).toEqual({
+            extraRoles: [{ id: 'r1', name: 'Reviewers', organizationId: 'o1' }],
+            roles: ['editor']
+        });
     });
 
     it('knows the roles to be none when they cannot be read', () => {
         service.load('/users');
         httpTesting.expectOne('https://api.test/api/users/roles').flush(null, { status: 403, statusText: 'Forbidden' });
 
-        expect(service.roles()).toEqual([]);
+        expect(service.roles()).toEqual({ extraRoles: [], roles: [] });
     });
 });

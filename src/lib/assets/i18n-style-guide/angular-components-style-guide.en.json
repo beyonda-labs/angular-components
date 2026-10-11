@@ -831,6 +831,10 @@
             }
         },
         "properties-menu-section": "Properties Menu",
+        "roles": {
+            "example": "The roles and permissions page of a manager or the superadmin: the base roles of the application with their permissions to see, and the additional roles of the organization to create, edit and delete, their permissions chosen from a checklist grouped by resource, as far as the backend allows each row. The demo backend serves no roles, so the list stays empty."
+        },
+        "roles-section": "Roles and permissions",
         "search": {
             "applied": "Applied filters",
             "example": "Quick search box plus a panel of typed filter rows. It starts from the filters of its config, here the editor role; every change is reported through onFiltersChange and the consumer runs the query.",

@@ -131,6 +131,18 @@ describe('SessionService', () => {
             expect(service.getUser()?.organizationId).toBeUndefined();
         });
 
+        it('decodes the permissions the extra roles of the user add, and none when the token has no claim', () => {
+            const payload = { email: 'ada@example.com', extraPermissions: ['templates.edit'], roles: ['normaluser'] };
+
+            service.setToken(`header.${btoa(JSON.stringify(payload))}.signature`);
+
+            expect(service.getUser()?.extraPermissions).toEqual(['templates.edit']);
+
+            service.setToken(buildAccessToken(['/documents']));
+
+            expect(service.getUser()?.extraPermissions).toBeUndefined();
+        });
+
         it('exposes the user it is given as it is', () => {
             service.setUser(mockUser);
 

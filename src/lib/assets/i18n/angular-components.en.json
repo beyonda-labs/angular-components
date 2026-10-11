@@ -316,6 +316,12 @@
                     "uppercase-required": "The password must include an uppercase letter."
                 },
                 "required-field": "The field \"{{fieldName}}\" is required.",
+                "roles": {
+                    "base-role": "The base roles of the application cannot be changed nor deleted.",
+                    "existing-name": "There is already a role with this name in this organization, or it is the name of a base role.",
+                    "invalid-permissions": "Some of the permissions chosen cannot go into a role: they are not yours to give, or they manage users, organizations or roles. Reload the page and try again.",
+                    "not-found": "This role does not exist or is out of your reach. Reload the page and try again."
+                },
                 "service-unavailable": "The service is temporarily unavailable. Please try again later.",
                 "sharing": {
                     "invalid-grantees": "Some of the users or groups chosen cannot get access to this folder: they belong to another organization, own it or no longer exist. Reload the page and try again."
@@ -326,6 +332,7 @@
                 "unknown": "An unexpected error occurred. Please try again later.",
                 "users": {
                     "existing-user": "There is already an account with the email {{email}}.",
+                    "invalid-extra-roles": "Some of the additional roles chosen do not belong to the organization of the user, or no longer exist. Reload the page and try again.",
                     "invitation-not-sent": "The user {{email}} was created, but the invitation email could not be sent. Use \"Resend invitation\" to try again.",
                     "last-superadmin": "This change would leave no active superadmin.",
                     "not-found": "This user does not exist. Reload the page and try again.",
@@ -442,6 +449,12 @@
                     "uppercase-required": "Uppercase letter missing"
                 },
                 "required-field": "Required field",
+                "roles": {
+                    "base-role": "Base role",
+                    "existing-name": "Name already in use",
+                    "invalid-permissions": "Permissions not valid",
+                    "not-found": "Role not found"
+                },
                 "service-unavailable": "Service unavailable",
                 "sharing": {
                     "invalid-grantees": "Recipients not valid"
@@ -451,6 +464,7 @@
                 "unknown": "Unexpected error",
                 "users": {
                     "existing-user": "Account already exists",
+                    "invalid-extra-roles": "Additional roles not valid",
                     "invitation-not-sent": "Invitation not sent",
                     "last-superadmin": "Last superadmin",
                     "not-found": "User not found",
@@ -902,6 +916,125 @@
                 "expand": "Expand"
             }
         },
+        "roles": {
+            "actions": {
+                "create": {
+                    "label": "New role",
+                    "tooltip": "Create an additional role for the users of the organization"
+                },
+                "delete": {
+                    "label": "Delete",
+                    "tooltip": "Delete the selected roles"
+                },
+                "edit": {
+                    "label": "Edit",
+                    "tooltip": "Edit the selected role"
+                }
+            },
+            "form": {
+                "create": {
+                    "title": "New role"
+                },
+                "edit": {
+                    "title": "Edit role"
+                },
+                "main": {
+                    "description": {
+                        "label": "Description",
+                        "placeholder": "Say what the role is for"
+                    },
+                    "name": {
+                        "label": "Name",
+                        "placeholder": "Type the name of the role"
+                    },
+                    "organization-id": {
+                        "label": "Organization",
+                        "placeholder": "Choose an organization"
+                    }
+                },
+                "permissions": {
+                    "empty": "There are no permissions you can give.",
+                    "label": "Permissions"
+                }
+            },
+            "modal": {
+                "delete": {
+                    "message": "This will delete {{count}} role(s), and the users who hold them will lose the permissions they give. Do you want to continue?",
+                    "title": "Delete roles"
+                }
+            },
+            "permissions": {
+                "organization": {
+                    "label": "Organization",
+                    "manage": "Manage the organization"
+                },
+                "roles": {
+                    "label": "Roles",
+                    "manage": "Manage roles and permissions"
+                },
+                "users": {
+                    "change-status": "Activate and deactivate users",
+                    "edit": "Edit users",
+                    "invite": "Invite users",
+                    "label": "Users",
+                    "read": "See users"
+                }
+            },
+            "search": {
+                "fields": {
+                    "text": "Name"
+                }
+            },
+            "table": {
+                "columns": {
+                    "description": "Description",
+                    "member-count": "Users",
+                    "name": "Name",
+                    "organization": "Organization",
+                    "permission-count": "Permissions",
+                    "type": "Type"
+                },
+                "empty": "No role matches the search",
+                "every-organization": "All",
+                "tooltips": {
+                    "description": "What the role is for",
+                    "member-count": "How many users hold it",
+                    "name": "The name of the role",
+                    "organization": "The organization the role belongs to",
+                    "permission-count": "How many permissions it gives",
+                    "type": "Whether it is a base role of the application or an additional role of the organization"
+                },
+                "view-permissions": "See permissions"
+            },
+            "title": "Roles and permissions",
+            "toast": {
+                "create-success": "Role created",
+                "delete-success": "Roles deleted",
+                "edit-success": "Role saved"
+            },
+            "type": {
+                "base": "Base",
+                "extra": "Additional"
+            },
+            "view": {
+                "buttons": {
+                    "close": "Close"
+                },
+                "main": {
+                    "description": {
+                        "label": "Description"
+                    },
+                    "name": {
+                        "label": "Role"
+                    }
+                },
+                "permissions": {
+                    "empty": "This role gives no permissions.",
+                    "label": "Permissions"
+                },
+                "title": "Permissions of the role"
+            }
+        },
         "search": {
             "add": "Add filter",
             "apply": "Apply filter",
@@ -1003,6 +1136,9 @@
                     "email": {
                         "label": "Email",
                         "placeholder": "Type the email of the person"
+                    },
+                    "extra-role-ids": {
+                        "label": "Additional roles"
                     },
                     "language": {
                         "label": "Language of the invitation",
