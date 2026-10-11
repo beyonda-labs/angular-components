@@ -15,11 +15,11 @@ describe('UserOrganizationsService', () => {
     let httpTesting: HttpTestingController;
     let service: UserOrganizationsService;
 
-    function configure(roles: string[]): void {
+    function configure(roles: string[], organizationId?: string): void {
         const user: SessionUser = {
             allowedPaths: ['/users'],
             email: 'ada@example.test',
-            organizationId: 'o2',
+            organizationId,
             redirectPath: '/users',
             roles
         };
@@ -34,15 +34,15 @@ describe('UserOrganizationsService', () => {
         httpTesting.verify();
     });
 
-    it('reads the organizations for a superadmin, and knows the own organization of the session', () => {
+    it('reads the organizations for a superadmin, who belongs to none of them', () => {
         configure(['superadmin']);
         expect(service.organizations()).toBeNull();
 
         service.load('/users');
         httpTesting.expectOne(ORGANIZATIONS_URL).flush({ organizations: ORGANIZATIONS });
 
+        expect(service.isSuperadmin()).toBe(true);
         expect(service.organizations()).toEqual(ORGANIZATIONS);
-        expect(service.organizationId()).toBe('o2');
     });
 
     it('knows no organizations for a superadmin when they cannot be read', () => {
@@ -54,12 +54,16 @@ describe('UserOrganizationsService', () => {
         expect(service.organizations()).toEqual([]);
     });
 
-    it('asks nothing for a manager or a normal user, who only ever see their own organization', () => {
-        configure(['adminuser']);
+    it.each([
+        ['a manager', ['adminuser']],
+        ['a normal user', ['editor']]
+    ])('asks nothing for %s, who only ever sees the own organization', (_, roles) => {
+        configure(roles, 'o2');
 
         service.load('/users');
 
         httpTesting.expectNone(ORGANIZATIONS_URL);
+        expect(service.isSuperadmin()).toBe(false);
         expect(service.organizations()).toEqual([]);
     });
 });

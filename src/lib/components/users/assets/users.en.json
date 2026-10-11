@@ -9,7 +9,8 @@
                     "not-found": "This user does not exist. Reload the page and try again.",
                     "not-invited": "This account is no longer waiting for an invitation.",
                     "own-account": "You cannot deactivate your own account nor change your own roles.",
-                    "superadmin-only": "Only a superadmin can grant or remove the superadmin role, or change a superadmin account.",
+                    "superadmin-only": "Only a superadmin can change a superadmin account.",
+                    "superadmin-role-fixed": "The superadmin role cannot be granted nor removed.",
                     "unknown-role": "The role \"{{role}}\" does not exist."
                 }
             },
@@ -22,6 +23,7 @@
                     "not-invited": "No pending invitation",
                     "own-account": "Your own account",
                     "superadmin-only": "Superadmins only",
+                    "superadmin-role-fixed": "Fixed role",
                     "unknown-role": "Unknown role"
                 }
             }
@@ -119,6 +121,7 @@
                 },
                 "empty": "No user matches the search",
                 "no-name": "No name",
+                "system": "System",
                 "tooltips": {
                     "created-at": "When the account was created",
                     "email": "The email the user signs in with",

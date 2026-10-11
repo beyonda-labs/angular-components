@@ -142,6 +142,9 @@
                     "validation-failed": "The document has pending validation errors. Fix them before generating it."
                 },
                 "duplicate-field": "An item with field \"{{fieldName}}\" and value \"{{value}}\" already exists.",
+                "entities": {
+                    "owner-required": "This item needs a user to own it: create it inside the folder of a user."
+                },
                 "forbidden": "You do not have permission to perform this action.",
                 "internal-server-error": "An internal server error occurred. Please try again later.",
                 "invalid-child": "The field \"{{childField}}\" is not valid for parent \"{{parentField}}\".",
@@ -178,7 +181,6 @@
                 "not-found": "The requested resource was not found.",
                 "organizations": {
                     "existing-name": "There is already an organization named {{name}}.",
-                    "has-superadmin": "This organization holds an active superadmin, so it cannot be deactivated.",
                     "not-found": "This organization does not exist or has been deactivated. Reload the page and try again."
                 },
                 "password": {
@@ -202,7 +204,8 @@
                     "not-found": "This user does not exist. Reload the page and try again.",
                     "not-invited": "This account is no longer waiting for an invitation.",
                     "own-account": "You cannot deactivate your own account nor change your own roles.",
-                    "superadmin-only": "Only a superadmin can grant or remove the superadmin role, or change a superadmin account.",
+                    "superadmin-only": "Only a superadmin can change a superadmin account.",
+                    "superadmin-role-fixed": "The superadmin role cannot be granted nor removed.",
                     "unknown-role": "The role \"{{role}}\" does not exist."
                 }
             },
@@ -256,6 +259,9 @@
                     "validation-failed": "Invalid document"
                 },
                 "duplicate-field": "Duplicate value",
+                "entities": {
+                    "owner-required": "Owner required"
+                },
                 "forbidden": "Access denied",
                 "internal-server-error": "Server error",
                 "invalid-child": "Invalid field",
@@ -288,7 +294,6 @@
                 "not-found": "Not found",
                 "organizations": {
                     "existing-name": "Name already in use",
-                    "has-superadmin": "Organization of a superadmin",
                     "not-found": "Organization not found"
                 },
                 "password": {
@@ -312,6 +317,7 @@
                     "not-invited": "No pending invitation",
                     "own-account": "Your own account",
                     "superadmin-only": "Superadmins only",
+                    "superadmin-role-fixed": "Fixed role",
                     "unknown-role": "Unknown role"
                 }
             }
@@ -880,6 +886,7 @@
                 },
                 "empty": "No user matches the search",
                 "no-name": "No name",
+                "system": "System",
                 "tooltips": {
                     "created-at": "When the account was created",
                     "email": "The email the user signs in with",

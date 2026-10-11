@@ -14,7 +14,7 @@ export class UserOrganizationsService {
 
     private readonly _organizations = signal<PageOrganization[] | null>(null);
 
-    readonly organizationId = computed(() => this.sessionService.user()?.organizationId);
+    readonly isSuperadmin = computed(() => isSuperadmin(this.sessionService.user()));
     readonly organizations = this._organizations.asReadonly();
 
     load(baseUrl: string): void {

@@ -4,7 +4,6 @@ import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { FormCheckboxGroupField } from '../../form/models/fields/form-checkbox-group-field.model';
 import { FormInfoField } from '../../form/models/fields/form-info-field.model';
-import { FormSelectField } from '../../form/models/fields/form-select-field.model';
 import { FormField } from '../../form/models/form-field.model';
 import { PageFormConfig } from '../../page/models/page-form.model';
 import { UserFormValue, UserRow, UserStatus } from '../models/users.model';
@@ -38,6 +37,7 @@ describe('UsersFormService', () => {
 
         service = TestBed.inject(UsersFormService);
         form = service.buildFormConfig({
+            isOrganizationAsked: false,
             organizations: [],
             prefix: 'demo.users',
             rolePrefix: 'demo.roles',
@@ -84,7 +84,7 @@ describe('UsersFormService', () => {
 
         beforeEach(() => {
             form = service.buildFormConfig({
-                organizationId: 'o2',
+                isOrganizationAsked: true,
                 organizations,
                 prefix: 'demo.users',
                 rolePrefix: 'demo.roles',
@@ -92,7 +92,7 @@ describe('UsersFormService', () => {
             });
         });
 
-        it('asks a new user for the organization, offering each one by name and starting with the own', () => {
+        it('asks a new user for the organization, required and offering each one by name, with none chosen', () => {
             const fields = fieldsFor();
 
             expect(fields.map(field => field.key)).toEqual([
@@ -103,11 +103,14 @@ describe('UsersFormService', () => {
                 'roles',
                 'language'
             ]);
-            expect((fields[3] as FormSelectField).options).toEqual([
-                { label: 'Acme', value: 'o1' },
-                { label: 'Globex', value: 'o2' }
-            ]);
-            expect(form.toFormValue()).toEqual({ main: { organizationId: 'o2', roles: [] } });
+            expect(fields[3]).toMatchObject({
+                isRequired: true,
+                options: [
+                    { label: 'Acme', value: 'o1' },
+                    { label: 'Globex', value: 'o2' }
+                ]
+            });
+            expect(form.toFormValue()).toBeUndefined();
         });
 
         it('never asks for the organization of a user it edits, since users do not move', () => {
@@ -119,30 +122,37 @@ describe('UsersFormService', () => {
                 form.toItem({ main: { email: 'grace@example.test', organizationId: 'o1', roles: ['admin'] } })
             ).toEqual({ email: 'grace@example.test', organizationId: 'o1', roles: ['admin'] });
         });
-
-        it('starts with no organization chosen when the own is not among them', () => {
-            form = service.buildFormConfig({
-                organizationId: 'gone',
-                organizations,
-                prefix: 'demo.users',
-                rolePrefix: 'demo.roles',
-                roles: []
-            });
-
-            expect(form.toFormValue()).toBeUndefined();
-        });
     });
 
-    it('never asks for the organization with a single one, so the invitation goes to the own', () => {
+    it('asks a superadmin for the organization with a single one too, chosen already', () => {
         form = service.buildFormConfig({
-            organizationId: 'o1',
+            isOrganizationAsked: true,
             organizations: [{ id: 'o1', name: 'Acme' }],
             prefix: 'demo.users',
             rolePrefix: 'demo.roles',
             roles: []
         });
 
-        expect(fieldsFor().map(field => field.key)).not.toContain('organizationId');
+        expect(fieldsFor().find(field => field.key === 'organizationId')).toMatchObject({
+            isRequired: true,
+            options: [{ label: 'Acme', value: 'o1' }]
+        });
+        expect(form.toFormValue()).toEqual({ main: { organizationId: 'o1', roles: [] } });
+    });
+
+    it('asks a superadmin for the organization even with none to offer, so nothing is sent without one', () => {
+        form = service.buildFormConfig({
+            isOrganizationAsked: true,
+            organizations: [],
+            prefix: 'demo.users',
+            rolePrefix: 'demo.roles',
+            roles: []
+        });
+
+        expect(fieldsFor().find(field => field.key === 'organizationId')).toMatchObject({
+            isRequired: true,
+            options: []
+        });
         expect(form.toFormValue()).toBeUndefined();
     });
 });

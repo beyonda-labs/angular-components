@@ -16,6 +16,7 @@ describe('buildUsersPageConfig', () => {
                 buildSections: () => [],
                 prefix: 'demo.users.form'
             }),
+            isOrganizationShown: false,
             loadRow: () => [],
             onReady: jest.fn(),
             onResendInvitation: jest.fn(),
@@ -60,8 +61,8 @@ describe('buildUsersPageConfig', () => {
         ]);
     });
 
-    it('shows a superadmin of several organizations the organization after the email, sortable by its name', () => {
-        const columns = build({ organizations }).tableConfig?.columns ?? [];
+    it('shows the organization after the email while the page shows organizations, sortable by its name', () => {
+        const columns = build({ isOrganizationShown: true }).tableConfig?.columns ?? [];
 
         expect(columns.map(({ key }) => key)).toEqual([
             'name',
@@ -88,11 +89,14 @@ describe('buildUsersPageConfig', () => {
         });
     });
 
-    it('shows nothing about organizations with one organization or none, as a manager gets', () => {
-        const config = build({ organizations: [organizations[0]] });
+    it('filters by organization only with two organizations or more, column or not', () => {
+        const single = build({ isOrganizationShown: true, organizations: [organizations[0]] });
+        const none = build();
 
-        expect(config.tableConfig?.columns.map(({ key }) => key)).not.toContain('organization');
-        expect(config.tableConfig?.search?.fields.map(({ key }) => key)).not.toContain('organizationId');
+        expect(single.tableConfig?.columns.map(({ key }) => key)).toContain('organization');
+        expect(single.tableConfig?.search?.fields.map(({ key }) => key)).not.toContain('organizationId');
+        expect(none.tableConfig?.columns.map(({ key }) => key)).not.toContain('organization');
+        expect(none.tableConfig?.search?.fields.map(({ key }) => key)).not.toContain('organizationId');
     });
 
     it('offers to invite, edit, change the status and resend the invitation of a user', () => {

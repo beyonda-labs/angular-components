@@ -196,7 +196,7 @@ describe('OrganizationsComponent', () => {
         ]);
     });
 
-    it('never offers to deactivate an organization that holds an active superadmin', async () => {
+    it('offers the status change only on the rows that list it', async () => {
         await render([buildOrganization({ actions: ['edit', 'invite-admin'] })]);
 
         await openMenu('Globex');
@@ -205,7 +205,7 @@ describe('OrganizationsComponent', () => {
         expect(queryButton(fixture, `${PREFIX}.actions.invite-admin.label`)).not.toBeNull();
     });
 
-    it('shows the reason the server gives for refusing a deactivation', async () => {
+    it('shows the reason the server gives for refusing a status change', async () => {
         await render();
 
         await useMenuAction('Globex', 'change-status');
@@ -216,14 +216,14 @@ describe('OrganizationsComponent', () => {
         httpTesting
             .expectOne(`${ORGANIZATIONS_URL}/o2/status`)
             .flush(
-                { errorCode: 'conflict', messageKey: 'organizations.has-superadmin' },
-                { status: 409, statusText: 'Conflict' }
+                { errorCode: 'not-found', messageKey: 'organizations.not-found' },
+                { status: 404, statusText: 'Not Found' }
             );
         await settle(fixture);
 
         expect(TestBed.inject(FakeModalService).errors()).toEqual([
             expect.objectContaining({
-                message: 'angular-components.http.error.organizations.has-superadmin'
+                message: 'angular-components.http.error.organizations.not-found'
             })
         ]);
     });

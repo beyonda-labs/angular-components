@@ -4,14 +4,12 @@
             "error": {
                 "organizations": {
                     "existing-name": "Ya hay una organización llamada {{name}}.",
-                    "has-superadmin": "Esta organización tiene un superadministrador activo, así que no se puede desactivar.",
                     "not-found": "Esta organización no existe o está desactivada. Recarga la página y vuelve a intentarlo."
                 }
             },
             "title": {
                 "organizations": {
                     "existing-name": "Nombre ya en uso",
-                    "has-superadmin": "Organización de un superadministrador",
                     "not-found": "Organización no encontrada"
                 }
             }

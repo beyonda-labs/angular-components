@@ -31,6 +31,9 @@
                     "validation-failed": "The document has pending validation errors. Fix them before generating it."
                 },
                 "duplicate-field": "An item with field \"{{fieldName}}\" and value \"{{value}}\" already exists.",
+                "entities": {
+                    "owner-required": "This item needs a user to own it: create it inside the folder of a user."
+                },
                 "forbidden": "You do not have permission to perform this action.",
                 "internal-server-error": "An internal server error occurred. Please try again later.",
                 "invalid-child": "The field \"{{childField}}\" is not valid for parent \"{{parentField}}\".",
@@ -90,6 +93,9 @@
                     "validation-failed": "Invalid document"
                 },
                 "duplicate-field": "Duplicate value",
+                "entities": {
+                    "owner-required": "Owner required"
+                },
                 "forbidden": "Access denied",
                 "internal-server-error": "Server error",
                 "invalid-child": "Invalid field",

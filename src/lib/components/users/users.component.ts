@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, untracked } from '@angular/core';
 
-import { hasOrganizationChoice } from '../page/functions/page-organization-filter';
 import { PageHandle } from '../page/models/page.model';
 import { PageComponent } from '../page/page.component';
+import { isOrganizationColumnShown } from './functions/user-organizations';
 import { UserRow, UsersConfig } from './models/users.model';
 import { UserOrganizationsService } from './services/user-organizations.service';
 import { UserRolesService } from './services/user-roles.service';
@@ -31,6 +31,7 @@ export class UsersComponent {
 
     readonly pageConfig = computed(() => {
         const config = this.config();
+        const isSuperadmin = this.userOrganizationsService.isSuperadmin();
         const organizations = this.userOrganizationsService.organizations();
         const roles = this.userRolesService.roles();
         const { prefix, rolePrefix } = config;
@@ -39,17 +40,18 @@ export class UsersComponent {
             return null;
         }
 
-        const isOrganizationShown = hasOrganizationChoice(organizations);
+        const isOrganizationShown = isOrganizationColumnShown(organizations, isSuperadmin);
 
         return buildUsersPageConfig({
             config,
             formConfig: this.usersFormService.buildFormConfig({
-                organizationId: this.userOrganizationsService.organizationId(),
+                isOrganizationAsked: isSuperadmin,
                 organizations,
                 prefix,
                 rolePrefix,
                 roles
             }),
+            isOrganizationShown,
             loadRow: user =>
                 this.usersTableService.loadRow(user, {
                     isOrganizationShown,
