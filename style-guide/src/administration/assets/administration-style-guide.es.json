@@ -1,0 +1,11 @@
+{
+    "angular-components-style-guide": {
+        "administration": {
+            "example": "Las cuatro páginas de gestión de una aplicación, en un solo módulo: usuarios, grupos, roles y permisos, y organizaciones, cada una sobre bey-page con el módulo correspondiente de express-components y cada una leyendo del backend lo que puede hacer.",
+            "groups": "Grupos",
+            "organizations": "Organizaciones",
+            "roles": "Roles y permisos",
+            "users": "Usuarios"
+        }
+    }
+}

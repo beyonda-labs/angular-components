@@ -9,6 +9,14 @@
             "name-hint": "Aparece en los documentos que firmas"
         },
         "account-data-section": "Datos de la cuenta",
+        "administration": {
+            "example": "Las cuatro páginas de gestión de una aplicación, en un solo módulo: usuarios, grupos, roles y permisos, y organizaciones, cada una sobre bey-page con el módulo correspondiente de express-components y cada una leyendo del backend lo que puede hacer.",
+            "groups": "Grupos",
+            "organizations": "Organizaciones",
+            "roles": "Roles y permisos",
+            "users": "Usuarios"
+        },
+        "administration-section": "Administración",
         "app-layout": {
             "actions": {
                 "dashboard": {
@@ -113,6 +121,7 @@
             }
         },
         "breadcrumbs": "Breadcrumbs",
+        "collapse-all": "Contraer todo",
         "components": "Componentes",
         "compound": "Compuestos",
         "edit-lock-notice": {
@@ -141,6 +150,7 @@
             }
         },
         "edit-lock-notice-section": "Aviso de bloqueo de edición",
+        "expand-all": "Expandir todo",
         "file-preview": {
             "buttons": {
                 "image": "Previsualizar una imagen",
@@ -523,7 +533,6 @@
         "groups": {
             "example": "La página de grupos de un administrador o del superadministrador: busca por nombre, crea un grupo, edita en un solo formulario su nombre, sus miembros y sus roles adicionales, y elimina grupos, en la medida en que el backend lo permita en cada fila. El backend de demostración no sirve grupos, así que la lista se queda vacía."
         },
-        "groups-section": "Grupos",
         "header": {
             "actions": {
                 "archive": {
@@ -814,7 +823,6 @@
         "organizations": {
             "example": "La página de organizaciones de un superadministrador: busca por nombre, filtra por estado, crea una organización y edita su nombre y su estado, con sus grupos y sus miembros a la vista, en la medida en que el backend lo permita en cada fila. El backend de demostración no sirve organizaciones, así que la lista se queda vacía."
         },
-        "organizations-section": "Organizaciones",
         "page": {
             "actions": {
                 "create": {
@@ -957,7 +965,6 @@
         "roles": {
             "example": "La página de roles y permisos de un administrador o del superadministrador: los roles base de la aplicación, cuyos permisos se pueden consultar, y los roles adicionales de la organización, que se crean, editan y eliminan eligiendo sus permisos en secciones plegables por recurso, cada permiso con su descripción, en la medida en que el backend lo permita en cada fila. El backend de demostración no sirve roles, así que la lista se queda vacía."
         },
-        "roles-section": "Roles y permisos",
         "search": {
             "applied": "Filtros aplicados",
             "example": "Caja de búsqueda rápida más un panel de filtros tipados. Parte de los filtros de su config, aquí el rol de editor; cada cambio se informa por onFiltersChange y la consulta la ejecuta el consumidor.",
@@ -1131,7 +1138,6 @@
                 "admin": "Administrador",
                 "editor": "Editor"
             }
-        },
-        "users-section": "Usuarios"
+        }
     }
 }
