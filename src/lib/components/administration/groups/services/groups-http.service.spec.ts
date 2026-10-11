@@ -28,7 +28,7 @@ describe('GroupsHttpService', () => {
         httpTesting.verify();
     });
 
-    it('reads a group with its members and extra roles, the users it may hold and the extra roles it may hold', () => {
+    it('reads a group with its members and extra roles', () => {
         const answers: unknown[] = [];
         const detail = {
             actions: [],
@@ -41,13 +41,24 @@ describe('GroupsHttpService', () => {
         };
 
         service.loadGroup('/teams', 'g1').subscribe(group => answers.push(group));
-        service.loadMemberOptions('/teams', 'g1').subscribe(users => answers.push(users));
-        service.loadRoleOptions('/teams', 'g1').subscribe(roles => answers.push(roles));
         httpTesting.expectOne(GROUP_URL).flush(detail);
-        httpTesting.expectOne(`${GROUP_URL}/member-options`).flush({ users: [ada] });
-        httpTesting.expectOne(`${GROUP_URL}/role-options`).flush({ extraRoles: [reviewers] });
 
-        expect(answers).toEqual([detail, [ada], [reviewers]]);
+        expect(answers).toEqual([detail]);
+    });
+
+    it('searches the users and the extra roles a group may hold by the text typed, at most as many as asked', () => {
+        const answers: unknown[] = [];
+
+        service.searchMembers('/teams', 'g1', 'nora lec', 21).subscribe(users => answers.push(users));
+        service.searchExtraRoles('/teams', 'g1', '', 20).subscribe(roles => answers.push(roles));
+        const members = httpTesting.expectOne(request => request.url === `${GROUP_URL}/member-options`);
+        const roles = httpTesting.expectOne(request => request.url === `${GROUP_URL}/role-options`);
+        members.flush({ users: [ada] });
+        roles.flush({ extraRoles: [reviewers] });
+
+        expect(members.request.urlWithParams).toBe(`${GROUP_URL}/member-options?search=nora%20lec&limit=21`);
+        expect(roles.request.urlWithParams).toBe(`${GROUP_URL}/role-options?search=&limit=20`);
+        expect(answers).toEqual([[ada], [reviewers]]);
     });
 
     it('saves the name, the members and the extra roles of a group at once and confirms it', () => {
@@ -85,7 +96,9 @@ describe('GroupsHttpService', () => {
         const translate = TestBed.inject(TranslateService);
         translate.setTranslation('en', groupsEn);
 
-        service.edit('/teams', 'g1', { name: 'Sales', userIds: ['u9'] }, 'teams.saved').subscribe({ error: () => {} });
+        service
+            .edit('/teams', 'g1', { extraRoleIds: [], name: 'Sales', userIds: ['u9'] }, 'teams.saved')
+            .subscribe({ error: () => {} });
         httpTesting
             .expectOne(GROUP_URL)
             .flush(

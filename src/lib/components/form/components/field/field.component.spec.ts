@@ -40,7 +40,14 @@ import {
 import { FormService } from '../../services/form.service';
 import { FormFieldComponent } from './field.component';
 
-const VALID: FormFieldState = { isDisabled: false, isHidden: false, isRequired: false, isValid: true, options: [] };
+const VALID: FormFieldState = {
+    excludedValues: [],
+    isDisabled: false,
+    isHidden: false,
+    isRequired: false,
+    isValid: true,
+    options: []
+};
 
 describe('FormFieldComponent', () => {
     let fixture: ComponentFixture<FormFieldComponent>;

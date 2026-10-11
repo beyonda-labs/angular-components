@@ -437,6 +437,24 @@
                 },
                 "tooltip": "Password fields with a length validator, a policy, toggle, required and disabled states"
             },
+            "section-picked-list": {
+                "label": "Picked lists",
+                "people": {
+                    "empty": "This group has no members yet.",
+                    "label": "Members",
+                    "placeholder": "Search a person by name or email"
+                },
+                "read-only-people": {
+                    "empty": "This group has no members yet.",
+                    "label": "Read-only members"
+                },
+                "roles": {
+                    "empty": "This group has no roles yet.",
+                    "label": "Roles",
+                    "placeholder": "Pick a role"
+                },
+                "tooltip": "A removable list holding ids, fed by a search on top: from the server, debounced, or from its own options"
+            },
             "section-radio": {
                 "label": "Radio Fields",
                 "radio1": {

@@ -78,14 +78,17 @@ describe('FormCheckboxSectionsFieldComponent', () => {
         translate.use('en');
     });
 
-    it('shows a section per entry with its counter, unfolding only those with something checked', async () => {
+    it('shows a section per entry with its counter, every one folded at first, also those with something checked', async () => {
         await render(['documents.read']);
 
         expect(controlByName(fixture, 'Permissions').getAttribute('role')).toBe('group');
         expect(header('Templates').getAttribute('aria-expanded')).toBe('false');
         expect(header('Templates').textContent).toContain('0 of 3 checked');
-        expect(header('Documents').getAttribute('aria-expanded')).toBe('true');
+        expect(header('Documents').getAttribute('aria-expanded')).toBe('false');
         expect(header('Documents').textContent).toContain('1/2');
+
+        await click(header('Documents'));
+
         expect(checkbox('Read').checked).toBe(true);
         expect(checkbox('Delete').checked).toBe(false);
         expect(fixture.nativeElement.textContent).not.toContain('See');
@@ -147,6 +150,7 @@ describe('FormCheckboxSectionsFieldComponent', () => {
     it('flags the group once touched while nothing is checked', async () => {
         await render(['documents.read']);
 
+        await click(header('Documents'));
         await click(checkbox('Read'));
 
         expect(controlByName(fixture, 'Permissions').getAttribute('aria-invalid')).toBe('true');
@@ -157,6 +161,7 @@ describe('FormCheckboxSectionsFieldComponent', () => {
 
         control.disable();
         await settle(fixture);
+        await click(header('Documents'));
 
         expect(checkbox('Read').disabled).toBe(true);
         expect(queryAll(fixture, 'button').some(button => button.textContent?.includes('Select all'))).toBe(false);

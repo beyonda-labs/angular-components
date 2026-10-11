@@ -21,9 +21,11 @@
     <bey-form-info-field [describedBy]="describedBy()" [field]="$any(field())"></bey-form-info-field>
 } @else if (type() === fieldType.List) {
     <bey-form-list-field
+        [control]="formControl()"
         [describedBy]="describedBy()"
         [field]="$any(field())"
         [label]="label()"
+        [options]="state().options"
         [prefix]="fieldPrefix()"
     ></bey-form-list-field>
 } @else if (formControl()) {
@@ -89,6 +91,7 @@
             <bey-form-autocomplete-field
                 [control]="control"
                 [describedBy]="describedBy()"
+                [excludedValues]="state().excludedValues"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [options]="state().options"

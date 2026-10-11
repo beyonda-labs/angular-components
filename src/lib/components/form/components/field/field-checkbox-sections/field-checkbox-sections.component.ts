@@ -9,12 +9,7 @@ import {
     FormCheckboxSectionsField,
     FormCheckboxSectionView
 } from '../../../models/fields/form-checkbox-sections-field.model';
-import {
-    checkboxSectionViews,
-    checkedSectionKeys,
-    toggleOptionValues,
-    toggleSectionValues
-} from '../functions/checkbox-sections';
+import { checkboxSectionViews, toggleOptionValues, toggleSectionValues } from '../functions/checkbox-sections';
 import { trackControl } from '../functions/control-state';
 
 @Component({
@@ -36,8 +31,8 @@ export class FormCheckboxSectionsFieldComponent {
     readonly controlState = trackControl(this.control);
     readonly countLabel = FORM_CHECKBOX_SECTIONS_TEXTS.count;
     readonly expandedKeys = linkedSignal({
-        computation: ({ control, field }) => checkedSectionKeys(field.sections, control.value ?? []),
-        source: () => ({ control: this.control(), field: this.field() })
+        computation: (): Set<string> => new Set<string>(),
+        source: () => this.field()
     });
     readonly sections = computed(() =>
         checkboxSectionViews(this.field().sections, {

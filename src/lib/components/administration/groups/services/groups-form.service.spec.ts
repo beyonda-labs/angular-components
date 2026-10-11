@@ -1,11 +1,17 @@
 import { TestBed } from '@angular/core/testing';
+import { TranslateService } from '@ngx-translate/core';
+import { buttonByName, controlByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { of } from 'rxjs';
 
+import formEn from '../../../form/assets/form.en.json';
 import { ModalFormSize } from '../../../form/components/modal/models/modal-form.model';
-import { FormCheckboxGroupField } from '../../../form/models/fields/form-checkbox-group-field.model';
+import { FormComponent } from '../../../form/form.component';
+import { FormListField } from '../../../form/models/fields/form-list-field.model';
 import { FormSection } from '../../../form/models/form.model';
-import { FormField } from '../../../form/models/form-field.model';
+import { FormField, FormFieldOption } from '../../../form/models/form-field.model';
 import { FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
+import groupsEn from '../assets/groups.en.json';
 import { GroupDetail, GroupEditOptions, GroupMember, GroupsFormOptions } from '../models/groups.model';
 import { GroupsFormService } from './groups-form.service';
 
@@ -42,11 +48,19 @@ describe('GroupsFormService', () => {
     function buildEditOptions(overrides: Partial<GroupEditOptions> = {}): GroupEditOptions {
         return {
             detail,
-            memberOptions: [ada, grace],
             prefix: 'demo.teams',
-            roleOptions: [reviewers, writers],
+            searchExtraRoles: jest.fn(() => of([reviewers, writers])),
+            searchMembers: jest.fn(() => of([ada, grace])),
             ...overrides
         };
+    }
+
+    function search(list: FormField, text: string, chosenIds: string[]): FormFieldOption[] {
+        const answers: FormFieldOption[][] = [];
+
+        (list as FormListField).picker?.search?.(text, chosenIds).subscribe(options => answers.push(options));
+
+        return answers[0];
     }
 
     beforeEach(() => {
@@ -113,46 +127,94 @@ describe('GroupsFormService', () => {
             'angular-components.page.form.submit'
         ]);
         expect(name).toMatchObject({ isRequired: true, key: 'name' });
-        expect(members.key).toBe('userIds');
-        expect((members as FormCheckboxGroupField).options).toEqual([
-            { label: 'Ada Lovelace (ada@example.test)', value: 'u1' },
-            { label: 'grace@example.test', value: 'u2' }
-        ]);
-        expect(members.hint).toBeUndefined();
-        expect(extraRoles.key).toBe('extraRoleIds');
-        expect((extraRoles as FormCheckboxGroupField).options).toEqual([
-            { label: 'Reviewers', value: 'r1' },
-            { label: 'Writers', value: 'r2' }
-        ]);
+        expect(members).toMatchObject({
+            emptyKey: 'demo.teams.form.main.user-ids.empty',
+            isRemovable: true,
+            key: 'userIds',
+            options: [{ label: 'Ada Lovelace (ada@example.test)', value: 'u1' }]
+        });
+        expect(extraRoles).toMatchObject({
+            emptyKey: 'demo.teams.form.main.extra-role-ids.empty',
+            isRemovable: true,
+            key: 'extraRoleIds',
+            options: [{ label: 'Reviewers', value: 'r1' }]
+        });
         expect(form.initialValue).toEqual({ main: { extraRoleIds: ['r1'], name: 'Sales', userIds: ['u1'] } });
     });
 
-    it('still offers a member or an extra role the options leave out, so it can be unchecked', () => {
-        const form = service.buildEditFormConfig(buildEditOptions({ memberOptions: [grace], roleOptions: [writers] }));
-        const [, members, extraRoles] = fieldsOf(form.sections);
+    it('searches the members by the text typed, labelled "name (email)" or the email, leaving out those chosen', () => {
+        const options = buildEditOptions();
+        const [, members] = fieldsOf(service.buildEditFormConfig(options).sections);
 
-        expect((members as FormCheckboxGroupField).options).toEqual([
-            { label: 'grace@example.test', value: 'u2' },
-            { label: 'Ada Lovelace (ada@example.test)', value: 'u1' }
-        ]);
-        expect((extraRoles as FormCheckboxGroupField).options).toEqual([
-            { label: 'Writers', value: 'r2' },
-            { label: 'Reviewers', value: 'r1' }
-        ]);
+        expect(search(members, 'example', ['u1'])).toEqual([{ label: 'grace@example.test', value: 'u2' }]);
+        expect(options.searchMembers).toHaveBeenCalledWith('example', 21);
     });
 
-    it('says there is nobody to offer, and offers no extra roles, when the organization has none', () => {
-        const form = service.buildEditFormConfig(
-            buildEditOptions({
-                detail: { ...detail, extraRoles: [], members: [] },
-                memberOptions: [],
-                roleOptions: []
-            })
-        );
-        const [, members, ...rest] = fieldsOf(form.sections);
+    it('searches the extra roles by their name, leaving out those chosen', () => {
+        const options = buildEditOptions();
+        const extraRoles = fieldsOf(service.buildEditFormConfig(options).sections)[2];
 
-        expect(members.hint).toBe('demo.teams.form.main.user-ids.empty');
-        expect(rest).toEqual([]);
-        expect(form.initialValue).toEqual({ main: { name: 'Sales', userIds: [] } });
+        expect(search(extraRoles, '', [])).toEqual([
+            { label: 'Reviewers', value: 'r1' },
+            { label: 'Writers', value: 'r2' }
+        ]);
+        expect(options.searchExtraRoles).toHaveBeenCalledWith('', 20);
+    });
+
+    it('asks for at most 50 and offers at most 20, however many are chosen', () => {
+        const people = Array.from({ length: 50 }, (_, index) => ({
+            email: `user${index}@example.test`,
+            id: `p${index}`,
+            name: `User ${index}`
+        }));
+        const options = buildEditOptions({ searchMembers: jest.fn(() => of(people)) });
+        const [, members] = fieldsOf(service.buildEditFormConfig(options).sections);
+        const chosen = Array.from({ length: 40 }, (_, index) => `c${index}`);
+
+        expect(search(members, 'user', chosen)).toHaveLength(20);
+        expect(options.searchMembers).toHaveBeenCalledWith('user', 50);
+    });
+
+    it('starts both lists empty, with their empty texts, when the group has neither members nor extra roles', () => {
+        const form = service.buildEditFormConfig(
+            buildEditOptions({ detail: { ...detail, extraRoles: [], members: [] } })
+        );
+        const [, members, extraRoles] = fieldsOf(form.sections);
+
+        expect((members as FormListField).options).toEqual([]);
+        expect((extraRoles as FormListField).options).toEqual([]);
+        expect(form.initialValue).toEqual({ main: { extraRoleIds: [], name: 'Sales', userIds: [] } });
+    });
+
+    it('shows the members and the extra roles as lists to search, pick into and remove from', async () => {
+        const translate = TestBed.inject(TranslateService);
+        translate.setTranslation('en', formEn);
+        translate.setTranslation('en', groupsEn, true);
+        translate.use('en');
+        const fixture = await renderComponent(FormComponent, {
+            config: service.buildEditFormConfig(
+                buildEditOptions({
+                    detail: { ...detail, extraRoles: [] },
+                    prefix: 'angular-components.groups'
+                })
+            )
+        });
+        const members = controlByName(fixture, 'Members');
+
+        expect(fixture.nativeElement.textContent).toContain('This group has no extra roles yet.');
+
+        members.dispatchEvent(new Event('focus'));
+        await settle(fixture);
+        queryAll(document.body, '[role="option"]')[0].dispatchEvent(new MouseEvent('mousedown'));
+        await settle(fixture);
+        buttonByName(fixture, 'Remove Ada Lovelace (ada@example.test)').click();
+        await settle(fixture);
+
+        expect(members.getAttribute('placeholder')).toBe('Search a person by name or email');
+        expect(members.value).toBe('');
+        expect(textsOf(queryAll(fixture, 'li'))).toEqual(['grace@example.test']);
+        expect(buttonByName(fixture, 'angular-components.page.form.submit').disabled).toBe(false);
+
+        fixture.destroy();
     });
 });

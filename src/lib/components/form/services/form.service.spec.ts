@@ -6,6 +6,7 @@ import { FormCheckboxField } from '../models/fields/form-checkbox-field.model';
 import { FormChipsField } from '../models/fields/form-chips-field.model';
 import { FormDateField } from '../models/fields/form-date-field.model';
 import { FormFileField } from '../models/fields/form-file-field.model';
+import { FormListField } from '../models/fields/form-list-field.model';
 import { FormNumberField } from '../models/fields/form-number-field.model';
 import { FormPasswordField } from '../models/fields/form-password-field.model';
 import { FormTextField } from '../models/fields/form-text-field.model';
@@ -49,6 +50,31 @@ describe('FormService', () => {
             contact: { name: 'Ada', email: '', subscribed: false, age: null, tags: [] }
         });
         expect(group.get('contact.subscribed')?.disabled).toBe(true);
+    });
+
+    it('gives a list field that holds a value a control with its ids, and none to one that only shows items', () => {
+        const group = service.buildFormGroup(
+            new FormConfig({
+                initialValue: { group: { userIds: ['u1'] } },
+                prefix: 'demo',
+                sections: [
+                    new FormSection({
+                        key: 'group',
+                        rows: [
+                            new FormRow({
+                                fields: [
+                                    new FormListField({ key: 'userIds', options: [] }),
+                                    new FormListField({ key: 'extraRoleIds', picker: {} }),
+                                    new FormListField({ items: ['Invoice'], key: 'usedBy' })
+                                ]
+                            })
+                        ]
+                    })
+                ]
+            })
+        );
+
+        expect(group.getRawValue()).toEqual({ group: { extraRoleIds: [], userIds: ['u1'] } });
     });
 
     it('requires a value when the field is required', () => {

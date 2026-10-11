@@ -98,6 +98,9 @@
                 "too-large": "The file exceeds the maximum size of {{maxSize}}",
                 "unsupported-type": "Unsupported file type. Allowed: {{accept}}"
             },
+            "list-field": {
+                "remove": "Remove {{label}}"
+            },
             "modal": {
                 "close-confirmation": {
                     "message": "There are unsaved changes in the form. Are you sure you want to close it?",
@@ -160,7 +163,9 @@
                 },
                 "main": {
                     "extra-role-ids": {
-                        "label": "Additional roles"
+                        "empty": "This group has no extra roles yet.",
+                        "label": "Additional roles",
+                        "placeholder": "Search a role by its name"
                     },
                     "name": {
                         "label": "Name",
@@ -171,8 +176,9 @@
                         "placeholder": "Choose an organization"
                     },
                     "user-ids": {
-                        "empty": "The organization of the group has no users yet.",
-                        "label": "Members"
+                        "empty": "This group has no members yet.",
+                        "label": "Members",
+                        "placeholder": "Search a person by name or email"
                     }
                 }
             },

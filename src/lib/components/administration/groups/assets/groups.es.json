@@ -24,7 +24,9 @@
                 },
                 "main": {
                     "extra-role-ids": {
-                        "label": "Roles adicionales"
+                        "empty": "Este grupo aún no tiene roles adicionales.",
+                        "label": "Roles adicionales",
+                        "placeholder": "Busca un rol por su nombre"
                     },
                     "name": {
                         "label": "Nombre",
@@ -35,8 +37,9 @@
                         "placeholder": "Elige una organización"
                     },
                     "user-ids": {
-                        "empty": "La organización del grupo todavía no tiene usuarios.",
-                        "label": "Miembros"
+                        "empty": "Este grupo aún no tiene miembros.",
+                        "label": "Miembros",
+                        "placeholder": "Busca a una persona por nombre o correo"
                     }
                 }
             },

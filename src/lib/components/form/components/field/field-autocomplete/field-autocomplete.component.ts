@@ -10,18 +10,27 @@ import {
     signal,
     viewChild
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { catchError, Observable, of, Subject, switchMap, timer } from 'rxjs';
 
 import { FormAutocompleteField } from '../../../models/fields/form-autocomplete-field.model';
 import { FormFieldOption } from '../../../models/form-field.model';
 import { trackControl } from '../functions/control-state';
+import { matchesOptionText } from '../functions/option-match';
 
 const EMPTY_KEY = 'angular-components.form.autocomplete-field.empty';
 const PANEL_GAP_PX = 2;
 const PANEL_MAX_HEIGHT_PX = 208;
+const SEARCH_DEBOUNCE_MS = 300;
+
+interface SearchRequest {
+    delay: number;
+    text: string;
+}
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,29 +46,51 @@ export class FormAutocompleteFieldComponent {
 
     readonly control = input.required<FormControl<string | null>>();
     readonly describedBy = input<string | null>(null);
+    readonly excludedValues = input<string[]>([]);
     readonly field = input.required<FormAutocompleteField>();
     readonly isRequired = input(false);
     readonly options = input<FormFieldOption[]>([]);
     readonly prefix = input.required<string>();
 
     readonly activeIndex = signal(-1);
+    readonly availableOptions = computed(() => {
+        const excluded = new Set(this.excludedValues());
+        const options = this.field().search ? (this.searchedOptions() ?? []) : this.options();
+
+        return options.filter(option => !excluded.has(option.value));
+    });
     readonly clearIcon = faXmark;
     readonly controlState = trackControl(this.control);
     readonly emptyKey = computed(() => this.field().emptyKey ?? EMPTY_KEY);
     readonly filteredOptions = computed(() => {
-        const term = this.hasTyped() ? this.query().trim().toLowerCase() : '';
+        const { filter, search } = this.field();
+        const text = this.hasTyped() ? this.query().trim() : '';
+        const options = this.availableOptions();
 
-        return term
-            ? this.options().filter(option => this.optionLabel(option).toLowerCase().includes(term))
-            : this.options();
+        if (!text || search) {
+            return options;
+        }
+
+        return options.filter(option =>
+            filter ? filter(option, text) : matchesOptionText(this.optionLabel(option), text)
+        );
     });
     readonly hasTyped = signal(false);
     readonly isOpen = signal(false);
-    readonly isPanelVisible = computed(
-        () => this.isOpen() && (this.filteredOptions().length > 0 || !this.field().isFreeTextAllowed)
-    );
+    readonly isPanelVisible = computed(() => {
+        const { isFreeTextAllowed, search } = this.field();
+
+        if (!this.isOpen()) {
+            return false;
+        }
+
+        return (
+            this.filteredOptions().length > 0 || (!isFreeTextAllowed && (!search || this.searchedOptions() !== null))
+        );
+    });
     readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
     readonly query = signal('');
+    readonly searchedOptions = signal<FormFieldOption[] | null>(null);
     readonly toggleIcon = faChevronDown;
 
     private readonly onAncestorScroll = (event: Event): void => {
@@ -69,9 +100,20 @@ export class FormAutocompleteFieldComponent {
     };
     private readonly onWindowResize = (): void => this.positionPanel();
     private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
+    private readonly pickedOption = signal<FormFieldOption | null>(null);
     private readonly queryInput = viewChild.required<ElementRef<HTMLInputElement>>('queryInput');
+    private readonly searchRequests = new Subject<SearchRequest | null>();
 
     constructor() {
+        this.searchRequests
+            .pipe(
+                switchMap(request =>
+                    request ? timer(request.delay).pipe(switchMap(() => this.searchOptions(request.text))) : of(null)
+                ),
+                takeUntilDestroyed()
+            )
+            .subscribe(options => this.searchedOptions.set(options));
+
         effect(onCleanup => {
             const panel = this.panel()?.nativeElement;
 
@@ -167,8 +209,15 @@ export class FormAutocompleteFieldComponent {
             return;
         }
 
-        this.select(option.value);
+        const { isClearedOnSelect, onSelect } = this.field();
+
+        if (!isClearedOnSelect) {
+            this.pickedOption.set(option);
+            this.select(option.value);
+        }
+
         this.close();
+        onSelect?.(option);
     }
 
     onQueryInput(event: Event): void {
@@ -178,6 +227,8 @@ export class FormAutocompleteFieldComponent {
         this.hasTyped.set(true);
         this.activeIndex.set(-1);
         this.isOpen.set(true);
+
+        this.requestSearch(value.trim(), SEARCH_DEBOUNCE_MS);
 
         if (this.field().isFreeTextAllowed) {
             this.select(value);
@@ -201,9 +252,8 @@ export class FormAutocompleteFieldComponent {
 
     private close(): void {
         this.isOpen.set(false);
-        this.query.set('');
-        this.hasTyped.set(false);
-        this.activeIndex.set(-1);
+        this.resetQuery();
+        this.searchRequests.next(null);
     }
 
     private moveActive(step: number): void {
@@ -226,9 +276,8 @@ export class FormAutocompleteFieldComponent {
 
     private open(): void {
         this.isOpen.set(true);
-        this.query.set('');
-        this.hasTyped.set(false);
-        this.activeIndex.set(-1);
+        this.resetQuery();
+        this.requestSearch('', 0);
     }
 
     private positionPanel(): void {
@@ -261,6 +310,24 @@ export class FormAutocompleteFieldComponent {
         }
     }
 
+    private requestSearch(text: string, delay: number): void {
+        if (this.field().search) {
+            this.searchRequests.next({ delay, text });
+        }
+    }
+
+    private resetQuery(): void {
+        this.query.set('');
+        this.hasTyped.set(false);
+        this.activeIndex.set(-1);
+    }
+
+    private searchOptions(text: string): Observable<FormFieldOption[] | null> {
+        const { search } = this.field();
+
+        return search ? search(text, this.excludedValues()).pipe(catchError(() => of([]))) : of(null);
+    }
+
     private select(value: string): void {
         const control = this.control();
 
@@ -271,7 +338,9 @@ export class FormAutocompleteFieldComponent {
 
     private selectedLabel(): string {
         const value = this.controlState.value();
-        const selected = this.options().find(option => option.value === value);
+        const picked = this.pickedOption();
+        const selected =
+            this.options().find(option => option.value === value) ?? (picked?.value === value ? picked : undefined);
 
         if (selected) {
             return this.optionLabel(selected);

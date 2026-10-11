@@ -70,8 +70,17 @@ describe('EditLockNoticeStyleGuideComponent', () => {
         ['free', 'free'],
         ['unavailable', 'unavailable']
     ])('shows the %s state with its message', async (scenario, message) => {
-        await pick(scenario);
+        jest.useFakeTimers({
+            doNotFake: ['nextTick', 'queueMicrotask', 'setImmediate', 'setInterval', 'setTimeout'],
+            now: new Date(2026, 9, 11, 12, 0)
+        });
 
-        expect(notice()).toContain(`${NOTICE}.messages.${message}`);
+        try {
+            await pick(scenario);
+
+            expect(notice()).toContain(`${NOTICE}.messages.${message}`);
+        } finally {
+            jest.useRealTimers();
+        }
     });
 });

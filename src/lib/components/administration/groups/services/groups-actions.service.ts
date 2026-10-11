@@ -1,5 +1,4 @@
 import { inject, Injectable } from '@angular/core';
-import { forkJoin } from 'rxjs';
 
 import { PageHandle } from '../../../page/models/page.model';
 import { GroupEditFields, GroupRow, GroupsConfig } from '../models/groups.model';
@@ -18,13 +17,16 @@ export class GroupsActionsService {
             return;
         }
 
-        forkJoin([
-            this.groupsHttpService.loadGroup(baseUrl, group.id),
-            this.groupsHttpService.loadMemberOptions(baseUrl, group.id),
-            this.groupsHttpService.loadRoleOptions(baseUrl, group.id)
-        ]).subscribe(([detail, memberOptions, roleOptions]) =>
+        this.groupsHttpService.loadGroup(baseUrl, group.id).subscribe(detail =>
             page.openForm(
-                this.groupsFormService.buildEditFormConfig({ detail, memberOptions, prefix, roleOptions }),
+                this.groupsFormService.buildEditFormConfig({
+                    detail,
+                    prefix,
+                    searchExtraRoles: (search, limit) =>
+                        this.groupsHttpService.searchExtraRoles(baseUrl, group.id, search, limit),
+                    searchMembers: (search, limit) =>
+                        this.groupsHttpService.searchMembers(baseUrl, group.id, search, limit)
+                }),
                 ({ main }) =>
                     this.groupsHttpService.edit(baseUrl, group.id, toEditRequest(main), `${prefix}.toast.edit-success`)
             )
@@ -33,5 +35,5 @@ export class GroupsActionsService {
 }
 
 function toEditRequest({ extraRoleIds, name, userIds }: GroupEditFields): GroupEditFields {
-    return { name: name.trim(), userIds, ...(extraRoleIds ? { extraRoleIds } : {}) };
+    return { extraRoleIds, name: name.trim(), userIds };
 }

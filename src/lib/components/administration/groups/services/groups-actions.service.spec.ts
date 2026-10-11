@@ -7,6 +7,8 @@ import { FakeToastService } from '@testing/services/fake-toast.service';
 import { Observable } from 'rxjs';
 
 import { ModalFormConfig } from '../../../form/components/modal/models/modal-form.model';
+import { FormListField } from '../../../form/models/fields/form-list-field.model';
+import { FormFieldOption } from '../../../form/models/form-field.model';
 import { PageHandle } from '../../../page/models/page.model';
 import { PageViewMode } from '../../../page/models/page-categories.model';
 import { GroupEditFormValue, GroupRow, GroupsConfig } from '../models/groups.model';
@@ -36,7 +38,14 @@ describe('GroupsActionsService', () => {
 
     function answerGroup(): void {
         httpTesting.expectOne(GROUP_URL).flush({ ...group, extraRoles: [reviewers], members: [ada] });
-        httpTesting.expectOne(`${GROUP_URL}/member-options`).flush({ users: [ada, grace] });
+    }
+
+    function listField(key: string): FormListField {
+        const field = opened[0].config.sections
+            .flatMap(section => section.rows.flatMap(row => row.fields))
+            .find(current => current.key === key);
+
+        return field as FormListField;
     }
 
     beforeEach(() => {
@@ -62,17 +71,16 @@ describe('GroupsActionsService', () => {
         httpTesting.verify();
     });
 
-    it('opens the edit form once the group, its member options and its role options are read, and saves them at once', () => {
+    it('opens the edit form once the group is read, and saves its name, members and extra roles at once', () => {
         TestBed.inject(GroupsActionsService).edit(
             new GroupsConfig({ baseUrl: '/teams', prefix: 'demo.teams' }),
             group,
             page
         );
-        answerGroup();
 
         expect(opened).toEqual([]);
 
-        httpTesting.expectOne(`${GROUP_URL}/role-options`).flush({ extraRoles: [reviewers] });
+        answerGroup();
         opened[0].submit({ main: { extraRoleIds: [], name: ' Sales team ', userIds: ['u1', 'u2'] } }).subscribe();
         const request = httpTesting.expectOne(GROUP_URL);
         request.flush({ ...group, memberCount: 2 });
@@ -85,16 +93,35 @@ describe('GroupsActionsService', () => {
         expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: 'demo.teams.toast.edit-success' }]);
     });
 
-    it('sends no extra roles when the organization of the group has none to offer', () => {
+    it('searches the users of the organization for the members, asking for 20 more than those chosen', () => {
         TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, page);
         answerGroup();
-        httpTesting.expectOne(`${GROUP_URL}/role-options`).flush({ extraRoles: [] });
+        const answers: FormFieldOption[][] = [];
 
-        opened[0].submit({ main: { name: 'Sales', userIds: ['u1'] } }).subscribe();
-        const request = httpTesting.expectOne(GROUP_URL);
-        request.flush(group);
+        listField('userIds')
+            .picker?.search?.('gra', ['u1'])
+            .subscribe(options => answers.push(options));
+        const request = httpTesting.expectOne(current => current.url === `${GROUP_URL}/member-options`);
+        request.flush({ users: [ada, grace] });
 
-        expect(request.request.body).toEqual({ name: 'Sales', userIds: ['u1'] });
+        expect(request.request.urlWithParams).toBe(`${GROUP_URL}/member-options?search=gra&limit=21`);
+        expect(answers).toEqual([[{ label: 'Grace Hopper (grace@example.test)', value: 'u2' }]]);
+    });
+
+    it('searches the extra roles of the organization by name, and leaves out those chosen', () => {
+        const writers = { id: 'r2', name: 'Writers' };
+        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, page);
+        answerGroup();
+        const answers: FormFieldOption[][] = [];
+
+        listField('extraRoleIds')
+            .picker?.search?.('er', ['r1'])
+            .subscribe(options => answers.push(options));
+        const request = httpTesting.expectOne(current => current.url === `${GROUP_URL}/role-options`);
+        request.flush({ extraRoles: [reviewers, writers] });
+
+        expect(request.request.urlWithParams).toBe(`${GROUP_URL}/role-options?search=er&limit=21`);
+        expect(answers).toEqual([[{ label: 'Writers', value: 'r2' }]]);
     });
 
     it('opens nothing and shows the reason once when the group cannot be read', () => {
@@ -103,8 +130,6 @@ describe('GroupsActionsService', () => {
             .expectOne(GROUP_URL)
             .flush({ errorCode: 'not-found', messageKey: 'groups.not-found' }, { status: 404, statusText: '' });
 
-        expect(httpTesting.expectOne(`${GROUP_URL}/member-options`).cancelled).toBe(true);
-        expect(httpTesting.expectOne(`${GROUP_URL}/role-options`).cancelled).toBe(true);
         expect(opened).toEqual([]);
         expect(TestBed.inject(FakeModalService).errors()).toEqual([
             expect.objectContaining({ message: 'angular-components.http.error.groups.not-found' })
