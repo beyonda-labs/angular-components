@@ -316,6 +316,12 @@
                     "uppercase-required": "La contraseña debe incluir una letra mayúscula."
                 },
                 "required-field": "El campo \"{{fieldName}}\" es obligatorio.",
+                "roles": {
+                    "base-role": "Los roles base de la aplicación no se pueden cambiar ni eliminar.",
+                    "existing-name": "Ya hay un rol con este nombre en esta organización, o es el nombre de un rol base.",
+                    "invalid-permissions": "Algunos de los permisos elegidos no pueden ir en un rol: no tienes esos permisos para darlos, o sirven para gestionar usuarios, organizaciones o roles. Recarga la página y vuelve a intentarlo.",
+                    "not-found": "Este rol no existe o está fuera de tu alcance. Recarga la página y vuelve a intentarlo."
+                },
                 "service-unavailable": "El servicio no está disponible temporalmente. Por favor, inténtelo de nuevo más tarde.",
                 "sharing": {
                     "invalid-grantees": "Algunos de los usuarios o grupos elegidos no pueden tener acceso a esta carpeta: pertenecen a otra organización, son sus propietarios o ya no existen. Recarga la página y vuelve a intentarlo."
@@ -326,6 +332,7 @@
                 "unknown": "Se produjo un error inesperado. Por favor, inténtelo de nuevo más tarde.",
                 "users": {
                     "existing-user": "Ya hay una cuenta con el correo {{email}}.",
+                    "invalid-extra-roles": "Algunos de los roles adicionales elegidos no pertenecen a la organización del usuario o ya no existen. Recarga la página y vuelve a intentarlo.",
                     "invitation-not-sent": "Se ha creado el usuario {{email}}, pero no se ha podido enviar el correo de invitación. Usa «Reenviar invitación» para intentarlo de nuevo.",
                     "last-superadmin": "Este cambio dejaría sin ningún superadministrador activo.",
                     "not-found": "Este usuario no existe. Recarga la página y vuelve a intentarlo.",
@@ -442,6 +449,12 @@
                     "uppercase-required": "Falta una mayúscula"
                 },
                 "required-field": "Campo obligatorio",
+                "roles": {
+                    "base-role": "Rol base",
+                    "existing-name": "Nombre ya en uso",
+                    "invalid-permissions": "Permisos no válidos",
+                    "not-found": "Rol no encontrado"
+                },
                 "service-unavailable": "Servicio no disponible",
                 "sharing": {
                     "invalid-grantees": "Destinatarios no válidos"
@@ -451,6 +464,7 @@
                 "unknown": "Error inesperado",
                 "users": {
                     "existing-user": "La cuenta ya existe",
+                    "invalid-extra-roles": "Roles adicionales no válidos",
                     "invitation-not-sent": "Invitación no enviada",
                     "last-superadmin": "Último superadministrador",
                     "not-found": "Usuario no encontrado",
@@ -902,6 +916,125 @@
                 "expand": "Desplegar"
             }
         },
+        "roles": {
+            "actions": {
+                "create": {
+                    "label": "Nuevo rol",
+                    "tooltip": "Crea un rol adicional para los usuarios de la organización"
+                },
+                "delete": {
+                    "label": "Eliminar",
+                    "tooltip": "Elimina los roles seleccionados"
+                },
+                "edit": {
+                    "label": "Editar",
+                    "tooltip": "Edita el rol seleccionado"
+                }
+            },
+            "form": {
+                "create": {
+                    "title": "Nuevo rol"
+                },
+                "edit": {
+                    "title": "Editar rol"
+                },
+                "main": {
+                    "description": {
+                        "label": "Descripción",
+                        "placeholder": "Explica para qué sirve el rol"
+                    },
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Escribe el nombre del rol"
+                    },
+                    "organization-id": {
+                        "label": "Organización",
+                        "placeholder": "Elige una organización"
+                    }
+                },
+                "permissions": {
+                    "empty": "No hay permisos que puedas dar.",
+                    "label": "Permisos"
+                }
+            },
+            "modal": {
+                "delete": {
+                    "message": "Se eliminarán {{count}} rol(es) y los usuarios que los tienen perderán los permisos que dan. ¿Quieres continuar?",
+                    "title": "Eliminar roles"
+                }
+            },
+            "permissions": {
+                "organization": {
+                    "label": "Organización",
+                    "manage": "Gestionar la organización"
+                },
+                "roles": {
+                    "label": "Roles",
+                    "manage": "Gestionar roles y permisos"
+                },
+                "users": {
+                    "change-status": "Activar y desactivar usuarios",
+                    "edit": "Editar usuarios",
+                    "invite": "Invitar usuarios",
+                    "label": "Usuarios",
+                    "read": "Ver usuarios"
+                }
+            },
+            "search": {
+                "fields": {
+                    "text": "Nombre"
+                }
+            },
+            "table": {
+                "columns": {
+                    "description": "Descripción",
+                    "member-count": "Usuarios",
+                    "name": "Nombre",
+                    "organization": "Organización",
+                    "permission-count": "Permisos",
+                    "type": "Tipo"
+                },
+                "empty": "Ningún rol coincide con la búsqueda",
+                "every-organization": "Todas",
+                "tooltips": {
+                    "description": "Para qué sirve el rol",
+                    "member-count": "Cuántos usuarios lo tienen",
+                    "name": "El nombre del rol",
+                    "organization": "La organización a la que pertenece el rol",
+                    "permission-count": "Cuántos permisos da",
+                    "type": "Si es un rol base de la aplicación o un rol adicional de la organización"
+                },
+                "view-permissions": "Ver permisos"
+            },
+            "title": "Roles y permisos",
+            "toast": {
+                "create-success": "Rol creado",
+                "delete-success": "Roles eliminados",
+                "edit-success": "Rol guardado"
+            },
+            "type": {
+                "base": "Base",
+                "extra": "Adicional"
+            },
+            "view": {
+                "buttons": {
+                    "close": "Cerrar"
+                },
+                "main": {
+                    "description": {
+                        "label": "Descripción"
+                    },
+                    "name": {
+                        "label": "Rol"
+                    }
+                },
+                "permissions": {
+                    "empty": "Este rol no da ningún permiso.",
+                    "label": "Permisos"
+                },
+                "title": "Permisos del rol"
+            }
+        },
         "search": {
             "add": "Añadir filtro",
             "apply": "Aplicar filtros",
@@ -1003,6 +1136,9 @@
                     "email": {
                         "label": "Correo electrónico",
                         "placeholder": "Escribe el correo de la persona"
+                    },
+                    "extra-role-ids": {
+                        "label": "Roles adicionales"
                     },
                     "language": {
                         "label": "Idioma de la invitación",

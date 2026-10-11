@@ -8,10 +8,16 @@ export enum UserStatus {
     Unverified = 'unverified'
 }
 
+export interface UserExtraRole {
+    id: string;
+    name: string;
+}
+
 export interface UserFormFields {
     roles: string[];
 
     email?: string;
+    extraRoleIds?: string[];
     language?: string;
     name?: string;
     organizationId?: string;
@@ -22,8 +28,19 @@ export interface UserFormValue {
     main: UserFormFields;
 }
 
+export interface UserOrganizationRole extends UserExtraRole {
+    organizationId: string;
+}
+
+export interface UserRoles {
+    extraRoles: UserOrganizationRole[];
+    roles: string[];
+}
+
 export interface UserRolesResponse {
     roles: string[];
+
+    extraRoles?: UserOrganizationRole[];
 }
 
 export interface UserRow extends PageOrganizationItem {
@@ -34,12 +51,14 @@ export interface UserRow extends PageOrganizationItem {
     roles: string[];
     status: UserStatus;
 
+    extraRoles?: UserExtraRole[];
     lastLoginAt?: number;
     name?: string;
     surname?: string;
 }
 
 export interface UsersFormOptions {
+    extraRoles: UserOrganizationRole[];
     isOrganizationAsked: boolean;
     organizations: PageOrganization[];
     prefix: string;
@@ -97,6 +116,10 @@ export const USER_STATUS_TRANSITIONS: Readonly<Record<UserStatus, readonly UserS
     [UserStatus.Invited]: [UserStatus.Inactive],
     [UserStatus.Unverified]: [UserStatus.Inactive]
 };
+
+export const USERS_EXTRA_ROLE_VARIANT = BadgeVariant.Info;
+
+export const USERS_EXTRA_ROLES_FIELD = 'extraRoleIds';
 
 export const USERS_FORM_SECTION = 'main';
 

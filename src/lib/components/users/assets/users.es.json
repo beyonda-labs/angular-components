@@ -4,6 +4,7 @@
             "error": {
                 "users": {
                     "existing-user": "Ya hay una cuenta con el correo {{email}}.",
+                    "invalid-extra-roles": "Algunos de los roles adicionales elegidos no pertenecen a la organización del usuario o ya no existen. Recarga la página y vuelve a intentarlo.",
                     "invitation-not-sent": "Se ha creado el usuario {{email}}, pero no se ha podido enviar el correo de invitación. Usa «Reenviar invitación» para intentarlo de nuevo.",
                     "last-superadmin": "Este cambio dejaría sin ningún superadministrador activo.",
                     "not-found": "Este usuario no existe. Recarga la página y vuelve a intentarlo.",
@@ -17,6 +18,7 @@
             "title": {
                 "users": {
                     "existing-user": "La cuenta ya existe",
+                    "invalid-extra-roles": "Roles adicionales no válidos",
                     "invitation-not-sent": "Invitación no enviada",
                     "last-superadmin": "Último superadministrador",
                     "not-found": "Usuario no encontrado",
@@ -71,6 +73,9 @@
                     "email": {
                         "label": "Correo electrónico",
                         "placeholder": "Escribe el correo de la persona"
+                    },
+                    "extra-role-ids": {
+                        "label": "Roles adicionales"
                     },
                     "language": {
                         "label": "Idioma de la invitación",

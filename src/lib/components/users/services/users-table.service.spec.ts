@@ -46,6 +46,17 @@ describe('UsersTableService', () => {
         expect([(lastLogin as DateTableCell).value, (created as DateTableCell).value]).toEqual([2_000, 1_000]);
     });
 
+    it('shows the extra roles of the user by name after the roles, apart from them', () => {
+        const roles = service.loadRow(
+            buildUser({ extraRoles: [{ id: 'r1', name: 'Reviewers' }], roles: ['admin'] }),
+            options
+        )[2];
+        const { badges } = roles as BadgeTableCell;
+
+        expect(badges.map(badge => badge.label)).toEqual(['Administrator', 'Reviewers']);
+        expect(badges[1].variant).not.toBe(badges[0].variant);
+    });
+
     it('lets the table translate the status but not the roles, which arrive translated', () => {
         const cells = service.loadRow(buildUser(), options);
 

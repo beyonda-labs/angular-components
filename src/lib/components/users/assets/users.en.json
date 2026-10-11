@@ -4,6 +4,7 @@
             "error": {
                 "users": {
                     "existing-user": "There is already an account with the email {{email}}.",
+                    "invalid-extra-roles": "Some of the additional roles chosen do not belong to the organization of the user, or no longer exist. Reload the page and try again.",
                     "invitation-not-sent": "The user {{email}} was created, but the invitation email could not be sent. Use \"Resend invitation\" to try again.",
                     "last-superadmin": "This change would leave no active superadmin.",
                     "not-found": "This user does not exist. Reload the page and try again.",
@@ -17,6 +18,7 @@
             "title": {
                 "users": {
                     "existing-user": "Account already exists",
+                    "invalid-extra-roles": "Additional roles not valid",
                     "invitation-not-sent": "Invitation not sent",
                     "last-superadmin": "Last superadmin",
                     "not-found": "User not found",
@@ -71,6 +73,9 @@
                     "email": {
                         "label": "Email",
                         "placeholder": "Type the email of the person"
+                    },
+                    "extra-role-ids": {
+                        "label": "Additional roles"
                     },
                     "language": {
                         "label": "Language of the invitation",

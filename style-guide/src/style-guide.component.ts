@@ -26,6 +26,7 @@ import { PaginationStyleGuideComponent } from './pagination/pagination-style-gui
 import { PasswordChangeStyleGuideComponent } from './password-change/password-change-style-guide.component';
 import { PdfViewerStyleGuideComponent } from './pdf-viewer/pdf-viewer-style-guide.component';
 import { PropertiesMenuStyleGuideComponent } from './properties-menu/properties-menu-style-guide.component';
+import { RolesStyleGuideComponent } from './roles/roles-style-guide.component';
 import { SearchStyleGuideComponent } from './search/search-style-guide.component';
 import { StyleGuideTranslationService } from './services/style-guide-translation.service';
 import { TableStyleGuideComponent } from './table/table-style-guide.component';
@@ -58,6 +59,7 @@ import { UsersStyleGuideComponent } from './users/users-style-guide.component';
         PasswordChangeStyleGuideComponent,
         PdfViewerStyleGuideComponent,
         PropertiesMenuStyleGuideComponent,
+        RolesStyleGuideComponent,
         SearchStyleGuideComponent,
         TableStyleGuideComponent,
         ToastStyleGuideComponent,
