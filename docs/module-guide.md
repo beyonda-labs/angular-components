@@ -32,12 +32,19 @@ what to touch; the rules themselves live in `c:\Dev\Personal\beyonda-labs\rules\
 | A shared test helper | `testing/src/dom.ts`, only when it is generic; otherwise it stays in the spec                                                                 |
 | A test double        | `testing/src/services/fake-<service>.service.ts`, for a public service a consumer's spec stubs                                                |
 
+A module that gathers several pages, as `administration` does, keeps one folder per page inside it
+(`src/lib/components/<module>/<page>/`, with its own `assets/`, `docs/` and specs), what more than one page uses at
+the root of the module (`services/`, `functions/`, `models/`), and a single `public-api.ts`, README and demo for the
+module; the demo of each page sits in `style-guide/src/<module>/<page>/`.
+
 ## 3. While writing
 
 -   **Texts**: keys under `angular-components.<module>.*` for the module and
     `angular-components-style-guide.<module>.*` for its demo, in both languages with the same keys. After any
     change to a `.json`, run `pnpm run merge-translations`; the bundles under `src/lib/assets/i18n*/` are
-    generated and committed with the change, never edited by hand.
+    generated and committed with the change, never edited by hand. A page inside a module that gathers pages owns
+    its node as any module does, `angular-components.<page>.*`: the keys `bey-page` builds from a prefix
+    (`<prefix>.form.main.<field>.placeholder`) leave no room for one more level within the six the check allows.
 -   **Styles**: read tokens only. When a value has no token, the token is created first in `tokens.css` and
     listed in `docs/tokens.md`.
 -   **Tests**: one spec per unit with behaviour, using `@testing/dom` for rendering and generic queries.
@@ -58,7 +65,9 @@ what to touch; the rules themselves live in `c:\Dev\Personal\beyonda-labs\rules\
     removed config field, a new callback, a changed behaviour.
 -   **The demo** in `style-guide/src/<module>/`, showing each variant and each callback. A new module is also
     registered in `style-guide/src/style-guide.component.ts` (import) and `.html` (a
-    `<bey-style-guide-section>` with the key `angular-components-style-guide.<module>-section`).
+    `<bey-style-guide-section>` with `key="<module>"` and the title key
+    `angular-components-style-guide.<module>-section`, its demo inside an `<ng-template>`). The section folds: it
+    renders the demo only while open, and `#<module>` in the URL opens it.
 -   **The root `README.md`**, when a module is created or removed: the components table and the list of module
     READMEs.
 -   **`docs/change-log.md`**, under `[Unreleased]`: one line per change a consumer notices, two at most, starting

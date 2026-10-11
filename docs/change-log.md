@@ -75,6 +75,8 @@
     `PUT {baseUrl}/{id}` only when it changes.
 -   Page module: `toItem` of `BeyPageFormConfig` receives the row an edit started from as its second argument.
 -   Styles: the `--bey-dialog-margin`, `--bey-dialog-max-height` and `--bey-grid-column-min-width` tokens.
+-   Style guide: "Expand all" and "Collapse all" at the top, and a hash naming a module (`#tabs`, `#administration`)
+    that opens its section and scrolls to it, on arrival or when a link changes it.
 
 ### Changed
 
@@ -88,6 +90,10 @@
     warns with `<prefix>.modal.delete-category-in-use.title` and `.message` when what the folders hold is in use.
 -   Modal, form, tree and file preview modules: every dialog is at most `--bey-dialog-max-height` high, its title and
     buttons fixed while its body scrolls, so a long form no longer makes the page scroll.
+-   Administration module: the users, groups, roles and organizations modules are now pages of one module,
+    `administration`, with one entry in the public API; every export keeps its name and every text its key.
+-   Style guide: every section folds under its title and a chevron, collapsed at first and rendered only while open;
+    the sections left open are remembered in `sessionStorage`, and the four administration demos share one section.
 
 ### Fixed
 

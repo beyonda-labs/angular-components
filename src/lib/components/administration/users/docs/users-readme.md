@@ -1,6 +1,6 @@
 # Users
 
-The users page of an app, built on [`bey-page`](../../page/docs/page-readme.md) over the users module of
+The users page of an app, built on [`bey-page`](../../../page/docs/page-readme.md) over the users module of
 express-components and meant as the content of an app page inside `bey-app-layout`. It lists every account with its
 name and surname, email, roles and extra roles, status, last sign-in and creation date (hidden at first), sorted by email, and searches
 them by name or email in the search box and by status and role in the filters; a superadmin also sees the organization
@@ -54,8 +54,8 @@ permissions.
 
 A name, a surname or a language left empty is not sent, and at least one role must be checked. The search box sends its
 text as the `text` of the search, which the backend matches against the email, the name and the surname at once
-(`textField` of [the page](../../page/docs/page-readme.md#search)); the filters send `status` and `role`. The languages
-of the invitation are the `languages` of the [preferences](../../../services/preferences/docs/preferences-readme.md),
+(`textField` of [the page](../../../page/docs/page-readme.md#search)); the filters send `status` and `role`. The languages
+of the invitation are the `languages` of the [preferences](../../../../services/preferences/docs/preferences-readme.md),
 and none picked sends the invitation in the default language of the mail.
 
 Each status has its badge: `active` success, `invited` info, `unverified` warning and `inactive` neutral. Every guard
@@ -88,7 +88,7 @@ their own organization and never sees a superadmin, and the server strips the or
 them, so the page shows nothing about organizations to anyone but a superadmin.
 
 The page knows a superadmin by the roles of the session user (`superadmin`, read from the token by
-[the session](../../../services/session/docs/session-readme.md)), rather than by asking and failing: nobody else sends
+[the session](../../../../services/session/docs/session-readme.md)), rather than by asking and failing: nobody else sends
 the request. For a superadmin it reads `GET {baseUrl}/organizations`, which answers `{ organizations: [{ id, name }] }`,
 the active organizations sorted by name, together with the roles and before the list shows; a failed answer counts as
 none, with no error.
@@ -157,7 +157,7 @@ roles of a user reaches them at the next refresh of their session, within the li
 
 ## Texts
 
-Every text follows [the page](../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
+Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.no-name` (the name of a user who has
 none), `table.system` (the organization of a superadmin), `search.fields.<key>`, `status.<status>`,
 `form.create.title`, `form.edit.title`, `form.main.<field>.label` and `.placeholder`, and `toast.<key>-success`. The module ships all of them in English and Spanish.

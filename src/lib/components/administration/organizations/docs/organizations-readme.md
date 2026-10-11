@@ -1,6 +1,6 @@
 # Organizations
 
-The organizations page of an app, built on [`bey-page`](../../page/docs/page-readme.md) over the organizations module
+The organizations page of an app, built on [`bey-page`](../../../page/docs/page-readme.md) over the organizations module
 of express-components, for the superadmin only, and meant as the content of an app page inside `bey-app-layout`. It
 lists every organization with its name, its status, how many users belong to it, active or not, and its creation date,
 sorted by name, and searches them by name in the search box and by status in the filters. It creates an organization
@@ -74,7 +74,7 @@ The errors of the module are translated under `angular-components.http.error.org
 
 ## Texts
 
-Every text follows [the page](../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
+Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `search.fields.<key>`, `status.<status>`,
 `form.create.title`, `form.edit.title`, `form.main.name.label` and `.placeholder`, `form.main.status.label` and
 `.placeholder`, `form.groups.label`, `.empty` and `.no-members`, and `toast.<key>-success`. The module ships all of them

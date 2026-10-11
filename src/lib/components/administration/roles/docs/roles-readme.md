@@ -1,6 +1,6 @@
 # Roles
 
-The roles and permissions page of an app, built on [`bey-page`](../../page/docs/page-readme.md) over the roles module
+The roles and permissions page of an app, built on [`bey-page`](../../../page/docs/page-readme.md) over the roles module
 of express-components, for the managers of an organization the app grants `roles.manage` to and the superadmin, and
 meant as the content of an app page inside `bey-app-layout`. Every user holds a base role of the application, whose
 permissions the app declares, and the managers add extra roles to the members of their organization: a name, an
@@ -93,7 +93,7 @@ a change or a delete of a base role.
 
 ## Permissions
 
-The checklist is a [`BeyFormCheckboxSectionsField`](../../form/docs/form-fields-readme.md#checkbox-sections) under the
+The checklist is a [`BeyFormCheckboxSectionsField`](../../../form/docs/form-fields-readme.md#checkbox-sections) under the
 label `form.permissions.label` ("Permissions:"): a foldable section per `group` of the answer, the resource the
 permission belongs to, in the order of the groups, with the permissions of each group in the order the server gives
 them. Each section shows its icon, its label, how many of its permissions are checked ("3/6") and "Select all", which
@@ -140,7 +140,7 @@ The module ships the labels and descriptions of the library's own permissions: `
 A manager reaches the extra roles of their own organization, and the server answers its rows without an organization,
 so the page shows nothing about organizations to anyone but a superadmin. A superadmin reaches the extra roles of
 every organization, and their rows carry `organizationId` and `organizationName`, as
-[`BeyPageOrganizationItem`](../../page/docs/page-readme.md#organizations) reads them; a base role carries `null`.
+[`BeyPageOrganizationItem`](../../../page/docs/page-readme.md#organizations) reads them; a base role carries `null`.
 
 The page knows a superadmin by the roles of the session user (`superadmin`), as
 [`bey-groups`](../../groups/docs/groups-readme.md#organizations) does, and reads `GET {usersUrl}/organizations` for it
@@ -160,7 +160,7 @@ The edit form never offers the organization: roles do not move between organizat
 
 ## Texts
 
-Every text follows [the page](../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
+Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.every-organization`,
 `table.view-permissions`, `type.base` and `.extra`, `search.fields.<key>`, `form.create.title`, `form.edit.title`,
 `form.main.<field>.label` and `.placeholder`, `form.permissions.label` (the label above the checklist) and `.empty`

@@ -98,7 +98,10 @@ The interactive style guide ships as `@beyonda-labs/angular-components/style-gui
 never pulls the demo in. Its sources live in `style-guide/src/<module>/`, one folder per module. `bey-style-guide`
 loads its own texts from `assets/angular-components/i18n-style-guide/` for the current language and every change:
 copy that folder in `angular.json` (`input: node_modules/@beyonda-labs/angular-components/assets/i18n-style-guide`,
-`output: assets/angular-components/i18n-style-guide`) and render the component.
+`output: assets/angular-components/i18n-style-guide`) and render the component. Each module is a section that folds
+under its title, collapsed at first and rendered only while open; "Expand all" and "Collapse all" at the top open or
+close every one, the sections left open are remembered in `sessionStorage` for the session, and a hash naming a module
+(`#tabs`, `#administration`) opens its section and scrolls to it, on arrival or when a link changes it.
 
 The specs of a consuming app take their helpers from `@beyonda-labs/angular-components/testing`, a second
 secondary entry point that only specs import: `provideBeyTesting(config?)`, the test counterpart of
@@ -113,17 +116,18 @@ Two plain functions are public so an app builds the same texts and keys as the l
 Component documentation:
 
 -   [Account data](src/lib/components/account-data/docs/account-data-readme.md)
+-   [Administration](src/lib/components/administration/docs/administration-readme.md):
+    [Users](src/lib/components/administration/users/docs/users-readme.md),
+    [Groups](src/lib/components/administration/groups/docs/groups-readme.md),
+    [Roles](src/lib/components/administration/roles/docs/roles-readme.md) and
+    [Organizations](src/lib/components/administration/organizations/docs/organizations-readme.md)
 -   [Edit lock notice](src/lib/components/edit-lock-notice/docs/edit-lock-notice-readme.md)
 -   [Form](src/lib/components/form/docs/form-readme.md)
--   [Groups](src/lib/components/groups/docs/groups-readme.md)
 -   [Header](src/lib/components/header/docs/header-readme.md)
 -   [Left Menu](src/lib/components/left-menu/docs/left-menu-readme.md)
 -   [Notice](src/lib/components/notice/docs/notice-readme.md)
--   [Organizations](src/lib/components/organizations/docs/organizations-readme.md)
 -   [Password change](src/lib/components/password-change/docs/password-change-readme.md)
--   [Roles](src/lib/components/roles/docs/roles-readme.md)
 -   [Table](src/lib/components/table/docs/table-readme.md)
--   [Users](src/lib/components/users/docs/users-readme.md)
 
 Service documentation:
 

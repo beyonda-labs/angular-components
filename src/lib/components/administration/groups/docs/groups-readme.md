@@ -1,6 +1,6 @@
 # Groups
 
-The groups page of an app, built on [`bey-page`](../../page/docs/page-readme.md) over the groups module of
+The groups page of an app, built on [`bey-page`](../../../page/docs/page-readme.md) over the groups module of
 express-components, for the managers of an organization and the superadmin, and meant as the content of an app page
 inside `bey-app-layout`. A group belongs to one organization and holds users of that organization; it is what folders
 are shared with, and it may hold extra roles of its organization, whose permissions every member gets as if they held
@@ -89,7 +89,7 @@ meanwhile, or of an organization out of reach, answers.
 
 A manager reaches the groups of their own organization, and the server answers its rows without an organization, so
 the page shows nothing about organizations to anyone but a superadmin. A superadmin reaches every group, and its rows
-carry `organizationId` and `organizationName`, as [`BeyPageOrganizationItem`](../../page/docs/page-readme.md#organizations)
+carry `organizationId` and `organizationName`, as [`BeyPageOrganizationItem`](../../../page/docs/page-readme.md#organizations)
 reads them.
 
 The page knows a superadmin by the roles of the session user (`superadmin`), as
@@ -114,7 +114,7 @@ The edit form never offers the organization: groups do not move between organiza
 
 ## Texts
 
-Every text follows [the page](../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
+Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `search.fields.<key>`, `form.create.title`,
 `form.edit.title`, `form.main.<field>.label` and `.placeholder`, `form.main.user-ids.empty`, `modal.delete.title` and
 `.message`, and `toast.<key>-success`. The module ships all of them in English and Spanish.
