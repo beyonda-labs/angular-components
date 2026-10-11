@@ -293,14 +293,15 @@ What `document-builder-front` did by hand that belongs in the library.
 ### Page
 
 -   [x] The trash names, as the tooltip of each row, the folder a restore puts it back in
--   [x] Warn before deleting rows other rows use, from the usages the backend answers (`usagesConfig`)
+-   [x] Warn before deleting rows other rows use, from the usages the backend answers (`usagesConfig`), folders included
 -   [x] Move rows by dragging them onto a folder
 -   [x] The number of rows of the folder, in the last node of the breadcrumb
 -   [x] Saved views: tabs that apply a search with its filters (templates / blocks)
 -   ~~Search every folder at once, naming the folder of each result~~ — decided against
 -   ~~Undo right after a delete, from its toast~~ — decided against
 -   [x] One editor at a time: `BeyEditLockService` and `bey-edit-lock-notice`, over the edit locks of base-entity
--   [ ] Share a folder with users or groups, to read or to edit, over the sharing of base-entity
+-   [x] Share a folder with users or groups, to read or to edit, over the sharing of base-entity, and a "Shared with
+        me" tab
 -   [ ] A save that meets a conflict (the row changed since it was opened) says so and offers to reload, instead of
         the generic error
 -   [ ] _(very low priority)_ Favourite and recent rows
