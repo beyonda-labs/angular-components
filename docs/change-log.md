@@ -91,6 +91,8 @@
 
 ### Fixed
 
+-   Page module: the trash origin on the tooltip of a row ends with the row's own name, so it reads as the place of
+    that row.
 -   Page module: the menus of the header open over the search toolbar again; the search sits in the new
     `--bey-z-toolbar` layer, over the sticky header of the table and under the menus.
 -   Page module: the entries of a move and of the trash read their type from the `typeField` of the categories, still
