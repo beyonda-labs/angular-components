@@ -57,8 +57,15 @@ describe('PageTableService', () => {
         expect(loadCategoryRow).toHaveBeenCalledWith(CLIENTS, PageViewMode.Shared);
     });
 
-    it('tells in the trash the folder a restore puts a row back in', () => {
+    it('tells in the trash where a restore puts a row back, ending with the row itself', () => {
         const [cell] = service.loadRow(buildConfig(), OFFER, PageViewMode.Trash, jest.fn());
+
+        expect(cell.tooltip).toBe('demo.categories.root / Clients / Offer');
+    });
+
+    it('ends the trash origin of a folder with the folder itself', () => {
+        const trashedFolder = { ...CLIENTS, parentPath: [] } as PageItem;
+        const [cell] = service.loadRow(buildConfig(), trashedFolder, PageViewMode.Trash, jest.fn());
 
         expect(cell.tooltip).toBe('demo.categories.root / Clients');
     });

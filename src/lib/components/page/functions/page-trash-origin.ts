@@ -4,6 +4,12 @@ import { readRowField } from './page-row';
 
 const ORIGIN_SEPARATOR = ' / ';
 
+export function readItemName(item: PageItem, field: string): string[] {
+    const value = readRowField(item, field);
+
+    return value === undefined || value === null || String(value).trim() === '' ? [] : [String(value)];
+}
+
 export function readParentPath(item: PageItem, field: string): string[] | null {
     const value = readRowField(item, field);
 
