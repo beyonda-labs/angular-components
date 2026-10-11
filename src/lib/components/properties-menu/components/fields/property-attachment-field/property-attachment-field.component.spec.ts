@@ -144,6 +144,20 @@ describe('PropertyAttachmentFieldComponent', () => {
         expect(control('Source').getAttribute('aria-expanded')).toBe('false');
     });
 
+    it('offers no upload when the field disables it, and still picks an existing attachment', async () => {
+        await render({ isUploadEnabled: false, options: OPTIONS });
+
+        expect(control('Upload a new file')).toBeUndefined();
+
+        await dispatch(new Event('focus'));
+        await dispatch(
+            new MouseEvent('mousedown'),
+            options().find(option => option.textContent?.trim() === 'Logo A4') as HTMLElement
+        );
+
+        expect(emitted).toEqual(['a1']);
+    });
+
     describe('picking a file to upload', () => {
         const WRONG_TYPE_TEXT = 'This file type is not accepted (image/*,application/pdf).';
 
