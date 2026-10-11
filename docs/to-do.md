@@ -313,11 +313,15 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [x] Organizations page for the superadmin, and the organization column and filter of every page and of the users
         page, shown only while the rows span two organizations or more
 -   [x] Groups page for the managers of an organization and the superadmin, over the `groups` module of
-        express-components: create, rename and delete a group and set its members, the targets of the folder sharing
+        express-components: create and delete a group, and edit its name, its members and its extra roles in one form;
+        groups are the targets of the folder sharing
 -   [ ] A modal at the first sign-in that asks to change a default password (the generated superadmin's, or one an
         admin set), built on `bey-password-change`, and that stays until the password changes
 -   [x] Roles and permissions page, over the `roles` module of express-components: the base roles read-only and the
-        extra roles of an organization, named and given permissions grouped by resource, assigned on the users page
+        extra roles of an organization, named and given permissions in foldable sections by resource, assigned on the
+        users page and the groups page
+-   [x] One edit per entity on the users, groups and organizations pages, every field shown and those the row does not
+        let change disabled
 -   [x] Account pages: change the password, recover it from the login, verify the email, and a profile with the name,
         the language and the theme
 -   [ ] The OAuth callback says why a sign-in failed (`?error=unauthorized`, `?error=account-inactive`,

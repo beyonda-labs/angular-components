@@ -64,7 +64,8 @@ const dialog = this.modalTree.open(new BeyModalTreeConfig({
 The dialog opens with every branch expanded unless `expandedKeys` says otherwise, and its confirm button stays
 disabled until a node is picked. The config is plain data: the dialog owns the selection and which branches are
 open, and confirming does not close it, so close it through the `BsModalRef` that `open` returns once the work
-is done. The title defaults to `<prefix>.title`.
+is done. The title defaults to `<prefix>.title`. The dialog stops at `--bey-modal-tree-max-height`, by default
+`--bey-dialog-max-height`: its title and its buttons stay in place and the tree scrolls.
 
 ## Theming
 

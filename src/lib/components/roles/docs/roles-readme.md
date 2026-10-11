@@ -6,18 +6,20 @@ meant as the content of an app page inside `bey-app-layout`. Every user holds a 
 permissions the app declares, and the managers add extra roles to the members of their organization: a name, an
 optional description and a set of permissions that only add to the base role of whoever holds it. The page lists the
 base roles first, read-only, and then the extra roles of the organization, each with its type ("Base" or
-"Additional"), how many permissions it gives, how many users hold it and its description, in the order the server
-answers them, and searches them by name in the search box; a superadmin also sees the organization of each role and
+"Additional"), how many permissions it gives, how many users hold it directly, how many groups hold it ("Groups",
+`groupCount`, whose members all get its permissions) and its description, in the order the server answers them, and searches them by name in the search box; a superadmin also sees the organization of each role and
 filters by it, see [Organizations](#organizations). It creates an extra role, edits one, deletes extra roles after a
 confirmation, and shows the permissions of a base role. Which actions it offers is up to the backend, as on any page:
 `create` when `globalActions` lists it, and `edit` and `delete` for the rows whose `actions` list them, which are the
-extra roles; a base role lists none. The extra roles are given to users on [the users page](../../users/docs/users-readme.md#extra-roles).
+extra roles; a base role lists none. The extra roles are given to users on [the users page](../../users/docs/users-readme.md#extra-roles),
+and to groups on [the groups page](../../groups/docs/groups-readme.md), whose members all get their permissions.
 
 ## Usage
 
 ```ts
 readonly layoutConfig = this.appShellService.buildConfig();
 readonly rolesConfig = new BeyRolesConfig({
+    groupIcons: { documents: faFileLines, templates: faFolderOpen },
     permissionPrefix: 'myApp.permissions',
     rolePrefix: 'myApp.roles'
 });
@@ -45,6 +47,7 @@ The route must be in the `allowedPaths` of whoever holds `roles.manage`, which t
 | `prefix`           | `'angular-components.roles'`             | i18n prefix of the page, as `bey-page` reads it                                    |
 | `rolePrefix`       | `'angular-components.users.roles'`       | i18n prefix the labels of the base roles are read from, the `rolePrefix` of the users page |
 | `permissionPrefix` | `'angular-components.roles.permissions'` | i18n prefix the labels of the permissions are read from, see [Permissions](#permissions) |
+| `groupIcons`       | `{}`                                     | The icon of the section of each permission group, by group, see [Permissions](#permissions) |
 | `storageKey`       | `'roles'`                                | Key under which the table remembers the columns the user hid                       |
 | `height`           | `'calc(100vh - 220px)'`                  | Height of the table                                                                |
 
@@ -71,14 +74,13 @@ caller without access gets `404` there and from the list. A superadmin reads the
 The name is required, at most 60 characters and sent trimmed; the server keeps it unique within the organization,
 without regard to case, refuses the name of a base role, and answers both with `roles.existing-name`. The description
 is optional and always sent, trimmed, so emptying it in an edit removes it. The permissions are sent as one list, every
-one checked in any group, and at least one is required: while none is checked every group is required and the form
-cannot be sent. The search box sends its text as the `text` of the search, which the backend matches against the name.
+one checked in any section, and at least one is required: while none is checked the form cannot be sent. The search box sends its text as the `text` of the search, which the backend matches against the name.
 No column sorts, since the server keeps the base roles first.
 
 The name of an extra role opens the edit form when the row lists `edit`. The name of a base role, or of any role the
 caller cannot edit, opens its permissions instead (`table.view-permissions` as its tooltip): the same checklist with
-the permissions of the role checked and every box disabled, under its name and description, closed with its only
-button (`view.buttons.close`).
+the permissions of the role checked and every box disabled, nothing to select and the sections still folding, under
+its name and description, closed with its only button (`view.buttons.close`).
 
 `delete` asks first with `modal.delete.title` and `.message`, which warns that the users who hold the roles lose the
 permissions they give, and the server takes the roles from them. A change of a role, or of who holds it, reaches a user
@@ -91,29 +93,47 @@ a change or a delete of a base role.
 
 ## Permissions
 
-The checklist has one group of checkboxes per `group` of the answer, the resource the permission belongs to, in the
-order of the groups, and the permissions of each group in the order the server gives them. A permission the role
-holds that the answer leaves out, such as one the editor does not hold, is offered too in the group of its prefix, so
-it can be unchecked; the read-only view of a base role shows that way the permissions of the base role nobody can put
-in an extra role.
+The checklist is a [`BeyFormCheckboxSectionsField`](../../form/docs/form-fields-readme.md#checkbox-sections) under the
+label `form.permissions.label` ("Permissions:"): a foldable section per `group` of the answer, the resource the
+permission belongs to, in the order of the groups, with the permissions of each group in the order the server gives
+them. Each section shows its icon, its label, how many of its permissions are checked ("3/6") and "Select all", which
+turns into "Clear all" once they all are; its body is a grid of checkboxes, each with its label and, under it, its
+description. The sections start folded, except those holding a permission of the role, so an edit opens on what the
+role gives. A permission the role holds that the answer leaves out, such as one the editor does not hold, is offered
+too in the section of its prefix, so it can be unchecked; the read-only view of a base role shows that way the
+permissions of the base role nobody can put in an extra role.
 
-A permission `<group>.<action>` is labelled `<permissionPrefix>.<group>.<action>` and its group
-`<permissionPrefix>.<group>.label`, every part as a kebab-case segment, and an action with dots of its own adds a
-level per part. A key the app does not translate is read under the library's own node,
-`angular-components.roles.permissions`, and without a translation there either the label is the action or the group
-made readable: `templates.change-status` shows "Change status" under "Templates". The permissions are the app's, so
-the app translates them under a node of its own and points `permissionPrefix` at it:
+A permission `<group>.<action>` is labelled `<permissionPrefix>.<group>.<action>.label` and described by
+`<permissionPrefix>.<group>.<action>.description`, and its section by `<permissionPrefix>.<group>.label`, every part
+as a kebab-case segment; an action with dots of its own adds a level per part. A key the app does not translate is
+read under the library's own node, `angular-components.roles.permissions`. Without a label there either, the label is
+the action made readable, `templates.change-status` showing "Change status", and the section the group made readable,
+"Templates"; without a description the permission shows none. The permissions are the app's, so the app translates
+them under a node of its own and points `permissionPrefix` at it:
 
 ```ts
 new BeyRolesConfig({ permissionPrefix: 'myApp.permissions' });
 ```
 
 ```json
-{ "myApp": { "permissions": { "templates": { "label": "Templates", "edit": "Edit templates" } } } }
+{
+    "myApp": {
+        "permissions": {
+            "templates": {
+                "label": "Templates",
+                "edit": { "label": "Edit templates", "description": "Can change the templates." }
+            }
+        }
+    }
+}
 ```
 
-The module ships the labels of the library's own permissions: `users.read`, `users.invite`, `users.edit`,
-`users.change-status`, `organization.manage` and `roles.manage`, with the labels of their groups.
+The icon of a section is the one `groupIcons` gives its group, an `IconDefinition` such as an outline icon of
+`@fortawesome/free-regular-svg-icons`; the library's own groups have theirs (`users`, `organization`, `roles`), and any
+other group shows `faRectangleList`.
+
+The module ships the labels and descriptions of the library's own permissions: `users.read`, `users.invite`,
+`users.edit`, `users.change-status`, `organization.manage` and `roles.manage`, with the labels of their groups.
 
 ## Organizations
 
@@ -127,7 +147,7 @@ The page knows a superadmin by the roles of the session user (`superadmin`), as
 alone, before the list shows; a failed answer counts as none, with no error.
 
 -   **The column.** With two active organizations or more, every row shows its organization in an "Organization"
-    column after the member count (`table.columns.organization`), and a base role shows "All" there
+    column after the group count (`table.columns.organization`), and a base role shows "All" there
     (`table.every-organization`). With one or none the column does not show.
 -   **The filter.** With two active organizations or more, the filters offer an "Organization" field, `organizationId`
     `equals`, with those organizations by name.
@@ -143,8 +163,8 @@ The edit form never offers the organization: roles do not move between organizat
 Every text follows [the page](../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.every-organization`,
 `table.view-permissions`, `type.base` and `.extra`, `search.fields.<key>`, `form.create.title`, `form.edit.title`,
-`form.main.<field>.label` and `.placeholder`, `form.permissions.label` (the title of the checklist) and `.empty` (when
-there is nothing to give), `modal.delete.title` and `.message`, `toast.<key>-success`, and for the read-only view
+`form.main.<field>.label` and `.placeholder`, `form.permissions.label` (the label above the checklist) and `.empty`
+(when there is nothing to give), `modal.delete.title` and `.message`, `toast.<key>-success`, and for the read-only view
 `view.title`, `view.buttons.close`, `view.main.name.label`, `view.main.description.label`,
 `view.permissions.label` and `.empty` (a role with no permission to show). The module ships all of them in English
 and Spanish.

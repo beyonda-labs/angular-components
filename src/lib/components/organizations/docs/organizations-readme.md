@@ -3,17 +3,18 @@
 The organizations page of an app, built on [`bey-page`](../../page/docs/page-readme.md) over the organizations module
 of express-components, for the superadmin only, and meant as the content of an app page inside `bey-app-layout`. It
 lists every organization with its name, its status, how many users belong to it, active or not, and its creation date,
-sorted by name, and searches them by name in the search box and by status in the filters. It creates an organization,
-renames one, deactivates or reactivates it, and invites its first admin; it never deletes one. Which actions it offers
-is up to the backend, as on any page: `create` when `globalActions` lists it, and `edit`, `change-status` and
-`invite-admin` for the rows whose `actions` list them. The name of an organization opens the rename form when the row
-lists `edit`.
+sorted by name, and searches them by name in the search box and by status in the filters. It creates an organization
+and edits one: its name and its status in one form, which also shows its groups and their members; it never deletes
+one. Which actions it offers is up to the backend, as on any page: `create` when `globalActions` lists it, and `edit`
+for the rows whose `actions` list it. The name of an organization opens the edit form when the row lists `edit`. The
+first admin of an organization is invited from [the users page](../../users/docs/users-readme.md#organizations), where
+the superadmin chooses the organization and the roles.
 
 ## Usage
 
 ```ts
 readonly layoutConfig = this.appShellService.buildConfig();
-readonly organizationsConfig = new BeyOrganizationsConfig({ adminRole: 'adminuser' });
+readonly organizationsConfig = new BeyOrganizationsConfig();
 ```
 
 ```html
@@ -34,14 +35,11 @@ anyone else gets `404` from `/organizations`.
 | Field        | Default                              | Meaning                                                                          |
 | ------------ | ------------------------------------ | -------------------------------------------------------------------------------- |
 | `baseUrl`    | `'/organizations'`                   | Path of the organizations, resolved against the environment's `baseUrl` and `webApiPath` |
-| `usersUrl`   | `'/users'`                           | Path of the users, where the invitation of an admin goes                         |
-| `adminRole`  | `'adminuser'`                        | The role the invited admin gets                                                  |
 | `prefix`     | `'angular-components.organizations'` | i18n prefix of the page, as `bey-page` reads it                                  |
 | `storageKey` | `'organizations'`                    | Key under which the table remembers the columns the user hid                     |
 | `height`     | `'calc(100vh - 220px)'`              | Height of the table                                                              |
 
-`baseUrl` follows the path of the organizations module of express-components, and `usersUrl` the `path` of its users
-module, as `baseUrl` of [`bey-users`](../../users/docs/users-readme.md) does.
+`baseUrl` follows the path of the organizations module of express-components.
 
 ## Requests
 
@@ -49,28 +47,27 @@ module, as `baseUrl` of [`bey-users`](../../users/docs/users-readme.md) does.
 | ---------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | List             | `GET {baseUrl}?search=<base64>`                                                        |                                                       |
 | `create`         | `POST {baseUrl}` `{ name }`                                                            | The name                                              |
-| `edit`           | `PUT {baseUrl}/{id}` `{ name }`                                                        | The name, filled in with the current one              |
-| `change-status`  | `POST {baseUrl}/{id}/status` `{ status }`                                              | The status the current one reaches                    |
-| `invite-admin`   | `POST {usersUrl}` `{ email, organizationId, roles: [adminRole], name?, surname?, language? }` | The organization to read, email, name, surname and the language of the invitation |
+| `edit`           | `GET {baseUrl}/{id}`, then `PUT {baseUrl}/{id}` `{ name, status? }`                    | The name and the status, and the groups read-only     |
 
 The name is required, at most 100 characters and sent trimmed; the server keeps it unique app-wide, without regard to
 case. The search box sends its text as the `text` of the search, which the backend matches against the name; the
 filter sends `status`. The columns sort by `name`, `userCount` and `createdAt`, the fields the server sorts by; the
 status does not sort.
 
-The status changes `active → inactive` and `inactive → active`, for every organization, the initial one included.
-The users of a deactivated organization can no longer sign in nor refresh their session. The superadmins belong to no
-organization, so a deactivation never touches them, and they never count in the user count. The page offers
-`change-status` on the rows that list it, as any other action. Each status has its badge: `active` success and
-`inactive` neutral.
+`edit` reads the organization first, `{ ...row, groups: [{ id, name, members: [{ id, name, email }] }] }`, its groups
+by name, and opens one form on the page, "Edit organization", with:
 
-`invite-admin` opens a form on the page with the name of the organization, the email (required), the name, the surname
-and the language of the invitation, whose languages are the `languages` of the
-[preferences](../../../services/preferences/docs/preferences-readme.md). It sends the invitation to the users module
-with the organization and the `adminRole`, a name, a surname or a language left empty not sent, then closes the form,
-confirms with `toast.invite-admin-success` and reloads, so the user count grows. A refused invitation shows the
-server's reason: the `users.*` errors of [`bey-users`](../../users/docs/users-readme.md), such as an email in use, or
-`organizations.not-found` for an organization deactivated meanwhile.
+-   **the name**, filled in with the current one;
+-   **"Status"** (`form.main.status`), "Active" or "Inactive", filled in with the current one;
+-   **"Groups"** (`form.groups.label`), read-only: each group under its name with its members, "name (email)" or the
+    email alone when the user has no name, or `form.groups.no-members` for a group without members, and
+    `form.groups.empty` ("This organization has no groups yet.") when it has none.
+
+Saving sends the name, trimmed, and the status only when it changes; then the form closes, confirms with
+`toast.edit-success` and reloads. The status changes `active → inactive` and `inactive → active`, for every
+organization, the initial one included. The users of a deactivated organization can no longer sign in nor refresh their
+session. The superadmins belong to no organization, so a deactivation never touches them, and they never count in the
+user count. Each status has its badge: `active` success and `inactive` neutral.
 
 The errors of the module are translated under `angular-components.http.error.organizations` and
 `.title.organizations`: `existing-name` (with its `name`) and `not-found`.
@@ -79,6 +76,6 @@ The errors of the module are translated under `angular-components.http.error.org
 
 Every text follows [the page](../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `search.fields.<key>`, `status.<status>`,
-`form.create.title`, `form.edit.title`, `form.main.name.label` and `.placeholder`, `change-status.*`,
-`toast.<key>-success`, and for the invitation `invite-admin.title`, `invite-admin.buttons.cancel` and `.submit`, and
-`invite-admin.main.<field>.label` and `.placeholder`. The module ships all of them in English and Spanish.
+`form.create.title`, `form.edit.title`, `form.main.name.label` and `.placeholder`, `form.main.status.label` and
+`.placeholder`, `form.groups.label`, `.empty` and `.no-members`, and `toast.<key>-success`. The module ships all of them
+in English and Spanish.

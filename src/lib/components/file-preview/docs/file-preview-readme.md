@@ -59,3 +59,7 @@ Set on `bey-file-preview-dialog`:
 | `--bey-file-preview-fg`             | `--bey-text-primary` |
 | `--bey-file-preview-fg-muted`       | `--bey-text-muted`   |
 | `--bey-file-preview-close-hover-bg` | `--bey-bg-active`    |
+| `--bey-file-preview-max-height`     | `--bey-dialog-max-height` |
+
+The dialog stops at `--bey-file-preview-max-height`: on a window too short for the body, the body shrinks while the
+header and the close button stay in sight.
