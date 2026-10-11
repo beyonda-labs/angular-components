@@ -107,8 +107,8 @@ The config never changes once built. Whatever has to happen to the live form goe
 
 ## Rules
 
-A field's `isHidden`, `isDisabled`, `isRequired` and `options`, and a section's `isHidden`, take a value, a
-signal or a function of the current form value. The form evaluates them on every change:
+A field's `isHidden`, `isDisabled`, `isRequired` and `options`, an autocomplete's `excludedValues`, and a section's
+`isHidden`, take a value, a signal or a function of the current form value. The form evaluates them on every change:
 
 ```ts
 new BeyFormSelectField({ key: 'fileType', isHidden: value => value['main']['type'] !== 'file' }),
@@ -149,7 +149,7 @@ A custom validator is also run again whenever the form value changes, so one tha
 When the options of a select, a radio or an autocomplete change and no longer list the value of the field, the
 form clears it, and `value()`, `onValueChange` and `onSubmit` see it cleared. Only a change of the options
 drops a value: an initial value is kept while its options are still loading, and cleared only if they arrive
-without it.
+without it. The options of a list field only name its ids, so a list keeps every id it holds.
 
 ## Steps
 
