@@ -130,19 +130,19 @@ Each field extends `BeyPropertyField` (`id`, `label`, `description`, `value`, `d
 and `withDisabled(disabled?)` return a copy of the same field with that value or disabled, which is how a menu is shown
 read-only: `disabled` blocks the input, the variable picker and the action button, while `readonly` leaves them.
 
-| Field                          | Extra                                                                                                      |
-| ------------------------------ | ---------------------------------------------------------------------------------------------------------- |
-| `BeyPropertyTextField`         | `placeholder`, `readonly`, `multiline`                                                                     |
-| `BeyPropertyNumberField`       | `placeholder`, `readonly`, `min`, `max`, `step`, `unit`                                                    |
-| `BeyPropertyNumberArrayField`  | `entryDefaultValue`, `minLength`, `maxLength`, `min`, `max`, `step`                                        |
-| `BeyPropertySelectField<T>`    | `options: BeyPropertyOption<T>[]`, `searchable`, `variables`                                               |
-| `BeyPropertySegmentedField<T>` | `options: BeyPropertyOption<T>[]`                                                                          |
-| `BeyPropertyToggleField`       |                                                                                                            |
-| `BeyPropertyColorField`        | `readonly`                                                                                                 |
-| `BeyPropertySpacingField`      | `readonly`, value is `{ top, right, bottom, left }`                                                        |
-| `BeyPropertyInfoField`         | `items: { label, icon? }[]`, read-only text                                                                |
-| `BeyPropertyFileField`         | `accept`, `maxSizeBytes`; value is the file as base64                                                      |
-| `BeyPropertyAttachmentField`   | `options: BeyPropertyAttachmentOption[]`, `variables`, `accept`, `maxSizeBytes`; value is an attachment id |
+| Field                          | Extra                                                                                                                         |
+| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| `BeyPropertyTextField`         | `placeholder`, `readonly`, `multiline`                                                                                        |
+| `BeyPropertyNumberField`       | `placeholder`, `readonly`, `min`, `max`, `step`, `unit`                                                                       |
+| `BeyPropertyNumberArrayField`  | `entryDefaultValue`, `minLength`, `maxLength`, `min`, `max`, `step`                                                           |
+| `BeyPropertySelectField<T>`    | `options: BeyPropertyOption<T>[]`, `searchable`, `variables`                                                                  |
+| `BeyPropertySegmentedField<T>` | `options: BeyPropertyOption<T>[]`                                                                                             |
+| `BeyPropertyToggleField`       |                                                                                                                               |
+| `BeyPropertyColorField`        | `readonly`                                                                                                                    |
+| `BeyPropertySpacingField`      | `readonly`, value is `{ top, right, bottom, left }`                                                                           |
+| `BeyPropertyInfoField`         | `items: { label, icon? }[]`, read-only text                                                                                   |
+| `BeyPropertyFileField`         | `accept`, `maxSizeBytes`; value is the file as base64                                                                         |
+| `BeyPropertyAttachmentField`   | `options: BeyPropertyAttachmentOption[]`, `variables`, `accept`, `maxSizeBytes`, `isUploadEnabled`; value is an attachment id |
 
 `span: 'half'` puts two consecutive fields on one row. A text field with `acceptsVariable` inserts the picked
 variable as `{{ path }}` at the cursor; with an `actionButton` it shows that button while text is selected and
@@ -150,7 +150,8 @@ reports the selection through `onFieldAction`. A `searchable` select filters its
 label as the user types, and `Enter` picks the first enabled match. A file field shows the name of a file picked
 in the session; a value it was given shows as _File selected_. The attachment field filters `options` as the
 user types and checks the file type and size before `onAttachmentUpload`; storing the file and adding it to
-`options` is the consumer's job.
+`options` is the consumer's job. With `isUploadEnabled: false` (it defaults to `true`) the field shows no upload
+button, for a user who may pick the files there but not add one, and the existing `options` stay selectable.
 
 The label of a field also names its controls for assistive technology: it is tied to the input, the select, the
 colour picker or the toggle, and it names the group of a number array, a segmented or a spacing field and the

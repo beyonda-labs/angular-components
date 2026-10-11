@@ -43,6 +43,8 @@
     `/categories/{id}/share-targets`, above what the folder inherits, with `PUT /categories/{id}/shares`.
 -   Page module: the texts of the `sharing.invalid-grantees` error, and `BeyPageShare`, `BeyPageInheritedShare`,
     `BeyPageShareTarget`, `BeyPageShareAccess` and `BeyPageShareGranteeType` for the answers of the share routes.
+-   Properties menu module: `isUploadEnabled` on `BeyPropertyAttachmentField`, `true` by default; with `false` the field
+    shows no upload button and its existing attachments stay selectable.
 
 ### Changed
 

@@ -3,15 +3,24 @@ import { PropertyFieldType } from '../property-field-type.model';
 import { PropertyVariable } from '../property-variable.model';
 
 export class PropertyAttachmentField extends PropertyField<string> {
+    isUploadEnabled: boolean;
     options: PropertyAttachmentOption[];
     variables: PropertyVariable[];
 
     accept?: string;
     maxSizeBytes?: number;
 
-    constructor({ accept, maxSizeBytes, options = [], variables = [], ...base }: PropertyAttachmentFieldParameters) {
+    constructor({
+        accept,
+        isUploadEnabled = true,
+        maxSizeBytes,
+        options = [],
+        variables = [],
+        ...base
+    }: PropertyAttachmentFieldParameters) {
         super({ ...base, type: PropertyFieldType.Attachment });
         this.accept = accept;
+        this.isUploadEnabled = isUploadEnabled;
         this.maxSizeBytes = maxSizeBytes;
         this.options = options;
         this.variables = variables;
@@ -43,6 +52,7 @@ export class PropertyAttachmentOption {
 
 export interface PropertyAttachmentFieldParameters extends Omit<PropertyFieldParameters<string>, 'type'> {
     accept?: string;
+    isUploadEnabled?: boolean;
     maxSizeBytes?: number;
     options?: PropertyAttachmentOption[];
     variables?: PropertyVariable[];
