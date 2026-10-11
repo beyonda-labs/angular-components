@@ -2,7 +2,7 @@
 
 The users page of an app, built on [`bey-page`](../../page/docs/page-readme.md) over the users module of
 express-components and meant as the content of an app page inside `bey-app-layout`. It lists every account with its
-name and surname, email, roles, status, last sign-in and creation date (hidden at first), sorted by email, and searches
+name and surname, email, roles and extra roles, status, last sign-in and creation date (hidden at first), sorted by email, and searches
 them by name or email in the search box and by status and role in the filters; a superadmin also sees the organization
 of each user and filters by it, see [Organizations](#organizations). It invites a user, edits one, changes
 their status and sends their invitation again. The roles it offers come from `GET {baseUrl}/roles`, read before the
@@ -48,8 +48,8 @@ permissions.
 | ------------------- | ------------------------------------------------------------- | ------------------------------------------------------------ |
 | List                | `GET {baseUrl}?search=<base64>`                               |                                                              |
 | Organizations       | `GET {baseUrl}/organizations`, for a superadmin only          |                                                              |
-| Invite (`create`)   | `POST {baseUrl}` `{ email, roles, name?, surname?, language?, organizationId? }` | Email, name, surname, the organization for a superadmin (required), roles and the language of the invitation |
-| `edit`              | `PUT {baseUrl}/{id}` `{ roles, name?, surname? }`             | The email to read, name, surname and roles                   |
+| Invite (`create`)   | `POST {baseUrl}` `{ email, roles, extraRoleIds?, name?, surname?, language?, organizationId? }` | Email, name, surname, the organization for a superadmin (required), roles, extra roles and the language of the invitation |
+| `edit`              | `PUT {baseUrl}/{id}` `{ roles, extraRoleIds?, name?, surname? }` | The email to read, name, surname, roles and extra roles   |
 | `change-status`     | `POST {baseUrl}/{id}/status` `{ status }`                     | The statuses the current one reaches                         |
 | `resend-invitation` | `POST {baseUrl}/{id}/invitation`                              | None                                                         |
 
@@ -117,6 +117,29 @@ new BeyUsersConfig({ rolePrefix: 'myApp.roles' });
 ```
 
 The module only ships `angular-components.users.roles.superadmin`, read while `rolePrefix` keeps its default.
+
+## Extra roles
+
+An organization may have extra roles of its own, which [the roles page](../../roles/docs/roles-readme.md) defines and
+which only add permissions to the base role of whoever holds them. `GET {baseUrl}/roles` answers them together with
+the base roles, `{ roles, extraRoles: [{ id, name, organizationId }] }`: those of the organization of the caller, or of
+every organization for a superadmin. A server that answers no `extraRoles` counts as one without extra roles. Every
+row lists the extra roles of its user as `extraRoles: [{ id, name }]`.
+
+-   **The table.** The roles column shows the extra roles of the user by name after its roles, in a badge of their own.
+-   **The forms.** The invite and edit forms offer the extra roles of the organization of the user as checkboxes,
+    "Additional roles" (`form.main.extra-role-ids`), after the roles, and send the ones checked as `extraRoleIds`; an
+    edit sends them all, so unchecking one takes it away. For a superadmin, the invitation offers those of the
+    organization chosen in the form and follows the choice, sending only those of the organization chosen at last, and
+    the edit offers those of the organization of the user. An extra role the user holds and the answer does not name is
+    offered too, so it can be unchecked. The group does not show, and nothing is sent, when the organization has no
+    extra roles.
+-   **The filter.** The role filter offers the extra roles after the roles, by name, and for a superadmin of two active
+    organizations or more with the organization of each, "Reviewers (Acme)"; it sends the `id` of the extra role as the
+    value of `role`.
+
+An extra role of another organization, or an unknown one, is refused with `users.invalid-extra-roles`. A change of the
+roles of a user reaches them at the next refresh of their session, within the lifetime of the access token.
 
 ## Texts
 

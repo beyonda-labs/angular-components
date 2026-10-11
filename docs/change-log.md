@@ -45,6 +45,20 @@
     `BeyPageShareTarget`, `BeyPageShareAccess` and `BeyPageShareGranteeType` for the answers of the share routes.
 -   Properties menu module: `isUploadEnabled` on `BeyPropertyAttachmentField`, `true` by default; with `false` the field
     shows no upload button and its existing attachments stay selectable.
+-   Roles module: `bey-roles`, the roles and permissions page over `/roles` on `bey-page`: the base roles read-only and
+    the extra roles of the organization, created, edited and deleted (confirmed) with a checklist of permissions.
+-   Roles module: the checklist groups `GET /roles/permissions` by resource, labelled from `permissionPrefix` with the
+    library's own keys and a readable name as fallbacks; the name of a base role opens its permissions read-only.
+-   Roles module: for a superadmin, the organization of the create form and, with two active organizations or more, an
+    organization column and filter; the texts of the `roles.existing-name`, `.invalid-permissions`, `.not-found` and
+    `.base-role` errors.
+-   Users module: the invite and edit forms offer the extra roles of the organization of the user as "Additional roles"
+    and send them as `extraRoleIds`; for a superadmin they follow the organization of the invitation or of the user.
+-   Users module: the extra roles of each user after its roles in the table, and in the role filter by their `id`;
+    `BeyUserExtraRole` and the texts of the `users.invalid-extra-roles` error.
+-   Session service: `extraPermissions` on `BeySessionUser`, read from the token; absent when the extra roles of the
+    user add none.
+-   Form module: `isSubmitHidden` on `BeyModalFormConfig` leaves only the cancel button, for a form that only shows.
 
 ### Changed
 
@@ -52,6 +66,8 @@
     superadmin, both `null` on the row of a superadmin.
 -   Users module: the `users.superadmin-only` text speaks only of changing a superadmin account, since nobody grants
     nor removes the superadmin role any more.
+-   Users module: `GET {baseUrl}/roles` is read as `{ roles, extraRoles }`, and `BeyUserRow` carries the `extraRoles`
+    of its user; a server that answers no `extraRoles` counts as one without extra roles.
 -   Page module: with `usagesConfig` and categories, `delete-category` asks `GET {baseUrl}/categories/usages?ids=` and
     warns with `<prefix>.modal.delete-category-in-use.title` and `.message` when what the folders hold is in use.
 

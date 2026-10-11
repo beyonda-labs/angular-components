@@ -192,18 +192,20 @@ is used as it is.
 `BeyModalFormService.open(config)` shows the same form inside a modal. `BeyModalFormConfig` takes everything
 `BeyFormConfig` does, `footer` among it, except `buttons`, which it builds itself, plus:
 
-| Field         | Default                   | Meaning                    |
-| ------------- | ------------------------- | -------------------------- |
-| `title`       | `<prefix>.title`          | Title of the dialog        |
-| `size`        | `BeyModalFormSize.Large`  | Bootstrap modal size       |
-| `cancelLabel` | `<prefix>.buttons.cancel` | Label of the cancel button |
-| `submitLabel` | `<prefix>.buttons.submit` | Label of the submit button |
+| Field            | Default                   | Meaning                                                  |
+| ---------------- | ------------------------- | -------------------------------------------------------- |
+| `title`          | `<prefix>.title`          | Title of the dialog                                      |
+| `size`           | `BeyModalFormSize.Large`  | Bootstrap modal size                                     |
+| `cancelLabel`    | `<prefix>.buttons.cancel` | Label of the cancel button                               |
+| `submitLabel`    | `<prefix>.buttons.submit` | Label of the submit button                               |
+| `isSubmitHidden` | `false`                   | Leaves only the cancel button, for a form that only shows |
 
 Submit does not close the dialog: call `handle.close()` once the operation succeeds, or open it with
 `BeyModalFormService.openWithRequest(config, submit)`, whose submit sends `submit(value)` and closes the dialog once
 that request answers, keeping it open when it fails and reporting nothing beyond what the request shows, such as the
 error modal of `BeyHttpService`; the config's own `onSubmit` is replaced. A config spread into a
-new one keeps its labels, so it can be copied. Cancel, the cross and
+new one keeps its labels and `isSubmitHidden`, so it can be copied. A form that only shows, with every field disabled
+or an info field, sets `isSubmitHidden` and names its cancel button "Close" through `cancelLabel`. Cancel, the cross and
 `handle.requestClose()` ask for confirmation when there are changes. The backdrop and Escape do nothing, so
 the confirmation cannot be skipped. `beyModalFormGuard` on a route closes pristine dialogs on navigation and
 asks before leaving a changed one.

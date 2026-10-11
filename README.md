@@ -88,6 +88,7 @@ const form = new BeyFormConfig({
 | Notice           | `<bey-notice>`           | Stable                      |
 | Organizations    | `<bey-organizations>`    | Stable                      |
 | Password change  | `<bey-password-change>`  | Stable                      |
+| Roles            | `<bey-roles>`            | Stable                      |
 | Table            | `<bey-table>`            | Stable                      |
 | Users            | `<bey-users>`            | Stable                      |
 | Style Guide      | `<bey-style-guide>`      | Demo, secondary entry point |
@@ -120,6 +121,7 @@ Component documentation:
 -   [Notice](src/lib/components/notice/docs/notice-readme.md)
 -   [Organizations](src/lib/components/organizations/docs/organizations-readme.md)
 -   [Password change](src/lib/components/password-change/docs/password-change-readme.md)
+-   [Roles](src/lib/components/roles/docs/roles-readme.md)
 -   [Table](src/lib/components/table/docs/table-readme.md)
 -   [Users](src/lib/components/users/docs/users-readme.md)
 

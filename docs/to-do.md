@@ -316,8 +316,8 @@ What `document-builder-front` did by hand that belongs in the library.
         express-components: create, rename and delete a group and set its members, the targets of the folder sharing
 -   [ ] A modal at the first sign-in that asks to change a default password (the generated superadmin's, or one an
         admin set), built on `bey-password-change`, and that stays until the password changes
--   [ ] _(high priority)_ Roles and permissions pages, over the `roles` module of express-components: create a role,
-        name it and pick its permissions, grouped by resource. First once the blocks of the enterprise review are done
+-   [x] Roles and permissions page, over the `roles` module of express-components: the base roles read-only and the
+        extra roles of an organization, named and given permissions grouped by resource, assigned on the users page
 -   [x] Account pages: change the password, recover it from the login, verify the email, and a profile with the name,
         the language and the theme
 -   [ ] The OAuth callback says why a sign-in failed (`?error=unauthorized`, `?error=account-inactive`,
