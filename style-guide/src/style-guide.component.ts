@@ -12,6 +12,7 @@ import { FilePreviewStyleGuideComponent } from './file-preview/file-preview-styl
 import { FloatingPreferencesStyleGuideComponent } from './floating-preferences/floating-preferences-style-guide.component';
 import { FooterStyleGuideComponent } from './footer/footer-style-guide.component';
 import { FormStyleGuideComponent } from './form/form-style-guide.component';
+import { GroupsStyleGuideComponent } from './groups/groups-style-guide.component';
 import { HeaderStyleGuideComponent } from './header/header-style-guide.component';
 import { LeftMenuStyleGuideComponent } from './left-menu/left-menu-style-guide.component';
 import { ListStyleGuideComponent } from './list/list-style-guide.component';
@@ -52,6 +53,7 @@ import { UsersStyleGuideComponent } from './users/users-style-guide.component';
         LeftMenuStyleGuideComponent,
         ListStyleGuideComponent,
         FormStyleGuideComponent,
+        GroupsStyleGuideComponent,
         PaginationStyleGuideComponent,
         PasswordChangeStyleGuideComponent,
         PdfViewerStyleGuideComponent,

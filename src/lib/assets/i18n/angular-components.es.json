@@ -129,6 +129,93 @@
                 "insert-variable": "Insertar variable"
             }
         },
+        "groups": {
+            "actions": {
+                "create": {
+                    "label": "Nuevo grupo",
+                    "tooltip": "Crea un grupo"
+                },
+                "delete": {
+                    "label": "Eliminar",
+                    "tooltip": "Elimina los grupos seleccionados"
+                },
+                "edit": {
+                    "label": "Renombrar",
+                    "tooltip": "Cambia el nombre del grupo seleccionado"
+                },
+                "members": {
+                    "label": "Miembros",
+                    "tooltip": "Elige quién pertenece al grupo seleccionado"
+                }
+            },
+            "form": {
+                "create": {
+                    "title": "Nuevo grupo"
+                },
+                "edit": {
+                    "title": "Renombrar grupo"
+                },
+                "main": {
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Escribe el nombre del grupo"
+                    },
+                    "organization-id": {
+                        "label": "Organización",
+                        "placeholder": "Elige una organización"
+                    }
+                }
+            },
+            "members": {
+                "buttons": {
+                    "cancel": "Cancelar",
+                    "submit": "Guardar"
+                },
+                "main": {
+                    "group": {
+                        "label": "Grupo"
+                    },
+                    "user-ids": {
+                        "empty": "La organización del grupo todavía no tiene usuarios.",
+                        "label": "Miembros"
+                    }
+                },
+                "title": "Miembros"
+            },
+            "modal": {
+                "delete": {
+                    "message": "Se eliminarán {{count}} grupo(s) y sus miembros perderán las carpetas compartidas con ellos. ¿Quieres continuar?",
+                    "title": "Eliminar grupos"
+                }
+            },
+            "search": {
+                "fields": {
+                    "text": "Nombre"
+                }
+            },
+            "table": {
+                "columns": {
+                    "created-at": "Creado",
+                    "member-count": "Miembros",
+                    "name": "Nombre",
+                    "organization": "Organización"
+                },
+                "empty": "Ningún grupo coincide con la búsqueda",
+                "tooltips": {
+                    "created-at": "Cuándo se creó el grupo",
+                    "member-count": "Cuántos usuarios pertenecen a él",
+                    "name": "El nombre del grupo",
+                    "organization": "La organización a la que pertenece el grupo"
+                }
+            },
+            "title": "Grupos",
+            "toast": {
+                "create-success": "Grupo creado",
+                "delete-success": "Grupos eliminados",
+                "edit-success": "Grupo renombrado",
+                "members-success": "Miembros guardados"
+            }
+        },
         "header": {
             "menu": "Más acciones"
         },
@@ -178,6 +265,11 @@
                     "owner-required": "Este elemento necesita un usuario propietario: créalo dentro de la carpeta de un usuario."
                 },
                 "forbidden": "No tiene permisos para realizar esta acción.",
+                "groups": {
+                    "existing-name": "Ya hay un grupo llamado {{name}} en esta organización.",
+                    "invalid-members": "Algunas de las personas elegidas no pueden unirse a este grupo: pertenecen a otra organización o ya no existen. Recarga la página y vuelve a intentarlo.",
+                    "not-found": "Este grupo no existe o está fuera de tu alcance. Recarga la página y vuelve a intentarlo."
+                },
                 "internal-server-error": "Se produjo un error interno en el servidor. Por favor, inténtelo de nuevo más tarde.",
                 "invalid-child": "El campo \"{{childField}}\" no es válido para el padre \"{{parentField}}\".",
                 "invalid-field-length": "El campo \"{{fieldName}}\" debe tener entre {{min}} y {{max}} caracteres.",
@@ -300,6 +392,11 @@
                     "owner-required": "Falta el propietario"
                 },
                 "forbidden": "Acceso denegado",
+                "groups": {
+                    "existing-name": "Nombre ya en uso",
+                    "invalid-members": "Miembros no válidos",
+                    "not-found": "Grupo no encontrado"
+                },
                 "internal-server-error": "Error del servidor",
                 "invalid-child": "Campo inválido",
                 "invalid-field-length": "Longitud inválida",

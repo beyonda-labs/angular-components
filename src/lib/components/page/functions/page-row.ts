@@ -53,10 +53,9 @@ export function toHandlerItems(
     return selectedItems.filter(item => !isCategoryRow(item, categoriesConfig));
 }
 
-export function toTrashItems(items: PageItem[]): PageTrashItem[] {
-    return items.map(item => {
-        const { id, type } = item as PageTrashItem;
-
-        return { id, type };
-    });
+export function toTrashItems(items: PageItem[], categoriesConfig?: PageCategoriesConfig): PageTrashItem[] {
+    return items.map(item => ({
+        id: item.id,
+        type: isCategoryRow(item, categoriesConfig) ? PageItemType.Category : PageItemType.Item
+    }));
 }

@@ -1,0 +1,107 @@
+{
+    "angular-components": {
+        "groups": {
+            "actions": {
+                "create": {
+                    "label": "New group",
+                    "tooltip": "Create a group"
+                },
+                "delete": {
+                    "label": "Delete",
+                    "tooltip": "Delete the selected groups"
+                },
+                "edit": {
+                    "label": "Rename",
+                    "tooltip": "Rename the selected group"
+                },
+                "members": {
+                    "label": "Members",
+                    "tooltip": "Choose who belongs to the selected group"
+                }
+            },
+            "form": {
+                "create": {
+                    "title": "New group"
+                },
+                "edit": {
+                    "title": "Rename group"
+                },
+                "main": {
+                    "name": {
+                        "label": "Name",
+                        "placeholder": "Type the name of the group"
+                    },
+                    "organization-id": {
+                        "label": "Organization",
+                        "placeholder": "Choose an organization"
+                    }
+                }
+            },
+            "members": {
+                "buttons": {
+                    "cancel": "Cancel",
+                    "submit": "Save"
+                },
+                "main": {
+                    "group": {
+                        "label": "Group"
+                    },
+                    "user-ids": {
+                        "empty": "The organization of the group has no users yet.",
+                        "label": "Members"
+                    }
+                },
+                "title": "Members"
+            },
+            "modal": {
+                "delete": {
+                    "message": "This will delete {{count}} group(s), and their members will lose the folders shared with them. Do you want to continue?",
+                    "title": "Delete groups"
+                }
+            },
+            "search": {
+                "fields": {
+                    "text": "Name"
+                }
+            },
+            "table": {
+                "columns": {
+                    "created-at": "Created",
+                    "member-count": "Members",
+                    "name": "Name",
+                    "organization": "Organization"
+                },
+                "empty": "No group matches the search",
+                "tooltips": {
+                    "created-at": "When the group was created",
+                    "member-count": "How many users belong to it",
+                    "name": "The name of the group",
+                    "organization": "The organization the group belongs to"
+                }
+            },
+            "title": "Groups",
+            "toast": {
+                "create-success": "Group created",
+                "delete-success": "Groups deleted",
+                "edit-success": "Group renamed",
+                "members-success": "Members saved"
+            }
+        },
+        "http": {
+            "error": {
+                "groups": {
+                    "existing-name": "There is already a group named {{name}} in this organization.",
+                    "invalid-members": "Some of the people chosen cannot join this group: they belong to another organization or no longer exist. Reload the page and try again.",
+                    "not-found": "This group does not exist or is out of your reach. Reload the page and try again."
+                }
+            },
+            "title": {
+                "groups": {
+                    "existing-name": "Name already in use",
+                    "invalid-members": "Members not valid",
+                    "not-found": "Group not found"
+                }
+            }
+        }
+    }
+}

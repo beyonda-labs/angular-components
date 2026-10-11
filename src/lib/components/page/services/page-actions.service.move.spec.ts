@@ -65,7 +65,7 @@ describe('PageActionsService — move to a category', () => {
     });
 
     it('moves the given rows straight into a category, with the move toast and the refresh', () => {
-        const context = buildContext();
+        const context = buildContext(buildFoldersConfig());
         const onMoved = jest.fn();
         const rows: PageItem[] = [
             { actions: ['move'], id: 'item-1', type: PageItemType.Item } as PageItem,
