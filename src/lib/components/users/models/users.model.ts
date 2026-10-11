@@ -1,5 +1,15 @@
 import { BadgeVariant } from '../../badge/models/badge.model';
+import { FormRow } from '../../form/models/form.model';
+import { FormFieldOption } from '../../form/models/form-field.model';
 import { PageOrganization, PageOrganizationItem } from '../../page/models/page-organization.model';
+
+export enum UserEditableField {
+    ExtraRoleIds = 'extraRoleIds',
+    Name = 'name',
+    Roles = 'roles',
+    Status = 'status',
+    Surname = 'surname'
+}
 
 export enum UserStatus {
     Active = 'active',
@@ -21,6 +31,7 @@ export interface UserFormFields {
     language?: string;
     name?: string;
     organizationId?: string;
+    status?: UserStatus;
     surname?: string;
 }
 
@@ -51,10 +62,18 @@ export interface UserRow extends PageOrganizationItem {
     roles: string[];
     status: UserStatus;
 
+    editableFields?: UserEditableField[];
     extraRoles?: UserExtraRole[];
     lastLoginAt?: number;
     name?: string;
     surname?: string;
+}
+
+export interface UserSectionOptions {
+    extraRolesRows: FormRow[];
+    organizationOptions: FormFieldOption[] | null;
+    prefix: string;
+    roleOptions: FormFieldOption[];
 }
 
 export interface UsersFormOptions {
@@ -110,12 +129,7 @@ export const USER_STATUS_BADGE_VARIANTS: Readonly<Record<UserStatus, BadgeVarian
     [UserStatus.Unverified]: BadgeVariant.Warning
 };
 
-export const USER_STATUS_TRANSITIONS: Readonly<Record<UserStatus, readonly UserStatus[]>> = {
-    [UserStatus.Active]: [UserStatus.Inactive],
-    [UserStatus.Inactive]: [UserStatus.Active],
-    [UserStatus.Invited]: [UserStatus.Inactive],
-    [UserStatus.Unverified]: [UserStatus.Inactive]
-};
+export const USER_STATUS_CHOICES: readonly UserStatus[] = [UserStatus.Active, UserStatus.Inactive];
 
 export const USERS_EXTRA_ROLE_VARIANT = BadgeVariant.Info;
 

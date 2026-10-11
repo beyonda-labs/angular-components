@@ -43,6 +43,7 @@
                     "label": "Access inherited from the folders above",
                     "user": "{{name}}: {{access}}, from {{folder}}"
                 },
+                "intro": "Sharing decides where people can work. What they can do there still depends on their permissions.",
                 "targets": {
                     "label": "Share with"
                 },

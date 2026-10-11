@@ -53,6 +53,7 @@ describe('RolesComponent', () => {
         return {
             actions: ['edit', 'delete'],
             description: 'Review the templates',
+            groupCount: 3,
             id: 'r1',
             isBase: false,
             memberCount: 2,
@@ -123,12 +124,9 @@ describe('RolesComponent', () => {
         await click(buttonByName(fixture, `${PREFIX}.actions.${action}.label`));
     }
 
-    async function editReviewers(
-        main: Record<string, unknown>,
-        permissions: Record<string, string[]>
-    ): Promise<TestRequest> {
+    async function editReviewers(main: Record<string, unknown>, permissions: string[]): Promise<TestRequest> {
         await click(buttonByName(fixture, 'Reviewers'));
-        modalForms.forms().at(-1)?.onSubmit?.({ main, permissions }, buildHandle());
+        modalForms.forms().at(-1)?.onSubmit?.({ main, permissions: { permissions } }, buildHandle());
 
         return httpTesting.expectOne(`${ROLES_URL}/r1`);
     }
@@ -147,7 +145,7 @@ describe('RolesComponent', () => {
         httpTesting.verify();
     });
 
-    it('lists the base roles and the extra roles, with their type, permission and member counts', async () => {
+    it('lists the base roles and the extra roles, with their type, permission, member and group counts', async () => {
         await render();
 
         expect(rowWith('normaluser').textContent).toContain(`${PREFIX}.type.base`);
@@ -155,6 +153,8 @@ describe('RolesComponent', () => {
         expect(rowWith('Reviewers').textContent).toContain(`${PREFIX}.type.extra`);
         expect(rowWith('Reviewers').textContent).toContain('Review the templates');
         expect(rowWith('Reviewers').textContent).toContain('2');
+        expect(rowWith('Reviewers').textContent).toContain('3');
+        expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.group-count`);
     });
 
     it('labels the base roles from the role prefix of the config', async () => {
@@ -173,7 +173,7 @@ describe('RolesComponent', () => {
         form?.onSubmit?.(
             {
                 main: { description: ' Read only ', name: ' Readers ' },
-                permissions: { documents: ['documents.read'], templates: [] }
+                permissions: { permissions: ['documents.read'] }
             },
             buildHandle()
         );
@@ -184,7 +184,9 @@ describe('RolesComponent', () => {
 
         expect(form?.title).toBe(`${PREFIX}.form.create.title`);
         expect(fieldsOf(form, 'main').map(({ key }) => key)).toEqual(['name', 'description']);
-        expect(fieldsOf(form, 'permissions').map(({ key }) => key)).toEqual(['documents', 'templates']);
+        expect(fieldsOf(form, 'permissions').map(({ key, label }) => [key, label])).toEqual([
+            ['permissions', `${PREFIX}.form.permissions.label`]
+        ]);
         expect(request.request.body).toEqual({
             name: 'Readers',
             description: 'Read only',
@@ -196,10 +198,10 @@ describe('RolesComponent', () => {
     it('edits an extra role from its name, with its permissions checked', async () => {
         await render();
 
-        const request = await editReviewers(
-            { description: 'Review', name: 'Reviewers' },
-            { documents: ['documents.read'], templates: ['templates.edit'] }
-        );
+        const request = await editReviewers({ description: 'Review', name: 'Reviewers' }, [
+            'documents.read',
+            'templates.edit'
+        ]);
         request.flush(buildRole());
         await settle(fixture);
         reload().flush({ globalActions: [], results: [] });
@@ -207,7 +209,7 @@ describe('RolesComponent', () => {
         expect(modalForms.forms().at(-1)?.title).toBe(`${PREFIX}.form.edit.title`);
         expect(modalForms.forms().at(-1)?.initialValue).toEqual({
             main: { description: 'Review the templates', name: 'Reviewers' },
-            permissions: { documents: [], templates: ['templates.edit', 'templates.publish'] }
+            permissions: { permissions: ['templates.edit', 'templates.publish'] }
         });
         expect(request.request.method).toBe('PUT');
         expect(request.request.body).toEqual({
@@ -227,8 +229,7 @@ describe('RolesComponent', () => {
         expect(form?.isSubmitHidden).toBe(true);
         expect(fieldsOf(form, 'permissions').every(({ isDisabled }) => isDisabled === true)).toBe(true);
         expect((form?.initialValue as RoleFormValue | undefined)?.permissions).toEqual({
-            documents: ['documents.read'],
-            templates: []
+            permissions: ['documents.read']
         });
     });
 
@@ -299,7 +300,7 @@ describe('RolesComponent', () => {
             await render();
             translate.setTranslation('en', rolesEn, true);
 
-            const request = await editReviewers({ name: 'Reviewers' }, { templates: ['templates.edit'] });
+            const request = await editReviewers({ name: 'Reviewers' }, ['templates.edit']);
             request.flush({ errorCode: 'error', messageKey }, { status, statusText: '' });
             await settle(fixture);
             const [error] = TestBed.inject(FakeModalService).errors();

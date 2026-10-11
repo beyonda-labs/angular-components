@@ -6,26 +6,23 @@ export enum OrganizationStatus {
     Inactive = 'inactive'
 }
 
-export interface OrganizationAdminFields {
-    email: string;
-
-    language?: string;
-    name?: string;
-    surname?: string;
+export interface OrganizationDetail extends OrganizationRow {
+    groups: OrganizationGroup[];
 }
 
-export interface OrganizationAdminFormValue {
-    main: OrganizationAdminFields;
+export interface OrganizationEditFields {
+    name: string;
+    status: OrganizationStatus;
 }
 
-export interface OrganizationAdminInvitation {
-    email: string;
-    organizationId: string;
-    roles: string[];
+export interface OrganizationEditFormValue {
+    main: OrganizationEditFields;
+}
 
-    language?: string;
-    name?: string;
-    surname?: string;
+export interface OrganizationEditRequest {
+    name: string;
+
+    status?: OrganizationStatus;
 }
 
 export interface OrganizationFields {
@@ -34,6 +31,18 @@ export interface OrganizationFields {
 
 export interface OrganizationFormValue {
     main: OrganizationFields;
+}
+
+export interface OrganizationGroup {
+    id: string;
+    members: OrganizationGroupMember[];
+    name: string;
+}
+
+export interface OrganizationGroupMember {
+    email: string;
+    id: string;
+    name: string;
 }
 
 export interface OrganizationRow extends PageItem {
@@ -51,37 +60,29 @@ export interface OrganizationsRowOptions {
 }
 
 export class OrganizationsConfig {
-    adminRole: string;
     baseUrl: string;
     height: string;
     prefix: string;
     storageKey: string;
-    usersUrl: string;
 
     constructor({
-        adminRole = 'adminuser',
         baseUrl = '/organizations',
         height = 'calc(100vh - 220px)',
         prefix = 'angular-components.organizations',
-        storageKey = 'organizations',
-        usersUrl = '/users'
+        storageKey = 'organizations'
     }: OrganizationsConfigParameters = {}) {
-        this.adminRole = adminRole;
         this.baseUrl = baseUrl;
         this.height = height;
         this.prefix = prefix;
         this.storageKey = storageKey;
-        this.usersUrl = usersUrl;
     }
 }
 
 export interface OrganizationsConfigParameters {
-    adminRole?: string;
     baseUrl?: string;
     height?: string;
     prefix?: string;
     storageKey?: string;
-    usersUrl?: string;
 }
 
 export const ORGANIZATION_NAME_MAX_LENGTH = 100;
@@ -91,11 +92,6 @@ export const ORGANIZATION_STATUS_BADGE_VARIANTS: Readonly<Record<OrganizationSta
     [OrganizationStatus.Inactive]: BadgeVariant.Neutral
 };
 
-export const ORGANIZATION_STATUS_TRANSITIONS: Readonly<Record<OrganizationStatus, readonly OrganizationStatus[]>> = {
-    [OrganizationStatus.Active]: [OrganizationStatus.Inactive],
-    [OrganizationStatus.Inactive]: [OrganizationStatus.Active]
-};
-
 export const ORGANIZATIONS_FORM_SECTION = 'main';
 
-export const ORGANIZATIONS_INVITE_ADMIN_ACTION = 'invite-admin';
+export const ORGANIZATIONS_GROUPS_SECTION = 'groups';

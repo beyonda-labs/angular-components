@@ -16,6 +16,7 @@ const EMPTY_VALUES: Partial<Record<FormFieldType, unknown>> = {
     [FormFieldType.Autocomplete]: '',
     [FormFieldType.Checkbox]: false,
     [FormFieldType.CheckboxGroup]: [],
+    [FormFieldType.CheckboxSections]: [],
     [FormFieldType.Chips]: [],
     [FormFieldType.Date]: '',
     [FormFieldType.File]: null,

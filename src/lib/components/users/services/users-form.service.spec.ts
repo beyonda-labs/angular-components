@@ -4,9 +4,10 @@ import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { FormCheckboxGroupField } from '../../form/models/fields/form-checkbox-group-field.model';
 import { FormInfoField } from '../../form/models/fields/form-info-field.model';
+import { FormSelectField } from '../../form/models/fields/form-select-field.model';
 import { FormField, FormFieldOption } from '../../form/models/form-field.model';
 import { PageFormConfig } from '../../page/models/page-form.model';
-import { UserFormValue, UserOrganizationRole, UserRow, UserStatus } from '../models/users.model';
+import { UserEditableField, UserFormValue, UserOrganizationRole, UserRow, UserStatus } from '../models/users.model';
 import { UsersFormService } from './users-form.service';
 
 describe('UsersFormService', () => {
@@ -67,6 +68,65 @@ describe('UsersFormService', () => {
             ((fields[3] as FormCheckboxGroupField).options as { value: string }[]).map(({ value }) => value)
         ).toEqual(['admin', 'editor', 'owner']);
         expect(form.toFormValue(user)).toEqual({ main: { name: 'Ada', roles: ['owner'], surname: '' } });
+    });
+
+    it('asks for the status of a user whose row says what may change, disabling every other field', () => {
+        const row: UserRow = {
+            ...user,
+            editableFields: [UserEditableField.Roles, UserEditableField.Status],
+            status: UserStatus.Inactive
+        };
+        const fields = fieldsFor(row);
+
+        expect(fields.map(({ isDisabled, key }) => [key, isDisabled])).toEqual([
+            ['email', false],
+            ['name', true],
+            ['surname', true],
+            ['status', false],
+            ['roles', false]
+        ]);
+        expect((fields[3] as FormSelectField).options).toEqual([
+            { label: 'demo.users.status.active', value: 'active' },
+            { label: 'demo.users.status.inactive', value: 'inactive' }
+        ]);
+        expect(form.toFormValue(row)).toEqual({
+            main: { name: 'Ada', roles: ['owner'], status: 'inactive', surname: '' }
+        });
+    });
+
+    it('shows the status of an invited user disabled, among the choices, since only an account may change it', () => {
+        const fields = fieldsFor({ ...user, editableFields: [UserEditableField.Name], status: UserStatus.Invited });
+        const status = fields.find(({ key }) => key === 'status') as FormSelectField;
+
+        expect(status.isDisabled).toBe(true);
+        expect((status.options as FormFieldOption[]).map(({ value }) => value)).toEqual([
+            'active',
+            'inactive',
+            'invited'
+        ]);
+    });
+
+    it('sends only the fields the row lets change, and the status only when it changes', () => {
+        const row: UserRow = { ...user, editableFields: [UserEditableField.Name, UserEditableField.Status] };
+
+        expect(
+            form.toItem({ main: { name: 'Grace', roles: ['admin'], status: UserStatus.Inactive, surname: 'H' } }, row)
+        ).toEqual({ name: 'Grace', status: 'inactive' });
+        expect(form.toItem({ main: { name: 'Grace', roles: ['admin'], status: UserStatus.Active } }, row)).toEqual({
+            name: 'Grace'
+        });
+    });
+
+    it('keeps every field enabled and asks no status for a row of a server that names no editable fields', () => {
+        const fields = fieldsFor(user);
+
+        expect(fields.every(({ isDisabled }) => isDisabled === false)).toBe(true);
+        expect(fields.map(({ key }) => key)).not.toContain('status');
+        expect(form.toItem({ main: { name: 'Ada', roles: ['owner'], surname: 'L' } }, user)).toEqual({
+            name: 'Ada',
+            roles: ['owner'],
+            surname: 'L'
+        });
     });
 
     it('sends the roles and only the texts that were filled in, trimmed', () => {

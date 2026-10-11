@@ -135,6 +135,15 @@
                 [prefix]="fieldPrefix()"
             ></bey-form-checkbox-group-field>
         }
+        @case (fieldType.CheckboxSections) {
+            <bey-form-checkbox-sections-field
+                [control]="control"
+                [describedBy]="describedBy()"
+                [field]="$any(field())"
+                [isRequired]="state().isRequired"
+                [label]="label()"
+            ></bey-form-checkbox-sections-field>
+        }
         @case (fieldType.Chips) {
             <bey-form-chips-field
                 [control]="control"

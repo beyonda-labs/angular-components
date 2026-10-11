@@ -19,6 +19,7 @@ export class GroupsTableService {
                 ? new LinkTableCell({ action: () => onEdit(group), content: name, tooltip: name })
                 : new TextTableCell({ content: name, tooltip: name }),
             new TextTableCell({ content: String(group.memberCount) }),
+            new TextTableCell({ content: String(group.extraRoleCount ?? 0) }),
             ...(isOrganizationShown ? [pageOrganizationCell(group)] : []),
             new DateTableCell({ format: CREATED_FORMAT, value: group.createdAt })
         ];

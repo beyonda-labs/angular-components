@@ -99,27 +99,20 @@ describe('buildUsersPageConfig', () => {
         expect(none.tableConfig?.search?.fields.map(({ key }) => key)).not.toContain('organizationId');
     });
 
-    it('offers to invite, edit, change the status and resend the invitation of a user', () => {
+    it('offers to invite, edit and resend the invitation of a user, the status being part of the edit', () => {
         const onResendInvitation = jest.fn();
-        const actions = build({ onResendInvitation }).headerConfig?.actions ?? [];
+        const config = build({ onResendInvitation });
+        const actions = config.headerConfig?.actions ?? [];
         const user = { actions: [], createdAt: 0, email: 'a@b.c', id: 'u1', roles: [], status: UserStatus.Invited };
 
-        expect(actions.map(action => action.key)).toEqual(['create', 'edit', 'change-status', 'resend-invitation']);
-        expect(actions[3]).toEqual(
+        expect(actions.map(action => action.key)).toEqual(['create', 'edit', 'resend-invitation']);
+        expect(actions[2]).toEqual(
             expect.objectContaining({ scope: PageActionScope.Single, zone: PageActionZone.Menu })
         );
+        expect(config.statusConfig).toBeUndefined();
 
-        actions[3].handler?.([user]);
+        actions[2].handler?.([user]);
 
         expect(onResendInvitation).toHaveBeenCalledWith(user);
-    });
-
-    it('changes the status through the transitions of the users module', () => {
-        expect(build().statusConfig?.transitions).toEqual({
-            active: ['inactive'],
-            inactive: ['active'],
-            invited: ['inactive'],
-            unverified: ['inactive']
-        });
     });
 });

@@ -153,7 +153,7 @@ describe('RolesComponent — organizations and callers', () => {
 
     async function create(main: Record<string, unknown>): Promise<TestRequest> {
         await click(buttonByName(fixture, `${PREFIX}.actions.create.label`));
-        lastForm()?.onSubmit?.({ main, permissions: { templates: ['templates.edit'] } }, buildHandle());
+        lastForm()?.onSubmit?.({ main, permissions: { permissions: ['templates.edit'] } }, buildHandle());
 
         return httpTesting.expectOne(current => current.url === ROLES_URL && current.method === 'POST');
     }
@@ -242,7 +242,7 @@ describe('RolesComponent — organizations and callers', () => {
             });
             expect(lastForm()?.initialValue).toEqual({
                 main: { description: '', name: '', organizationId: 'o2' },
-                permissions: {}
+                permissions: { permissions: [] }
             });
             expect(request.request.body).toEqual(expect.objectContaining({ organizationId: 'o2' }));
         });
@@ -279,7 +279,7 @@ describe('RolesComponent — organizations and callers', () => {
         await render(null, [buildRole({ organizationId: undefined, organizationName: undefined })]);
 
         await click(buttonByName(fixture, 'Reviewers'));
-        lastForm()?.onSubmit?.({ main: { name: 'Reviewers' }, permissions: { templates: [] } }, buildHandle());
+        lastForm()?.onSubmit?.({ main: { name: 'Reviewers' }, permissions: { permissions: [] } }, buildHandle());
         httpTesting
             .expectOne(`${ROLES_URL}/r1`)
             .flush({ errorCode: 'not-found', messageKey: 'roles.not-found' }, { status: 404, statusText: '' });

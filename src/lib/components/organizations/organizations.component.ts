@@ -32,11 +32,10 @@ export class OrganizationsComponent {
             formConfig: this.organizationsFormService.buildFormConfig(prefix),
             loadRow: organization =>
                 this.organizationsTableService.loadRow(organization, {
-                    onEdit: edited => this.page?.openEdit(edited),
+                    onEdit: edited => this.organizationsActionsService.edit(config, edited, this.page),
                     prefix
                 }),
-            onInviteAdmin: organization =>
-                this.organizationsActionsService.inviteAdmin(config, organization, this.page),
+            onEdit: organization => this.organizationsActionsService.edit(config, organization, this.page),
             onReady: handle => (this.page = handle)
         });
     });

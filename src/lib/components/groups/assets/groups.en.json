@@ -11,12 +11,8 @@
                     "tooltip": "Delete the selected groups"
                 },
                 "edit": {
-                    "label": "Rename",
-                    "tooltip": "Rename the selected group"
-                },
-                "members": {
-                    "label": "Members",
-                    "tooltip": "Choose who belongs to the selected group"
+                    "label": "Edit",
+                    "tooltip": "Edit the name, the members and the additional roles of the selected group"
                 }
             },
             "form": {
@@ -24,9 +20,12 @@
                     "title": "New group"
                 },
                 "edit": {
-                    "title": "Rename group"
+                    "title": "Edit group"
                 },
                 "main": {
+                    "extra-role-ids": {
+                        "label": "Additional roles"
+                    },
                     "name": {
                         "label": "Name",
                         "placeholder": "Type the name of the group"
@@ -34,24 +33,12 @@
                     "organization-id": {
                         "label": "Organization",
                         "placeholder": "Choose an organization"
-                    }
-                }
-            },
-            "members": {
-                "buttons": {
-                    "cancel": "Cancel",
-                    "submit": "Save"
-                },
-                "main": {
-                    "group": {
-                        "label": "Group"
                     },
                     "user-ids": {
                         "empty": "The organization of the group has no users yet.",
                         "label": "Members"
                     }
-                },
-                "title": "Members"
+                }
             },
             "modal": {
                 "delete": {
@@ -67,6 +54,7 @@
             "table": {
                 "columns": {
                     "created-at": "Created",
+                    "extra-role-count": "Roles",
                     "member-count": "Members",
                     "name": "Name",
                     "organization": "Organization"
@@ -74,6 +62,7 @@
                 "empty": "No group matches the search",
                 "tooltips": {
                     "created-at": "When the group was created",
+                    "extra-role-count": "How many additional roles it gives its members",
                     "member-count": "How many users belong to it",
                     "name": "The name of the group",
                     "organization": "The organization the group belongs to"
@@ -83,14 +72,14 @@
             "toast": {
                 "create-success": "Group created",
                 "delete-success": "Groups deleted",
-                "edit-success": "Group renamed",
-                "members-success": "Members saved"
+                "edit-success": "Group saved"
             }
         },
         "http": {
             "error": {
                 "groups": {
                     "existing-name": "There is already a group named {{name}} in this organization.",
+                    "invalid-extra-roles": "Some of the additional roles chosen do not belong to the organization of the group or no longer exist. Reload the page and try again.",
                     "invalid-members": "Some of the people chosen cannot join this group: they belong to another organization or no longer exist. Reload the page and try again.",
                     "not-found": "This group does not exist or is out of your reach. Reload the page and try again."
                 }
@@ -98,6 +87,7 @@
             "title": {
                 "groups": {
                     "existing-name": "Name already in use",
+                    "invalid-extra-roles": "Additional roles not valid",
                     "invalid-members": "Members not valid",
                     "not-found": "Group not found"
                 }

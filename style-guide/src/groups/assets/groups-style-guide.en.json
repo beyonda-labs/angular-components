@@ -1,7 +1,7 @@
 {
     "angular-components-style-guide": {
         "groups": {
-            "example": "The groups page of a manager or the superadmin: search by name, create and rename a group, delete groups and choose the members of one among the users of its organization, as far as the backend allows each row. The demo backend serves no groups, so the list stays empty."
+            "example": "The groups page of a manager or the superadmin: search by name, create a group, edit its name, its members and its additional roles in one form, and delete groups, as far as the backend allows each row. The demo backend serves no groups, so the list stays empty."
         }
     }
 }

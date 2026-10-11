@@ -15,6 +15,7 @@ describe('GroupsHttpService', () => {
     let service: GroupsHttpService;
 
     const ada = { email: 'ada@example.test', id: 'u1', name: 'Ada Lovelace' };
+    const reviewers = { id: 'r1', name: 'Reviewers' };
 
     beforeEach(() => {
         TestBed.configureTestingModule({ providers: [provideBeyTesting()] });
@@ -27,24 +28,37 @@ describe('GroupsHttpService', () => {
         httpTesting.verify();
     });
 
-    it('reads the users a group may hold and its members', () => {
+    it('reads a group with its members and extra roles, the users it may hold and the extra roles it may hold', () => {
         const answers: unknown[] = [];
+        const detail = {
+            actions: [],
+            createdAt: 0,
+            extraRoles: [reviewers],
+            id: 'g1',
+            memberCount: 1,
+            members: [ada],
+            name: 'Sales'
+        };
 
+        service.loadGroup('/teams', 'g1').subscribe(group => answers.push(group));
         service.loadMemberOptions('/teams', 'g1').subscribe(users => answers.push(users));
-        service.loadMembers('/teams', 'g1').subscribe(members => answers.push(members));
+        service.loadRoleOptions('/teams', 'g1').subscribe(roles => answers.push(roles));
+        httpTesting.expectOne(GROUP_URL).flush(detail);
         httpTesting.expectOne(`${GROUP_URL}/member-options`).flush({ users: [ada] });
-        httpTesting.expectOne(`${GROUP_URL}/members`).flush({ members: [] });
+        httpTesting.expectOne(`${GROUP_URL}/role-options`).flush({ extraRoles: [reviewers] });
 
-        expect(answers).toEqual([[ada], []]);
+        expect(answers).toEqual([detail, [ada], [reviewers]]);
     });
 
-    it('replaces the members with the users given and confirms it', () => {
-        service.setMembers('/teams', 'g1', ['u1'], 'teams.saved').subscribe();
-        const request = httpTesting.expectOne(`${GROUP_URL}/members`);
-        request.flush({ members: [ada] });
+    it('saves the name, the members and the extra roles of a group at once and confirms it', () => {
+        service
+            .edit('/teams', 'g1', { extraRoleIds: ['r1'], name: 'Sales', userIds: ['u1'] }, 'teams.saved')
+            .subscribe();
+        const request = httpTesting.expectOne(GROUP_URL);
+        request.flush({ actions: [], createdAt: 0, id: 'g1', memberCount: 1, name: 'Sales' });
 
         expect(request.request.method).toBe('PUT');
-        expect(request.request.body).toEqual({ userIds: ['u1'] });
+        expect(request.request.body).toEqual({ extraRoleIds: ['r1'], name: 'Sales', userIds: ['u1'] });
         expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: 'teams.saved' }]);
     });
 
@@ -56,27 +70,30 @@ describe('GroupsHttpService', () => {
             'Some of the people chosen cannot join this group: they belong to another organization or no longer exist. Reload the page and try again.'
         ],
         [
+            'groups.invalid-extra-roles',
+            400,
+            'Additional roles not valid',
+            'Some of the additional roles chosen do not belong to the organization of the group or no longer exist. Reload the page and try again.'
+        ],
+        [
             'groups.not-found',
             404,
             'Group not found',
             'This group does not exist or is out of your reach. Reload the page and try again.'
         ]
-    ])(
-        'shows the reason the server gives for refusing the members, such as %s',
-        (messageKey, status, title, message) => {
-            const translate = TestBed.inject(TranslateService);
-            translate.setTranslation('en', groupsEn);
+    ])('shows the reason the server gives for refusing an edit, such as %s', (messageKey, status, title, message) => {
+        const translate = TestBed.inject(TranslateService);
+        translate.setTranslation('en', groupsEn);
 
-            service.setMembers('/teams', 'g1', ['u9'], 'teams.saved').subscribe({ error: () => {} });
-            httpTesting
-                .expectOne(`${GROUP_URL}/members`)
-                .flush(
-                    { errorCode: 'error', messageKey, messageParameters: { userIds: ['u9'] } },
-                    { status, statusText: '' }
-                );
-            const [error] = TestBed.inject(FakeModalService).errors();
+        service.edit('/teams', 'g1', { name: 'Sales', userIds: ['u9'] }, 'teams.saved').subscribe({ error: () => {} });
+        httpTesting
+            .expectOne(GROUP_URL)
+            .flush(
+                { errorCode: 'error', messageKey, messageParameters: { userIds: ['u9'] } },
+                { status, statusText: '' }
+            );
+        const [error] = TestBed.inject(FakeModalService).errors();
 
-            expect([translate.instant(error.title), translate.instant(error.message)]).toEqual([title, message]);
-        }
-    );
+        expect([translate.instant(error.title), translate.instant(error.message)]).toEqual([title, message]);
+    });
 });

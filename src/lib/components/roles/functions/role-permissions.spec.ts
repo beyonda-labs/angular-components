@@ -1,15 +1,20 @@
+import { faFileLines, faRectangleList, faUser } from '@fortawesome/free-regular-svg-icons';
+
 import {
     groupRolePermissions,
+    rolePermissionDescription,
     rolePermissionGroupLabel,
     rolePermissionLabel,
-    toRolePermissions
+    rolePermissionSections
 } from './role-permissions';
 
 describe('role permissions', () => {
     const translations: Record<string, string> = {
-        'angular-components.roles.permissions.users.invite': 'Invite users',
+        'angular-components.roles.permissions.users.invite.description': 'Can invite people.',
+        'angular-components.roles.permissions.users.invite.label': 'Invite users',
         'angular-components.roles.permissions.users.label': 'Users',
-        'my-app.permissions.templates.edit-content': 'Edit the content of templates',
+        'my-app.permissions.templates.edit-content.description': 'Can change what the templates say.',
+        'my-app.permissions.templates.edit-content.label': 'Edit the content of templates',
         'my-app.permissions.templates.label': 'Templates'
     };
     const translate = (key: string): string => translations[key] ?? key;
@@ -75,6 +80,28 @@ describe('role permissions', () => {
         });
     });
 
+    describe('rolePermissionDescription', () => {
+        it('reads the description under the prefix of the app, then the library, and gives none without one', () => {
+            expect(
+                rolePermissionDescription(
+                    { group: 'templates', key: 'templates.editContent' },
+                    'my-app.permissions',
+                    translate
+                )
+            ).toBe('Can change what the templates say.');
+            expect(
+                rolePermissionDescription({ group: 'users', key: 'users.invite' }, 'my-app.permissions', translate)
+            ).toBe('Can invite people.');
+            expect(
+                rolePermissionDescription(
+                    { group: 'templates', key: 'templates.publish' },
+                    'my-app.permissions',
+                    translate
+                )
+            ).toBeUndefined();
+        });
+    });
+
     describe('rolePermissionGroupLabel', () => {
         it('reads the label of a group under the prefix, then the library, then makes the group readable', () => {
             expect(rolePermissionGroupLabel('templates', 'my-app.permissions', translate)).toBe('Templates');
@@ -83,16 +110,29 @@ describe('role permissions', () => {
         });
     });
 
-    describe('toRolePermissions', () => {
-        it('joins the permissions checked in every group, once each', () => {
-            expect(
-                toRolePermissions({
-                    templates: ['templates.edit'],
-                    users: ['users.read', 'templates.edit'],
-                    none: null
-                })
-            ).toEqual(['templates.edit', 'users.read']);
-            expect(toRolePermissions(undefined)).toEqual([]);
+    describe('rolePermissionSections', () => {
+        it('makes a section per group, with the icon the app gives it, the library one or the default', () => {
+            const sections = rolePermissionSections(
+                groupRolePermissions([
+                    { group: 'templates', key: 'templates.editContent' },
+                    { group: 'users', key: 'users.invite' },
+                    { group: 'documents', key: 'documents.read' }
+                ]),
+                { groupIcons: { templates: faFileLines }, permissionPrefix: 'my-app.permissions', translate }
+            );
+
+            expect(sections.map(({ icon, key, label }) => [key, label, icon])).toEqual([
+                ['documents', 'Documents', faRectangleList],
+                ['templates', 'Templates', faFileLines],
+                ['users', 'Users', faUser]
+            ]);
+            expect(sections[1].options).toEqual([
+                {
+                    description: 'Can change what the templates say.',
+                    label: 'Edit the content of templates',
+                    value: 'templates.editContent'
+                }
+            ]);
         });
     });
 });

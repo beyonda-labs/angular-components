@@ -30,6 +30,15 @@ describe('FormStyleGuideComponent', () => {
         expect(accessibleDescription(buttonByName(fixture, `${PREFIX}.button.submit`))).toBe(`${PREFIX}.footer.note`);
     });
 
+    it('shows the checkbox sections twice, the read-only one with every box disabled', () => {
+        const editable = controlByName(fixture, `${PREFIX}.section-checkbox-sections.sections1.label`);
+        const readOnly = controlByName(fixture, `${PREFIX}.section-checkbox-sections.sections2.label`);
+
+        expect(editable.getAttribute('aria-required')).toBe('true');
+        expect(editable.querySelector('input')?.disabled).toBe(false);
+        expect(readOnly.querySelector('input')?.disabled).toBe(true);
+    });
+
     it('lists every rule of a password policy under the field that has one', () => {
         const description = accessibleDescription(controlByName(fixture, `${PREFIX}.section-password.password5.label`));
 

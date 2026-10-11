@@ -13,6 +13,7 @@ describe('GroupsTableService', () => {
         return {
             actions: ['edit'],
             createdAt: 1_000,
+            extraRoleCount: 2,
             id: 'g1',
             memberCount: 4,
             name: 'Sales',
@@ -29,26 +30,35 @@ describe('GroupsTableService', () => {
         service = TestBed.inject(GroupsTableService);
     });
 
-    it('fills a cell per column: name, member count and creation', () => {
-        const [name, memberCount, created, ...rest] = service.loadRow(buildGroup(), options);
+    it('fills a cell per column: name, member count, extra role count and creation', () => {
+        const [name, memberCount, extraRoleCount, created, ...rest] = service.loadRow(buildGroup(), options);
 
         expect(name.content).toBe('Sales');
-        expect(memberCount.content).toBe('4');
+        expect([memberCount.content, extraRoleCount.content]).toEqual(['4', '2']);
         expect((created as DateTableCell).value).toBe(1_000);
         expect(rest).toEqual([]);
     });
 
-    it('fills the organization after the member count when it is shown', () => {
-        const [name, memberCount, organization, created] = service.loadRow(buildGroup(), {
+    it('counts no extra role for a group of a server that answers no count', () => {
+        expect(service.loadRow(buildGroup({ extraRoleCount: undefined }), options)[2].content).toBe('0');
+    });
+
+    it('fills the organization after the extra role count when it is shown', () => {
+        const [name, memberCount, extraRoleCount, organization, created] = service.loadRow(buildGroup(), {
             ...options,
             isOrganizationShown: true
         });
 
-        expect([name.content, memberCount.content, organization.content]).toEqual(['Sales', '4', 'Globex']);
+        expect([name.content, memberCount.content, extraRoleCount.content, organization.content]).toEqual([
+            'Sales',
+            '4',
+            '2',
+            'Globex'
+        ]);
         expect((created as DateTableCell).value).toBe(1_000);
     });
 
-    it('opens the rename form from the name of a group the caller may edit', () => {
+    it('opens the edit form from the name of a group the caller may edit', () => {
         const group = buildGroup();
         const [name] = service.loadRow(group, options);
 

@@ -32,6 +32,7 @@ export class RolesTableService {
             }),
             new TextTableCell({ content: String(role.permissions.length) }),
             new TextTableCell({ content: String(role.memberCount) }),
+            new TextTableCell({ content: String(role.groupCount ?? 0) }),
             ...(isOrganizationShown ? [buildOrganizationCell(role, prefix)] : []),
             new TextTableCell({ content: role.description ?? '', tooltip: role.description })
         ];

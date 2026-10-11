@@ -22,6 +22,7 @@ describe('RolesActionsService', () => {
     it('opens the permissions of a role in a form that only shows them', () => {
         TestBed.inject(RolesActionsService).viewPermissions(
             {
+                groupIcons: {},
                 permissionPrefix: 'demo.permissions',
                 permissions: [{ group: 'documents', key: 'documents.read' }],
                 prefix: 'demo.roles',
@@ -33,6 +34,8 @@ describe('RolesActionsService', () => {
 
         expect(form.title).toBe('demo.roles.view.title');
         expect(form.isSubmitHidden).toBe(true);
-        expect(form.initialValue).toEqual(expect.objectContaining({ permissions: { documents: ['documents.read'] } }));
+        expect(form.initialValue).toEqual(
+            expect.objectContaining({ permissions: { permissions: ['documents.read'] } })
+        );
     });
 });

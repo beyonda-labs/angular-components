@@ -9,7 +9,7 @@
                     "last-superadmin": "This change would leave no active superadmin.",
                     "not-found": "This user does not exist. Reload the page and try again.",
                     "not-invited": "This account is no longer waiting for an invitation.",
-                    "own-account": "You cannot deactivate your own account nor change your own roles.",
+                    "own-account": "You cannot change your own account here: neither its status, its roles nor its name. Change your name on your account page.",
                     "superadmin-only": "Only a superadmin can change a superadmin account.",
                     "superadmin-role-fixed": "The superadmin role cannot be granted nor removed.",
                     "unknown-role": "The role \"{{role}}\" does not exist."
@@ -32,10 +32,6 @@
         },
         "users": {
             "actions": {
-                "change-status": {
-                    "label": "Change status",
-                    "tooltip": "Activate or deactivate the selected user"
-                },
                 "create": {
                     "label": "Invite user",
                     "tooltip": "Invite someone to create their account"
@@ -48,19 +44,6 @@
                     "label": "Resend invitation",
                     "tooltip": "Send the invitation email again"
                 }
-            },
-            "change-status": {
-                "buttons": {
-                    "cancel": "Cancel",
-                    "submit": "Change"
-                },
-                "main": {
-                    "status": {
-                        "label": "New status",
-                        "placeholder": "Choose a status"
-                    }
-                },
-                "title": "Change status"
             },
             "form": {
                 "create": {
@@ -91,6 +74,10 @@
                     },
                     "roles": {
                         "label": "Roles"
+                    },
+                    "status": {
+                        "label": "Status",
+                        "placeholder": "Choose a status"
                     },
                     "surname": {
                         "label": "Surname",
@@ -139,7 +126,6 @@
             },
             "title": "Users",
             "toast": {
-                "change-status-success": "Status changed",
                 "create-success": "Invitation sent",
                 "edit-success": "User saved",
                 "resend-invitation-success": "Invitation sent again"

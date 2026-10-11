@@ -3,6 +3,7 @@
     --bey-modal-fg-muted: var(--bey-text-muted);
     --bey-modal-fg-message: var(--bey-text-secondary);
     --bey-modal-close-hover-bg: var(--bey-bg-active);
+    --bey-modal-max-height: var(--bey-dialog-max-height);
     color: var(--bey-modal-fg);
 
     display: block;
@@ -17,8 +18,15 @@
     border: var(--bey-border-width) solid var(--bey-modal-border);
     border-radius: var(--bey-radius-md);
     box-shadow: var(--bey-shadow-lg);
+    display: flex;
+    flex-direction: column;
+    max-height: var(--bey-modal-max-height);
     padding: var(--bey-space-xl) var(--bey-space-lg);
     width: min(100%, 32rem);
+}
+
+.bey-modal-header {
+    flex-shrink: 0;
 }
 
 .bey-modal-info {
@@ -90,9 +98,16 @@
 
 .bey-modal-message {
     color: var(--bey-modal-fg-message);
+    flex: 1 1 auto;
     font-size: var(--bey-font-size-md);
     line-height: var(--bey-line-height-loose);
+    min-height: 0;
+    overflow-y: auto;
     white-space: pre-line;
+}
+
+.bey-modal-actions {
+    flex-shrink: 0;
 }
 
 .bey-modal-action {

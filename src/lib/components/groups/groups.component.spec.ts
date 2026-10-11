@@ -32,8 +32,9 @@ describe('GroupsComponent', () => {
 
     function buildGroup(overrides: Partial<GroupRow> = {}): GroupRow {
         return {
-            actions: ['edit', 'members', 'delete'],
+            actions: ['edit', 'delete'],
             createdAt: Date.UTC(2026, 0, 2),
+            extraRoleCount: 2,
             id: 'g1',
             memberCount: 3,
             name: 'Sales',
@@ -92,6 +93,27 @@ describe('GroupsComponent', () => {
         await settle(fixture);
     }
 
+    async function answerEdit(): Promise<void> {
+        httpTesting.expectOne(`${GROUPS_URL}/g1`).flush({
+            ...buildGroup(),
+            extraRoles: [{ id: 'r1', name: 'Reviewers' }],
+            members: [{ email: 'ada@example.test', id: 'u1', name: 'Ada Lovelace' }]
+        });
+        httpTesting.expectOne(`${GROUPS_URL}/g1/member-options`).flush({
+            users: [
+                { email: 'ada@example.test', id: 'u1', name: 'Ada Lovelace' },
+                { email: 'grace@example.test', id: 'u2', name: 'Grace Hopper' }
+            ]
+        });
+        httpTesting.expectOne(`${GROUPS_URL}/g1/role-options`).flush({
+            extraRoles: [
+                { id: 'r1', name: 'Reviewers' },
+                { id: 'r2', name: 'Writers' }
+            ]
+        });
+        await settle(fixture);
+    }
+
     async function useMenuAction(rowText: string, action: string): Promise<void> {
         await openMenu(rowText);
         buttonByName(fixture, `${PREFIX}.actions.${action}.label`).click();
@@ -112,11 +134,13 @@ describe('GroupsComponent', () => {
         httpTesting.verify();
     });
 
-    it('lists the groups by name, with how many members they have', async () => {
-        await render([buildGroup(), buildGroup({ id: 'g2', memberCount: 0, name: 'Support' })]);
+    it('lists the groups by name, with how many members and extra roles they have', async () => {
+        await render([buildGroup(), buildGroup({ extraRoleCount: 0, id: 'g2', memberCount: 0, name: 'Support' })]);
 
         expect(rowWith('Sales').textContent).toContain('3');
+        expect(rowWith('Sales').textContent).toContain('2');
         expect(rowWith('Support').textContent).toContain('0');
+        expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.extra-role-count`);
     });
 
     it('sorts the groups by name at first, from the address of the config', async () => {
@@ -148,22 +172,43 @@ describe('GroupsComponent', () => {
         expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: `${PREFIX}.toast.create-success` }]);
     });
 
-    it('renames a group from its name', async () => {
+    it('edits the name, the members and the extra roles of a group from its name, read from the server first', async () => {
         await render();
 
         buttonByName(fixture, 'Sales').click();
         await settle(fixture);
+        await answerEdit();
         const form = modalForms.forms().at(-1);
-        form?.onSubmit?.({ main: { name: 'Sales team' } }, buildHandle());
+        form?.onSubmit?.({ main: { extraRoleIds: ['r2'], name: 'Sales team', userIds: ['u2'] } }, buildHandle());
         const request = httpTesting.expectOne(`${GROUPS_URL}/g1`);
         request.flush(buildGroup({ name: 'Sales team' }));
         await settle(fixture);
         reload().flush({ globalActions: [], results: [] });
 
         expect(form?.title).toBe(`${PREFIX}.form.edit.title`);
-        expect(form?.initialValue).toEqual({ main: { name: 'Sales' } });
+        expect(fieldsOf(form).map(({ key }) => key)).toEqual(['name', 'userIds', 'extraRoleIds']);
+        expect((fieldsOf(form)[1] as FormCheckboxGroupField).options).toEqual([
+            { label: 'Ada Lovelace (ada@example.test)', value: 'u1' },
+            { label: 'Grace Hopper (grace@example.test)', value: 'u2' }
+        ]);
+        expect(form?.initialValue).toEqual({ main: { extraRoleIds: ['r1'], name: 'Sales', userIds: ['u1'] } });
         expect(request.request.method).toBe('PUT');
-        expect(request.request.body).toEqual({ name: 'Sales team' });
+        expect(request.request.body).toEqual({ extraRoleIds: ['r2'], name: 'Sales team', userIds: ['u2'] });
+        expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: `${PREFIX}.toast.edit-success` }]);
+    });
+
+    it('edits a group from the edit action of the header, and offers no separate members action', async () => {
+        await render();
+
+        await openMenu('Sales');
+
+        expect(queryButton(fixture, `${PREFIX}.actions.members.label`)).toBeNull();
+
+        buttonByName(fixture, `${PREFIX}.actions.edit.label`).click();
+        await settle(fixture);
+        await answerEdit();
+
+        expect(modalForms.forms().at(-1)?.title).toBe(`${PREFIX}.form.edit.title`);
     });
 
     it('shows the reason the server gives for a name taken in the organization', async () => {
@@ -171,10 +216,11 @@ describe('GroupsComponent', () => {
 
         buttonByName(fixture, 'Sales').click();
         await settle(fixture);
+        await answerEdit();
         modalForms
             .forms()
             .at(-1)
-            ?.onSubmit?.({ main: { name: 'Support' } }, buildHandle());
+            ?.onSubmit?.({ main: { name: 'Support', userIds: [] } }, buildHandle());
         httpTesting
             .expectOne(`${GROUPS_URL}/g1`)
             .flush(
@@ -222,52 +268,18 @@ describe('GroupsComponent', () => {
         expect(TestBed.inject(FakeModalService).confirmations()).toHaveLength(1);
     });
 
-    it('sets the members of a group among the users of its organization, and reloads', async () => {
-        await render();
-
-        await useMenuAction('Sales', 'members');
-        httpTesting.expectOne(`${GROUPS_URL}/g1/member-options`).flush({
-            users: [
-                { email: 'ada@example.test', id: 'u1', name: 'Ada Lovelace' },
-                { email: 'grace@example.test', id: 'u2', name: 'Grace Hopper' }
-            ]
-        });
-        httpTesting
-            .expectOne(`${GROUPS_URL}/g1/members`)
-            .flush({ members: [{ email: 'ada@example.test', id: 'u1', name: 'Ada Lovelace' }] });
-        await settle(fixture);
-        const form = modalForms.forms().at(-1);
-        form?.onSubmit?.({ main: { userIds: ['u2'] } }, buildHandle());
-        const request = httpTesting.expectOne(
-            current => current.url === `${GROUPS_URL}/g1/members` && current.method === 'PUT'
-        );
-        request.flush({ members: [{ email: 'grace@example.test', id: 'u2', name: 'Grace Hopper' }] });
-        await settle(fixture);
-        reload().flush({ globalActions: [], results: [buildGroup({ memberCount: 1 })] });
-
-        expect(form?.title).toBe(`${PREFIX}.members.title`);
-        expect((fieldsOf(form)[1] as FormCheckboxGroupField).options).toEqual([
-            { label: 'Ada Lovelace (ada@example.test)', value: 'u1' },
-            { label: 'Grace Hopper (grace@example.test)', value: 'u2' }
-        ]);
-        expect(form?.initialValue).toEqual({ main: { userIds: ['u1'] } });
-        expect(request.request.body).toEqual({ userIds: ['u2'] });
-        expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: `${PREFIX}.toast.members-success` }]);
-    });
-
     it('shows the reason the server gives for refusing the members', async () => {
         await render();
 
-        await useMenuAction('Sales', 'members');
-        httpTesting.expectOne(`${GROUPS_URL}/g1/member-options`).flush({ users: [] });
-        httpTesting.expectOne(`${GROUPS_URL}/g1/members`).flush({ members: [] });
+        buttonByName(fixture, 'Sales').click();
         await settle(fixture);
+        await answerEdit();
         modalForms
             .forms()
             .at(-1)
-            ?.onSubmit?.({ main: { userIds: ['u9'] } }, buildHandle());
+            ?.onSubmit?.({ main: { name: 'Sales', userIds: ['u9'] } }, buildHandle());
         httpTesting
-            .expectOne(current => current.url === `${GROUPS_URL}/g1/members` && current.method === 'PUT')
+            .expectOne(current => current.url === `${GROUPS_URL}/g1` && current.method === 'PUT')
             .flush(
                 { errorCode: 'invalid', messageKey: 'groups.invalid-members', messageParameters: { userIds: ['u9'] } },
                 { status: 400, statusText: 'Bad Request' }

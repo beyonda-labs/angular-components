@@ -11,7 +11,7 @@ import { FormHandle } from '../form/models/form.model';
 import { FormField } from '../form/models/form-field.model';
 import { PageOrganization } from '../page/models/page-organization.model';
 import { PageSearch } from '../page/models/page-search.model';
-import { UserRow, UsersConfig, UserStatus } from './models/users.model';
+import { UserEditableField, UserRow, UsersConfig, UserStatus } from './models/users.model';
 import { UsersComponent } from './users.component';
 
 const ORGANIZATIONS: PageOrganization[] = [
@@ -212,16 +212,37 @@ describe('UsersComponent — organizations', () => {
         });
     });
 
-    it('offers a superadmin no edit of another superadmin, only the status change the row lists', async () => {
+    it('lets a superadmin change only the status of another superadmin, every other field disabled', async () => {
         await configure(['superadmin']);
-        await render(ORGANIZATIONS, [buildSuperadmin({ actions: ['change-status'], id: 'root-2', name: 'Second' })]);
+        await render(ORGANIZATIONS, [
+            buildSuperadmin({
+                actions: ['edit'],
+                editableFields: [UserEditableField.Status],
+                id: 'root-2',
+                name: 'Second'
+            })
+        ]);
 
-        await click(rowWith('Second'));
-        await click(buttonByName(fixture, 'angular-components.header.menu'));
+        await click(buttonByName(fixture, 'Second'));
+        const form = lastForm();
+        form?.onSubmit?.(
+            { main: { name: 'Renamed', roles: ['superadmin'], status: 'inactive', surname: '' } },
+            buildHandle()
+        );
+        const request = httpTesting.expectOne(`${USERS_URL}/root-2`);
+        request.flush(buildSuperadmin({ id: 'root-2', status: UserStatus.Inactive }));
+        await settle(fixture);
+        answerList();
 
-        expect(queryButton(fixture, 'Second')).toBeNull();
-        expect(queryButton(fixture, `${PREFIX}.actions.edit.label`)).toBeNull();
-        expect(queryButton(fixture, `${PREFIX}.actions.change-status.label`)).not.toBeNull();
+        expect(fieldsOf(form).map(({ isDisabled, key }) => [key, isDisabled])).toEqual([
+            ['email', false],
+            ['name', true],
+            ['surname', true],
+            ['status', false],
+            ['roles', true]
+        ]);
+        expect(request.request.body).toEqual({ status: 'inactive' });
+        expect(queryButton(fixture, `${PREFIX}.actions.change-status.label`)).toBeNull();
     });
 
     describe('for a superadmin of a single organization', () => {

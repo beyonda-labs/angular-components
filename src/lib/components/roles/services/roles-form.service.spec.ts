@@ -1,12 +1,13 @@
 import { TestBed } from '@angular/core/testing';
+import { faFileLines, faRectangleList, faUser } from '@fortawesome/free-regular-svg-icons';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
-import { FormCheckboxGroupField } from '../../form/models/fields/form-checkbox-group-field.model';
+import { FormCheckboxSectionsField } from '../../form/models/fields/form-checkbox-sections-field.model';
 import { FormInfoField } from '../../form/models/fields/form-info-field.model';
 import { FormButtonType, FormSection } from '../../form/models/form.model';
-import { FormField, FormRule } from '../../form/models/form-field.model';
+import { FormField } from '../../form/models/form-field.model';
 import { FormFieldValidatorType } from '../../form/models/form-field-validator.model';
-import { RolePermissionEntry, RoleRow, RolesFormOptions } from '../models/roles.model';
+import { RolePermissionEntry, RoleRow, RolesFormOptions, RolesViewOptions } from '../models/roles.model';
 import { RolesFormService } from './roles-form.service';
 
 describe('RolesFormService', () => {
@@ -20,6 +21,7 @@ describe('RolesFormService', () => {
     const reviewers: RoleRow = {
         actions: ['edit', 'delete'],
         description: 'Review the templates',
+        groupCount: 1,
         id: 'r1',
         isBase: false,
         memberCount: 2,
@@ -29,11 +31,23 @@ describe('RolesFormService', () => {
 
     function buildOptions(overrides: Partial<RolesFormOptions> = {}): RolesFormOptions {
         return {
+            groupIcons: { templates: faFileLines },
             isOrganizationAsked: false,
             organizations: [],
             permissionPrefix: 'demo.permissions',
             permissions,
             prefix: 'demo.roles',
+            ...overrides
+        };
+    }
+
+    function buildViewOptions(overrides: Partial<RolesViewOptions> = {}): RolesViewOptions {
+        return {
+            groupIcons: {},
+            permissionPrefix: 'demo.permissions',
+            permissions,
+            prefix: 'demo.roles',
+            rolePrefix: 'demo.roles',
             ...overrides
         };
     }
@@ -44,8 +58,10 @@ describe('RolesFormService', () => {
             .flatMap(section => section.rows.flatMap(row => row.fields));
     }
 
-    function resolve<T>(rule: FormRule<T>, value: Record<string, Record<string, unknown>>): T {
-        return typeof rule === 'function' ? (rule as (current: typeof value) => T)(value) : rule;
+    function checklistOf(sections: FormSection[]): FormCheckboxSectionsField {
+        const [checklist] = fieldsOf(sections, 'permissions');
+
+        return checklist as FormCheckboxSectionsField;
     }
 
     beforeEach(() => {
@@ -55,7 +71,12 @@ describe('RolesFormService', () => {
                     translations: {
                         en: {
                             demo: {
-                                permissions: { templates: { edit: 'Edit templates', label: 'Templates' } },
+                                permissions: {
+                                    templates: {
+                                        edit: { description: 'Can change the templates.', label: 'Edit templates' },
+                                        label: 'Templates'
+                                    }
+                                },
                                 roles: { adminuser: 'Administrator' }
                             }
                         }
@@ -81,39 +102,45 @@ describe('RolesFormService', () => {
         expect(form.toFormValue()).toBeUndefined();
         expect(form.toFormValue(reviewers)).toEqual({
             main: { description: 'Review the templates', name: 'Reviewers' },
-            permissions: { documents: [], templates: ['templates.edit'] }
+            permissions: { permissions: ['templates.edit'] }
         });
     });
 
-    it('offers a checklist per group of permissions, ordered by group, labelled from the permission prefix', () => {
-        const groups = fieldsOf(service.buildFormConfig(buildOptions()).buildSections(), 'permissions');
+    it('offers the permissions in one required checklist, a section per group, labelled and described from the prefix', () => {
+        const checklist = checklistOf(service.buildFormConfig(buildOptions()).buildSections());
 
-        expect(groups.map(({ key, label }) => [key, label])).toEqual([
-            ['documents', 'Documents'],
-            ['templates', 'Templates']
-        ]);
-        expect((groups[1] as FormCheckboxGroupField).options).toEqual([
-            { label: 'Edit templates', value: 'templates.edit' },
-            { label: 'Publish', value: 'templates.publish' }
+        expect(checklist).toMatchObject({
+            isDisabled: false,
+            isRequired: true,
+            key: 'permissions',
+            label: 'demo.roles.form.permissions.label'
+        });
+        expect(checklist.sections).toEqual([
+            {
+                icon: faRectangleList,
+                key: 'documents',
+                label: 'Documents',
+                options: [{ description: undefined, label: 'Read', value: 'documents.read' }]
+            },
+            {
+                icon: faFileLines,
+                key: 'templates',
+                label: 'Templates',
+                options: [
+                    { description: 'Can change the templates.', label: 'Edit templates', value: 'templates.edit' },
+                    { description: undefined, label: 'Publish', value: 'templates.publish' }
+                ]
+            }
         ]);
     });
 
-    it('requires a permission at least, in any of the groups', () => {
-        const [documents, templates] = fieldsOf(service.buildFormConfig(buildOptions()).buildSections(), 'permissions');
-        const none = { main: {}, permissions: { documents: [], templates: [] } };
-        const one = { main: {}, permissions: { documents: [], templates: ['templates.edit'] } };
-
-        expect([resolve(documents.isRequired, none), resolve(templates.isRequired, none)]).toEqual([true, true]);
-        expect([resolve(documents.isRequired, one), resolve(templates.isRequired, one)]).toEqual([false, false]);
-    });
-
-    it('sends the name and the description trimmed and every permission checked', () => {
+    it('sends the name and the description trimmed and every permission checked, once each', () => {
         const form = service.buildFormConfig(buildOptions());
 
         expect(
             form.toItem({
                 main: { description: '  Review  ', name: ' Reviewers ' },
-                permissions: { documents: ['documents.read'], templates: ['templates.edit'] }
+                permissions: { permissions: ['documents.read', 'templates.edit', 'documents.read'] }
             })
         ).toEqual({
             description: 'Review',
@@ -125,14 +152,13 @@ describe('RolesFormService', () => {
     it('still offers a permission the role holds that the caller cannot give, so it can be unchecked', () => {
         const form = service.buildFormConfig(buildOptions());
         const role = { ...reviewers, permissions: ['templates.edit', 'audit.read'] };
-        const groups = fieldsOf(form.buildSections(role), 'permissions');
 
-        expect(groups.map(({ key }) => key)).toEqual(['audit', 'documents', 'templates']);
-        expect(form.toFormValue(role)?.permissions).toEqual({
-            audit: ['audit.read'],
-            documents: [],
-            templates: ['templates.edit']
-        });
+        expect(checklistOf(form.buildSections(role)).sections.map(({ key }) => key)).toEqual([
+            'audit',
+            'documents',
+            'templates'
+        ]);
+        expect(form.toFormValue(role)?.permissions).toEqual({ permissions: ['audit.read', 'templates.edit'] });
     });
 
     it('says there is nothing to give when the caller can give no permission', () => {
@@ -141,6 +167,7 @@ describe('RolesFormService', () => {
             'permissions'
         );
 
+        expect(empty).toMatchObject({ label: 'demo.roles.form.permissions.label' });
         expect((empty as FormInfoField).items).toEqual([{ label: 'demo.roles.form.permissions.empty' }]);
     });
 
@@ -164,7 +191,7 @@ describe('RolesFormService', () => {
         expect(
             form.toItem({
                 main: { name: 'Reviewers', organizationId: 'o2' },
-                permissions: { documents: ['documents.read'] }
+                permissions: { permissions: ['documents.read'] }
             })
         ).toEqual({ description: '', name: 'Reviewers', organizationId: 'o2', permissions: ['documents.read'] });
     });
@@ -176,11 +203,11 @@ describe('RolesFormService', () => {
 
         expect(form.toFormValue()).toEqual({
             main: { description: '', name: '', organizationId: 'o2' },
-            permissions: {}
+            permissions: { permissions: [] }
         });
     });
 
-    it('shows a role read-only, labelled from the role prefix, its permissions checked and disabled', () => {
+    it('shows a role read-only, labelled from the role prefix, with the same checklist disabled', () => {
         const adminuser: RoleRow = {
             actions: [],
             id: 'adminuser',
@@ -189,36 +216,31 @@ describe('RolesFormService', () => {
             name: 'adminuser',
             permissions: ['templates.edit', 'users.read']
         };
-        const view = service.buildViewConfig(
-            { permissionPrefix: 'demo.permissions', permissions, prefix: 'demo.roles', rolePrefix: 'demo.roles' },
-            adminuser
-        );
-        const groups = fieldsOf(view.sections, 'permissions');
+        const view = service.buildViewConfig(buildViewOptions(), adminuser);
+        const checklist = checklistOf(view.sections);
 
         expect(view.title).toBe('demo.roles.view.title');
         expect((fieldsOf(view.sections, 'main') as FormInfoField[]).map(({ items }) => items)).toEqual([
             [{ label: 'Administrator' }]
         ]);
-        expect(groups.map(({ isDisabled, key }) => [key, isDisabled])).toEqual([
-            ['documents', true],
-            ['templates', true],
-            ['users', true]
-        ]);
-        expect(view.initialValue?.permissions).toEqual({
-            documents: [],
-            templates: ['templates.edit'],
-            users: ['users.read']
+        expect(checklist).toMatchObject({
+            isDisabled: true,
+            isRequired: false,
+            label: 'demo.roles.view.permissions.label'
         });
+        expect(checklist.sections.map(({ icon, key }) => [key, icon])).toEqual([
+            ['documents', faRectangleList],
+            ['templates', faRectangleList],
+            ['users', faUser]
+        ]);
+        expect(view.initialValue?.permissions).toEqual({ permissions: ['templates.edit', 'users.read'] });
         expect(view.buttons.filter(({ isHidden }) => !isHidden).map(({ label, type }) => [label, type])).toEqual([
             ['demo.roles.view.buttons.close', FormButtonType.Cancel]
         ]);
     });
 
     it('shows the description of a role it views when the role has one', () => {
-        const view = service.buildViewConfig(
-            { permissionPrefix: 'demo.permissions', permissions, prefix: 'demo.roles', rolePrefix: 'demo.roles' },
-            reviewers
-        );
+        const view = service.buildViewConfig(buildViewOptions(), reviewers);
 
         expect((fieldsOf(view.sections, 'main') as FormInfoField[]).map(({ items, key }) => [key, items])).toEqual([
             ['name', [{ label: 'Reviewers' }]],
@@ -227,10 +249,7 @@ describe('RolesFormService', () => {
     });
 
     it('says a role it views gives no permissions when there is none to show', () => {
-        const view = service.buildViewConfig(
-            { permissionPrefix: 'demo.permissions', permissions: [], prefix: 'demo.roles', rolePrefix: 'demo.roles' },
-            { ...reviewers, permissions: [] }
-        );
+        const view = service.buildViewConfig(buildViewOptions({ permissions: [] }), { ...reviewers, permissions: [] });
         const [empty] = fieldsOf(view.sections, 'permissions');
 
         expect((empty as FormInfoField).items).toEqual([{ label: 'demo.roles.view.permissions.empty' }]);

@@ -1,4 +1,4 @@
-import { PageActionScope, PageActionZone } from '../page/models/page-action.model';
+import { PageActionZone } from '../page/models/page-action.model';
 import { PageFormConfig } from '../page/models/page-form.model';
 import {
     OrganizationFormValue,
@@ -19,7 +19,7 @@ describe('buildOrganizationsPageConfig', () => {
                 prefix: 'demo.tenants.form'
             }),
             loadRow: () => [],
-            onInviteAdmin: jest.fn(),
+            onEdit: jest.fn(),
             onReady: jest.fn(),
             ...overrides
         });
@@ -57,9 +57,9 @@ describe('buildOrganizationsPageConfig', () => {
         ]);
     });
 
-    it('offers to create, rename, change the status and invite the admin of an organization', () => {
-        const onInviteAdmin = jest.fn();
-        const actions = build({ onInviteAdmin }).headerConfig?.actions ?? [];
+    it('offers to create and edit an organization, the edit holding its name and its status', () => {
+        const onEdit = jest.fn();
+        const actions = build({ onEdit }).headerConfig?.actions ?? [];
         const organization: OrganizationRow = {
             actions: [],
             createdAt: 0,
@@ -69,20 +69,18 @@ describe('buildOrganizationsPageConfig', () => {
             userCount: 0
         };
 
-        expect(actions.map(action => action.key)).toEqual(['create', 'edit', 'change-status', 'invite-admin']);
-        expect(actions[3]).toEqual(
-            expect.objectContaining({ scope: PageActionScope.Single, zone: PageActionZone.Menu })
-        );
+        expect(actions.map(action => action.key)).toEqual(['create', 'edit']);
+        expect(actions[1].zone).toBe(PageActionZone.Left);
 
-        actions[3].handler?.([organization]);
+        actions[1].handler?.([organization]);
 
-        expect(onInviteAdmin).toHaveBeenCalledWith(organization);
+        expect(onEdit).toHaveBeenCalledWith(organization);
     });
 
-    it('deactivates an active organization and reactivates an inactive one, never deleting', () => {
+    it('changes no status on its own and never deletes, the status being part of the edit', () => {
         const config = build();
 
-        expect(config.statusConfig?.transitions).toEqual({ active: ['inactive'], inactive: ['active'] });
+        expect(config.statusConfig).toBeUndefined();
         expect(config.headerConfig?.actions.map(action => action.key)).not.toContain('delete');
     });
 });

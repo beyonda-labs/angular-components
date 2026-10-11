@@ -8,8 +8,7 @@ import { FakeModalFormService } from '@testing/services/fake-modal-form.service'
 import { FakeToastService } from '@testing/services/fake-toast.service';
 
 import { ModalFormConfig } from '../form/components/modal/models/modal-form.model';
-import { FormInfoField } from '../form/models/fields/form-info-field.model';
-import { FormSelectField } from '../form/models/fields/form-select-field.model';
+import { FormListField } from '../form/models/fields/form-list-field.model';
 import { FormHandle } from '../form/models/form.model';
 import { FormField } from '../form/models/form-field.model';
 import { OrganizationRow, OrganizationsConfig, OrganizationStatus } from './models/organizations.model';
@@ -17,7 +16,6 @@ import { OrganizationsComponent } from './organizations.component';
 
 const ORGANIZATIONS_URL = 'https://api.test/api/organizations';
 const PREFIX = 'angular-components.organizations';
-const USERS_URL = 'https://api.test/api/users';
 
 describe('OrganizationsComponent', () => {
     let fixture: ComponentFixture<OrganizationsComponent>;
@@ -26,7 +24,7 @@ describe('OrganizationsComponent', () => {
 
     function buildOrganization(overrides: Partial<OrganizationRow> = {}): OrganizationRow {
         return {
-            actions: ['edit', 'change-status', 'invite-admin'],
+            actions: ['edit'],
             createdAt: Date.UTC(2026, 0, 2),
             id: 'o2',
             name: 'Globex',
@@ -80,17 +78,17 @@ describe('OrganizationsComponent', () => {
         return form?.sections.flatMap(section => section.rows.flatMap(row => row.fields)) ?? [];
     }
 
-    async function openMenu(rowText: string): Promise<void> {
-        rowWith(rowText).click();
-        await settle(fixture);
-        buttonByName(fixture, 'angular-components.header.menu').click();
-        await settle(fixture);
-    }
-
-    async function useMenuAction(rowText: string, action: string): Promise<void> {
-        await openMenu(rowText);
-        buttonByName(fixture, `${PREFIX}.actions.${action}.label`).click();
-        await settle(fixture);
+    function answerDetail(): void {
+        httpTesting.expectOne(`${ORGANIZATIONS_URL}/o2`).flush({
+            ...buildOrganization(),
+            groups: [
+                {
+                    id: 'g1',
+                    members: [{ email: 'ada@example.test', id: 'u1', name: 'Ada Lovelace' }],
+                    name: 'Sales'
+                }
+            ]
+        });
     }
 
     beforeEach(async () => {
@@ -150,138 +148,63 @@ describe('OrganizationsComponent', () => {
         expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: `${PREFIX}.toast.create-success` }]);
     });
 
-    it('renames an organization from its name', async () => {
+    it('edits the name and the status of an organization from its name, showing its groups read-only', async () => {
         await render();
 
         buttonByName(fixture, 'Globex').click();
         await settle(fixture);
+        answerDetail();
+        await settle(fixture);
         const form = modalForms.forms().at(-1);
-        form?.onSubmit?.({ main: { name: 'Globex Corporation' } }, buildHandle());
+        form?.onSubmit?.({ main: { name: 'Globex Corporation', status: OrganizationStatus.Inactive } }, buildHandle());
         const request = httpTesting.expectOne(`${ORGANIZATIONS_URL}/o2`);
-        request.flush(buildOrganization({ name: 'Globex Corporation' }));
+        request.flush(buildOrganization({ name: 'Globex Corporation', status: OrganizationStatus.Inactive }));
         await settle(fixture);
         reload().flush({ globalActions: [], results: [] });
 
         expect(form?.title).toBe(`${PREFIX}.form.edit.title`);
-        expect(form?.initialValue).toEqual({ main: { name: 'Globex' } });
+        expect(form?.initialValue).toEqual({ main: { name: 'Globex', status: 'active' } });
+        expect(fieldsOf(form).map(({ key, label }) => [key, label])).toEqual([
+            ['name', undefined],
+            ['status', undefined],
+            ['g1', 'Sales']
+        ]);
+        expect((fieldsOf(form)[2] as FormListField).items).toEqual(['Ada Lovelace (ada@example.test)']);
         expect(request.request.method).toBe('PUT');
-        expect(request.request.body).toEqual({ name: 'Globex Corporation' });
+        expect(request.request.body).toEqual({ name: 'Globex Corporation', status: 'inactive' });
+        expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: `${PREFIX}.toast.edit-success` }]);
     });
 
-    it('deactivates an active organization and reactivates an inactive one', async () => {
-        await render([
-            buildOrganization(),
-            buildOrganization({ id: 'o3', name: 'Initech', status: OrganizationStatus.Inactive })
-        ]);
-
-        await useMenuAction('Globex', 'change-status');
-        const deactivation = modalForms.forms().at(-1);
-        deactivation?.onSubmit?.({ main: { status: 'inactive' } }, buildHandle());
-        const request = httpTesting.expectOne(`${ORGANIZATIONS_URL}/o2/status`);
-        request.flush(buildOrganization({ status: OrganizationStatus.Inactive }));
-        await settle(fixture);
-        reload().flush({
-            globalActions: [],
-            results: [buildOrganization({ id: 'o3', name: 'Initech', status: OrganizationStatus.Inactive })]
-        });
-        await settle(fixture);
-        await useMenuAction('Initech', 'change-status');
-
-        expect((fieldsOf(deactivation)[0] as FormSelectField).options).toEqual([
-            { label: `${PREFIX}.status.inactive`, value: 'inactive' }
-        ]);
-        expect(request.request.body).toEqual({ status: 'inactive' });
-        expect((fieldsOf(modalForms.forms().at(-1))[0] as FormSelectField).options).toEqual([
-            { label: `${PREFIX}.status.active`, value: 'active' }
-        ]);
-    });
-
-    it('offers the status change only on the rows that list it', async () => {
-        await render([buildOrganization({ actions: ['edit', 'invite-admin'] })]);
-
-        await openMenu('Globex');
-
-        expect(queryButton(fixture, `${PREFIX}.actions.change-status.label`)).toBeNull();
-        expect(queryButton(fixture, `${PREFIX}.actions.invite-admin.label`)).not.toBeNull();
-    });
-
-    it('shows the reason the server gives for refusing a status change', async () => {
+    it('edits an organization from the edit action of the header, with no status change nor invitation of its own', async () => {
         await render();
 
-        await useMenuAction('Globex', 'change-status');
-        modalForms
-            .forms()
-            .at(-1)
-            ?.onSubmit?.({ main: { status: 'inactive' } }, buildHandle());
+        rowWith('Globex').click();
+        await settle(fixture);
+
+        expect(queryButton(fixture, 'angular-components.header.menu')).toBeNull();
+
+        buttonByName(fixture, `${PREFIX}.actions.edit.label`).click();
+        await settle(fixture);
+        answerDetail();
+        await settle(fixture);
+
+        expect(modalForms.forms().at(-1)?.title).toBe(`${PREFIX}.form.edit.title`);
+    });
+
+    it('shows the reason the server gives for an organization it cannot read', async () => {
+        await render();
+
+        buttonByName(fixture, 'Globex').click();
+        await settle(fixture);
         httpTesting
-            .expectOne(`${ORGANIZATIONS_URL}/o2/status`)
-            .flush(
-                { errorCode: 'not-found', messageKey: 'organizations.not-found' },
-                { status: 404, statusText: 'Not Found' }
-            );
+            .expectOne(`${ORGANIZATIONS_URL}/o2`)
+            .flush({ errorCode: 'not-found', messageKey: 'organizations.not-found' }, { status: 404, statusText: '' });
         await settle(fixture);
 
+        expect(modalForms.forms()).toEqual([]);
         expect(TestBed.inject(FakeModalService).errors()).toEqual([
-            expect.objectContaining({
-                message: 'angular-components.http.error.organizations.not-found'
-            })
+            expect.objectContaining({ message: 'angular-components.http.error.organizations.not-found' })
         ]);
-    });
-
-    it('invites the admin of an organization into it, with the admin role of the config', async () => {
-        await render(undefined, undefined, new OrganizationsConfig({ adminRole: 'manager', usersUrl: '/staff' }));
-
-        await useMenuAction('Globex', 'invite-admin');
-        const form = modalForms.forms().at(-1);
-        form?.onSubmit?.(
-            { main: { email: ' grace@example.test ', language: 'es', name: 'Grace', surname: ' ' } },
-            buildHandle()
-        );
-        const request = httpTesting.expectOne('https://api.test/api/staff');
-        request.flush({ id: 'u9' });
-        await settle(fixture);
-        reload().flush({ globalActions: [], results: [buildOrganization({ userCount: 8 })] });
-
-        expect(form?.title).toBe(`${PREFIX}.invite-admin.title`);
-        expect((fieldsOf(form)[0] as FormInfoField).items).toEqual([{ label: 'Globex' }]);
-        expect(fieldsOf(form).map(field => field.key)).toEqual([
-            'organization',
-            'email',
-            'name',
-            'surname',
-            'language'
-        ]);
-        expect(request.request.method).toBe('POST');
-        expect(request.request.body).toEqual({
-            email: 'grace@example.test',
-            language: 'es',
-            name: 'Grace',
-            organizationId: 'o2',
-            roles: ['manager']
-        });
-        expect(TestBed.inject(FakeToastService).successes()).toEqual([
-            { message: `${PREFIX}.toast.invite-admin-success` }
-        ]);
-    });
-
-    it('invites the admin with the role adminuser and into /users by default', async () => {
-        await render();
-
-        await useMenuAction('Globex', 'invite-admin');
-        modalForms
-            .forms()
-            .at(-1)
-            ?.onSubmit?.({ main: { email: 'grace@example.test' } }, buildHandle());
-        const request = httpTesting.expectOne(USERS_URL);
-        request.flush({ id: 'u9' });
-        await settle(fixture);
-        reload().flush({ globalActions: [], results: [] });
-
-        expect(request.request.body).toEqual({
-            email: 'grace@example.test',
-            organizationId: 'o2',
-            roles: ['adminuser']
-        });
     });
 
     it('offers only the actions the backend lists', async () => {
@@ -291,7 +214,7 @@ describe('OrganizationsComponent', () => {
         await settle(fixture);
 
         expect(queryButton(fixture, `${PREFIX}.actions.create.label`)).toBeNull();
-        expect(queryButton(fixture, `${PREFIX}.actions.invite-admin.label`)).toBeNull();
+        expect(queryButton(fixture, `${PREFIX}.actions.edit.label`)).toBeNull();
         expect(queryButton(fixture, 'Globex')).toBeNull();
     });
 });

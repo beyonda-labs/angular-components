@@ -9,6 +9,13 @@
             "cancel": {
                 "without-changes": "No se han realizado cambios en el formulario."
             },
+            "checkbox-sections": {
+                "clear-all": "Desmarcar todos",
+                "clear-all-in": "Desmarcar todos en {{section}}",
+                "count": "{{checked}} de {{total}} marcados",
+                "select-all": "Marcar todos",
+                "select-all-in": "Marcar todos en {{section}}"
+            },
             "chips": {
                 "remove": "Eliminar"
             },

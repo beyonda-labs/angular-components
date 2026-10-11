@@ -9,6 +9,13 @@
             "cancel": {
                 "without-changes": "No changes have been made to the form."
             },
+            "checkbox-sections": {
+                "clear-all": "Clear all",
+                "clear-all-in": "Clear all in {{section}}",
+                "count": "{{checked}} of {{total}} checked",
+                "select-all": "Select all",
+                "select-all-in": "Select all in {{section}}"
+            },
             "chips": {
                 "remove": "Remove"
             },

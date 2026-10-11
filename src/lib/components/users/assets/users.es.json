@@ -9,7 +9,7 @@
                     "last-superadmin": "Este cambio dejaría sin ningún superadministrador activo.",
                     "not-found": "Este usuario no existe. Recarga la página y vuelve a intentarlo.",
                     "not-invited": "Esta cuenta ya no está pendiente de una invitación.",
-                    "own-account": "No puedes desactivar tu propia cuenta ni cambiar tus propios roles.",
+                    "own-account": "No puedes cambiar tu propia cuenta desde aquí: ni su estado, ni sus roles, ni tu nombre. Cambia tu nombre en la página de tu cuenta.",
                     "superadmin-only": "Solo un superadministrador puede cambiar la cuenta de un superadministrador.",
                     "superadmin-role-fixed": "El rol de superadministrador no se puede asignar ni quitar.",
                     "unknown-role": "El rol \"{{role}}\" no existe."
@@ -32,10 +32,6 @@
         },
         "users": {
             "actions": {
-                "change-status": {
-                    "label": "Cambiar estado",
-                    "tooltip": "Activa o desactiva el usuario seleccionado"
-                },
                 "create": {
                     "label": "Invitar usuario",
                     "tooltip": "Invita a alguien a crear su cuenta"
@@ -48,19 +44,6 @@
                     "label": "Reenviar invitación",
                     "tooltip": "Vuelve a enviar el correo de invitación"
                 }
-            },
-            "change-status": {
-                "buttons": {
-                    "cancel": "Cancelar",
-                    "submit": "Cambiar"
-                },
-                "main": {
-                    "status": {
-                        "label": "Nuevo estado",
-                        "placeholder": "Elige un estado"
-                    }
-                },
-                "title": "Cambiar estado"
             },
             "form": {
                 "create": {
@@ -91,6 +74,10 @@
                     },
                     "roles": {
                         "label": "Roles"
+                    },
+                    "status": {
+                        "label": "Estado",
+                        "placeholder": "Elige un estado"
                     },
                     "surname": {
                         "label": "Apellidos",
@@ -139,7 +126,6 @@
             },
             "title": "Usuarios",
             "toast": {
-                "change-status-success": "Estado cambiado",
                 "create-success": "Invitación enviada",
                 "edit-success": "Usuario guardado",
                 "resend-invitation-success": "Invitación reenviada"
