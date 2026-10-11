@@ -16,6 +16,7 @@ export * from './lib/components/app-layout/public-api';
 export * from './lib/components/edit-lock-notice/public-api';
 export * from './lib/components/floating-preferences/public-api';
 export * from './lib/components/form/public-api';
+export * from './lib/components/groups/public-api';
 export * from './lib/components/header/public-api';
 export * from './lib/components/left-menu/public-api';
 export * from './lib/components/login/public-api';

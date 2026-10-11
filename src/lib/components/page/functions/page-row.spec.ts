@@ -79,8 +79,27 @@ describe('page rows', () => {
     });
 
     it('keeps only the id and the type of each row for a trash request', () => {
-        expect(toTrashItems([{ id: 1, name: 'One', type: PageItemType.Item } as PageItem])).toEqual([
-            { id: 1, type: PageItemType.Item }
+        expect(toTrashItems([REPORT, FOLDER], CATEGORIES)).toEqual([
+            { id: 1, type: PageItemType.Item },
+            { id: 'f', type: PageItemType.Category }
+        ]);
+    });
+
+    it('reads the entry type from the type field the categories config names, and sends it as the type', () => {
+        const entryType = new PageCategoriesConfig({ typeField: 'entryType' });
+        const variable = { entryType: PageItemType.Item, id: 'v', type: 'string' } as PageItem;
+        const folder = { entryType: PageItemType.Category, id: 'g' } as PageItem;
+
+        expect(toTrashItems([variable, folder], entryType)).toEqual([
+            { id: 'v', type: PageItemType.Item },
+            { id: 'g', type: PageItemType.Category }
+        ]);
+    });
+
+    it('sends every row as an item without categories', () => {
+        expect(toTrashItems([{ id: 1, type: 'string' } as PageItem, FOLDER])).toEqual([
+            { id: 1, type: PageItemType.Item },
+            { id: 'f', type: PageItemType.Item }
         ]);
     });
 });

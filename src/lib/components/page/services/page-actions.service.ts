@@ -162,18 +162,18 @@ export class PageActionsService {
         targetId: string | number | null,
         onMoved?: () => void
     ): void {
-        const { baseUrl, prefix } = context.config;
+        const { baseUrl, prefix, tableConfig } = context.config;
 
         if (items.length === 0 || !baseUrl) {
             return;
         }
 
-        this.pageHttpService
-            .moveItems(baseUrl, toTrashItems(items), targetId, `${prefix}.toast.move-success`)
-            .subscribe(() => {
-                onMoved?.();
-                context.onMoved();
-            });
+        const entries = toTrashItems(items, tableConfig?.categoriesConfig);
+
+        this.pageHttpService.moveItems(baseUrl, entries, targetId, `${prefix}.toast.move-success`).subscribe(() => {
+            onMoved?.();
+            context.onMoved();
+        });
     }
 
     openEditForm(context: PageActionsContext, row: PageItem): void {
@@ -291,7 +291,7 @@ export class PageActionsService {
             {
                 confirm: true,
                 key: 'delete-trash-item',
-                mapPayload: toTrashItems,
+                mapPayload: items => toTrashItems(items, context.config.tableConfig?.categoriesConfig),
                 onComplete: () => context.onTrashItemDeleted(),
                 request: (baseUrl, items, successToast) =>
                     this.pageHttpService.deleteTrashItems(baseUrl, items, successToast)
@@ -348,7 +348,7 @@ export class PageActionsService {
         this.executeBulkAction(context, {
             confirm: false,
             key: 'restore-trash-item',
-            mapPayload: toTrashItems,
+            mapPayload: items => toTrashItems(items, context.config.tableConfig?.categoriesConfig),
             onComplete: () => context.onSaved(),
             request: (baseUrl, items, successToast) =>
                 this.pageHttpService
