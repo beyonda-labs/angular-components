@@ -1,0 +1,9 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.notice.example' | translate }}
+</p>
+
+<div class="d-flex flex-column gap-2">
+    @for (notice of notices; track notice.variant) {
+        <bey-notice [config]="notice"></bey-notice>
+    }
+</div>

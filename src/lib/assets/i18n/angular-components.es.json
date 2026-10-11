@@ -28,6 +28,33 @@
         "breadcrumb": {
             "label": "Migas de pan"
         },
+        "edit-lock-notice": {
+            "actions": {
+                "edit": "Editar",
+                "release": "Liberar",
+                "save-copy": "Guardar como copia",
+                "take-over": "Editar aquí"
+            },
+            "messages": {
+                "free": "Ya nadie lo está editando: vuelve a estar libre para editarlo.",
+                "held": {
+                    "earlier": "{{name}} lo está editando desde el {{date}} a las {{time}}. Puedes consultarlo, pero no cambiarlo.",
+                    "today": "{{name}} lo está editando desde las {{time}}. Puedes consultarlo, pero no cambiarlo."
+                },
+                "lost": {
+                    "other-window": "Ahora lo estás editando en otra ventana. Tus cambios siguen en pantalla, pero ya no se pueden guardar aquí.",
+                    "released": "Se ha liberado tu edición. Tus cambios siguen en pantalla, pero ya no se pueden guardar aquí.",
+                    "taken": "{{name}} ha pasado a editarlo. Tus cambios siguen en pantalla, pero ya no se pueden guardar aquí."
+                },
+                "other-window": "Lo estás editando en otra ventana.",
+                "unavailable": "Ya no está disponible para editarlo."
+            },
+            "release-confirmation": {
+                "confirm": "Liberar",
+                "message": "{{name}} ya no podrá guardar los cambios que aún no haya guardado. ¿Quieres liberar la edición?",
+                "title": "Liberar la edición"
+            }
+        },
         "file-preview": {
             "cancel": "Cancelar",
             "close": "Cerrar vista previa",
@@ -142,6 +169,11 @@
                     "validation-failed": "El documento tiene errores de validación pendientes. Corrígelos antes de generarlo."
                 },
                 "duplicate-field": "Ya existe un elemento con el campo \"{{fieldName}}\" con el valor \"{{value}}\".",
+                "edit-locks": {
+                    "held": "{{holderName}} lo está editando: tus cambios no se han guardado.",
+                    "release-forbidden": "Solo pueden liberar la edición quien lo está editando, un administrador de su organización o un superadministrador.",
+                    "released": "Se ha liberado tu edición, así que tus cambios no se han guardado aquí. Guárdalos como copia o recárgalo para volver a editarlo."
+                },
                 "entities": {
                     "owner-required": "Este elemento necesita un usuario propietario: créalo dentro de la carpeta de un usuario."
                 },
@@ -259,6 +291,11 @@
                     "validation-failed": "Documento no válido"
                 },
                 "duplicate-field": "Valor duplicado",
+                "edit-locks": {
+                    "held": "En edición",
+                    "release-forbidden": "No se puede liberar",
+                    "released": "Edición liberada"
+                },
                 "entities": {
                     "owner-required": "Falta el propietario"
                 },

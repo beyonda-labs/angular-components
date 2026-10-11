@@ -22,6 +22,16 @@
 -   Session service: `organizationId` on `BeySessionUser`, read from the token; absent for a superadmin.
 -   Login module: the texts of the `login.organization-inactive` error; the OAuth callback goes back to the login on
     `?error=organization-inactive`, as on any other error.
+-   Notice module: `bey-notice`, a compact banner across its container: a `BeyNoticeVariant` (`Info`, `Warning`,
+    `Danger`, announced as an alert), an icon, a translated message with its parameters, and its `BeyNoticeAction`s.
+-   Edit lock service: `BeyEditLockService`, provided by the component that edits a row: `start(lockUrl)` acquires the
+    edit lock of base-entity for a token of the window, keeps it with a heartbeat and watches it while others hold it.
+-   Edit lock service: `acquire()`, `takeOver()`, `release()`, `releaseOther()` and `headers()`, the `X-Edit-Lock-Token`
+    of the save; the lock is released on destroy and on `pagehide`, through a `keepalive` fetch with the bearer.
+-   Edit lock service: the texts of the `edit-locks.held`, `edit-locks.released` and `edit-locks.release-forbidden`
+    errors.
+-   Edit lock notice module: `bey-edit-lock-notice`, who edits the row and since when, with Release (confirmed), Edit
+    here, Edit once free (`onEdit` reloads first) and Save as a copy (`onSaveCopy`), its texts under `prefix`.
 
 ### Changed
 

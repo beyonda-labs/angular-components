@@ -1,0 +1,20 @@
+{
+    "angular-components-style-guide": {
+        "notice": {
+            "actions": {
+                "dismiss": "Not now",
+                "reload": "Reload"
+            },
+            "example": "An inline banner across its container, one per variant: information, warning with its actions, and danger.",
+            "messages": {
+                "danger": "This item was deleted while you were looking at it.",
+                "info": "This item is shared with your whole organization.",
+                "warning": "{{name}} changed this item a moment ago."
+            },
+            "toast": {
+                "dismiss": "The notice stays as it is",
+                "reload": "The item would reload now"
+            }
+        }
+    }
+}
