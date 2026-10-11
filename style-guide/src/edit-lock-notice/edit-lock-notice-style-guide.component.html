@@ -1,0 +1,17 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.edit-lock-notice.example' | translate }}
+</p>
+
+<div class="d-flex flex-wrap gap-2 mb-3 bey-style-guide-actions">
+    @for (scenario of scenarios; track scenario.label) {
+        <span class="bey-style-guide-action-slot">
+            <button class="btn btn-sm btn-outline-dark" type="button" (click)="scenario.action()">
+                {{ scenario.label | translate }}
+            </button>
+        </span>
+    }
+</div>
+
+<p class="bey-style-guide-example-label mb-2">{{ status() | translate }}</p>
+
+<bey-edit-lock-notice [config]="config"></bey-edit-lock-notice>

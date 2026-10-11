@@ -28,6 +28,33 @@
         "breadcrumb": {
             "label": "Breadcrumb"
         },
+        "edit-lock-notice": {
+            "actions": {
+                "edit": "Edit",
+                "release": "Release",
+                "save-copy": "Save as a copy",
+                "take-over": "Edit here"
+            },
+            "messages": {
+                "free": "Nobody is editing it now: it is free to edit again.",
+                "held": {
+                    "earlier": "{{name}} has been editing it since {{date}} at {{time}}. You can look at it, but not change it.",
+                    "today": "{{name}} has been editing it since {{time}}. You can look at it, but not change it."
+                },
+                "lost": {
+                    "other-window": "You are editing it in another window now. Your changes stay on screen, but they can no longer be saved here.",
+                    "released": "Your editing was released. Your changes stay on screen, but they can no longer be saved here.",
+                    "taken": "{{name}} took over the editing. Your changes stay on screen, but they can no longer be saved here."
+                },
+                "other-window": "You are editing it in another window.",
+                "unavailable": "It is no longer available for editing."
+            },
+            "release-confirmation": {
+                "confirm": "Release",
+                "message": "{{name}} will no longer be able to save the changes they have not saved yet. Release the editing?",
+                "title": "Release the editing"
+            }
+        },
         "file-preview": {
             "cancel": "Cancel",
             "close": "Close preview",
@@ -142,6 +169,11 @@
                     "validation-failed": "The document has pending validation errors. Fix them before generating it."
                 },
                 "duplicate-field": "An item with field \"{{fieldName}}\" and value \"{{value}}\" already exists.",
+                "edit-locks": {
+                    "held": "{{holderName}} is editing it: your changes were not saved.",
+                    "release-forbidden": "Only whoever is editing it, an admin of its organization or a superadmin can release the editing.",
+                    "released": "Your editing was released, so your changes were not saved here. Save them as a copy, or reload it to edit it again."
+                },
                 "entities": {
                     "owner-required": "This item needs a user to own it: create it inside the folder of a user."
                 },
@@ -259,6 +291,11 @@
                     "validation-failed": "Invalid document"
                 },
                 "duplicate-field": "Duplicate value",
+                "edit-locks": {
+                    "held": "Being edited",
+                    "release-forbidden": "Release not allowed",
+                    "released": "Editing released"
+                },
                 "entities": {
                     "owner-required": "Owner required"
                 },

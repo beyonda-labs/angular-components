@@ -7,6 +7,7 @@ import { AppLayoutStyleGuideComponent } from './app-layout/app-layout-style-guid
 import { BadgeStyleGuideComponent } from './badge/badge-style-guide.component';
 import { BreadcrumbStyleGuideComponent } from './breadcrumb/breadcrumb-style-guide.component';
 import { StyleGuideSectionComponent } from './components/section/style-guide-section.component';
+import { EditLockNoticeStyleGuideComponent } from './edit-lock-notice/edit-lock-notice-style-guide.component';
 import { FilePreviewStyleGuideComponent } from './file-preview/file-preview-style-guide.component';
 import { FloatingPreferencesStyleGuideComponent } from './floating-preferences/floating-preferences-style-guide.component';
 import { FooterStyleGuideComponent } from './footer/footer-style-guide.component';
@@ -17,6 +18,7 @@ import { ListStyleGuideComponent } from './list/list-style-guide.component';
 import { LoadingStyleGuideComponent } from './loading/loading-style-guide.component';
 import { LoginStyleGuideComponent } from './login/login-style-guide.component';
 import { ModalStyleGuideComponent } from './modal/modal-style-guide.component';
+import { NoticeStyleGuideComponent } from './notice/notice-style-guide.component';
 import { OrganizationsStyleGuideComponent } from './organizations/organizations-style-guide.component';
 import { PageStyleGuideComponent } from './page/page-style-guide.component';
 import { PaginationStyleGuideComponent } from './pagination/pagination-style-guide.component';
@@ -40,11 +42,13 @@ import { UsersStyleGuideComponent } from './users/users-style-guide.component';
         AppLayoutStyleGuideComponent,
         BadgeStyleGuideComponent,
         BreadcrumbStyleGuideComponent,
+        EditLockNoticeStyleGuideComponent,
         FilePreviewStyleGuideComponent,
         FloatingPreferencesStyleGuideComponent,
         FooterStyleGuideComponent,
         HeaderStyleGuideComponent,
         ModalStyleGuideComponent,
+        NoticeStyleGuideComponent,
         LeftMenuStyleGuideComponent,
         ListStyleGuideComponent,
         FormStyleGuideComponent,

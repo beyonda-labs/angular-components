@@ -1,0 +1,15 @@
+@let current = config();
+
+<div class="bey-notice" [attr.role]="role()" [class]="variantClass()">
+    <fa-icon class="bey-notice-icon" aria-hidden="true" [icon]="icon()"></fa-icon>
+
+    <p class="bey-notice-message">{{ current.message | translate: current.messageParameters }}</p>
+
+    @if (buttons().length > 0) {
+        <div class="bey-notice-actions">
+            @for (entry of buttons(); track entry.key) {
+                <bey-button [button]="entry.button"></bey-button>
+            }
+        </div>
+    }
+</div>

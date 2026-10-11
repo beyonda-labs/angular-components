@@ -1,0 +1,31 @@
+{
+    "angular-components": {
+        "edit-lock-notice": {
+            "actions": {
+                "edit": "Editar",
+                "release": "Liberar",
+                "save-copy": "Guardar como copia",
+                "take-over": "Editar aquí"
+            },
+            "messages": {
+                "free": "Ya nadie lo está editando: vuelve a estar libre para editarlo.",
+                "held": {
+                    "earlier": "{{name}} lo está editando desde el {{date}} a las {{time}}. Puedes consultarlo, pero no cambiarlo.",
+                    "today": "{{name}} lo está editando desde las {{time}}. Puedes consultarlo, pero no cambiarlo."
+                },
+                "lost": {
+                    "other-window": "Ahora lo estás editando en otra ventana. Tus cambios siguen en pantalla, pero ya no se pueden guardar aquí.",
+                    "released": "Se ha liberado tu edición. Tus cambios siguen en pantalla, pero ya no se pueden guardar aquí.",
+                    "taken": "{{name}} ha pasado a editarlo. Tus cambios siguen en pantalla, pero ya no se pueden guardar aquí."
+                },
+                "other-window": "Lo estás editando en otra ventana.",
+                "unavailable": "Ya no está disponible para editarlo."
+            },
+            "release-confirmation": {
+                "confirm": "Liberar",
+                "message": "{{name}} ya no podrá guardar los cambios que aún no haya guardado. ¿Quieres liberar la edición?",
+                "title": "Liberar la edición"
+            }
+        }
+    }
+}

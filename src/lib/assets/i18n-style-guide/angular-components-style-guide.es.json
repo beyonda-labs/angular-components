@@ -115,6 +115,32 @@
         "breadcrumbs": "Breadcrumbs",
         "components": "Componentes",
         "compound": "Compuestos",
+        "edit-lock-notice": {
+            "example": "Lo que muestra el editor de una fila en cada estado de su bloqueo de edición. Elige un estado; las acciones del aviso lo hacen avanzar como lo haría el bloqueo real.",
+            "scenarios": {
+                "colleague": "Lo edita un compañero",
+                "earlier": "Desde ayer",
+                "free": "Libre de nuevo",
+                "manager": "Visto por un responsable",
+                "other-window": "Otra ventana tuya",
+                "released": "Tu edición liberada",
+                "taken": "Tomado por un compañero",
+                "unavailable": "Ya no disponible"
+            },
+            "statuses": {
+                "acquiring": "Estado: adquiriendo",
+                "free": "Estado: libre",
+                "held": "Estado: ocupado",
+                "lost": "Estado: perdido",
+                "own": "Estado: propio, así que el editor se puede editar y no se muestra ningún aviso",
+                "unavailable": "Estado: no disponible"
+            },
+            "toast": {
+                "copy-saved": "El producto guardaría los cambios como una copia",
+                "reloaded": "El producto recargaría la fila antes de editarla"
+            }
+        },
+        "edit-lock-notice-section": "Aviso de bloqueo de edición",
         "file-preview": {
             "buttons": {
                 "image": "Previsualizar una imagen",
@@ -641,6 +667,23 @@
             }
         },
         "modals": "Modales",
+        "notice": {
+            "actions": {
+                "dismiss": "Ahora no",
+                "reload": "Recargar"
+            },
+            "example": "Un aviso en línea a todo el ancho de su contenedor, uno por variante: información, advertencia con sus acciones y peligro.",
+            "messages": {
+                "danger": "Este elemento se ha eliminado mientras lo consultabas.",
+                "info": "Este elemento está compartido con toda tu organización.",
+                "warning": "{{name}} ha cambiado este elemento hace un momento."
+            },
+            "toast": {
+                "dismiss": "El aviso se queda como está",
+                "reload": "El elemento se recargaría ahora"
+            }
+        },
+        "notice-section": "Avisos",
         "organizations": {
             "example": "La página de organizaciones de un superadministrador: busca por nombre, filtra por estado, crea y renombra una organización, desactívala o reactívala e invita a su primer administrador, en la medida en que el backend lo permita en cada fila. El backend de demostración no sirve organizaciones, así que la lista se queda vacía."
         },

@@ -115,6 +115,32 @@
         "breadcrumbs": "Breadcrumbs",
         "components": "Components",
         "compound": "Compound",
+        "edit-lock-notice": {
+            "example": "What the editor of a row shows for each state of its edit lock. Pick a state; the actions of the notice move it on as the real lock would.",
+            "scenarios": {
+                "colleague": "A colleague edits it",
+                "earlier": "Since yesterday",
+                "free": "Free again",
+                "manager": "Seen by a manager",
+                "other-window": "Another window of yours",
+                "released": "Your editing released",
+                "taken": "Taken over by a colleague",
+                "unavailable": "No longer available"
+            },
+            "statuses": {
+                "acquiring": "Status: acquiring",
+                "free": "Status: free",
+                "held": "Status: held",
+                "lost": "Status: lost",
+                "own": "Status: own, so the editor is editable and no notice shows",
+                "unavailable": "Status: unavailable"
+            },
+            "toast": {
+                "copy-saved": "The product would save the changes as a copy",
+                "reloaded": "The product would reload the row before editing it"
+            }
+        },
+        "edit-lock-notice-section": "Edit lock notice",
         "file-preview": {
             "buttons": {
                 "image": "Preview an image",
@@ -641,6 +667,23 @@
             }
         },
         "modals": "Modals",
+        "notice": {
+            "actions": {
+                "dismiss": "Not now",
+                "reload": "Reload"
+            },
+            "example": "An inline banner across its container, one per variant: information, warning with its actions, and danger.",
+            "messages": {
+                "danger": "This item was deleted while you were looking at it.",
+                "info": "This item is shared with your whole organization.",
+                "warning": "{{name}} changed this item a moment ago."
+            },
+            "toast": {
+                "dismiss": "The notice stays as it is",
+                "reload": "The item would reload now"
+            }
+        },
+        "notice-section": "Notices",
         "organizations": {
             "example": "The organizations page of a superadmin: search by name, filter by status, create and rename an organization, deactivate or reactivate it and invite its first admin, as far as the backend allows each row. The demo backend serves no organizations, so the list stays empty."
         },
