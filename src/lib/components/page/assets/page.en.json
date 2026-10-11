@@ -1,5 +1,17 @@
 {
     "angular-components": {
+        "http": {
+            "error": {
+                "sharing": {
+                    "invalid-grantees": "Some of the users or groups chosen cannot get access to this folder: they belong to another organization, own it or no longer exist. Reload the page and try again."
+                }
+            },
+            "title": {
+                "sharing": {
+                    "invalid-grantees": "Recipients not valid"
+                }
+            }
+        },
         "page": {
             "count": {
                 "many": "({{count}} items)",
@@ -14,6 +26,33 @@
                     "organization-id": "Organization",
                     "owner-id": "Owner"
                 }
+            },
+            "share": {
+                "access": {
+                    "inherited": "{{access}} (from {{folder}})",
+                    "none": "No access",
+                    "read": "View",
+                    "write": "Edit"
+                },
+                "empty": "There is nobody else in the organization to share it with.",
+                "groups": {
+                    "label": "Groups"
+                },
+                "inherited": {
+                    "group": "{{name}} (group): {{access}}, from {{folder}}",
+                    "label": "Access inherited from the folders above",
+                    "user": "{{name}}: {{access}}, from {{folder}}"
+                },
+                "targets": {
+                    "label": "Share with"
+                },
+                "title": "Share \"{{name}}\"",
+                "users": {
+                    "label": "Users"
+                }
+            },
+            "shared": {
+                "label": "Shared with me"
             },
             "table": {
                 "columns": {

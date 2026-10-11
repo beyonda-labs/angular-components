@@ -37,6 +37,12 @@
     errors.
 -   Edit lock notice module: `bey-edit-lock-notice`, who edits the row and since when, with Release (confirmed), Edit
     here, Edit once free (`onEdit` reloads first) and Save as a copy (`onSaveCopy`), its texts under `prefix`.
+-   Page module: `isSharedEnabled` on `BeyPageTableConfig` adds a "Shared with me" tab, `BeyPageViewMode.Shared`, that
+    lists `GET {baseUrl}/shared` and opens its folders as usual, its breadcrumb starting at the shared folder.
+-   Page module: `BeyPageStandardAction.Share` on a folder sets no access, view or edit per group and user of
+    `/categories/{id}/share-targets`, above what the folder inherits, with `PUT /categories/{id}/shares`.
+-   Page module: the texts of the `sharing.invalid-grantees` error, and `BeyPageShare`, `BeyPageInheritedShare`,
+    `BeyPageShareTarget`, `BeyPageShareAccess` and `BeyPageShareGranteeType` for the answers of the share routes.
 
 ### Changed
 
@@ -44,6 +50,8 @@
     superadmin, both `null` on the row of a superadmin.
 -   Users module: the `users.superadmin-only` text speaks only of changing a superadmin account, since nobody grants
     nor removes the superadmin role any more.
+-   Page module: with `usagesConfig` and categories, `delete-category` asks `GET {baseUrl}/categories/usages?ids=` and
+    warns with `<prefix>.modal.delete-category-in-use.title` and `.message` when what the folders hold is in use.
 
 ### Fixed
 

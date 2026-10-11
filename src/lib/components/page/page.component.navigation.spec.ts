@@ -50,6 +50,7 @@ class PeopleComponent {
         tableConfig: new PageTableConfig<Person>({
             categoriesConfig: new PageCategoriesConfig({}),
             columns: [new TableColumn({ isSortable: true, key: 'name' })],
+            isSharedEnabled: true,
             loadRow: person => [new TextTableCell({ content: person.name })],
             search: new PageTableSearchConfig({
                 fields: [new SearchField({ key: 'name', type: SearchFieldType.Text })],
@@ -135,6 +136,7 @@ describe('PageComponent — coming back from another route', () => {
         pageActionsService.buildHeaderActions.mockReturnValue([]);
         pageHttpService = mock<PageHttpService>();
         pageHttpService.load.mockReturnValue(of(buildResponse([STAFF, { id: 1, name: 'Ada' }])));
+        pageHttpService.loadShared.mockReturnValue(of(buildResponse([STAFF])));
         pageHttpService.loadCategoryPath.mockReturnValue(of([STAFF]));
         pageHttpService.findOwners.mockReturnValue(of(OWNERS));
 
@@ -164,6 +166,24 @@ describe('PageComponent — coming back from another route', () => {
         expect(searchBox().value).toBe('ada');
         expect(lastQuery()['parentId']).toBe('staff');
         expect(lastSearch().filters).toEqual([expect.objectContaining({ field: 'name', value: 'ada' })]);
+    });
+
+    it('comes back to the shared view, in the shared folder it was left in', async () => {
+        buttonByName(element(), 'angular-components.page.shared.label').click();
+        harness.detectChanges();
+        buttonByName(element(), 'Staff').click();
+        harness.detectChanges();
+
+        await harness.navigateByUrl('/people/1');
+        pageHttpService.loadShared.mockClear();
+        await harness.navigateByUrl('/people');
+
+        expect(buttonByName(element(), 'angular-components.page.shared.label').getAttribute('aria-selected')).toBe(
+            'true'
+        );
+        expect(breadcrumb()).toContain('Staff');
+        expect(lastQuery()['parentId']).toBe('staff');
+        expect(pageHttpService.loadShared).not.toHaveBeenCalled();
     });
 
     it('comes back sorted as the user left it from the header', async () => {

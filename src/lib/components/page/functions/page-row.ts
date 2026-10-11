@@ -3,6 +3,7 @@ import { PageCategoriesConfig, PageItemType, PageTrashItem } from '../models/pag
 import { PageItem } from '../models/page-item.model';
 import { hasOneOwner } from './page-move-owner';
 
+const CATEGORY_HANDLER_KEYS = new Set<string>([PageStandardAction.Share]);
 const ROWLESS_SCOPES = new Set([PageActionScope.Global, PageActionScope.Group]);
 const SINGLE_ROW_KEYS = new Set<string>([PageStandardAction.Edit, PageStandardAction.EditCategory]);
 
@@ -50,7 +51,9 @@ export function toHandlerItems(
         return [];
     }
 
-    return selectedItems.filter(item => !isCategoryRow(item, categoriesConfig));
+    const takesCategories = CATEGORY_HANDLER_KEYS.has(action.key);
+
+    return selectedItems.filter(item => isCategoryRow(item, categoriesConfig) === takesCategories);
 }
 
 export function toTrashItems(items: PageItem[], categoriesConfig?: PageCategoriesConfig): PageTrashItem[] {

@@ -51,7 +51,7 @@ readonly config = new BeyPageConfig<UserFormValue, User>({
 | `prefix`            | yes      | i18n prefix every text of the page resolves from                                                                                                                                                                                             |
 | `baseUrl`           | no       | Path of the resource, resolved against the environment's `baseUrl` and `webApiPath`; without it nothing is loaded                                                                                                                            |
 | `headerConfig`      | no       | `title` and the `actions` catalogue                                                                                                                                                                                                          |
-| `tableConfig`       | no       | Columns, `loadRow`, `height`, `order`, `search`, `allowSelection`, `showPagination`, `categoriesConfig`, `isTrashEnabled`, `onSelectionChange`, `storageKey`                                                                                 |
+| `tableConfig`       | no       | Columns, `loadRow`, `height`, `order`, `search`, `allowSelection`, `showPagination`, `categoriesConfig`, `isTrashEnabled`, `isSharedEnabled`, `onSelectionChange`, `storageKey`                                                              |
 | `formConfig`        | no       | How the create and edit modal forms are built, see below                                                                                                                                                                                     |
 | `statusConfig`      | no       | `BeyPageStatusConfig`: the status field and its transitions, for `change-status`                                                                                                                                                             |
 | `duplicationConfig` | no       | `BeyPageDuplicationConfig`: the field that names a row (`nameField`, `name` by default), the validators of the name of a copy (`nameValidators`) and what joins the copy suffix to it (`copySeparator`, a space by default), for `duplicate` |
@@ -93,6 +93,7 @@ infer it from that form, to `BeyPageConfig<UserFormValue, User, Folder, FolderFo
 | Status    | `POST {baseUrl}/{id}/status` with `{ [field]: status }`                                      |
 | Owners    | `GET {baseUrl}/owners` for the owner filter, see [Owners](#owners)                           |
 | Organizations | `GET {baseUrl}/organizations` for the organization column and filter, see [Organizations](#organizations) |
+| Shared    | `GET {baseUrl}/shared` and the shares of a folder, see [Sharing](#sharing)                    |
 
 The list answers with `{ globalActions, results, search? }`: `globalActions` names the global actions the
 user may see, each result may carry its own `actions`, and `search.total` feeds the paginator and the count of the
@@ -101,7 +102,8 @@ breadcrumb, so it counts every row the list shows across its pages, categories i
 
 With `categoriesConfig` the resource also serves, under `{baseUrl}`: `/categories/{id}/path`,
 `/categories/tree` (`?ownerId=` narrows it to one owner, see [Owners](#owners)), `POST` and `PUT /categories`, `DELETE /categories` with `{ ids }`, `PUT /move` with
-`{ items: [{ id, type }], targetId }`, and `GET`, `PUT` and `DELETE /trash` with `{ items }`. Every call
+`{ items: [{ id, type }], targetId }`, `GET`, `PUT` and `DELETE /trash` with `{ items }`, and with `usagesConfig`
+`/categories/usages`, see [Usages](#usages). Every call
 goes through `BeyHttpService`, so errors open the standard modal and writes show their success toast. A new
 load of the list cancels the one still out, so a slow answer never replaces a newer list.
 
@@ -119,8 +121,8 @@ An action has a `key`, a `scope`, a `zone` and optionally an `icon`, a `label`, 
 
 Zones are `Left` next to the title, `Right` for the main buttons and `Menu` for the kebab. A standard key
 (`create`, `edit`, `delete`, `duplicate`, `change-status`, `move`, `create-category`, `edit-category`,
-`delete-category`, `restore-trash-item`, `delete-trash-item`, `empty-trash`) needs no `handler`; `edit` and `edit-category` need exactly one row
-whatever their scope, and `move` rows of a single owner, see [Owners](#owners). A `handler` always receives an array, so a single-row action reads `([user]) => …`; given
+`delete-category`, `restore-trash-item`, `delete-trash-item`, `empty-trash`, `share`) needs no `handler`; `edit` and `edit-category` need exactly one row
+whatever their scope, `move` rows of a single owner, see [Owners](#owners), and `share` a folder, see [Sharing](#sharing). A `handler` always receives an array, so a single-row action reads `([user]) => …`; given
 to a standard key it replaces the standard behaviour. The page does no permission logic of its own.
 
 `delete`, `delete-category`, `delete-trash-item` and `empty-trash` ask before sending their request, with
@@ -149,7 +151,7 @@ actions of the page are still listed in the order they should render, standard o
 | `create`                                                 | `Global` | `Right` | primary button with `faPlus` |
 | `create-category`, `empty-trash`                         | `Global` | `Right` | secondary button             |
 | `edit`, `edit-category`                                  | `Single` | `Left`  | text                         |
-| `duplicate`, `change-status`                             | `Single` | `Menu`  | text                         |
+| `duplicate`, `change-status`, `share`                    | `Single` | `Menu`  | text                         |
 | `restore-trash-item`                                     | `Item`   | `Left`  | text                         |
 | `move`, `delete`, `delete-category`, `delete-trash-item` | `Item`   | `Menu`  | text                         |
 
@@ -200,8 +202,8 @@ search: new BeyPageTableSearchConfig({
 `views` adds a tab per `BeyPageView` between the main tab and the trash, each one the same list with the `filters`
 of the view sent before those of the user, who can still search inside it. A view keeps the folder the user is in
 and the search, and goes back to the first page; its tab reads `<prefix>.tabs.<key>.label`, or its `label` when it
-has one. Its key must not be `table` nor `trash`. The page sends the `search` parameter whenever a view has filters,
-with or without `tableConfig.search`, and the trash never applies them.
+has one. Its key must not be `table`, `shared` nor `trash`. The page sends the `search` parameter whenever a view has
+filters, with or without `tableConfig.search`, and neither the trash nor the [shared view](#sharing) applies them.
 
 ```ts
 views: [
@@ -366,7 +368,8 @@ keyboard.
 
 On a page with categories an action `handler` receives only the selected rows that are not categories, since
 categories are handled by the standard category actions, and an action with a `handler` is hidden while every
-selected row is a category. Standard actions without a `handler` work on the whole selection.
+selected row is a category. `share` is the other way round: its `handler` receives only the folders, and hides while
+none is selected. Standard actions without a `handler` work on the whole selection.
 
 ## Usages
 
@@ -376,10 +379,16 @@ users as `usedBy`, and `GET {baseUrl}/usages?ids=a,b` answers all of them. A use
 resource, kind? }`.
 
 `usagesConfig: new BeyPageUsagesConfig({ suffixes, listedUsers })` turns it on. Before `delete` and
-`delete-trash-item`, the page asks for the usages of the selected items (never of a folder) and, when anything else
-uses them, warns with `<prefix>.modal.<key>-in-use.title` and `.message` instead of the standard texts, with `count`,
-`usageCount` and `users`, the first `listedUsers` (10) names joined by commas. A user that is itself selected is left
-out, so deleting a block with the only template that includes it warns about nothing.
+`delete-trash-item`, the page asks for the usages of the selected items (the folders of a trash selection are left
+out) and, when anything else uses them, warns with `<prefix>.modal.<key>-in-use.title` and `.message` instead of the
+standard texts, with `count`, `usageCount` and `users`, the first `listedUsers` (10) names joined by commas. A user that
+is itself selected is left out, so deleting a block with the only template that includes it warns about nothing.
+
+With categories, the same switch warns before `delete-category`: the page asks
+`GET {baseUrl}/categories/usages?ids=a,b`, which answers in the same shape the users of everything each folder holds,
+its sub-folders included, each named once, and warns with `<prefix>.modal.delete-category-in-use.title` and `.message`,
+with the same parameters, `count` being the number of folders. A page with `usagesConfig` and categories gives those
+texts too; a confirmation of its own on `delete-category` that asked for the same is no longer needed.
 
 `suffixes` names a kind or a resource of user by a translation key, shown after its name: `Header (block)`.
 
@@ -396,6 +405,54 @@ usagesConfig: new BeyPageUsagesConfig({
 the row carries, with an ellipsis when it lists only the first ones, for the tooltip of a cell;
 `listUsers(baseUrl, row, usagesConfig)` answers a signal with them and asks for all of them when the row lists only
 the first ones, for a form; `find(baseUrl, ids)` answers the usages of several rows.
+
+## Sharing
+
+On a backend whose folders can be shared with other users and groups of the organization, as base-entity of
+express-components does with `sharing`, `tableConfig.isSharedEnabled` adds a "Shared with me" tab
+(`angular-components.page.shared.label`) after the views and before the trash. A shared folder shares everything in
+it, so the page needs categories.
+
+-   **The list.** At its root the tab asks `GET {baseUrl}/shared`, with the `search` like any list and no `parentId`,
+    which answers in the page response shape the top-most folders shared with the user, directly or through a group.
+    Opening one lists it as usual, `GET {baseUrl}?parentId=`, and what the user may do is what each row and the
+    `globalActions` list, so a read share offers only what the backend leaves.
+-   **The breadcrumb** starts at "Shared with me" and then at the shared folder: the path the backend answers is cut
+    there, so the folders of the owner above it never show.
+-   **The tab** keeps the folders of each side apart: going from the shared view to the main tab or a view, or back,
+    starts at the root of that side. The tab, the folder and the search are kept when the user comes back to the
+    page, as for any other tab. `loadRow` and `categoriesConfig.loadRow` receive `PageViewMode.Shared`.
+-   **The rows** carry their owner, so `beyPageOwnerColumn` names whose they are. A shared folder shows no badge: every
+    row of the view is shared, and the tab and the breadcrumb already say so.
+-   **Moves.** Inside a shared folder rows drag onto its folders as in the main tab, and `move` picks only among the
+    shared folder and the folders below it that `GET {baseUrl}/categories/tree?ownerId=` answers.
+
+The standard `share` action (`Single`, `Menu`) shows on a folder that lists `share` in its `actions`, which base-entity
+grants to its owner, the managers of its organization and the superadmin. It asks
+`GET {baseUrl}/categories/{id}/shares`, `{ shares, inherited }`, and `GET {baseUrl}/categories/{id}/share-targets`,
+`{ users, groups }`, and opens a form titled after the folder:
+
+-   **What it inherits**: the shares of the folders above that already reach it, as a list of who, with which access
+    and from which folder.
+-   **A select per group, then per user**, named after it, with the email of a user as hint: "No access", "View" or
+    "Edit", the folder's own share chosen. A target that inherits an access is offered only the ones above it, the
+    empty choice reading the inherited one ("View (from Clients)"), and one that inherits "Edit" cannot change.
+
+Saving sends `PUT {baseUrl}/categories/{id}/shares` with `{ shares: [{ granteeType, granteeId, access }] }`, the own
+shares of the folder, which replace the previous ones, then shows `<prefix>.toast.share-success` and reloads. A target
+left on its inherited access keeps an own share the inherited one covers, and the shares of grantees the targets no
+longer list, such as a deactivated user, are sent back as they were. A refused grantee answers
+`sharing.invalid-grantees`, whose text the page ships under `angular-components.http.error.sharing`.
+
+```ts
+headerConfig: new BeyPageHeaderConfig({
+    actions: [beyPageAddAction(), beyPageStandardAction(BeyPageStandardAction.Share), beyPageStandardAction(BeyPageStandardAction.Move)]
+}),
+tableConfig: new BeyPageTableConfig({ categoriesConfig, columns, loadRow, isSharedEnabled: true, isTrashEnabled: true })
+```
+
+`BeyPageShare`, `BeyPageInheritedShare`, `BeyPageShareTarget`, `BeyPageShareAccess` and `BeyPageShareGranteeType` type
+those answers for a `handler` of its own.
 
 ## Forms
 
@@ -431,6 +488,8 @@ that has consequences elsewhere, such as renaming something other records name.
 | `angular-components.page.search.fields.owner-id`                                                            | The owner filter                                       |
 | `angular-components.page.table.columns.organization-name` / `.tooltips.organization-name` | The organization column, see [Organizations](#organizations) |
 | `angular-components.page.search.fields.organization-id` | The organization filter |
+| `angular-components.page.shared.label` | The shared tab and the root of its breadcrumb, see [Sharing](#sharing) |
+| `angular-components.page.share.*` | The form of `share`: its title, sections, access choices and empty text |
 
 Every `<key>` is the action, column or field key as a kebab-case segment: a column `createdAt` reads
 `<prefix>.table.columns.created-at`. A column with a `label` or a `tooltip` of its own reads those keys instead, as the

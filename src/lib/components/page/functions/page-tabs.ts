@@ -2,15 +2,17 @@ import { SearchFilter } from '../../search/models/search-filter.model';
 import { Tab, TabsConfig, TabsVariant } from '../../tabs/models/tabs.model';
 import { PageConfig } from '../models/page.model';
 import { PageViewMode } from '../models/page-categories.model';
+import { PAGE_SHARED_LABEL } from '../models/page-sharing.model';
 
 export function buildPageTabs(
     config: PageConfig,
     activeTab: string,
     onTabChange: (key: string) => void
 ): TabsConfig | null {
+    const isSharedEnabled = Boolean(config.tableConfig?.isSharedEnabled);
     const isTrashEnabled = Boolean(config.tableConfig?.isTrashEnabled);
 
-    if (!isTrashEnabled && config.views.length === 0) {
+    if (!isSharedEnabled && !isTrashEnabled && config.views.length === 0) {
         return null;
     }
 
@@ -21,6 +23,7 @@ export function buildPageTabs(
         tabs: [
             new Tab({ key: PageViewMode.Table }),
             ...config.views.map(view => new Tab({ key: view.key, label: view.label })),
+            ...(isSharedEnabled ? [new Tab({ key: PageViewMode.Shared, label: PAGE_SHARED_LABEL })] : []),
             ...(isTrashEnabled ? [new Tab({ key: PageViewMode.Trash })] : [])
         ],
         variant: TabsVariant.Segmented

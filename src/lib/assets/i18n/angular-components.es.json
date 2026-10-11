@@ -317,6 +317,9 @@
                 },
                 "required-field": "El campo \"{{fieldName}}\" es obligatorio.",
                 "service-unavailable": "El servicio no está disponible temporalmente. Por favor, inténtelo de nuevo más tarde.",
+                "sharing": {
+                    "invalid-grantees": "Algunos de los usuarios o grupos elegidos no pueden tener acceso a esta carpeta: pertenecen a otra organización, son sus propietarios o ya no existen. Recarga la página y vuelve a intentarlo."
+                },
                 "title": "Error",
                 "too-many-requests": "Demasiadas solicitudes. Por favor, inténtelo de nuevo más tarde.",
                 "unauthorized": "Su sesión ha expirado o no está autenticado. Por favor, inicie sesión de nuevo.",
@@ -440,6 +443,9 @@
                 },
                 "required-field": "Campo obligatorio",
                 "service-unavailable": "Servicio no disponible",
+                "sharing": {
+                    "invalid-grantees": "Destinatarios no válidos"
+                },
                 "too-many-requests": "Demasiadas solicitudes",
                 "unauthorized": "Autenticación requerida",
                 "unknown": "Error inesperado",
@@ -745,6 +751,33 @@
                     "organization-id": "Organización",
                     "owner-id": "Propietario"
                 }
+            },
+            "share": {
+                "access": {
+                    "inherited": "{{access}} (heredado de {{folder}})",
+                    "none": "Sin acceso",
+                    "read": "Ver",
+                    "write": "Editar"
+                },
+                "empty": "No hay nadie más en la organización con quien compartirla.",
+                "groups": {
+                    "label": "Grupos"
+                },
+                "inherited": {
+                    "group": "{{name}} (grupo): {{access}}, desde {{folder}}",
+                    "label": "Acceso heredado de las carpetas superiores",
+                    "user": "{{name}}: {{access}}, desde {{folder}}"
+                },
+                "targets": {
+                    "label": "Compartir con"
+                },
+                "title": "Compartir \"{{name}}\"",
+                "users": {
+                    "label": "Usuarios"
+                }
+            },
+            "shared": {
+                "label": "Compartido conmigo"
             },
             "table": {
                 "columns": {

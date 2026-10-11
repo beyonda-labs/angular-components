@@ -1,5 +1,5 @@
 import { PageViewMode } from '../models/page-categories.model';
-import { buildPageBreadcrumbItems } from './page-breadcrumb';
+import { buildPageBreadcrumbItems, fromSharedRoot } from './page-breadcrumb';
 
 describe('buildPageBreadcrumbItems', () => {
     it('starts at the translated root and follows the folders opened, numbered from it', () => {
@@ -21,5 +21,32 @@ describe('buildPageBreadcrumbItems', () => {
                 item => item.label
             )
         ).toEqual(['demo.tabs.trash.label']);
+    });
+
+    it('starts the shared view at the folders shared with the user', () => {
+        expect(
+            buildPageBreadcrumbItems('demo', PageViewMode.Shared, [{ id: 'clients', label: 'Clients' }]).map(
+                item => item.label
+            )
+        ).toEqual(['angular-components.page.shared.label', 'Clients']);
+    });
+});
+
+describe('fromSharedRoot', () => {
+    const PATH = [
+        { id: 'home', label: 'Home' },
+        { id: 'clients', label: 'Clients' },
+        { id: 2026, label: '2026' }
+    ];
+
+    it('starts the path at the shared folder, leaving out the folders of the owner above it', () => {
+        expect(fromSharedRoot(PATH, 'clients')).toEqual([
+            { id: 'clients', label: 'Clients' },
+            { id: 2026, label: '2026' }
+        ]);
+    });
+
+    it('keeps the path as it is when the shared folder is not in it', () => {
+        expect(fromSharedRoot(PATH, 'elsewhere')).toBe(PATH);
     });
 });

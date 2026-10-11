@@ -8,6 +8,7 @@ export enum PageItemType {
 }
 
 export enum PageViewMode {
+    Shared = 'shared',
     Table = 'table',
     Trash = 'trash'
 }

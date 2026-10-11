@@ -51,4 +51,16 @@ describe('buildMoveTargetNodes', () => {
             false
         ]);
     });
+
+    it('offers only the shared folder and the folders below it inside the shared view', () => {
+        const nodes = buildMoveTargetNodes('testPage', categories, categoriesConfig, [], {
+            id: 'cat-1',
+            label: 'Electronics'
+        });
+
+        expect(nodes.map(node => [node.key, node.label, node.data])).toEqual([
+            ['cat-1', 'Electronics', { id: 'cat-1' }]
+        ]);
+        expect(nodes[0].children.map(node => node.key)).toEqual(['cat-2']);
+    });
 });
