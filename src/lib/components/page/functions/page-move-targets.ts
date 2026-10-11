@@ -1,13 +1,15 @@
 import { TreeNode } from '../../tree/models/tree.model';
 import { PageCategoriesConfig, PageMoveTarget } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
+import { PageCategoryPathEntry } from '../models/page-state.model';
 import { isCategoryRow, readRowField } from './page-row';
 
 export function buildMoveTargetNodes(
     prefix: string,
     categories: PageItem[],
     categoriesConfig: PageCategoriesConfig,
-    selectedItems: PageItem[]
+    selectedItems: PageItem[],
+    sharedRoot: PageCategoryPathEntry | null = null
 ): TreeNode<PageMoveTarget>[] {
     const { nameField, parentField } = categoriesConfig;
     const childrenByParent = new Map<string | number | null, PageItem[]>();
@@ -51,6 +53,17 @@ export function buildMoveTargetNodes(
                     children: buildLevel(category.id)
                 })
         );
+
+    if (sharedRoot) {
+        return [
+            new TreeNode<PageMoveTarget>({
+                key: String(sharedRoot.id),
+                label: sharedRoot.label,
+                data: { id: sharedRoot.id },
+                children: buildLevel(sharedRoot.id)
+            })
+        ];
+    }
 
     return [
         new TreeNode<PageMoveTarget>({

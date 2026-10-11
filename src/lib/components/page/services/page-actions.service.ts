@@ -18,9 +18,11 @@ import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from 
 import { PageCategoriesConfig, PageMoveTarget } from '../models/page-categories.model';
 import { PageFormConfig } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
+import { PageCategoryPathEntry } from '../models/page-state.model';
 import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
 import { PageLifecycleActionsService } from './page-lifecycle-actions.service';
+import { PageShareActionsService } from './page-share-actions.service';
 import { PageUsagesService } from './page-usages.service';
 
 export interface PageActionsContext {
@@ -35,6 +37,8 @@ export interface PageActionsContext {
     onSaved: () => void;
     onTrashItemDeleted: () => void;
     selectedItems: () => PageItem[];
+
+    getSharedRoot?: () => PageCategoryPathEntry | null;
 }
 
 interface BulkActionOptions<T> {
@@ -63,6 +67,7 @@ export class PageActionsService {
     private readonly pageFormService = inject(PageFormService);
     private readonly pageHttpService = inject(PageHttpService);
     private readonly pageLifecycleActionsService = inject(PageLifecycleActionsService);
+    private readonly pageShareActionsService = inject(PageShareActionsService);
     private readonly pageUsagesService = inject(PageUsagesService);
 
     private readonly actionHandlers: Record<string, (context: PageActionsContext, action: PageAction) => void> = {
@@ -78,7 +83,8 @@ export class PageActionsService {
         [PageStandardAction.EmptyTrash]: (context, action) =>
             this.pageLifecycleActionsService.emptyTrash(context.config, action, () => context.onTrashItemDeleted()),
         [PageStandardAction.Move]: context => this.executeMove(context),
-        [PageStandardAction.RestoreTrashItem]: context => this.executeRestoreTrashItem(context)
+        [PageStandardAction.RestoreTrashItem]: context => this.executeRestoreTrashItem(context),
+        [PageStandardAction.Share]: context => this.executeShare(context)
     };
 
     buildHeaderActions(
@@ -86,30 +92,7 @@ export class PageActionsService {
         zone: PageActionZone,
         execute: (action: PageAction) => void
     ): HeaderAction[] {
-        return actions
-            .filter(action => action.zone === zone)
-            .map(
-                action =>
-                    new HeaderAction({
-                        action: () => execute(action),
-                        icon: action.icon,
-                        key: action.key,
-                        label: action.label,
-                        subActions: action.subActions?.map(
-                            subAction =>
-                                new HeaderAction({
-                                    action: () => execute(subAction),
-                                    icon: subAction.icon,
-                                    key: subAction.key,
-                                    label: subAction.label,
-                                    tooltip: subAction.tooltip,
-                                    type: subAction.type
-                                })
-                        ),
-                        tooltip: action.tooltip,
-                        type: action.type
-                    })
-            );
+        return actions.filter(action => action.zone === zone).map(action => toHeaderAction(action, execute));
     }
 
     executeAction(action: PageAction, context: PageActionsContext): void {
@@ -334,9 +317,10 @@ export class PageActionsService {
         }
 
         this.pageHttpService.loadCategoryTree(baseUrl, readMoveOwnerId(items)).subscribe(categories => {
+            const sharedRoot = context.getSharedRoot?.() ?? null;
             const reference = this.modalTreeService.open(
                 new ModalTreeConfig<PageMoveTarget>({
-                    nodes: buildMoveTargetNodes(prefix, categories, categoriesConfig, items),
+                    nodes: buildMoveTargetNodes(prefix, categories, categoriesConfig, items, sharedRoot),
                     prefix: `${prefix}.move`,
                     onConfirm: node => this.moveItems(context, items, node?.data?.id ?? null, () => reference.hide())
                 })
@@ -355,6 +339,14 @@ export class PageActionsService {
                     .restoreTrashItems(baseUrl, items, successToast)
                     .pipe(map(renamed => this.pageLifecycleActionsService.reportRenamed(renamed)))
         });
+    }
+
+    private executeShare(context: PageActionsContext): void {
+        const items = context.selectedItems();
+
+        if (items.length === 1 && isCategoryRow(items[0], context.config.tableConfig?.categoriesConfig)) {
+            this.pageShareActionsService.share(context.config, items[0], () => context.onSaved());
+        }
     }
 
     private mergeParentField(context: PageActionsContext, value: unknown, original?: PageItem): unknown {
@@ -461,6 +453,13 @@ export class PageActionsService {
             followUp.subscribe(() => this.completeSave(handle, options));
         });
     }
+}
+
+function toHeaderAction(action: PageAction, execute: (action: PageAction) => void): HeaderAction {
+    const { icon, key, label, tooltip, type } = action;
+    const subActions = action.subActions?.map(subAction => toHeaderAction(subAction, execute));
+
+    return new HeaderAction({ action: () => execute(action), icon, key, label, subActions, tooltip, type });
 }
 
 function toObservable<T>(value: T | Observable<T>): Observable<T> {

@@ -13,7 +13,9 @@ import { PageHttpService } from './page-http.service';
 
 describe('PageActionsService — usages', () => {
     const OFFER = { id: 't-1', name: 'Offer', resource: 'templates' };
+    const deleteCategories = jest.fn();
     const deleteItems = jest.fn();
+    const findCategoryUsages = jest.fn();
     const findUsages = jest.fn();
     let modal: FakeModalService;
     let service: PageActionsService;
@@ -40,9 +42,16 @@ describe('PageActionsService — usages', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
+        deleteCategories.mockReturnValue(of(null));
         deleteItems.mockReturnValue(of(null));
         TestBed.configureTestingModule({
-            providers: [provideBeyTesting(), { provide: PageHttpService, useValue: { deleteItems, findUsages } }]
+            providers: [
+                provideBeyTesting(),
+                {
+                    provide: PageHttpService,
+                    useValue: { deleteCategories, deleteItems, findCategoryUsages, findUsages }
+                }
+            ]
         });
         modal = TestBed.inject(FakeModalService);
         service = TestBed.inject(PageActionsService);
@@ -94,10 +103,21 @@ describe('PageActionsService — usages', () => {
         ]);
     });
 
-    it('never asks for the usages of a category delete', () => {
+    it('warns with the in-use texts of a folder delete when the items inside are used, then deletes the folder', () => {
+        modal.setConfirmationAnswer(true);
+        findCategoryUsages.mockReturnValue(of([{ id: 'folder', total: 1, users: [OFFER] }]));
+
         service.executeAction(buildAction(PageStandardAction.DeleteCategory), buildContext([{ id: 'folder' }]));
 
+        expect(findCategoryUsages).toHaveBeenCalledWith('/items', ['folder']);
         expect(findUsages).not.toHaveBeenCalled();
-        expect(modal.confirmations()).toHaveLength(1);
+        expect(modal.confirmations()).toEqual([
+            {
+                message: 'testPage.modal.delete-category-in-use.message',
+                messageParameters: { count: 1, usageCount: 1, users: 'Offer' },
+                title: 'testPage.modal.delete-category-in-use.title'
+            }
+        ]);
+        expect(deleteCategories).toHaveBeenCalledWith('/items', ['folder'], 'testPage.toast.delete-category-success');
     });
 });

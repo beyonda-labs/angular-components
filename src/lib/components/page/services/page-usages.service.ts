@@ -6,6 +6,7 @@ import { ConfirmationModalConfig } from '../../modal/models/modal.model';
 import { isCategoryRow } from '../functions/page-row';
 import { buildInUseConfirmation, describeUsers, readRowUsers } from '../functions/page-usages';
 import { PageConfig } from '../models/page.model';
+import { PageStandardAction } from '../models/page-action.model';
 import { PageItem } from '../models/page-item.model';
 import { PAGE_USAGE_CHECKED_ACTIONS, PageUsages, PageUsagesConfig } from '../models/page-usages.model';
 import { PageHttpService } from './page-http.service';
@@ -24,13 +25,21 @@ export class PageUsagesService {
         confirmation: ConfirmationModalConfig
     ): Observable<ConfirmationModalConfig> {
         const { baseUrl, prefix, tableConfig, usagesConfig } = config;
-        const ids = items.filter(item => !isCategoryRow(item, tableConfig?.categoriesConfig)).map(({ id }) => id);
+        const isCategoryDelete = key === PageStandardAction.DeleteCategory;
+        const checked = isCategoryDelete
+            ? items
+            : items.filter(item => !isCategoryRow(item, tableConfig?.categoriesConfig));
+        const ids = checked.map(({ id }) => id);
 
         if (!usagesConfig || !baseUrl || ids.length === 0 || !PAGE_USAGE_CHECKED_ACTIONS.has(key)) {
             return of(confirmation);
         }
 
-        return this.find(baseUrl, ids).pipe(
+        const usages = isCategoryDelete
+            ? this.pageHttpService.findCategoryUsages(baseUrl, ids)
+            : this.find(baseUrl, ids);
+
+        return usages.pipe(
             map(usages =>
                 buildInUseConfirmation({
                     confirmation,

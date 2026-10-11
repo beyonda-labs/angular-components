@@ -317,6 +317,9 @@
                 },
                 "required-field": "The field \"{{fieldName}}\" is required.",
                 "service-unavailable": "The service is temporarily unavailable. Please try again later.",
+                "sharing": {
+                    "invalid-grantees": "Some of the users or groups chosen cannot get access to this folder: they belong to another organization, own it or no longer exist. Reload the page and try again."
+                },
                 "title": "Error",
                 "too-many-requests": "Too many requests. Please try again later.",
                 "unauthorized": "Your session has expired or you are not authenticated. Please log in again.",
@@ -440,6 +443,9 @@
                 },
                 "required-field": "Required field",
                 "service-unavailable": "Service unavailable",
+                "sharing": {
+                    "invalid-grantees": "Recipients not valid"
+                },
                 "too-many-requests": "Too many requests",
                 "unauthorized": "Authentication required",
                 "unknown": "Unexpected error",
@@ -745,6 +751,33 @@
                     "organization-id": "Organization",
                     "owner-id": "Owner"
                 }
+            },
+            "share": {
+                "access": {
+                    "inherited": "{{access}} (from {{folder}})",
+                    "none": "No access",
+                    "read": "View",
+                    "write": "Edit"
+                },
+                "empty": "There is nobody else in the organization to share it with.",
+                "groups": {
+                    "label": "Groups"
+                },
+                "inherited": {
+                    "group": "{{name}} (group): {{access}}, from {{folder}}",
+                    "label": "Access inherited from the folders above",
+                    "user": "{{name}}: {{access}}, from {{folder}}"
+                },
+                "targets": {
+                    "label": "Share with"
+                },
+                "title": "Share \"{{name}}\"",
+                "users": {
+                    "label": "Users"
+                }
+            },
+            "shared": {
+                "label": "Shared with me"
             },
             "table": {
                 "columns": {

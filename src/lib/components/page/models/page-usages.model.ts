@@ -8,6 +8,7 @@ export const PAGE_USED_BY_FIELD = 'usedBy';
 export const PAGE_USERS_SEPARATOR = ', ';
 export const PAGE_USAGE_CHECKED_ACTIONS: ReadonlySet<string> = new Set([
     PageStandardAction.Delete,
+    PageStandardAction.DeleteCategory,
     PageStandardAction.DeleteTrashItem
 ]);
 

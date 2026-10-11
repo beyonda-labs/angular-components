@@ -69,7 +69,8 @@ describe('page standard actions', () => {
                 scope: PageActionScope.Item,
                 type: HeaderActionType.Text,
                 zone: PageActionZone.Left
-            }
+            },
+            { key: 'share', scope: PageActionScope.Single, type: HeaderActionType.Text, zone: PageActionZone.Menu }
         ]);
         expect(pageStandardAction(PageStandardAction.Create).icon).toBe(faPlus);
     });

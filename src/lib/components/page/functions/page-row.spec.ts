@@ -69,6 +69,18 @@ describe('page rows', () => {
         expect(toHandlerItems(create, [REPORT], CATEGORIES)).toEqual([]);
     });
 
+    it('hands a share handler the folder it shares, and shows it only on a folder that lists it', () => {
+        const share = buildAction(PageStandardAction.Share, PageActionScope.Single, jest.fn());
+        const sharedFolder: Row = { ...FOLDER, actions: [PageStandardAction.Share] };
+
+        expect(toHandlerItems(share, [sharedFolder], CATEGORIES)).toEqual([sharedFolder]);
+        expect(isActionVisible(share, [], [sharedFolder], CATEGORIES)).toBe(true);
+        expect(isActionVisible(share, [], [FOLDER], CATEGORIES)).toBe(false);
+        expect(isActionVisible(share, [], [{ ...REPORT, actions: [PageStandardAction.Share] }], CATEGORIES)).toBe(
+            false
+        );
+    });
+
     it('tells a category apart by the type field the categories config names', () => {
         const kind = new PageCategoriesConfig({ typeField: 'kind' });
         const folder: PageItem & { kind: PageItemType } = { id: 'k', kind: PageItemType.Category };

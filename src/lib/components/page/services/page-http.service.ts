@@ -11,6 +11,7 @@ import {
     PageOrganizationsResponse
 } from '../models/page-organization.model';
 import { PAGE_OWNER_FIELD, PAGE_OWNERS_PATH, PageOwner, PageOwnersResponse } from '../models/page-owner.model';
+import { PAGE_SHARED_PATH, PageShareEntry, PageShares, PageShareTargets } from '../models/page-sharing.model';
 import { PAGE_USAGES_IDS_SEPARATOR, PageUsages, PageUsagesResponse } from '../models/page-usages.model';
 import { PageUrlService } from './page-url.service';
 
@@ -75,6 +76,10 @@ export class PageHttpService {
         return this.httpService.delete<void>(this.url(relativeUrl, '/trash/all'), undefined, { successToast });
     }
 
+    findCategoryUsages(relativeUrl: string, ids: (string | number)[]): Observable<PageUsages[]> {
+        return this.requestUsages(this.url(relativeUrl, '/categories/usages'), ids);
+    }
+
     findOrganizations(relativeUrl: string): Observable<PageOrganization[]> {
         return this.httpService
             .get<PageOrganizationsResponse>(this.url(relativeUrl, PAGE_ORGANIZATIONS_PATH), {
@@ -89,12 +94,16 @@ export class PageHttpService {
             .pipe(map(({ owners }) => owners));
     }
 
+    findShares(relativeUrl: string, folderId: string | number): Observable<PageShares> {
+        return this.httpService.get<PageShares>(this.url(relativeUrl, `/categories/${folderId}/shares`));
+    }
+
+    findShareTargets(relativeUrl: string, folderId: string | number): Observable<PageShareTargets> {
+        return this.httpService.get<PageShareTargets>(this.url(relativeUrl, `/categories/${folderId}/share-targets`));
+    }
+
     findUsages(relativeUrl: string, ids: (string | number)[]): Observable<PageUsages[]> {
-        return this.httpService
-            .get<PageUsagesResponse>(this.url(relativeUrl, '/usages'), {
-                queryParams: { ids: ids.join(PAGE_USAGES_IDS_SEPARATOR) }
-            })
-            .pipe(map(({ usages }) => usages));
+        return this.requestUsages(this.url(relativeUrl, '/usages'), ids);
     }
 
     load(relativeUrl: string, queryParameters: QueryParameters): Observable<PageBackendResponse> {
@@ -110,6 +119,12 @@ export class PageHttpService {
             this.url(relativeUrl, '/categories/tree'),
             ownerId === undefined ? undefined : { queryParams: { [PAGE_OWNER_FIELD]: ownerId } }
         );
+    }
+
+    loadShared(relativeUrl: string, queryParameters: QueryParameters): Observable<PageBackendResponse> {
+        return this.httpService.get<PageBackendResponse>(this.url(relativeUrl, PAGE_SHARED_PATH), {
+            queryParams: queryParameters
+        });
     }
 
     loadTrash(relativeUrl: string, queryParameters: QueryParameters): Observable<PageBackendResponse> {
@@ -137,6 +152,25 @@ export class PageHttpService {
                 renamed?: PageRestoredRename[];
             } | null>(this.url(relativeUrl, '/trash'), { items }, { successToast })
             .pipe(map(response => response?.renamed ?? []));
+    }
+
+    saveShares(
+        relativeUrl: string,
+        folderId: string | number,
+        shares: PageShareEntry[],
+        successToast: string
+    ): Observable<PageShares> {
+        return this.httpService.put<PageShares>(
+            this.url(relativeUrl, `/categories/${folderId}/shares`),
+            { shares },
+            { successToast }
+        );
+    }
+
+    private requestUsages(url: string, ids: (string | number)[]): Observable<PageUsages[]> {
+        return this.httpService
+            .get<PageUsagesResponse>(url, { queryParams: { ids: ids.join(PAGE_USAGES_IDS_SEPARATOR) } })
+            .pipe(map(({ usages }) => usages));
     }
 
     private url(relativeUrl: string, suffix = ''): string {

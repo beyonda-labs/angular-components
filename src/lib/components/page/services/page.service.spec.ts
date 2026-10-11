@@ -590,5 +590,23 @@ describe('PageService', () => {
             flush();
             expect(service.tableConfig()?.isRowDraggable).toBeUndefined();
         });
+
+        it('lets the rows of a shared folder be dragged onto its folders, and hands the move the shared folder', () => {
+            pageHttpService.loadShared.mockReturnValue(of(buildResponse([FOLDER])));
+            pageHttpService.load.mockReturnValue(of(buildResponse([FOLDER, FILE])));
+            pageHttpService.loadCategoryPath.mockReturnValue(
+                of([{ id: 'home', name: 'Home' } as PageItem, { id: 'folder', name: 'Clients' } as PageItem])
+            );
+            service.setConfig(buildMoveConfig([pageStandardAction(PageStandardAction.Move)]));
+            service.setViewMode(PageViewMode.Shared);
+            flush();
+            service.openCategory(FOLDER);
+            flush();
+            service.tableConfig()?.onRowDrop?.(FOLDER, [FILE]);
+            const [context] = pageActionsService.moveItems.mock.calls[0];
+
+            expect(service.tableConfig()?.isRowDraggable?.(FILE)).toBe(true);
+            expect(context.getSharedRoot?.()).toEqual({ id: 'folder', label: 'Clients' });
+        });
     });
 });

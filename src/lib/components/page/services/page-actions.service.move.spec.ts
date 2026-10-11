@@ -121,4 +121,26 @@ describe('PageActionsService — move to a category', () => {
             'testPage.toast.move-success'
         );
     });
+
+    it('picks inside a shared folder only among that folder and the folders below it', () => {
+        const rows: (PageOwnedItem & { type: PageItemType })[] = [
+            { id: 'item-1', ownerId: 'ada', ownerName: 'Ada', type: PageItemType.Item }
+        ];
+        loadCategoryTree.mockReturnValue(
+            of([
+                { id: 'home', name: 'Home', ownerId: 'ada', parentId: null },
+                { id: 'clients', name: 'Clients', ownerId: 'ada', parentId: 'home' },
+                { id: 'acme', name: 'Acme', ownerId: 'ada', parentId: 'clients' }
+            ])
+        );
+        openTree.mockReturnValue({ hide: jest.fn() });
+
+        service.executeAction(pageStandardAction(PageStandardAction.Move), {
+            ...buildContext(buildFoldersConfig(), rows),
+            getSharedRoot: () => ({ id: 'clients', label: 'Clients' })
+        });
+        const [root] = (openTree.mock.calls[0][0] as ModalTreeConfig).treeConfig.nodes;
+
+        expect([root.key, root.label, root.children.map(node => node.key)]).toEqual(['clients', 'Clients', ['acme']]);
+    });
 });

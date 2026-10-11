@@ -1,6 +1,5 @@
 import { computed, DestroyRef, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslateService } from '@ngx-translate/core';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { catchError, EMPTY, finalize, Observable, Subject, switchMap, tap } from 'rxjs';
 
@@ -12,30 +11,28 @@ import { PAGINATION_SIZE_DEFAULT, PaginationConfig } from '../../pagination/mode
 import { SearchConfig } from '../../search/models/search.model';
 import { SearchFilter } from '../../search/models/search-filter.model';
 import { TableConfig, TableSort } from '../../table/models/table.model';
-import { LinkTableCell, TableCell, TextTableCell } from '../../table/models/table-cell.model';
 import { TabsConfig } from '../../tabs/models/tabs.model';
-import { buildPageBreadcrumbItems } from '../functions/page-breadcrumb';
+import { buildPageBreadcrumbItems, fromSharedRoot } from '../functions/page-breadcrumb';
 import { withColumnTooltips } from '../functions/page-columns';
 import { withFolderCount } from '../functions/page-folder-count';
-import { isCategoryRow, readRowField } from '../functions/page-row';
+import { readRowField } from '../functions/page-row';
 import { findStandardMoveAction, isMoveDragAllowed, isMoveDropAllowed } from '../functions/page-row-drop';
 import { buildPageSearchConfig } from '../functions/page-search-config';
 import { hasSortableColumn, toSearchSort } from '../functions/page-sort';
 import { buildPageTabs, readViewFilters } from '../functions/page-tabs';
-import { readParentPath, withOriginTooltip } from '../functions/page-trash-origin';
 import { PageBackendResponse, PageConfig, PageHandle } from '../models/page.model';
 import { PageAction, PageActionZone } from '../models/page-action.model';
-import { PageCategoriesConfig, PageViewMode } from '../models/page-categories.model';
+import { PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
 import { PageSearch } from '../models/page-search.model';
 import { PageCategoryPathEntry } from '../models/page-state.model';
-import { PageTableConfig } from '../models/page-table.model';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
 import { PageOrganizationsService } from './page-organizations.service';
 import { PageOwnersService } from './page-owners.service';
 import { PageSearchService } from './page-search.service';
 import { PageStateService } from './page-state.service';
+import { PageTableService } from './page-table.service';
 
 interface PageLoad {
     config: PageConfig;
@@ -53,7 +50,7 @@ export class PageService {
     private readonly pageOwnersService = inject(PageOwnersService);
     private readonly pageSearchService = inject(PageSearchService);
     private readonly pageStateService = inject(PageStateService);
-    private readonly translateService = inject(TranslateService);
+    private readonly pageTableService = inject(PageTableService);
 
     private readonly config = signal<PageConfig | null>(null);
     private readonly countedLocation = signal<string | null>(null);
@@ -155,7 +152,7 @@ export class PageService {
         const tablePrefix = `${config.prefix}.table`;
         const { categoriesConfig } = pageTable;
         const moveAction = findStandardMoveAction(config.headerConfig?.actions ?? []);
-        const canMoveByDrop = Boolean(config.baseUrl) && this.viewMode() === PageViewMode.Table;
+        const canMoveByDrop = Boolean(config.baseUrl) && this.viewMode() !== PageViewMode.Trash;
         const dropMove = moveAction && categoriesConfig && canMoveByDrop ? { categoriesConfig, moveAction } : null;
         const columns = this.pageOrganizationsService.withoutHidden(config, pageTable.columns);
 
@@ -170,7 +167,13 @@ export class PageService {
                 : undefined,
             isRowSelected: item => this.selected().some(selected => selected.id === item.id),
             items: this.items(),
-            loadRow: item => this.pageOrganizationsService.withoutHidden(config, this.loadRow(pageTable, item)),
+            loadRow: item =>
+                this.pageOrganizationsService.withoutHidden(
+                    config,
+                    this.pageTableService.loadRow(config, item, this.viewMode(), category =>
+                        this.openCategory(category)
+                    )
+                ),
             onRowDrop: dropMove
                 ? (target, items) =>
                       this.pageActionsService.moveItems(this.buildActionsContext(config), items, target.id)
@@ -237,13 +240,15 @@ export class PageService {
             return;
         }
 
+        const sharedRootId = this.viewMode() === PageViewMode.Shared ? (this.categoryPath()[0]?.id ?? item.id) : null;
+
         this.pageHttpService.loadCategoryPath(config.baseUrl, item.id).subscribe(path => {
-            this.categoryPath.set(
-                path.map(ancestor => ({
-                    id: ancestor.id,
-                    label: String(readRowField(ancestor, categoriesConfig.nameField) ?? '')
-                }))
-            );
+            const entries = path.map(ancestor => ({
+                id: ancestor.id,
+                label: String(readRowField(ancestor, categoriesConfig.nameField) ?? '')
+            }));
+
+            this.categoryPath.set(sharedRootId === null ? entries : fromSharedRoot(entries, sharedRootId));
             this.currentCategoryId.set(item.id);
             this.selected.set([]);
             this.refresh();
@@ -312,6 +317,11 @@ export class PageService {
     }
 
     setViewMode(mode: PageViewMode): void {
+        if ((this.viewMode() === PageViewMode.Shared) !== (mode === PageViewMode.Shared)) {
+            this.categoryPath.set([]);
+            this.currentCategoryId.set(null);
+        }
+
         this.viewMode.set(mode);
         this.selected.set([]);
         this.refresh();
@@ -330,6 +340,7 @@ export class PageService {
         return {
             config,
             getCurrentCategoryId: () => this.currentCategoryId(),
+            getSharedRoot: () => (this.viewMode() === PageViewMode.Shared ? (this.categoryPath()[0] ?? null) : null),
             onCategoryDeleted: clearAndRefresh,
             onCategoryFormModalOpened: keepModal,
             onCategorySaved: () => this.refresh(),
@@ -340,6 +351,10 @@ export class PageService {
             onTrashItemDeleted: clearAndRefresh,
             selectedItems: () => this.selected()
         };
+    }
+
+    private isAtSharedRoot(): boolean {
+        return this.viewMode() === PageViewMode.Shared && this.currentCategoryId() === null;
     }
 
     private load(config: PageConfig, search: PageSearch): Observable<PageBackendResponse> {
@@ -359,17 +374,13 @@ export class PageService {
             config.tableConfig?.search?.textField
         );
 
-        if (categoriesConfig && !viewingTrash) {
+        if (categoriesConfig && !viewingTrash && !this.isAtSharedRoot()) {
             queryParameters[categoriesConfig.parentField] = this.currentCategoryId() ?? 'null';
         }
 
         this.loading.set(true);
 
-        const request = viewingTrash
-            ? this.pageHttpService.loadTrash(baseUrl, queryParameters)
-            : this.pageHttpService.load(baseUrl, queryParameters);
-
-        return request.pipe(
+        return this.requestList(baseUrl, queryParameters).pipe(
             tap(response => {
                 this.items.set(response.results);
                 this.totalItems.set(response.search?.total ?? response.results.length);
@@ -383,35 +394,17 @@ export class PageService {
         );
     }
 
-    private loadCategoryRow(
-        category: PageItem,
-        categoriesConfig: PageCategoriesConfig,
-        viewMode: PageViewMode
-    ): TableCell[] {
-        if (categoriesConfig.loadRow) {
-            return categoriesConfig.loadRow(category, viewMode);
+    private requestList(
+        baseUrl: string,
+        queryParameters: Record<string, string | number>
+    ): Observable<PageBackendResponse> {
+        if (this.viewMode() === PageViewMode.Trash) {
+            return this.pageHttpService.loadTrash(baseUrl, queryParameters);
         }
 
-        const name = String(readRowField(category, categoriesConfig.nameField) ?? '');
-
-        return [
-            viewMode === PageViewMode.Trash
-                ? new TextTableCell({ content: name })
-                : new LinkTableCell({ action: () => this.openCategory(category), content: name })
-        ];
-    }
-
-    private loadRow(tableConfig: PageTableConfig, item: PageItem): TableCell[] {
-        const { categoriesConfig } = tableConfig;
-        const viewMode = this.viewMode();
-        const cells =
-            categoriesConfig && isCategoryRow(item, categoriesConfig)
-                ? this.loadCategoryRow(item, categoriesConfig, viewMode)
-                : tableConfig.loadRow(item, viewMode);
-
-        return categoriesConfig && viewMode === PageViewMode.Trash
-            ? this.withOrigin(cells, item, categoriesConfig)
-            : cells;
+        return this.isAtSharedRoot()
+            ? this.pageHttpService.loadShared(baseUrl, queryParameters)
+            : this.pageHttpService.load(baseUrl, queryParameters);
     }
 
     private restoreSelection(): void {
@@ -455,14 +448,5 @@ export class PageService {
 
     private withCount(items: BreadcrumbItem[]): BreadcrumbItem[] {
         return this.countedLocation() === this.location() ? withFolderCount(items, this.totalItems()) : items;
-    }
-
-    private withOrigin(cells: TableCell[], item: PageItem, categoriesConfig: PageCategoriesConfig): TableCell[] {
-        const parentPath = readParentPath(item, categoriesConfig.parentPathField);
-        const prefix = this.config()?.prefix;
-
-        return parentPath && prefix
-            ? withOriginTooltip(cells, this.translateService.instant(`${prefix}.categories.root`), parentPath)
-            : cells;
     }
 }

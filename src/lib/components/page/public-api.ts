@@ -51,6 +51,15 @@ export {
     pageOwnerColumn as beyPageOwnerColumn
 } from './functions/page-owner-column';
 export type { PageOwnedItem as BeyPageOwnedItem, PageOwner as BeyPageOwner } from './models/page-owner.model';
+export {
+    PageShareAccess as BeyPageShareAccess,
+    PageShareGranteeType as BeyPageShareGranteeType
+} from './models/page-sharing.model';
+export type {
+    PageInheritedShare as BeyPageInheritedShare,
+    PageShare as BeyPageShare,
+    PageShareTarget as BeyPageShareTarget
+} from './models/page-sharing.model';
 export { SearchSortDirection as BeySearchSortDirection } from './models/page-search.model';
 export type { PageSearch as BeyPageSearch, SearchSort as BeySearchSort } from './models/page-search.model';
 export {
