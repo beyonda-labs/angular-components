@@ -10,6 +10,8 @@ import {
     ModalFormConfig
 } from '../models/modal-form.model';
 
+const ignoreError = (): void => undefined;
+
 @Injectable({
     providedIn: 'root'
 })
@@ -76,7 +78,7 @@ export class ModalFormService {
                 onSubmit: (value, handle) =>
                     submit(value)
                         .pipe(take(1))
-                        .subscribe(() => handle.close())
+                        .subscribe({ error: ignoreError, next: () => handle.close() })
             })
         );
     }

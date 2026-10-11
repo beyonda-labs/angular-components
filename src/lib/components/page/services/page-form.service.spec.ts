@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
-import { of } from 'rxjs';
+import { config as rxjsConfig, of, throwError } from 'rxjs';
 
 import { ModalFormConfig, ModalFormSize } from '../../form/components/modal/models/modal-form.model';
 import { FormTextField } from '../../form/models/fields/form-text-field.model';
@@ -153,6 +153,29 @@ describe('PageFormService', () => {
 
         expect(modal.confirmations()).toEqual([]);
         expect(onSave).toHaveBeenCalledTimes(1);
+    });
+
+    it('saves nothing and leaves no error unhandled when confirmSave fails', async () => {
+        const previousHandler = rxjsConfig.onUnhandledError;
+        const unhandled = jest.fn();
+        const onSave = jest.fn();
+        const pageForm = buildPageForm();
+
+        pageForm.confirmSave = () => throwError(() => new Error('refused'));
+        service.open(pageForm, { id: 7 }, 'testPage', onSave);
+        rxjsConfig.onUnhandledError = unhandled;
+
+        try {
+            getOpenedConfig().onSubmit?.({ section1: { text1: 'renamed' } }, {} as FormHandle<TestFormValue>);
+            await new Promise(resolve => {
+                setTimeout(resolve);
+            });
+        } finally {
+            rxjsConfig.onUnhandledError = previousHandler;
+        }
+
+        expect(unhandled).not.toHaveBeenCalled();
+        expect(onSave).not.toHaveBeenCalled();
     });
 
     it('opens a form with its own request through the modal forms and reports the save once it answers', () => {

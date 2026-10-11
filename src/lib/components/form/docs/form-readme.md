@@ -201,7 +201,8 @@ is used as it is.
 
 Submit does not close the dialog: call `handle.close()` once the operation succeeds, or open it with
 `BeyModalFormService.openWithRequest(config, submit)`, whose submit sends `submit(value)` and closes the dialog once
-that request answers, keeping it open when it fails; the config's own `onSubmit` is replaced. A config spread into a
+that request answers, keeping it open when it fails and reporting nothing beyond what the request shows, such as the
+error modal of `BeyHttpService`; the config's own `onSubmit` is replaced. A config spread into a
 new one keeps its labels, so it can be copied. Cancel, the cross and
 `handle.requestClose()` ask for confirmation when there are changes. The backdrop and Escape do nothing, so
 the confirmation cannot be skipped. `beyModalFormGuard` on a route closes pristine dialogs on navigation and

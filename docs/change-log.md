@@ -61,6 +61,10 @@
     `--bey-z-toolbar` layer, over the sticky header of the table and under the menus.
 -   Page module: the entries of a move and of the trash read their type from the `typeField` of the categories, still
     sent as `{ id, type }`, so rows may keep a `type` field of their own; without categories every entry is an `item`.
+-   Page module: a failed create, edit, `afterCreate` or `confirmSave` leaves no unhandled error; when `afterCreate`
+    fails the form stays open and the table reloads, and sending the form again creates the row anew.
+-   Form module: a form of `openWithRequest`, also in `BeyFakeModalFormService`, stays open without an unhandled error
+    when its request fails.
 
 ## [1.4.0] - 2026-10-10
 

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { EMPTY, Observable, of } from 'rxjs';
+import { config as rxjsConfig, EMPTY, Observable, of, throwError } from 'rxjs';
 
 import { FormTextField } from '../../../models/fields/form-text-field.model';
 import { FormHandle, FormRow, FormSection } from '../../../models/form.model';
@@ -93,6 +93,26 @@ describe('ModalFormService', () => {
             openedConfig().onSubmit?.({}, handle);
 
             expect(close).toHaveBeenCalledTimes(1);
+        });
+
+        it('keeps the form open and leaves no error unhandled when the request fails', async () => {
+            const previousHandler = rxjsConfig.onUnhandledError;
+            const unhandled = jest.fn();
+
+            service.openWithRequest(buildConfig(), () => throwError(() => new Error('refused')));
+            rxjsConfig.onUnhandledError = unhandled;
+
+            try {
+                openedConfig().onSubmit?.({}, handle);
+                await new Promise(resolve => {
+                    setTimeout(resolve);
+                });
+            } finally {
+                rxjsConfig.onUnhandledError = previousHandler;
+            }
+
+            expect(unhandled).not.toHaveBeenCalled();
+            expect(close).not.toHaveBeenCalled();
         });
     });
 

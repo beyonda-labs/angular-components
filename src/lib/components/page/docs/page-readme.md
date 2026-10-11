@@ -461,13 +461,17 @@ those answers for a `handler` of its own.
 `onEdit(value, handle)`, `afterCreate(created)`, `confirmSave(value, item?)`, `allowSubmitWithoutChanges` and `size`
 (a `BeyModalFormSize`, `Large` by default). `onValueChange` runs on every
 change of the open form, so a field can fill another through `handle.patchValue`. Create and edit open a modal form from the form
-module; on success the modal closes and the table reloads, on error it stays open. `afterCreate` returns an
-observable the page waits for before closing, for entities that need a second request. Titles come from
-`<prefix>.form.create.title` and `.edit.title`, the buttons from the library.
+module; on success the modal closes and the table reloads, on error it stays open, the reason shown by the error
+modal of the HTTP service and nothing more reported. `afterCreate` returns an observable the page waits for before
+closing, for entities that need a second request. When that one fails the row already exists, so the form stays open
+and the table reloads, showing whatever the backend kept of it; sending the form again creates the row anew, which
+suits a backend that drops the row whose second request it refused, as the attachments of express-components do.
+Titles come from `<prefix>.form.create.title` and `.edit.title`, the buttons from the library.
 
 `confirmSave(value, item?)` asks before a create or an edit is sent: it answers a confirmation, or an observable of
-one, and the page shows it over the form and saves only once the user confirms; `null` saves at once. It suits a save
-that has consequences elsewhere, such as renaming something other records name.
+one, and the page shows it over the form and saves only once the user confirms; `null` saves at once, and an
+observable that fails saves nothing and leaves the form open. It suits a save that has consequences elsewhere, such as
+renaming something other records name.
 
 ## Texts
 
