@@ -9,7 +9,8 @@
                     "not-found": "Este usuario no existe. Recarga la página y vuelve a intentarlo.",
                     "not-invited": "Esta cuenta ya no está pendiente de una invitación.",
                     "own-account": "No puedes desactivar tu propia cuenta ni cambiar tus propios roles.",
-                    "superadmin-only": "Solo un superadministrador puede dar o quitar el rol de superadministrador, o cambiar la cuenta de un superadministrador.",
+                    "superadmin-only": "Solo un superadministrador puede cambiar la cuenta de un superadministrador.",
+                    "superadmin-role-fixed": "El rol de superadministrador no se puede asignar ni quitar.",
                     "unknown-role": "El rol \"{{role}}\" no existe."
                 }
             },
@@ -22,6 +23,7 @@
                     "not-invited": "Sin invitación pendiente",
                     "own-account": "Tu propia cuenta",
                     "superadmin-only": "Solo para superadministradores",
+                    "superadmin-role-fixed": "Rol fijo",
                     "unknown-role": "Rol desconocido"
                 }
             }
@@ -119,6 +121,7 @@
                 },
                 "empty": "Ningún usuario coincide con la búsqueda",
                 "no-name": "Sin nombre",
+                "system": "Sistema",
                 "tooltips": {
                     "created-at": "Cuándo se creó la cuenta",
                     "email": "El correo con el que entra el usuario",

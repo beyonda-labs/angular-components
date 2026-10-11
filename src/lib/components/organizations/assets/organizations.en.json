@@ -4,14 +4,12 @@
             "error": {
                 "organizations": {
                     "existing-name": "There is already an organization named {{name}}.",
-                    "has-superadmin": "This organization holds an active superadmin, so it cannot be deactivated.",
                     "not-found": "This organization does not exist or has been deactivated. Reload the page and try again."
                 }
             },
             "title": {
                 "organizations": {
                     "existing-name": "Name already in use",
-                    "has-superadmin": "Organization of a superadmin",
                     "not-found": "Organization not found"
                 }
             }

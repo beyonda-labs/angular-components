@@ -31,6 +31,9 @@
                     "validation-failed": "El documento tiene errores de validación pendientes. Corrígelos antes de generarlo."
                 },
                 "duplicate-field": "Ya existe un elemento con el campo \"{{fieldName}}\" con el valor \"{{value}}\".",
+                "entities": {
+                    "owner-required": "Este elemento necesita un usuario propietario: créalo dentro de la carpeta de un usuario."
+                },
                 "forbidden": "No tiene permisos para realizar esta acción.",
                 "internal-server-error": "Se produjo un error interno en el servidor. Por favor, inténtelo de nuevo más tarde.",
                 "invalid-child": "El campo \"{{childField}}\" no es válido para el padre \"{{parentField}}\".",
@@ -90,6 +93,9 @@
                     "validation-failed": "Documento no válido"
                 },
                 "duplicate-field": "Valor duplicado",
+                "entities": {
+                    "owner-required": "Falta el propietario"
+                },
                 "forbidden": "Acceso denegado",
                 "internal-server-error": "Error del servidor",
                 "invalid-child": "Campo inválido",

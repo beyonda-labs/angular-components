@@ -258,6 +258,12 @@ On a backend where every row has an owner, as base-entity of express-components 
 carries `ownerId` and `ownerName`, the display name; a row type extends `BeyPageOwnedItem` to read them. A row nobody
 owns, such as one the system seeds for everyone, has both `null`.
 
+A superadmin belongs to no organization and owns nothing: what it creates belongs to a user, the owner of the folder it
+creates in, and a duplicate to the owner of the original. At the root it has nowhere to create, so base-entity leaves `create` and the category create out of the
+`globalActions` it answers there, and the page offers neither; a create sent anyway is refused with
+`entities.owner-required`, whose text the [http service](../../../services/http/docs/http-readme.md) ships under
+`angular-components.http.error.entities`.
+
 `beyPageOwnerColumn(overrides?)` is the column: key `ownerName`, headed "Owner"
 (`angular-components.page.table.columns.owner-name` and its `.tooltips.owner-name`), sortable by `ownerId`, hideable,
 with a width of `2`; `overrides` changes any of that. `beyPageOwnerCell(row)` is its cell, the display name as text,

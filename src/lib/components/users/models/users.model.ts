@@ -40,12 +40,11 @@ export interface UserRow extends PageOrganizationItem {
 }
 
 export interface UsersFormOptions {
+    isOrganizationAsked: boolean;
     organizations: PageOrganization[];
     prefix: string;
     rolePrefix: string;
     roles: string[];
-
-    organizationId?: string;
 }
 
 export interface UsersRowOptions {

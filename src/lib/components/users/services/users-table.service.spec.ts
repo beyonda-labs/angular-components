@@ -76,4 +76,12 @@ describe('UsersTableService', () => {
         expect(cells.map(cell => cell.content).slice(1, 3)).toEqual(['ada@example.test', 'Globex']);
         expect(service.loadRow(user, options).map(cell => cell.content)).not.toContain('Globex');
     });
+
+    it('shows a superadmin, who belongs to no organization, as the system in that column', () => {
+        const superadmin = buildUser({ organizationId: null, organizationName: null, roles: ['superadmin'] });
+        const organization = service.loadRow(superadmin, { ...options, isOrganizationShown: true })[2];
+
+        expect(organization.content).toBe('demo.users.table.system');
+        expect(organization.translate).toBe(true);
+    });
 });

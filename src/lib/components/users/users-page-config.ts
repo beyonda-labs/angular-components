@@ -42,6 +42,7 @@ const TRAILING_COLUMNS = [
 export interface UsersPageConfigOptions {
     config: UsersConfig;
     formConfig: PageFormConfig<UserFormValue, UserRow>;
+    isOrganizationShown: boolean;
     loadRow: (user: UserRow) => TableCell[];
     onReady: (handle: PageHandle<UserRow>) => void;
     onResendInvitation: (user: UserRow) => void;
@@ -52,6 +53,7 @@ export interface UsersPageConfigOptions {
 export function buildUsersPageConfig({
     config,
     formConfig,
+    isOrganizationShown,
     loadRow,
     onReady,
     onResendInvitation,
@@ -82,7 +84,7 @@ export function buildUsersPageConfig({
         prefix,
         statusConfig: new PageStatusConfig({ transitions: USER_STATUS_TRANSITIONS }),
         tableConfig: new PageTableConfig<UserRow>({
-            columns: [...LEADING_COLUMNS, ...(organizationField ? [ORGANIZATION_COLUMN] : []), ...TRAILING_COLUMNS],
+            columns: [...LEADING_COLUMNS, ...(isOrganizationShown ? [ORGANIZATION_COLUMN] : []), ...TRAILING_COLUMNS],
             height,
             loadRow,
             order: ORDER,

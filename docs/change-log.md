@@ -6,21 +6,29 @@
 
 -   Organizations module: `bey-organizations`, the superadmin's page over `/organizations` on `bey-page`: create and
     rename an organization, deactivate or reactivate it, and invite its first admin with the `adminRole` of the config.
--   Organizations module: the texts of the `organizations.existing-name`, `.has-superadmin` and `.not-found` errors.
+-   Organizations module: the texts of the `organizations.existing-name` and `.not-found` errors.
 -   Page module: `beyPageOrganizationColumn(overrides?)` and `beyPageOrganizationCell(row)` show the `organizationName`
     of a `BeyPageOrganizationItem`, only while `GET {baseUrl}/organizations` names two organizations or more.
 -   Page module: `isOrganizationFilterEnabled` on `BeyPageTableSearchConfig` adds an "Organization" filter,
     `organizationId` `equals`, from the same answer and shown only with two organizations or more.
--   Users module: for a superadmin of several organizations, an organization column and filter, and an organization
-    select in the invite form that starts with their own, read from `GET {baseUrl}/organizations`.
--   Session service: `organizationId` on `BeySessionUser`, read from the token.
+-   Users module: for a superadmin with an active organization or more, an organization column after the email, with
+    "System" on the superadmins' rows (`table.system`), read from `GET {baseUrl}/organizations`.
+-   Users module: for a superadmin with two active organizations or more, an organization filter, `organizationId`
+    `equals`, with those organizations by name.
+-   Users module: the invite form always asks a superadmin for the organization, required and chosen already when only
+    one is active; a superadmin belongs to none, so nothing comes from the session.
+-   Users module: the texts of the `users.superadmin-role-fixed` error.
+-   HTTP service: the texts of the `entities.owner-required` error, a create with no user to own the row.
+-   Session service: `organizationId` on `BeySessionUser`, read from the token; absent for a superadmin.
 -   Login module: the texts of the `login.organization-inactive` error; the OAuth callback goes back to the login on
     `?error=organization-inactive`, as on any other error.
 
 ### Changed
 
 -   Users module: `BeyUserRow` carries `organizationId` and `organizationName` when the server answers them to a
-    superadmin.
+    superadmin, both `null` on the row of a superadmin.
+-   Users module: the `users.superadmin-only` text speaks only of changing a superadmin account, since nobody grants
+    nor removes the superadmin role any more.
 
 ### Fixed
 

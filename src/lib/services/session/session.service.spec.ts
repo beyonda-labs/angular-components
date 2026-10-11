@@ -115,11 +115,20 @@ describe('SessionService', () => {
         });
 
         it('decodes the roles and the organization of the user from the token', () => {
-            const payload = { email: 'ada@example.com', organizationId: 'o1', roles: ['superadmin'] };
+            const payload = { email: 'ada@example.com', organizationId: 'o1', roles: ['adminuser'] };
 
             service.setToken(`header.${btoa(JSON.stringify(payload))}.signature`);
 
-            expect(service.getUser()).toEqual(expect.objectContaining({ organizationId: 'o1', roles: ['superadmin'] }));
+            expect(service.getUser()).toEqual(expect.objectContaining({ organizationId: 'o1', roles: ['adminuser'] }));
+        });
+
+        it('decodes a superadmin with no organization, since it belongs to none', () => {
+            const payload = { email: 'root@example.com', roles: ['superadmin'] };
+
+            service.setToken(`header.${btoa(JSON.stringify(payload))}.signature`);
+
+            expect(service.getUser()).toEqual(expect.objectContaining({ roles: ['superadmin'] }));
+            expect(service.getUser()?.organizationId).toBeUndefined();
         });
 
         it('exposes the user it is given as it is', () => {

@@ -58,10 +58,11 @@ case. The search box sends its text as the `text` of the search, which the backe
 filter sends `status`. The columns sort by `name`, `userCount` and `createdAt`, the fields the server sorts by; the
 status does not sort.
 
-The status changes `active → inactive` and `inactive → active`. The users of a deactivated organization can no longer
-sign in nor refresh their session, superadmins excepted. The server leaves `change-status` out of the actions of an
-organization that holds an active superadmin, so the page never offers it there, and refuses it anyway with
-`organizations.has-superadmin`. Each status has its badge: `active` success and `inactive` neutral.
+The status changes `active → inactive` and `inactive → active`, for every organization, the initial one included.
+The users of a deactivated organization can no longer sign in nor refresh their session. The superadmins belong to no
+organization, so a deactivation never touches them, and they never count in the user count. The page offers
+`change-status` on the rows that list it, as any other action. Each status has its badge: `active` success and
+`inactive` neutral.
 
 `invite-admin` opens a form on the page with the name of the organization, the email (required), the name, the surname
 and the language of the invitation, whose languages are the `languages` of the
@@ -72,7 +73,7 @@ server's reason: the `users.*` errors of [`bey-users`](../../users/docs/users-re
 `organizations.not-found` for an organization deactivated meanwhile.
 
 The errors of the module are translated under `angular-components.http.error.organizations` and
-`.title.organizations`: `existing-name` (with its `name`), `has-superadmin` and `not-found`.
+`.title.organizations`: `existing-name` (with its `name`) and `not-found`.
 
 ## Texts
 

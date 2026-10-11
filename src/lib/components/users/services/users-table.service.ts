@@ -27,7 +27,7 @@ export class UsersTableService {
         return [
             this.buildNameCell(user, prefix, onEdit),
             new TextTableCell({ content: user.email, tooltip: user.email }),
-            ...(isOrganizationShown ? [pageOrganizationCell(user)] : []),
+            ...(isOrganizationShown ? [buildOrganizationCell(user, prefix)] : []),
             new BadgeTableCell({
                 badges: user.roles.map(
                     role =>
@@ -62,4 +62,10 @@ export class UsersTableService {
             ? new LinkTableCell({ action: () => onEdit(user), content, tooltip, translate })
             : new TextTableCell({ content, tooltip, translate });
     }
+}
+
+function buildOrganizationCell(user: UserRow, prefix: string): TableCell {
+    return user.organizationId === null
+        ? new TextTableCell({ content: `${prefix}.table.system`, translate: true })
+        : pageOrganizationCell(user);
 }
