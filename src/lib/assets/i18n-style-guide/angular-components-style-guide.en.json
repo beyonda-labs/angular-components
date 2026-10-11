@@ -9,6 +9,14 @@
             "name-hint": "Shown on the documents you sign"
         },
         "account-data-section": "Account data",
+        "administration": {
+            "example": "The four management pages of an app, one module: users, groups, roles and permissions, and organizations, each on bey-page over the matching module of express-components and each reading what it may do from the backend.",
+            "groups": "Groups",
+            "organizations": "Organizations",
+            "roles": "Roles and permissions",
+            "users": "Users"
+        },
+        "administration-section": "Administration",
         "app-layout": {
             "actions": {
                 "dashboard": {
@@ -113,6 +121,7 @@
             }
         },
         "breadcrumbs": "Breadcrumbs",
+        "collapse-all": "Collapse all",
         "components": "Components",
         "compound": "Compound",
         "edit-lock-notice": {
@@ -141,6 +150,7 @@
             }
         },
         "edit-lock-notice-section": "Edit lock notice",
+        "expand-all": "Expand all",
         "file-preview": {
             "buttons": {
                 "image": "Preview an image",
@@ -523,7 +533,6 @@
         "groups": {
             "example": "The groups page of a manager or the superadmin: search by name, create a group, edit its name, its members and its additional roles in one form, and delete groups, as far as the backend allows each row. The demo backend serves no groups, so the list stays empty."
         },
-        "groups-section": "Groups",
         "header": {
             "actions": {
                 "archive": {
@@ -814,7 +823,6 @@
         "organizations": {
             "example": "The organizations page of a superadmin: search by name, filter by status, create an organization and edit one, its name and its status, with its groups and their members to read, as far as the backend allows each row. The demo backend serves no organizations, so the list stays empty."
         },
-        "organizations-section": "Organizations",
         "page": {
             "actions": {
                 "create": {
@@ -957,7 +965,6 @@
         "roles": {
             "example": "The roles and permissions page of a manager or the superadmin: the base roles of the application with their permissions to see, and the additional roles of the organization to create, edit and delete, their permissions chosen in foldable sections by resource, each permission with its description, as far as the backend allows each row. The demo backend serves no roles, so the list stays empty."
         },
-        "roles-section": "Roles and permissions",
         "search": {
             "applied": "Applied filters",
             "example": "Quick search box plus a panel of typed filter rows. It starts from the filters of its config, here the editor role; every change is reported through onFiltersChange and the consumer runs the query.",
@@ -1131,7 +1138,6 @@
                 "admin": "Administrator",
                 "editor": "Editor"
             }
-        },
-        "users-section": "Users"
+        }
     }
 }

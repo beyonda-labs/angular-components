@@ -2,19 +2,69 @@
     --bey-style-guide-section-gradient: linear-gradient(180deg, var(--bey-bg-page) 0%, var(--bey-bg-surface) 100%);
 
     display: block;
-    margin-top: var(--bey-space-2xl);
+    margin-top: var(--bey-space-md);
 }
 
-.bey-style-guide-section-title {
-    color: var(--bey-text-primary);
-    font-size: var(--bey-font-size-2xl);
-    font-weight: var(--bey-font-weight-semibold);
-    margin-bottom: var(--bey-space-sm);
-}
-
-.bey-style-guide-section-card {
+.bey-style-guide-section {
     background: var(--bey-style-guide-section-gradient);
     border: var(--bey-border-width) solid var(--bey-border-subtle);
     border-radius: var(--bey-radius-xl);
+}
+
+.bey-style-guide-section-heading {
+    margin: 0;
+}
+
+.bey-style-guide-section-toggle {
+    align-items: center;
+    background: transparent;
+    border: none;
+    border-radius: var(--bey-radius-xl);
+    color: var(--bey-text-primary);
+    cursor: pointer;
+    display: flex;
+    gap: var(--bey-space-md);
+    justify-content: space-between;
+    padding: var(--bey-space-lg) var(--bey-space-xl);
+    text-align: left;
+    transition: background-color var(--bey-duration-fast) var(--bey-easing-standard);
+    width: 100%;
+}
+
+.bey-style-guide-section-toggle:hover {
+    background-color: var(--bey-bg-hover);
+}
+
+.bey-style-guide-section-toggle:focus-visible {
+    outline: var(--bey-border-width-thick) solid var(--bey-primary);
+    outline-offset: var(--bey-space-3xs);
+}
+
+.bey-style-guide-section-toggle.is-expanded {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.bey-style-guide-section-title {
+    font-size: var(--bey-font-size-2xl);
+    font-weight: var(--bey-font-weight-semibold);
+    line-height: var(--bey-line-height-tight);
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.bey-style-guide-section-chevron {
+    color: var(--bey-text-muted);
+    flex-shrink: 0;
+    font-size: var(--bey-font-size-lg);
+    transition: transform var(--bey-duration-base) var(--bey-easing-standard);
+}
+
+.bey-style-guide-section-toggle.is-expanded .bey-style-guide-section-chevron {
+    transform: rotate(180deg);
+}
+
+.bey-style-guide-section-body {
+    border-top: var(--bey-border-width) solid var(--bey-border-subtle);
     padding: var(--bey-space-xl);
 }

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { renderComponent, settle } from '@testing/dom';
+import { buttonByName, renderComponent, settle } from '@testing/dom';
 
 import { StyleGuideSectionComponent } from './style-guide-section.component';
 
@@ -10,7 +10,9 @@ import { StyleGuideSectionComponent } from './style-guide-section.component';
     imports: [StyleGuideSectionComponent],
     standalone: true,
     template: `
-        <bey-style-guide-section [titleKey]="titleKey"><p>demo content</p></bey-style-guide-section>
+        <bey-style-guide-section key="tabs" [titleKey]="titleKey">
+            <ng-template><p>demo content</p></ng-template>
+        </bey-style-guide-section>
     `
 })
 class HostComponent {
@@ -25,6 +27,8 @@ describe('StyleGuideSectionComponent', () => {
     }
 
     beforeEach(async () => {
+        sessionStorage.clear();
+
         await TestBed.configureTestingModule({
             imports: [HostComponent, TranslateModule.forRoot()]
         }).compileComponents();
@@ -39,10 +43,27 @@ describe('StyleGuideSectionComponent', () => {
         expect(fixture.nativeElement.querySelector('h3').textContent.trim()).toBe('Tabs');
     });
 
-    it('projects the demo inside the card', async () => {
+    it('starts collapsed, showing only its title', async () => {
         await render();
 
+        expect(buttonByName(fixture, 'Tabs').getAttribute('aria-expanded')).toBe('false');
+        expect(fixture.nativeElement.textContent).not.toContain('demo content');
+    });
+
+    it('shows the demo inside the card once its header is clicked, and hides it on a second click', async () => {
+        await render();
+
+        buttonByName(fixture, 'Tabs').click();
+        await settle(fixture);
+
+        expect(buttonByName(fixture, 'Tabs').getAttribute('aria-expanded')).toBe('true');
         expect(fixture.nativeElement.textContent).toContain('demo content');
+
+        buttonByName(fixture, 'Tabs').click();
+        await settle(fixture);
+
+        expect(buttonByName(fixture, 'Tabs').getAttribute('aria-expanded')).toBe('false');
+        expect(fixture.nativeElement.textContent).not.toContain('demo content');
     });
 
     it('follows the title key when it changes', async () => {
