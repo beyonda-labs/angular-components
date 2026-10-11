@@ -56,6 +56,18 @@ TestBed.inject(HttpTestingController)
     .flush({ isDigitRequired: true, isLowercaseRequired: true, isSymbolRequired: true, isUppercaseRequired: true });
 ```
 
+Nor is `BeyEditLockService`, which the editing component provides itself. Once the component starts it, it sends
+`POST <lockUrl>` with `{ token }`; the spec answers `{ lifetimeMs, lock }` with the `BeyEditLock` it wants, `isOwn: true`
+to edit or somebody else's to stay read-only, and drives the heartbeats and the polls with Jest's fake timers, leaving
+`nextTick`, `queueMicrotask` and `setImmediate` real so `beySettle` still resolves:
+
+```ts
+jest.useFakeTimers({ doNotFake: ['nextTick', 'queueMicrotask', 'setImmediate'] });
+TestBed.inject(HttpTestingController)
+    .expectOne(request => request.method === 'POST' && request.url === 'https://api.test/api/items/i1/lock')
+    .flush({ lifetimeMs: 120000, lock: { ...lock, isOwn: true } });
+```
+
 ## Fakes
 
 | Fake                        | Stands for              | Records                                                                                                           | Answers                                                                     |

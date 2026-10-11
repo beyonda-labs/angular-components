@@ -262,6 +262,7 @@ What `document-builder-front` did by hand that belongs in the library.
 
 -   [ ] Layout: `card`, `panel`
 -   [x] Feedback: `toast`, `loading spinner` (inline + overlay + service)
+-   [x] Feedback: `notice`, an inline banner with a variant, an icon, a message and its actions
 -   [ ] Feedback: `alert`, `progress bar`
 -   [x] Modals (info, warning, error, confirmation via service)
 -   [ ] Drawers
@@ -298,6 +299,7 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [x] Saved views: tabs that apply a search with its filters (templates / blocks)
 -   ~~Search every folder at once, naming the folder of each result~~ — decided against
 -   ~~Undo right after a delete, from its toast~~ — decided against
+-   [x] One editor at a time: `BeyEditLockService` and `bey-edit-lock-notice`, over the edit locks of base-entity
 -   [ ] Share a folder with users or groups, to read or to edit, over the sharing of base-entity
 -   [ ] A save that meets a conflict (the row changed since it was opened) says so and offers to reload, instead of
         the generic error
