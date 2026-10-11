@@ -62,6 +62,8 @@ its default. An app that does not use `provideBeyApp` adds `provideBeyHttp()` to
 The reason the modal shows comes from the error body express-components sends,
 `{ errorCode, messageKey, messageParameters, details, timestamp }`: `angular-components.http.error.<messageKey>`
 when the body names one, the text of its `errorCode` otherwise, and the unknown error when neither is translated.
+Besides the text of every `errorCode`, the service ships those of the `messageKey`s no module of the library owns,
+such as `attachments.*` and `entities.owner-required`; a module ships the texts of its own, such as `users.*`.
 A string among the `messageParameters` is replaced by `angular-components.http.field.<value>` when that key is
 translated; any other value is shown as it is, such as the `minutes` of `login.account-locked`.
 A failed `getBlob` or `postBlob` answers that body as a `Blob`; the service reads it as JSON first, so a download shows
