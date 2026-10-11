@@ -52,14 +52,6 @@ export function checkboxSectionViews(
     });
 }
 
-export function checkedSectionKeys(sections: FormCheckboxSection[], values: string[]): Set<string> {
-    const checked = new Set(values);
-
-    return new Set(
-        sections.filter(({ options }) => options.some(({ value }) => checked.has(value))).map(({ key }) => key)
-    );
-}
-
 export function toggleOptionValues(
     sections: FormCheckboxSection[],
     values: string[],

@@ -1,7 +1,7 @@
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { accessibleDescription, buttonByName, renderComponent, settle } from '@testing/dom';
+import { accessibleDescription, buttonByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { PasswordPolicy } from '../../services/password-policy/models/password-policy.model';
 import { FormComponent } from './form.component';
@@ -654,6 +654,32 @@ describe('FormComponent', () => {
             await settle(fixture);
 
             expect(input('email')).not.toBeNull();
+        });
+    });
+
+    describe('values left out', () => {
+        const ADA: FormFieldOption = { label: 'Ada Lovelace', value: 'u1' };
+        const GRACE: FormFieldOption = { label: 'Grace Hopper', value: 'u2' };
+
+        it('leaves out of an autocomplete the values its rule excludes', async () => {
+            await render(
+                buildContactConfig(
+                    [
+                        new FormTextField({ key: 'email' }),
+                        new FormAutocompleteField({
+                            excludedValues: value => [value['contact']['email'] as string],
+                            key: 'name',
+                            options: [ADA, GRACE]
+                        })
+                    ],
+                    { initialValue: { contact: { email: 'u1', name: '' } } }
+                )
+            );
+
+            input('name')?.dispatchEvent(new Event('focus'));
+            await settle(fixture);
+
+            expect(textsOf(queryAll(document.body, '[role="option"]'))).toEqual(['Grace Hopper']);
         });
     });
 

@@ -30,16 +30,20 @@ export class GroupsHttpService {
         return this.httpService.get<GroupDetail>(this.url(baseUrl, id));
     }
 
-    loadMemberOptions(baseUrl: string, id: string): Observable<GroupMember[]> {
+    searchExtraRoles(baseUrl: string, id: string, search: string, limit: number): Observable<GroupExtraRole[]> {
         return this.httpService
-            .get<GroupMemberOptionsResponse>(this.url(baseUrl, id, GROUPS_MEMBER_OPTIONS_PATH))
-            .pipe(map(({ users }) => users));
+            .get<GroupRoleOptionsResponse>(this.url(baseUrl, id, GROUPS_ROLE_OPTIONS_PATH), {
+                queryParams: { search, limit }
+            })
+            .pipe(map(({ extraRoles }) => extraRoles ?? []));
     }
 
-    loadRoleOptions(baseUrl: string, id: string): Observable<GroupExtraRole[]> {
+    searchMembers(baseUrl: string, id: string, search: string, limit: number): Observable<GroupMember[]> {
         return this.httpService
-            .get<GroupRoleOptionsResponse>(this.url(baseUrl, id, GROUPS_ROLE_OPTIONS_PATH))
-            .pipe(map(({ extraRoles }) => extraRoles ?? []));
+            .get<GroupMemberOptionsResponse>(this.url(baseUrl, id, GROUPS_MEMBER_OPTIONS_PATH), {
+                queryParams: { search, limit }
+            })
+            .pipe(map(({ users }) => users ?? []));
     }
 
     private url(baseUrl: string, id: string, suffix = ''): string {

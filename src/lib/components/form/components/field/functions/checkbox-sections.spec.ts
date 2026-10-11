@@ -1,5 +1,5 @@
 import { FormCheckboxSection } from '../../../models/fields/form-checkbox-sections-field.model';
-import { checkboxSectionViews, checkedSectionKeys, toggleOptionValues, toggleSectionValues } from './checkbox-sections';
+import { checkboxSectionViews, toggleOptionValues, toggleSectionValues } from './checkbox-sections';
 
 const SECTIONS: FormCheckboxSection[] = [
     {
@@ -14,10 +14,6 @@ const SECTIONS: FormCheckboxSection[] = [
 ];
 
 describe('checkbox sections', () => {
-    it('names the sections that hold a checked value', () => {
-        expect([...checkedSectionKeys(SECTIONS, ['documents.read', 'unknown'])]).toEqual(['documents']);
-    });
-
     it('describes each section with its counts, its ids and whether all its enabled options are checked', () => {
         const [templates, documents] = checkboxSectionViews(SECTIONS, {
             expandedKeys: new Set(['templates']),

@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 
+import { holdsListValue } from '../functions/list-value';
 import { passwordPolicyValidator } from '../functions/password-rules';
 import { FormChipsField } from '../models/fields/form-chips-field.model';
 import { FormDateField } from '../models/fields/form-date-field.model';
@@ -71,6 +72,10 @@ export class FormService {
     }
 
     initFieldControl(field: FormField, initialValue?: unknown): FormControl | undefined {
+        if (holdsListValue(field)) {
+            return this.buildControl<unknown>(field, initialValue ?? []);
+        }
+
         if (!(field.type in EMPTY_VALUES)) {
             return undefined;
         }

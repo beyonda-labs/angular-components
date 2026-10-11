@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
+import { map, Observable } from 'rxjs';
 
 import { ModalFormConfig, ModalFormSize } from '../../../form/components/modal/models/modal-form.model';
-import { FormCheckboxGroupField } from '../../../form/models/fields/form-checkbox-group-field.model';
+import { FormListField } from '../../../form/models/fields/form-list-field.model';
 import { FormSelectField } from '../../../form/models/fields/form-select-field.model';
 import { FormTextField } from '../../../form/models/fields/form-text-field.model';
 import { FormRow, FormSection } from '../../../form/models/form.model';
@@ -20,6 +21,8 @@ import {
     GroupRow,
     GROUPS_EXTRA_ROLES_FIELD,
     GROUPS_FORM_SECTION,
+    GROUPS_SEARCH_LIMIT,
+    GROUPS_SEARCH_MAX_LIMIT,
     GroupsFormOptions
 } from '../models/groups.model';
 
@@ -32,22 +35,17 @@ const SUBMIT_LABEL_KEY = 'angular-components.page.form.submit';
 export class GroupsFormService {
     buildEditFormConfig({
         detail,
-        memberOptions,
         prefix,
-        roleOptions
+        searchExtraRoles,
+        searchMembers
     }: GroupEditOptions): ModalFormConfig<GroupEditFormValue> {
-        const members = withHeld(memberOptions, detail.members);
-        const extraRoles = withHeld(roleOptions, detail.extraRoles);
-
         return new ModalFormConfig<GroupEditFormValue>({
             cancelLabel: CANCEL_LABEL_KEY,
             initialValue: {
                 [GROUPS_FORM_SECTION]: {
+                    extraRoleIds: detail.extraRoles.map(({ id }) => id),
                     name: detail.name,
-                    userIds: detail.members.map(({ id }) => id),
-                    ...(extraRoles.length > 0
-                        ? { [GROUPS_EXTRA_ROLES_FIELD]: detail.extraRoles.map(({ id }) => id) }
-                        : {})
+                    userIds: detail.members.map(({ id }) => id)
                 }
             },
             prefix: `${prefix}.form`,
@@ -59,25 +57,32 @@ export class GroupsFormService {
                         new FormRow({ fields: [buildNameField()] }),
                         new FormRow({
                             fields: [
-                                new FormCheckboxGroupField({
-                                    hint: members.length > 0 ? undefined : `${prefix}.form.main.user-ids.empty`,
+                                new FormListField({
+                                    emptyKey: `${prefix}.form.main.user-ids.empty`,
+                                    isRemovable: true,
                                     key: 'userIds',
-                                    options: members.map(toMemberOption)
+                                    options: detail.members.map(toMemberOption),
+                                    picker: {
+                                        search: (text, chosenIds) =>
+                                            searchUnchosen(searchMembers, text, chosenIds, toMemberOption)
+                                    }
                                 })
                             ]
                         }),
-                        ...(extraRoles.length > 0
-                            ? [
-                                  new FormRow({
-                                      fields: [
-                                          new FormCheckboxGroupField({
-                                              key: GROUPS_EXTRA_ROLES_FIELD,
-                                              options: extraRoles.map(({ id, name }) => ({ label: name, value: id }))
-                                          })
-                                      ]
-                                  })
-                              ]
-                            : [])
+                        new FormRow({
+                            fields: [
+                                new FormListField({
+                                    emptyKey: `${prefix}.form.main.extra-role-ids.empty`,
+                                    isRemovable: true,
+                                    key: GROUPS_EXTRA_ROLES_FIELD,
+                                    options: detail.extraRoles.map(toExtraRoleOption),
+                                    picker: {
+                                        search: (text, chosenIds) =>
+                                            searchUnchosen(searchExtraRoles, text, chosenIds, toExtraRoleOption)
+                                    }
+                                })
+                            ]
+                        })
                     ]
                 })
             ],
@@ -134,8 +139,31 @@ function buildNameField(): FormTextField {
     });
 }
 
+function searchUnchosen<T extends { id: string }>(
+    search: (text: string, limit: number) => Observable<T[]>,
+    text: string,
+    chosenIds: string[],
+    toOption: (item: T) => FormFieldOption
+): Observable<FormFieldOption[]> {
+    const chosen = new Set(chosenIds);
+    const limit = Math.min(GROUPS_SEARCH_MAX_LIMIT, GROUPS_SEARCH_LIMIT + chosen.size);
+
+    return search(text, limit).pipe(
+        map(items =>
+            items
+                .filter(({ id }) => !chosen.has(id))
+                .slice(0, GROUPS_SEARCH_LIMIT)
+                .map(toOption)
+        )
+    );
+}
+
 function toCreateValue(organizationId: string | undefined): GroupFormValue | undefined {
     return organizationId ? { [GROUPS_FORM_SECTION]: { name: '', organizationId } } : undefined;
+}
+
+function toExtraRoleOption({ id, name }: GroupExtraRole): FormFieldOption {
+    return { label: name, value: id };
 }
 
 function toGroupRequest({ name, organizationId }: GroupFields): GroupFields {
@@ -148,8 +176,4 @@ function toMemberOption({ email, id, name }: GroupMember): FormFieldOption {
 
 function toOrganizationOptions(organizations: PageOrganization[]): FormFieldOption[] {
     return organizations.map(({ id, name }) => ({ label: name, value: id }));
-}
-
-function withHeld<T extends GroupExtraRole | GroupMember>(options: T[], held: T[]): T[] {
-    return [...options, ...held.filter(item => !options.some(({ id }) => id === item.id))];
 }

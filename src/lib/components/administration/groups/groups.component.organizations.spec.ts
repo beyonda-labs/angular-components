@@ -189,11 +189,9 @@ describe('GroupsComponent — organizations and callers', () => {
         it('edits a group without offering to move it to another organization', async () => {
             await click(buttonByName(fixture, 'Sales'));
             httpTesting.expectOne(`${GROUPS_URL}/g1`).flush({ ...buildGroup(), extraRoles: [], members: [] });
-            httpTesting.expectOne(`${GROUPS_URL}/g1/member-options`).flush({ users: [] });
-            httpTesting.expectOne(`${GROUPS_URL}/g1/role-options`).flush({ extraRoles: [] });
             await settle(fixture);
 
-            expect(fieldsOf(lastForm()).map(field => field.key)).toEqual(['name', 'userIds']);
+            expect(fieldsOf(lastForm()).map(field => field.key)).toEqual(['name', 'userIds', 'extraRoleIds']);
         });
     });
 
@@ -271,8 +269,6 @@ describe('GroupsComponent — organizations and callers', () => {
             .flush({ errorCode: 'not-found', messageKey: 'groups.not-found' }, { status: 404, statusText: '' });
         await settle(fixture);
 
-        expect(httpTesting.expectOne(`${GROUPS_URL}/g1/member-options`).cancelled).toBe(true);
-        expect(httpTesting.expectOne(`${GROUPS_URL}/g1/role-options`).cancelled).toBe(true);
         expect(TestBed.inject(FakeModalService).errors()).toEqual([
             expect.objectContaining({ message: 'angular-components.http.error.groups.not-found' })
         ]);

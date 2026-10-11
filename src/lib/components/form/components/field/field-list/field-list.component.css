@@ -7,6 +7,10 @@
     min-width: 0;
 }
 
+.bey-form-list-picker {
+    margin-bottom: var(--bey-space-xs);
+}
+
 .bey-form-list {
     border: var(--bey-border-width) solid var(--bey-form-list-border);
     border-radius: var(--bey-radius-sm);
@@ -20,6 +24,26 @@
 
 .bey-form-list-item {
     overflow-wrap: anywhere;
+}
+
+.bey-form-list-row {
+    align-items: center;
+    display: flex;
+    gap: var(--bey-space-xs);
+}
+
+.bey-form-list-row-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.bey-form-list-row-remove {
+    border-radius: var(--bey-radius-circle);
+    flex-shrink: 0;
+    font-size: var(--bey-font-size-2xs);
+    height: var(--bey-space-lg);
+    width: var(--bey-space-lg);
 }
 
 .bey-form-list-empty {

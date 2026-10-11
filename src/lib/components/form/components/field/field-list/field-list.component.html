@@ -1,14 +1,47 @@
-@if (items().length > 0) {
+@if (picker(); as picker) {
+    @if (isEditable()) {
+        <bey-form-autocomplete-field
+            class="bey-form-list-picker"
+            [control]="pickerControl"
+            [describedBy]="describedBy()"
+            [excludedValues]="values()"
+            [field]="picker"
+            [options]="options()"
+            [prefix]="prefix()"
+        ></bey-form-autocomplete-field>
+    }
+}
+
+@if (hasRows()) {
     <ul
         class="bey-form-list"
         [attr.aria-describedby]="describedBy()"
         [attr.aria-label]="label() | translate"
-        [id]="field().key"
+        [id]="listId()"
     >
-        @for (item of items(); track $index) {
-            <li class="bey-form-list-item">{{ item }}</li>
+        @if (isValued()) {
+            @for (row of rows(); track $index) {
+                <li class="bey-form-list-row">
+                    <span class="bey-form-list-row-label">{{ row.label | translate }}</span>
+
+                    @if (isRemovable()) {
+                        <button
+                            class="bey-form-field-action bey-form-list-row-remove"
+                            type="button"
+                            [attr.aria-label]="removeLabel(row)"
+                            (click)="onRemove(row.value)"
+                        >
+                            <fa-icon aria-hidden="true" [icon]="removeIcon"></fa-icon>
+                        </button>
+                    }
+                </li>
+            }
+        } @else {
+            @for (item of items(); track $index) {
+                <li class="bey-form-list-item">{{ item }}</li>
+            }
         }
     </ul>
 } @else {
-    <p class="bey-form-list-empty">{{ placeholder() | translate }}</p>
+    <p class="bey-form-list-empty">{{ emptyKey() | translate }}</p>
 }

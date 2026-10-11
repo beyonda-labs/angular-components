@@ -55,7 +55,10 @@ export { FormDateField as BeyFormDateField } from './models/fields/form-date-fie
 export { FormFileField as BeyFormFileField } from './models/fields/form-file-field.model';
 export { FormInfoField as BeyFormInfoField } from './models/fields/form-info-field.model';
 export { FormListField as BeyFormListField } from './models/fields/form-list-field.model';
-export type { FormListFieldParameters as BeyFormListFieldParameters } from './models/fields/form-list-field.model';
+export type {
+    FormListFieldParameters as BeyFormListFieldParameters,
+    FormListPicker as BeyFormListPicker
+} from './models/fields/form-list-field.model';
 export type { FormInfoItem as BeyFormInfoItem } from './models/fields/form-info-field.model';
 export { FormNumberField as BeyFormNumberField } from './models/fields/form-number-field.model';
 export { FormPasswordField as BeyFormPasswordField } from './models/fields/form-password-field.model';

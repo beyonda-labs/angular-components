@@ -71,6 +71,10 @@
 -   Form module: `isSubmitHidden` on `BeyModalFormConfig` leaves only the cancel button, for a form that only shows.
 -   Form module: `BeyFormCheckboxSectionsField`, checkboxes in a foldable card per `BeyFormCheckboxSection`, each with a
     counter and select all, and a description under each option; its value lists every checked one.
+-   Form module: `filter`, `search` (debounced, asked with the values left out), `onSelect`, `isClearedOnSelect` and
+    `excludedValues` (a value or a rule) on `BeyFormAutocompleteField`.
+-   Form module: a `BeyFormListField` with `options` or a `picker` (`BeyFormListPicker`) holds ids: a row per id with
+    its label, a search above that adds rows, a remove button per row with `isRemovable`, and `emptyKey`.
 -   Users module: `editableFields` on `BeyUserRow` (`BeyUserEditableField`); the edit form disables every field the row
     leaves out and sends only those it names.
 -   Users module: the edit form asks for the status, "Active" or "Inactive", sent as `status` with
@@ -83,6 +87,12 @@
 
 ### Changed
 
+-   Form module: every section of a `BeyFormCheckboxSectionsField` starts folded, also those holding a checked option.
+-   Form module: an autocomplete finds the typed text anywhere in the label whatever its case, accents and spaces, with
+    the fold express-components searches with.
+-   Groups module: the edit form reads only `GET {baseUrl}/{id}`; members and extra roles are removable lists with a
+    search over `member-options` and `role-options` (`?search=&limit=`), and both always show and are always sent.
+-   Organizations module: the status of the edit form takes the whole width of its row.
 -   Users module: `BeyUserRow` carries `organizationId` and `organizationName` when the server answers them to a
     superadmin, both `null` on the row of a superadmin.
 -   Users module: the `users.superadmin-only` text speaks only of changing a superadmin account, since nobody grants

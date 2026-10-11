@@ -27,6 +27,9 @@
                 "too-large": "El archivo supera el tamaño máximo de {{maxSize}}",
                 "unsupported-type": "Tipo de archivo no admitido. Permitidos: {{accept}}"
             },
+            "list-field": {
+                "remove": "Quitar {{label}}"
+            },
             "modal": {
                 "close-confirmation": {
                     "message": "Hay cambios sin guardar en el formulario. ¿Seguro que desea cerrarlo?",

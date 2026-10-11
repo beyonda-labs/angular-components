@@ -9,7 +9,7 @@ import { FakeToastService } from '@testing/services/fake-toast.service';
 
 import { SessionUser } from '../../../services/session/models/session.model';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
-import { FormCheckboxGroupField } from '../../form/models/fields/form-checkbox-group-field.model';
+import { FormListField } from '../../form/models/fields/form-list-field.model';
 import { FormHandle } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
 import { GroupsComponent } from './groups.component';
@@ -99,18 +99,6 @@ describe('GroupsComponent', () => {
             extraRoles: [{ id: 'r1', name: 'Reviewers' }],
             members: [{ email: 'ada@example.test', id: 'u1', name: 'Ada Lovelace' }]
         });
-        httpTesting.expectOne(`${GROUPS_URL}/g1/member-options`).flush({
-            users: [
-                { email: 'ada@example.test', id: 'u1', name: 'Ada Lovelace' },
-                { email: 'grace@example.test', id: 'u2', name: 'Grace Hopper' }
-            ]
-        });
-        httpTesting.expectOne(`${GROUPS_URL}/g1/role-options`).flush({
-            extraRoles: [
-                { id: 'r1', name: 'Reviewers' },
-                { id: 'r2', name: 'Writers' }
-            ]
-        });
         await settle(fixture);
     }
 
@@ -187,10 +175,10 @@ describe('GroupsComponent', () => {
 
         expect(form?.title).toBe(`${PREFIX}.form.edit.title`);
         expect(fieldsOf(form).map(({ key }) => key)).toEqual(['name', 'userIds', 'extraRoleIds']);
-        expect((fieldsOf(form)[1] as FormCheckboxGroupField).options).toEqual([
-            { label: 'Ada Lovelace (ada@example.test)', value: 'u1' },
-            { label: 'Grace Hopper (grace@example.test)', value: 'u2' }
+        expect((fieldsOf(form)[1] as FormListField).options).toEqual([
+            { label: 'Ada Lovelace (ada@example.test)', value: 'u1' }
         ]);
+        expect((fieldsOf(form)[2] as FormListField).options).toEqual([{ label: 'Reviewers', value: 'r1' }]);
         expect(form?.initialValue).toEqual({ main: { extraRoleIds: ['r1'], name: 'Sales', userIds: ['u1'] } });
         expect(request.request.method).toBe('PUT');
         expect(request.request.body).toEqual({ extraRoleIds: ['r2'], name: 'Sales team', userIds: ['u2'] });
@@ -220,7 +208,7 @@ describe('GroupsComponent', () => {
         modalForms
             .forms()
             .at(-1)
-            ?.onSubmit?.({ main: { name: 'Support', userIds: [] } }, buildHandle());
+            ?.onSubmit?.({ main: { extraRoleIds: [], name: 'Support', userIds: [] } }, buildHandle());
         httpTesting
             .expectOne(`${GROUPS_URL}/g1`)
             .flush(
@@ -277,7 +265,7 @@ describe('GroupsComponent', () => {
         modalForms
             .forms()
             .at(-1)
-            ?.onSubmit?.({ main: { name: 'Sales', userIds: ['u9'] } }, buildHandle());
+            ?.onSubmit?.({ main: { extraRoleIds: [], name: 'Sales', userIds: ['u9'] } }, buildHandle());
         httpTesting
             .expectOne(current => current.url === `${GROUPS_URL}/g1` && current.method === 'PUT')
             .flush(

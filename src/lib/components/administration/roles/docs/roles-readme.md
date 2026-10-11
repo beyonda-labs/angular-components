@@ -100,8 +100,7 @@ The checklist is a [`BeyFormCheckboxSectionsField`](../../../form/docs/form-fiel
 label `form.permissions.label` ("Permissions:"): a foldable section per `group` of the answer, the resource the
 permission belongs to, with the permissions of each group, both ordered as [Order](#order) says. Each section shows its icon, its label, how many of its permissions are checked ("3/6") and "Select all", which
 turns into "Clear all" once they all are; its body is a grid of checkboxes, each with its label and, under it, its
-description. The sections start folded, except those holding a permission of the role, so an edit opens on what the
-role gives. A permission the role holds that the answer leaves out, such as one the editor does not hold, is offered
+description. Every section starts folded; its counter tells how many permissions of the role it holds. A permission the role holds that the answer leaves out, such as one the editor does not hold, is offered
 too in the section of its prefix, so it can be unchecked; the read-only view of a base role shows that way the
 permissions of the base role nobody can put in an extra role.
 

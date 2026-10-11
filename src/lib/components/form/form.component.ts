@@ -21,7 +21,7 @@ import { FormSectionComponent } from './components/section/section.component';
 import { resolveRule } from './functions/form-rule-resolution';
 import { FormAutocompleteField } from './models/fields/form-autocomplete-field.model';
 import { FormButton, FormButtonType, FormConfig, FormHandle, FormSection } from './models/form.model';
-import { FormField, FormFieldOption, FormFieldType, FormValue } from './models/form-field.model';
+import { FormField, FormFieldOption, FormFieldType, FormRule, FormValue } from './models/form-field.model';
 import { FORM_HOST } from './models/form-host.model';
 import { FormService } from './services/form.service';
 
@@ -39,6 +39,7 @@ const OPTION_FIELD_TYPES: ReadonlySet<FormFieldType> = new Set([
 let noteCount = 0;
 
 export interface FormFieldState {
+    excludedValues: string[];
     isDisabled: boolean;
     isHidden: boolean;
     isRequired: boolean;
@@ -118,14 +119,14 @@ export class FormComponent<TValue = unknown> {
         for (const section of this.config().sections) {
             for (const field of fieldsOf(section)) {
                 const control = formGroup.get([section.key, field.key]);
-                const options = 'options' in field ? (field as { options: unknown }).options : [];
 
                 states.set(fieldStateKey(section.key, field.key), {
+                    excludedValues: resolveRule(ruleOf<string>(field, 'excludedValues'), value),
                     isDisabled: resolveRule(field.isDisabled, value),
                     isHidden: resolveRule(field.isHidden, value),
                     isRequired: resolveRule(field.isRequired, value),
                     isValid: control?.valid ?? true,
-                    options: resolveRule(options as FormFieldOption[], value)
+                    options: resolveRule(ruleOf<FormFieldOption>(field, 'options'), value)
                 });
             }
         }
@@ -395,6 +396,10 @@ function noop(): void {}
 
 function readState(formGroup: FormGroup): FormState {
     return { isDirty: formGroup.dirty, isValid: formGroup.valid, value: formGroup.getRawValue() as FormValue };
+}
+
+function ruleOf<T>(field: FormField, key: 'excludedValues' | 'options'): FormRule<T[]> {
+    return (field as Partial<Record<typeof key, FormRule<T[]>>>)[key] ?? [];
 }
 
 function syncDisabled(control: AbstractControl, state: FormFieldState): void {

@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs';
+
 import { PageOrganization, PageOrganizationItem } from '../../../page/models/page-organization.model';
 
 export interface GroupDetail extends GroupRow {
@@ -6,10 +8,9 @@ export interface GroupDetail extends GroupRow {
 }
 
 export interface GroupEditFields {
+    extraRoleIds: string[];
     name: string;
     userIds: string[];
-
-    extraRoleIds?: string[];
 }
 
 export interface GroupEditFormValue {
@@ -18,9 +19,9 @@ export interface GroupEditFormValue {
 
 export interface GroupEditOptions {
     detail: GroupDetail;
-    memberOptions: GroupMember[];
     prefix: string;
-    roleOptions: GroupExtraRole[];
+    searchExtraRoles: (search: string, limit: number) => Observable<GroupExtraRole[]>;
+    searchMembers: (search: string, limit: number) => Observable<GroupMember[]>;
 }
 
 export interface GroupExtraRole {
@@ -112,3 +113,7 @@ export const GROUPS_FORM_SECTION = 'main';
 export const GROUPS_MEMBER_OPTIONS_PATH = '/member-options';
 
 export const GROUPS_ROLE_OPTIONS_PATH = '/role-options';
+
+export const GROUPS_SEARCH_LIMIT = 20;
+
+export const GROUPS_SEARCH_MAX_LIMIT = 50;

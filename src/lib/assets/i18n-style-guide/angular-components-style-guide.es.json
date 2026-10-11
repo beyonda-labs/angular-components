@@ -437,6 +437,24 @@
                 },
                 "tooltip": "Campos de contraseña con validador de longitud, política, toggle, obligatorio y deshabilitado"
             },
+            "section-picked-list": {
+                "label": "Listas elegidas",
+                "people": {
+                    "empty": "Este grupo aún no tiene miembros.",
+                    "label": "Miembros",
+                    "placeholder": "Busca a una persona por nombre o correo"
+                },
+                "read-only-people": {
+                    "empty": "Este grupo aún no tiene miembros.",
+                    "label": "Miembros de solo lectura"
+                },
+                "roles": {
+                    "empty": "Este grupo aún no tiene roles.",
+                    "label": "Roles",
+                    "placeholder": "Elige un rol"
+                },
+                "tooltip": "Una lista de ids con filas que se quitan, alimentada por una búsqueda encima: en el servidor, con espera, o en sus propias opciones"
+            },
             "section-radio": {
                 "label": "Campos de radio",
                 "radio1": {

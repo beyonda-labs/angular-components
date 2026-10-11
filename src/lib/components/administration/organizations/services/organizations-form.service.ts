@@ -41,7 +41,6 @@ export class OrganizationsFormService {
                         new FormRow({
                             fields: [
                                 new FormSelectField({
-                                    columns: 6,
                                     isRequired: true,
                                     key: 'status',
                                     options: Object.values(OrganizationStatus).map(status => ({

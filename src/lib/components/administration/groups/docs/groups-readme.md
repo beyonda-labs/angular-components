@@ -51,7 +51,8 @@ module, as `baseUrl` of [`bey-users`](../../users/docs/users-readme.md) does.
 | List      | `GET {baseUrl}?search=<base64>`                                                            |                                                            |
 | Organizations | `GET {usersUrl}/organizations`, for a superadmin only                                  |                                                            |
 | `create`  | `POST {baseUrl}` `{ name, organizationId? }`                                               | The name, and the organization for a superadmin (required) |
-| `edit`    | `GET {baseUrl}/{id}`, `GET {baseUrl}/{id}/member-options` and `GET {baseUrl}/{id}/role-options`, then `PUT {baseUrl}/{id}` `{ name, userIds, extraRoleIds? }` | The name, the members and the extra roles, filled in with what the group holds |
+| `edit`    | `GET {baseUrl}/{id}`, then `PUT {baseUrl}/{id}` `{ name, userIds, extraRoleIds }`          | The name, the members and the extra roles, filled in with what the group holds |
+| Searches  | `GET {baseUrl}/{id}/member-options?search=<text>&limit=<n>` and `GET {baseUrl}/{id}/role-options?search=<text>&limit=<n>`, while the edit form is open | |
 | `delete`  | `DELETE {baseUrl}` `{ ids }`, after a confirmation                                         | None                                                       |
 
 The name is required, at most 100 characters and sent trimmed; the server keeps it unique within the organization,
@@ -62,21 +63,31 @@ without regard to case, and refuses a taken one with `groups.existing-name`. The
 `delete` asks first with `modal.delete.title` and `.message`, which warns that the members lose the folders shared with
 the groups, and the server drops their memberships with them.
 
-`edit` reads, at once, the group with its members and extra roles, `{ ...row, members: [{ id, name, email }],
-extraRoles: [{ id, name }] }`; the users it may hold, `{ users: [{ id, name, email }] }`, the users of its organization
-by name with the superadmins left out; and the extra roles it may hold, `{ extraRoles: [{ id, name }] }`, those of its
-organization. It then opens one form on the page, "Edit group", with:
+`edit` reads the group with its members and extra roles, `{ ...row, members: [{ id, name, email }], extraRoles:
+[{ id, name }] }`, and opens one form on the page, "Edit group", with:
 
 -   **the name**, filled in with the current one;
--   **"Members"** (`form.main.user-ids`), a checkbox per user, labelled "name (email)", or the email alone when the user
-    has no name, with the members checked; with no user to offer, the form says so under the empty list
-    (`form.main.user-ids.empty`);
--   **"Additional roles"** (`form.main.extra-role-ids`), a checkbox per extra role of the organization, by name, with
-    those the group holds checked; it does not show when the organization has none.
+-   **"Members"** (`form.main.user-ids`), a search above the list of the members, each "name (email)", or the email
+    alone when the user has no name, with a remove button; "This group has no members yet." (`form.main.user-ids.empty`)
+    while it has none;
+-   **"Additional roles"** (`form.main.extra-role-ids`), the same for the extra roles, each by name; "This group has no
+    extra roles yet." (`form.main.extra-role-ids.empty`) while it has none.
 
-A member or an extra role the options do not name is offered too, so it can be unchecked. Saving sends the name, the
-checked users and, when the extra roles show, the checked extra roles, all of them, since the request replaces them;
-then the form closes, confirms with `toast.edit-success` and reloads, so the counts follow. A user of another
+Both are [lists that hold ids](../../../form/docs/form-fields-readme.md#lists-that-hold-ids), so the organization is
+never read whole, however many users it has:
+
+-   **The search** asks the server as soon as it opens, for `''`, and again for the text typed once typing settles:
+    `member-options` answers `{ users: [{ id, name, email }] }`, the users of the organization of the group, by name,
+    with the superadmins left out, matching the email, the name or "name surname"; `role-options` answers
+    `{ extraRoles: [{ id, name }] }`, the extra roles of the organization, matching the name. Both match whatever the
+    case and the accents, so "nora", "nora lec", "nora@" and "INIGO" find who they name.
+-   **The limit.** The server does not leave out who the list holds already, so the form asks for `20` more than the
+    list holds, `50` at most, leaves those out and suggests the first `20` of the rest.
+-   **Picking** a suggestion adds its row and empties the search; the remove button of a row takes it out. Either one
+    changes the form, so it can be saved.
+
+Saving sends the name and every member and extra role of the lists, since the request replaces them; then the form
+closes, confirms with `toast.edit-success` and reloads, so the counts follow. A user of another
 organization, a superadmin or an unknown id is refused with `groups.invalid-members`, and an extra role of another
 organization or an unknown one with `groups.invalid-extra-roles`. What the extra roles of a group give reaches its
 members at the next refresh of their session, within the lifetime of the access token.
@@ -116,5 +127,5 @@ The edit form never offers the organization: groups do not move between organiza
 
 Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `search.fields.<key>`, `form.create.title`,
-`form.edit.title`, `form.main.<field>.label` and `.placeholder`, `form.main.user-ids.empty`, `modal.delete.title` and
-`.message`, and `toast.<key>-success`. The module ships all of them in English and Spanish.
+`form.edit.title`, `form.main.<field>.label` and `.placeholder`, the placeholder of a search, `form.main.user-ids.empty`
+and `form.main.extra-role-ids.empty`, `modal.delete.title` and `.message`, and `toast.<key>-success`. The module ships all of them in English and Spanish.
