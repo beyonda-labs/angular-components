@@ -186,12 +186,32 @@ describe('GroupsComponent — organizations and callers', () => {
             expect(request.request.body).toEqual({ name: 'Support', organizationId: 'o1' });
         });
 
-        it('edits a group without offering to move it to another organization', async () => {
+        it('edits a group showing its organization disabled, and never sends it', async () => {
             await click(buttonByName(fixture, 'Sales'));
             httpTesting.expectOne(`${GROUPS_URL}/g1`).flush({ ...buildGroup(), extraRoles: [], members: [] });
             await settle(fixture);
+            lastForm()?.onSubmit?.(
+                { main: { extraRoleIds: [], name: 'Sales', organizationId: 'o2', userIds: [] } },
+                buildHandle()
+            );
+            const request = httpTesting.expectOne(
+                current => current.url === `${GROUPS_URL}/g1` && current.method === 'PUT'
+            );
+            request.flush(buildGroup());
+            await settle(fixture);
+            answerList();
 
-            expect(fieldsOf(lastForm()).map(field => field.key)).toEqual(['name', 'userIds', 'extraRoleIds']);
+            expect(fieldsOf(lastForm()).map(field => field.key)).toEqual([
+                'name',
+                'organizationId',
+                'userIds',
+                'extraRoleIds'
+            ]);
+            expect(organizationField()).toMatchObject({
+                isDisabled: true,
+                options: [{ label: 'Globex', value: 'o2' }]
+            });
+            expect(request.request.body).toEqual({ extraRoleIds: [], name: 'Sales', userIds: [] });
         });
     });
 
@@ -201,9 +221,15 @@ describe('GroupsComponent — organizations and callers', () => {
             await render([{ id: 'o2', name: 'Globex' }]);
         });
 
-        it('shows no organization column, since there is nothing to tell apart', () => {
-            expect(rowWith('Sales')).toBeTruthy();
-            expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.table.columns.organization`);
+        it('shows the organization column all the same, but no organization filter with nothing to choose', async () => {
+            await click(queryAll<HTMLButtonElement>(fixture, 'bey-search [aria-expanded]')[0]);
+            await click(buttonByName(fixture, 'angular-components.search.add'));
+
+            expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.organization`);
+            expect(rowWith('Sales').textContent).toContain('Globex');
+            expect(queryAll<HTMLOptionElement>(filterSelects()[0], 'option').map(({ value }) => value)).not.toContain(
+                'organizationId'
+            );
         });
 
         it('still asks for the organization when creating, chosen already, and sends it', async () => {

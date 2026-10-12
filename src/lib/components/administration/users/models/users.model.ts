@@ -1,4 +1,5 @@
 import { BadgeVariant } from '../../../badge/models/badge.model';
+import { FormSelectField } from '../../../form/models/fields/form-select-field.model';
 import { FormRow } from '../../../form/models/form.model';
 import { FormFieldOption } from '../../../form/models/form-field.model';
 import { PageOrganization, PageOrganizationItem } from '../../../page/models/page-organization.model';
@@ -71,6 +72,7 @@ export interface UserRow extends PageOrganizationItem {
 
 export interface UserSectionOptions {
     extraRolesRows: FormRow[];
+    organizationField: FormSelectField | null;
     organizationOptions: FormFieldOption[] | null;
     prefix: string;
     roleOptions: FormFieldOption[];

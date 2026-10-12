@@ -252,8 +252,44 @@
                     },
                     "placeholder": "Disabled typeahead"
                 },
+                "autocomplete4": {
+                    "label": "Typeahead with many options",
+                    "options": {
+                        "option1": "Item 1",
+                        "option10": "Item 10",
+                        "option11": "Item 11",
+                        "option12": "Item 12",
+                        "option13": "Item 13",
+                        "option14": "Item 14",
+                        "option15": "Item 15",
+                        "option16": "Item 16",
+                        "option17": "Item 17",
+                        "option18": "Item 18",
+                        "option19": "Item 19",
+                        "option2": "Item 2",
+                        "option20": "Item 20",
+                        "option21": "Item 21",
+                        "option22": "Item 22",
+                        "option23": "Item 23",
+                        "option24": "Item 24",
+                        "option25": "Item 25",
+                        "option26": "Item 26",
+                        "option27": "Item 27",
+                        "option28": "Item 28",
+                        "option29": "Item 29",
+                        "option3": "Item 3",
+                        "option30": "Item 30",
+                        "option4": "Item 4",
+                        "option5": "Item 5",
+                        "option6": "Item 6",
+                        "option7": "Item 7",
+                        "option8": "Item 8",
+                        "option9": "Item 9"
+                    },
+                    "placeholder": "Search among thirty options"
+                },
                 "label": "Searchable fields",
-                "tooltip": "Typeahead variants with basic, required and disabled behaviour"
+                "tooltip": "Typeahead variants with basic, required and disabled behaviour, and one with thirty options to scroll"
             },
             "section-checkbox": {
                 "checkbox1": {
@@ -981,7 +1017,7 @@
         },
         "properties-menu-section": "Properties Menu",
         "roles": {
-            "example": "The roles and permissions page of a manager or the superadmin: the base roles of the application with their permissions to see, and the additional roles of the organization to create, edit and delete, their permissions chosen in foldable sections by resource, each permission with its description, as far as the backend allows each row. The demo backend serves no roles, so the list stays empty."
+            "example": "The roles and permissions page of a manager or the superadmin: the base roles of the application with their permissions to see, and the additional roles of the organization to create, edit, duplicate and delete, their permissions chosen in foldable sections by resource, each permission with its description, as far as the backend allows each row; a base role can be duplicated too, as the start of a new additional role. The demo backend serves no roles, so the list stays empty."
         },
         "search": {
             "applied": "Applied filters",

@@ -46,8 +46,8 @@
     --bey-text-muted: var(--bey-gray-500);
     --bey-text-disabled: var(--bey-gray-400);
     --bey-text-inverse: var(--bey-white);
-    --bey-text-link: var(--bey-blue);
-    --bey-text-link-hover: color-mix(in srgb, var(--bey-blue) 75%, var(--bey-black));
+    --bey-text-link: var(--bey-primary);
+    --bey-text-link-hover: color-mix(in srgb, var(--bey-primary) 75%, var(--bey-bg-page));
 
     /* Borders */
     --bey-border-subtle: var(--bey-gray-200);
@@ -170,8 +170,8 @@ body.dark {
     --bey-text-muted: var(--bey-gray-500);
     --bey-text-disabled: var(--bey-gray-600);
     --bey-text-inverse: var(--bey-gray-900);
-    --bey-text-link: var(--bey-blue);
-    --bey-text-link-hover: color-mix(in srgb, var(--bey-blue) 75%, var(--bey-white));
+    --bey-text-link: var(--bey-primary);
+    --bey-text-link-hover: color-mix(in srgb, var(--bey-primary) 75%, var(--bey-bg-page));
 
     /* Borders */
     --bey-border-subtle: var(--bey-gray-800);

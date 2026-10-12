@@ -28,10 +28,21 @@
                     "label": "Eliminar",
                     "tooltip": "Elimina los roles seleccionados"
                 },
+                "duplicate": {
+                    "label": "Duplicar",
+                    "tooltip": "Crea un rol a partir del seleccionado, con su descripción y sus permisos"
+                },
                 "edit": {
                     "label": "Editar",
                     "tooltip": "Edita el rol seleccionado"
                 }
+            },
+            "duplicate": {
+                "buttons": {
+                    "submit": "Duplicar"
+                },
+                "copy-suffix": "(copia)",
+                "title": "Duplicar rol"
             },
             "form": {
                 "create": {
@@ -132,6 +143,7 @@
             "toast": {
                 "create-success": "Rol creado",
                 "delete-success": "Roles eliminados",
+                "duplicate-success": "Rol duplicado",
                 "edit-success": "Rol guardado"
             },
             "type": {

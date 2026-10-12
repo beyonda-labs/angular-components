@@ -293,6 +293,87 @@ describe('RolesComponent', () => {
         expect(TestBed.inject(FakeModalService).confirmations()).toHaveLength(1);
     });
 
+    it.each([
+        ['an extra role', buildRole({ actions: ['edit', 'duplicate', 'delete'] }), 'Reviewers'],
+        ['a base role', buildBase({ actions: ['duplicate'] }), 'normaluser']
+    ])('offers to duplicate %s whose actions list it', async (_, role, name) => {
+        await render([role]);
+
+        await useMenuAction(name, 'duplicate');
+
+        expect(modalForms.forms().at(-1)?.title).toBe(`${PREFIX}.duplicate.title`);
+    });
+
+    it('does not offer to duplicate a role whose actions leave it out', async () => {
+        await render([buildRole({ actions: ['delete'] })]);
+
+        await click(rowWith('Reviewers'));
+        await click(buttonByName(fixture, 'angular-components.header.menu'));
+
+        expect(queryButton(fixture, `${PREFIX}.actions.delete.label`)).not.toBeNull();
+        expect(queryButton(fixture, `${PREFIX}.actions.duplicate.label`)).toBeNull();
+    });
+
+    it('duplicates a role in the create form filled in with it, then creates the copy and reloads', async () => {
+        TestBed.inject(TranslateService).setTranslation(
+            'en',
+            { 'angular-components': { roles: { duplicate: { 'copy-suffix': '(copy)' } } } },
+            true
+        );
+        await render([buildBase(), buildRole({ actions: ['edit', 'duplicate', 'delete'] })]);
+        const handle = buildHandle();
+
+        await useMenuAction('Reviewers', 'duplicate');
+        const form = modalForms.forms().at(-1);
+        form?.onSubmit?.(
+            {
+                main: { description: 'Review', name: ' Reviewers (copy) ' },
+                permissions: { permissions: ['templates.edit'] }
+            },
+            handle
+        );
+        const request = httpTesting.expectOne(current => current.url === ROLES_URL && current.method === 'POST');
+        request.flush(buildRole({ id: 'r2', name: 'Reviewers (copy)' }));
+        await settle(fixture);
+        reload().flush({ globalActions: [], results: [] });
+
+        expect(fieldsOf(form, 'main').map(({ key }) => key)).toEqual(['name', 'description']);
+        expect(form?.initialValue).toEqual({
+            main: { description: 'Review the templates', name: 'Reviewers (copy)' },
+            permissions: { permissions: ['templates.edit', 'templates.publish'] }
+        });
+        expect(request.request.body).toEqual({
+            name: 'Reviewers (copy)',
+            description: 'Review',
+            permissions: ['templates.edit']
+        });
+        expect(handle.close).toHaveBeenCalled();
+        expect(TestBed.inject(FakeToastService).successes()).toEqual([
+            { message: `${PREFIX}.toast.duplicate-success` }
+        ]);
+    });
+
+    it('keeps the duplicate form open, with the reason of the server, when the name is taken', async () => {
+        await render([buildRole({ actions: ['duplicate'] })]);
+        const handle = buildHandle();
+
+        await useMenuAction('Reviewers', 'duplicate');
+        modalForms
+            .forms()
+            .at(-1)
+            ?.onSubmit?.({ main: { name: 'Reviewers' }, permissions: { permissions: ['templates.edit'] } }, handle);
+        httpTesting
+            .expectOne(current => current.url === ROLES_URL && current.method === 'POST')
+            .flush({ errorCode: 'error', messageKey: 'roles.existing-name' }, { status: 409, statusText: '' });
+        await settle(fixture);
+
+        expect(handle.close).not.toHaveBeenCalled();
+        expect(TestBed.inject(FakeModalService).errors()).toEqual([
+            expect.objectContaining({ message: 'angular-components.http.error.roles.existing-name' })
+        ]);
+        expect(TestBed.inject(FakeToastService).successes()).toEqual([]);
+    });
+
     it('offers nothing to change on a base role, as the backend lists no action for it', async () => {
         await render();
 

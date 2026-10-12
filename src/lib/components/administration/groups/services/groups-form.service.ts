@@ -11,6 +11,7 @@ import { FormFieldOption } from '../../../form/models/form-field.model';
 import { FormFieldLengthValidator, FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
 import { PageFormConfig } from '../../../page/models/page-form.model';
 import { PageOrganization } from '../../../page/models/page-organization.model';
+import { buildDisabledOrganizationField } from '../../functions/organization-fields';
 import {
     GROUP_NAME_MAX_LENGTH,
     GroupEditFormValue,
@@ -36,17 +37,21 @@ const SUBMIT_LABEL_KEY = 'angular-components.page.form.submit';
 export class GroupsFormService {
     buildEditFormConfig({
         detail,
+        isOrganizationShown,
         prefix,
         searchExtraRoles,
         searchMembers
     }: GroupEditOptions): ModalFormConfig<GroupEditFormValue> {
+        const organizationField = isOrganizationShown ? buildDisabledOrganizationField(detail) : null;
+
         return new ModalFormConfig<GroupEditFormValue>({
             cancelLabel: CANCEL_LABEL_KEY,
             initialValue: {
                 [GROUPS_FORM_SECTION]: {
                     extraRoleIds: detail.extraRoles.map(({ id }) => id),
                     name: detail.name,
-                    userIds: detail.members.map(({ id }) => id)
+                    userIds: detail.members.map(({ id }) => id),
+                    ...(organizationField && detail.organizationId ? { organizationId: detail.organizationId } : {})
                 }
             },
             prefix: `${prefix}.form`,
@@ -56,6 +61,7 @@ export class GroupsFormService {
                     key: GROUPS_FORM_SECTION,
                     rows: [
                         new FormRow({ fields: [buildNameField()] }),
+                        ...(organizationField ? [new FormRow({ fields: [organizationField] })] : []),
                         new FormRow({
                             fields: [
                                 new FormListField({

@@ -198,8 +198,27 @@ describe('UsersFormService', () => {
             expect(form.toFormValue()).toBeUndefined();
         });
 
-        it('never asks for the organization of a user it edits, since users do not move', () => {
-            expect(fieldsFor(user).map(field => field.key)).not.toContain('organizationId');
+        it('shows the organization of a user it edits disabled next to the status, and never sends it', () => {
+            const row: UserRow = {
+                ...user,
+                editableFields: [UserEditableField.Name, UserEditableField.Roles, UserEditableField.Status],
+                organizationId: 'o2',
+                organizationName: 'Globex'
+            };
+            const fields = fieldsFor(row);
+            const value = form.toFormValue(row);
+
+            expect(fields.map(({ columns, isDisabled, key }) => [key, columns, isDisabled])).toEqual([
+                ['email', 12, false],
+                ['name', 6, false],
+                ['surname', 6, true],
+                ['status', 6, false],
+                ['organizationId', 6, true],
+                ['roles', 12, false]
+            ]);
+            expect((fields[4] as FormSelectField).options).toEqual([{ label: 'Globex', value: 'o2' }]);
+            expect(value?.main.organizationId).toBe('o2');
+            expect(form.toItem(value as UserFormValue, row)).not.toHaveProperty('organizationId');
         });
 
         it('sends the organization chosen', () => {

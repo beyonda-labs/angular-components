@@ -55,7 +55,14 @@ describe('AdministrationStyleGuideComponent', () => {
             .flush({
                 globalActions: [],
                 results: [
-                    { actions: [], id: 'auditor', isBase: true, memberCount: 1, name: 'auditor', permissions: [] }
+                    {
+                        actions: ['duplicate'],
+                        id: 'auditor',
+                        isBase: true,
+                        memberCount: 1,
+                        name: 'auditor',
+                        permissions: []
+                    }
                 ]
             });
         httpTesting

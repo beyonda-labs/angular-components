@@ -34,7 +34,14 @@ describe('RolesStyleGuideComponent', () => {
             .flush({
                 globalActions: [],
                 results: [
-                    { actions: [], id: 'normaluser', isBase: true, memberCount: 3, name: 'normaluser', permissions: [] }
+                    {
+                        actions: ['duplicate'],
+                        id: 'normaluser',
+                        isBase: true,
+                        memberCount: 3,
+                        name: 'normaluser',
+                        permissions: []
+                    }
                 ]
             });
         await settle(fixture);

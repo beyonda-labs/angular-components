@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, untracked } from '@angular/core';
 
-import { hasOrganizationChoice } from '../../page/functions/page-organization-filter';
 import { PageHandle } from '../../page/models/page.model';
 import { PageComponent } from '../../page/page.component';
 import { UserOrganizationsService } from '../services/user-organizations.service';
@@ -37,8 +36,6 @@ export class GroupsComponent {
             return null;
         }
 
-        const isOrganizationShown = isSuperadmin && hasOrganizationChoice(organizations);
-
         return buildGroupsPageConfig({
             config,
             formConfig: this.groupsFormService.buildFormConfig({
@@ -46,13 +43,13 @@ export class GroupsComponent {
                 organizations,
                 prefix
             }),
-            isOrganizationShown,
+            isOrganizationShown: isSuperadmin,
             loadRow: group =>
                 this.groupsTableService.loadRow(group, {
-                    isOrganizationShown,
-                    onEdit: edited => this.groupsActionsService.edit(config, edited, this.page)
+                    isOrganizationShown: isSuperadmin,
+                    onEdit: edited => this.groupsActionsService.edit(config, edited, isSuperadmin, this.page)
                 }),
-            onEdit: group => this.groupsActionsService.edit(config, group, this.page),
+            onEdit: group => this.groupsActionsService.edit(config, group, isSuperadmin, this.page),
             onReady: handle => (this.page = handle),
             organizations
         });

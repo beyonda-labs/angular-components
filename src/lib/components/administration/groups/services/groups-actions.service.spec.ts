@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 
 import { ModalFormConfig } from '../../../form/components/modal/models/modal-form.model';
 import { FormListField } from '../../../form/models/fields/form-list-field.model';
+import { FormField } from '../../../form/models/form-field.model';
 import { PageHandle } from '../../../page/models/page.model';
 import { PageViewMode } from '../../../page/models/page-categories.model';
 import { GroupEditFormValue, GroupRow, GroupsConfig } from '../models/groups.model';
@@ -39,12 +40,14 @@ describe('GroupsActionsService', () => {
         httpTesting.expectOne(GROUP_URL).flush({ ...group, extraRoles: [reviewers], members: [ada] });
     }
 
-    function listField(key: string): FormListField {
-        const field = opened[0].config.sections
+    function fieldOf(key: string): FormField | undefined {
+        return opened[0].config.sections
             .flatMap(section => section.rows.flatMap(row => row.fields))
             .find(current => current.key === key);
+    }
 
-        return field as FormListField;
+    function listField(key: string): FormListField {
+        return fieldOf(key) as FormListField;
     }
 
     beforeEach(() => {
@@ -74,6 +77,7 @@ describe('GroupsActionsService', () => {
         TestBed.inject(GroupsActionsService).edit(
             new GroupsConfig({ baseUrl: '/teams', prefix: 'demo.teams' }),
             group,
+            false,
             page
         );
 
@@ -92,8 +96,26 @@ describe('GroupsActionsService', () => {
         expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: 'demo.teams.toast.edit-success' }]);
     });
 
+    it('shows a superadmin the organization of the group, disabled, and never sends it', () => {
+        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, true, page);
+        httpTesting.expectOne(GROUP_URL).flush({
+            ...group,
+            extraRoles: [],
+            members: [],
+            organizationId: 'o2',
+            organizationName: 'Globex'
+        });
+        opened[0].submit({ main: { extraRoleIds: [], name: 'Sales', organizationId: 'o2', userIds: [] } }).subscribe();
+        const request = httpTesting.expectOne(GROUP_URL);
+        request.flush(group);
+
+        expect(opened[0].config.initialValue?.main.organizationId).toBe('o2');
+        expect(fieldOf('organizationId')).toMatchObject({ isDisabled: true });
+        expect(request.request.body).toEqual({ extraRoleIds: [], name: 'Sales', userIds: [] });
+    });
+
     it('searches the users of the organization for the members, asking for 20 more than those chosen', () => {
-        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, page);
+        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, false, page);
         answerGroup();
         const answers: unknown[] = [];
 
@@ -111,7 +133,7 @@ describe('GroupsActionsService', () => {
 
     it('searches the extra roles of the organization by name, and leaves out those chosen', () => {
         const writers = { id: 'r2', name: 'Writers' };
-        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, page);
+        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, false, page);
         answerGroup();
         const answers: unknown[] = [];
 
@@ -126,7 +148,7 @@ describe('GroupsActionsService', () => {
     });
 
     it('opens nothing and shows the reason once when the group cannot be read', () => {
-        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, page);
+        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, false, page);
         httpTesting
             .expectOne(GROUP_URL)
             .flush({ errorCode: 'not-found', messageKey: 'groups.not-found' }, { status: 404, statusText: '' });
@@ -138,7 +160,7 @@ describe('GroupsActionsService', () => {
     });
 
     it('does nothing before the page is ready', () => {
-        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group);
+        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, false);
 
         httpTesting.expectNone(GROUP_URL);
         expect(opened).toEqual([]);

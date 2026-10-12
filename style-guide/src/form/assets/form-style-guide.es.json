@@ -63,8 +63,44 @@
                     },
                     "placeholder": "Typeahead deshabilitado"
                 },
+                "autocomplete4": {
+                    "label": "Typeahead con muchas opciones",
+                    "options": {
+                        "option1": "Elemento 1",
+                        "option10": "Elemento 10",
+                        "option11": "Elemento 11",
+                        "option12": "Elemento 12",
+                        "option13": "Elemento 13",
+                        "option14": "Elemento 14",
+                        "option15": "Elemento 15",
+                        "option16": "Elemento 16",
+                        "option17": "Elemento 17",
+                        "option18": "Elemento 18",
+                        "option19": "Elemento 19",
+                        "option2": "Elemento 2",
+                        "option20": "Elemento 20",
+                        "option21": "Elemento 21",
+                        "option22": "Elemento 22",
+                        "option23": "Elemento 23",
+                        "option24": "Elemento 24",
+                        "option25": "Elemento 25",
+                        "option26": "Elemento 26",
+                        "option27": "Elemento 27",
+                        "option28": "Elemento 28",
+                        "option29": "Elemento 29",
+                        "option3": "Elemento 3",
+                        "option30": "Elemento 30",
+                        "option4": "Elemento 4",
+                        "option5": "Elemento 5",
+                        "option6": "Elemento 6",
+                        "option7": "Elemento 7",
+                        "option8": "Elemento 8",
+                        "option9": "Elemento 9"
+                    },
+                    "placeholder": "Busque entre treinta opciones"
+                },
                 "label": "Campos con búsqueda",
-                "tooltip": "Variantes de typeahead con comportamiento básico, obligatorio y deshabilitado"
+                "tooltip": "Variantes de typeahead con comportamiento básico, obligatorio y deshabilitado, y una con treinta opciones para desplazarse"
             },
             "section-checkbox": {
                 "checkbox1": {
