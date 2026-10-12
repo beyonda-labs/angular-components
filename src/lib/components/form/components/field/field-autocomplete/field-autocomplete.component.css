@@ -96,3 +96,17 @@
     margin: 0;
     padding: var(--bey-space-xs) var(--bey-space-sm);
 }
+
+.bey-form-autocomplete-more {
+    background: var(--bey-form-autocomplete-panel-bg);
+    bottom: 0;
+    color: var(--bey-text-muted);
+    font-size: var(--bey-font-size-xs);
+    margin: 0;
+    padding: var(--bey-space-xs) var(--bey-space-sm);
+    position: sticky;
+}
+
+.bey-form-autocomplete-option ~ .bey-form-autocomplete-more {
+    border-top: var(--bey-border-width) solid var(--bey-form-autocomplete-panel-border);
+}

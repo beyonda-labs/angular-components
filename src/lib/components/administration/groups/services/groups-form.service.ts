@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 
 import { ModalFormConfig, ModalFormSize } from '../../../form/components/modal/models/modal-form.model';
+import { FormAutocompleteSearchResult } from '../../../form/models/fields/form-autocomplete-field.model';
 import { FormListField } from '../../../form/models/fields/form-list-field.model';
 import { FormSelectField } from '../../../form/models/fields/form-select-field.model';
 import { FormTextField } from '../../../form/models/fields/form-text-field.model';
@@ -144,17 +145,19 @@ function searchUnchosen<T extends { id: string }>(
     text: string,
     chosenIds: string[],
     toOption: (item: T) => FormFieldOption
-): Observable<FormFieldOption[]> {
+): Observable<FormAutocompleteSearchResult> {
     const chosen = new Set(chosenIds);
     const limit = Math.min(GROUPS_SEARCH_MAX_LIMIT, GROUPS_SEARCH_LIMIT + chosen.size);
 
     return search(text, limit).pipe(
-        map(items =>
-            items
-                .filter(({ id }) => !chosen.has(id))
-                .slice(0, GROUPS_SEARCH_LIMIT)
-                .map(toOption)
-        )
+        map(items => {
+            const unchosen = items.filter(({ id }) => !chosen.has(id));
+
+            return {
+                hasMore: items.length >= limit || unchosen.length > GROUPS_SEARCH_LIMIT,
+                options: unchosen.slice(0, GROUPS_SEARCH_LIMIT).map(toOption)
+            };
+        })
     );
 }
 

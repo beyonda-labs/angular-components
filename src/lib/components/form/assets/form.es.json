@@ -4,6 +4,7 @@
             "autocomplete-field": {
                 "clear": "Vaciar",
                 "empty": "No se han encontrado opciones",
+                "more": "Hay más coincidencias: escribe más para afinar.",
                 "toggle": "Mostrar opciones"
             },
             "cancel": {

@@ -15,9 +15,12 @@ import { FormControl } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { catchError, Observable, of, Subject, switchMap, timer } from 'rxjs';
+import { catchError, map, Observable, of, Subject, switchMap, timer } from 'rxjs';
 
-import { FormAutocompleteField } from '../../../models/fields/form-autocomplete-field.model';
+import {
+    FormAutocompleteField,
+    FormAutocompleteSearchResult
+} from '../../../models/fields/form-autocomplete-field.model';
 import { FormFieldOption } from '../../../models/form-field.model';
 import { trackControl } from '../functions/control-state';
 import { matchesOptionText } from '../functions/option-match';
@@ -55,7 +58,7 @@ export class FormAutocompleteFieldComponent {
     readonly activeIndex = signal(-1);
     readonly availableOptions = computed(() => {
         const excluded = new Set(this.excludedValues());
-        const options = this.field().search ? (this.searchedOptions() ?? []) : this.options();
+        const options = this.field().search ? (this.searchResult()?.options ?? []) : this.options();
 
         return options.filter(option => !excluded.has(option.value));
     });
@@ -75,6 +78,7 @@ export class FormAutocompleteFieldComponent {
             filter ? filter(option, text) : matchesOptionText(this.optionLabel(option), text)
         );
     });
+    readonly hasMore = computed(() => this.searchResult()?.hasMore ?? false);
     readonly hasTyped = signal(false);
     readonly isOpen = signal(false);
     readonly isPanelVisible = computed(() => {
@@ -84,13 +88,10 @@ export class FormAutocompleteFieldComponent {
             return false;
         }
 
-        return (
-            this.filteredOptions().length > 0 || (!isFreeTextAllowed && (!search || this.searchedOptions() !== null))
-        );
+        return this.filteredOptions().length > 0 || (!isFreeTextAllowed && (!search || this.searchResult() !== null));
     });
     readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
     readonly query = signal('');
-    readonly searchedOptions = signal<FormFieldOption[] | null>(null);
     readonly toggleIcon = faChevronDown;
 
     private readonly onAncestorScroll = (event: Event): void => {
@@ -103,6 +104,7 @@ export class FormAutocompleteFieldComponent {
     private readonly pickedOption = signal<FormFieldOption | null>(null);
     private readonly queryInput = viewChild.required<ElementRef<HTMLInputElement>>('queryInput');
     private readonly searchRequests = new Subject<SearchRequest | null>();
+    private readonly searchResult = signal<FormAutocompleteSearchResult | null>(null);
 
     constructor() {
         this.searchRequests
@@ -112,7 +114,7 @@ export class FormAutocompleteFieldComponent {
                 ),
                 takeUntilDestroyed()
             )
-            .subscribe(options => this.searchedOptions.set(options));
+            .subscribe(result => this.searchResult.set(result));
 
         effect(onCleanup => {
             const panel = this.panel()?.nativeElement;
@@ -322,10 +324,15 @@ export class FormAutocompleteFieldComponent {
         this.activeIndex.set(-1);
     }
 
-    private searchOptions(text: string): Observable<FormFieldOption[] | null> {
+    private searchOptions(text: string): Observable<FormAutocompleteSearchResult | null> {
         const { search } = this.field();
 
-        return search ? search(text, this.excludedValues()).pipe(catchError(() => of([]))) : of(null);
+        return search
+            ? search(text, this.excludedValues()).pipe(
+                  map(answer => (Array.isArray(answer) ? { options: answer } : answer)),
+                  catchError(() => of({ options: [] }))
+              )
+            : of(null);
     }
 
     private select(value: string): void {

@@ -7,9 +7,10 @@ import { of } from 'rxjs';
 import formEn from '../../../form/assets/form.en.json';
 import { ModalFormSize } from '../../../form/components/modal/models/modal-form.model';
 import { FormComponent } from '../../../form/form.component';
+import { FormAutocompleteSearchResult } from '../../../form/models/fields/form-autocomplete-field.model';
 import { FormListField } from '../../../form/models/fields/form-list-field.model';
 import { FormSection } from '../../../form/models/form.model';
-import { FormField, FormFieldOption } from '../../../form/models/form-field.model';
+import { FormField } from '../../../form/models/form-field.model';
 import { FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
 import groupsEn from '../assets/groups.en.json';
 import { GroupDetail, GroupEditOptions, GroupMember, GroupsFormOptions } from '../models/groups.model';
@@ -55,12 +56,20 @@ describe('GroupsFormService', () => {
         };
     }
 
-    function search(list: FormField, text: string, chosenIds: string[]): FormFieldOption[] {
-        const answers: FormFieldOption[][] = [];
+    function buildPeople(count: number): GroupMember[] {
+        return Array.from({ length: count }, (_, index) => ({
+            email: `user${index}@example.test`,
+            id: `p${index}`,
+            name: `User ${index}`
+        }));
+    }
 
-        (list as FormListField).picker?.search?.(text, chosenIds).subscribe(options => answers.push(options));
+    function search(list: FormField, text: string, chosenIds: string[]): FormAutocompleteSearchResult {
+        const answers: unknown[] = [];
 
-        return answers[0];
+        (list as FormListField).picker?.search?.(text, chosenIds).subscribe(answer => answers.push(answer));
+
+        return answers[0] as FormAutocompleteSearchResult;
     }
 
     beforeEach(() => {
@@ -146,7 +155,7 @@ describe('GroupsFormService', () => {
         const options = buildEditOptions();
         const [, members] = fieldsOf(service.buildEditFormConfig(options).sections);
 
-        expect(search(members, 'example', ['u1'])).toEqual([{ label: 'grace@example.test', value: 'u2' }]);
+        expect(search(members, 'example', ['u1']).options).toEqual([{ label: 'grace@example.test', value: 'u2' }]);
         expect(options.searchMembers).toHaveBeenCalledWith('example', 21);
     });
 
@@ -154,25 +163,48 @@ describe('GroupsFormService', () => {
         const options = buildEditOptions();
         const extraRoles = fieldsOf(service.buildEditFormConfig(options).sections)[2];
 
-        expect(search(extraRoles, '', [])).toEqual([
-            { label: 'Reviewers', value: 'r1' },
-            { label: 'Writers', value: 'r2' }
-        ]);
+        expect(search(extraRoles, '', [])).toEqual({
+            hasMore: false,
+            options: [
+                { label: 'Reviewers', value: 'r1' },
+                { label: 'Writers', value: 'r2' }
+            ]
+        });
         expect(options.searchExtraRoles).toHaveBeenCalledWith('', 20);
     });
 
     it('asks for at most 50 and offers at most 20, however many are chosen', () => {
-        const people = Array.from({ length: 50 }, (_, index) => ({
-            email: `user${index}@example.test`,
-            id: `p${index}`,
-            name: `User ${index}`
-        }));
-        const options = buildEditOptions({ searchMembers: jest.fn(() => of(people)) });
+        const options = buildEditOptions({ searchMembers: jest.fn(() => of(buildPeople(50))) });
         const [, members] = fieldsOf(service.buildEditFormConfig(options).sections);
         const chosen = Array.from({ length: 40 }, (_, index) => `c${index}`);
 
-        expect(search(members, 'user', chosen)).toHaveLength(20);
+        expect(search(members, 'user', chosen).options).toHaveLength(20);
         expect(options.searchMembers).toHaveBeenCalledWith('user', 50);
+    });
+
+    it('says there are more matches when the server answers as many as it was asked for', () => {
+        const options = buildEditOptions({ searchMembers: jest.fn(() => of(buildPeople(21))) });
+        const [, members] = fieldsOf(service.buildEditFormConfig(options).sections);
+
+        expect(search(members, 'user', ['p0']).hasMore).toBe(true);
+        expect(options.searchMembers).toHaveBeenCalledWith('user', 21);
+    });
+
+    it('says there are more matches when more than 20 are left once those chosen are left out', () => {
+        const options = buildEditOptions({ searchMembers: jest.fn(() => of(buildPeople(22))) });
+        const [, members] = fieldsOf(service.buildEditFormConfig(options).sections);
+
+        const { hasMore, options: suggested } = search(members, 'user', ['c1', 'c2', 'c3']);
+
+        expect(hasMore).toBe(true);
+        expect(suggested).toHaveLength(20);
+        expect(options.searchMembers).toHaveBeenCalledWith('user', 23);
+    });
+
+    it('says nothing more when the server answers fewer than asked for and all of them show', () => {
+        const [, members] = fieldsOf(service.buildEditFormConfig(buildEditOptions()).sections);
+
+        expect(search(members, 'example', ['u1']).hasMore).toBe(false);
     });
 
     it('starts both lists empty, with their empty texts, when the group has neither members nor extra roles', () => {

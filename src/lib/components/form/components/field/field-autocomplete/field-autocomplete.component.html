@@ -62,7 +62,15 @@
                     {{ optionLabel(option) }}
                 </button>
             } @empty {
-                <p class="bey-form-autocomplete-empty">{{ emptyKey() | translate }}</p>
+                @if (!hasMore()) {
+                    <p class="bey-form-autocomplete-empty">{{ emptyKey() | translate }}</p>
+                }
+            }
+
+            @if (hasMore()) {
+                <p class="bey-form-autocomplete-more">
+                    {{ 'angular-components.form.autocomplete-field.more' | translate }}
+                </p>
             }
         </div>
     }

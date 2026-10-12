@@ -229,6 +229,44 @@ describe('FormAutocompleteFieldComponent', () => {
             expect(textsOf(panelOptions())).toEqual(['Ada Lovelace (ada@empresa.com)']);
         });
 
+        it('says at the end of the suggestions that there are more matches when the search answers so', async () => {
+            await renderPicker({ search: () => of({ hasMore: true, options: [PEOPLE[0], PEOPLE[2]] }) });
+
+            await type('empresa');
+
+            expect(textsOf(panelOptions())).toEqual([
+                'Nora Lectora (nora@empresa.com)',
+                'Ada Lovelace (ada@empresa.com)'
+            ]);
+            expect(document.body.querySelector('[role="listbox"]')?.textContent).toContain(
+                'angular-components.form.autocomplete-field.more'
+            );
+        });
+
+        it.each([
+            ['a list of options', of([PEOPLE[0]])],
+            ['no more matches', of({ hasMore: false, options: [PEOPLE[0]] })]
+        ])('says nothing about more matches when the search answers %s', async (_, answer) => {
+            await renderPicker({ search: () => answer });
+
+            await type('nora');
+
+            expect(textsOf(panelOptions())).toEqual(['Nora Lectora (nora@empresa.com)']);
+            expect(document.body.querySelector('[role="listbox"]')?.textContent).not.toContain(
+                'angular-components.form.autocomplete-field.more'
+            );
+        });
+
+        it('says there are more matches instead of none when every option it answers is left out', async () => {
+            await renderPicker({ search: () => of({ hasMore: true, options: [PEOPLE[0]] }) }, ['u1']);
+
+            await type('nora');
+            const panel = document.body.querySelector('[role="listbox"]')?.textContent;
+
+            expect(panel).toContain('angular-components.form.autocomplete-field.more');
+            expect(panel).not.toContain('angular-components.form.autocomplete-field.empty');
+        });
+
         it('says nothing matches when the search fails', async () => {
             await renderPicker({ search: () => throwError(() => new Error('offline')) });
 

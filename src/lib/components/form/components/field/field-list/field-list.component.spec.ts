@@ -174,6 +174,22 @@ describe('FormListFieldComponent', () => {
             expect(search()).toBeNull();
         });
 
+        it('keeps every row of a long list removable, with its search still offered', async () => {
+            const many = Array.from({ length: 12 }, (_, index) => ({
+                label: `Person ${index + 1}`,
+                value: `p${index + 1}`
+            }));
+            await renderValue(
+                {},
+                many.map(({ value }) => value),
+                many
+            );
+
+            expect(rows()).toEqual(many.map(({ label }) => label));
+            expect(queryButton(fixture, 'Remove Person 12')).not.toBeNull();
+            expect(search()).not.toBeNull();
+        });
+
         it('offers no remove button unless the field is removable', async () => {
             await renderValue({ isRemovable: false });
 

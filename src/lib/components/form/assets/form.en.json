@@ -4,6 +4,7 @@
             "autocomplete-field": {
                 "clear": "Clear",
                 "empty": "No options found",
+                "more": "There are more matches: type more to narrow them down.",
                 "toggle": "Show options"
             },
             "cancel": {

@@ -8,7 +8,6 @@ import { Observable } from 'rxjs';
 
 import { ModalFormConfig } from '../../../form/components/modal/models/modal-form.model';
 import { FormListField } from '../../../form/models/fields/form-list-field.model';
-import { FormFieldOption } from '../../../form/models/form-field.model';
 import { PageHandle } from '../../../page/models/page.model';
 import { PageViewMode } from '../../../page/models/page-categories.model';
 import { GroupEditFormValue, GroupRow, GroupsConfig } from '../models/groups.model';
@@ -96,32 +95,34 @@ describe('GroupsActionsService', () => {
     it('searches the users of the organization for the members, asking for 20 more than those chosen', () => {
         TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, page);
         answerGroup();
-        const answers: FormFieldOption[][] = [];
+        const answers: unknown[] = [];
 
         listField('userIds')
             .picker?.search?.('gra', ['u1'])
-            .subscribe(options => answers.push(options));
+            .subscribe(answer => answers.push(answer));
         const request = httpTesting.expectOne(current => current.url === `${GROUP_URL}/member-options`);
         request.flush({ users: [ada, grace] });
 
         expect(request.request.urlWithParams).toBe(`${GROUP_URL}/member-options?search=gra&limit=21`);
-        expect(answers).toEqual([[{ label: 'Grace Hopper (grace@example.test)', value: 'u2' }]]);
+        expect(answers).toEqual([
+            { hasMore: false, options: [{ label: 'Grace Hopper (grace@example.test)', value: 'u2' }] }
+        ]);
     });
 
     it('searches the extra roles of the organization by name, and leaves out those chosen', () => {
         const writers = { id: 'r2', name: 'Writers' };
         TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, page);
         answerGroup();
-        const answers: FormFieldOption[][] = [];
+        const answers: unknown[] = [];
 
         listField('extraRoleIds')
             .picker?.search?.('er', ['r1'])
-            .subscribe(options => answers.push(options));
+            .subscribe(answer => answers.push(answer));
         const request = httpTesting.expectOne(current => current.url === `${GROUP_URL}/role-options`);
         request.flush({ extraRoles: [reviewers, writers] });
 
         expect(request.request.urlWithParams).toBe(`${GROUP_URL}/role-options?search=er&limit=21`);
-        expect(answers).toEqual([[{ label: 'Writers', value: 'r2' }]]);
+        expect(answers).toEqual([{ hasMore: false, options: [{ label: 'Writers', value: 'r2' }] }]);
     });
 
     it('opens nothing and shows the reason once when the group cannot be read', () => {

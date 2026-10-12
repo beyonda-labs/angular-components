@@ -264,7 +264,7 @@
                     "label": "Roles",
                     "placeholder": "Elige un rol"
                 },
-                "tooltip": "Una lista de ids con filas que se quitan, alimentada por una búsqueda encima: en el servidor, con espera, o en sus propias opciones"
+                "tooltip": "Una lista de ids con filas que se quitan, alimentada por una búsqueda encima: en el servidor, con espera y avisando cuando hay más coincidencias de las que muestra, o en sus propias opciones. Pasadas siete filas, la lista se desplaza bajo su búsqueda"
             },
             "section-radio": {
                 "label": "Campos de radio",

@@ -2,6 +2,17 @@ import { Observable } from 'rxjs';
 
 import { FormField, FormFieldBaseParameters, FormFieldOption, FormFieldType, FormRule } from '../form-field.model';
 
+export type FormAutocompleteSearch = (
+    text: string,
+    excludedValues: string[]
+) => Observable<FormAutocompleteSearchResult | FormFieldOption[]>;
+
+export interface FormAutocompleteSearchResult {
+    options: FormFieldOption[];
+
+    hasMore?: boolean;
+}
+
 export class FormAutocompleteField extends FormField {
     excludedValues: FormRule<string[]>;
     isClearedOnSelect: boolean;
@@ -11,7 +22,7 @@ export class FormAutocompleteField extends FormField {
     emptyKey?: string;
     filter?: (option: FormFieldOption, text: string) => boolean;
     onSelect?: (option: FormFieldOption) => void;
-    search?: (text: string, excludedValues: string[]) => Observable<FormFieldOption[]>;
+    search?: FormAutocompleteSearch;
 
     constructor({
         emptyKey,
@@ -45,5 +56,5 @@ export interface FormAutocompleteFieldParameters extends FormFieldBaseParameters
     isFreeTextAllowed?: boolean;
     onSelect?: (option: FormFieldOption) => void;
     options?: FormRule<FormFieldOption[]>;
-    search?: (text: string, excludedValues: string[]) => Observable<FormFieldOption[]>;
+    search?: FormAutocompleteSearch;
 }
