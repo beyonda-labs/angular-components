@@ -9,8 +9,8 @@
 -   Organizations module: the texts of the `organizations.existing-name` and `.not-found` errors.
 -   Groups module: `bey-groups`, the groups of users of an organization over `/groups` on `bey-page`, for its managers
     and the superadmin: create and delete (confirmed) a group, and edit its name, members and extra roles in one form.
--   Groups module: for a superadmin, the organization of the create form (required, chosen already when only one is
-    active), and with two active organizations or more an organization column and filter, from `/users/organizations`.
+-   Groups module: for a superadmin, an organization column, the organization in the create form (required, chosen
+    already when only one is active) and disabled in the edit form, and with two active or more a filter by it.
 -   Groups module: a "Roles" column with the `extraRoleCount` of each group, the extra roles its members all get.
 -   Groups module: the texts of the `groups.existing-name`, `.invalid-members`, `.invalid-extra-roles` and `.not-found`
     errors.
@@ -24,6 +24,8 @@
     `equals`, with those organizations by name.
 -   Users module: the invite form always asks a superadmin for the organization, required and chosen already when only
     one is active; a superadmin belongs to none, so nothing comes from the session.
+-   Users module: the edit form shows a superadmin the organization of the user, disabled, next to the status; it is
+    never sent, since users do not move.
 -   Users module: the texts of the `users.superadmin-role-fixed` error.
 -   HTTP service: the texts of the `entities.owner-required` error, a create with no user to own the row.
 -   Session service: `organizationId` on `BeySessionUser`, read from the token; absent for a superadmin.
@@ -57,9 +59,11 @@
     groups have theirs and any other one `faRectangleList`.
 -   Roles module: the name of a base role opens its permissions read-only, in the same sections disabled; a "Groups"
     column shows the `groupCount` of each role.
--   Roles module: for a superadmin, the organization of the create form and, with two active organizations or more, an
-    organization column and filter; the texts of the `roles.existing-name`, `.invalid-permissions`, `.not-found` and
-    `.base-role` errors.
+-   Roles module: for a superadmin, an organization column, the organization in the create form and, disabled, in the
+    edit form, and with two active organizations or more an organization filter.
+-   Roles module: the texts of the `roles.existing-name`, `.invalid-permissions`, `.not-found` and `.base-role` errors.
+-   Roles module: `duplicate`, for the rows whose `actions` list it, opens the create form filled in with the role,
+    "<name> (copy)" and the permissions the caller can give, and sends it as a `create`.
 -   Roles module: `groupOrder` and `actionOrder` on `BeyRolesConfig` put the groups and actions they list first, in
     their order, the rest in server order; `groupOrder` is empty by default, `actionOrder` lists reading first.
 -   Users module: the invite and edit forms offer the extra roles of the organization of the user as "Additional roles"
@@ -87,7 +91,8 @@
     `PUT {baseUrl}/{id}` only when it changes.
 -   Page module: `toItem` of `BeyPageFormConfig` receives the row an edit started from as its second argument.
 -   Styles: the `--bey-dialog-margin`, `--bey-dialog-max-height` and `--bey-grid-column-min-width` tokens.
--   Styles: the `--bey-text-link` and `--bey-text-link-hover` tokens, the colour of a text button that reads as a link.
+-   Styles: the `--bey-text-link` and `--bey-text-link-hover` tokens, the colour of a text button that reads as a link:
+    the primary colour, mixed on hover with a quarter of the page.
 -   Style guide: "Expand all" and "Collapse all" at the top, and a hash naming a module (`#tabs`, `#administration`)
     that opens its section and scrolls to it, on arrival or when a link changes it.
 
@@ -134,8 +139,11 @@
     when its request fails.
 -   Form module: every option of a `BeyFormCheckboxSectionsField` sits at the top of its grid row, with its description
     right under its label, so a short label no longer opens a gap above the description.
--   Form module: "Select all" and "Clear all" of a `BeyFormCheckboxSectionsField` read as a link, in `--bey-text-link`,
-    with `--bey-form-checkbox-sections-link-hover` and an underline on hover and on keyboard focus.
+-   Form module: "Select all" and "Clear all" of a `BeyFormCheckboxSectionsField` read as a link in the primary colour,
+    `--bey-text-link`, with `--bey-form-checkbox-sections-link-hover` and an underline on hover and on keyboard focus.
+-   Form module: the suggestions of an autocomplete keep their height and its panel scrolls past `13rem`, so ten or more
+    no longer squeeze into it, overlapping and cut.
+-   Page module: the duplicate form takes the proposed copy name as it is; its submit no longer waits for an edit.
 -   Roles module: the permission sections no longer come sorted by group; they follow `groupOrder`, then the server.
 
 ### Removed
