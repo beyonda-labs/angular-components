@@ -42,14 +42,17 @@ Every field extends `BeyFormField` and takes the same base parameters; each type
 | `BeyFormListField`          | none, or `string[]` | `items`, a list of texts or a signal of one; or `options`, `picker`, `isRemovable` (`false`) and `emptyKey` to hold ids, see below |
 
 An option is `{ label, value, badge?, isDisabled? }`; `label` and `badge` are translation keys. When the options
-of a select, a radio or an autocomplete change and no longer list its value, the form clears it. An autocomplete with
+of a select, a radio or an autocomplete change and no longer list its value, the form clears it, and a list that holds
+ids drops the ids they no longer list, unless its picker has a `search` (see
+[Lists that hold ids](#lists-that-hold-ids)). An autocomplete with
 `isFreeTextAllowed` takes what is typed as its value and offers the options as suggestions, so its value need not be
 one of them and the form keeps it; it shows no panel while no option matches.
 
-The list field shows read-only texts, such as everything that uses a record, in a bordered box. It never scrolls on
-its own: it grows with its texts and the form scrolls, so a modal has one scrollbar. A signal lets the texts arrive
-after the form opens. Like the info field, it has no control, unless it holds ids (see
-[Lists that hold ids](#lists-that-hold-ids)). Its empty text is `emptyKey`, or else its placeholder.
+The list field shows read-only texts, such as everything that uses a record, in a bordered box. It grows with its
+rows up to seven and a half of them, `--bey-form-list-max-height`, and scrolls inside the box past that, the half row
+telling there is more; a short list keeps its own height. A signal lets the texts arrive after the form opens. Like
+the info field, it has no control, unless it holds ids (see [Lists that hold ids](#lists-that-hold-ids)). Its empty
+text is `emptyKey`, or else its placeholder.
 
 The date field keeps the value as text in `format` and shows a datepicker in the current language. The
 autocomplete and the variable picker float above their ancestors, so a scrolling modal cannot clip them.
@@ -65,7 +68,7 @@ the spaces collapsed.
 | Parameter           | Default | Meaning                                                                                                  |
 | ------------------- | ------- | -------------------------------------------------------------------------------------------------------- |
 | `filter`            |         | `(option, text) => boolean`, the match instead of the default one; `text` is the typed text, trimmed      |
-| `search`            |         | `(text, excludedValues) => Observable<BeyFormFieldOption[]>`: the suggestions come from it, not `options` |
+| `search`            |         | `(text, excludedValues) => Observable<BeyFormFieldOption[] \| BeyFormAutocompleteSearchResult>`: the suggestions come from it, not `options` |
 | `excludedValues`    | `[]`    | Values never suggested, such as those already chosen; a value or a rule                                  |
 | `onSelect`          |         | Run with the option picked, after the field took it                                                      |
 | `isClearedOnSelect` | `false` | A pick leaves the value and the input empty, so the field only picks; `onSelect` receives the option     |
@@ -76,6 +79,12 @@ the spaces collapsed.
     the panel stays closed; an empty or a failed answer shows `emptyKey`. It receives `excludedValues` so it can ask a
     server for enough rows once those are left out. `options` still names the current value of a field that keeps
     one; a value picked from `search` keeps its label too.
+-   **More matches.** `search` may answer a `BeyFormAutocompleteSearchResult`, `{ options, hasMore? }`, instead of the
+    options alone. With `hasMore`, the panel ends with a muted line, `angular-components.form.autocomplete-field.more`
+    ("There are more matches: type more to narrow them down."), that stays in sight at its bottom while the
+    suggestions scroll; when every option it answered is left out, that line shows instead of `emptyKey`. A search
+    that answers a page of a server sets it when the server filled the page. An array, or `hasMore` false, shows no
+    such line; a field without `search` never shows it.
 -   **`excludedValues`** applies to `options` and to `search` alike.
 
 ## Lists that hold ids
@@ -110,8 +119,12 @@ new BeyFormListField({
     with the label of the row, "Remove Nora Lectora (nora@empresa.com)", that takes its id out of the value.
 -   **A pick and a removal** change the form, so cancel and submit wake up as they would after typing.
 -   **Disabled**, the list shows its rows without the picker and without the remove buttons.
+-   **Options that change.** A list whose picker has no `search` suggests its own `options`; when a rule or a signal
+    changes them, the form drops the ids they no longer list, as a select clears a value its options no longer list.
+    A list with a `search` keeps every id, since its `options` only name the rows.
 -   **The look** is the one of the read-only list: the same bordered box, the rows in its text, so the groups of an
-    organization and the members of a group read alike.
+    organization and the members of a group read alike. Past `--bey-form-list-max-height` the rows scroll inside the
+    box and the picker stays above them, out of the scroll.
 
 ## Checkbox sections
 

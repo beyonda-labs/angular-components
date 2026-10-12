@@ -82,7 +82,9 @@ never read whole, however many users it has:
     `{ extraRoles: [{ id, name }] }`, the extra roles of the organization, matching the name. Both match whatever the
     case and the accents, so "nora", "nora lec", "nora@" and "INIGO" find who they name.
 -   **The limit.** The server does not leave out who the list holds already, so the form asks for `20` more than the
-    list holds, `50` at most, leaves those out and suggests the first `20` of the rest.
+    list holds, `50` at most, leaves those out and suggests the first `20` of the rest. When the server answered as
+    many as asked for, or more than `20` are left, the suggestions end with "There are more matches: type more to
+    narrow them down." (`hasMore` of [the search](../../../form/docs/form-fields-readme.md#searching-and-picking)).
 -   **Picking** a suggestion adds its row and empties the search; the remove button of a row takes it out. Either one
     changes the form, so it can be saved.
 

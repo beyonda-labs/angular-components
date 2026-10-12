@@ -75,6 +75,12 @@
     `excludedValues` (a value or a rule) on `BeyFormAutocompleteField`.
 -   Form module: a `BeyFormListField` with `options` or a `picker` (`BeyFormListPicker`) holds ids: a row per id with
     its label, a search above that adds rows, a remove button per row with `isRemovable`, and `emptyKey`.
+-   Form module: a `BeyFormListField` that holds ids and has no `search` drops the ids its options no longer list once
+    they change, as a select clears a value its options no longer list.
+-   Form module: `search` of `BeyFormAutocompleteField` may answer a `BeyFormAutocompleteSearchResult`,
+    `{ options, hasMore? }`; with `hasMore` the suggestions end with "There are more matches: type more…".
+-   Groups module: the member and extra role searches of the edit form say there are more matches when the server
+    answers as many as asked for, or more than 20 are left once those chosen are left out.
 -   Users module: `editableFields` on `BeyUserRow` (`BeyUserEditableField`); the edit form disables every field the row
     leaves out and sends only those it names.
 -   Users module: the edit form asks for the status, "Active" or "Inactive", sent as `status` with
@@ -90,6 +96,10 @@
 -   Form module: every section of a `BeyFormCheckboxSectionsField` starts folded, also those holding a checked option.
 -   Form module: an autocomplete finds the typed text anywhere in the label whatever its case, accents and spaces, with
     the fold express-components searches with.
+-   Form module: a `BeyFormListField` grows up to seven and a half rows, `--bey-form-list-max-height`, and scrolls
+    inside past them, the search of a list that holds ids staying above the rows.
+-   Users module: "Roles" and "Additional roles" of the invite and edit forms are lists with a search above and a remove
+    button per row instead of checkboxes; "Roles" needs one role at least, and the requests do not change.
 -   Groups module: the edit form reads only `GET {baseUrl}/{id}`; members and extra roles are removable lists with a
     search over `member-options` and `role-options` (`?search=&limit=`), and both always show and are always sent.
 -   Organizations module: the status of the edit form takes the whole width of its row.
