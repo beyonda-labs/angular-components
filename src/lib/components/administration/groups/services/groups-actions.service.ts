@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 
 import { ModalFormService } from '../../../form/components/modal/services/modal-form.service';
 import { PageHandle } from '../../../page/models/page.model';
+import { OrganizationFolder } from '../../models/organization-folders.model';
 import { RoleViewSettings } from '../../models/role-permissions.model';
 import { RoleViewFormService } from '../../services/role-view-form.service';
 import { GroupEditFields, GroupEditFormFields, GroupRow, GroupsConfig, GroupViewRole } from '../models/groups.model';
@@ -21,7 +22,7 @@ export class GroupsActionsService {
         { baseUrl, prefix }: GroupsConfig,
         group: GroupRow,
         isOrganizationShown: boolean,
-        page?: PageHandle<GroupRow>
+        page?: PageHandle<GroupRow, OrganizationFolder>
     ): void {
         if (!page) {
             return;

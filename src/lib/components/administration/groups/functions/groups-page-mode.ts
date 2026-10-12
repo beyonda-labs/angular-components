@@ -1,23 +1,25 @@
 import { PageBackendResponse } from '../../../page/models/page.model';
 import { PageStandardAction } from '../../../page/models/page-action.model';
+import { withoutOrganizationFolders } from '../../functions/organization-folders';
+import { OrganizationFolder } from '../../models/organization-folders.model';
 import { GroupRow, GroupsPageMode } from '../models/groups.model';
 
 export function groupsPageMode(
     current: GroupsPageMode,
-    { globalActions, results }: Pick<PageBackendResponse<GroupRow>, 'globalActions' | 'results'>
+    { globalActions, results }: Pick<PageBackendResponse<GroupRow | OrganizationFolder>, 'globalActions' | 'results'>
 ): GroupsPageMode {
+    const groups = withoutOrganizationFolders(results);
+
     if (
         (globalActions ?? []).includes(PageStandardAction.Create) ||
-        results.some(({ actions }) => actions.some(action => action !== PageStandardAction.View))
+        groups.some(({ actions }) => actions.some(action => action !== PageStandardAction.View))
     ) {
         return GroupsPageMode.Manage;
     }
 
-    if (results.length === 0) {
+    if (groups.length === 0) {
         return current;
     }
 
-    return results.some(({ roleCount }) => roleCount !== undefined)
-        ? GroupsPageMode.ReadWithRoles
-        : GroupsPageMode.Read;
+    return groups.some(({ roleCount }) => roleCount !== undefined) ? GroupsPageMode.ReadWithRoles : GroupsPageMode.Read;
 }

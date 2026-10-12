@@ -1,5 +1,11 @@
 import { PageSearch } from '../models/page-search.model';
 
+export function hasSearchCriteria(search: PageSearch, textField?: string): boolean {
+    const { filters, text } = withSearchText(search, textField);
+
+    return Boolean(text) || filters.length > 0;
+}
+
 export function withSearchText(search: PageSearch, textField?: string): PageSearch {
     if (!textField) {
         return search;

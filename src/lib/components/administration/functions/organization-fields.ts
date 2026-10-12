@@ -1,6 +1,7 @@
 import { FormSelectField } from '../../form/models/fields/form-select-field.model';
-import { FormFieldColumn } from '../../form/models/form-field.model';
+import { FormFieldColumn, FormFieldOption } from '../../form/models/form-field.model';
 import { PAGE_ORGANIZATION_FIELD, PageOrganizationItem } from '../../page/models/page-organization.model';
+import { PageCategoryPathEntry } from '../../page/models/page-state.model';
 
 export function buildDisabledOrganizationField(
     { organizationId, organizationName }: Pick<PageOrganizationItem, 'organizationId' | 'organizationName'>,
@@ -14,4 +15,13 @@ export function buildDisabledOrganizationField(
               options: [{ label: organizationName ?? organizationId, value: organizationId }]
           })
         : null;
+}
+
+export function initialOrganizationId(
+    organizationOptions: FormFieldOption[] | null,
+    folder?: Pick<PageCategoryPathEntry, 'id'>
+): string | undefined {
+    const opened = folder ? organizationOptions?.find(({ value }) => value === String(folder.id)) : undefined;
+
+    return opened?.value ?? (organizationOptions?.length === 1 ? organizationOptions[0].value : undefined);
 }

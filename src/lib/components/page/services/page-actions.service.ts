@@ -40,6 +40,7 @@ export interface PageActionsContext {
     onTrashItemDeleted: () => void;
     selectedItems: () => PageItem[];
 
+    getCurrentCategory?: () => PageCategoryPathEntry | null;
     getSharedRoot?: () => PageCategoryPathEntry | null;
 }
 
@@ -389,7 +390,8 @@ export class PageActionsService {
             return;
         }
 
-        const reference = this.pageFormService.open(formConfig, item, prefix, save);
+        const category = context.getCurrentCategory?.() ?? undefined;
+        const reference = this.pageFormService.open(formConfig, item, prefix, save, category);
 
         context.onFormModalOpened(reference);
     }

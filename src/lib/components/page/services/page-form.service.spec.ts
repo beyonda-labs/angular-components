@@ -77,6 +77,27 @@ describe('PageFormService', () => {
         expect(getOpenedConfig().initialValue).toEqual({ section1: { text1: 'default' } });
     });
 
+    it('builds the form for the category open in the page, and for the root without one', () => {
+        const pageForm = new PageFormConfig<TestFormValue>({
+            buildSections: (_, category) => [
+                new FormSection({ key: category ? `in-${category.id}` : 'root', rows: [] })
+            ],
+            prefix: 'testPage.form',
+            toFormValue: (_, category) => ({ section1: { text1: category?.label ?? '' } })
+        });
+
+        service.open(pageForm, undefined, 'testPage', jest.fn(), { id: 'cat-1', label: 'Clients' });
+        service.open(pageForm, undefined, 'testPage', jest.fn());
+
+        const [inside, root] = modalForm.forms() as ModalFormConfig<TestFormValue>[];
+
+        expect([inside.initialValue, root.initialValue]).toEqual([
+            { section1: { text1: 'Clients' } },
+            { section1: { text1: '' } }
+        ]);
+        expect([inside.sections[0].key, root.sections[0].key]).toEqual(['in-cat-1', 'root']);
+    });
+
     it('forwards every value change of the modal form with its handle', () => {
         const onValueChange = jest.fn();
         const pageForm = buildPageForm();

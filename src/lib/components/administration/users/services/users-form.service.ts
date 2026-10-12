@@ -12,7 +12,7 @@ import { FormFieldEmailValidator } from '../../../form/models/form-field-validat
 import { hasOrganizationChoice } from '../../../page/functions/page-organization-filter';
 import { PageFormConfig } from '../../../page/models/page-form.model';
 import { PageOrganization } from '../../../page/models/page-organization.model';
-import { buildDisabledOrganizationField } from '../../functions/organization-fields';
+import { buildDisabledOrganizationField, initialOrganizationId } from '../../functions/organization-fields';
 import { userRoleLabel } from '../../functions/user-role-labels';
 import {
     USER_STATUS_CHOICES,
@@ -49,7 +49,6 @@ export class UsersFormService {
         roles
     }: UsersFormOptions): PageFormConfig<UserFormValue, UserRow> {
         const organizationOptions = isOrganizationAsked ? toOptions(organizations) : null;
-        const initialOrganizationId = organizationOptions?.length === 1 ? organizationOptions[0].value : undefined;
 
         return new PageFormConfig<UserFormValue, UserRow>({
             buildSections: user => [
@@ -63,14 +62,14 @@ export class UsersFormService {
                 })
             ],
             prefix: `${prefix}.form`,
-            toFormValue: user =>
+            toFormValue: (user, folder) =>
                 user
                     ? toEditValue(
                           user,
                           editChoices(extraRoles, isOrganizationAsked, user).length > 0,
                           isOrganizationAsked
                       )
-                    : toInviteValue(initialOrganizationId),
+                    : toInviteValue(initialOrganizationId(organizationOptions, folder)),
             toItem: (value, user) => toUserRequest(value[USERS_FORM_SECTION], extraRoles, user)
         });
     }

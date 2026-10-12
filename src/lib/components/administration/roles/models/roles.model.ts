@@ -89,6 +89,7 @@ export interface RolesRowOptions {
 export class RolesConfig {
     actionOrder: string[];
     baseUrl: string;
+    foldersHeight: string;
     groupIcons: Record<string, IconDefinition>;
     groupOrder: string[];
     height: string;
@@ -103,6 +104,7 @@ export class RolesConfig {
         baseUrl = '/roles',
         groupIcons = {},
         groupOrder = [],
+        foldersHeight = 'calc(100vh - 255px)',
         height = 'calc(100vh - 220px)',
         permissionPrefix = ROLES_LIBRARY_PERMISSION_PREFIX,
         prefix = ROLES_DEFAULT_PREFIX,
@@ -114,6 +116,7 @@ export class RolesConfig {
         this.baseUrl = baseUrl;
         this.groupIcons = groupIcons;
         this.groupOrder = groupOrder;
+        this.foldersHeight = foldersHeight;
         this.height = height;
         this.permissionPrefix = permissionPrefix;
         this.prefix = prefix;
@@ -126,6 +129,7 @@ export class RolesConfig {
 export interface RolesConfigParameters {
     actionOrder?: string[];
     baseUrl?: string;
+    foldersHeight?: string;
     groupIcons?: Record<string, IconDefinition>;
     groupOrder?: string[];
     height?: string;

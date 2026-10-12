@@ -1,4 +1,4 @@
-import { buildDisabledOrganizationField } from './organization-fields';
+import { buildDisabledOrganizationField, initialOrganizationId } from './organization-fields';
 
 describe('buildDisabledOrganizationField', () => {
     it('shows the organization of a row in a disabled select that offers only that organization', () => {
@@ -25,5 +25,30 @@ describe('buildDisabledOrganizationField', () => {
 
     it.each([null, undefined])('shows nothing for a row of no organization, such as %s', organizationId => {
         expect(buildDisabledOrganizationField({ organizationId, organizationName: null })).toBeNull();
+    });
+});
+
+describe('initialOrganizationId', () => {
+    const options = [
+        { label: 'Acme', value: 'o1' },
+        { label: 'Globex', value: 'o2' }
+    ];
+
+    it('chooses the organization of the open folder when the form offers it', () => {
+        expect(initialOrganizationId(options, { id: 'o2' })).toBe('o2');
+    });
+
+    it('chooses the only organization offered, or none among several, at the root', () => {
+        expect(initialOrganizationId([options[0]])).toBe('o1');
+        expect(initialOrganizationId(options)).toBeUndefined();
+    });
+
+    it('ignores an open folder the form does not offer, such as a deactivated organization', () => {
+        expect(initialOrganizationId(options, { id: 'o9' })).toBeUndefined();
+        expect(initialOrganizationId([options[0]], { id: 'o9' })).toBe('o1');
+    });
+
+    it('chooses nothing when the form asks for no organization', () => {
+        expect(initialOrganizationId(null, { id: 'o1' })).toBeUndefined();
     });
 });

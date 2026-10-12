@@ -10,7 +10,7 @@ import { FormFieldOption } from '../../../form/models/form-field.model';
 import { FormFieldLengthValidator, FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
 import { PageFormConfig } from '../../../page/models/page-form.model';
 import { PageOrganization } from '../../../page/models/page-organization.model';
-import { buildDisabledOrganizationField } from '../../functions/organization-fields';
+import { buildDisabledOrganizationField, initialOrganizationId } from '../../functions/organization-fields';
 import { roleLabel } from '../../functions/role-labels';
 import { groupRolePermissions, heldPermissionKeys } from '../../functions/role-permissions';
 import {
@@ -73,14 +73,14 @@ export class RolesFormService {
         return new PageFormConfig<RoleFormValue, RoleRow>({
             buildSections: role => this.buildSections(options, role),
             prefix: `${prefix}.form`,
-            toFormValue: role =>
+            toFormValue: (role, folder) =>
                 role
                     ? toRoleValue(
                           role,
                           groupRolePermissions(permissions, order, role.permissions),
                           isOrganizationAsked ? role.organizationId : undefined
                       )
-                    : toCreateValue(onlyOrganizationId(organizationOptions)),
+                    : toCreateValue(initialOrganizationId(organizationOptions, folder)),
             toItem: (value, role) => (role ? toRoleEditRequest(value) : toRoleCreateRequest(value))
         });
     }
@@ -146,11 +146,7 @@ function copyOrganizationId(
 ): string | undefined {
     const source = organizationOptions?.find(({ value }) => value === organizationId);
 
-    return source?.value ?? onlyOrganizationId(organizationOptions);
-}
-
-function onlyOrganizationId(organizationOptions: FormFieldOption[] | null): string | undefined {
-    return organizationOptions?.length === 1 ? organizationOptions[0].value : undefined;
+    return source?.value ?? initialOrganizationId(organizationOptions);
 }
 
 function toCreateValue(organizationId: string | undefined): RoleFormValue | undefined {

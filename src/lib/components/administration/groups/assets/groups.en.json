@@ -18,6 +18,9 @@
                     "tooltip": "See the members of the selected group"
                 }
             },
+            "categories": {
+                "root": "Groups"
+            },
             "form": {
                 "create": {
                     "title": "New group"

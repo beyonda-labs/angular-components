@@ -24,9 +24,11 @@ import {
     OrganizationEditFormValue,
     OrganizationFormValue,
     OrganizationRow,
+    ORGANIZATIONS_ADMINISTRATORS_SECTION,
     ORGANIZATIONS_FORM_SECTION,
     ORGANIZATIONS_GROUPS_SECTION,
     ORGANIZATIONS_LIBRARY_CONTENT,
+    ORGANIZATIONS_UNGROUPED_KEY,
     OrganizationStatus
 } from '../models/organizations.model';
 
@@ -135,11 +137,13 @@ export class OrganizationsFormService {
                     ]
                 }),
                 new FormSection({
+                    isTitleVisible: false,
+                    key: ORGANIZATIONS_ADMINISTRATORS_SECTION,
+                    rows: buildAdministratorRows(organization, `${prefix}.form.${ORGANIZATIONS_ADMINISTRATORS_SECTION}`)
+                }),
+                new FormSection({
                     key: ORGANIZATIONS_GROUPS_SECTION,
-                    rows: buildGroupMemberListRows(
-                        organization.groups,
-                        `${prefix}.form.${ORGANIZATIONS_GROUPS_SECTION}`
-                    )
+                    rows: buildGroupRows(organization, `${prefix}.form.${ORGANIZATIONS_GROUPS_SECTION}`)
                 })
             ],
             size: ModalFormSize.Medium,
@@ -162,6 +166,31 @@ export class OrganizationsFormService {
             toItem: value => ({ name: value[ORGANIZATIONS_FORM_SECTION].name.trim() })
         });
     }
+}
+
+function buildAdministratorRows({ administrators }: OrganizationDetail, administratorsPrefix: string): FormRow[] {
+    return buildGroupMemberListRows(
+        [
+            {
+                id: ORGANIZATIONS_ADMINISTRATORS_SECTION,
+                members: administrators,
+                name: `${administratorsPrefix}.label`
+            }
+        ],
+        administratorsPrefix
+    );
+}
+
+function buildGroupRows({ groups, ungroupedMembers }: OrganizationDetail, groupsPrefix: string): FormRow[] {
+    const ungrouped =
+        ungroupedMembers.length > 0
+            ? buildGroupMemberListRows(
+                  [{ id: ORGANIZATIONS_UNGROUPED_KEY, members: ungroupedMembers, name: `${groupsPrefix}.ungrouped` }],
+                  groupsPrefix
+              )
+            : [];
+
+    return [...buildGroupMemberListRows(groups, groupsPrefix), ...ungrouped];
 }
 
 function buildNameField(): FormTextField {

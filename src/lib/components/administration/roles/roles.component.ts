@@ -2,6 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, si
 
 import { PageHandle } from '../../page/models/page.model';
 import { PageComponent } from '../../page/page.component';
+import { buildOrganizationFoldersConfig } from '../functions/organization-folders';
+import { OrganizationFolder } from '../models/organization-folders.model';
+import { OrganizationFolderTableService } from '../services/organization-folder-table.service';
 import { UserOrganizationsService } from '../services/user-organizations.service';
 import { rolesPageMode } from './functions/roles-page-mode';
 import { RoleRow, RolesConfig, RolesFormOptions, RolesPageMode } from './models/roles.model';
@@ -21,6 +24,7 @@ import { RolesTableService } from './services/roles-table.service';
     templateUrl: './roles.component.html'
 })
 export class RolesComponent {
+    private readonly organizationFolderTableService = inject(OrganizationFolderTableService);
     private readonly rolePermissionsService = inject(RolePermissionsService);
     private readonly rolesActionsService = inject(RolesActionsService);
     private readonly rolesFormService = inject(RolesFormService);
@@ -58,6 +62,13 @@ export class RolesComponent {
             );
 
         return buildRolesPageConfig({
+            categoriesConfig: isSuperadmin
+                ? buildOrganizationFoldersConfig(folder =>
+                      this.organizationFolderTableService.loadRow(folder, {
+                          onOpen: opened => this.page?.openCategory(opened)
+                      })
+                  )
+                : undefined,
             config,
             formConfig: this.rolesFormService.buildFormConfig(formOptions),
             isOrganizationShown: isSuperadmin,
@@ -81,7 +92,7 @@ export class RolesComponent {
     });
 
     private readonly mode = signal(RolesPageMode.Manage);
-    private page?: PageHandle<RoleRow>;
+    private page?: PageHandle<RoleRow, OrganizationFolder>;
 
     constructor() {
         effect(() => {

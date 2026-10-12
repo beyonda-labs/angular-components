@@ -5,7 +5,7 @@
                 "documents": "Documentos",
                 "templates": "Plantillas"
             },
-            "example": "La página de usuarios sobre el backend de demostración: busca por nombre o correo, filtra por estado y rol, invita a un usuario, edita su nombre, sus roles y su estado, cada campo activo solo cuando la fila deja cambiarlo, vuelve a enviarle la invitación, transfiere el contenido de un usuario inactivo a otro y elimina usuarios inactivos e invitaciones pendientes con todo lo que poseen, en la medida en que el backend lo permita en cada fila. Los recuentos de contenido leen las etiquetas de la aplicación, aquí documentos y plantillas.",
+            "example": "La página de usuarios sobre el backend de demostración: busca por nombre o correo, filtra por estado y rol, invita a un usuario, edita su nombre, sus roles y su estado, cada campo activo solo cuando la fila deja cambiarlo, vuelve a enviarle la invitación, transfiere el contenido de un usuario inactivo a otro y elimina usuarios inactivos e invitaciones pendientes con todo lo que poseen, en la medida en que el backend lo permita en cada fila. Los recuentos de contenido leen las etiquetas de la aplicación, aquí documentos y plantillas. Con la sesión de un superadministrador, la página abre una carpeta por organización junto a los superadministradores, una búsqueda en la raíz abarca todas las organizaciones y es la única lista con la columna de organización, y una invitación enviada desde dentro de una carpeta llega con su organización elegida.",
             "roles": {
                 "admin": "Administrador",
                 "editor": "Editor"

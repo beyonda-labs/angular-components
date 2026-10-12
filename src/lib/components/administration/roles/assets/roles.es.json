@@ -40,6 +40,9 @@
                     "tooltip": "Muestra los permisos del rol seleccionado"
                 }
             },
+            "categories": {
+                "root": "Roles"
+            },
             "duplicate": {
                 "buttons": {
                     "submit": "Duplicar"

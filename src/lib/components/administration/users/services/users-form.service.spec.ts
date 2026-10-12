@@ -226,6 +226,13 @@ describe('UsersFormService', () => {
                 form.toItem({ main: { email: 'grace@example.test', organizationId: 'o1', roles: ['admin'] } })
             ).toEqual({ email: 'grace@example.test', organizationId: 'o1', roles: ['admin'] });
         });
+
+        it('chooses the organization of the folder it opens in, among the ones offered', () => {
+            expect(form.toFormValue(undefined, { id: 'o2', label: 'Globex' })).toEqual({
+                main: { organizationId: 'o2', roles: [] }
+            });
+            expect(form.toFormValue(undefined, { id: 'o9', label: 'Initech' })).toBeUndefined();
+        });
     });
 
     it('asks a superadmin for the organization with a single one too, chosen already', () => {

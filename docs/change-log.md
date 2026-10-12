@@ -5,7 +5,7 @@
 ### Added
 
 -   Organizations module: `bey-organizations`, the superadmin's page over `/organizations` on `bey-page`: create an
-    organization, and edit its name and its status in one form that shows its groups and their members read-only.
+    organization, and edit its name and status in one form showing its administrators, groups and "No group" read-only.
 -   Organizations module: the texts of the `organizations.existing-name` and `.not-found` errors.
 -   Groups module: `bey-groups`, the groups of users of an organization over `/groups` on `bey-page`, for its managers
     and the superadmin: create and delete (confirmed) a group, and edit its name, members and extra roles in one form.
@@ -131,6 +131,17 @@
 -   Form module: `isSubmitDanger` on `BeyModalFormConfig` and `isDanger` on `BeyFormButton` paint a submit button in
     the danger colour.
 -   Styles: the `--bey-danger-fg` and `--bey-danger-hover` tokens, the text and the hover of a danger button.
+-   Page module: `buildSections` and `toFormValue` of `BeyPageFormConfig` receive the category open in the page, a
+    `BeyPageCategoryPathEntry` `{ id, label }`, or `undefined` at the root, so a create form can preselect from it.
+-   Users, groups and roles modules: a superadmin browses one folder per organization (`entryType: 'category'`), with
+    the rows of no organization at the root and a breadcrumb inside; a create from a folder comes with its organization.
+-   Users, groups and roles modules: the text `categories.root`, the root of the breadcrumb of the folders.
+-   Users, groups and roles modules: `foldersHeight` (`'calc(100vh - 255px)'`), the height of the table while it shows the
+    folders, which leaves room for their breadcrumb as the pages of rows with folders do.
+-   Users, groups and roles modules: with the folders, the organization column shows only in a search or a filter at the
+    root, the one list where rows of several organizations meet.
+-   Page module: `isColumnShown(column, context)` on `BeyPageTableConfig` leaves a column and its cells out by the
+    `BeyPageColumnContext` of the list in view, `{ category?, isSearching }`, asked again once each list answers.
 
 ### Changed
 
@@ -167,6 +178,8 @@
     "Unknown".
 -   Roles module: `memberCount` of `BeyRoleRow` is optional, since the rows of a member carry no counts.
 -   Left menu module: the avatar of the user is `bey-avatar` of the cards module, painted through `--bey-cards-avatar-*`.
+-   Users, groups and roles modules: a superadmin's list sends `parentId`, `null` at the root, and its creates send it
+    next to `organizationId`, as on any page with folders; a search at the root still spans every organization.
 
 ### Fixed
 

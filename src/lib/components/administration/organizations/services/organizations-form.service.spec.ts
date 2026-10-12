@@ -18,6 +18,7 @@ describe('OrganizationsFormService', () => {
 
     const organization: OrganizationDetail = {
         actions: ['edit'],
+        administrators: [{ email: 'root@example.test', id: 'u9', name: 'Rita Root' }],
         createdAt: 0,
         groups: [
             {
@@ -33,6 +34,7 @@ describe('OrganizationsFormService', () => {
         id: 'o2',
         name: 'Globex',
         status: OrganizationStatus.Inactive,
+        ungroupedMembers: [],
         userCount: 3
     };
 
@@ -103,6 +105,56 @@ describe('OrganizationsFormService', () => {
             placeholder: 'demo.tenants.form.groups.empty'
         });
         expect(rest).toEqual([]);
+    });
+
+    it('lists the administrators first, read-only, before the groups', () => {
+        const form = service.buildEditFormConfig('demo.tenants', organization);
+        const [administrators, ...rest] = fieldsOf(form.sections, 'administrators') as FormListField[];
+
+        expect(form.sections.map(({ key }) => key)).toEqual(['main', 'administrators', 'groups']);
+        expect(form.sections.find(({ key }) => key === 'administrators')?.isTitleVisible).toBe(false);
+        expect([administrators.label, administrators.items, administrators.placeholder]).toEqual([
+            'demo.tenants.form.administrators.label',
+            ['Rita Root (root@example.test)'],
+            'demo.tenants.form.administrators.no-members'
+        ]);
+        expect(rest).toEqual([]);
+    });
+
+    it('says when the organization has no active administrator', () => {
+        const [administrators] = fieldsOf(
+            service.buildEditFormConfig('demo.tenants', { ...organization, administrators: [] }).sections,
+            'administrators'
+        ) as FormListField[];
+
+        expect([administrators.label, administrators.items, administrators.placeholder]).toEqual([
+            'demo.tenants.form.administrators.label',
+            [],
+            'demo.tenants.form.administrators.no-members'
+        ]);
+    });
+
+    it('lists the members in no group last, as "No group", only when someone is in none', () => {
+        const ungroupedMembers = [{ email: 'nora@example.test', id: 'u3', name: 'Nora' }];
+        const withUngrouped = fieldsOf(
+            service.buildEditFormConfig('demo.tenants', { ...organization, ungroupedMembers }).sections,
+            'groups'
+        ) as FormListField[];
+        const withoutGroups = fieldsOf(
+            service.buildEditFormConfig('demo.tenants', { ...organization, groups: [], ungroupedMembers }).sections,
+            'groups'
+        ) as FormListField[];
+
+        expect(withUngrouped.map(({ items, label }) => [label, items])).toEqual([
+            ['Sales', ['Ada Lovelace (ada@example.test)', 'grace@example.test']],
+            ['Support', []],
+            ['demo.tenants.form.groups.ungrouped', ['Nora (nora@example.test)']]
+        ]);
+        expect(withoutGroups.map(({ items, label, placeholder }) => [label, items, placeholder])).toEqual([
+            [undefined, [], 'demo.tenants.form.groups.empty'],
+            ['demo.tenants.form.groups.ungrouped', ['Nora (nora@example.test)'], 'demo.tenants.form.groups.no-members']
+        ]);
+        expect(fieldsOf(service.buildEditFormConfig('demo.tenants', organization).sections, 'groups')).toHaveLength(2);
     });
 
     describe('buildDeleteConfig', () => {

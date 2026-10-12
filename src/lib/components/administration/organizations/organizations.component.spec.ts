@@ -86,13 +86,15 @@ describe('OrganizationsComponent', () => {
     function answerDetail(): void {
         httpTesting.expectOne(`${ORGANIZATIONS_URL}/o2`).flush({
             ...buildOrganization(),
+            administrators: [{ email: 'rita@example.test', id: 'u9', name: 'Rita Root' }],
             groups: [
                 {
                     id: 'g1',
                     members: [{ email: 'ada@example.test', id: 'u1', name: 'Ada Lovelace' }],
                     name: 'Sales'
                 }
-            ]
+            ],
+            ungroupedMembers: [{ email: 'nora@example.test', id: 'u3', name: 'nora@example.test' }]
         });
     }
 
@@ -153,7 +155,7 @@ describe('OrganizationsComponent', () => {
         expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: `${PREFIX}.toast.create-success` }]);
     });
 
-    it('edits the name and the status of an organization from its name, showing its groups read-only', async () => {
+    it('edits the name and the status of an organization from its name, showing its people read-only', async () => {
         await render();
 
         buttonByName(fixture, 'Globex').click();
@@ -172,9 +174,15 @@ describe('OrganizationsComponent', () => {
         expect(fieldsOf(form).map(({ key, label }) => [key, label])).toEqual([
             ['name', undefined],
             ['status', undefined],
-            ['g1', 'Sales']
+            ['administrators', `${PREFIX}.form.administrators.label`],
+            ['g1', 'Sales'],
+            ['ungrouped', `${PREFIX}.form.groups.ungrouped`]
         ]);
-        expect((fieldsOf(form)[2] as FormListField).items).toEqual(['Ada Lovelace (ada@example.test)']);
+        expect(
+            fieldsOf(form)
+                .slice(2)
+                .map(field => (field as FormListField).items)
+        ).toEqual([['Rita Root (rita@example.test)'], ['Ada Lovelace (ada@example.test)'], ['nora@example.test']]);
         expect(request.request.method).toBe('PUT');
         expect(request.request.body).toEqual({ name: 'Globex Corporation', status: 'inactive' });
         expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: `${PREFIX}.toast.edit-success` }]);

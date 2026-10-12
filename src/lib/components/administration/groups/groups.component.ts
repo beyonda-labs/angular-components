@@ -2,6 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, si
 
 import { PageHandle } from '../../page/models/page.model';
 import { PageComponent } from '../../page/page.component';
+import { buildOrganizationFoldersConfig } from '../functions/organization-folders';
+import { OrganizationFolder } from '../models/organization-folders.model';
+import { OrganizationFolderTableService } from '../services/organization-folder-table.service';
 import { UserOrganizationsService } from '../services/user-organizations.service';
 import { groupsPageMode } from './functions/groups-page-mode';
 import { buildGroupsPageConfig } from './groups-page-config';
@@ -23,6 +26,7 @@ export class GroupsComponent {
     private readonly groupsActionsService = inject(GroupsActionsService);
     private readonly groupsFormService = inject(GroupsFormService);
     private readonly groupsTableService = inject(GroupsTableService);
+    private readonly organizationFolderTableService = inject(OrganizationFolderTableService);
     private readonly userOrganizationsService = inject(UserOrganizationsService);
 
     readonly config = input.required<GroupsConfig>();
@@ -40,6 +44,13 @@ export class GroupsComponent {
         }
 
         return buildGroupsPageConfig({
+            categoriesConfig: isSuperadmin
+                ? buildOrganizationFoldersConfig(folder =>
+                      this.organizationFolderTableService.loadRow(folder, {
+                          onOpen: opened => this.page?.openCategory(opened)
+                      })
+                  )
+                : undefined,
             config,
             formConfig: this.groupsFormService.buildFormConfig({
                 isOrganizationAsked: isSuperadmin,
@@ -65,7 +76,7 @@ export class GroupsComponent {
     });
 
     private readonly mode = signal(GroupsPageMode.Manage);
-    private page?: PageHandle<GroupRow>;
+    private page?: PageHandle<GroupRow, OrganizationFolder>;
 
     constructor() {
         effect(() => {

@@ -1,7 +1,7 @@
 {
     "angular-components-style-guide": {
         "groups": {
-            "example": "The groups page of a manager or the superadmin: search by name, create a group, edit its name, its members and its additional roles in one form, and delete groups, as far as the backend allows each row. The demo backend serves no groups, so the list stays empty."
+            "example": "The groups page of a manager or the superadmin: search by name, create a group, edit its name, its members and its additional roles in one form, and delete groups, as far as the backend allows each row. A superadmin sees one folder per organization, a search at the root spans all of them and is the only list with the organization column, and a group created inside a folder comes with its organization chosen. The demo backend serves no groups, so the list stays empty."
         }
     }
 }

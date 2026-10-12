@@ -51,7 +51,7 @@ readonly config = new BeyPageConfig<UserFormValue, User>({
 | `prefix`            | yes      | i18n prefix every text of the page resolves from                                                                                                                                                                                             |
 | `baseUrl`           | no       | Path of the resource, resolved against the environment's `baseUrl` and `webApiPath`; without it nothing is loaded                                                                                                                            |
 | `headerConfig`      | no       | `title` and the `actions` catalogue                                                                                                                                                                                                          |
-| `tableConfig`       | no       | Columns, `loadRow`, `height`, `order`, `search`, `allowSelection`, `showPagination`, `categoriesConfig`, `isTrashEnabled`, `isSharedEnabled`, `onSelectionChange`, `storageKey`                                                              |
+| `tableConfig`       | no       | Columns, `loadRow`, `height`, `order`, `search`, `allowSelection`, `showPagination`, `categoriesConfig`, `isTrashEnabled`, `isSharedEnabled`, `isColumnShown`, `onSelectionChange`, `storageKey`                                             |
 | `formConfig`        | no       | How the create and edit modal forms are built, see below                                                                                                                                                                                     |
 | `statusConfig`      | no       | `BeyPageStatusConfig`: the status field and its transitions, for `change-status`                                                                                                                                                             |
 | `duplicationConfig` | no       | `BeyPageDuplicationConfig`: the field that names a row (`nameField`, `name` by default), the validators of the name of a copy (`nameValidators`) and what joins the copy suffix to it (`copySeparator`, a space by default), for `duplicate` |
@@ -86,7 +86,7 @@ infer it from that form, to `BeyPageConfig<UserFormValue, User, Folder, FolderFo
 | Operation | Request                                                                                      |
 | --------- | -------------------------------------------------------------------------------------------- |
 | List      | `GET {baseUrl}?search=<base64 json>` when `tableConfig.search` is set, plain `GET` otherwise |
-| Create    | `POST {baseUrl}` with the form value mapped through `toItem`                                 |
+| Create    | `POST {baseUrl}` with the form value mapped through `toItem`, plus with categories the `parentField` of the open category, `null` at the root |
 | Edit      | `PUT {baseUrl}/{id}`                                                                         |
 | Delete    | `DELETE {baseUrl}` with `{ ids }`                                                            |
 | Duplicate | `POST {baseUrl}/{id}/duplicate` with `{ [nameField]: name }`                                 |
@@ -260,6 +260,27 @@ tableConfig: new BeyPageTableConfig({
 });
 ```
 
+`tableConfig.isColumnShown(column, context)` shows a column only in some states of the page: it is asked for every
+column of the table, and a column it answers `false` for leaves the table, header and cell alike, with no place in the
+columns menu either. `loadRow` keeps building every cell, and the page drops the cells of the columns left out. The
+`BeyPageColumnContext` says what the list in view was asked with: `category`, the
+[category](#categories-and-trash) open as a `BeyPageCategoryPathEntry` `{ id, label }`, absent at the root, in the
+trash and on a page without categories, and `isSearching`, whether the search the page sent holds a text or a filter,
+those of a [view](#views) included and a blank text not counted. The page asks again once each list answers, so the
+columns change with the rows they describe and not while the answer is on its way. Without the predicate every column
+shows. It suits a column that tells apart what only some lists mix, such as the organization the
+[administration](../../administration/docs/administration-readme.md#folders-per-organization) pages show only in a search
+at the root, where rows of every folder meet.
+
+```ts
+tableConfig: new BeyPageTableConfig<Contract, Folder>({
+    categoriesConfig,
+    columns: [nameColumn, clientColumn, statusColumn],
+    isColumnShown: ({ key }, { category, isSearching }) => key !== 'client' || (!category && isSearching),
+    loadRow
+});
+```
+
 ## Owners
 
 On a backend where every row has an owner, as base-entity of express-components does with `ownership`, each row
@@ -380,6 +401,19 @@ categories are handled by the standard category actions, and an action with a `h
 selected row is a category. `share` is the other way round: its `handler` receives only the folders, and hides while
 none is selected. Standard actions without a `handler` work on the whole selection.
 
+Every list of the main tab and of a view sends the `parentField` of the open category, `null` at the root, together
+with the search, so what a search answers is up to the backend, and the page shows whatever rows come back. base-entity
+of express-components keeps a search within the open category, so a search at the root finds the rows at the root.
+A backend may answer a search at the root with the matching rows of every category instead, as the users, groups and
+roles modules of express-components do for a superadmin, whose folders there are the organizations; the breadcrumb still
+reads the root and counts what came back. The page has no option for it: it already lets the backend decide. A column
+that only such an answer needs shows only then through [`isColumnShown`](#sort-and-columns).
+
+The categories need not be stored ones. A backend may answer rows of its own as categories, read-only folders such as
+the organizations of the [administration](../../administration/docs/administration-readme.md#folders-per-organization)
+pages: rows with `actions: []`, the `typeField` set to `category`, and `/categories/{id}/path` for the breadcrumb, while
+a header that lists none of the category actions offers no way to create, rename, move, share or delete them.
+
 ## Usages
 
 A resource other rows point at (a file the documents show, a block the templates include) answers what uses each row,
@@ -468,7 +502,7 @@ those answers for a `handler` of its own.
 
 ## Forms
 
-`BeyPageFormConfig<TValue, TItem>` takes `prefix`, `buildSections(item?)`, and optionally `toFormValue(item?)`,
+`BeyPageFormConfig<TValue, TItem>` takes `prefix`, `buildSections(item?, category?)`, and optionally `toFormValue(item?, category?)`,
 `toItem(value, item?)`, `onReady(handle)`, `onValueChange(value, handle)`, `onCreate(value, handle)`,
 `onEdit(value, handle)`, `afterCreate(created)`, `confirmSave(value, item?)`, `allowSubmitWithoutChanges` and `size`
 (a `BeyModalFormSize`, `Large` by default). `toItem` builds the body of the request and receives the row an edit
@@ -480,6 +514,17 @@ closing, for entities that need a second request. When that one fails the row al
 and the table reloads, showing whatever the backend kept of it; sending the form again creates the row anew, which
 suits a backend that drops the row whose second request it refused, as the attachments of express-components do.
 Titles come from `<prefix>.form.create.title` and `.edit.title`, the buttons from the library.
+
+`buildSections` and `toFormValue` receive, after the row, the category open in the page when the form opens: a
+`BeyPageCategoryPathEntry`, `{ id, label }`, its id and its name as the breadcrumb shows it, or `undefined` at the root,
+at the root of the [shared view](#sharing) and on a page without categories. Every form of the page gets it, the
+create and edit forms and those of the categories, so a create form can preselect what the category stands for, as the
+administration pages choose the organization of the folder they are in, while the page itself already sends its
+`parentField` with the create.
+
+```ts
+toFormValue: (contract, category) => (contract ? toEditValue(contract) : { main: { clientId: category?.id ?? null } })
+```
 
 `confirmSave(value, item?)` asks before a create or an edit is sent: it answers a confirmation, or an observable of
 one, and the page shows it over the form and saves only once the user confirms; `null` saves at once, and an

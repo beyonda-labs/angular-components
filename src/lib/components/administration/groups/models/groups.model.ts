@@ -119,6 +119,7 @@ export interface GroupViewRole {
 
 export class GroupsConfig {
     baseUrl: string;
+    foldersHeight: string;
     height: string;
     prefix: string;
     rolesConfig: RoleViewSettings;
@@ -127,6 +128,7 @@ export class GroupsConfig {
 
     constructor({
         baseUrl = '/groups',
+        foldersHeight = 'calc(100vh - 255px)',
         height = 'calc(100vh - 220px)',
         prefix = 'angular-components.groups',
         rolesConfig = ROLE_VIEW_DEFAULTS,
@@ -134,6 +136,7 @@ export class GroupsConfig {
         usersUrl = '/users'
     }: GroupsConfigParameters = {}) {
         this.baseUrl = baseUrl;
+        this.foldersHeight = foldersHeight;
         this.height = height;
         this.prefix = prefix;
         this.rolesConfig = rolesConfig;
@@ -144,6 +147,7 @@ export class GroupsConfig {
 
 export interface GroupsConfigParameters {
     baseUrl?: string;
+    foldersHeight?: string;
     height?: string;
     prefix?: string;
     rolesConfig?: RoleViewSettings;

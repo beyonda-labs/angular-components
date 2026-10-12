@@ -12,7 +12,7 @@ import { FormFieldOption } from '../../../form/models/form-field.model';
 import { FormFieldLengthValidator, FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
 import { PageFormConfig } from '../../../page/models/page-form.model';
 import { PageOrganization } from '../../../page/models/page-organization.model';
-import { buildDisabledOrganizationField } from '../../functions/organization-fields';
+import { buildDisabledOrganizationField, initialOrganizationId } from '../../functions/organization-fields';
 import { userContactLabel } from '../../functions/user-names';
 import {
     GROUP_NAME_MAX_LENGTH,
@@ -108,7 +108,6 @@ export class GroupsFormService {
         prefix
     }: GroupsFormOptions): PageFormConfig<GroupFormValue, GroupRow> {
         const organizationOptions = isOrganizationAsked ? toOrganizationOptions(organizations) : null;
-        const initialOrganizationId = organizationOptions?.length === 1 ? organizationOptions[0].value : undefined;
 
         return new PageFormConfig<GroupFormValue, GroupRow>({
             buildSections: () => [
@@ -135,7 +134,7 @@ export class GroupsFormService {
             ],
             prefix: `${prefix}.form`,
             size: ModalFormSize.Medium,
-            toFormValue: () => toCreateValue(initialOrganizationId),
+            toFormValue: (_, folder) => toCreateValue(initialOrganizationId(organizationOptions, folder)),
             toItem: value => toGroupRequest(value[GROUPS_FORM_SECTION])
         });
     }

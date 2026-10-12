@@ -323,4 +323,10 @@ describe('RolesFormService', () => {
             permissions: { permissions: [] }
         });
     });
+
+    it('chooses the organization of the folder it opens in', () => {
+        const form = service.buildFormConfig(buildOptions({ isOrganizationAsked: true, organizations }));
+
+        expect(form.toFormValue(undefined, { id: 'o1', label: 'Acme' })?.main.organizationId).toBe('o1');
+    });
 });

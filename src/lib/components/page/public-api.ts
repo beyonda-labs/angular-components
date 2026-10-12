@@ -60,6 +60,7 @@ export type {
     PageShare as BeyPageShare,
     PageShareTarget as BeyPageShareTarget
 } from './models/page-sharing.model';
+export type { PageCategoryPathEntry as BeyPageCategoryPathEntry } from './models/page-state.model';
 export { SearchSortDirection as BeySearchSortDirection } from './models/page-search.model';
 export type { PageSearch as BeyPageSearch, SearchSort as BeySearchSort } from './models/page-search.model';
 export {
@@ -67,6 +68,7 @@ export {
     PageTableSearchConfig as BeyPageTableSearchConfig
 } from './models/page-table.model';
 export type {
+    PageColumnContext as BeyPageColumnContext,
     PageTableConfigParameters as BeyPageTableConfigParameters,
     PageTableSearchConfigParameters as BeyPageTableSearchConfigParameters
 } from './models/page-table.model';

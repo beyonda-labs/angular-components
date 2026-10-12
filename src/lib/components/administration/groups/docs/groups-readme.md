@@ -35,28 +35,29 @@ permissions; anyone else gets `404` from `/groups`.
 
 ## BeyGroupsConfig
 
-| Field        | Default                       | Meaning                                                                                  |
-| ------------ | ----------------------------- | ---------------------------------------------------------------------------------------- |
-| `baseUrl`    | `'/groups'`                   | Path of the groups, resolved against the environment's `baseUrl` and `webApiPath`        |
-| `usersUrl`   | `'/users'`                    | Path of the users, where a superadmin reads the organizations from                       |
-| `rolesConfig` | the defaults of `BeyRolesConfig` | The settings of the roles page the permissions of a role follow in [Members](#members): `actionOrder`, `groupIcons`, `groupOrder`, `permissionPrefix`, `prefix` and `rolePrefix` (`BeyRoleViewSettings`); a `BeyRolesConfig` fits |
-| `prefix`     | `'angular-components.groups'` | i18n prefix of the page, as `bey-page` reads it                                          |
-| `storageKey` | `'groups'`                    | Key under which the table remembers the columns the user hid                             |
-| `height`     | `'calc(100vh - 220px)'`       | Height of the table                                                                      |
+| Field           | Default                          | Meaning                                                                                                                                                                                                                           |
+| --------------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `baseUrl`       | `'/groups'`                      | Path of the groups, resolved against the environment's `baseUrl` and `webApiPath`                                                                                                                                                 |
+| `usersUrl`      | `'/users'`                       | Path of the users, where a superadmin reads the organizations from                                                                                                                                                                |
+| `rolesConfig`   | the defaults of `BeyRolesConfig` | The settings of the roles page the permissions of a role follow in [Members](#members): `actionOrder`, `groupIcons`, `groupOrder`, `permissionPrefix`, `prefix` and `rolePrefix` (`BeyRoleViewSettings`); a `BeyRolesConfig` fits |
+| `prefix`        | `'angular-components.groups'`    | i18n prefix of the page, as `bey-page` reads it                                                                                                                                                                                   |
+| `storageKey`    | `'groups'`                       | Key under which the table remembers the columns the user hid                                                                                                                                                                      |
+| `foldersHeight` | `'calc(100vh - 255px)'`          | Height of the table while it shows the folders of the superadmin, under their breadcrumb                                                                                                                                          |
+| `height`        | `'calc(100vh - 220px)'`          | Height of the table                                                                                                                                                                                                               |
 
 `baseUrl` follows the `path` of the groups module of express-components, and `usersUrl` the `path` of its users
 module, as `baseUrl` of [`bey-users`](../../users/docs/users-readme.md) does.
 
 ## Requests
 
-| Action    | Request                                                                                    | Form                                                       |
-| --------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
-| List      | `GET {baseUrl}?search=<base64>`                                                            |                                                            |
-| Organizations | `GET {usersUrl}/organizations`, for a superadmin only                                  |                                                            |
-| `create`  | `POST {baseUrl}` `{ name, organizationId? }`                                               | The name, and the organization for a superadmin (required) |
-| `edit`    | `GET {baseUrl}/{id}`, then `PUT {baseUrl}/{id}` `{ name, userIds, extraRoleIds }`          | The name, the members and the extra roles, filled in with what the group holds |
-| Searches  | `GET {baseUrl}/{id}/member-options?search=<text>&limit=<n>` and `GET {baseUrl}/{id}/role-options?search=<text>&limit=<n>`, while the edit form is open | |
-| `delete`  | `DELETE {baseUrl}` `{ ids }`, after a confirmation                                         | None                                                       |
+| Action        | Request                                                                                                                                                | Form                                                                           |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------ |
+| List          | `GET {baseUrl}?search=<base64>`, with `parentId` for a superadmin, see [Organizations](#organizations)                                                 |                                                                                |
+| Organizations | `GET {usersUrl}/organizations`, for a superadmin only                                                                                                  |                                                                                |
+| `create`      | `POST {baseUrl}` `{ name, organizationId? }`                                                                                                           | The name, and the organization for a superadmin (required)                     |
+| `edit`        | `GET {baseUrl}/{id}`, then `PUT {baseUrl}/{id}` `{ name, userIds, extraRoleIds }`                                                                      | The name, the members and the extra roles, filled in with what the group holds |
+| Searches      | `GET {baseUrl}/{id}/member-options?search=<text>&limit=<n>` and `GET {baseUrl}/{id}/role-options?search=<text>&limit=<n>`, while the edit form is open |                                                                                |
+| `delete`      | `DELETE {baseUrl}` `{ ids }`, after a confirmation                                                                                                     | None                                                                           |
 
 The name is required, at most 100 characters and sent trimmed; the server keeps it unique within the organization,
 without regard to case, and refuses a taken one with `groups.existing-name`. The search box sends its text as the
@@ -113,7 +114,7 @@ that.
 -   **The columns** are "Name", "Members", "Roles" (`table.columns.role-count`, the `roleCount` of each group) only while
     the rows count them, and "Created". An empty answer leaves the columns as they were.
 -   **The name** of a group opens it (`table.view-group` as its tooltip), read from `GET {baseUrl}/{id}`, `{ id, name,
-    members: [{ id, name, surname, email }], extraRoles? }`, in "Group details" (`view.title`), closed with its only
+members: [{ id, name, surname, email }], extraRoles? }`, in "Group details" (`view.title`), closed with its only
     button (`view.buttons.close`): its name, "Members" (`view.main.members`) in the look of a read-only list, each
     "Name Surname (email)", or the email alone, and "This group has no members yet." (`view.main.members.empty`) without
     any.
@@ -141,10 +142,10 @@ it reads `GET {usersUrl}/organizations`, the active organizations by name, befor
 counts as none, with no error. Groups have no source of organizations of their own, and that answer is the one the
 users page invites into, so a group is created in the same organizations a user is invited into.
 
--   **The column.** A superadmin always sees an "Organization" column after the extra role count
+-   **The column.** A superadmin sees an "Organization" column after the extra role count in a search at the root
     (`table.columns.organization`), sortable by `organizationName`, however many organizations are active, so the
-    organization of every group shows even when there is a single one. The groups of a deactivated organization stay,
-    and show theirs.
+    organization of every group found shows even when there is a single one. The groups of a deactivated organization
+    stay, and show theirs. Browsing the folders the column leaves the table, see the folders below.
 -   **The filter.** With two active organizations or more, the filters offer an "Organization" field, `organizationId`
     `equals`, with those organizations by name.
 -   **The create form.** It always asks a superadmin for the organization, required, and sends it as
@@ -153,11 +154,17 @@ users page invites into, so a group is created in the same organizations a user 
     is never asked: the group goes to their organization.
 -   **The edit form** shows a superadmin the organization of the group after the name, in a disabled select, and never
     sends it: groups do not move between organizations. A manager does not see it.
+-   **The folders.** A superadmin sees one folder per organization at the root, and nothing else there, and the groups
+    of an organization inside its folder; a search text or a filter at the root finds the groups of every organization,
+    the one list with the organization column, which inside a folder, searching or not, the page leaves out. A group
+    created inside a folder comes with its organization chosen, which the superadmin may still change. A root
+    of folders alone keeps the page as it was, since only groups tell what the caller may do. See
+    [folders per organization](../../docs/administration-readme.md#folders-per-organization).
 
 ## Texts
 
 Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
-`.tooltip` (only the tooltip for `view`, whose label is the page module's), `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `search.fields.<key>`, `form.create.title`,
+`.tooltip` (only the tooltip for `view`, whose label is the page module's), `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `categories.root` (the root of its breadcrumb), `search.fields.<key>`, `form.create.title`,
 `form.edit.title`, `form.main.<field>.label` and `.placeholder`, the placeholder of a search, `form.main.user-ids.empty`
 and `form.main.extra-role-ids.empty`, `modal.delete.title` and `.message`, `table.view-group`, `view.title`,
 `view.buttons.close`, `view.main.<field>.label`, `view.main.members.empty` and `view.main.extra-roles.empty`, and

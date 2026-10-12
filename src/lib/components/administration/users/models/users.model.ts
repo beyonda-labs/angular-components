@@ -161,6 +161,7 @@ export interface UserTransferTargetsResponse {
 export class UsersConfig {
     baseUrl: string;
     contentLabels: Readonly<Record<string, string>>;
+    foldersHeight: string;
     height: string;
     prefix: string;
     rolePrefix: string;
@@ -169,6 +170,7 @@ export class UsersConfig {
     constructor({
         baseUrl = '/users',
         contentLabels = {},
+        foldersHeight = 'calc(100vh - 255px)',
         height = 'calc(100vh - 220px)',
         prefix = 'angular-components.users',
         rolePrefix = `${prefix}.roles`,
@@ -176,6 +178,7 @@ export class UsersConfig {
     }: UsersConfigParameters = {}) {
         this.baseUrl = baseUrl;
         this.contentLabels = contentLabels;
+        this.foldersHeight = foldersHeight;
         this.height = height;
         this.prefix = prefix;
         this.rolePrefix = rolePrefix;
@@ -186,6 +189,7 @@ export class UsersConfig {
 export interface UsersConfigParameters {
     baseUrl?: string;
     contentLabels?: Readonly<Record<string, string>>;
+    foldersHeight?: string;
     height?: string;
     prefix?: string;
     rolePrefix?: string;
