@@ -9,7 +9,7 @@ import { AdministrationStyleGuideComponent } from './administration-style-guide.
 const API_URL = 'https://api.test/api/style-guide';
 
 describe('AdministrationStyleGuideComponent', () => {
-    it('renders the four pages of the module, each under its heading', async () => {
+    it('renders the pages of the module and the summary of the organization, each under its heading', async () => {
         await TestBed.configureTestingModule({
             imports: [AdministrationStyleGuideComponent],
             providers: [
@@ -20,6 +20,7 @@ describe('AdministrationStyleGuideComponent', () => {
                             'angular-components-style-guide': {
                                 administration: {
                                     groups: 'Groups',
+                                    'organization-summary': 'Organization summary',
                                     organizations: 'Organizations',
                                     roles: 'Roles and permissions',
                                     users: 'Users'
@@ -35,6 +36,17 @@ describe('AdministrationStyleGuideComponent', () => {
         const fixture = await renderComponent(AdministrationStyleGuideComponent);
         httpTesting.expectOne(`${API_URL}/users/roles`).flush({ roles: [] });
         httpTesting.expectOne(`${API_URL}/roles/permissions`).flush({ permissions: [] });
+        httpTesting.expectOne(`${API_URL}/organizations/current`).flush({
+            administrators: [{ email: 'ada@example.test', id: 'u1', name: 'Ada', surname: 'Lovelace' }],
+            counts: { extraRoles: 0, groups: 1, members: 3 },
+            createdAt: 0,
+            extraRoles: [],
+            groups: [{ id: 'g1', memberCount: 0, members: [], name: 'Sales' }],
+            id: 'o1',
+            name: 'Acme',
+            status: 'active',
+            ungroupedMembers: []
+        });
         await settle(fixture);
         httpTesting
             .expectOne(request => request.url === `${API_URL}/users`)
@@ -48,7 +60,7 @@ describe('AdministrationStyleGuideComponent', () => {
             .expectOne(request => request.url === `${API_URL}/groups`)
             .flush({
                 globalActions: [],
-                results: [{ actions: [], createdAt: 0, id: 'g1', memberCount: 3, name: 'Sales' }]
+                results: [{ actions: ['edit'], createdAt: 0, id: 'g1', memberCount: 3, name: 'Sales' }]
             });
         httpTesting
             .expectOne(request => request.url === `${API_URL}/roles`)
@@ -56,7 +68,7 @@ describe('AdministrationStyleGuideComponent', () => {
                 globalActions: [],
                 results: [
                     {
-                        actions: ['duplicate'],
+                        actions: ['view', 'duplicate'],
                         id: 'auditor',
                         isBase: true,
                         memberCount: 1,
@@ -83,6 +95,8 @@ describe('AdministrationStyleGuideComponent', () => {
         expect(text).toContain('auditor');
         expect(text).toContain('Organizations');
         expect(text).toContain('Acme');
+        expect(text).toContain('Organization summary');
+        expect(text).toContain('Ada Lovelace');
         httpTesting.verify();
     });
 });

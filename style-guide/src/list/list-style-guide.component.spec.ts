@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { queryAll, renderComponent, textsOf } from '@testing/dom';
+import { queryAll, renderComponent, visibleText } from '@testing/dom';
 
 import { ListStyleGuideComponent } from './list-style-guide.component';
 
@@ -16,10 +16,10 @@ describe('ListStyleGuideComponent', () => {
     });
 
     it('shows every employee with the initials of their name', () => {
-        expect(textsOf(queryAll(fixture, '[role="button"]'))).toEqual([
-            expect.stringMatching(/^AL\s+Ada Lovelace/u),
-            expect.stringMatching(/^LT\s+Linus Torvalds/u),
-            expect.stringMatching(/^GH\s+Grace Hopper/u)
+        expect(queryAll(fixture, '[role="button"]').map(employee => visibleText(employee))).toEqual([
+            'AL Ada Lovelace Engineering',
+            'LT Linus Torvalds Platform',
+            'GH Grace Hopper Research'
         ]);
     });
 });

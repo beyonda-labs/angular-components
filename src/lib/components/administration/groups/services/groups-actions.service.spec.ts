@@ -1,16 +1,20 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { faFileLines } from '@fortawesome/free-regular-svg-icons';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
+import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 import { FakeToastService } from '@testing/services/fake-toast.service';
 import { Observable } from 'rxjs';
 
 import { ModalFormConfig } from '../../../form/components/modal/models/modal-form.model';
+import { FormCheckboxSectionsField } from '../../../form/models/fields/form-checkbox-sections-field.model';
 import { FormListField } from '../../../form/models/fields/form-list-field.model';
 import { FormField } from '../../../form/models/form-field.model';
 import { PageHandle } from '../../../page/models/page.model';
 import { PageViewMode } from '../../../page/models/page-categories.model';
+import { RolesConfig } from '../../roles/models/roles.model';
 import { GroupEditFormValue, GroupRow, GroupsConfig } from '../models/groups.model';
 import { GroupsActionsService } from './groups-actions.service';
 
@@ -164,5 +168,38 @@ describe('GroupsActionsService', () => {
 
         httpTesting.expectNone(GROUP_URL);
         expect(opened).toEqual([]);
+    });
+
+    it('shows a group to a member and the permissions of its roles in the view of the roles page', () => {
+        const modalForms = TestBed.inject(FakeModalFormService);
+        const rolesConfig = new RolesConfig({
+            groupIcons: { templates: faFileLines },
+            permissionPrefix: 'my-app.permissions'
+        });
+
+        TestBed.inject(GroupsActionsService).view(
+            new GroupsConfig({ baseUrl: '/teams', prefix: 'demo.teams', rolesConfig }),
+            { ...group, actions: [] }
+        );
+        httpTesting.expectOne(GROUP_URL).flush({
+            extraRoles: [{ description: 'Review', id: 'r1', name: 'Reviewers', permissions: ['templates.edit'] }],
+            id: 'g1',
+            members: [ada],
+            name: 'Sales'
+        });
+        const [view] = modalForms.forms();
+        const roles = view.sections.flatMap(section => section.rows.flatMap(row => row.fields)).at(-1) as FormListField;
+        roles.onItemClick?.('Reviewers', 0);
+        const permissions = modalForms.forms()[1];
+        const checklist = permissions.sections
+            .flatMap(section => section.rows.flatMap(row => row.fields))
+            .find(({ key }) => key === 'permissions') as FormCheckboxSectionsField;
+
+        expect(view.title).toBe('demo.teams.view.title');
+        expect(permissions.title).toBe('angular-components.roles.view.title');
+        expect(checklist.isDisabled).toBe(true);
+        expect(
+            checklist.sections.map(({ icon, key, options }) => [key, icon, options.map(({ value }) => value)])
+        ).toEqual([['templates', faFileLines, ['templates.edit']]]);
     });
 });

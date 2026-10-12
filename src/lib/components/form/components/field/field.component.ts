@@ -20,6 +20,7 @@ import { FormDateFieldComponent } from './field-date/field-date.component';
 import { FormFileFieldComponent } from './field-file/field-file.component';
 import { FormInfoFieldComponent } from './field-info/field-info.component';
 import { FormListFieldComponent } from './field-list/field-list.component';
+import { FormNoticeFieldComponent } from './field-notice/field-notice.component';
 import { FormNumberFieldComponent } from './field-number/field-number.component';
 import { FormPasswordFieldComponent } from './field-password/field-password.component';
 import { FormRadioFieldComponent } from './field-radio/field-radio.component';
@@ -43,6 +44,7 @@ let messageCount = 0;
         FormFileFieldComponent,
         FormInfoFieldComponent,
         FormListFieldComponent,
+        FormNoticeFieldComponent,
         FormNumberFieldComponent,
         FormPasswordFieldComponent,
         FormRadioFieldComponent,

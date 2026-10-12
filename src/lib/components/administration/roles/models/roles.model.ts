@@ -1,8 +1,30 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
-import { faBuilding, faIdBadge, faRectangleList, faUser } from '@fortawesome/free-regular-svg-icons';
 
 import { BadgeVariant } from '../../../badge/models/badge.model';
 import { PageOrganization, PageOrganizationItem } from '../../../page/models/page-organization.model';
+import {
+    RolePermissionEntry,
+    RolePermissionsFields,
+    RolePermissionsOptions,
+    ROLES_DEFAULT_ACTION_ORDER,
+    ROLES_DEFAULT_PREFIX,
+    ROLES_DEFAULT_ROLE_PREFIX,
+    ROLES_LIBRARY_PERMISSION_PREFIX
+} from '../../models/role-permissions.model';
+
+export enum RoleSourceType {
+    Direct = 'direct',
+    Group = 'group'
+}
+
+export enum RolesPageMode {
+    Manage = 'manage',
+    Read = 'read'
+}
+
+export type RoleSource =
+    | { groupId: string; groupName: string; type: RoleSourceType.Group }
+    | { type: RoleSourceType.Direct };
 
 export interface RoleFields {
     name: string;
@@ -14,34 +36,6 @@ export interface RoleFields {
 export interface RoleFormValue {
     main: RoleFields;
     permissions: RolePermissionsFields;
-}
-
-export interface RolePermissionEntry {
-    group: string;
-    key: string;
-}
-
-export interface RolePermissionGroup {
-    entries: RolePermissionEntry[];
-    group: string;
-}
-
-export interface RolePermissionSectionsOptions {
-    groupIcons: Readonly<Record<string, IconDefinition>>;
-    permissionPrefix: string;
-    translate: (key: string) => unknown;
-}
-
-export interface RolePermissionsFields {
-    permissions: string[];
-}
-
-export interface RolePermissionsOptions {
-    actionOrder: string[];
-    groupIcons: Readonly<Record<string, IconDefinition>>;
-    groupOrder: string[];
-    permissionPrefix: string;
-    permissions: RolePermissionEntry[];
 }
 
 export interface RolePermissionsResponse {
@@ -60,12 +54,13 @@ export interface RoleRow extends PageOrganizationItem {
     actions: string[];
     id: string;
     isBase: boolean;
-    memberCount: number;
     name: string;
     permissions: string[];
 
     description?: string;
     groupCount?: number;
+    memberCount?: number;
+    sources?: RoleSource[];
 }
 
 export interface RolesDuplicateFormOptions extends RolesFormOptions {
@@ -84,13 +79,9 @@ export interface RolesFormOptions extends RolePermissionsOptions {
 
 export interface RolesRowOptions {
     isOrganizationShown: boolean;
+    isReadOnly: boolean;
     onEdit: (role: RoleRow) => void;
     onView: (role: RoleRow) => void;
-    prefix: string;
-    rolePrefix: string;
-}
-
-export interface RolesViewOptions extends RolePermissionsOptions {
     prefix: string;
     rolePrefix: string;
 }
@@ -114,8 +105,8 @@ export class RolesConfig {
         groupOrder = [],
         height = 'calc(100vh - 220px)',
         permissionPrefix = ROLES_LIBRARY_PERMISSION_PREFIX,
-        prefix = 'angular-components.roles',
-        rolePrefix = 'angular-components.users.roles',
+        prefix = ROLES_DEFAULT_PREFIX,
+        rolePrefix = ROLES_DEFAULT_ROLE_PREFIX,
         storageKey = 'roles',
         usersUrl = '/users'
     }: RolesConfigParameters = {}) {
@@ -149,53 +140,11 @@ export const ROLE_COPY_SEPARATOR = ' ';
 
 export const ROLE_NAME_MAX_LENGTH = 60;
 
-export const ROLES_DEFAULT_ACTION_ORDER: readonly string[] = [
-    'read',
-    'read-definition',
-    'create',
-    'edit',
-    'edit-definition',
-    'delete',
-    'duplicate',
-    'complete',
-    'download',
-    'change-status',
-    'convert-to-block',
-    'convert-to-template',
-    'replace-content',
-    'export',
-    'import',
-    'share',
-    'create-category',
-    'edit-category',
-    'delete-category',
-    'move',
-    'restore-trash-item',
-    'delete-trash-item',
-    'empty-trash',
-    'invite',
-    'manage'
-];
-
-export const ROLES_DEFAULT_GROUP_ICON: IconDefinition = faRectangleList;
-
 export const ROLE_TYPE_VARIANTS: Readonly<Record<'base' | 'extra', BadgeVariant>> = {
     base: BadgeVariant.Primary,
     extra: BadgeVariant.Info
 };
 
-export const ROLES_FORM_SECTION = 'main';
-
-export const ROLES_LIBRARY_GROUP_ICONS: Readonly<Record<string, IconDefinition>> = {
-    organization: faBuilding,
-    roles: faIdBadge,
-    users: faUser
-};
-
-export const ROLES_LIBRARY_PERMISSION_PREFIX = 'angular-components.roles.permissions';
-
 export const ROLES_PERMISSIONS_PATH = '/permissions';
 
-export const ROLES_PERMISSIONS_FIELD = 'permissions';
-
-export const ROLES_PERMISSIONS_SECTION = 'permissions';
+export const ROLES_SOURCES_SEPARATOR = ' · ';

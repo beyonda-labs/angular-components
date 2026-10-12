@@ -13,6 +13,9 @@
                 "edit": {
                     "label": "Editar",
                     "tooltip": "Edita el nombre, los miembros y los roles adicionales del grupo seleccionado"
+                },
+                "view": {
+                    "tooltip": "Muestra los miembros del grupo seleccionado"
                 }
             },
             "form": {
@@ -60,7 +63,8 @@
                     "extra-role-count": "Roles",
                     "member-count": "Miembros",
                     "name": "Nombre",
-                    "organization": "Organización"
+                    "organization": "Organización",
+                    "role-count": "Roles"
                 },
                 "empty": "Ningún grupo coincide con la búsqueda",
                 "tooltips": {
@@ -68,14 +72,35 @@
                     "extra-role-count": "Cuántos roles adicionales da a sus miembros",
                     "member-count": "Cuántos usuarios pertenecen a él",
                     "name": "El nombre del grupo",
-                    "organization": "La organización a la que pertenece el grupo"
-                }
+                    "organization": "La organización a la que pertenece el grupo",
+                    "role-count": "Cuántos roles adicionales da a sus miembros"
+                },
+                "view-group": "Ver sus miembros"
             },
             "title": "Grupos",
             "toast": {
                 "create-success": "Grupo creado",
                 "delete-success": "Grupos eliminados",
                 "edit-success": "Grupo guardado"
+            },
+            "view": {
+                "buttons": {
+                    "close": "Cerrar"
+                },
+                "main": {
+                    "extra-roles": {
+                        "empty": "Este grupo no da roles adicionales.",
+                        "label": "Roles adicionales"
+                    },
+                    "members": {
+                        "empty": "Este grupo aún no tiene miembros.",
+                        "label": "Miembros"
+                    },
+                    "name": {
+                        "label": "Grupo"
+                    }
+                },
+                "title": "Detalle del grupo"
             }
         },
         "http": {

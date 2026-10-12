@@ -11,9 +11,11 @@ base roles first, read-only, and then the extra roles of the organization, each 
 filters by it, see [Organizations](#organizations). It creates an extra role, edits one, duplicates any role into a
 new extra role, deletes extra roles after a confirmation, and shows the permissions of a base role. Which actions it
 offers is up to the backend, as on any page: `create` when `globalActions` lists it, `edit` and `delete` for the rows
-whose `actions` list them, which are the extra roles, and `duplicate` for those that list it, which the roles module of
-express-components gives every role a manager sees, the base roles included. The extra roles are given to users on [the users page](../../users/docs/users-readme.md#extra-roles),
-and to groups on [the groups page](../../groups/docs/groups-readme.md), whose members all get their permissions.
+whose `actions` list them, which are the extra roles, `duplicate` for those that list it, which the roles module of
+express-components gives every role a manager sees, the base roles included, and `view` for the roles whose
+permissions the caller may only see, the base roles of a manager and every role of a member. The extra roles are given to users on [the users page](../../users/docs/users-readme.md#extra-roles),
+and to groups on [the groups page](../../groups/docs/groups-readme.md), whose members all get their permissions. A
+member who may only see their own roles gets the same page read-only, see [Members](#members).
 
 ## Usage
 
@@ -69,7 +71,7 @@ module, as `baseUrl` of [`bey-users`](../../users/docs/users-readme.md) does.
 | `edit`        | `PUT {baseUrl}/{id}` `{ name, description, permissions }`                            | The same, filled in with the role; a superadmin sees its organization disabled, never sent |
 | `duplicate`   | `POST {baseUrl}` `{ name, description, permissions, organizationId? }`, as `create`  | The create form, filled in with the role, see [Duplicate](#duplicate) |
 | `delete`      | `DELETE {baseUrl}` `{ ids }`, after a confirmation                                   | None                                                              |
-| Permissions of a base role | None                                                                    | The name, the description and the permissions, read-only           |
+| `view`, the permissions of a role | None                                                             | The name, the description and the permissions, read-only           |
 
 The page reads, before the list shows, what the caller may put in a role: `GET {baseUrl}/permissions` answers
 `{ permissions: [{ group, key }] }`, the permissions the caller holds, every one for a superadmin, without those that
@@ -85,7 +87,11 @@ No column sorts, since the server keeps the base roles first.
 The name of an extra role opens the edit form when the row lists `edit`. The name of a base role, or of any role the
 caller cannot edit, opens its permissions instead (`table.view-permissions` as its tooltip): the same checklist with
 the permissions of the role checked and every box disabled, nothing to select and the sections still folding, under
-its name and description, closed with its only button (`view.buttons.close`).
+its name and description, closed with its only button (`view.buttons.close`). A selected row that lists `view` offers
+the same from "View" in the header, next to where Edit sits so it shows directly: the standard `view` action of
+[the page](../../../page/docs/page-readme.md#header-actions), with the label of the page module and the tooltip
+`actions.view.tooltip` ("See the permissions of the selected role"). An extra role a manager edits lists `edit`
+instead, since its edit form shows everything.
 
 `delete` asks first with `modal.delete.title` and `.message`, which warns that the users who hold the roles lose the
 permissions they give, and the server takes the roles from them. A change of a role, or of who holds it, reaches a user
@@ -156,7 +162,13 @@ The icon of a section is the one `groupIcons` gives its group, an `IconDefinitio
 other group shows `faRectangleList`.
 
 The module ships the labels and descriptions of the library's own permissions: `users.read`, `users.invite`,
-`users.edit`, `users.change-status`, `organization.manage` and `roles.manage`, with the labels of their groups.
+`users.edit`, `users.change-status`, `users.transfer-content` ("Transfer content"), `organization.manage` and
+`roles.manage`, with the labels of their groups, and
+the four an extra role may give in the "Organization" section: `organization.read` ("See the organization summary"),
+`organization.read-groups` ("See their groups and members"), `organization.read-group-roles` ("See the roles and
+permissions of their groups") and `organization.read-roles` ("See their roles and permissions"). Nothing checks one of
+them with another: "See the roles and permissions of their groups" alone shows nothing, since the groups page needs
+"See their groups and members".
 
 ### Order
 
@@ -182,6 +194,21 @@ new BeyRolesConfig({
     groupOrder: ['templates', 'documents', 'global-variables', 'attachments']
 });
 ```
+
+## Members
+
+The roles module of express-components answers a member who holds `organization.read-roles`, and not `roles.manage`,
+only the roles they hold, their base roles and their extra roles, held directly or through their groups:
+`{ id, name, description?, isBase, permissions, sources, actions: ['view'] }`, `sources` being
+`({ type: 'direct' } | { type: 'group', groupId, groupName })[]` (`BeyRoleSource`, `BeyRoleSourceType`), with no counts
+and no `globalActions`; `GET {baseUrl}/permissions` answers them too. The page reads that from the answer: rows that
+carry `sources` turn it read-only, and it builds itself again for that.
+
+-   **The columns** are "Name", "Type", "Permissions", "Origin" (`table.columns.sources`) and "Description"; "Users" and
+    "Groups" do not show. "Origin" reads "Direct" (`sources.direct`), "Group Sales, Support" (`sources.group`, with the
+    names of the groups), or both, joined by " · ".
+-   **The name** of every role opens its permissions read-only, as the name of a base role does for a manager, and so
+    does "View" in the header once the role is selected.
 
 ## Organizations
 
@@ -209,11 +236,12 @@ alone, before the list shows; a failed answer counts as none, with no error.
 ## Texts
 
 Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
-`.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.every-organization`,
+`.tooltip` (only the tooltip for `view`, whose label is the page module's), `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.every-organization`,
 `table.view-permissions`, `type.base` and `.extra`, `search.fields.<key>`, `form.create.title`, `form.edit.title`,
 `form.main.<field>.label` and `.placeholder`, `form.permissions.label` (the label above the checklist) and `.empty`
 (when there is nothing to give), `duplicate.title`, `duplicate.buttons.submit` and `duplicate.copy-suffix`,
 `modal.delete.title` and `.message`, `toast.<key>-success`, and for the read-only view
 `view.title`, `view.buttons.close`, `view.main.name.label`, `view.main.description.label`,
-`view.permissions.label` and `.empty` (a role with no permission to show). The module ships all of them in English
-and Spanish.
+`view.permissions.label` and `.empty` (a role with no permission to show), and for a member
+`table.columns.sources`, `table.tooltips.sources`, `sources.direct` and `sources.group`. The module ships all of them in
+English and Spanish.

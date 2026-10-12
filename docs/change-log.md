@@ -95,6 +95,42 @@
     the primary colour, mixed on hover with a quarter of the page.
 -   Style guide: "Expand all" and "Collapse all" at the top, and a hash naming a module (`#tabs`, `#administration`)
     that opens its section and scrolls to it, on arrival or when a link changes it.
+-   Users module: `transfer`, on an inactive row that lists it, moves what the user owns (`GET {baseUrl}/{id}/content`)
+    to the active user picked over `transfer-targets`, into a folder named after them, with `POST {baseUrl}/{id}/transfer`.
+-   Users module: `delete`, on one row or several that list it, confirms with what they own, what others use of it and
+    the invitations that stop working, then sends `DELETE {baseUrl}/{id}` for each, one after the other.
+-   Users module: `contentLabels` on `BeyUsersConfig` labels each kind of content the counts name; the texts of the
+    `users.not-deletable`, `.transfer-source-not-inactive` and `.invalid-transfer-target` errors.
+-   Organizations module: `delete`, on a deactivated organization that lists it, confirms with what it holds and its exact
+    name typed, then sends `DELETE {baseUrl}/{id}` `{ name }`; `contentLabels` on `BeyOrganizationsConfig`.
+-   Organizations module: the texts of the `organizations.active` and `.name-mismatch` errors.
+-   Organization summary module: `bey-organization-summary`, the organization of a member read-only from
+    `GET {organizationsUrl}/current`, under its page title, in cards: name, creation, figures (by status when answered),
+    admins.
+-   Organization summary module: the administrators, the groups and the extra roles, each counted, in the same list
+    card: every group with members folded with them, "No group" last, and every extra role that opens the `permissions`
+    answered with it (`rolesConfig`); `BeyOrganizationSummaryGroup`, `…Member`, `…ExtraRole`.
+-   Cards module: `bey-card`, `bey-card-stats`, `bey-card-list` and `bey-avatar`, the pieces of a summary page: a card
+    with a title and a count, a strip of figures, lists of items that fold or open, and the initials of a person.
+-   Testing: `beyVisibleText(scope)`, the text of a fixture or an element as a reader sees it, one space between nodes.
+-   Page module: `BeyPageStandardAction.View`, one row, next to `edit`, labelled "View" by the page module
+    (`angular-components.page.actions.view.*`); it has no behaviour of its own, so it takes a `handler`.
+-   Groups module: rows with no action but `view`, and no `create`, turn the page read-only, "Roles" only with a
+    `roleCount`, and the name opening the members and the roles of a group, each role its permissions.
+-   Groups module: "View" in the header opens the selected group read-only when its row lists `view`, as its name does.
+-   Groups module: `rolesConfig` on `BeyGroupsConfig` (`BeyRoleViewSettings`, a `BeyRolesConfig` fits), the sections and
+    order of the permissions of a role opened from a group.
+-   Roles module: rows with `sources` turn the page read-only, with an "Origin" column, "Direct" or "Group <names>",
+    instead of the user and group counts; `BeyRoleSource` and `BeyRoleSourceType`.
+-   Roles module: "View" in the header opens the permissions of the selected role when its row lists `view`, as its name
+    does, for a member's roles and a manager's base roles.
+-   Roles module: the labels and descriptions of `organization.read`, `.read-groups`, `.read-group-roles` and
+    `.read-roles`, in the "Organization" section of the permissions, and of `users.transfer-content`.
+-   Form module: `BeyFormNoticeField`, a `bey-notice` of a variant inside a form, and `onItemClick` on a
+    `BeyFormListField` of texts, which makes every text a link and calls it with the text and its index.
+-   Form module: `isSubmitDanger` on `BeyModalFormConfig` and `isDanger` on `BeyFormButton` paint a submit button in
+    the danger colour.
+-   Styles: the `--bey-danger-fg` and `--bey-danger-hover` tokens, the text and the hover of a danger button.
 
 ### Changed
 
@@ -122,9 +158,20 @@
     `administration`, with one entry in the public API; every export keeps its name and every text its key.
 -   Style guide: every section folds under its title and a chevron, collapsed at first and rendered only while open;
     the sections left open are remembered in `sessionStorage`, and the four administration demos share one section.
+-   Page module: `beyPageOwnerCell` names an owner with an `ownerId` and a `null` `ownerName` "Unknown"
+    (`angular-components.user-name.unknown`), and so do the usages a user of `name` `null` (`BeyPageUser`) and the
+    owner filter an owner of `GET /owners` with `name` `null` (`BeyPageOwner`).
+-   Properties menu: the attachment field names an attachment it holds "Unknown" once its options came and none is it,
+    such as a deleted file; a variable reference still shows as typed.
+-   Edit lock service: `holderName` of `BeyEditLock` may be `null`, and `bey-edit-lock-notice` names such a holder
+    "Unknown".
+-   Roles module: `memberCount` of `BeyRoleRow` is optional, since the rows of a member carry no counts.
+-   Left menu module: the avatar of the user is `bey-avatar` of the cards module, painted through `--bey-cards-avatar-*`.
 
 ### Fixed
 
+-   Session: `beyAuthGuard` lets a path of `allowedPaths` open that page and the pages under it only, no longer a page
+    whose path merely begins with it, such as `/administration/organizations` for `/administration/organization`.
 -   Header module: the header keeps the new `--bey-control-height` token, the height of a text button, as its least
     height, so its title no longer moves when the actions of a selection show or hide.
 -   Page module: the trash origin on the tooltip of a row ends with the row's own name, so it reads as the place of

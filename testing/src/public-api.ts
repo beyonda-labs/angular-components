@@ -9,7 +9,8 @@ export {
     queryControl as beyQueryControl,
     renderComponent as beyRenderComponent,
     settle as beySettle,
-    textsOf as beyTextsOf
+    textsOf as beyTextsOf,
+    visibleText as beyVisibleText
 } from './dom';
 export type { QueryScope as BeyQueryScope } from './dom';
 export type { TestingConfig as BeyTestingConfig } from './models/testing.model';

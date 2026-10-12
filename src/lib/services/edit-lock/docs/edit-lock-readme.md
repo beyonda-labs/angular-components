@@ -72,7 +72,7 @@ its life is the life of that component.
 | Field        | Meaning                                                                                        |
 | ------------ | ---------------------------------------------------------------------------------------------- |
 | `holderId`   | The user who holds it                                                                          |
-| `holderName` | Their name and surname, or their email                                                         |
+| `holderName` | Their name and surname, or their email; `null` when the server no longer resolves the holder    |
 | `acquiredAt` | When their editing started, in milliseconds                                                    |
 | `expiresAt`  | When it expires unless a heartbeat comes first                                                 |
 | `isOwn`      | This window holds it                                                                           |

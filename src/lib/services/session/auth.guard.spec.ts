@@ -69,6 +69,11 @@ describe('authGuard', () => {
             await expect(runGuard('settings/profile')).resolves.toBe(true);
         });
 
+        it('keeps out a route that only begins with the name of an allowed one', async () => {
+            expect(redirection(await runGuard('settingsarchive'))).toBe('/dashboard');
+            expect(redirection(await runGuard('dashboards'))).toBe('/dashboard');
+        });
+
         it('redirects to redirectPath when the route is not in allowedPaths', async () => {
             expect(redirection(await runGuard('admin/users'))).toBe('/dashboard');
         });

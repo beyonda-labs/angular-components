@@ -30,8 +30,8 @@ describe('GroupsStyleGuideComponent', () => {
         httpTesting
             .expectOne(request => request.url === GROUPS_URL)
             .flush({
-                globalActions: [],
-                results: [{ actions: [], createdAt: 0, id: 'g1', memberCount: 3, name: 'Sales' }]
+                globalActions: ['create'],
+                results: [{ actions: ['edit'], createdAt: 0, id: 'g1', memberCount: 3, name: 'Sales' }]
             });
         await settle(fixture);
 

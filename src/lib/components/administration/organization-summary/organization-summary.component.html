@@ -1,0 +1,28 @@
+<bey-header class="bey-organization-summary-page-header" [config]="headerConfig()"></bey-header>
+
+@if (view(); as view) {
+    <bey-card [config]="view.card">
+        <header class="bey-organization-summary-header">
+            <h2 class="bey-organization-summary-name">{{ view.name }}</h2>
+
+            <p class="bey-organization-summary-created">
+                {{ texts().createdAt | translate: view.createdAtParameters }}
+            </p>
+        </header>
+
+        <div class="bey-organization-summary-stats">
+            <bey-card-stats [config]="view.stats"></bey-card-stats>
+
+            @if (view.breakdown) {
+                <p class="bey-organization-summary-breakdown">{{ view.breakdown }}</p>
+            }
+        </div>
+
+        <bey-card-list [config]="view.administrators"></bey-card-list>
+
+        <div class="bey-organization-summary-columns">
+            <bey-card-list [config]="view.groups"></bey-card-list>
+            <bey-card-list [config]="view.extraRoles"></bey-card-list>
+        </div>
+    </bey-card>
+}

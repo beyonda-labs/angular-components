@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { BeyListComponent, BeyListConfig } from '@beyonda-labs/angular-components';
+import { BeyAvatarComponent, BeyAvatarConfig, BeyListComponent, BeyListConfig } from '@beyonda-labs/angular-components';
 import { TranslateModule } from '@ngx-translate/core';
 
 interface Employee {
+    avatar: BeyAvatarConfig;
     id: number;
     name: string;
     role: string;
@@ -10,7 +11,7 @@ interface Employee {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [BeyListComponent, TranslateModule],
+    imports: [BeyAvatarComponent, BeyListComponent, TranslateModule],
     selector: 'bey-list-style-guide',
     standalone: true,
     styleUrls: ['../style-guide-shared.css'],
@@ -38,24 +39,19 @@ export class ListStyleGuideComponent {
         return item as Employee;
     }
 
-    getInitials(name: string): string {
-        return name
-            .split(' ')
-            .map(part => part.charAt(0))
-            .join('')
-            .slice(0, 2)
-            .toUpperCase();
-    }
-
     private buildEmployees(): Employee[] {
         return [
-            { id: 1, name: 'Ada Lovelace', role: 'Engineering' },
-            { id: 2, name: 'Linus Torvalds', role: 'Platform' },
-            { id: 3, name: 'Grace Hopper', role: 'Research' }
+            buildEmployee(1, ['Ada', 'Lovelace'], 'Engineering'),
+            buildEmployee(2, ['Linus', 'Torvalds'], 'Platform'),
+            buildEmployee(3, ['Grace', 'Hopper'], 'Research')
         ];
     }
 
     private onEmployeeClick(employee: Employee): void {
         this.selectedEmployee.set(employee.name);
     }
+}
+
+function buildEmployee(id: number, [name, surname]: [string, string], role: string): Employee {
+    return { avatar: new BeyAvatarConfig({ name, surname }), id, name: `${name} ${surname}`, role };
 }

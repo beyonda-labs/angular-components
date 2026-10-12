@@ -1,0 +1,11 @@
+<ul class="bey-cards-stats">
+    @for (stat of config().items; track stat.key) {
+        <li class="bey-cards-stats-item">
+            @if (stat.icon) {
+                <fa-icon class="bey-cards-stats-icon" aria-hidden="true" [icon]="stat.icon"></fa-icon>
+            }
+            <span class="bey-cards-stats-value">{{ stat.value }}</span>
+            <span class="bey-cards-stats-label">{{ stat.label | translate: { count: stat.value } }}</span>
+        </li>
+    }
+</ul>

@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { BadgeTableCell, LinkTableCell } from '../../../table/models/table-cell.model';
-import { RoleRow, RolesRowOptions } from '../models/roles.model';
+import { RoleRow, RoleSourceType, RolesRowOptions } from '../models/roles.model';
 import { RolesTableService } from './roles-table.service';
 
 describe('RolesTableService', () => {
@@ -40,12 +40,24 @@ describe('RolesTableService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             providers: [
-                provideBeyTesting({ translations: { en: { demo: { roles: { adminuser: 'Administrator' } } } } })
+                provideBeyTesting({
+                    translations: {
+                        en: {
+                            demo: {
+                                roles: {
+                                    adminuser: 'Administrator',
+                                    sources: { direct: 'Direct', group: 'Group {{names}}' }
+                                }
+                            }
+                        }
+                    }
+                })
             ]
         });
 
         options = {
             isOrganizationShown: false,
+            isReadOnly: false,
             onEdit: jest.fn(),
             onView: jest.fn(),
             prefix: 'demo.roles',
@@ -109,6 +121,39 @@ describe('RolesTableService', () => {
         expect(service.loadRow(buildBase(), shown)[5]).toMatchObject({
             content: 'demo.roles.table.every-organization',
             translate: true
+        });
+    });
+
+    describe('reading the own roles of a member', () => {
+        it('fills the name, the type, the permission count, the origin and the description, without counts of users', () => {
+            const role = buildRole({
+                actions: [],
+                groupCount: undefined,
+                memberCount: undefined,
+                sources: [
+                    { type: RoleSourceType.Direct },
+                    { groupId: 'g1', groupName: 'Sales', type: RoleSourceType.Group },
+                    { groupId: 'g2', groupName: 'Support', type: RoleSourceType.Group }
+                ]
+            });
+            const cells = service.loadRow(role, { ...options, isReadOnly: true });
+
+            expect(cells.map(({ content }) => (typeof content === 'string' ? content : ''))).toEqual([
+                'Reviewers',
+                '',
+                '2',
+                'Direct · Group Sales, Support',
+                'Review the templates'
+            ]);
+        });
+
+        it('says only where the role comes from', () => {
+            const origin = service.loadRow(buildRole({ sources: [{ type: RoleSourceType.Direct }] }), {
+                ...options,
+                isReadOnly: true
+            })[3];
+
+            expect(origin.content).toBe('Direct');
         });
     });
 });

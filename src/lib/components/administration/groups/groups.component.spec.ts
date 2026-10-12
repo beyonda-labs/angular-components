@@ -279,14 +279,82 @@ describe('GroupsComponent', () => {
         ]);
     });
 
-    it('offers only the actions the backend lists', async () => {
-        await render([buildGroup({ actions: [] })], []);
+    describe('for a member who reads their own groups', () => {
+        async function renderMember(member: GroupRow): Promise<void> {
+            await render([member], []);
+            reload().flush({
+                globalActions: [],
+                results: [member],
+                search: { filters: [], page: 1, size: 25, total: 1 }
+            });
+            await settle(fixture);
+        }
 
-        rowWith('Sales').click();
-        await settle(fixture);
+        async function openView(detail: Record<string, unknown>): Promise<ModalFormConfig | undefined> {
+            buttonByName(fixture, 'Sales').click();
+            await settle(fixture);
+            httpTesting.expectOne(`${GROUPS_URL}/g1`).flush({ id: 'g1', name: 'Sales', ...detail });
+            await settle(fixture);
 
-        expect(queryButton(fixture, `${PREFIX}.actions.create.label`)).toBeNull();
-        expect(queryButton(fixture, `${PREFIX}.actions.edit.label`)).toBeNull();
-        expect(queryButton(fixture, 'Sales')).toBeNull();
+            return modalForms.forms().at(-1);
+        }
+
+        it('offers no action, and opens a group from its name with its members to read', async () => {
+            await renderMember(buildGroup({ actions: [], extraRoleCount: undefined }));
+
+            expect(queryButton(fixture, `${PREFIX}.actions.create.label`)).toBeNull();
+            expect(queryButton(fixture, `${PREFIX}.actions.edit.label`)).toBeNull();
+            expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.table.columns.extra-role-count`);
+
+            const view = await openView({
+                members: [{ email: 'ada@example.test', id: 'u1', name: 'Ada', surname: 'Lovelace' }]
+            });
+
+            expect(view?.title).toBe(`${PREFIX}.view.title`);
+            expect(view?.isSubmitHidden).toBe(true);
+            expect(fieldsOf(view).map(({ key }) => key)).toEqual(['name', 'members']);
+            expect((fieldsOf(view)[1] as FormListField).items).toEqual(['Ada Lovelace (ada@example.test)']);
+        });
+
+        it('opens the selected group from the view action of the header when its row lists view', async () => {
+            await renderMember(buildGroup({ actions: ['view'], extraRoleCount: undefined }));
+
+            expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.table.columns.extra-role-count`);
+
+            rowWith('Sales').click();
+            await settle(fixture);
+
+            expect(queryButton(fixture, `${PREFIX}.actions.edit.label`)).toBeNull();
+            expect(queryButton(fixture, 'angular-components.header.menu')).toBeNull();
+
+            buttonByName(fixture, 'angular-components.page.actions.view.label').click();
+            await settle(fixture);
+            httpTesting.expectOne(`${GROUPS_URL}/g1`).flush({ id: 'g1', members: [], name: 'Sales' });
+            await settle(fixture);
+
+            expect(modalForms.forms().at(-1)?.title).toBe(`${PREFIX}.view.title`);
+        });
+
+        it('counts and lists the roles of the groups when the rows count them, each opening its permissions', async () => {
+            await renderMember(buildGroup({ actions: [], extraRoleCount: undefined, roleCount: 1 }));
+
+            expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.role-count`);
+
+            const view = await openView({
+                extraRoles: [{ id: 'r1', name: 'Reviewers', permissions: ['templates.edit'] }],
+                members: []
+            });
+            const roles = fieldsOf(view).find(({ key }) => key === 'extraRoles') as FormListField;
+
+            expect(roles.items).toEqual(['Reviewers']);
+
+            roles.onItemClick?.('Reviewers', 0);
+
+            expect(modalForms.forms().at(-1)?.title).toBe('angular-components.roles.view.title');
+            expect(modalForms.forms().at(-1)?.initialValue).toEqual({
+                main: { description: '', name: 'Reviewers' },
+                permissions: { permissions: ['templates.edit'] }
+            });
+        });
     });
 });

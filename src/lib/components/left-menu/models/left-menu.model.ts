@@ -1,5 +1,7 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
+import { avatarInitials } from '../../cards/avatar/functions/avatar-initials';
+
 export class LeftMenuAction {
     active: boolean;
     disabled: boolean;
@@ -84,17 +86,10 @@ export class LeftMenuUserInfo {
 
     constructor({ email = '', initials = '', name, route, surname = '' }: LeftMenuUserInfoParameters) {
         this.email = email;
-        this.initials = initials || this.getInitials(name, surname);
+        this.initials = initials || avatarInitials(name, surname);
         this.name = name;
         this.route = route;
         this.surname = surname;
-    }
-
-    private getInitials(name: string, surname: string): string {
-        const nameInitial = name ? name.charAt(0).toUpperCase() : '';
-        const surnameInitial = surname ? surname.charAt(0).toUpperCase() : '';
-
-        return nameInitial + surnameInitial;
     }
 }
 

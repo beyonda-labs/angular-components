@@ -252,7 +252,7 @@ export class FormComponent<TValue = unknown> {
             return new ButtonConfig({
                 ...base,
                 action: () => action(this.handle),
-                type: button.type === FormButtonType.Submit ? ButtonType.Primary : ButtonType.Secondary
+                type: button.type === FormButtonType.Submit ? submitType(button) : ButtonType.Secondary
             });
         }
 
@@ -275,7 +275,7 @@ export class FormComponent<TValue = unknown> {
                 action: () => this.submit(),
                 isDisabled: requiresChanges || !isValid,
                 tooltip: requiresChanges || !isValid ? blockedTooltip : button.tooltip,
-                type: ButtonType.Primary
+                type: submitType(button)
             });
         }
 
@@ -422,6 +422,10 @@ function readState(formGroup: FormGroup): FormState {
 
 function ruleOf<T>(field: FormField, key: 'excludedValues' | 'options'): FormRule<T[]> {
     return (field as Partial<Record<typeof key, FormRule<T[]>>>)[key] ?? [];
+}
+
+function submitType({ isDanger }: FormButton): ButtonType {
+    return isDanger ? ButtonType.Danger : ButtonType.Primary;
 }
 
 function syncDisabled(control: AbstractControl, state: FormFieldState): void {

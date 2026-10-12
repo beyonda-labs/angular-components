@@ -1,0 +1,29 @@
+<p class="bey-style-guide-description text-muted mb-3">
+    {{ 'angular-components-style-guide.cards.example' | translate }}
+</p>
+
+<bey-card [config]="card">
+    <bey-card-stats [config]="stats"></bey-card-stats>
+
+    <bey-card-list [config]="people"></bey-card-list>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <bey-card-list [config]="teams"></bey-card-list>
+        </div>
+
+        <div class="col-md-6">
+            <bey-card-list [config]="roles"></bey-card-list>
+        </div>
+    </div>
+
+    <bey-card-list [config]="empty"></bey-card-list>
+</bey-card>
+
+<p class="bey-style-guide-example-label mt-4 mb-2">{{ 'angular-components-style-guide.cards.avatars' | translate }}</p>
+
+<div class="d-flex gap-2">
+    @for (avatar of avatars; track avatar.name) {
+        <bey-avatar [config]="avatar"></bey-avatar>
+    }
+</div>

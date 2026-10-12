@@ -18,7 +18,7 @@ export const authGuard: CanActivateFn = route => {
         }
 
         const targetPath = `/${route.routeConfig?.path ?? ''}`;
-        const isAllowed = user.allowedPaths.some(allowed => targetPath.startsWith(allowed));
+        const isAllowed = user.allowedPaths.some(allowed => isWithin(targetPath, allowed));
 
         if (!isAllowed) {
             return router.createUrlTree([user.redirectPath]);
@@ -33,3 +33,7 @@ export const authGuard: CanActivateFn = route => {
 
     return sessionService.restore().pipe(map(() => decide()));
 };
+
+function isWithin(path: string, allowed: string): boolean {
+    return path === allowed || path.startsWith(allowed.endsWith('/') ? allowed : `${allowed}/`);
+}

@@ -13,6 +13,12 @@
             }
         },
         "page": {
+            "actions": {
+                "view": {
+                    "label": "Ver",
+                    "tooltip": "Muestra el elemento seleccionado sin cambiarlo"
+                }
+            },
             "count": {
                 "many": "({{count}} elementos)",
                 "one": "({{count}} elemento)"

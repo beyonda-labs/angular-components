@@ -3,13 +3,8 @@ import { map, Observable } from 'rxjs';
 
 import { HttpService } from '../../../../services/http/http.service';
 import { PageUrlService } from '../../../page/services/page-url.service';
-import {
-    RolePermissionEntry,
-    RolePermissionsResponse,
-    RoleRequest,
-    RoleRow,
-    ROLES_PERMISSIONS_PATH
-} from '../models/roles.model';
+import { RolePermissionEntry } from '../../models/role-permissions.model';
+import { RolePermissionsResponse, RoleRequest, RoleRow, ROLES_PERMISSIONS_PATH } from '../models/roles.model';
 
 const ignoreError = (): void => undefined;
 

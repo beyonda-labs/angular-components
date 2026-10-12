@@ -5,7 +5,11 @@ import { hasOneOwner } from './page-move-owner';
 
 const CATEGORY_HANDLER_KEYS = new Set<string>([PageStandardAction.Share]);
 const ROWLESS_SCOPES = new Set([PageActionScope.Global, PageActionScope.Group]);
-const SINGLE_ROW_KEYS = new Set<string>([PageStandardAction.Edit, PageStandardAction.EditCategory]);
+const SINGLE_ROW_KEYS = new Set<string>([
+    PageStandardAction.Edit,
+    PageStandardAction.EditCategory,
+    PageStandardAction.View
+]);
 
 export function isActionVisible(
     action: PageAction,

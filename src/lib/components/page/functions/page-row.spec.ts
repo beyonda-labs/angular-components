@@ -27,13 +27,17 @@ describe('page rows', () => {
         expect(isActionVisible(duplicate, [], [FOLDER])).toBe(false);
     });
 
-    it('asks for exactly one row for edit and edit-category, whatever their scope', () => {
+    it('asks for exactly one row for edit, edit-category and view, whatever their scope', () => {
         const edit = buildAction(PageStandardAction.Edit, PageActionScope.Item);
         const editCategory = buildAction(PageStandardAction.EditCategory, PageActionScope.Item);
+        const view = buildAction(PageStandardAction.View, PageActionScope.Item);
+        const readable: Row = { ...REPORT, actions: [PageStandardAction.View] };
 
         expect(isActionVisible(edit, [], [REPORT])).toBe(true);
         expect(isActionVisible(edit, [], [REPORT, SUMMARY])).toBe(false);
         expect(isActionVisible(editCategory, [], [FOLDER, OTHER_FOLDER], CATEGORIES)).toBe(false);
+        expect(isActionVisible(view, [], [readable])).toBe(true);
+        expect(isActionVisible(view, [], [readable, { ...readable, id: 2 }])).toBe(false);
     });
 
     it('shows move only while the selected rows have a single owner, or none of them has owners', () => {

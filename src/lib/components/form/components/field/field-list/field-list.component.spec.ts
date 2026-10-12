@@ -38,6 +38,15 @@ describe('FormListFieldComponent', () => {
         expect(textsOf([...list.querySelectorAll('li')])).toEqual(['Invoice', 'Offer']);
     });
 
+    it('calls onItemClick with the item clicked and its index', async () => {
+        const onItemClick = jest.fn();
+        const fixture = await render(new FormListField({ items: ['Invoice', 'Offer'], key: 'usedBy', onItemClick }));
+
+        buttonByName(fixture, 'Offer').click();
+
+        expect(onItemClick).toHaveBeenCalledWith('Offer', 1);
+    });
+
     it('shows its placeholder while it has no items, and the items once a signal brings them', async () => {
         const items = signal<string[]>([]);
         const fixture = await render(new FormListField({ key: 'usedBy', items }));

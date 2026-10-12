@@ -18,6 +18,7 @@ export interface InUseConfirmationOptions {
     listedUsers: number;
     selectedIds: (string | number)[];
     suffixes: Record<string, string>;
+    unknownName: string;
     usages: PageUsages[];
 }
 
@@ -33,7 +34,7 @@ export interface PageUsagesResponse {
 
 export interface PageUser {
     id: string;
-    name: string;
+    name: string | null;
     resource: string;
 
     kind?: string;

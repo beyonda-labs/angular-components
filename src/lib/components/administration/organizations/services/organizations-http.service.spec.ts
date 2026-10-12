@@ -77,4 +77,25 @@ describe('OrganizationsHttpService', () => {
             translate.instant(error.message, error.messageParameters as Record<string, unknown>)
         ]).toEqual(['Name already in use', 'There is already an organization named Acme.']);
     });
+
+    it('reads how much an organization holds, nothing from an answer without counts', () => {
+        const answers: unknown[] = [];
+
+        service.loadContent('/tenants', 'o2').subscribe(content => answers.push(content));
+        httpTesting.expectOne(`${ORGANIZATION_URL}/content`).flush({ counts: { groups: 1, roles: 0, users: 3 } });
+        service.loadContent('/tenants', 'o2').subscribe(content => answers.push(content));
+        httpTesting.expectOne(`${ORGANIZATION_URL}/content`).flush({});
+
+        expect(answers).toEqual([{ counts: { groups: 1, roles: 0, users: 3 } }, { counts: {} }]);
+    });
+
+    it('deletes an organization with the name typed and confirms it', () => {
+        service.deleteOrganization('/tenants', 'o2', 'Globex', 'organizations.deleted').subscribe();
+        const request = httpTesting.expectOne(ORGANIZATION_URL);
+        request.flush(null, { status: 204, statusText: 'No Content' });
+
+        expect(request.request.method).toBe('DELETE');
+        expect(request.request.body).toEqual({ name: 'Globex' });
+        expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: 'organizations.deleted' }]);
+    });
 });

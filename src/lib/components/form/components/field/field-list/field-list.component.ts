@@ -35,6 +35,7 @@ export class FormListFieldComponent {
     readonly emptyKey = computed(
         () => this.field().emptyKey ?? this.field().placeholder ?? `${this.prefix()}.placeholder`
     );
+    readonly hasItemClick = computed(() => this.field().onItemClick !== undefined);
     readonly hasRows = computed(() => (this.isValued() ? this.rows().length : this.items().length) > 0);
     readonly isEditable = computed(() => this.isValued() && !this.controlState.isDisabled());
     readonly isRemovable = computed(() => this.field().isRemovable && this.isEditable());
@@ -77,6 +78,10 @@ export class FormListFieldComponent {
 
     private readonly detachedControl = new FormControl<string[] | null>([]);
     private readonly pickedOptions = signal<FormFieldOption[]>([]);
+
+    onItemClick(item: string, index: number): void {
+        this.field().onItemClick?.(item, index);
+    }
 
     onRemove(value: string): void {
         this.write(this.values().filter(current => current !== value));

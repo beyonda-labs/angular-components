@@ -10,7 +10,14 @@ import { PageTableConfig, PageTableSearchConfig } from '../../page/models/page-t
 import { SearchField, SearchFieldOption, SearchFieldType } from '../../search/models/search.model';
 import { TableColumn } from '../../table/models/table.model';
 import { TableCell } from '../../table/models/table-cell.model';
-import { UserFormValue, UserRow, USERS_RESEND_INVITATION_ACTION, UsersConfig, UserStatus } from './models/users.model';
+import {
+    UserFormValue,
+    UserRow,
+    USERS_RESEND_INVITATION_ACTION,
+    USERS_TRANSFER_ACTION,
+    UsersConfig,
+    UserStatus
+} from './models/users.model';
 
 const LEADING_COLUMNS = [
     new TableColumn({ isHideable: false, isSortable: true, key: 'name', width: 3 }),
@@ -36,8 +43,10 @@ export interface UsersPageConfigOptions {
     formConfig: PageFormConfig<UserFormValue, UserRow>;
     isOrganizationShown: boolean;
     loadRow: (user: UserRow) => TableCell[];
+    onDelete: (users: UserRow[]) => void;
     onReady: (handle: PageHandle<UserRow>) => void;
     onResendInvitation: (user: UserRow) => void;
+    onTransfer: (user: UserRow) => void;
     organizations: PageOrganization[];
     roleOptions: SearchFieldOption[];
 }
@@ -47,8 +56,10 @@ export function buildUsersPageConfig({
     formConfig,
     isOrganizationShown,
     loadRow,
+    onDelete,
     onReady,
     onResendInvitation,
+    onTransfer,
     organizations,
     roleOptions
 }: UsersPageConfigOptions): PageConfig<UserFormValue, UserRow> {
@@ -67,7 +78,14 @@ export function buildUsersPageConfig({
                     key: USERS_RESEND_INVITATION_ACTION,
                     scope: PageActionScope.Single,
                     zone: PageActionZone.Menu
-                })
+                }),
+                new PageAction<UserRow>({
+                    handler: ([user]) => onTransfer(user),
+                    key: USERS_TRANSFER_ACTION,
+                    scope: PageActionScope.Single,
+                    zone: PageActionZone.Menu
+                }),
+                pageStandardAction<UserRow>(PageStandardAction.Delete, { handler: users => onDelete(users) })
             ],
             title: `${prefix}.title`
         }),

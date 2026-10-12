@@ -6,6 +6,29 @@ export enum OrganizationStatus {
     Inactive = 'inactive'
 }
 
+export interface OrganizationContent {
+    counts: Record<string, number>;
+}
+
+export interface OrganizationContentResponse {
+    counts?: Record<string, number>;
+}
+
+export interface OrganizationDeleteFields {
+    name: string;
+}
+
+export interface OrganizationDeleteFormOptions {
+    contentLabels: Readonly<Record<string, string>>;
+    counts: Readonly<Record<string, number>>;
+    organization: OrganizationRow;
+    prefix: string;
+}
+
+export interface OrganizationDeleteFormValue {
+    main: OrganizationDeleteFields;
+}
+
 export interface OrganizationDetail extends OrganizationRow {
     groups: OrganizationGroup[];
 }
@@ -61,17 +84,20 @@ export interface OrganizationsRowOptions {
 
 export class OrganizationsConfig {
     baseUrl: string;
+    contentLabels: Readonly<Record<string, string>>;
     height: string;
     prefix: string;
     storageKey: string;
 
     constructor({
         baseUrl = '/organizations',
+        contentLabels = {},
         height = 'calc(100vh - 220px)',
         prefix = 'angular-components.organizations',
         storageKey = 'organizations'
     }: OrganizationsConfigParameters = {}) {
         this.baseUrl = baseUrl;
+        this.contentLabels = contentLabels;
         this.height = height;
         this.prefix = prefix;
         this.storageKey = storageKey;
@@ -80,6 +106,7 @@ export class OrganizationsConfig {
 
 export interface OrganizationsConfigParameters {
     baseUrl?: string;
+    contentLabels?: Readonly<Record<string, string>>;
     height?: string;
     prefix?: string;
     storageKey?: string;
@@ -92,6 +119,10 @@ export const ORGANIZATION_STATUS_BADGE_VARIANTS: Readonly<Record<OrganizationSta
     [OrganizationStatus.Inactive]: BadgeVariant.Neutral
 };
 
+export const ORGANIZATIONS_CONTENT_PATH = '/content';
+
 export const ORGANIZATIONS_FORM_SECTION = 'main';
 
 export const ORGANIZATIONS_GROUPS_SECTION = 'groups';
+
+export const ORGANIZATIONS_LIBRARY_CONTENT: readonly string[] = ['users', 'groups', 'roles'];

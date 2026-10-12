@@ -33,6 +33,14 @@ describe('pageOwnerCell', () => {
     });
 
     it('stays empty for a row nobody owns', () => {
+        expect(pageOwnerCell({ ownerId: null, ownerName: null })).toMatchObject({ content: '', tooltip: undefined });
         expect(pageOwnerCell({ ownerName: null })).toMatchObject({ content: '', tooltip: undefined });
+    });
+
+    it('names as unknown an owner whose name resolves to nothing', () => {
+        expect(pageOwnerCell({ ownerId: 'u1', ownerName: null })).toMatchObject({
+            content: 'angular-components.user-name.unknown',
+            translate: true
+        });
     });
 });

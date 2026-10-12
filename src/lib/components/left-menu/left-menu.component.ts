@@ -6,6 +6,8 @@ import { faAnglesLeft, faAnglesRight } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { AvatarComponent } from '../cards/avatar/avatar.component';
+import { AvatarConfig } from '../cards/avatar/models/avatar.model';
 import { ActionListComponent } from './components/action-list/action-list.component';
 import { LeftMenuConfig } from './models/left-menu.model';
 
@@ -13,6 +15,7 @@ import { LeftMenuConfig } from './models/left-menu.model';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         ActionListComponent,
+        AvatarComponent,
         FontAwesomeModule,
         NgTemplateOutlet,
         RouterLink,
@@ -28,6 +31,13 @@ import { LeftMenuConfig } from './models/left-menu.model';
 export class LeftMenuComponent {
     readonly config = input.required<LeftMenuConfig>();
 
+    readonly avatar = computed(() => {
+        const { userInfo } = this.config();
+
+        return userInfo
+            ? new AvatarConfig({ initials: userInfo.initials, name: userInfo.name, surname: userInfo.surname })
+            : null;
+    });
     readonly bottomActions = computed(() => this.config().bottomActions ?? []);
     readonly collapseIcon = faAnglesLeft;
     readonly expanded = linkedSignal(() => this.config().expanded);

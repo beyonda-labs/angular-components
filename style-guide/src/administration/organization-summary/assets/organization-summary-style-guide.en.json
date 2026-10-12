@@ -1,0 +1,7 @@
+{
+    "angular-components-style-guide": {
+        "organization-summary": {
+            "example": "The summary of the organization of the signed-in member, read-only, built with the cards module: its name, status and creation, a strip with its active members, groups and additional roles, with the members by status for whoever may see the users; its administrators; every group folded with its count, unfolding its active members in place, and those in no group last; and every additional role, opening its permissions for whoever may already see them. The demo backend serves no organization, so nothing shows: the cards section shows the same pieces."
+        }
+    }
+}

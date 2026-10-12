@@ -137,6 +137,13 @@ describe('EditLockNoticeComponent', () => {
         expect(queryAll(fixture, 'button')).toHaveLength(0);
     });
 
+    it('names as unknown a colleague whose name resolves to nothing', async () => {
+        setup('en', { ...TEXTS, 'angular-components': { 'user-name': { unknown: 'Unknown' } } });
+        await render({ ...COLLEAGUE, holderName: null });
+
+        expect(notice()).toBe('Unknown since 9:05 AM.');
+    });
+
     it('gives the date as well when the editing started on an earlier day, in the language in use', async () => {
         setup('es');
         await render({ ...COLLEAGUE, acquiredAt: new Date(2026, 9, 9, 16, 30).getTime() });

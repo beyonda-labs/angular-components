@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, untracked } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 
 import { PageHandle } from '../../page/models/page.model';
 import { PageComponent } from '../../page/page.component';
 import { UserOrganizationsService } from '../services/user-organizations.service';
-import { RoleRow, RolesConfig, RolesFormOptions } from './models/roles.model';
+import { rolesPageMode } from './functions/roles-page-mode';
+import { RoleRow, RolesConfig, RolesFormOptions, RolesPageMode } from './models/roles.model';
 import { buildRolesPageConfig } from './roles-page-config';
 import { RolePermissionsService } from './services/role-permissions.service';
 import { RolesActionsService } from './services/roles-actions.service';
@@ -33,6 +34,7 @@ export class RolesComponent {
         const isSuperadmin = this.userOrganizationsService.isSuperadmin();
         const organizations = this.userOrganizationsService.organizations();
         const permissions = this.rolePermissionsService.permissions();
+        const mode = this.mode();
         const { actionOrder, baseUrl, groupIcons, groupOrder, permissionPrefix, prefix, rolePrefix } = config;
 
         if (!organizations || !permissions) {
@@ -49,6 +51,11 @@ export class RolesComponent {
             permissions,
             prefix
         };
+        const onView = (role: RoleRow): void =>
+            this.rolesActionsService.viewPermissions(
+                { actionOrder, groupIcons, groupOrder, permissionPrefix, permissions, prefix, rolePrefix },
+                role
+            );
 
         return buildRolesPageConfig({
             config,
@@ -57,22 +64,23 @@ export class RolesComponent {
             loadRow: role =>
                 this.rolesTableService.loadRow(role, {
                     isOrganizationShown: isSuperadmin,
+                    isReadOnly: mode === RolesPageMode.Read,
                     onEdit: edited => this.page?.openEdit(edited),
-                    onView: viewed =>
-                        this.rolesActionsService.viewPermissions(
-                            { actionOrder, groupIcons, groupOrder, permissionPrefix, permissions, prefix, rolePrefix },
-                            viewed
-                        ),
+                    onView,
                     prefix,
                     rolePrefix
                 }),
+            mode,
+            onDataLoaded: ({ results }) => this.mode.update(current => rolesPageMode(current, results)),
             onDuplicate: role =>
                 this.rolesActionsService.duplicate({ ...formOptions, baseUrl, rolePrefix }, role, this.page),
             onReady: handle => (this.page = handle),
+            onView,
             organizations
         });
     });
 
+    private readonly mode = signal(RolesPageMode.Manage);
     private page?: PageHandle<RoleRow>;
 
     constructor() {

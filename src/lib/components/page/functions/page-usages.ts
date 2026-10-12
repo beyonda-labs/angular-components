@@ -17,6 +17,7 @@ export function buildInUseConfirmation({
     listedUsers,
     selectedIds,
     suffixes,
+    unknownName,
     usages
 }: InUseConfirmationOptions): ConfirmationModalConfig {
     const selected = new Set(selectedIds.map(String));
@@ -34,17 +35,25 @@ export function buildInUseConfirmation({
         messageParameters: {
             ...confirmation.messageParameters,
             usageCount,
-            users: describeUsers(users.slice(0, listedUsers), usageCount, suffixes).join(PAGE_USERS_SEPARATOR)
+            users: describeUsers(users.slice(0, listedUsers), usageCount, suffixes, unknownName).join(
+                PAGE_USERS_SEPARATOR
+            )
         },
         title: `${inUseModal}.title`
     };
 }
 
-export function describeUsers(users: PageUser[], total: number, suffixes: Record<string, string>): string[] {
+export function describeUsers(
+    users: PageUser[],
+    total: number,
+    suffixes: Record<string, string>,
+    unknownName: string
+): string[] {
     const names = users.map(user => {
         const suffix = suffixes[user.kind ?? user.resource] ?? suffixes[user.resource];
+        const name = user.name?.trim() ? user.name : unknownName;
 
-        return suffix ? `${user.name} (${suffix})` : user.name;
+        return suffix ? `${name} (${suffix})` : name;
     });
 
     return total > users.length ? [...names, PAGE_MORE_USERS] : names;

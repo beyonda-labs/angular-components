@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { DateTableCell, LinkTableCell, TextTableCell } from '../../../table/models/table-cell.model';
-import { GroupRow, GroupsRowOptions } from '../models/groups.model';
+import { GroupRow, GroupsPageMode, GroupsRowOptions } from '../models/groups.model';
 import { GroupsTableService } from './groups-table.service';
 
 describe('GroupsTableService', () => {
@@ -26,7 +26,13 @@ describe('GroupsTableService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({ providers: [provideBeyTesting()] });
 
-        options = { isOrganizationShown: false, onEdit: jest.fn() };
+        options = {
+            isOrganizationShown: false,
+            mode: GroupsPageMode.Manage,
+            onEdit: jest.fn(),
+            onView: jest.fn(),
+            prefix: 'demo.groups'
+        };
         service = TestBed.inject(GroupsTableService);
     });
 
@@ -72,5 +78,38 @@ describe('GroupsTableService', () => {
 
         expect(name).toBeInstanceOf(TextTableCell);
         expect(name.content).toBe('Sales');
+    });
+
+    it('opens the view of a group from its name when its row lists view', () => {
+        const group = buildGroup({ actions: ['view'] });
+        const [name] = service.loadRow(group, options);
+
+        (name as LinkTableCell).action();
+
+        expect(options.onView).toHaveBeenCalledWith(group);
+    });
+
+    describe('reading the own groups of a member', () => {
+        const member = buildGroup({ actions: [], extraRoleCount: undefined, roleCount: 3 });
+
+        it('fills the name, the member count and the creation, the roles only with their count', () => {
+            const read = service.loadRow(member, { ...options, mode: GroupsPageMode.Read });
+            const withRoles = service.loadRow(member, { ...options, mode: GroupsPageMode.ReadWithRoles });
+
+            expect(read.slice(0, 2).map(({ content }) => content)).toEqual(['Sales', '4']);
+            expect((read[2] as DateTableCell).value).toBe(1_000);
+            expect(read).toHaveLength(3);
+            expect(withRoles.slice(0, 3).map(({ content }) => content)).toEqual(['Sales', '4', '3']);
+            expect(withRoles).toHaveLength(4);
+        });
+
+        it('opens the view of a group from its name', () => {
+            const [name] = service.loadRow(member, { ...options, mode: GroupsPageMode.Read });
+
+            (name as LinkTableCell).action();
+
+            expect(name.tooltip).toBe('demo.groups.table.view-group');
+            expect(options.onView).toHaveBeenCalledWith(member);
+        });
     });
 });

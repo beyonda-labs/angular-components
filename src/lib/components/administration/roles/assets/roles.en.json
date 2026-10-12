@@ -35,6 +35,9 @@
                 "edit": {
                     "label": "Edit",
                     "tooltip": "Edit the selected role"
+                },
+                "view": {
+                    "tooltip": "See the permissions of the selected role"
                 }
             },
             "duplicate": {
@@ -82,6 +85,22 @@
                     "manage": {
                         "description": "Can manage the groups of the organization and reach everything its members create.",
                         "label": "Manage the organization"
+                    },
+                    "read": {
+                        "description": "Can see the name, the status, the administrators and the counts of their organization, and every group with its members and every additional role.",
+                        "label": "See the organization summary"
+                    },
+                    "read-group-roles": {
+                        "description": "Can see the additional roles their groups give, with their permissions. It shows nothing without \"See their groups and members\".",
+                        "label": "See the roles and permissions of their groups"
+                    },
+                    "read-groups": {
+                        "description": "Can see the groups they belong to and who else is in them.",
+                        "label": "See their groups and members"
+                    },
+                    "read-roles": {
+                        "description": "Can see the roles they hold, directly or through their groups, with their permissions.",
+                        "label": "See their roles and permissions"
                     }
                 },
                 "roles": {
@@ -108,6 +127,10 @@
                     "read": {
                         "description": "Can see the users of the organization.",
                         "label": "See users"
+                    },
+                    "transfer-content": {
+                        "description": "Can move everything of an inactive user to an active user of their organization.",
+                        "label": "Transfer content"
                     }
                 }
             },
@@ -115,6 +138,10 @@
                 "fields": {
                     "text": "Name"
                 }
+            },
+            "sources": {
+                "direct": "Direct",
+                "group": "Group {{names}}"
             },
             "table": {
                 "columns": {
@@ -124,6 +151,7 @@
                     "name": "Name",
                     "organization": "Organization",
                     "permission-count": "Permissions",
+                    "sources": "Origin",
                     "type": "Type"
                 },
                 "empty": "No role matches the search",
@@ -135,6 +163,7 @@
                     "name": "The name of the role",
                     "organization": "The organization the role belongs to",
                     "permission-count": "How many permissions it gives",
+                    "sources": "Whether the role is held directly or through a group",
                     "type": "Whether it is a base role of the application or an additional role of the organization"
                 },
                 "view-permissions": "See permissions"

@@ -1,19 +1,14 @@
 import { TestBed } from '@angular/core/testing';
-import { faFileLines, faRectangleList, faUser } from '@fortawesome/free-regular-svg-icons';
+import { faFileLines, faRectangleList } from '@fortawesome/free-regular-svg-icons';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { FormCheckboxSectionsField } from '../../../form/models/fields/form-checkbox-sections-field.model';
 import { FormInfoField } from '../../../form/models/fields/form-info-field.model';
-import { FormButtonType, FormSection } from '../../../form/models/form.model';
+import { FormSection } from '../../../form/models/form.model';
 import { FormField } from '../../../form/models/form-field.model';
 import { FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
-import {
-    RolePermissionEntry,
-    RoleRow,
-    RolesDuplicateFormOptions,
-    RolesFormOptions,
-    RolesViewOptions
-} from '../models/roles.model';
+import { RolePermissionEntry } from '../../models/role-permissions.model';
+import { RoleRow, RolesDuplicateFormOptions, RolesFormOptions } from '../models/roles.model';
 import { RolesFormService } from './roles-form.service';
 
 describe('RolesFormService', () => {
@@ -55,19 +50,6 @@ describe('RolesFormService', () => {
 
     function buildDuplicateOptions(overrides: Partial<RolesDuplicateFormOptions> = {}): RolesDuplicateFormOptions {
         return { ...buildOptions(), rolePrefix: 'demo.roles', ...overrides };
-    }
-
-    function buildViewOptions(overrides: Partial<RolesViewOptions> = {}): RolesViewOptions {
-        return {
-            actionOrder: [],
-            groupIcons: {},
-            groupOrder: [],
-            permissionPrefix: 'demo.permissions',
-            permissions,
-            prefix: 'demo.roles',
-            rolePrefix: 'demo.roles',
-            ...overrides
-        };
     }
 
     function fieldsOf(sections: FormSection[], key: string): FormField[] {
@@ -156,20 +138,11 @@ describe('RolesFormService', () => {
         ]);
     });
 
-    it('orders the sections of the form and of the view by groupOrder and their permissions by actionOrder', () => {
+    it('orders the sections of the form by groupOrder and their permissions by actionOrder', () => {
         const order = { actionOrder: ['publish'], groupOrder: ['users', 'documents'] };
         const form = service.buildFormConfig(buildOptions(order));
-        const view = service.buildViewConfig(buildViewOptions(order), {
-            ...reviewers,
-            permissions: ['templates.edit', 'users.read']
-        });
 
         expect(optionsBySection(form.buildSections())).toEqual([
-            ['documents', ['documents.read']],
-            ['templates', ['templates.publish', 'templates.edit']]
-        ]);
-        expect(optionsBySection(view.sections)).toEqual([
-            ['users', ['users.read']],
             ['documents', ['documents.read']],
             ['templates', ['templates.publish', 'templates.edit']]
         ]);
@@ -349,53 +322,5 @@ describe('RolesFormService', () => {
             main: { description: '', name: '', organizationId: 'o2' },
             permissions: { permissions: [] }
         });
-    });
-
-    it('shows a role read-only, labelled from the role prefix, with the same checklist disabled', () => {
-        const adminuser: RoleRow = {
-            actions: [],
-            id: 'adminuser',
-            isBase: true,
-            memberCount: 1,
-            name: 'adminuser',
-            permissions: ['templates.edit', 'users.read']
-        };
-        const view = service.buildViewConfig(buildViewOptions(), adminuser);
-        const checklist = checklistOf(view.sections);
-
-        expect(view.title).toBe('demo.roles.view.title');
-        expect((fieldsOf(view.sections, 'main') as FormInfoField[]).map(({ items }) => items)).toEqual([
-            [{ label: 'Administrator' }]
-        ]);
-        expect(checklist).toMatchObject({
-            isDisabled: true,
-            isRequired: false,
-            label: 'demo.roles.view.permissions.label'
-        });
-        expect(checklist.sections.map(({ icon, key }) => [key, icon])).toEqual([
-            ['templates', faRectangleList],
-            ['documents', faRectangleList],
-            ['users', faUser]
-        ]);
-        expect(view.initialValue?.permissions).toEqual({ permissions: ['templates.edit', 'users.read'] });
-        expect(view.buttons.filter(({ isHidden }) => !isHidden).map(({ label, type }) => [label, type])).toEqual([
-            ['demo.roles.view.buttons.close', FormButtonType.Cancel]
-        ]);
-    });
-
-    it('shows the description of a role it views when the role has one', () => {
-        const view = service.buildViewConfig(buildViewOptions(), reviewers);
-
-        expect((fieldsOf(view.sections, 'main') as FormInfoField[]).map(({ items, key }) => [key, items])).toEqual([
-            ['name', [{ label: 'Reviewers' }]],
-            ['description', [{ label: 'Review the templates' }]]
-        ]);
-    });
-
-    it('says a role it views gives no permissions when there is none to show', () => {
-        const view = service.buildViewConfig(buildViewOptions({ permissions: [] }), { ...reviewers, permissions: [] });
-        const [empty] = fieldsOf(view.sections, 'permissions');
-
-        expect((empty as FormInfoField).items).toEqual([{ label: 'demo.roles.view.permissions.empty' }]);
     });
 });

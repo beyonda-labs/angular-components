@@ -11,8 +11,8 @@ import {
     TableCell,
     TextTableCell
 } from '../../../table/models/table-cell.model';
+import { userFullName } from '../../functions/user-names';
 import { userRoleLabel } from '../../functions/user-role-labels';
-import { userFullName } from '../functions/user-labels';
 import { USER_STATUS_BADGE_VARIANTS, UserRow, USERS_EXTRA_ROLE_VARIANT, UsersRowOptions } from '../models/users.model';
 
 const CREATED_FORMAT = 'yyyy-MM-dd';

@@ -1,4 +1,5 @@
-import { RoleFormValue, RoleRequest, ROLES_PERMISSIONS_FIELD } from '../models/roles.model';
+import { ROLES_PERMISSIONS_FIELD } from '../../models/role-permissions.model';
+import { RoleFormValue, RoleRequest } from '../models/roles.model';
 
 export function toRoleCreateRequest(value: RoleFormValue): RoleRequest {
     const { organizationId } = value.main;

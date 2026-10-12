@@ -1,0 +1,24 @@
+@let current = config();
+
+<section class="bey-cards-list" [attr.aria-labelledby]="labelledBy()" [class]="variantClass()">
+    @if (current.title) {
+        <bey-card-heading
+            [count]="current.count"
+            [headingId]="headingId"
+            [level]="headingLevel"
+            [title]="current.title"
+        ></bey-card-heading>
+    }
+
+    @if (hasItems()) {
+        <ul class="bey-cards-list-items">
+            @for (item of current.items; track item.key) {
+                <li class="bey-cards-list-entry">
+                    <bey-card-list-item [item]="item"></bey-card-list-item>
+                </li>
+            }
+        </ul>
+    } @else {
+        <p class="bey-cards-list-empty">{{ current.emptyLabel | translate }}</p>
+    }
+</section>

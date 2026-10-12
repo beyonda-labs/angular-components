@@ -35,6 +35,7 @@ export class OrganizationsComponent {
                     onEdit: edited => this.organizationsActionsService.edit(config, edited, this.page),
                     prefix
                 }),
+            onDelete: organization => this.organizationsActionsService.delete(config, organization, this.page),
             onEdit: organization => this.organizationsActionsService.edit(config, organization, this.page),
             onReady: handle => (this.page = handle)
         });

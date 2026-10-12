@@ -5,7 +5,7 @@ export interface EditLock {
     canRelease: boolean;
     expiresAt: number;
     holderId: string;
-    holderName: string;
+    holderName: string | null;
     isOwn: boolean;
     isSameUser: boolean;
 }

@@ -271,7 +271,7 @@ describe('GroupsFormService', () => {
         });
         const members = controlByName(fixture, 'Members');
 
-        expect(fixture.nativeElement.textContent).toContain('This group has no extra roles yet.');
+        expect(fixture.nativeElement.textContent).toContain('This group has no additional roles yet.');
 
         members.dispatchEvent(new Event('focus'));
         await settle(fixture);
@@ -286,5 +286,47 @@ describe('GroupsFormService', () => {
         expect(buttonByName(fixture, 'angular-components.page.form.submit').disabled).toBe(false);
 
         fixture.destroy();
+    });
+
+    describe('buildViewConfig', () => {
+        const view = {
+            id: 'g1',
+            members: [
+                { email: 'ada@example.test', id: 'u1', name: 'Ada', surname: 'Lovelace' },
+                { email: 'grace@example.test', id: 'u2', name: null, surname: null }
+            ],
+            name: 'Sales'
+        };
+
+        it('shows the name and the members of a group to read, closed with its only button', () => {
+            const form = service.buildViewConfig({ group: view, onRoleClick: jest.fn(), prefix: 'demo.teams' });
+            const [name, members, ...rest] = fieldsOf(form.sections);
+
+            expect(form.title).toBe('demo.teams.view.title');
+            expect(form.isSubmitHidden).toBe(true);
+            expect(form.cancelLabel).toBe('demo.teams.view.buttons.close');
+            expect(name).toMatchObject({ items: [{ label: 'Sales' }], key: 'name' });
+            expect(members).toMatchObject({
+                emptyKey: 'demo.teams.view.main.members.empty',
+                items: ['Ada Lovelace (ada@example.test)', 'grace@example.test']
+            });
+            expect(rest).toEqual([]);
+        });
+
+        it('lists the roles the group gives when they came, each opening its permissions', () => {
+            const onRoleClick = jest.fn();
+            const role = { id: 'r1', name: 'Reviewers', permissions: ['templates.edit'] };
+            const form = service.buildViewConfig({
+                group: { ...view, extraRoles: [role] },
+                onRoleClick,
+                prefix: 'demo.teams'
+            });
+            const roles = fieldsOf(form.sections).at(-1) as FormListField;
+
+            roles.onItemClick?.('Reviewers', 0);
+
+            expect(roles).toMatchObject({ emptyKey: 'demo.teams.view.main.extra-roles.empty', items: ['Reviewers'] });
+            expect(onRoleClick).toHaveBeenCalledWith(role);
+        });
     });
 });

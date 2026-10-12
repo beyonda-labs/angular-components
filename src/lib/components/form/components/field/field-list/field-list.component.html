@@ -38,7 +38,15 @@
             }
         } @else {
             @for (item of items(); track $index) {
-                <li class="bey-form-list-item">{{ item }}</li>
+                <li class="bey-form-list-item">
+                    @if (hasItemClick()) {
+                        <button class="bey-form-list-item-link" type="button" (click)="onItemClick(item, $index)">
+                            {{ item }}
+                        </button>
+                    } @else {
+                        {{ item }}
+                    }
+                </li>
             }
         }
     </ul>

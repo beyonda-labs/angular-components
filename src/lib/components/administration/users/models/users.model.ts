@@ -1,3 +1,5 @@
+import { Observable } from 'rxjs';
+
 import { BadgeVariant } from '../../../badge/models/badge.model';
 import { FormSelectField } from '../../../form/models/fields/form-select-field.model';
 import { FormRow } from '../../../form/models/form.model';
@@ -17,6 +19,38 @@ export enum UserStatus {
     Inactive = 'inactive',
     Invited = 'invited',
     Unverified = 'unverified'
+}
+
+export interface UserContent {
+    counts: Record<string, number>;
+    usedByOthers: Record<string, UserContentUsage[]>;
+}
+
+export interface UserContentFormOptions {
+    contentLabels: Readonly<Record<string, string>>;
+    prefix: string;
+}
+
+export interface UserContentResponse {
+    counts?: Record<string, number>;
+    usedByOthers?: Record<string, UserContentUsage[]>;
+}
+
+export interface UserContentUsage {
+    id: string;
+    name: string | null;
+    users: UserContentUser[];
+}
+
+export interface UserContentUser {
+    id: string;
+    name: string | null;
+    ownerName: string | null;
+}
+
+export interface UserDeleteFormOptions extends UserContentFormOptions {
+    contents: UserContent[];
+    users: UserRow[];
 }
 
 export interface UserExtraRole {
@@ -94,8 +128,39 @@ export interface UsersRowOptions {
     rolePrefix: string;
 }
 
+export interface UserTransferFields {
+    targetUserId: string;
+}
+
+export interface UserTransferFormOptions extends UserContentFormOptions {
+    content: UserContent;
+    searchTargets: (search: string, limit: number) => Observable<UserTransferTarget[]>;
+    user: UserRow;
+}
+
+export interface UserTransferFormValue {
+    main: UserTransferFields;
+}
+
+export interface UserTransferResponse {
+    transferred: Record<string, number>;
+}
+
+export interface UserTransferTarget {
+    email: string;
+    id: string;
+
+    name?: string | null;
+    surname?: string | null;
+}
+
+export interface UserTransferTargetsResponse {
+    options: UserTransferTarget[];
+}
+
 export class UsersConfig {
     baseUrl: string;
+    contentLabels: Readonly<Record<string, string>>;
     height: string;
     prefix: string;
     rolePrefix: string;
@@ -103,12 +168,14 @@ export class UsersConfig {
 
     constructor({
         baseUrl = '/users',
+        contentLabels = {},
         height = 'calc(100vh - 220px)',
         prefix = 'angular-components.users',
         rolePrefix = `${prefix}.roles`,
         storageKey = 'users'
     }: UsersConfigParameters = {}) {
         this.baseUrl = baseUrl;
+        this.contentLabels = contentLabels;
         this.height = height;
         this.prefix = prefix;
         this.rolePrefix = rolePrefix;
@@ -118,6 +185,7 @@ export class UsersConfig {
 
 export interface UsersConfigParameters {
     baseUrl?: string;
+    contentLabels?: Readonly<Record<string, string>>;
     height?: string;
     prefix?: string;
     rolePrefix?: string;
@@ -133,6 +201,8 @@ export const USER_STATUS_BADGE_VARIANTS: Readonly<Record<UserStatus, BadgeVarian
 
 export const USER_STATUS_CHOICES: readonly UserStatus[] = [UserStatus.Active, UserStatus.Inactive];
 
+export const USERS_CONTENT_PATH = '/content';
+
 export const USERS_EXTRA_ROLE_VARIANT = BadgeVariant.Info;
 
 export const USERS_EXTRA_ROLES_FIELD = 'extraRoleIds';
@@ -141,4 +211,14 @@ export const USERS_FORM_SECTION = 'main';
 
 export const USERS_RESEND_INVITATION_ACTION = 'resend-invitation';
 
+export const USERS_LIST_SEPARATOR = ', ';
+
 export const USERS_ROLES_PATH = '/roles';
+
+export const USERS_TRANSFER_ACTION = 'transfer';
+
+export const USERS_TRANSFER_PATH = '/transfer';
+
+export const USERS_TRANSFER_TARGETS_LIMIT = 20;
+
+export const USERS_TRANSFER_TARGETS_PATH = '/transfer-targets';

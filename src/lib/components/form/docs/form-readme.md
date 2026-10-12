@@ -59,7 +59,8 @@ The value is one object per section, keyed by the section key, with one entry pe
 `isTooltipVisible`, `prefix`, which lets two sections share the same texts, and `label`, a title that replaces
 `<prefix>.<key>.label`. `BeyFormRow` takes `fields`
 and an `alignment` of `start` or `end`. `BeyFormButton` takes `label`, `type`, an optional `action` that
-receives the handle, `isHidden` and `tooltip`.
+receives the handle, `isHidden`, `tooltip` and `isDanger`, which paints a submit button in the danger colour
+(`--bey-danger`, `--bey-danger-fg` and `--bey-danger-hover`) for a form whose submit deletes for good.
 
 ## Buttons
 
@@ -201,12 +202,13 @@ is used as it is.
 | `cancelLabel`    | `<prefix>.buttons.cancel` | Label of the cancel button                               |
 | `submitLabel`    | `<prefix>.buttons.submit` | Label of the submit button                               |
 | `isSubmitHidden` | `false`                   | Leaves only the cancel button, for a form that only shows |
+| `isSubmitDanger` | `false`                   | Paints the submit button as a danger, for a confirmation that deletes for good |
 
 Submit does not close the dialog: call `handle.close()` once the operation succeeds, or open it with
 `BeyModalFormService.openWithRequest(config, submit)`, whose submit sends `submit(value)` and closes the dialog once
 that request answers, keeping it open when it fails and reporting nothing beyond what the request shows, such as the
 error modal of `BeyHttpService`; the config's own `onSubmit` is replaced. A config spread into a
-new one keeps its labels and `isSubmitHidden`, so it can be copied. A form that only shows, with every field disabled
+new one keeps its labels, `isSubmitHidden` and `isSubmitDanger`, so it can be copied. A form that only shows, with every field disabled
 or an info field, sets `isSubmitHidden` and names its cancel button "Close" through `cancelLabel`. The dialog is at most `--bey-modal-form-max-height` high, by default the
 `--bey-dialog-max-height` token: its title and its buttons stay in place and the sections scroll between them, so a
 long form never makes the page scroll, and a short one keeps its own height. Cancel, the cross and
@@ -229,4 +231,6 @@ See [form-fields-readme.md](./form-fields-readme.md).
 | `--bey-form-field-label`           | `--bey-text-muted`    |
 | `--bey-form-field-hint`            | `--bey-text-muted`    |
 | `--bey-form-list-max-height`       | seven and a half rows of `--bey-font-size-md` at `--bey-line-height-base`, and the padding of the box |
+| `--bey-form-list-link`             | `--bey-text-link`     |
+| `--bey-form-list-link-hover`       | `--bey-text-link-hover` |
 | `--bey-modal-form-max-height`      | `--bey-dialog-max-height` |

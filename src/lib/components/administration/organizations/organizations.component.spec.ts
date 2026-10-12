@@ -1,6 +1,8 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormControl } from '@angular/forms';
 import { provideRouter } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { buttonByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
@@ -8,9 +10,12 @@ import { FakeModalFormService } from '@testing/services/fake-modal-form.service'
 import { FakeToastService } from '@testing/services/fake-toast.service';
 
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
+import { FormInfoField } from '../../form/models/fields/form-info-field.model';
 import { FormListField } from '../../form/models/fields/form-list-field.model';
 import { FormHandle } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
+import { FormFieldCustomValidator } from '../../form/models/form-field-validator.model';
+import organizationsEn from './assets/organizations.en.json';
 import { OrganizationRow, OrganizationsConfig, OrganizationStatus } from './models/organizations.model';
 import { OrganizationsComponent } from './organizations.component';
 
@@ -216,5 +221,91 @@ describe('OrganizationsComponent', () => {
         expect(queryButton(fixture, `${PREFIX}.actions.create.label`)).toBeNull();
         expect(queryButton(fixture, `${PREFIX}.actions.edit.label`)).toBeNull();
         expect(queryButton(fixture, 'Globex')).toBeNull();
+    });
+
+    describe('deleting a deactivated organization', () => {
+        const inactive = buildOrganization({
+            actions: ['delete'],
+            name: 'Globex',
+            status: OrganizationStatus.Inactive
+        });
+
+        function fieldOf<T extends FormField>(form: ModalFormConfig | undefined, key: string): T {
+            return fieldsOf(form).find(field => field.key === key) as T;
+        }
+
+        async function openDelete(): Promise<ModalFormConfig | undefined> {
+            rowWith('Globex').click();
+            await settle(fixture);
+            buttonByName(fixture, 'angular-components.header.menu').click();
+            await settle(fixture);
+            buttonByName(fixture, 'Delete').click();
+            await settle(fixture);
+            httpTesting.expectOne(`${ORGANIZATIONS_URL}/o2/content`).flush({
+                counts: { documents: 4, groups: 2, roles: 0, users: 3 }
+            });
+            await settle(fixture);
+
+            return modalForms.forms().at(-1);
+        }
+
+        beforeEach(() => {
+            TestBed.inject(TranslateService).setTranslation(
+                'en',
+                { ...organizationsEn, 'my-app': { content: { documents: 'Documents' } } },
+                true
+            );
+        });
+
+        it('shows what goes with it and deletes it once its exact name is typed', async () => {
+            await render(
+                [inactive],
+                [],
+                new OrganizationsConfig({ contentLabels: { documents: 'my-app.content.documents' } })
+            );
+
+            const form = await openDelete();
+            const name = fieldOf(form, 'name');
+            const [validator] = name.validators as FormFieldCustomValidator[];
+            form?.onSubmit?.({ main: { name: 'Globex' } }, buildHandle());
+            const request = httpTesting.expectOne(
+                current => current.url === `${ORGANIZATIONS_URL}/o2` && current.method === 'DELETE'
+            );
+            request.flush(null, { status: 204, statusText: 'No Content' });
+            await settle(fixture);
+            reload().flush({ globalActions: [], results: [] });
+
+            expect(form?.title).toBe(`${PREFIX}.delete.title`);
+            expect(form?.isSubmitDanger).toBe(true);
+            expect(fieldOf<FormInfoField>(form, 'message').items[0].label).toContain('«Globex»');
+            expect(fieldOf<FormListField>(form, 'content').items).toEqual(['Documents: 4', 'Groups: 2', 'Users: 3']);
+            expect(name).toMatchObject({ isRequired: true, label: 'Type «Globex» to confirm' });
+            expect(validator.validatorFn(new FormControl('globex'))).toEqual({
+                nameMismatch: { messageKey: `${PREFIX}.delete.name-mismatch` }
+            });
+            expect(validator.validatorFn(new FormControl('Globex'))).toBeNull();
+            expect(request.request.body).toEqual({ name: 'Globex' });
+            expect(TestBed.inject(FakeToastService).successes()).toEqual([
+                { message: `${PREFIX}.toast.delete-success` }
+            ]);
+        });
+
+        it('shows the reason the server gives for an organization still active', async () => {
+            await render([inactive], []);
+
+            const form = await openDelete();
+            form?.onSubmit?.({ main: { name: 'Globex' } }, buildHandle());
+            httpTesting
+                .expectOne(current => current.url === `${ORGANIZATIONS_URL}/o2` && current.method === 'DELETE')
+                .flush(
+                    { errorCode: 'conflict', messageKey: 'organizations.active' },
+                    { status: 409, statusText: 'Conflict' }
+                );
+            await settle(fixture);
+
+            expect(TestBed.inject(FakeModalService).errors()).toEqual([
+                expect.objectContaining({ message: 'angular-components.http.error.organizations.active' })
+            ]);
+        });
     });
 });
