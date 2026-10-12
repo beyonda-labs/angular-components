@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { ModalFormConfig } from '../../../form/components/modal/models/modal-form.model';
 import { PageHandle } from '../../../page/models/page.model';
 import { PageViewMode } from '../../../page/models/page-categories.model';
+import { OrganizationFolder } from '../../models/organization-folders.model';
 import { RoleFormValue, RoleRow, RolesDuplicateOptions } from '../models/roles.model';
 import { RolesActionsService } from './roles-actions.service';
 
@@ -19,7 +20,7 @@ describe('RolesActionsService', () => {
         config: ModalFormConfig<RoleFormValue>;
         submit: (value: RoleFormValue) => Observable<unknown>;
     }[];
-    let page: PageHandle<RoleRow>;
+    let page: PageHandle<RoleRow, OrganizationFolder>;
 
     const normaluser: RoleRow = {
         actions: [],

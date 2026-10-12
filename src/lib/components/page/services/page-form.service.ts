@@ -10,6 +10,7 @@ import { ConfirmationModalConfig } from '../../modal/models/modal.model';
 import { ModalService } from '../../modal/services/modal.service';
 import { PageFormConfig, PageSaveMode } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
+import { PageCategoryPathEntry } from '../models/page-state.model';
 
 const CANCEL_LABEL_KEY = 'angular-components.page.form.cancel';
 const SUBMIT_LABEL_KEY = 'angular-components.page.form.submit';
@@ -27,7 +28,8 @@ export class PageFormService {
         pageForm: PageFormConfig<TValue>,
         item: PageItem | undefined,
         pagePrefix: string,
-        onSave: (value: unknown, handle: FormHandle<TValue>) => void
+        onSave: (value: unknown, handle: FormHandle<TValue>) => void,
+        category?: PageCategoryPathEntry
     ): BsModalRef<ModalFormDialogComponent> {
         const mode: PageSaveMode = item ? 'edit' : 'create';
 
@@ -35,7 +37,7 @@ export class PageFormService {
             new ModalFormConfig<TValue>({
                 allowSubmitWithoutChanges: pageForm.allowSubmitWithoutChanges,
                 cancelLabel: CANCEL_LABEL_KEY,
-                initialValue: pageForm.toFormValue(item),
+                initialValue: pageForm.toFormValue(item, category),
                 onReady: handle => pageForm.onReady?.(handle),
                 onSubmit: (value, handle) => {
                     const callback = item ? pageForm.onEdit : pageForm.onCreate;
@@ -52,7 +54,7 @@ export class PageFormService {
                 },
                 onValueChange: (value, handle) => pageForm.onValueChange?.(value, handle),
                 prefix: pageForm.prefix,
-                sections: pageForm.buildSections(item),
+                sections: pageForm.buildSections(item, category),
                 size: pageForm.size,
                 submitLabel: SUBMIT_LABEL_KEY,
                 title: `${pagePrefix}.form.${mode}.title`

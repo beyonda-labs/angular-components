@@ -59,6 +59,9 @@
                     "tooltip": "Pasa todo lo que posee el usuario inactivo seleccionado a otro usuario"
                 }
             },
+            "categories": {
+                "root": "Usuarios"
+            },
             "content": {
                 "count": "{{label}}: {{count}}",
                 "empty": "No posee nada.",

@@ -30,7 +30,9 @@ export interface OrganizationDeleteFormValue {
 }
 
 export interface OrganizationDetail extends OrganizationRow {
+    administrators: OrganizationGroupMember[];
     groups: OrganizationGroup[];
+    ungroupedMembers: OrganizationGroupMember[];
 }
 
 export interface OrganizationEditFields {
@@ -119,6 +121,8 @@ export const ORGANIZATION_STATUS_BADGE_VARIANTS: Readonly<Record<OrganizationSta
     [OrganizationStatus.Inactive]: BadgeVariant.Neutral
 };
 
+export const ORGANIZATIONS_ADMINISTRATORS_SECTION = 'administrators';
+
 export const ORGANIZATIONS_CONTENT_PATH = '/content';
 
 export const ORGANIZATIONS_FORM_SECTION = 'main';
@@ -126,3 +130,5 @@ export const ORGANIZATIONS_FORM_SECTION = 'main';
 export const ORGANIZATIONS_GROUPS_SECTION = 'groups';
 
 export const ORGANIZATIONS_LIBRARY_CONTENT: readonly string[] = ['users', 'groups', 'roles'];
+
+export const ORGANIZATIONS_UNGROUPED_KEY = 'ungrouped';

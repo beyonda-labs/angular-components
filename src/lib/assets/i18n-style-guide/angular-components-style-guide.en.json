@@ -621,7 +621,7 @@
         },
         "forms": "Forms",
         "groups": {
-            "example": "The groups page of a manager or the superadmin: search by name, create a group, edit its name, its members and its additional roles in one form, and delete groups, as far as the backend allows each row. The demo backend serves no groups, so the list stays empty."
+            "example": "The groups page of a manager or the superadmin: search by name, create a group, edit its name, its members and its additional roles in one form, and delete groups, as far as the backend allows each row. A superadmin sees one folder per organization, a search at the root spans all of them and is the only list with the organization column, and a group created inside a folder comes with its organization chosen. The demo backend serves no groups, so the list stays empty."
         },
         "header": {
             "actions": {
@@ -914,7 +914,7 @@
             "example": "The summary of the organization of the signed-in member, read-only, built with the cards module: its name, status and creation, a strip with its active members, groups and additional roles, with the members by status for whoever may see the users; its administrators; every group folded with its count, unfolding its active members in place, and those in no group last; and every additional role, opening its permissions for whoever may already see them. The demo backend serves no organization, so nothing shows: the cards section shows the same pieces."
         },
         "organizations": {
-            "example": "The organizations page of a superadmin: search by name, filter by status, create an organization and edit one, its name and its status, with its groups and their members to read, as far as the backend allows each row. The demo backend serves no organizations, so the list stays empty."
+            "example": "The organizations page of a superadmin: search by name, filter by status, create an organization and edit one, its name and its status, with its active administrators, its groups and their members, and its members in no group to read, as far as the backend allows each row. The demo backend serves no organizations, so the list stays empty."
         },
         "page": {
             "actions": {
@@ -1056,7 +1056,7 @@
         },
         "properties-menu-section": "Properties Menu",
         "roles": {
-            "example": "The roles and permissions page of a manager or the superadmin: the base roles of the application with their permissions to see, from their name or from View in the header, and the additional roles of the organization to create, edit, duplicate and delete, their permissions chosen in foldable sections by resource, each permission with its description, as far as the backend allows each row; a base role can be duplicated too, as the start of a new additional role. The demo backend serves no roles, so the list stays empty."
+            "example": "The roles and permissions page of a manager or the superadmin: the base roles of the application with their permissions to see, from their name or from View in the header, and the additional roles of the organization to create, edit, duplicate and delete, their permissions chosen in foldable sections by resource, each permission with its description, as far as the backend allows each row; a base role can be duplicated too, as the start of a new additional role. A superadmin sees one folder per organization next to the base roles, a search at the root spans all of them and is the only list with the organization column, and a role created inside a folder comes with its organization chosen. The demo backend serves no roles, so the list stays empty."
         },
         "search": {
             "applied": "Applied filters",
@@ -1230,7 +1230,7 @@
                 "documents": "Documents",
                 "templates": "Templates"
             },
-            "example": "The users page on the demo backend: search by name or email, filter by status and role, invite a user, edit their names, roles and status, each field enabled only when the row lets it change, send their invitation again, transfer the content of an inactive user to another one and delete inactive users and pending invitations with everything they own, as far as the backend allows each row. The content counts read the labels of the app, here documents and templates.",
+            "example": "The users page on the demo backend: search by name or email, filter by status and role, invite a user, edit their names, roles and status, each field enabled only when the row lets it change, send their invitation again, transfer the content of an inactive user to another one and delete inactive users and pending invitations with everything they own, as far as the backend allows each row. The content counts read the labels of the app, here documents and templates. Signed in as a superadmin, the page opens on one folder per organization next to the superadmins, a search at the root spans every organization and is the only list with the organization column, and an invitation sent from inside a folder comes with its organization chosen.",
             "roles": {
                 "admin": "Administrator",
                 "editor": "Editor"

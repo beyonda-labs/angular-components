@@ -59,6 +59,9 @@
                     "tooltip": "Move everything the selected inactive user owns to another user"
                 }
             },
+            "categories": {
+                "root": "Users"
+            },
             "content": {
                 "count": "{{label}}: {{count}}",
                 "empty": "Owns nothing.",

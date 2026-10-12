@@ -155,4 +155,19 @@ describe('PageActionsService — saving a row', () => {
         expect(afterCreate.mock.calls).toEqual([[CREATED], [RECREATED]]);
         expect(close).toHaveBeenCalledTimes(1);
     });
+
+    it('opens the create form for the category open in the page, and for none at the root', () => {
+        const category = { id: 'cat-1', label: 'Clients' };
+
+        service.executeAction(pageStandardAction(PageStandardAction.Create), {
+            ...buildContext(),
+            getCurrentCategory: () => category
+        });
+        service.executeAction(pageStandardAction(PageStandardAction.Create), {
+            ...buildContext(),
+            getCurrentCategory: () => null
+        });
+
+        expect(openPageForm.mock.calls.map(call => call[4])).toEqual([category, undefined]);
+    });
 });

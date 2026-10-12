@@ -1,3 +1,4 @@
+import { PageItemType } from '../../../page/models/page-categories.model';
 import { GroupRow, GroupsPageMode } from '../models/groups.model';
 import { groupsPageMode } from './groups-page-mode';
 
@@ -34,6 +35,17 @@ describe('groupsPageMode', () => {
                 results: [buildGroup({ actions: ['view', 'delete'] })]
             })
         ).toBe(GroupsPageMode.Manage);
+    });
+
+    it('tells the mode by the groups alone, the folders of the organizations left out', () => {
+        const folder = { actions: [], entryType: PageItemType.Category as const, id: 'o1', name: 'Acme' };
+
+        expect(groupsPageMode(GroupsPageMode.Manage, { globalActions: [], results: [folder] })).toBe(
+            GroupsPageMode.Manage
+        );
+        expect(groupsPageMode(GroupsPageMode.Manage, { globalActions: [], results: [folder, buildGroup()] })).toBe(
+            GroupsPageMode.Read
+        );
     });
 
     it('keeps the mode it had while there are no rows to tell', () => {

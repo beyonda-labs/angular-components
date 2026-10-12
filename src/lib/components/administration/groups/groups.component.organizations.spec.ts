@@ -10,11 +10,21 @@ import { SessionUser } from '../../../services/session/models/session.model';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { FormHandle } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
+import { PageItemType } from '../../page/models/page-categories.model';
 import { PageOrganization } from '../../page/models/page-organization.model';
 import { PageSearch } from '../../page/models/page-search.model';
+import { OrganizationFolder } from '../models/organization-folders.model';
 import { GroupsComponent } from './groups.component';
 import { GroupRow, GroupsConfig } from './models/groups.model';
 
+const ACME: OrganizationFolder = {
+    actions: [],
+    entryType: PageItemType.Category,
+    id: 'o1',
+    name: 'Acme',
+    itemCount: 1
+};
+const GLOBEX: OrganizationFolder = { actions: [], entryType: PageItemType.Category, id: 'o2', name: 'Globex' };
 const GROUPS_URL = 'https://api.test/api/groups';
 const ORGANIZATIONS: PageOrganization[] = [
     { id: 'o1', name: 'Acme' },
@@ -22,6 +32,7 @@ const ORGANIZATIONS: PageOrganization[] = [
 ];
 const ORGANIZATIONS_URL = 'https://api.test/api/users/organizations';
 const PREFIX = 'angular-components.groups';
+const SEARCH_DEBOUNCE_MS = 350;
 
 describe('GroupsComponent — organizations and callers', () => {
     let fixture: ComponentFixture<GroupsComponent>;
@@ -73,9 +84,9 @@ describe('GroupsComponent — organizations and callers', () => {
 
     async function render(
         organizations: PageOrganization[] | null,
-        groups: GroupRow[] = [buildGroup()],
+        groups: (GroupRow | OrganizationFolder)[] = [buildGroup()],
         globalActions: string[] = ['create']
-    ): Promise<void> {
+    ): Promise<TestRequest> {
         fixture = await renderComponent(GroupsComponent, { config: new GroupsConfig() });
 
         if (organizations) {
@@ -83,16 +94,25 @@ describe('GroupsComponent — organizations and callers', () => {
         }
 
         await settle(fixture);
-        answerList(groups, globalActions);
+        const request = answerList(groups, globalActions);
         await settle(fixture);
+
+        return request;
     }
 
-    function answerList(groups: GroupRow[] = [buildGroup()], globalActions: string[] = ['create']): TestRequest {
+    function answerList(
+        groups: (GroupRow | OrganizationFolder)[] = [buildGroup()],
+        globalActions: string[] = ['create']
+    ): TestRequest {
         const request = httpTesting.expectOne(current => current.url === GROUPS_URL && current.method === 'GET');
 
         request.flush({ globalActions, results: groups, search: { total: groups.length } });
 
         return request;
+    }
+
+    function breadcrumb(): string {
+        return queryAll(fixture, 'nav[aria-label="angular-components.breadcrumb.label"]')[0]?.textContent ?? '';
     }
 
     function fieldsOf(form: ModalFormConfig | undefined): FormField[] {
@@ -131,6 +151,33 @@ describe('GroupsComponent — organizations and callers', () => {
         return httpTesting.expectOne(current => current.url === GROUPS_URL && current.method === 'POST');
     }
 
+    async function openAcme(): Promise<TestRequest> {
+        await click(buttonByName(fixture, 'Acme'));
+        httpTesting.expectOne(`${GROUPS_URL}/categories/o1/path`).flush([{ id: 'o1', name: 'Acme' }]);
+        await settle(fixture);
+        const request = answerList([
+            buildGroup({ id: 'g2', name: 'Support', organizationId: 'o1', organizationName: 'Acme' })
+        ]);
+        await settle(fixture);
+
+        return request;
+    }
+
+    async function searchFor(text: string, groups: GroupRow[]): Promise<TestRequest> {
+        const box = fixture.nativeElement.querySelector('[role="searchbox"]') as HTMLInputElement;
+
+        box.value = text;
+        box.dispatchEvent(new Event('input'));
+        await new Promise(resolve => {
+            setTimeout(resolve, SEARCH_DEBOUNCE_MS);
+        });
+        await settle(fixture);
+        const request = answerList(groups);
+        await settle(fixture);
+
+        return request;
+    }
+
     function lastForm(): ModalFormConfig | undefined {
         return TestBed.inject(FakeModalFormService).forms().at(-1);
     }
@@ -152,7 +199,14 @@ describe('GroupsComponent — organizations and callers', () => {
             ]);
         });
 
-        it('shows the organization of every group', () => {
+        it('shows the organization of every group a search at the root finds, and none before', async () => {
+            const before = fixture.nativeElement.textContent as string;
+            await searchFor('s', [
+                buildGroup(),
+                buildGroup({ id: 'g2', name: 'Support', organizationId: 'o1', organizationName: 'Acme' })
+            ]);
+
+            expect(before).not.toContain(`${PREFIX}.table.columns.organization`);
             expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.organization`);
             expect(rowWith('Sales').textContent).toContain('Globex');
             expect(rowWith('Support').textContent).toContain('Acme');
@@ -183,7 +237,7 @@ describe('GroupsComponent — organizations and callers', () => {
                 ]
             });
             expect(lastForm()?.initialValue).toBeUndefined();
-            expect(request.request.body).toEqual({ name: 'Support', organizationId: 'o1' });
+            expect(request.request.body).toEqual({ name: 'Support', organizationId: 'o1', parentId: null });
         });
 
         it('edits a group showing its organization disabled, and never sends it', async () => {
@@ -215,13 +269,66 @@ describe('GroupsComponent — organizations and callers', () => {
         });
     });
 
+    describe('folders per organization for a superadmin', () => {
+        let rootRequest: TestRequest;
+
+        beforeEach(async () => {
+            await configure(buildUser(['superadmin']));
+            rootRequest = await render(ORGANIZATIONS, [ACME, GLOBEX]);
+        });
+
+        it('lists one folder per organization at the root', () => {
+            expect(rootRequest.request.params.get('parentId')).toBe('null');
+            expect(buttonByName(fixture, 'Acme')).toBeTruthy();
+            expect(buttonByName(fixture, 'Globex')).toBeTruthy();
+            expect(breadcrumb()).toContain(`${PREFIX}.categories.root`);
+        });
+
+        it('opens the folder of an organization from its name, with its groups under its breadcrumb', async () => {
+            const request = await openAcme();
+
+            expect(request.request.params.get('parentId')).toBe('o1');
+            expect(rowWith('Support').textContent).not.toContain('Acme');
+            expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.table.columns.organization`);
+            expect(breadcrumb()).toContain('Acme');
+        });
+
+        it('creates a group in the organization of the open folder, chosen already and still open to change', async () => {
+            await openAcme();
+            const request = await create({ name: 'Billing', organizationId: 'o1' });
+            request.flush(buildGroup({ id: 'g3' }));
+            await settle(fixture);
+            answerList();
+
+            expect(lastForm()?.initialValue).toEqual({ main: { name: '', organizationId: 'o1' } });
+            expect(organizationField()).toMatchObject({ isDisabled: false, isRequired: true });
+            expect(request.request.body).toEqual({ name: 'Billing', organizationId: 'o1', parentId: 'o1' });
+        });
+    });
+
+    it('keeps managing the groups at a root of only folders, even with nothing to create', async () => {
+        await configure(buildUser(['superadmin']));
+        await render([], [ACME], []);
+
+        expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.extra-role-count`);
+    });
+
+    it('lists the groups of a manager flat, with no folder and no parent', async () => {
+        await configure(buildUser(['adminuser'], 'o2'));
+        const request = await render(null, [buildGroup({ organizationId: undefined, organizationName: undefined })]);
+
+        expect(request.request.params.has('parentId')).toBe(false);
+        expect(breadcrumb()).toBe('');
+    });
+
     describe('for a superadmin of a single organization', () => {
         beforeEach(async () => {
             await configure(buildUser(['superadmin']));
             await render([{ id: 'o2', name: 'Globex' }]);
         });
 
-        it('shows the organization column all the same, but no organization filter with nothing to choose', async () => {
+        it('shows the organization column in a search all the same, but no organization filter with nothing to choose', async () => {
+            await searchFor('Sales', [buildGroup()]);
             await click(queryAll<HTMLButtonElement>(fixture, 'bey-search [aria-expanded]')[0]);
             await click(buttonByName(fixture, 'angular-components.search.add'));
 
@@ -243,7 +350,7 @@ describe('GroupsComponent — organizations and callers', () => {
                 options: [{ label: 'Globex', value: 'o2' }]
             });
             expect(lastForm()?.initialValue).toEqual({ main: { name: '', organizationId: 'o2' } });
-            expect(request.request.body).toEqual({ name: 'Support', organizationId: 'o2' });
+            expect(request.request.body).toEqual({ name: 'Support', organizationId: 'o2', parentId: null });
         });
     });
 

@@ -54,6 +54,10 @@
                 "title": "Delete organization"
             },
             "form": {
+                "administrators": {
+                    "label": "Administrators",
+                    "no-members": "No administrators yet"
+                },
                 "create": {
                     "title": "New organization"
                 },
@@ -63,7 +67,8 @@
                 "groups": {
                     "empty": "This organization has no groups yet.",
                     "label": "Groups",
-                    "no-members": "No members yet"
+                    "no-members": "No members yet",
+                    "ungrouped": "No group"
                 },
                 "main": {
                     "name": {

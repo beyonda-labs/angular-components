@@ -13,7 +13,7 @@ import { SearchFilter } from '../../search/models/search-filter.model';
 import { TableConfig, TableSort } from '../../table/models/table.model';
 import { TabsConfig } from '../../tabs/models/tabs.model';
 import { buildPageBreadcrumbItems, fromSharedRoot } from '../functions/page-breadcrumb';
-import { withColumnTooltips } from '../functions/page-columns';
+import { buildColumnContext, withColumnTooltips, withShownColumns } from '../functions/page-columns';
 import { withFolderCount } from '../functions/page-folder-count';
 import { readRowField } from '../functions/page-row';
 import { findStandardMoveAction, isMoveDragAllowed, isMoveDropAllowed } from '../functions/page-row-drop';
@@ -26,6 +26,7 @@ import { PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
 import { PageSearch } from '../models/page-search.model';
 import { PageCategoryPathEntry } from '../models/page-state.model';
+import { PageColumnContext } from '../models/page-table.model';
 import { PageActionsContext, PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
 import { PageOrganizationsService } from './page-organizations.service';
@@ -52,6 +53,7 @@ export class PageService {
     private readonly pageStateService = inject(PageStateService);
     private readonly pageTableService = inject(PageTableService);
 
+    private readonly columnContext = signal<PageColumnContext>({ isSearching: false });
     private readonly config = signal<PageConfig | null>(null);
     private readonly countedLocation = signal<string | null>(null);
     private formModalReference?: BsModalRef<ModalFormDialogComponent>;
@@ -150,14 +152,16 @@ export class PageService {
         }
 
         const tablePrefix = `${config.prefix}.table`;
-        const { categoriesConfig } = pageTable;
+        const { categoriesConfig, isColumnShown } = pageTable;
         const moveAction = findStandardMoveAction(config.headerConfig?.actions ?? []);
         const canMoveByDrop = Boolean(config.baseUrl) && this.viewMode() !== PageViewMode.Trash;
         const dropMove = moveAction && categoriesConfig && canMoveByDrop ? { categoriesConfig, moveAction } : null;
         const columns = this.pageOrganizationsService.withoutHidden(config, pageTable.columns);
+        const columnContext = this.columnContext();
+        const shown = <T>(entries: T[]): T[] => withShownColumns(entries, columns, columnContext, isColumnShown);
 
         return new TableConfig<PageItem>({
-            columns: withColumnTooltips(columns, tablePrefix),
+            columns: withColumnTooltips(shown(columns), tablePrefix),
             height: pageTable.height,
             isDropAllowed: dropMove
                 ? (target, items) => isMoveDropAllowed(dropMove.moveAction, target, items, dropMove.categoriesConfig)
@@ -168,10 +172,12 @@ export class PageService {
             isRowSelected: item => this.selected().some(selected => selected.id === item.id),
             items: this.items(),
             loadRow: item =>
-                this.pageOrganizationsService.withoutHidden(
-                    config,
-                    this.pageTableService.loadRow(config, item, this.viewMode(), category =>
-                        this.openCategory(category)
+                shown(
+                    this.pageOrganizationsService.withoutHidden(
+                        config,
+                        this.pageTableService.loadRow(config, item, this.viewMode(), category =>
+                            this.openCategory(category)
+                        )
                     )
                 ),
             onRowDrop: dropMove
@@ -339,6 +345,7 @@ export class PageService {
 
         return {
             config,
+            getCurrentCategory: () => this.currentCategory(),
             getCurrentCategoryId: () => this.currentCategoryId(),
             getSharedRoot: () => (this.viewMode() === PageViewMode.Shared ? (this.categoryPath()[0] ?? null) : null),
             onCategoryDeleted: clearAndRefresh,
@@ -351,6 +358,12 @@ export class PageService {
             onTrashItemDeleted: clearAndRefresh,
             selectedItems: () => this.selected()
         };
+    }
+
+    private currentCategory(): PageCategoryPathEntry | null {
+        const path = this.categoryPath();
+
+        return this.currentCategoryId() === null ? null : (path[path.length - 1] ?? null);
     }
 
     private isAtSharedRoot(): boolean {
@@ -368,11 +381,14 @@ export class PageService {
         const viewingTrash = this.viewMode() === PageViewMode.Trash;
         const location = this.location();
         const viewFilters = viewingTrash ? [] : readViewFilters(config, this.activeView());
+        const sentSearch = { ...search, filters: [...viewFilters, ...search.filters] };
+        const textField = config.tableConfig?.search?.textField;
         const queryParameters = this.pageSearchService.buildQueryParameters(
-            { ...search, filters: [...viewFilters, ...search.filters] },
+            sentSearch,
             Boolean(config.tableConfig?.search) || viewFilters.length > 0 || hasSortableColumn(config),
-            config.tableConfig?.search?.textField
+            textField
         );
+        const columnContext = buildColumnContext(sentSearch, textField, viewingTrash ? null : this.currentCategory());
 
         if (categoriesConfig && !viewingTrash && !this.isAtSharedRoot()) {
             queryParameters[categoriesConfig.parentField] = this.currentCategoryId() ?? 'null';
@@ -382,6 +398,7 @@ export class PageService {
 
         return this.requestList(baseUrl, queryParameters).pipe(
             tap(response => {
+                this.columnContext.set(columnContext);
                 this.items.set(response.results);
                 this.totalItems.set(response.search?.total ?? response.results.length);
                 this.countedLocation.set(location);

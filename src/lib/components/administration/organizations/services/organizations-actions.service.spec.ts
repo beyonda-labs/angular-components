@@ -41,7 +41,9 @@ describe('OrganizationsActionsService', () => {
             organization,
             page
         );
-        httpTesting.expectOne(ORGANIZATION_URL).flush({ ...organization, groups: [] });
+        httpTesting
+            .expectOne(ORGANIZATION_URL)
+            .flush({ ...organization, administrators: [], groups: [], ungroupedMembers: [] });
     }
 
     beforeEach(() => {

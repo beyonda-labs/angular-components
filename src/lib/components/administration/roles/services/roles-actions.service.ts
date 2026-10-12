@@ -2,6 +2,7 @@ import { inject, Injectable } from '@angular/core';
 
 import { ModalFormService } from '../../../form/components/modal/services/modal-form.service';
 import { PageHandle } from '../../../page/models/page.model';
+import { OrganizationFolder } from '../../models/organization-folders.model';
 import { RoleViewOptions } from '../../models/role-permissions.model';
 import { RoleViewFormService } from '../../services/role-view-form.service';
 import { toRoleCreateRequest } from '../functions/role-requests';
@@ -18,7 +19,7 @@ export class RolesActionsService {
     private readonly rolesHttpService = inject(RolesHttpService);
     private readonly roleViewFormService = inject(RoleViewFormService);
 
-    duplicate(options: RolesDuplicateOptions, role: RoleRow, page?: PageHandle<RoleRow>): void {
+    duplicate(options: RolesDuplicateOptions, role: RoleRow, page?: PageHandle<RoleRow, OrganizationFolder>): void {
         const { baseUrl, prefix } = options;
 
         page?.openForm(this.rolesFormService.buildDuplicateConfig(options, role), value =>

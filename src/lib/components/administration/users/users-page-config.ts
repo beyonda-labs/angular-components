@@ -2,6 +2,7 @@ import { buildPageOrganizationField } from '../../page/functions/page-organizati
 import { pageStandardAction } from '../../page/functions/page-standard-actions';
 import { PageConfig, PageHandle } from '../../page/models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../../page/models/page-action.model';
+import { PageCategoriesConfig } from '../../page/models/page-categories.model';
 import { PageFormConfig } from '../../page/models/page-form.model';
 import { PageHeaderConfig } from '../../page/models/page-header.model';
 import { PageOrganization } from '../../page/models/page-organization.model';
@@ -10,6 +11,8 @@ import { PageTableConfig, PageTableSearchConfig } from '../../page/models/page-t
 import { SearchField, SearchFieldOption, SearchFieldType } from '../../search/models/search.model';
 import { TableColumn } from '../../table/models/table.model';
 import { TableCell } from '../../table/models/table-cell.model';
+import { isColumnShownInFolders } from '../functions/organization-folders';
+import { ORGANIZATION_COLUMN_KEY, OrganizationFolder } from '../models/organization-folders.model';
 import {
     UserFormValue,
     UserRow,
@@ -26,7 +29,7 @@ const LEADING_COLUMNS = [
 const ORDER: SearchSort = { direction: SearchSortDirection.Asc, field: 'email' };
 const ORGANIZATION_COLUMN = new TableColumn({
     isSortable: true,
-    key: 'organization',
+    key: ORGANIZATION_COLUMN_KEY,
     sortField: 'organizationName',
     width: 2
 });
@@ -44,14 +47,17 @@ export interface UsersPageConfigOptions {
     isOrganizationShown: boolean;
     loadRow: (user: UserRow) => TableCell[];
     onDelete: (users: UserRow[]) => void;
-    onReady: (handle: PageHandle<UserRow>) => void;
+    onReady: (handle: PageHandle<UserRow, OrganizationFolder>) => void;
     onResendInvitation: (user: UserRow) => void;
     onTransfer: (user: UserRow) => void;
     organizations: PageOrganization[];
     roleOptions: SearchFieldOption[];
+
+    categoriesConfig?: PageCategoriesConfig<OrganizationFolder>;
 }
 
 export function buildUsersPageConfig({
+    categoriesConfig,
     config,
     formConfig,
     isOrganizationShown,
@@ -62,11 +68,11 @@ export function buildUsersPageConfig({
     onTransfer,
     organizations,
     roleOptions
-}: UsersPageConfigOptions): PageConfig<UserFormValue, UserRow> {
-    const { baseUrl, height, prefix, storageKey } = config;
+}: UsersPageConfigOptions): PageConfig<UserFormValue, UserRow, OrganizationFolder> {
+    const { baseUrl, foldersHeight, height, prefix, storageKey } = config;
     const organizationField = buildPageOrganizationField(organizations);
 
-    return new PageConfig<UserFormValue, UserRow>({
+    return new PageConfig<UserFormValue, UserRow, OrganizationFolder>({
         baseUrl,
         formConfig,
         headerConfig: new PageHeaderConfig<UserRow>({
@@ -91,9 +97,11 @@ export function buildUsersPageConfig({
         }),
         onReady,
         prefix,
-        tableConfig: new PageTableConfig<UserRow>({
+        tableConfig: new PageTableConfig<UserRow, OrganizationFolder>({
+            categoriesConfig,
             columns: [...LEADING_COLUMNS, ...(isOrganizationShown ? [ORGANIZATION_COLUMN] : []), ...TRAILING_COLUMNS],
-            height,
+            height: categoriesConfig ? foldersHeight : height,
+            isColumnShown: categoriesConfig ? isColumnShownInFolders : undefined,
             loadRow,
             order: ORDER,
             search: new PageTableSearchConfig({

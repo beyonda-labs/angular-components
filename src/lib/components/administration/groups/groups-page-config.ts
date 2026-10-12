@@ -2,6 +2,7 @@ import { buildPageOrganizationField } from '../../page/functions/page-organizati
 import { pageStandardAction } from '../../page/functions/page-standard-actions';
 import { PageBackendResponse, PageConfig, PageHandle } from '../../page/models/page.model';
 import { PageStandardAction } from '../../page/models/page-action.model';
+import { PageCategoriesConfig } from '../../page/models/page-categories.model';
 import { PageFormConfig } from '../../page/models/page-form.model';
 import { PageHeaderConfig } from '../../page/models/page-header.model';
 import { PageOrganization } from '../../page/models/page-organization.model';
@@ -10,6 +11,8 @@ import { PageTableConfig, PageTableSearchConfig } from '../../page/models/page-t
 import { SearchField, SearchFieldType } from '../../search/models/search.model';
 import { TableColumn } from '../../table/models/table.model';
 import { TableCell } from '../../table/models/table-cell.model';
+import { isColumnShownInFolders } from '../functions/organization-folders';
+import { ORGANIZATION_COLUMN_KEY, OrganizationFolder } from '../models/organization-folders.model';
 import { GroupFormValue, GroupRow, GroupsConfig, GroupsPageMode } from './models/groups.model';
 
 const CREATED_AT_COLUMN = new TableColumn({ isSortable: true, key: 'createdAt', width: 2 });
@@ -21,7 +24,7 @@ const LEADING_COLUMNS = [
 const ORDER: SearchSort = { direction: SearchSortDirection.Asc, field: 'name' };
 const ORGANIZATION_COLUMN = new TableColumn({
     isSortable: true,
-    key: 'organization',
+    key: ORGANIZATION_COLUMN_KEY,
     sortField: 'organizationName',
     width: 3
 });
@@ -34,14 +37,17 @@ export interface GroupsPageConfigOptions {
     isOrganizationShown: boolean;
     loadRow: (group: GroupRow) => TableCell[];
     mode: GroupsPageMode;
-    onDataLoaded: (response: PageBackendResponse<GroupRow>) => void;
+    onDataLoaded: (response: PageBackendResponse<GroupRow | OrganizationFolder>) => void;
     onEdit: (group: GroupRow) => void;
-    onReady: (handle: PageHandle<GroupRow>) => void;
+    onReady: (handle: PageHandle<GroupRow, OrganizationFolder>) => void;
     onView: (group: GroupRow) => void;
     organizations: PageOrganization[];
+
+    categoriesConfig?: PageCategoriesConfig<OrganizationFolder>;
 }
 
 export function buildGroupsPageConfig({
+    categoriesConfig,
     config,
     formConfig,
     isOrganizationShown,
@@ -52,11 +58,11 @@ export function buildGroupsPageConfig({
     onReady,
     onView,
     organizations
-}: GroupsPageConfigOptions): PageConfig<GroupFormValue, GroupRow> {
-    const { baseUrl, height, prefix, storageKey } = config;
+}: GroupsPageConfigOptions): PageConfig<GroupFormValue, GroupRow, OrganizationFolder> {
+    const { baseUrl, foldersHeight, height, prefix, storageKey } = config;
     const organizationField = buildPageOrganizationField(organizations);
 
-    return new PageConfig<GroupFormValue, GroupRow>({
+    return new PageConfig<GroupFormValue, GroupRow, OrganizationFolder>({
         baseUrl,
         formConfig,
         headerConfig: new PageHeaderConfig<GroupRow>({
@@ -74,9 +80,11 @@ export function buildGroupsPageConfig({
         onDataLoaded,
         onReady,
         prefix,
-        tableConfig: new PageTableConfig<GroupRow>({
+        tableConfig: new PageTableConfig<GroupRow, OrganizationFolder>({
+            categoriesConfig,
             columns: [...LEADING_COLUMNS, ...modeColumns(mode, isOrganizationShown), CREATED_AT_COLUMN],
-            height,
+            height: categoriesConfig ? foldersHeight : height,
+            isColumnShown: categoriesConfig ? isColumnShownInFolders : undefined,
             loadRow,
             order: ORDER,
             search: new PageTableSearchConfig({

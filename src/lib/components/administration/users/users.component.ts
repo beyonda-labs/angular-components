@@ -2,6 +2,9 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, un
 
 import { PageHandle } from '../../page/models/page.model';
 import { PageComponent } from '../../page/page.component';
+import { buildOrganizationFoldersConfig } from '../functions/organization-folders';
+import { OrganizationFolder } from '../models/organization-folders.model';
+import { OrganizationFolderTableService } from '../services/organization-folder-table.service';
 import { UserOrganizationsService } from '../services/user-organizations.service';
 import { isOrganizationColumnShown } from './functions/user-organizations';
 import { UserRow, UsersConfig } from './models/users.model';
@@ -21,6 +24,7 @@ import { buildUsersPageConfig } from './users-page-config';
     templateUrl: './users.component.html'
 })
 export class UsersComponent {
+    private readonly organizationFolderTableService = inject(OrganizationFolderTableService);
     private readonly userOrganizationsService = inject(UserOrganizationsService);
     private readonly userRolesService = inject(UserRolesService);
     private readonly usersActionsService = inject(UsersActionsService);
@@ -43,6 +47,13 @@ export class UsersComponent {
         const isOrganizationShown = isOrganizationColumnShown(organizations, isSuperadmin);
 
         return buildUsersPageConfig({
+            categoriesConfig: isSuperadmin
+                ? buildOrganizationFoldersConfig(folder =>
+                      this.organizationFolderTableService.loadRow(folder, {
+                          onOpen: opened => this.page?.openCategory(opened)
+                      })
+                  )
+                : undefined,
             config,
             formConfig: this.usersFormService.buildFormConfig({
                 extraRoles: roles.extraRoles,
@@ -69,7 +80,7 @@ export class UsersComponent {
         });
     });
 
-    private page?: PageHandle<UserRow>;
+    private page?: PageHandle<UserRow, OrganizationFolder>;
 
     constructor() {
         effect(() => {

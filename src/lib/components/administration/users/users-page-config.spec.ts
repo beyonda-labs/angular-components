@@ -1,7 +1,10 @@
 import { PageActionScope, PageActionZone } from '../../page/models/page-action.model';
 import { PageFormConfig } from '../../page/models/page-form.model';
+import { buildOrganizationFoldersConfig } from '../functions/organization-folders';
 import { UserFormValue, UserRow, UsersConfig, UserStatus } from './models/users.model';
 import { buildUsersPageConfig, UsersPageConfigOptions } from './users-page-config';
+
+const FOLDER_ACTIONS = new Set(['create-category', 'delete-category', 'edit-category', 'move', 'share']);
 
 describe('buildUsersPageConfig', () => {
     const organizations = [
@@ -138,5 +141,35 @@ describe('buildUsersPageConfig', () => {
 
         expect(onTransfer).toHaveBeenCalledWith(user);
         expect(onDelete).toHaveBeenCalledWith([user, { ...user, id: 'u2' }]);
+    });
+
+    it('browses the folders it is given, with no folder action, and is flat without them', () => {
+        const categoriesConfig = buildOrganizationFoldersConfig(() => []);
+        const config = build({ categoriesConfig });
+        const keys = config.headerConfig?.actions.map(({ key }) => key) ?? [];
+
+        expect(config.tableConfig?.categoriesConfig).toBe(categoriesConfig);
+        expect(keys.filter(key => FOLDER_ACTIONS.has(key))).toEqual([]);
+        expect(build().tableConfig?.categoriesConfig).toBeUndefined();
+        expect(config.tableConfig?.height).toBe('calc(100vh - 255px)');
+        expect(build().tableConfig?.height).toBe('calc(100vh - 220px)');
+    });
+
+    it('shows the organization among the folders only in a search at the root, and always on a flat page', () => {
+        const folders = build({
+            categoriesConfig: buildOrganizationFoldersConfig(() => []),
+            isOrganizationShown: true
+        });
+        const flat = build({ isOrganizationShown: true });
+        const column = folders.tableConfig?.columns.find(({ key }) => key === 'organization');
+        const category = { id: 'o1', label: 'Acme' };
+
+        expect(column).toBeDefined();
+        expect(
+            [{ isSearching: true }, { isSearching: false }, { category, isSearching: true }].map(context =>
+                column ? folders.tableConfig?.isColumnShown?.(column, context) : undefined
+            )
+        ).toEqual([true, false, false]);
+        expect(flat.tableConfig?.isColumnShown).toBeUndefined();
     });
 });

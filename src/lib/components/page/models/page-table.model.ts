@@ -4,6 +4,13 @@ import { TableCell } from '../../table/models/table-cell.model';
 import { PageCategoriesConfig, PageViewMode } from './page-categories.model';
 import { PageItem } from './page-item.model';
 import { SearchSort } from './page-search.model';
+import { PageCategoryPathEntry } from './page-state.model';
+
+export interface PageColumnContext {
+    isSearching: boolean;
+
+    category?: PageCategoryPathEntry;
+}
 
 export class PageTableConfig<
     TItem extends PageItem = PageItem,
@@ -19,6 +26,7 @@ export class PageTableConfig<
     showPagination: boolean;
 
     categoriesConfig?: PageCategoriesConfig<TCategory, TCategoryValue>;
+    isColumnShown?: (column: TableColumn, context: PageColumnContext) => boolean;
     onSelectionChange?: (items: (TItem | TCategory)[]) => void;
     order?: SearchSort;
     search?: PageTableSearchConfig;
@@ -29,6 +37,7 @@ export class PageTableConfig<
         categoriesConfig,
         columns,
         height = '60vh',
+        isColumnShown,
         isSharedEnabled = false,
         isTrashEnabled = false,
         loadRow,
@@ -42,6 +51,7 @@ export class PageTableConfig<
         this.categoriesConfig = categoriesConfig;
         this.columns = columns;
         this.height = height;
+        this.isColumnShown = isColumnShown;
         this.isSharedEnabled = isSharedEnabled;
         this.isTrashEnabled = isTrashEnabled;
         this.loadRow = loadRow;
@@ -87,6 +97,7 @@ export interface PageTableConfigParameters<
     allowSelection?: boolean;
     categoriesConfig?: PageCategoriesConfig<TCategory, TCategoryValue>;
     height?: string;
+    isColumnShown?: (column: TableColumn, context: PageColumnContext) => boolean;
     isSharedEnabled?: boolean;
     isTrashEnabled?: boolean;
     onSelectionChange?: (items: (TItem | TCategory)[]) => void;

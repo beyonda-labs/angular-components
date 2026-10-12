@@ -125,6 +125,14 @@ describe('GroupsFormService', () => {
         expect(form.toFormValue()).toEqual({ main: { name: '', organizationId: 'o2' } });
     });
 
+    it('chooses the organization of the folder it opens in', () => {
+        const form = service.buildFormConfig(buildOptions({ isOrganizationAsked: true, organizations }));
+
+        expect(form.toFormValue(undefined, { id: 'o1', label: 'Acme' })).toEqual({
+            main: { name: '', organizationId: 'o1' }
+        });
+    });
+
     it('edits the name, the members and the extra roles of a group in one form, filled in with what it holds', () => {
         const form = service.buildEditFormConfig(buildEditOptions());
         const [name, members, extraRoles] = fieldsOf(form.sections);

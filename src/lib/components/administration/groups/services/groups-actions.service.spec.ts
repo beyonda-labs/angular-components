@@ -14,6 +14,7 @@ import { FormListField } from '../../../form/models/fields/form-list-field.model
 import { FormField } from '../../../form/models/form-field.model';
 import { PageHandle } from '../../../page/models/page.model';
 import { PageViewMode } from '../../../page/models/page-categories.model';
+import { OrganizationFolder } from '../../models/organization-folders.model';
 import { RolesConfig } from '../../roles/models/roles.model';
 import { GroupEditFormValue, GroupRow, GroupsConfig } from '../models/groups.model';
 import { GroupsActionsService } from './groups-actions.service';
@@ -26,7 +27,7 @@ describe('GroupsActionsService', () => {
         config: ModalFormConfig<GroupEditFormValue>;
         submit: (value: GroupEditFormValue) => Observable<unknown>;
     }[];
-    let page: PageHandle<GroupRow>;
+    let page: PageHandle<GroupRow, OrganizationFolder>;
 
     const ada = { email: 'ada@example.test', id: 'u1', name: 'Ada Lovelace' };
     const grace = { email: 'grace@example.test', id: 'u2', name: 'Grace Hopper' };

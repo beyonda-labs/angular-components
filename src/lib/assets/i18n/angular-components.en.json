@@ -165,6 +165,9 @@
                     "tooltip": "See the members of the selected group"
                 }
             },
+            "categories": {
+                "root": "Groups"
+            },
             "form": {
                 "create": {
                     "title": "New group"
@@ -782,6 +785,10 @@
                 "title": "Delete organization"
             },
             "form": {
+                "administrators": {
+                    "label": "Administrators",
+                    "no-members": "No administrators yet"
+                },
                 "create": {
                     "title": "New organization"
                 },
@@ -791,7 +798,8 @@
                 "groups": {
                     "empty": "This organization has no groups yet.",
                     "label": "Groups",
-                    "no-members": "No members yet"
+                    "no-members": "No members yet",
+                    "ungrouped": "No group"
                 },
                 "main": {
                     "name": {
@@ -1030,6 +1038,9 @@
                 "view": {
                     "tooltip": "See the permissions of the selected role"
                 }
+            },
+            "categories": {
+                "root": "Roles"
             },
             "duplicate": {
                 "buttons": {
@@ -1272,6 +1283,9 @@
                     "label": "Transfer content",
                     "tooltip": "Move everything the selected inactive user owns to another user"
                 }
+            },
+            "categories": {
+                "root": "Users"
             },
             "content": {
                 "count": "{{label}}: {{count}}",

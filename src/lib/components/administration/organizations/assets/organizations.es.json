@@ -54,6 +54,10 @@
                 "title": "Eliminar organización"
             },
             "form": {
+                "administrators": {
+                    "label": "Administradores",
+                    "no-members": "Todavía no tiene administradores"
+                },
                 "create": {
                     "title": "Nueva organización"
                 },
@@ -63,7 +67,8 @@
                 "groups": {
                     "empty": "Esta organización aún no tiene grupos.",
                     "label": "Grupos",
-                    "no-members": "Todavía no tiene miembros"
+                    "no-members": "Todavía no tiene miembros",
+                    "ungrouped": "Sin grupo"
                 },
                 "main": {
                     "name": {

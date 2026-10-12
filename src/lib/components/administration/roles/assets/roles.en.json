@@ -40,6 +40,9 @@
                     "tooltip": "See the permissions of the selected role"
                 }
             },
+            "categories": {
+                "root": "Roles"
+            },
             "duplicate": {
                 "buttons": {
                     "submit": "Duplicate"
