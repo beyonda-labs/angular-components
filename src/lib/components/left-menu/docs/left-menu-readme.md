@@ -90,6 +90,10 @@ Collapsed, branches open as a flyout on hover or click instead, and the labels g
 
 ## Theming
 
+The avatar of the user is [`bey-avatar`](../../cards/docs/cards-readme.md) of the cards module, painted with
+`--bey-left-menu-accent` on `--bey-left-menu-surface`, and the other way round while the account link is the current
+page.
+
 | Variable                          | Default               |
 | --------------------------------- | --------------------- |
 | `--bey-left-menu-accent`          | `--bey-primary`       |

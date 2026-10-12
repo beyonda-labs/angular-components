@@ -90,7 +90,12 @@ another colour sets `--bey-text-link` and `--bey-text-link-hover`, or the variab
 | `--bey-secondary`  | `#949b98`      | `#7a8380`      |
 | `--bey-success`    | `--bey-teal`   | `--bey-teal`   |
 | `--bey-danger`     | `--bey-red`    | `--bey-red`    |
+| `--bey-danger-fg`  | `--bey-white`  | `--bey-black`  |
+| `--bey-danger-hover` | `--bey-danger`, 15% `--bey-black` | `--bey-danger`, 15% `--bey-white` |
 | `--bey-warning`    | `--bey-orange` | `--bey-orange` |
+
+`--bey-danger-fg` is the text on a danger button, and `--bey-danger-hover` its background under the pointer or
+pressed: the button of a form whose submit deletes for good (`isSubmitDanger` of `BeyModalFormConfig`).
 
 ### Highlight
 

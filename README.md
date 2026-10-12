@@ -77,21 +77,23 @@ const form = new BeyFormConfig({
 
 ## Components
 
-| Component        | Selector                 | Status                      |
-| ---------------- | ------------------------ | --------------------------- |
-| Account data     | `<bey-account-data>`     | Stable                      |
-| Edit lock notice | `<bey-edit-lock-notice>` | Stable                      |
-| Form             | `<bey-form>`             | Stable                      |
-| Groups           | `<bey-groups>`           | Stable                      |
-| Header           | `<bey-header>`           | Stable                      |
-| Left Menu        | `<bey-left-menu>`        | Stable                      |
-| Notice           | `<bey-notice>`           | Stable                      |
-| Organizations    | `<bey-organizations>`    | Stable                      |
-| Password change  | `<bey-password-change>`  | Stable                      |
-| Roles            | `<bey-roles>`            | Stable                      |
-| Table            | `<bey-table>`            | Stable                      |
-| Users            | `<bey-users>`            | Stable                      |
-| Style Guide      | `<bey-style-guide>`      | Demo, secondary entry point |
+| Component            | Selector                                                            | Status                      |
+| -------------------- | ------------------------------------------------------------------- | --------------------------- |
+| Account data         | `<bey-account-data>`                                                | Stable                      |
+| Cards                | `<bey-card>`, `<bey-card-list>`, `<bey-card-stats>`, `<bey-avatar>` | Stable                      |
+| Edit lock notice     | `<bey-edit-lock-notice>`                                            | Stable                      |
+| Form                 | `<bey-form>`                                                        | Stable                      |
+| Groups               | `<bey-groups>`                                                      | Stable                      |
+| Header               | `<bey-header>`                                                      | Stable                      |
+| Left Menu            | `<bey-left-menu>`                                                   | Stable                      |
+| Notice               | `<bey-notice>`                                                      | Stable                      |
+| Organization summary | `<bey-organization-summary>`                                        | Stable                      |
+| Organizations        | `<bey-organizations>`                                               | Stable                      |
+| Password change      | `<bey-password-change>`                                             | Stable                      |
+| Roles                | `<bey-roles>`                                                       | Stable                      |
+| Table                | `<bey-table>`                                                       | Stable                      |
+| Users                | `<bey-users>`                                                       | Stable                      |
+| Style Guide          | `<bey-style-guide>`                                                 | Demo, secondary entry point |
 
 The interactive style guide ships as `@beyonda-labs/angular-components/style-guide`, a secondary entry point:
 `import { BeyStyleGuideComponent } from '@beyonda-labs/angular-components/style-guide'`. Importing a component
@@ -119,8 +121,10 @@ Component documentation:
 -   [Administration](src/lib/components/administration/docs/administration-readme.md):
     [Users](src/lib/components/administration/users/docs/users-readme.md),
     [Groups](src/lib/components/administration/groups/docs/groups-readme.md),
-    [Roles](src/lib/components/administration/roles/docs/roles-readme.md) and
-    [Organizations](src/lib/components/administration/organizations/docs/organizations-readme.md)
+    [Roles](src/lib/components/administration/roles/docs/roles-readme.md),
+    [Organizations](src/lib/components/administration/organizations/docs/organizations-readme.md) and
+    [Organization summary](src/lib/components/administration/organization-summary/docs/organization-summary-readme.md)
+-   [Cards](src/lib/components/cards/docs/cards-readme.md)
 -   [Edit lock notice](src/lib/components/edit-lock-notice/docs/edit-lock-notice-readme.md)
 -   [Form](src/lib/components/form/docs/form-readme.md)
 -   [Header](src/lib/components/header/docs/header-readme.md)

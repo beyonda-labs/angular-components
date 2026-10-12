@@ -39,7 +39,8 @@ Every field extends `BeyFormField` and takes the same base parameters; each type
 | `BeyFormFileField`          | `File`     | `accept` (`[]`), `maxSizeBytes`, both validated                                                                                              |
 | `BeyFormTextVariableField`  | `string`   | `options`, a value or a rule, inserted as `{{ value }}`                                                                                      |
 | `BeyFormInfoField`          | none       | `items: { label, icon?, tooltip?, tooltipItems? }[]`, shows text without a control, with a tooltip that lists `tooltipItems` under `tooltip` |
-| `BeyFormListField`          | none, or `string[]` | `items`, a list of texts or a signal of one; or `options`, `picker`, `isRemovable` (`false`) and `emptyKey` to hold ids, see below |
+| `BeyFormListField`          | none, or `string[]` | `items`, a list of texts or a signal of one, and `onItemClick`; or `options`, `picker`, `isRemovable` (`false`) and `emptyKey` to hold ids, see below |
+| `BeyFormNoticeField`        | none       | `message`, a translation key, its `messageParameters` and a `variant` of `BeyNoticeVariant` (`Info`): a [`bey-notice`](../../notice/docs/notice-readme.md) across the row, its label hidden by default |
 
 An option is `{ label, value, badge?, isDisabled? }`; `label` and `badge` are translation keys. When the options
 of a select, a radio or an autocomplete change and no longer list its value, the form clears it, and a list that holds
@@ -52,7 +53,14 @@ The list field shows read-only texts, such as everything that uses a record, in 
 rows up to seven and a half of them, `--bey-form-list-max-height`, and scrolls inside the box past that, the half row
 telling there is more; a short list keeps its own height. A signal lets the texts arrive after the form opens. Like
 the info field, it has no control, unless it holds ids (see [Lists that hold ids](#lists-that-hold-ids)). Its empty
-text is `emptyKey`, or else its placeholder.
+text is `emptyKey`, or else its placeholder. With `onItemClick`, `(item, index) => void`, every text is a button
+that reads as a link (`--bey-form-list-link`, `--bey-text-link` by default, and `--bey-form-list-link-hover`, underlined
+under the pointer and on keyboard focus) and calls it with the text and its place in the list, such as the roles of a
+group that each open their permissions.
+
+The notice field says something about the form inside it, such as a warning before a deletion: it renders the
+`bey-notice` of its `variant` with `message` translated with its `messageParameters`, without actions, and has no
+control, so it never changes the value nor the validity of the form.
 
 The date field keeps the value as text in `format` and shows a datepicker in the current language. The
 autocomplete and the variable picker float above their ancestors, so a scrolling modal cannot clip them. The panel

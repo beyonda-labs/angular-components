@@ -260,7 +260,8 @@ What `document-builder-front` did by hand that belongs in the library.
 
 ### Core UI
 
--   [ ] Layout: `card`, `panel`
+-   [x] Layout: `card`, the cards module: a card, a strip of figures, lists of items that fold or open, the avatar
+-   [ ] Layout: `panel`
 -   [x] Feedback: `toast`, `loading spinner` (inline + overlay + service)
 -   [x] Feedback: `notice`, an inline banner with a variant, an icon, a message and its actions
 -   [ ] Feedback: `alert`, `progress bar`
@@ -322,6 +323,10 @@ What `document-builder-front` did by hand that belongs in the library.
         users page and the groups page
 -   [x] One edit per entity on the users, groups and organizations pages, every field shown and those the row does not
         let change disabled
+-   [x] Content of a user: transfer what an inactive user owns to another user, and delete inactive users, pending
+        invitations and deactivated organizations with everything they hold, what pointed at them reading "Unknown"
+-   [x] Member views: the summary of the organization, and the own groups and roles read-only, through permissions an
+        extra role gives
 -   [x] Account pages: change the password, recover it from the login, verify the email, and a profile with the name,
         the language and the theme
 -   [ ] The OAuth callback says why a sign-in failed (`?error=unauthorized`, `?error=account-inactive`,

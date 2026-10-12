@@ -9,7 +9,9 @@ them. The page lists the groups with their name, how many members they have, how
 also sees the organization of each group and filters by it, see [Organizations](#organizations). It creates a group,
 edits one (its name, its members and its extra roles, in one form), and deletes groups after a confirmation. Which
 actions it offers is up to the backend, as on any page: `create` when `globalActions` lists it, and `edit` and `delete`
-for the rows whose `actions` list them. The name of a group opens the edit form when the row lists `edit`.
+for the rows whose `actions` list them. The name of a group opens the edit form when the row lists `edit`, as Edit in
+the header does for the selected row. A member who may only see their own groups gets the same page read-only, see
+[Members](#members).
 
 ## Usage
 
@@ -37,6 +39,7 @@ permissions; anyone else gets `404` from `/groups`.
 | ------------ | ----------------------------- | ---------------------------------------------------------------------------------------- |
 | `baseUrl`    | `'/groups'`                   | Path of the groups, resolved against the environment's `baseUrl` and `webApiPath`        |
 | `usersUrl`   | `'/users'`                    | Path of the users, where a superadmin reads the organizations from                       |
+| `rolesConfig` | the defaults of `BeyRolesConfig` | The settings of the roles page the permissions of a role follow in [Members](#members): `actionOrder`, `groupIcons`, `groupOrder`, `permissionPrefix`, `prefix` and `rolePrefix` (`BeyRoleViewSettings`); a `BeyRolesConfig` fits |
 | `prefix`     | `'angular-components.groups'` | i18n prefix of the page, as `bey-page` reads it                                          |
 | `storageKey` | `'groups'`                    | Key under which the table remembers the columns the user hid                             |
 | `height`     | `'calc(100vh - 220px)'`       | Height of the table                                                                      |
@@ -99,6 +102,32 @@ The errors of the module are translated under `angular-components.http.error.gro
 `existing-name` (with its `name`), `invalid-members`, `invalid-extra-roles` and `not-found`, which a group deleted
 meanwhile, or of an organization out of reach, answers.
 
+## Members
+
+The groups module of express-components answers a member who holds `organization.read-groups`, and not
+`organization.manage`, only the groups they belong to, `{ id, name, memberCount, createdAt, actions: ['view'] }`, with
+`roleCount` too when they also hold `organization.read-group-roles`, and no `globalActions`. The page reads that from the
+answer: rows whose actions list nothing but `view`, and no `create`, turn it read-only, and it builds itself again for
+that.
+
+-   **The columns** are "Name", "Members", "Roles" (`table.columns.role-count`, the `roleCount` of each group) only while
+    the rows count them, and "Created". An empty answer leaves the columns as they were.
+-   **The name** of a group opens it (`table.view-group` as its tooltip), read from `GET {baseUrl}/{id}`, `{ id, name,
+    members: [{ id, name, surname, email }], extraRoles? }`, in "Group details" (`view.title`), closed with its only
+    button (`view.buttons.close`): its name, "Members" (`view.main.members`) in the look of a read-only list, each
+    "Name Surname (email)", or the email alone, and "This group has no members yet." (`view.main.members.empty`) without
+    any.
+-   **View.** Once a row that lists `view` is selected, "View" in the header opens the same, next to where Edit sits so
+    it shows directly: the standard `view` action of [the page](../../../page/docs/page-readme.md#header-actions), with
+    the label of the page module and the tooltip `actions.view.tooltip` ("See the members of the selected group").
+-   **The roles.** When the answer brings `extraRoles: [{ id, name, description?, permissions }]`, the view lists them too,
+    "Additional roles" (`view.main.extra-roles`, or "This group gives no additional roles."), each name a link that opens
+    its permissions in the read-only view of [the roles page](../../roles/docs/roles-readme.md), the checklist disabled, in
+    the sections, icons and order `rolesConfig` sets. That view shows the permissions the role holds; the list of every
+    permission is not asked for, since a member who reads their groups may not read it.
+
+Holding only `organization.read-group-roles` shows nothing: both requests answer `404`.
+
 ## Organizations
 
 A manager reaches the groups of their own organization, and the server answers its rows without an organization, so
@@ -128,6 +157,8 @@ users page invites into, so a group is created in the same organizations a user 
 ## Texts
 
 Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
-`.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `search.fields.<key>`, `form.create.title`,
+`.tooltip` (only the tooltip for `view`, whose label is the page module's), `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `search.fields.<key>`, `form.create.title`,
 `form.edit.title`, `form.main.<field>.label` and `.placeholder`, the placeholder of a search, `form.main.user-ids.empty`
-and `form.main.extra-role-ids.empty`, `modal.delete.title` and `.message`, and `toast.<key>-success`. The module ships all of them in English and Spanish.
+and `form.main.extra-role-ids.empty`, `modal.delete.title` and `.message`, `table.view-group`, `view.title`,
+`view.buttons.close`, `view.main.<field>.label`, `view.main.members.empty` and `view.main.extra-roles.empty`, and
+`toast.<key>-success`. The module ships all of them in English and Spanish.

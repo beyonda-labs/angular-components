@@ -97,6 +97,7 @@ A `BeyQueryScope` is a fixture or an element.
 | `beyAccessibleDescription(element)`      | The text of what its `aria-describedby` points at, such as the hint or the error of a field; `''` when nothing        |
 | `beyQueryAll(scope, selector)`           | Every match, as an array                                                                                              |
 | `beyTextsOf(elements)`                   | Their trimmed texts                                                                                                   |
+| `beyVisibleText(scope)`                  | Its text as a reader sees it: the text of every text node, trimmed, one space apart                                   |
 | `beyHostOf(scope)`                       | The element of a fixture, or the element itself                                                                       |
 
 ## Usage

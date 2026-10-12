@@ -5,10 +5,11 @@ express-components and meant as the content of an app page inside `bey-app-layou
 name and surname, email, roles and extra roles, status, last sign-in and creation date (hidden at first), sorted by email, and searches
 them by name or email in the search box and by status and role in the filters; a superadmin also sees the organization
 of each user and filters by it, see [Organizations](#organizations). It invites a user, edits one, their status
-included, and sends their invitation again. The roles it offers come from `GET {baseUrl}/roles`, read before the
+included, sends their invitation again, transfers what an inactive user owns to another user and deletes users, see
+[Transfer and deletion](#transfer-and-deletion). The roles it offers come from `GET {baseUrl}/roles`, read before the
 list shows; when they cannot be read the list shows anyway, with no role to offer. Which actions it offers is up to the
-backend, as on any page: `create` when `globalActions` lists it, and `edit` and `resend-invitation` for the rows whose
-`actions` list them. A user's name opens the edit form when the row lists `edit`.
+backend, as on any page: `create` when `globalActions` lists it, and `edit`, `resend-invitation`, `transfer` and
+`delete` for the rows whose `actions` list them. A user's name opens the edit form when the row lists `edit`.
 
 ## Usage
 
@@ -37,6 +38,7 @@ permissions.
 | `baseUrl`    | `'/users'`                   | Path of the users, resolved against the environment's `baseUrl` and `webApiPath` |
 | `prefix`     | `'angular-components.users'` | i18n prefix of the page, as `bey-page` reads it                                  |
 | `rolePrefix` | `<prefix>.roles`             | i18n prefix the labels of the roles are read from, see [Roles](#roles)           |
+| `contentLabels` | `{}`                      | The translation key that labels each kind of content a user owns, by the key the server counts it under, see [Transfer and deletion](#transfer-and-deletion) |
 | `storageKey` | `'users'`                    | Key under which the table remembers the columns the user hid                     |
 | `height`     | `'calc(100vh - 220px)'`      | Height of the table                                                              |
 
@@ -51,6 +53,8 @@ permissions.
 | Invite (`create`)   | `POST {baseUrl}` `{ email, roles, extraRoleIds?, name?, surname?, language?, organizationId? }` | Email, name, surname, the organization for a superadmin (required), roles, extra roles and the language of the invitation |
 | `edit`              | `PUT {baseUrl}/{id}` `{ name?, surname?, status?, roles?, extraRoleIds? }`                      | The email to read, name, surname, status, roles and extra roles, see [Editable fields](#editable-fields)                  |
 | `resend-invitation` | `POST {baseUrl}/{id}/invitation`                                                                | None                                                                                                                      |
+| `transfer`          | `GET {baseUrl}/{id}/content`, then `POST {baseUrl}/{id}/transfer` `{ targetUserId }`            | What the user owns, to read, and the user who receives it, searched with `GET {baseUrl}/{id}/transfer-targets?search=&limit=` |
+| `delete`            | `GET {baseUrl}/{id}/content` for each row, then `DELETE {baseUrl}/{id}` for each, one after the other | A confirmation, see [Transfer and deletion](#transfer-and-deletion)                                                      |
 
 A name, a surname or a language left empty is not sent, and "Roles" must hold one role at least. The search box sends its
 text as the `text` of the search, which the backend matches against the email, the name and the surname at once
@@ -89,6 +93,49 @@ sends only the fields the row names, the status only when it changes. The server
 A row without `editableFields`, from a server before express-components 1.3.0, keeps every field enabled and shows no
 status, as before. The change of a status follows the server: `active → inactive` and `inactive → active`, an account
 brought back coming back as `invited`, `unverified` or `active`, as the backend decides.
+
+## Transfer and deletion
+
+An inactive user keeps what they own until someone moves it. `GET {baseUrl}/{id}/content` answers what a user owns,
+`{ counts: { [key]: number }, usedByOthers: { [key]: [{ id, name, users: [{ id, name, ownerName }] }] } }`: how many rows
+of each kind of content of the app, folders and trash included, and which of them rows of other owners use. An answer
+without either counts as empty. Each kind is labelled with the translation key `contentLabels` gives its key, or with
+the key itself when the config names none; the app passes its own:
+
+```ts
+new BeyUsersConfig({
+    contentLabels: { documents: 'myApp.content.documents', templates: 'myApp.content.templates' }
+});
+```
+
+Both forms list the kinds the user owns any of, a line each, "Documents: 3" (`content.count`), under "Content"
+(`content.label`), or "Owns nothing." (`content.empty`).
+
+-   **Transfer content** (`transfer`, in the menu, one row at a time, offered by the server on an inactive user to an
+    organization admin or the superadmin) reads what the user owns and opens "Transfer {{name}}'s content"
+    (`transfer.title`, the name and surname of the user, or the email without them), with the lines above and a required
+    "Transfer to" (`transfer.main.target-user-id`): an autocomplete whose `search` asks
+    `GET {baseUrl}/{id}/transfer-targets?search=<text>&limit=20`, the active users of the organization of the user
+    without the user nor the superadmins, by name, labelled "Name Surname (email)", or the email alone; when the server
+    answers 20, the suggestions say there are more. The note by the buttons (`transfer.note`) says everything moves
+    into a folder named after the user at the root of the person chosen. "Transfer" (`transfer.submit`) sends
+    `POST {baseUrl}/{id}/transfer` `{ targetUserId }`, confirms with `toast.transfer-success` and reloads.
+-   **Delete** (`delete`, in the menu, one row or several, offered by the server to the superadmin on inactive users and
+    pending invitations) reads what each user owns and opens its own confirmation, not the generic one: "Delete user"
+    or "Delete users" (`delete.title.one` and `.other`), what will go, "Ada Lovelace will be deleted, together with
+    everything they still own." or "2 users will be deleted, …" (`delete.message.one` and `.other`), "The invitation will
+    stop working." (`delete.invitation.one` and `.other`) when an invited user is among them, and the lines of what
+    they own added up. When rows of other owners use any of it, a warning notice (`delete.used-by-others`, a
+    `BeyFormNoticeField`) says those references will show as "Unknown" (`angular-components.user-name.unknown`) and
+    need fixing, over the list of those rows, "Template «Offer»: Offer for Acme (Grace Hopper)" (`content.used-by`,
+    under `delete.main.used-by-others`), an owner the server no longer resolves reading "Unknown". Its "Delete" button
+    (`delete.submit`) is a danger one (`isSubmitDanger`); it sends `DELETE {baseUrl}/{id}` for each user in turn, stops
+    at the first refused, whose reason the error modal shows, and reloads; once the last is gone it confirms with
+    `toast.delete-success`.
+
+The server checks everything again and answers `users.transfer-source-not-inactive`, `users.invalid-transfer-target`
+and `users.not-deletable`, which the module translates. A user deleted takes everything they own with them, and what
+other owners kept pointing at it shows "Unknown" from then on.
 
 ## Organizations
 
@@ -172,4 +219,7 @@ Every text follows [the page](../../../page/docs/page-readme.md#texts) under `pr
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.no-name` (the name of a user who has
 none), `table.system` (the organization of a superadmin), `search.fields.<key>`, `status.<status>`,
 `form.create.title`, `form.edit.title`, `form.main.<field>.label` and `.placeholder`, `form.main.roles.empty` and
-`form.main.extra-role-ids.empty`, and `toast.<key>-success`. The module ships all of them in English and Spanish.
+`form.main.extra-role-ids.empty`, `content.label`, `.count`, `.empty` and `.used-by`, `transfer.title`, `.note`,
+`.submit`, `.no-targets` and `.main.target-user-id.label` and `.placeholder`, `delete.title.one` and `.other`,
+`delete.message.one` and `.other`, `delete.invitation.one` and `.other`, `delete.used-by-others`, `delete.submit` and
+`delete.main.used-by-others.label`, and `toast.<key>-success`. The module ships all of them in English and Spanish.

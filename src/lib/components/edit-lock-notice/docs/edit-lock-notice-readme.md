@@ -48,7 +48,8 @@ readonly notice = computed(
 | `unavailable`                         | `Danger`  | `messages.unavailable`                   | none                                          |
 
 The time and the date follow the language in use: `9:05 AM` and `Oct 11, 2026` in English, `9:05` and `11 oct 2026` in
-Spanish. A `name` is the `holderName` of the lock.
+Spanish. A `name` is the `holderName` of the lock, or "Unknown"
+(`angular-components.user-name.unknown`, "Desconocido" in Spanish) when the server answers it `null`.
 
 ## The actions
 

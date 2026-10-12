@@ -121,9 +121,15 @@ An action has a `key`, a `scope`, a `zone` and optionally an `icon`, a `label`, 
 
 Zones are `Left` next to the title, `Right` for the main buttons and `Menu` for the kebab. A standard key
 (`create`, `edit`, `delete`, `duplicate`, `change-status`, `move`, `create-category`, `edit-category`,
-`delete-category`, `restore-trash-item`, `delete-trash-item`, `empty-trash`, `share`) needs no `handler`; `edit` and `edit-category` need exactly one row
+`delete-category`, `restore-trash-item`, `delete-trash-item`, `empty-trash`, `share`) needs no `handler`; `edit`, `edit-category` and `view` need exactly one row
 whatever their scope, `move` rows of a single owner, see [Owners](#owners), and `share` a folder, see [Sharing](#sharing). A `handler` always receives an array, so a single-row action reads `([user]) => …`; given
 to a standard key it replaces the standard behaviour. The page does no permission logic of its own.
+
+`view` is the one standard key with no behaviour of its own, since only the page knows how to show a row read-only: it
+needs a `handler`, which opens what the name of the row opens, so that a row whose name opens something always offers
+the same from the header. It sits next to `edit`, where it shows directly rather than in the menu, and carries texts of
+the page module, "View" (`angular-components.page.actions.view.label`) with a tooltip (`.tooltip`), so it needs no
+key under the `prefix` of the page; a `label` or `tooltip` override replaces them.
 
 `delete`, `delete-category`, `delete-trash-item` and `empty-trash` ask before sending their request, with
 `<prefix>.modal.<key>.title` and `.message` and a `count` parameter (none for `empty-trash`). A `confirmation(items, confirmation)` on the
@@ -150,7 +156,7 @@ actions of the page are still listed in the order they should render, standard o
 | -------------------------------------------------------- | -------- | ------- | ---------------------------- |
 | `create`                                                 | `Global` | `Right` | primary button with `faPlus` |
 | `create-category`, `empty-trash`                         | `Global` | `Right` | secondary button             |
-| `edit`, `edit-category`                                  | `Single` | `Left`  | text                         |
+| `edit`, `edit-category`, `view`                          | `Single` | `Left`  | text                         |
 | `duplicate`, `change-status`, `share`                    | `Single` | `Menu`  | text                         |
 | `restore-trash-item`                                     | `Item`   | `Left`  | text                         |
 | `move`, `delete`, `delete-category`, `delete-trash-item` | `Item`   | `Menu`  | text                         |
@@ -269,7 +275,9 @@ creates in, and a duplicate to the owner of the original. At the root it has now
 `beyPageOwnerColumn(overrides?)` is the column: key `ownerName`, headed "Owner"
 (`angular-components.page.table.columns.owner-name` and its `.tooltips.owner-name`), sortable by `ownerId`, hideable,
 with a width of `2`; `overrides` changes any of that. `beyPageOwnerCell(row)` is its cell, the display name as text,
-empty for a row nobody owns. The columns of the page config take the column where it should show, and `loadRow` the
+empty for a row nobody owns. A row with an `ownerId` whose `ownerName` is `null`, an owner the server no longer
+resolves, such as a deleted user, reads "Unknown" (`angular-components.user-name.unknown`, "Desconocido" in
+Spanish). The columns of the page config take the column where it should show, and `loadRow` the
 cell at the same place; with categories, a `categoriesConfig.loadRow` adds it too, since folders have owners as well.
 
 ```ts
@@ -377,7 +385,8 @@ none is selected. Standard actions without a `handler` work on the whole selecti
 A resource other rows point at (a file the documents show, a block the templates include) answers what uses each row,
 as base-entity of express-components does with its `findUsages` hook: every item row carries `usageCount` and the first
 users as `usedBy`, and `GET {baseUrl}/usages?ids=a,b` answers all of them. A user is a `BeyPageUser`, `{ id, name,
-resource, kind? }`.
+resource, kind? }`; a `name` of `null`, a user the server no longer resolves, reads "Unknown"
+(`angular-components.user-name.unknown`) in every warning and every list of names.
 
 `usagesConfig: new BeyPageUsagesConfig({ suffixes, listedUsers })` turns it on. Before `delete` and
 `delete-trash-item`, the page asks for the usages of the selected items (the folders of a trash selection are left
@@ -498,6 +507,7 @@ renaming something other records name.
 | `angular-components.page.search.fields.organization-id` | The organization filter |
 | `angular-components.page.shared.label` | The shared tab and the root of its breadcrumb, see [Sharing](#sharing) |
 | `angular-components.page.share.*` | The form of `share`: its title, sections, access choices and empty text |
+| `angular-components.page.actions.view.label` / `.tooltip` | The standard `view` action, see [Header actions](#header-actions) |
 
 Every `<key>` is the action, column or field key as a kebab-case segment: a column `createdAt` reads
 `<prefix>.table.columns.created-at`. A column with a `label` or a `tooltip` of its own reads those keys instead, as the
