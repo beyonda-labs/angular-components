@@ -1,0 +1,60 @@
+{
+    "angular-components": {
+        "organization-summary": {
+            "administrators": {
+                "empty": "No administrators yet.",
+                "label": "Administrators"
+            },
+            "breakdown": {
+                "active": {
+                    "one": "{{count}} active",
+                    "other": "{{count}} active"
+                },
+                "inactive": {
+                    "one": "{{count}} inactive",
+                    "other": "{{count}} inactive"
+                },
+                "invited": {
+                    "one": "{{count}} pending invitation",
+                    "other": "{{count}} pending invitations"
+                },
+                "unverified": {
+                    "one": "{{count}} unverified",
+                    "other": "{{count}} unverified"
+                }
+            },
+            "created-at": "Created on {{date}}",
+            "extra-roles": {
+                "empty": "This organization has no additional roles yet.",
+                "label": "Additional roles"
+            },
+            "groups": {
+                "empty": "This organization has no groups yet.",
+                "hide-members": "Hide members",
+                "label": "Groups",
+                "members": {
+                    "one": "{{count}} member",
+                    "other": "{{count}} members"
+                },
+                "no-members": "No members.",
+                "show-members": "Show members",
+                "ungrouped": "No group"
+            },
+            "stats": {
+                "extra-roles": {
+                    "one": "Additional role",
+                    "other": "Additional roles"
+                },
+                "groups": {
+                    "one": "Group",
+                    "other": "Groups"
+                },
+                "members": {
+                    "one": "Member",
+                    "other": "Members"
+                }
+            },
+            "title": "Organization"
+        }
+    }
+}

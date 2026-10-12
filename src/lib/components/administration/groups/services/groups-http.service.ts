@@ -12,7 +12,8 @@ import {
     GroupRoleOptionsResponse,
     GroupRow,
     GROUPS_MEMBER_OPTIONS_PATH,
-    GROUPS_ROLE_OPTIONS_PATH
+    GROUPS_ROLE_OPTIONS_PATH,
+    GroupView
 } from '../models/groups.model';
 
 @Injectable({
@@ -28,6 +29,10 @@ export class GroupsHttpService {
 
     loadGroup(baseUrl: string, id: string): Observable<GroupDetail> {
         return this.httpService.get<GroupDetail>(this.url(baseUrl, id));
+    }
+
+    loadGroupView(baseUrl: string, id: string): Observable<GroupView> {
+        return this.httpService.get<GroupView>(this.url(baseUrl, id));
     }
 
     searchExtraRoles(baseUrl: string, id: string, search: string, limit: number): Observable<GroupExtraRole[]> {

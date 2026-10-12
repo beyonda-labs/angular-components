@@ -13,8 +13,9 @@ import { ModalFormConfig } from '../../form/components/modal/models/modal-form.m
 import { FormCheckboxSectionsField } from '../../form/models/fields/form-checkbox-sections-field.model';
 import { FormHandle } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
+import { RolePermissionEntry } from '../models/role-permissions.model';
 import rolesEn from './assets/roles.en.json';
-import { RoleFormValue, RolePermissionEntry, RoleRow, RolesConfig } from './models/roles.model';
+import { RoleFormValue, RoleRow, RolesConfig, RoleSourceType } from './models/roles.model';
 import { RolesComponent } from './roles.component';
 
 const MANAGER: SessionUser = {
@@ -383,6 +384,30 @@ describe('RolesComponent', () => {
         expect(queryButton(fixture, 'angular-components.header.menu')).toBeNull();
     });
 
+    it('shows the permissions of the selected base role from the view action of the header, out of the menu', async () => {
+        await render([buildBase({ actions: ['view', 'duplicate'] }), buildRole()]);
+
+        await click(rowWith('normaluser'));
+
+        expect(queryButton(fixture, `${PREFIX}.actions.edit.label`)).toBeNull();
+
+        await click(buttonByName(fixture, 'angular-components.page.actions.view.label'));
+
+        expect(modalForms.forms().at(-1)?.title).toBe(`${PREFIX}.view.title`);
+        expect((modalForms.forms().at(-1)?.initialValue as RoleFormValue | undefined)?.permissions).toEqual({
+            permissions: ['documents.read']
+        });
+    });
+
+    it('offers no view on a role the caller edits, whose actions leave it out', async () => {
+        await render([buildRole()]);
+
+        await click(rowWith('Reviewers'));
+
+        expect(queryButton(fixture, `${PREFIX}.actions.edit.label`)).not.toBeNull();
+        expect(queryButton(fixture, 'angular-components.page.actions.view.label')).toBeNull();
+    });
+
     it.each([
         [
             'roles.existing-name',
@@ -418,4 +443,51 @@ describe('RolesComponent', () => {
             expect([translate.instant(error.title), translate.instant(error.message)]).toEqual([title, message]);
         }
     );
+
+    describe('for a member who reads their own roles', () => {
+        const own = [
+            buildBase({ actions: ['view'], memberCount: undefined, sources: [{ type: RoleSourceType.Direct }] }),
+            buildRole({
+                actions: ['view'],
+                groupCount: undefined,
+                memberCount: undefined,
+                sources: [{ groupId: 'g1', groupName: 'Sales', type: RoleSourceType.Group }]
+            })
+        ];
+
+        beforeEach(async () => {
+            await render(own, []);
+            reload().flush({ globalActions: [], results: own, search: { filters: [], page: 1, size: 25, total: 2 } });
+            await settle(fixture);
+        });
+
+        it('says where each role comes from instead of who holds it', () => {
+            const text = fixture.nativeElement.textContent as string;
+
+            expect(text).toContain(`${PREFIX}.table.columns.sources`);
+            expect(text).not.toContain(`${PREFIX}.table.columns.member-count`);
+            expect(text).not.toContain(`${PREFIX}.table.columns.group-count`);
+            expect(rowWith('normaluser').textContent).toContain(`${PREFIX}.sources.direct`);
+            expect(rowWith('Reviewers').textContent).toContain(`${PREFIX}.sources.group`);
+        });
+
+        it('opens the permissions of a role from its name', async () => {
+            await click(buttonByName(fixture, 'Reviewers'));
+
+            expect(modalForms.forms().at(-1)?.title).toBe(`${PREFIX}.view.title`);
+            expect((modalForms.forms().at(-1)?.initialValue as RoleFormValue | undefined)?.permissions).toEqual({
+                permissions: ['templates.edit', 'templates.publish']
+            });
+        });
+
+        it('opens the permissions of the selected role from the view action of the header', async () => {
+            await click(rowWith('Reviewers'));
+            await click(buttonByName(fixture, 'angular-components.page.actions.view.label'));
+
+            expect(modalForms.forms().at(-1)?.title).toBe(`${PREFIX}.view.title`);
+            expect((modalForms.forms().at(-1)?.initialValue as RoleFormValue | undefined)?.permissions).toEqual({
+                permissions: ['templates.edit', 'templates.publish']
+            });
+        });
+    });
 });

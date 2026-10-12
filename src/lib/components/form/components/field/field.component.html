@@ -19,6 +19,8 @@
 
 @if (type() === fieldType.Info) {
     <bey-form-info-field [describedBy]="describedBy()" [field]="$any(field())"></bey-form-info-field>
+} @else if (type() === fieldType.Notice) {
+    <bey-form-notice-field [field]="$any(field())"></bey-form-notice-field>
 } @else if (type() === fieldType.List) {
     <bey-form-list-field
         [control]="formControl()"

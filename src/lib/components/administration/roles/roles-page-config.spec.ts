@@ -1,6 +1,6 @@
 import { PageActionZone } from '../../page/models/page-action.model';
 import { PageFormConfig } from '../../page/models/page-form.model';
-import { RoleFormValue, RoleRow, RolesConfig } from './models/roles.model';
+import { RoleFormValue, RoleRow, RolesConfig, RolesPageMode } from './models/roles.model';
 import { buildRolesPageConfig, RolesPageConfigOptions } from './roles-page-config';
 
 describe('buildRolesPageConfig', () => {
@@ -18,8 +18,11 @@ describe('buildRolesPageConfig', () => {
             }),
             isOrganizationShown: false,
             loadRow: () => [],
+            mode: RolesPageMode.Manage,
+            onDataLoaded: jest.fn(),
             onDuplicate: jest.fn(),
             onReady: jest.fn(),
+            onView: jest.fn(),
             organizations: [],
             ...overrides
         });
@@ -62,6 +65,12 @@ describe('buildRolesPageConfig', () => {
         ]);
     });
 
+    it('declares the origin instead of the user and group counts while it reads the roles of a member', () => {
+        const columns = build({ mode: RolesPageMode.Read }).tableConfig?.columns ?? [];
+
+        expect(columns.map(({ key }) => key)).toEqual(['name', 'type', 'permissionCount', 'sources', 'description']);
+    });
+
     it('searches the name with the text of the search, and by organization with two organizations or more', () => {
         const search = build().tableConfig?.search;
         const [, organization] = build({ organizations }).tableConfig?.search?.fields ?? [];
@@ -72,8 +81,26 @@ describe('buildRolesPageConfig', () => {
         expect(organization).toMatchObject({ key: 'organizationId', operators: ['equals'] });
     });
 
-    it('offers to create, edit, duplicate and delete a role', () => {
-        expect(build().headerConfig?.actions.map(({ key }) => key)).toEqual(['create', 'edit', 'duplicate', 'delete']);
+    it('offers to create, edit, view, duplicate and delete a role', () => {
+        expect(build().headerConfig?.actions.map(({ key }) => key)).toEqual([
+            'create',
+            'edit',
+            'view',
+            'duplicate',
+            'delete'
+        ]);
+    });
+
+    it('views the permissions of the role selected through onView, next to the edit, as its name does', () => {
+        const onView = jest.fn();
+        const role: RoleRow = { actions: ['view'], id: 'adminuser', isBase: true, name: 'adminuser', permissions: [] };
+        const view = build({ onView }).headerConfig?.actions.find(({ key }) => key === 'view');
+
+        view?.handler?.([role]);
+
+        expect(view?.zone).toBe(PageActionZone.Left);
+        expect(view?.tooltip).toBe('demo.roles.actions.view.tooltip');
+        expect(onView).toHaveBeenCalledWith(role);
     });
 
     it('duplicates the role selected through onDuplicate, in the menu of the header', () => {

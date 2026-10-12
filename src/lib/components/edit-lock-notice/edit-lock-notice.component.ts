@@ -4,6 +4,7 @@ import { faLock, faLockOpen, faTriangleExclamation, faWindowRestore } from '@for
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map } from 'rxjs';
 
+import { userNameOrUnknown } from '../../internal/user-name/user-name';
 import { EditLockService } from '../../services/edit-lock/edit-lock.service';
 import { EditLock } from '../../services/edit-lock/models/edit-lock.model';
 import { ModalService } from '../modal/services/modal.service';
@@ -58,7 +59,7 @@ export class EditLockNoticeComponent {
             .openConfirmation({
                 confirmLabel: `${prefix}.release-confirmation.confirm`,
                 message: `${prefix}.release-confirmation.message`,
-                messageParameters: { name: lock.holderName },
+                messageParameters: { name: this.holderName(lock) },
                 title: `${prefix}.release-confirmation.title`
             })
             .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
@@ -121,9 +122,13 @@ export class EditLockNoticeComponent {
                 : [],
             icon: faLock,
             message: `${prefix}.messages.held.${isToday ? 'today' : 'earlier'}`,
-            messageParameters: { date, name: lock.holderName, time },
+            messageParameters: { date, name: this.holderName(lock), time },
             variant: NoticeVariant.Warning
         });
+    }
+
+    private holderName({ holderName }: EditLock): string {
+        return userNameOrUnknown(holderName, key => this.translateService.instant(key) as string);
     }
 
     private lostNotice(config: EditLockNoticeConfig, lock: EditLock | null): NoticeConfig {
@@ -131,7 +136,7 @@ export class EditLockNoticeComponent {
             actions: this.saveCopyActions(config, NoticeActionType.Primary),
             icon: faTriangleExclamation,
             message: `${config.prefix}.messages.lost.${lostReason(lock)}`,
-            messageParameters: lock ? { name: lock.holderName } : undefined,
+            messageParameters: lock ? { name: this.holderName(lock) } : undefined,
             variant: NoticeVariant.Danger
         });
     }

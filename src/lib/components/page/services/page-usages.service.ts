@@ -2,6 +2,7 @@ import { inject, Injectable, Signal, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { map, Observable, of } from 'rxjs';
 
+import { UNKNOWN_USER_NAME_KEY } from '../../../internal/user-name/models/user-name.model';
 import { ConfirmationModalConfig } from '../../modal/models/modal.model';
 import { isCategoryRow } from '../functions/page-row';
 import { buildInUseConfirmation, describeUsers, readRowUsers } from '../functions/page-usages';
@@ -47,6 +48,7 @@ export class PageUsagesService {
                     listedUsers: usagesConfig.listedUsers,
                     selectedIds: items.map(({ id }) => id),
                     suffixes: this.translateSuffixes(usagesConfig),
+                    unknownName: this.unknownName(),
                     usages
                 })
             )
@@ -56,7 +58,7 @@ export class PageUsagesService {
     describeRowUsers(item: PageItem, usagesConfig: PageUsagesConfig): string[] {
         const { total, users } = readRowUsers(item);
 
-        return describeUsers(users, total, this.translateSuffixes(usagesConfig));
+        return describeUsers(users, total, this.translateSuffixes(usagesConfig), this.unknownName());
     }
 
     find(baseUrl: string, ids: (string | number)[]): Observable<PageUsages[]> {
@@ -70,7 +72,14 @@ export class PageUsagesService {
         if (total > users.length) {
             this.find(baseUrl, [item.id]).subscribe(([usage]) => {
                 if (usage) {
-                    names.set(describeUsers(usage.users, usage.total, this.translateSuffixes(usagesConfig)));
+                    names.set(
+                        describeUsers(
+                            usage.users,
+                            usage.total,
+                            this.translateSuffixes(usagesConfig),
+                            this.unknownName()
+                        )
+                    );
                 }
             });
         }
@@ -82,5 +91,9 @@ export class PageUsagesService {
         return Object.fromEntries(
             Object.entries(suffixes).map(([kind, key]) => [kind, this.translateService.instant(key) as string])
         );
+    }
+
+    private unknownName(): string {
+        return this.translateService.instant(UNKNOWN_USER_NAME_KEY) as string;
     }
 }

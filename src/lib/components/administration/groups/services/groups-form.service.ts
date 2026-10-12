@@ -3,6 +3,7 @@ import { map, Observable } from 'rxjs';
 
 import { ModalFormConfig, ModalFormSize } from '../../../form/components/modal/models/modal-form.model';
 import { FormAutocompleteSearchResult } from '../../../form/models/fields/form-autocomplete-field.model';
+import { FormInfoField } from '../../../form/models/fields/form-info-field.model';
 import { FormListField } from '../../../form/models/fields/form-list-field.model';
 import { FormSelectField } from '../../../form/models/fields/form-select-field.model';
 import { FormTextField } from '../../../form/models/fields/form-text-field.model';
@@ -12,6 +13,7 @@ import { FormFieldLengthValidator, FormFieldValidatorType } from '../../../form/
 import { PageFormConfig } from '../../../page/models/page-form.model';
 import { PageOrganization } from '../../../page/models/page-organization.model';
 import { buildDisabledOrganizationField } from '../../functions/organization-fields';
+import { userContactLabel } from '../../functions/user-names';
 import {
     GROUP_NAME_MAX_LENGTH,
     GroupEditFormValue,
@@ -25,7 +27,8 @@ import {
     GROUPS_FORM_SECTION,
     GROUPS_SEARCH_LIMIT,
     GROUPS_SEARCH_MAX_LIMIT,
-    GroupsFormOptions
+    GroupsFormOptions,
+    GroupViewOptions
 } from '../models/groups.model';
 
 const CANCEL_LABEL_KEY = 'angular-components.page.form.cancel';
@@ -134,6 +137,50 @@ export class GroupsFormService {
             size: ModalFormSize.Medium,
             toFormValue: () => toCreateValue(initialOrganizationId),
             toItem: value => toGroupRequest(value[GROUPS_FORM_SECTION])
+        });
+    }
+
+    buildViewConfig({ group, onRoleClick, prefix }: GroupViewOptions): ModalFormConfig {
+        const { extraRoles } = group;
+
+        return new ModalFormConfig({
+            cancelLabel: `${prefix}.view.buttons.close`,
+            isSubmitHidden: true,
+            prefix: `${prefix}.view`,
+            sections: [
+                new FormSection({
+                    isTitleVisible: false,
+                    key: GROUPS_FORM_SECTION,
+                    rows: [
+                        new FormRow({ fields: [new FormInfoField({ items: [{ label: group.name }], key: 'name' })] }),
+                        new FormRow({
+                            fields: [
+                                new FormListField({
+                                    emptyKey: `${prefix}.view.main.members.empty`,
+                                    items: group.members.map(member => userContactLabel(member)),
+                                    key: 'members'
+                                })
+                            ]
+                        }),
+                        ...(extraRoles
+                            ? [
+                                  new FormRow({
+                                      fields: [
+                                          new FormListField({
+                                              emptyKey: `${prefix}.view.main.extra-roles.empty`,
+                                              items: extraRoles.map(({ name }) => name),
+                                              key: 'extraRoles',
+                                              onItemClick: (_, index) => onRoleClick(extraRoles[index])
+                                          })
+                                      ]
+                                  })
+                              ]
+                            : [])
+                    ]
+                })
+            ],
+            size: ModalFormSize.Medium,
+            title: `${prefix}.view.title`
         });
     }
 }

@@ -9,6 +9,7 @@ import { AdministrationStyleGuideComponent } from './administration/administrati
 import { AppLayoutStyleGuideComponent } from './app-layout/app-layout-style-guide.component';
 import { BadgeStyleGuideComponent } from './badge/badge-style-guide.component';
 import { BreadcrumbStyleGuideComponent } from './breadcrumb/breadcrumb-style-guide.component';
+import { CardsStyleGuideComponent } from './cards/cards-style-guide.component';
 import { StyleGuideSectionComponent } from './components/section/style-guide-section.component';
 import { EditLockNoticeStyleGuideComponent } from './edit-lock-notice/edit-lock-notice-style-guide.component';
 import { FilePreviewStyleGuideComponent } from './file-preview/file-preview-style-guide.component';
@@ -45,6 +46,7 @@ import { TreeStyleGuideComponent } from './tree/tree-style-guide.component';
         AppLayoutStyleGuideComponent,
         BadgeStyleGuideComponent,
         BreadcrumbStyleGuideComponent,
+        CardsStyleGuideComponent,
         EditLockNoticeStyleGuideComponent,
         FilePreviewStyleGuideComponent,
         FloatingPreferencesStyleGuideComponent,

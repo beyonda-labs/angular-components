@@ -1,10 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, untracked } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal, untracked } from '@angular/core';
 
 import { PageHandle } from '../../page/models/page.model';
 import { PageComponent } from '../../page/page.component';
 import { UserOrganizationsService } from '../services/user-organizations.service';
+import { groupsPageMode } from './functions/groups-page-mode';
 import { buildGroupsPageConfig } from './groups-page-config';
-import { GroupRow, GroupsConfig } from './models/groups.model';
+import { GroupRow, GroupsConfig, GroupsPageMode } from './models/groups.model';
 import { GroupsActionsService } from './services/groups-actions.service';
 import { GroupsFormService } from './services/groups-form.service';
 import { GroupsTableService } from './services/groups-table.service';
@@ -30,7 +31,9 @@ export class GroupsComponent {
         const config = this.config();
         const isSuperadmin = this.userOrganizationsService.isSuperadmin();
         const organizations = this.userOrganizationsService.organizations();
+        const mode = this.mode();
         const { prefix } = config;
+        const onView = (group: GroupRow): void => this.groupsActionsService.view(config, group);
 
         if (!organizations) {
             return null;
@@ -47,14 +50,21 @@ export class GroupsComponent {
             loadRow: group =>
                 this.groupsTableService.loadRow(group, {
                     isOrganizationShown: isSuperadmin,
-                    onEdit: edited => this.groupsActionsService.edit(config, edited, isSuperadmin, this.page)
+                    mode,
+                    onEdit: edited => this.groupsActionsService.edit(config, edited, isSuperadmin, this.page),
+                    onView,
+                    prefix
                 }),
+            mode,
+            onDataLoaded: response => this.mode.update(current => groupsPageMode(current, response)),
             onEdit: group => this.groupsActionsService.edit(config, group, isSuperadmin, this.page),
             onReady: handle => (this.page = handle),
+            onView,
             organizations
         });
     });
 
+    private readonly mode = signal(GroupsPageMode.Manage);
     private page?: PageHandle<GroupRow>;
 
     constructor() {

@@ -19,6 +19,7 @@ export interface FormHandle<TValue = unknown> {
 }
 
 export class FormButton {
+    isDanger: boolean;
     isHidden: boolean;
     label: string;
     tooltip: string;
@@ -26,8 +27,9 @@ export class FormButton {
 
     action?: (handle: FormHandle) => void;
 
-    constructor({ label, type, action, isHidden = false, tooltip = '' }: FormButtonParameters) {
+    constructor({ action, isDanger = false, isHidden = false, label, tooltip = '', type }: FormButtonParameters) {
         this.action = action;
+        this.isDanger = isDanger;
         this.isHidden = isHidden;
         this.label = label;
         this.tooltip = tooltip;
@@ -149,6 +151,7 @@ export interface FormButtonParameters {
     type: FormButtonType;
 
     action?: (handle: FormHandle) => void;
+    isDanger?: boolean;
     isHidden?: boolean;
     tooltip?: string;
 }

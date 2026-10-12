@@ -87,6 +87,20 @@ describe('PropertyAttachmentFieldComponent', () => {
         expect(queryButton(fixture, 'Clear')).not.toBeNull();
     });
 
+    it('names the attachment picked as unknown once the options came and none is it', async () => {
+        await render({ options: OPTIONS, value: 'deleted-id' });
+
+        expect(control('Source').value).toBe('Unknown');
+
+        await render({ options: [], value: 'deleted-id' });
+
+        expect(control('Source').value).toBe('deleted-id');
+
+        await render({ options: OPTIONS, value: '{{ logo_cliente }}', variables: VARIABLES });
+
+        expect(control('Source').value).toBe('{{ logo_cliente }}');
+    });
+
     it('filters the options by the typed query', async () => {
         await render({ options: OPTIONS });
         await dispatch(new Event('focus'));

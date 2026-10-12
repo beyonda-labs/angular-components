@@ -1,0 +1,55 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bey-space-lg);
+    width: 100%;
+}
+
+.bey-organization-summary-page-header {
+    display: block;
+    min-width: 0;
+}
+
+.bey-organization-summary-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bey-space-2xs);
+    min-width: 0;
+}
+
+.bey-organization-summary-created,
+.bey-organization-summary-breakdown {
+    color: var(--bey-text-muted);
+    font-size: var(--bey-font-size-sm);
+    line-height: var(--bey-line-height-base);
+    margin: 0;
+}
+
+.bey-organization-summary-name {
+    color: var(--bey-text-primary);
+    font-size: var(--bey-font-size-3xl);
+    font-weight: var(--bey-font-weight-bold);
+    line-height: var(--bey-line-height-tight);
+    margin: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.bey-organization-summary-stats {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bey-space-xs);
+}
+
+.bey-organization-summary-columns {
+    align-items: start;
+    display: grid;
+    gap: var(--bey-space-lg) var(--bey-space-xl);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+@media (max-width: 767.98px) {
+    .bey-organization-summary-columns {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

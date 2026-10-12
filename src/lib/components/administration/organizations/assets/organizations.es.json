@@ -3,13 +3,17 @@
         "http": {
             "error": {
                 "organizations": {
+                    "active": "Solo se puede eliminar una organización desactivada. Desactívala primero.",
                     "existing-name": "Ya hay una organización llamada {{name}}.",
+                    "name-mismatch": "El nombre escrito no coincide con el de la organización.",
                     "not-found": "Esta organización no existe o está desactivada. Recarga la página y vuelve a intentarlo."
                 }
             },
             "title": {
                 "organizations": {
+                    "active": "Organización todavía activa",
                     "existing-name": "Nombre ya en uso",
+                    "name-mismatch": "El nombre no coincide",
                     "not-found": "Organización no encontrada"
                 }
             }
@@ -20,10 +24,34 @@
                     "label": "Nueva organización",
                     "tooltip": "Crea una organización"
                 },
+                "delete": {
+                    "label": "Eliminar",
+                    "tooltip": "Elimina la organización desactivada seleccionada y todo lo que contiene"
+                },
                 "edit": {
                     "label": "Editar",
                     "tooltip": "Edita el nombre y el estado de la organización seleccionada"
                 }
+            },
+            "content": {
+                "count": "{{label}}: {{count}}",
+                "empty": "No contiene nada.",
+                "groups": "Grupos",
+                "label": "Contenido",
+                "roles": "Roles adicionales",
+                "users": "Usuarios"
+            },
+            "delete": {
+                "confirm": "Escribe «{{name}}» para confirmar",
+                "main": {
+                    "name": {
+                        "placeholder": "El nombre de la organización, tal cual"
+                    }
+                },
+                "message": "Se eliminará para siempre la organización «{{name}}» y todo lo que contiene: sus usuarios de cualquier estado con todo lo que poseen, sus grupos, sus roles adicionales y lo que comparte.",
+                "name-mismatch": "El nombre no coincide.",
+                "submit": "Eliminar",
+                "title": "Eliminar organización"
             },
             "form": {
                 "create": {
@@ -76,6 +104,7 @@
             "title": "Organizaciones",
             "toast": {
                 "create-success": "Organización creada",
+                "delete-success": "Organización eliminada",
                 "edit-success": "Organización guardada"
             }
         }

@@ -238,23 +238,13 @@
 }
 
 .bey-left-menu-user-avatar {
-    align-items: center;
-    background: var(--bey-left-menu-accent);
-    border-radius: var(--bey-radius-circle);
-    color: var(--bey-left-menu-surface);
-    display: inline-flex;
-    flex: 0 0 auto;
-    font-size: var(--bey-font-size-sm);
-    font-weight: var(--bey-font-weight-bold);
-    height: 2.45rem;
-    justify-content: center;
-    letter-spacing: 0.04em;
-    width: 2.45rem;
+    --bey-cards-avatar-bg: var(--bey-left-menu-accent);
+    --bey-cards-avatar-fg: var(--bey-left-menu-surface);
 }
 
 .bey-left-menu-user--link.is-active .bey-left-menu-user-avatar {
-    background: var(--bey-left-menu-surface);
-    color: var(--bey-left-menu-accent);
+    --bey-cards-avatar-bg: var(--bey-left-menu-surface);
+    --bey-cards-avatar-fg: var(--bey-left-menu-accent);
 }
 
 .bey-left-menu-user-copy {

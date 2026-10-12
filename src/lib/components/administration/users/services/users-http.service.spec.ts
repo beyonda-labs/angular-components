@@ -45,4 +45,62 @@ describe('UsersHttpService', () => {
         expect(request.request.method).toBe('POST');
         expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: 'users.sent' }]);
     });
+
+    it('reads what a user owns and what others use of it, nothing of either from an answer without them', () => {
+        const answers: unknown[] = [];
+
+        service.loadContent('/users', 'u7').subscribe(content => answers.push(content));
+        httpTesting
+            .expectOne('https://api.test/api/users/u7/content')
+            .flush({ counts: { documents: 2 }, usedByOthers: { documents: [] } });
+        service.loadContent('/users', 'u7').subscribe(content => answers.push(content));
+        httpTesting.expectOne('https://api.test/api/users/u7/content').flush({});
+
+        expect(answers).toEqual([
+            { counts: { documents: 2 }, usedByOthers: { documents: [] } },
+            { counts: {}, usedByOthers: {} }
+        ]);
+    });
+
+    it('searches the users who may receive the content of another by the text typed, at most as many as asked', () => {
+        const answers: unknown[] = [];
+        const grace = { email: 'grace@example.test', id: 'u2', name: 'Grace', surname: 'Hopper' };
+
+        service.searchTransferTargets('/users', 'u7', 'gra', 20).subscribe(targets => answers.push(targets));
+        const request = httpTesting.expectOne(
+            current => current.url === 'https://api.test/api/users/u7/transfer-targets'
+        );
+        request.flush({ options: [grace] });
+
+        expect([request.request.params.get('search'), request.request.params.get('limit')]).toEqual(['gra', '20']);
+        expect(answers).toEqual([[grace]]);
+    });
+
+    it('transfers the content of a user to the one chosen and confirms it', () => {
+        service.transfer('/users', 'u7', 'u2', 'users.transferred').subscribe();
+        const request = httpTesting.expectOne('https://api.test/api/users/u7/transfer');
+        request.flush({ transferred: { documents: 2 } });
+
+        expect(request.request.method).toBe('POST');
+        expect(request.request.body).toEqual({ targetUserId: 'u2' });
+        expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: 'users.transferred' }]);
+    });
+
+    it('deletes the users one after the other, confirming once the last is gone', () => {
+        const done = jest.fn();
+
+        service.deleteUsers('/users', ['u7', 'u8'], 'users.deleted').subscribe(done);
+        const first = httpTesting.expectOne('https://api.test/api/users/u7');
+        httpTesting.expectNone('https://api.test/api/users/u8');
+        first.flush(null, { status: 204, statusText: 'No Content' });
+        const second = httpTesting.expectOne('https://api.test/api/users/u8');
+
+        expect(TestBed.inject(FakeToastService).successes()).toEqual([]);
+
+        second.flush(null, { status: 204, statusText: 'No Content' });
+
+        expect([first.request.method, second.request.method]).toEqual(['DELETE', 'DELETE']);
+        expect(done).toHaveBeenCalledTimes(1);
+        expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: 'users.deleted' }]);
+    });
 });

@@ -1,8 +1,8 @@
-import { userRoleLabel } from '../../functions/user-role-labels';
-import { RoleRow } from '../models/roles.model';
+import { ViewedRole } from '../models/role-permissions.model';
+import { userRoleLabel } from './user-role-labels';
 
 export function roleLabel(
-    { isBase, name }: Pick<RoleRow, 'isBase' | 'name'>,
+    { isBase, name }: Pick<ViewedRole, 'isBase' | 'name'>,
     rolePrefix: string,
     translate: (key: string) => string
 ): string {

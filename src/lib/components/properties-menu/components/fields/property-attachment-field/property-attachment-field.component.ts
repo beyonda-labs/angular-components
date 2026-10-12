@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faFileArrowUp, faXmark } from '@fortawesome/free-solid-svg-icons';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { isAcceptedMimeType } from '../../../../../internal/file/accept-pattern';
@@ -17,6 +17,8 @@ import { PROPERTY_VARIABLE_ICON } from '../../../models/property-variable.model'
 
 const BYTES_PER_MB = 1024 * 1024;
 
+const UNKNOWN_ATTACHMENT_KEY = 'angular-components.properties-menu.attachment-field.unknown';
+
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [FontAwesomeModule, OptionPickerComponent, TooltipModule, TranslateModule],
@@ -26,6 +28,8 @@ const BYTES_PER_MB = 1024 * 1024;
     templateUrl: './property-attachment-field.component.html'
 })
 export class PropertyAttachmentFieldComponent {
+    private readonly translateService = inject(TranslateService);
+
     readonly field = input.required<PropertyAttachmentField>();
     readonly labelling = input.required<PropertyFieldLabelling>();
 
@@ -48,7 +52,13 @@ export class PropertyAttachmentFieldComponent {
     readonly selectedLabel = computed(() => {
         const field = this.field();
 
-        return field.selectedOption?.label ?? field.value ?? '';
+        if (field.selectedOption) {
+            return field.selectedOption.label;
+        }
+
+        return isUnresolved(field)
+            ? (this.translateService.instant(UNKNOWN_ATTACHMENT_KEY) as string)
+            : (field.value ?? '');
     });
     readonly sizeErrorMaxSizeMB = signal<number | null>(null);
     readonly uploadIcon = faFileArrowUp;
@@ -148,4 +158,8 @@ export class PropertyAttachmentFieldComponent {
         this.hasTypeError.set(false);
         this.sizeErrorMaxSizeMB.set(null);
     }
+}
+
+function isUnresolved({ holdsVariable, options, value }: PropertyAttachmentField): boolean {
+    return Boolean(value?.trim()) && !holdsVariable && options.length > 0;
 }

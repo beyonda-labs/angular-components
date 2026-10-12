@@ -3,13 +3,17 @@
         "http": {
             "error": {
                 "organizations": {
+                    "active": "Only a deactivated organization can be deleted. Deactivate it first.",
                     "existing-name": "There is already an organization named {{name}}.",
+                    "name-mismatch": "The name typed does not match the name of the organization.",
                     "not-found": "This organization does not exist or has been deactivated. Reload the page and try again."
                 }
             },
             "title": {
                 "organizations": {
+                    "active": "Organization still active",
                     "existing-name": "Name already in use",
+                    "name-mismatch": "Name does not match",
                     "not-found": "Organization not found"
                 }
             }
@@ -20,10 +24,34 @@
                     "label": "New organization",
                     "tooltip": "Create an organization"
                 },
+                "delete": {
+                    "label": "Delete",
+                    "tooltip": "Delete the selected deactivated organization and everything in it"
+                },
                 "edit": {
                     "label": "Edit",
                     "tooltip": "Edit the name and the status of the selected organization"
                 }
+            },
+            "content": {
+                "count": "{{label}}: {{count}}",
+                "empty": "It holds nothing.",
+                "groups": "Groups",
+                "label": "Content",
+                "roles": "Additional roles",
+                "users": "Users"
+            },
+            "delete": {
+                "confirm": "Type «{{name}}» to confirm",
+                "main": {
+                    "name": {
+                        "placeholder": "The name of the organization, exactly"
+                    }
+                },
+                "message": "The organization «{{name}}» and everything in it will be deleted for good: its users of any status with everything they own, its groups, its additional roles and what it shares.",
+                "name-mismatch": "The name does not match.",
+                "submit": "Delete",
+                "title": "Delete organization"
             },
             "form": {
                 "create": {
@@ -76,6 +104,7 @@
             "title": "Organizations",
             "toast": {
                 "create-success": "Organization created",
+                "delete-success": "Organization deleted",
                 "edit-success": "Organization saved"
             }
         }

@@ -1,13 +1,15 @@
 import { TestBed } from '@angular/core/testing';
+import { FormControl } from '@angular/forms';
 import { provideRouter } from '@angular/router';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { ModalFormSize } from '../../../form/components/modal/models/modal-form.model';
+import { FormInfoField } from '../../../form/models/fields/form-info-field.model';
 import { FormListField } from '../../../form/models/fields/form-list-field.model';
 import { FormSelectField } from '../../../form/models/fields/form-select-field.model';
 import { FormSection } from '../../../form/models/form.model';
 import { FormField } from '../../../form/models/form-field.model';
-import { FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
+import { FormFieldCustomValidator, FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
 import { OrganizationDetail, OrganizationStatus } from '../models/organizations.model';
 import { OrganizationsFormService } from './organizations-form.service';
 
@@ -101,5 +103,42 @@ describe('OrganizationsFormService', () => {
             placeholder: 'demo.tenants.form.groups.empty'
         });
         expect(rest).toEqual([]);
+    });
+
+    describe('buildDeleteConfig', () => {
+        function buildDelete(
+            counts: Record<string, number>
+        ): ReturnType<OrganizationsFormService['buildDeleteConfig']> {
+            return service.buildDeleteConfig({
+                contentLabels: { documents: 'my-app.content.documents', groups: 'my-app.content.teams' },
+                counts,
+                organization,
+                prefix: 'demo.organizations'
+            });
+        }
+
+        it('confirms with a danger button, the counts of what goes and the name to type', () => {
+            const form = buildDelete({ documents: 4, groups: 2, roles: 0, users: 3 });
+            const [message, content, name] = fieldsOf(form.sections, 'main');
+
+            expect(form.title).toBe('demo.organizations.delete.title');
+            expect(form.isSubmitDanger).toBe(true);
+            expect(form.submitLabel).toBe('demo.organizations.delete.submit');
+            expect(form.initialValue).toEqual({ main: { name: '' } });
+            expect((message as FormInfoField).items).toEqual([{ label: 'demo.organizations.delete.message' }]);
+            expect((content as FormListField).items).toHaveLength(3);
+            expect(name).toMatchObject({ isRequired: true, key: 'name', label: 'demo.organizations.delete.confirm' });
+        });
+
+        it('takes only the exact name of the organization', () => {
+            const name = fieldsOf(buildDelete({}).sections, 'main')[2];
+            const [validator] = name.validators as FormFieldCustomValidator[];
+
+            expect(validator.validatorFn(new FormControl('Globex'))).toBeNull();
+            expect(validator.validatorFn(new FormControl(''))).toBeNull();
+            expect(validator.validatorFn(new FormControl('Globex '))).toEqual({
+                nameMismatch: { messageKey: 'demo.organizations.delete.name-mismatch' }
+            });
+        });
     });
 });

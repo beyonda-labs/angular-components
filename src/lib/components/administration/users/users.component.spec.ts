@@ -1,18 +1,26 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { buttonByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
+import { TranslateService } from '@ngx-translate/core';
+import { buttonByName, controlByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 import { FakeToastService } from '@testing/services/fake-toast.service';
 
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
+import {
+    FormAutocompleteField,
+    FormAutocompleteSearchResult
+} from '../../form/models/fields/form-autocomplete-field.model';
 import { FormInfoField } from '../../form/models/fields/form-info-field.model';
+import { FormListField } from '../../form/models/fields/form-list-field.model';
+import { FormNoticeField } from '../../form/models/fields/form-notice-field.model';
 import { FormSelectField } from '../../form/models/fields/form-select-field.model';
 import { FormHandle } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
 import { PageSearch } from '../../page/models/page-search.model';
+import usersEn from './assets/users.en.json';
 import { UserEditableField, UserRolesResponse, UserRow, UsersConfig, UserStatus } from './models/users.model';
 import { UsersComponent } from './users.component';
 
@@ -385,5 +393,196 @@ describe('UsersComponent', () => {
         await settle(fixture);
 
         expect(rowWith('ada@example.test')).toBeTruthy();
+    });
+
+    describe('the content of a user', () => {
+        const CONTENT_LABELS = { documents: 'my-app.content.documents' };
+
+        function fieldOf<T extends FormField>(form: ModalFormConfig | undefined, key: string): T {
+            return fieldsOf(form).find(field => field.key === key) as T;
+        }
+
+        async function useNamedAction(label: string): Promise<void> {
+            rowWith('ada@example.test').click();
+            await settle(fixture);
+            buttonByName(fixture, 'angular-components.header.menu').click();
+            await settle(fixture);
+            buttonByName(fixture, label).click();
+            await settle(fixture);
+        }
+
+        async function deleteSelected(): Promise<void> {
+            controlByName(fixture, 'angular-components.table.select-all').click();
+            await settle(fixture);
+            buttonByName(fixture, 'angular-components.header.menu').click();
+            await settle(fixture);
+            buttonByName(fixture, 'Delete').click();
+            await settle(fixture);
+        }
+
+        beforeEach(() => {
+            TestBed.inject(TranslateService).setTranslation(
+                'en',
+                {
+                    'angular-components': { ...usersEn['angular-components'], 'user-name': { unknown: 'Unknown' } },
+                    'my-app': { content: { documents: 'Documents' } }
+                },
+                true
+            );
+        });
+
+        it('transfers what an inactive user owns to the active user picked, into a folder named after them', async () => {
+            await render(
+                [buildUser({ actions: ['transfer'], status: UserStatus.Inactive })],
+                [],
+                new UsersConfig({ contentLabels: CONTENT_LABELS })
+            );
+
+            await useNamedAction('Transfer content');
+            httpTesting
+                .expectOne(`${USERS_URL}/u1/content`)
+                .flush({ counts: { attachments: 1, documents: 2, templates: 0 }, usedByOthers: {} });
+            await settle(fixture);
+            const form = modalForms.forms().at(-1);
+            let suggestions: FormAutocompleteSearchResult | undefined;
+            fieldOf<FormAutocompleteField>(form, 'targetUserId')
+                .search?.('gra', [])
+                .subscribe(result => (suggestions = result as FormAutocompleteSearchResult));
+            const search = httpTesting.expectOne(request => request.url === `${USERS_URL}/u1/transfer-targets`);
+            search.flush({ options: [{ email: 'grace@example.test', id: 'u2', name: 'Grace', surname: 'Hopper' }] });
+            form?.onSubmit?.({ main: { targetUserId: 'u2' } }, buildHandle());
+            const request = httpTesting.expectOne(`${USERS_URL}/u1/transfer`);
+            request.flush({ transferred: { documents: 2 } });
+            await settle(fixture);
+            reload().flush({ globalActions: [], results: [] });
+
+            expect(form?.title).toBe("Transfer Ada Lovelace's content");
+            expect(form?.footer?.note).toBe(
+                'Everything moves into a folder «Ada Lovelace» at the root of the person you choose.'
+            );
+            expect(fieldOf<FormListField>(form, 'content').items).toEqual(['attachments: 1', 'Documents: 2']);
+            expect(fieldOf(form, 'targetUserId').isRequired).toBe(true);
+            expect([search.request.params.get('search'), search.request.params.get('limit')]).toEqual(['gra', '20']);
+            expect(suggestions).toEqual({
+                hasMore: false,
+                options: [{ label: 'Grace Hopper (grace@example.test)', value: 'u2' }]
+            });
+            expect(request.request.method).toBe('POST');
+            expect(request.request.body).toEqual({ targetUserId: 'u2' });
+            expect(TestBed.inject(FakeToastService).successes()).toEqual([
+                { message: `${PREFIX}.toast.transfer-success` }
+            ]);
+        });
+
+        it('deletes the users selected, one request each, after a confirmation with what they own and what others use', async () => {
+            await render(
+                [
+                    buildUser({ actions: ['delete'], status: UserStatus.Inactive }),
+                    buildUser({
+                        actions: ['delete'],
+                        email: 'grace@example.test',
+                        id: 'u2',
+                        status: UserStatus.Invited
+                    })
+                ],
+                [],
+                new UsersConfig({ contentLabels: CONTENT_LABELS })
+            );
+
+            await deleteSelected();
+            httpTesting.expectOne(`${USERS_URL}/u1/content`).flush({
+                counts: { documents: 2 },
+                usedByOthers: {
+                    documents: [
+                        { id: 'd1', name: 'Offer', users: [{ id: 'd9', name: 'Offer for Acme', ownerName: null }] }
+                    ]
+                }
+            });
+            httpTesting.expectOne(`${USERS_URL}/u2/content`).flush({ counts: { documents: 1 }, usedByOthers: {} });
+            await settle(fixture);
+            const form = modalForms.forms().at(-1);
+            form?.onSubmit?.({}, buildHandle());
+            const first = httpTesting.expectOne(`${USERS_URL}/u1`);
+            first.flush(null, { status: 204, statusText: 'No Content' });
+            const second = httpTesting.expectOne(`${USERS_URL}/u2`);
+            second.flush(null, { status: 204, statusText: 'No Content' });
+            await settle(fixture);
+            reload().flush({ globalActions: [], results: [] });
+
+            expect(form?.title).toBe('Delete users');
+            expect(form?.isSubmitDanger).toBe(true);
+            expect(form?.submitLabel).toBe(`${PREFIX}.delete.submit`);
+            expect(fieldOf<FormInfoField>(form, 'message').items).toEqual([
+                { label: '2 users will be deleted, together with everything they still own.' }
+            ]);
+            expect(fieldOf<FormInfoField>(form, 'invitation').items).toEqual([
+                { label: 'The invitation will stop working.' }
+            ]);
+            expect(fieldOf<FormListField>(form, 'content').items).toEqual(['Documents: 3']);
+            expect(fieldOf<FormNoticeField>(form, 'usedByOthersNotice').messageParameters).toEqual({
+                unknown: 'Unknown'
+            });
+            expect(fieldOf<FormListField>(form, 'usedByOthers').items).toEqual([
+                'Documents «Offer»: Offer for Acme (Unknown)'
+            ]);
+            expect([first.request.method, second.request.method]).toEqual(['DELETE', 'DELETE']);
+            expect(TestBed.inject(FakeToastService).successes()).toEqual([
+                { message: `${PREFIX}.toast.delete-success` }
+            ]);
+        });
+
+        it('names the one user deleted and warns of nothing when nobody else uses what they own', async () => {
+            await render([buildUser({ actions: ['delete'], status: UserStatus.Inactive })], []);
+
+            await useNamedAction('Delete');
+            httpTesting.expectOne(`${USERS_URL}/u1/content`).flush({ counts: { documents: 0 } });
+            await settle(fixture);
+            const form = modalForms.forms().at(-1);
+
+            expect(form?.title).toBe('Delete user');
+            expect(fieldOf<FormInfoField>(form, 'message').items).toEqual([
+                { label: 'Ada Lovelace will be deleted, together with everything they still own.' }
+            ]);
+            expect(fieldsOf(form).map(({ key }) => key)).toEqual(['message', 'content']);
+            expect(fieldOf<FormListField>(form, 'content')).toMatchObject({
+                emptyKey: `${PREFIX}.content.empty`,
+                items: []
+            });
+        });
+
+        it('reloads when a deletion fails half-way, so the rows already deleted go', async () => {
+            await render(
+                [
+                    buildUser({ actions: ['delete'], status: UserStatus.Inactive }),
+                    buildUser({
+                        actions: ['delete'],
+                        email: 'grace@example.test',
+                        id: 'u2',
+                        status: UserStatus.Inactive
+                    })
+                ],
+                []
+            );
+
+            await deleteSelected();
+            httpTesting.expectOne(`${USERS_URL}/u1/content`).flush({ counts: {} });
+            httpTesting.expectOne(`${USERS_URL}/u2/content`).flush({ counts: {} });
+            await settle(fixture);
+            modalForms.forms().at(-1)?.onSubmit?.({}, buildHandle());
+            httpTesting.expectOne(`${USERS_URL}/u1`).flush(null, { status: 204, statusText: 'No Content' });
+            httpTesting
+                .expectOne(`${USERS_URL}/u2`)
+                .flush(
+                    { errorCode: 'conflict', messageKey: 'users.not-deletable' },
+                    { status: 409, statusText: 'Conflict' }
+                );
+            await settle(fixture);
+            reload().flush({ globalActions: [], results: [] });
+
+            expect(TestBed.inject(FakeModalService).errors()).toEqual([
+                expect.objectContaining({ message: 'angular-components.http.error.users.not-deletable' })
+            ]);
+            expect(TestBed.inject(FakeToastService).successes()).toEqual([]);
+        });
     });
 });

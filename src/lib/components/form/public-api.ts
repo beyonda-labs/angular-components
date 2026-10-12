@@ -64,6 +64,8 @@ export type {
     FormListPicker as BeyFormListPicker
 } from './models/fields/form-list-field.model';
 export type { FormInfoItem as BeyFormInfoItem } from './models/fields/form-info-field.model';
+export { FormNoticeField as BeyFormNoticeField } from './models/fields/form-notice-field.model';
+export type { FormNoticeFieldParameters as BeyFormNoticeFieldParameters } from './models/fields/form-notice-field.model';
 export { FormNumberField as BeyFormNumberField } from './models/fields/form-number-field.model';
 export { FormPasswordField as BeyFormPasswordField } from './models/fields/form-password-field.model';
 export { FormRadioField as BeyFormRadioField } from './models/fields/form-radio-field.model';

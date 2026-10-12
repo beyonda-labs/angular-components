@@ -1,7 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { catchError, of } from 'rxjs';
 
-import { RolePermissionEntry } from '../models/roles.model';
+import { RolePermissionEntry } from '../../models/role-permissions.model';
 import { RolesHttpService } from './roles-http.service';
 
 @Injectable()

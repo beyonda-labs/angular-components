@@ -18,8 +18,10 @@ describe('buildUsersPageConfig', () => {
             }),
             isOrganizationShown: false,
             loadRow: () => [],
+            onDelete: jest.fn(),
             onReady: jest.fn(),
             onResendInvitation: jest.fn(),
+            onTransfer: jest.fn(),
             organizations: [],
             roleOptions: [{ label: 'Editor', value: 'editor' }],
             ...overrides
@@ -105,7 +107,13 @@ describe('buildUsersPageConfig', () => {
         const actions = config.headerConfig?.actions ?? [];
         const user = { actions: [], createdAt: 0, email: 'a@b.c', id: 'u1', roles: [], status: UserStatus.Invited };
 
-        expect(actions.map(action => action.key)).toEqual(['create', 'edit', 'resend-invitation']);
+        expect(actions.map(action => action.key)).toEqual([
+            'create',
+            'edit',
+            'resend-invitation',
+            'transfer',
+            'delete'
+        ]);
         expect(actions[2]).toEqual(
             expect.objectContaining({ scope: PageActionScope.Single, zone: PageActionZone.Menu })
         );
@@ -114,5 +122,21 @@ describe('buildUsersPageConfig', () => {
         actions[2].handler?.([user]);
 
         expect(onResendInvitation).toHaveBeenCalledWith(user);
+    });
+
+    it('transfers the content of one user and deletes one user or several, in the menu of the header', () => {
+        const onDelete = jest.fn();
+        const onTransfer = jest.fn();
+        const [transfer, remove] = (build({ onDelete, onTransfer }).headerConfig?.actions ?? []).slice(3);
+        const user = { actions: [], createdAt: 0, email: 'a@b.c', id: 'u1', roles: [], status: UserStatus.Inactive };
+
+        expect(transfer).toEqual(expect.objectContaining({ scope: PageActionScope.Single, zone: PageActionZone.Menu }));
+        expect(remove).toEqual(expect.objectContaining({ scope: PageActionScope.Item, zone: PageActionZone.Menu }));
+
+        transfer.handler?.([user]);
+        remove.handler?.([user, { ...user, id: 'u2' }]);
+
+        expect(onTransfer).toHaveBeenCalledWith(user);
+        expect(onDelete).toHaveBeenCalledWith([user, { ...user, id: 'u2' }]);
     });
 });

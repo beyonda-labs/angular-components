@@ -10,8 +10,9 @@
         },
         "account-data-section": "Account data",
         "administration": {
-            "example": "The four management pages of an app, one module: users, groups, roles and permissions, and organizations, each on bey-page over the matching module of express-components and each reading what it may do from the backend.",
+            "example": "The management pages of an app, one module: users, groups, roles and permissions, and organizations, each on bey-page over the matching module of express-components and each reading what it may do from the backend, and the read-only summary of the organization of a member.",
             "groups": "Groups",
+            "organization-summary": "Organization summary",
             "organizations": "Organizations",
             "roles": "Roles and permissions",
             "users": "Users"
@@ -121,6 +122,41 @@
             }
         },
         "breadcrumbs": "Breadcrumbs",
+        "cards": {
+            "avatars": "Avatars, solid and soft",
+            "card": {
+                "title": "Team overview"
+            },
+            "empty": {
+                "label": "Nobody has asked for access yet.",
+                "title": "Access requests"
+            },
+            "example": "The pieces of a summary page: a card with an optional title and count, a strip of figures, and lists of items with an avatar or an icon, a title, a subtitle and either a fold or a chevron that opens them. A grouped list holds its items in one box, a separate one gives each its own.",
+            "people": {
+                "title": "People"
+            },
+            "roles": {
+                "editors": "Create and edit the templates",
+                "title": "Roles",
+                "toast": "Here the role would open."
+            },
+            "stats": {
+                "people": "People",
+                "projects": "Projects",
+                "teams": "Teams"
+            },
+            "teams": {
+                "empty": "Nobody in this team yet.",
+                "hide": "Hide people",
+                "members": {
+                    "one": "{{count}} person",
+                    "other": "{{count}} people"
+                },
+                "show": "Show people",
+                "title": "Teams"
+            }
+        },
+        "cards-section": "Cards",
         "collapse-all": "Collapse all",
         "components": "Components",
         "compound": "Compound",
@@ -874,6 +910,9 @@
             }
         },
         "notice-section": "Notices",
+        "organization-summary": {
+            "example": "The summary of the organization of the signed-in member, read-only, built with the cards module: its name, status and creation, a strip with its active members, groups and additional roles, with the members by status for whoever may see the users; its administrators; every group folded with its count, unfolding its active members in place, and those in no group last; and every additional role, opening its permissions for whoever may already see them. The demo backend serves no organization, so nothing shows: the cards section shows the same pieces."
+        },
         "organizations": {
             "example": "The organizations page of a superadmin: search by name, filter by status, create an organization and edit one, its name and its status, with its groups and their members to read, as far as the backend allows each row. The demo backend serves no organizations, so the list stays empty."
         },
@@ -1017,7 +1056,7 @@
         },
         "properties-menu-section": "Properties Menu",
         "roles": {
-            "example": "The roles and permissions page of a manager or the superadmin: the base roles of the application with their permissions to see, and the additional roles of the organization to create, edit, duplicate and delete, their permissions chosen in foldable sections by resource, each permission with its description, as far as the backend allows each row; a base role can be duplicated too, as the start of a new additional role. The demo backend serves no roles, so the list stays empty."
+            "example": "The roles and permissions page of a manager or the superadmin: the base roles of the application with their permissions to see, from their name or from View in the header, and the additional roles of the organization to create, edit, duplicate and delete, their permissions chosen in foldable sections by resource, each permission with its description, as far as the backend allows each row; a base role can be duplicated too, as the start of a new additional role. The demo backend serves no roles, so the list stays empty."
         },
         "search": {
             "applied": "Applied filters",
@@ -1187,7 +1226,11 @@
         },
         "trees": "Trees",
         "users": {
-            "example": "The users page on the demo backend: search by name or email, filter by status and role, invite a user, edit their names, roles and status, each field enabled only when the row lets it change, and send their invitation again, as far as the backend allows each row.",
+            "content": {
+                "documents": "Documents",
+                "templates": "Templates"
+            },
+            "example": "The users page on the demo backend: search by name or email, filter by status and role, invite a user, edit their names, roles and status, each field enabled only when the row lets it change, send their invitation again, transfer the content of an inactive user to another one and delete inactive users and pending invitations with everything they own, as far as the backend allows each row. The content counts read the labels of the app, here documents and templates.",
             "roles": {
                 "admin": "Administrator",
                 "editor": "Editor"

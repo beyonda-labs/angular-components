@@ -1,7 +1,7 @@
 import { PageActionZone } from '../../page/models/page-action.model';
 import { PageFormConfig } from '../../page/models/page-form.model';
 import { buildGroupsPageConfig, GroupsPageConfigOptions } from './groups-page-config';
-import { GroupFormValue, GroupRow, GroupsConfig } from './models/groups.model';
+import { GroupFormValue, GroupRow, GroupsConfig, GroupsPageMode } from './models/groups.model';
 
 describe('buildGroupsPageConfig', () => {
     const organizations = [
@@ -18,8 +18,11 @@ describe('buildGroupsPageConfig', () => {
             }),
             isOrganizationShown: false,
             loadRow: () => [],
+            mode: GroupsPageMode.Manage,
+            onDataLoaded: jest.fn(),
             onEdit: jest.fn(),
             onReady: jest.fn(),
+            onView: jest.fn(),
             organizations: [],
             ...overrides
         });
@@ -58,6 +61,23 @@ describe('buildGroupsPageConfig', () => {
         ]);
     });
 
+    it('declares the name, the member count and the creation for a member, the roles only with their count', () => {
+        const keysOf = (mode: GroupsPageMode): string[] =>
+            (build({ isOrganizationShown: true, mode }).tableConfig?.columns ?? []).map(({ key }) => key);
+
+        expect(keysOf(GroupsPageMode.Read)).toEqual(['name', 'memberCount', 'createdAt']);
+        expect(keysOf(GroupsPageMode.ReadWithRoles)).toEqual(['name', 'memberCount', 'roleCount', 'createdAt']);
+    });
+
+    it('hands what each load answers to the page', () => {
+        const onDataLoaded = jest.fn();
+        const response = { globalActions: [], results: [] };
+
+        build({ onDataLoaded }).onDataLoaded?.(response);
+
+        expect(onDataLoaded).toHaveBeenCalledWith(response);
+    });
+
     it('searches the name with the text of the search', () => {
         const search = build().tableConfig?.search;
 
@@ -78,16 +98,28 @@ describe('buildGroupsPageConfig', () => {
         expect(build({ organizations: [organizations[0]] }).tableConfig?.search?.fields).toHaveLength(1);
     });
 
-    it('offers to create, edit and delete a group, the edit opening the form of the group with everything in it', () => {
+    it('offers to create, edit, view and delete a group, the edit opening the form of the group with everything in it', () => {
         const onEdit = jest.fn();
         const actions = build({ onEdit }).headerConfig?.actions ?? [];
         const group: GroupRow = { actions: [], createdAt: 0, id: 'g1', memberCount: 0, name: 'Sales' };
 
-        expect(actions.map(action => action.key)).toEqual(['create', 'edit', 'delete']);
+        expect(actions.map(action => action.key)).toEqual(['create', 'edit', 'view', 'delete']);
         expect(actions[1].zone).toBe(PageActionZone.Left);
 
         actions[1].handler?.([group]);
 
         expect(onEdit).toHaveBeenCalledWith(group);
+    });
+
+    it('views a group from the header next to the edit, as its name does, with the tooltip of the page', () => {
+        const onView = jest.fn();
+        const view = (build({ onView }).headerConfig?.actions ?? [])[2];
+        const group: GroupRow = { actions: ['view'], createdAt: 0, id: 'g1', memberCount: 0, name: 'Sales' };
+
+        view.handler?.([group]);
+
+        expect(view.zone).toBe(PageActionZone.Left);
+        expect(view.tooltip).toBe('demo.teams.actions.view.tooltip');
+        expect(onView).toHaveBeenCalledWith(group);
     });
 });

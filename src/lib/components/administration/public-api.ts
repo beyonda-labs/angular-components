@@ -19,12 +19,29 @@ export type {
 } from './groups/models/groups.model';
 
 export { RolesComponent as BeyRolesComponent } from './roles/roles.component';
-export { RolesConfig as BeyRolesConfig } from './roles/models/roles.model';
+export { RolesConfig as BeyRolesConfig, RoleSourceType as BeyRoleSourceType } from './roles/models/roles.model';
+export type {
+    RoleRow as BeyRoleRow,
+    RolesConfigParameters as BeyRolesConfigParameters,
+    RoleSource as BeyRoleSource
+} from './roles/models/roles.model';
 export type {
     RolePermissionEntry as BeyRolePermissionEntry,
-    RoleRow as BeyRoleRow,
-    RolesConfigParameters as BeyRolesConfigParameters
-} from './roles/models/roles.model';
+    RoleViewSettings as BeyRoleViewSettings
+} from './models/role-permissions.model';
+
+export { OrganizationSummaryComponent as BeyOrganizationSummaryComponent } from './organization-summary/organization-summary.component';
+export { OrganizationSummaryConfig as BeyOrganizationSummaryConfig } from './organization-summary/models/organization-summary.model';
+export type {
+    OrganizationSummary as BeyOrganizationSummary,
+    OrganizationSummaryAdministrator as BeyOrganizationSummaryAdministrator,
+    OrganizationSummaryConfigParameters as BeyOrganizationSummaryConfigParameters,
+    OrganizationSummaryCounts as BeyOrganizationSummaryCounts,
+    OrganizationSummaryExtraRole as BeyOrganizationSummaryExtraRole,
+    OrganizationSummaryGroup as BeyOrganizationSummaryGroup,
+    OrganizationSummaryMember as BeyOrganizationSummaryMember,
+    OrganizationSummaryStatusCounts as BeyOrganizationSummaryStatusCounts
+} from './organization-summary/models/organization-summary.model';
 
 export { OrganizationsComponent as BeyOrganizationsComponent } from './organizations/organizations.component';
 export {

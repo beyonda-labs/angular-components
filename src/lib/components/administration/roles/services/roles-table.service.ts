@@ -5,8 +5,17 @@ import { BadgeConfig } from '../../../badge/models/badge.model';
 import { pageOrganizationCell } from '../../../page/functions/page-organization-column';
 import { PageStandardAction } from '../../../page/models/page-action.model';
 import { BadgeTableCell, LinkTableCell, TableCell, TextTableCell } from '../../../table/models/table-cell.model';
-import { roleLabel } from '../functions/role-labels';
-import { ROLE_TYPE_VARIANTS, RoleRow, RolesRowOptions } from '../models/roles.model';
+import { roleLabel } from '../../functions/role-labels';
+import {
+    ROLE_TYPE_VARIANTS,
+    RoleRow,
+    ROLES_SOURCES_SEPARATOR,
+    RoleSource,
+    RoleSourceType,
+    RolesRowOptions
+} from '../models/roles.model';
+
+const GROUP_NAMES_SEPARATOR = ', ';
 
 @Injectable({
     providedIn: 'root'
@@ -14,7 +23,8 @@ import { ROLE_TYPE_VARIANTS, RoleRow, RolesRowOptions } from '../models/roles.mo
 export class RolesTableService {
     private readonly translateService = inject(TranslateService);
 
-    loadRow(role: RoleRow, { isOrganizationShown, onEdit, onView, prefix, rolePrefix }: RolesRowOptions): TableCell[] {
+    loadRow(role: RoleRow, options: RolesRowOptions): TableCell[] {
+        const { isOrganizationShown, isReadOnly, onEdit, onView, prefix, rolePrefix } = options;
         const name = roleLabel(role, rolePrefix, key => this.translateService.instant(key) as string);
         const type = role.isBase ? 'base' : 'extra';
 
@@ -31,11 +41,34 @@ export class RolesTableService {
                 translate: true
             }),
             new TextTableCell({ content: String(role.permissions.length) }),
-            new TextTableCell({ content: String(role.memberCount) }),
-            new TextTableCell({ content: String(role.groupCount ?? 0) }),
+            ...(isReadOnly
+                ? [this.buildSourcesCell(role.sources ?? [], prefix)]
+                : [
+                      new TextTableCell({ content: String(role.memberCount ?? 0) }),
+                      new TextTableCell({ content: String(role.groupCount ?? 0) })
+                  ]),
             ...(isOrganizationShown ? [buildOrganizationCell(role, prefix)] : []),
             new TextTableCell({ content: role.description ?? '', tooltip: role.description })
         ];
+    }
+
+    private buildSourcesCell(sources: RoleSource[], prefix: string): TableCell {
+        const groupNames = sources.flatMap(source => (source.type === RoleSourceType.Group ? [source.groupName] : []));
+        const parts = [
+            ...(sources.some(({ type }) => type === RoleSourceType.Direct)
+                ? [this.translateService.instant(`${prefix}.sources.direct`) as string]
+                : []),
+            ...(groupNames.length > 0
+                ? [
+                      this.translateService.instant(`${prefix}.sources.group`, {
+                          names: groupNames.join(GROUP_NAMES_SEPARATOR)
+                      }) as string
+                  ]
+                : [])
+        ];
+        const content = parts.join(ROLES_SOURCES_SEPARATOR);
+
+        return new TextTableCell({ content, tooltip: content || undefined });
     }
 }
 

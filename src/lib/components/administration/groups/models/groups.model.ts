@@ -1,6 +1,14 @@
 import { Observable } from 'rxjs';
 
 import { PageOrganization, PageOrganizationItem } from '../../../page/models/page-organization.model';
+import { ROLE_VIEW_DEFAULTS, RoleViewSettings } from '../../models/role-permissions.model';
+import { NamedUser } from '../../models/user-names.model';
+
+export enum GroupsPageMode {
+    Manage = 'manage',
+    Read = 'read',
+    ReadWithRoles = 'read-with-roles'
+}
 
 export interface GroupDetail extends GroupRow {
     extraRoles: GroupExtraRole[];
@@ -66,6 +74,7 @@ export interface GroupRow extends PageOrganizationItem {
     name: string;
 
     extraRoleCount?: number;
+    roleCount?: number;
 }
 
 export interface GroupsFormOptions {
@@ -76,13 +85,43 @@ export interface GroupsFormOptions {
 
 export interface GroupsRowOptions {
     isOrganizationShown: boolean;
+    mode: GroupsPageMode;
     onEdit: (group: GroupRow) => void;
+    onView: (group: GroupRow) => void;
+    prefix: string;
+}
+
+export interface GroupView {
+    id: string;
+    members: GroupViewMember[];
+    name: string;
+
+    extraRoles?: GroupViewRole[];
+}
+
+export interface GroupViewMember extends NamedUser {
+    id: string;
+}
+
+export interface GroupViewOptions {
+    group: GroupView;
+    onRoleClick: (role: GroupViewRole) => void;
+    prefix: string;
+}
+
+export interface GroupViewRole {
+    id: string;
+    name: string;
+    permissions: string[];
+
+    description?: string;
 }
 
 export class GroupsConfig {
     baseUrl: string;
     height: string;
     prefix: string;
+    rolesConfig: RoleViewSettings;
     storageKey: string;
     usersUrl: string;
 
@@ -90,12 +129,14 @@ export class GroupsConfig {
         baseUrl = '/groups',
         height = 'calc(100vh - 220px)',
         prefix = 'angular-components.groups',
+        rolesConfig = ROLE_VIEW_DEFAULTS,
         storageKey = 'groups',
         usersUrl = '/users'
     }: GroupsConfigParameters = {}) {
         this.baseUrl = baseUrl;
         this.height = height;
         this.prefix = prefix;
+        this.rolesConfig = rolesConfig;
         this.storageKey = storageKey;
         this.usersUrl = usersUrl;
     }
@@ -105,6 +146,7 @@ export interface GroupsConfigParameters {
     baseUrl?: string;
     height?: string;
     prefix?: string;
+    rolesConfig?: RoleViewSettings;
     storageKey?: string;
     usersUrl?: string;
 }

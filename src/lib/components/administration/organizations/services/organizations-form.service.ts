@@ -1,22 +1,32 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { ValidatorFn } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 
 import { ModalFormConfig, ModalFormSize } from '../../../form/components/modal/models/modal-form.model';
+import { FormInfoField } from '../../../form/models/fields/form-info-field.model';
 import { FormListField } from '../../../form/models/fields/form-list-field.model';
 import { FormSelectField } from '../../../form/models/fields/form-select-field.model';
 import { FormTextField } from '../../../form/models/fields/form-text-field.model';
 import { FormRow, FormSection } from '../../../form/models/form.model';
-import { FormFieldLengthValidator, FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
+import {
+    FormFieldCustomValidator,
+    FormFieldLengthValidator,
+    FormFieldValidatorType
+} from '../../../form/models/form-field-validator.model';
 import { PageFormConfig } from '../../../page/models/page-form.model';
+import { contentCountLines } from '../../functions/content-counts';
+import { buildGroupMemberListRows } from '../../functions/group-member-lists';
 import {
     ORGANIZATION_NAME_MAX_LENGTH,
+    OrganizationDeleteFormOptions,
+    OrganizationDeleteFormValue,
     OrganizationDetail,
     OrganizationEditFormValue,
     OrganizationFormValue,
-    OrganizationGroup,
-    OrganizationGroupMember,
     OrganizationRow,
     ORGANIZATIONS_FORM_SECTION,
     ORGANIZATIONS_GROUPS_SECTION,
+    ORGANIZATIONS_LIBRARY_CONTENT,
     OrganizationStatus
 } from '../models/organizations.model';
 
@@ -27,6 +37,78 @@ const SUBMIT_LABEL_KEY = 'angular-components.page.form.submit';
     providedIn: 'root'
 })
 export class OrganizationsFormService {
+    private readonly translateService = inject(TranslateService);
+
+    buildDeleteConfig({
+        contentLabels,
+        counts,
+        organization,
+        prefix
+    }: OrganizationDeleteFormOptions): ModalFormConfig<OrganizationDeleteFormValue> {
+        const translate = (key: string, parameters?: Record<string, unknown>): string =>
+            this.translateService.instant(key, parameters) as string;
+        const { name } = organization;
+        const labels = {
+            ...Object.fromEntries(ORGANIZATIONS_LIBRARY_CONTENT.map(key => [key, `${prefix}.content.${key}`])),
+            ...contentLabels
+        };
+
+        return new ModalFormConfig<OrganizationDeleteFormValue>({
+            cancelLabel: CANCEL_LABEL_KEY,
+            initialValue: { [ORGANIZATIONS_FORM_SECTION]: { name: '' } },
+            isSubmitDanger: true,
+            prefix: `${prefix}.delete`,
+            sections: [
+                new FormSection({
+                    isTitleVisible: false,
+                    key: ORGANIZATIONS_FORM_SECTION,
+                    rows: [
+                        new FormRow({
+                            fields: [
+                                new FormInfoField({
+                                    isLabelVisible: false,
+                                    items: [{ label: translate(`${prefix}.delete.message`, { name }) }],
+                                    key: 'message'
+                                })
+                            ]
+                        }),
+                        new FormRow({
+                            fields: [
+                                new FormListField({
+                                    emptyKey: `${prefix}.content.empty`,
+                                    items: contentCountLines(
+                                        counts,
+                                        { contentLabels: labels, countKey: `${prefix}.content.count` },
+                                        translate
+                                    ),
+                                    key: 'content',
+                                    label: `${prefix}.content.label`
+                                })
+                            ]
+                        }),
+                        new FormRow({
+                            fields: [
+                                new FormTextField({
+                                    isRequired: true,
+                                    key: 'name',
+                                    label: translate(`${prefix}.delete.confirm`, { name }),
+                                    validators: [
+                                        new FormFieldCustomValidator(
+                                            matchesName(name, `${prefix}.delete.name-mismatch`)
+                                        )
+                                    ]
+                                })
+                            ]
+                        })
+                    ]
+                })
+            ],
+            size: ModalFormSize.Medium,
+            submitLabel: `${prefix}.delete.submit`,
+            title: `${prefix}.delete.title`
+        });
+    }
+
     buildEditFormConfig(prefix: string, organization: OrganizationDetail): ModalFormConfig<OrganizationEditFormValue> {
         return new ModalFormConfig<OrganizationEditFormValue>({
             cancelLabel: CANCEL_LABEL_KEY,
@@ -54,7 +136,10 @@ export class OrganizationsFormService {
                 }),
                 new FormSection({
                     key: ORGANIZATIONS_GROUPS_SECTION,
-                    rows: buildGroupRows(organization.groups, `${prefix}.form.${ORGANIZATIONS_GROUPS_SECTION}`)
+                    rows: buildGroupMemberListRows(
+                        organization.groups,
+                        `${prefix}.form.${ORGANIZATIONS_GROUPS_SECTION}`
+                    )
                 })
             ],
             size: ModalFormSize.Medium,
@@ -79,32 +164,6 @@ export class OrganizationsFormService {
     }
 }
 
-function buildGroupRows(groups: OrganizationGroup[], groupsPrefix: string): FormRow[] {
-    if (groups.length === 0) {
-        return [
-            new FormRow({
-                fields: [
-                    new FormListField({ isLabelVisible: false, key: 'empty', placeholder: `${groupsPrefix}.empty` })
-                ]
-            })
-        ];
-    }
-
-    return groups.map(
-        ({ id, members, name }) =>
-            new FormRow({
-                fields: [
-                    new FormListField({
-                        items: members.map(toMemberLabel),
-                        key: id,
-                        label: name,
-                        placeholder: `${groupsPrefix}.no-members`
-                    })
-                ]
-            })
-    );
-}
-
 function buildNameField(): FormTextField {
     return new FormTextField({
         isRequired: true,
@@ -113,6 +172,6 @@ function buildNameField(): FormTextField {
     });
 }
 
-function toMemberLabel({ email, name }: OrganizationGroupMember): string {
-    return name && name !== email ? `${name} (${email})` : email;
+function matchesName(name: string, messageKey: string): ValidatorFn {
+    return ({ value }) => (!value || value === name ? null : { nameMismatch: { messageKey } });
 }

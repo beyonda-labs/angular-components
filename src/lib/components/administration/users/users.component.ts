@@ -60,8 +60,10 @@ export class UsersComponent {
                     prefix,
                     rolePrefix
                 }),
+            onDelete: users => this.usersActionsService.delete(config, users, this.page),
             onReady: handle => (this.page = handle),
             onResendInvitation: user => this.usersActionsService.resendInvitation(config, user),
+            onTransfer: user => this.usersActionsService.transfer(config, user, this.page),
             organizations,
             roleOptions: this.usersFormService.buildRoleFilterOptions(roles, rolePrefix, organizations)
         });

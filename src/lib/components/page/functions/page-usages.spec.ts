@@ -13,7 +13,8 @@ describe('buildInUseConfirmation', () => {
         inUseModal: 'files.modal.delete-in-use',
         listedUsers: 10,
         selectedIds: ['a', 'b'],
-        suffixes: SUFFIXES
+        suffixes: SUFFIXES,
+        unknownName: 'Unknown'
     };
 
     it('keeps the confirmation when nothing uses the rows', () => {
@@ -59,11 +60,15 @@ describe('buildInUseConfirmation', () => {
 
 describe('describeUsers', () => {
     it('ends with an ellipsis when the users are fewer than the total', () => {
-        expect(describeUsers([OFFER], 3, SUFFIXES)).toEqual(['Offer', '...']);
+        expect(describeUsers([OFFER], 3, SUFFIXES, 'Unknown')).toEqual(['Offer', '...']);
     });
 
     it('names the users as they are without a suffix for them', () => {
-        expect(describeUsers([OFFER, LOGO], 2, {})).toEqual(['Offer', 'logo']);
+        expect(describeUsers([OFFER, LOGO], 2, {}, 'Unknown')).toEqual(['Offer', 'logo']);
+    });
+
+    it('names as unknown a user whose name resolves to nothing', () => {
+        expect(describeUsers([{ ...HEADER, name: null }], 1, SUFFIXES, 'Unknown')).toEqual(['Unknown (block)']);
     });
 });
 

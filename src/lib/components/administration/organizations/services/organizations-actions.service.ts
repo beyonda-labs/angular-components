@@ -18,6 +18,31 @@ export class OrganizationsActionsService {
     private readonly organizationsFormService = inject(OrganizationsFormService);
     private readonly organizationsHttpService = inject(OrganizationsHttpService);
 
+    delete(
+        { baseUrl, contentLabels, prefix }: OrganizationsConfig,
+        organization: OrganizationRow,
+        page?: PageHandle<OrganizationRow>
+    ): void {
+        if (!page) {
+            return;
+        }
+
+        this.organizationsHttpService
+            .loadContent(baseUrl, organization.id)
+            .subscribe(({ counts }) =>
+                page.openForm(
+                    this.organizationsFormService.buildDeleteConfig({ contentLabels, counts, organization, prefix }),
+                    ({ main }) =>
+                        this.organizationsHttpService.deleteOrganization(
+                            baseUrl,
+                            organization.id,
+                            main.name,
+                            `${prefix}.toast.delete-success`
+                        )
+                )
+            );
+    }
+
     edit(
         { baseUrl, prefix }: OrganizationsConfig,
         organization: OrganizationRow,

@@ -13,6 +13,10 @@ import { TranslateModule } from '@ngx-translate/core';
 export class UsersStyleGuideComponent {
     readonly config = new BeyUsersConfig({
         baseUrl: '/style-guide/users',
+        contentLabels: {
+            documents: 'angular-components-style-guide.users.content.documents',
+            templates: 'angular-components-style-guide.users.content.templates'
+        },
         height: '24rem',
         rolePrefix: 'angular-components-style-guide.users.roles',
         storageKey: 'style-guide-users'

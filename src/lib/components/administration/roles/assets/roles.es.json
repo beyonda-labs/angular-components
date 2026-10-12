@@ -35,6 +35,9 @@
                 "edit": {
                     "label": "Editar",
                     "tooltip": "Edita el rol seleccionado"
+                },
+                "view": {
+                    "tooltip": "Muestra los permisos del rol seleccionado"
                 }
             },
             "duplicate": {
@@ -82,6 +85,22 @@
                     "manage": {
                         "description": "Puede gestionar los grupos de la organización y acceder a todo lo que crean sus miembros.",
                         "label": "Gestionar la organización"
+                    },
+                    "read": {
+                        "description": "Puede ver el nombre, el estado, los administradores y los recuentos de su organización, y cada grupo con sus miembros y cada rol adicional.",
+                        "label": "Ver el resumen de la organización"
+                    },
+                    "read-group-roles": {
+                        "description": "Puede ver los roles adicionales que dan sus grupos, con sus permisos. Sin «Ver sus grupos y sus miembros» no muestra nada.",
+                        "label": "Ver los roles y permisos de sus grupos"
+                    },
+                    "read-groups": {
+                        "description": "Puede ver los grupos a los que pertenece y quién más está en ellos.",
+                        "label": "Ver sus grupos y sus miembros"
+                    },
+                    "read-roles": {
+                        "description": "Puede ver los roles que tiene, directamente o a través de sus grupos, con sus permisos.",
+                        "label": "Ver sus roles y permisos"
                     }
                 },
                 "roles": {
@@ -108,6 +127,10 @@
                     "read": {
                         "description": "Puede ver los usuarios de la organización.",
                         "label": "Ver usuarios"
+                    },
+                    "transfer-content": {
+                        "description": "Puede pasar todo lo de un usuario inactivo a un usuario activo de su organización.",
+                        "label": "Transferir contenido"
                     }
                 }
             },
@@ -115,6 +138,10 @@
                 "fields": {
                     "text": "Nombre"
                 }
+            },
+            "sources": {
+                "direct": "Directo",
+                "group": "Grupo {{names}}"
             },
             "table": {
                 "columns": {
@@ -124,6 +151,7 @@
                     "name": "Nombre",
                     "organization": "Organización",
                     "permission-count": "Permisos",
+                    "sources": "Origen",
                     "type": "Tipo"
                 },
                 "empty": "Ningún rol coincide con la búsqueda",
@@ -135,6 +163,7 @@
                     "name": "El nombre del rol",
                     "organization": "La organización a la que pertenece el rol",
                     "permission-count": "Cuántos permisos da",
+                    "sources": "Si el rol se tiene directamente o a través de un grupo",
                     "type": "Si es un rol base de la aplicación o un rol adicional de la organización"
                 },
                 "view-permissions": "Ver permisos"

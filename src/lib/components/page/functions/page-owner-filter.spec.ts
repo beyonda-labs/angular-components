@@ -22,6 +22,18 @@ describe('buildPageOwnerField', () => {
         });
     });
 
+    it('labels an owner the service no longer resolves as unknown, translated with the other labels', () => {
+        expect(
+            buildPageOwnerField([
+                { id: 'u1', name: 'Ada' },
+                { id: 'u2', name: null }
+            ])?.options
+        ).toEqual([
+            { label: 'Ada', value: 'u1' },
+            { label: 'angular-components.user-name.unknown', value: 'u2' }
+        ]);
+    });
+
     it('offers nothing with one owner or none, since there is nothing to choose', () => {
         expect(buildPageOwnerField([{ id: 'u1', name: 'Ada' }])).toBeNull();
         expect(buildPageOwnerField([])).toBeNull();

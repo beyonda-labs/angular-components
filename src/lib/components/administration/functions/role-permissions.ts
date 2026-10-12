@@ -1,5 +1,5 @@
-import { toKeySegment } from '../../../../utilities/key-segment';
-import { FormCheckboxSection } from '../../../form/models/fields/form-checkbox-sections-field.model';
+import { toKeySegment } from '../../../utilities/key-segment';
+import { FormCheckboxSection } from '../../form/models/fields/form-checkbox-sections-field.model';
 import {
     RolePermissionEntry,
     RolePermissionGroup,
@@ -8,7 +8,7 @@ import {
     ROLES_DEFAULT_GROUP_ICON,
     ROLES_LIBRARY_GROUP_ICONS,
     ROLES_LIBRARY_PERMISSION_PREFIX
-} from '../models/roles.model';
+} from '../models/role-permissions.model';
 
 const DESCRIPTION_KEY = 'description';
 const LABEL_KEY = 'label';
@@ -33,6 +33,13 @@ export function groupRolePermissions(
         entries: inOrder(groups.get(group) ?? [], actionOrder, actionOf),
         group
     }));
+}
+
+export function heldPermissionKeys(groups: RolePermissionGroup[], held: string[]): string[] {
+    return groups
+        .flatMap(({ entries }) => entries)
+        .filter(({ key }) => held.includes(key))
+        .map(({ key }) => key);
 }
 
 export function rolePermissionDescription(

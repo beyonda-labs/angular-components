@@ -1,4 +1,4 @@
-import { PageActionZone } from '../../page/models/page-action.model';
+import { PageActionScope, PageActionZone } from '../../page/models/page-action.model';
 import { PageFormConfig } from '../../page/models/page-form.model';
 import {
     OrganizationFormValue,
@@ -19,6 +19,7 @@ describe('buildOrganizationsPageConfig', () => {
                 prefix: 'demo.tenants.form'
             }),
             loadRow: () => [],
+            onDelete: jest.fn(),
             onEdit: jest.fn(),
             onReady: jest.fn(),
             ...overrides
@@ -69,7 +70,7 @@ describe('buildOrganizationsPageConfig', () => {
             userCount: 0
         };
 
-        expect(actions.map(action => action.key)).toEqual(['create', 'edit']);
+        expect(actions.map(action => action.key)).toEqual(['create', 'edit', 'delete']);
         expect(actions[1].zone).toBe(PageActionZone.Left);
 
         actions[1].handler?.([organization]);
@@ -77,10 +78,26 @@ describe('buildOrganizationsPageConfig', () => {
         expect(onEdit).toHaveBeenCalledWith(organization);
     });
 
-    it('changes no status on its own and never deletes, the status being part of the edit', () => {
-        const config = build();
+    it('changes no status on its own, the status being part of the edit', () => {
+        expect(build().statusConfig).toBeUndefined();
+    });
 
-        expect(config.statusConfig).toBeUndefined();
-        expect(config.headerConfig?.actions.map(action => action.key)).not.toContain('delete');
+    it('deletes one organization at a time through onDelete, in the menu of the header', () => {
+        const onDelete = jest.fn();
+        const remove = (build({ onDelete }).headerConfig?.actions ?? [])[2];
+        const organization: OrganizationRow = {
+            actions: ['delete'],
+            createdAt: 0,
+            id: 'o1',
+            name: 'Acme',
+            status: OrganizationStatus.Inactive,
+            userCount: 0
+        };
+
+        expect(remove).toEqual(expect.objectContaining({ scope: PageActionScope.Single, zone: PageActionZone.Menu }));
+
+        remove.handler?.([organization]);
+
+        expect(onDelete).toHaveBeenCalledWith(organization);
     });
 });

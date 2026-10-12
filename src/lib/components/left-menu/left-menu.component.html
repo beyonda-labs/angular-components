@@ -114,7 +114,9 @@
 </aside>
 
 <ng-template #userContent let-userInfo>
-    <div class="bey-left-menu-user-avatar">{{ userInfo.initials }}</div>
+    @if (avatar(); as avatar) {
+        <bey-avatar class="bey-left-menu-user-avatar" [config]="avatar"></bey-avatar>
+    }
 
     @if (expanded()) {
         <div class="bey-left-menu-user-copy">

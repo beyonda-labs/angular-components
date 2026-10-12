@@ -1,8 +1,10 @@
 import { faFileLines, faRectangleList, faUser } from '@fortawesome/free-regular-svg-icons';
 
-import { RolePermissionGroup, ROLES_DEFAULT_ACTION_ORDER } from '../models/roles.model';
+import { RolePermissionGroup, ROLES_DEFAULT_ACTION_ORDER } from '../models/role-permissions.model';
+import rolesEn from '../roles/assets/roles.en.json';
 import {
     groupRolePermissions,
+    heldPermissionKeys,
     rolePermissionDescription,
     rolePermissionGroupLabel,
     rolePermissionLabel,
@@ -101,6 +103,24 @@ describe('role permissions', () => {
         });
     });
 
+    describe('heldPermissionKeys', () => {
+        it('lists the permissions of the groups a role holds, in the order of the groups', () => {
+            const groups = groupRolePermissions(
+                [
+                    { group: 'users', key: 'users.read' },
+                    { group: 'users', key: 'users.invite' }
+                ],
+                serverOrder,
+                ['templates.edit', 'users.invite']
+            );
+
+            expect(heldPermissionKeys(groups, ['templates.edit', 'users.invite', 'roles.manage'])).toEqual([
+                'users.invite',
+                'templates.edit'
+            ]);
+        });
+    });
+
     describe('rolePermissionLabel', () => {
         it('reads the label of a permission under the prefix of the app, by group and action', () => {
             expect(
@@ -148,6 +168,19 @@ describe('role permissions', () => {
                     translate
                 )
             ).toBeUndefined();
+        });
+
+        it('describes the transfer of content with the texts the library ships', () => {
+            const shipped = (key: string): unknown =>
+                key
+                    .split('.')
+                    .reduce<unknown>((node, part) => (node as Record<string, unknown> | undefined)?.[part], rolesEn);
+            const entry = { group: 'users', key: 'users.transfer-content' };
+
+            expect(rolePermissionLabel(entry, 'my-app.permissions', shipped)).toBe('Transfer content');
+            expect(rolePermissionDescription(entry, 'my-app.permissions', shipped)).toBe(
+                'Can move everything of an inactive user to an active user of their organization.'
+            );
         });
     });
 

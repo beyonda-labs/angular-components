@@ -2,8 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { ModalFormConfig } from '../../../form/components/modal/models/modal-form.model';
-import { FormCheckboxSectionsField } from '../../../form/models/fields/form-checkbox-sections-field.model';
-import { FormInfoField } from '../../../form/models/fields/form-info-field.model';
 import { FormSelectField } from '../../../form/models/fields/form-select-field.model';
 import { FormTextField } from '../../../form/models/fields/form-text-field.model';
 import { FormTextareaField } from '../../../form/models/fields/form-textarea-field.model';
@@ -13,22 +11,23 @@ import { FormFieldLengthValidator, FormFieldValidatorType } from '../../../form/
 import { PageFormConfig } from '../../../page/models/page-form.model';
 import { PageOrganization } from '../../../page/models/page-organization.model';
 import { buildDisabledOrganizationField } from '../../functions/organization-fields';
+import { roleLabel } from '../../functions/role-labels';
+import { groupRolePermissions, heldPermissionKeys } from '../../functions/role-permissions';
+import {
+    RolePermissionGroup,
+    ROLES_FORM_SECTION,
+    ROLES_PERMISSIONS_FIELD,
+    ROLES_PERMISSIONS_SECTION
+} from '../../models/role-permissions.model';
+import { RoleViewFormService } from '../../services/role-view-form.service';
 import { roleCopyName } from '../functions/role-copy';
-import { roleLabel } from '../functions/role-labels';
-import { groupRolePermissions, rolePermissionSections } from '../functions/role-permissions';
 import { toRoleCreateRequest, toRoleEditRequest } from '../functions/role-requests';
 import {
     ROLE_NAME_MAX_LENGTH,
     RoleFormValue,
-    RolePermissionGroup,
-    RolePermissionsOptions,
     RoleRow,
-    ROLES_FORM_SECTION,
-    ROLES_PERMISSIONS_FIELD,
-    ROLES_PERMISSIONS_SECTION,
     RolesDuplicateFormOptions,
-    RolesFormOptions,
-    RolesViewOptions
+    RolesFormOptions
 } from '../models/roles.model';
 
 const CANCEL_LABEL_KEY = 'angular-components.page.form.cancel';
@@ -37,6 +36,7 @@ const CANCEL_LABEL_KEY = 'angular-components.page.form.cancel';
     providedIn: 'root'
 })
 export class RolesFormService {
+    private readonly roleViewFormService = inject(RoleViewFormService);
     private readonly translateService = inject(TranslateService);
 
     buildDuplicateConfig(options: RolesDuplicateFormOptions, role: RoleRow): ModalFormConfig<RoleFormValue> {
@@ -85,73 +85,6 @@ export class RolesFormService {
         });
     }
 
-    buildViewConfig(
-        { actionOrder, groupIcons, groupOrder, permissionPrefix, permissions, prefix, rolePrefix }: RolesViewOptions,
-        role: RoleRow
-    ): ModalFormConfig<RoleFormValue> {
-        const groups = groupRolePermissions(permissions, { actionOrder, groupOrder }, role.permissions);
-        const name = roleLabel(role, rolePrefix, key => this.translateService.instant(key) as string);
-
-        return new ModalFormConfig<RoleFormValue>({
-            cancelLabel: `${prefix}.view.buttons.close`,
-            initialValue: toRoleValue(role, groups),
-            isSubmitHidden: true,
-            prefix: `${prefix}.view`,
-            sections: [
-                new FormSection({
-                    isTitleVisible: false,
-                    key: ROLES_FORM_SECTION,
-                    rows: [
-                        new FormRow({ fields: [new FormInfoField({ items: [{ label: name }], key: 'name' })] }),
-                        ...(role.description
-                            ? [
-                                  new FormRow({
-                                      fields: [
-                                          new FormInfoField({
-                                              items: [{ label: role.description }],
-                                              key: 'description'
-                                          })
-                                      ]
-                                  })
-                              ]
-                            : [])
-                    ]
-                }),
-                this.buildPermissionsSection(groups, { groupIcons, permissionPrefix }, `${prefix}.view`, true)
-            ]
-        });
-    }
-
-    private buildPermissionsSection(
-        groups: RolePermissionGroup[],
-        { groupIcons, permissionPrefix }: Pick<RolePermissionsOptions, 'groupIcons' | 'permissionPrefix'>,
-        formPrefix: string,
-        isDisabled: boolean
-    ): FormSection {
-        const translate = (key: string): unknown => this.translateService.instant(key);
-        const label = `${formPrefix}.${ROLES_PERMISSIONS_SECTION}.label`;
-        const field =
-            groups.length > 0
-                ? new FormCheckboxSectionsField({
-                      isDisabled,
-                      isRequired: !isDisabled,
-                      key: ROLES_PERMISSIONS_FIELD,
-                      label,
-                      sections: rolePermissionSections(groups, { groupIcons, permissionPrefix, translate })
-                  })
-                : new FormInfoField({
-                      items: [{ label: String(translate(`${formPrefix}.${ROLES_PERMISSIONS_SECTION}.empty`)) }],
-                      key: 'empty',
-                      label
-                  });
-
-        return new FormSection({
-            isTitleVisible: false,
-            key: ROLES_PERMISSIONS_SECTION,
-            rows: [new FormRow({ fields: [field] })]
-        });
-    }
-
     private buildSections(
         {
             actionOrder,
@@ -185,7 +118,7 @@ export class RolesFormService {
                     ...(isOrganizationAsked ? buildOrganizationRows(organizations, role) : [])
                 ]
             }),
-            this.buildPermissionsSection(
+            this.roleViewFormService.buildPermissionsSection(
                 groupRolePermissions(permissions, { actionOrder, groupOrder }, role?.permissions),
                 { groupIcons, permissionPrefix },
                 `${prefix}.form`,
@@ -245,10 +178,7 @@ function toRoleValue(
             ...(organizationId ? { organizationId } : {})
         },
         [ROLES_PERMISSIONS_SECTION]: {
-            [ROLES_PERMISSIONS_FIELD]: groups
-                .flatMap(({ entries }) => entries)
-                .filter(({ key }) => role.permissions.includes(key))
-                .map(({ key }) => key)
+            [ROLES_PERMISSIONS_FIELD]: heldPermissionKeys(groups, role.permissions)
         }
     };
 }

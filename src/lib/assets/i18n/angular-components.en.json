@@ -28,6 +28,13 @@
         "breadcrumb": {
             "label": "Breadcrumb"
         },
+        "cards": {
+            "empty": "Nothing here yet.",
+            "fold": {
+                "hide": "Hide",
+                "show": "Show"
+            }
+        },
         "edit-lock-notice": {
             "actions": {
                 "edit": "Edit",
@@ -153,6 +160,9 @@
                 "edit": {
                     "label": "Edit",
                     "tooltip": "Edit the name, the members and the additional roles of the selected group"
+                },
+                "view": {
+                    "tooltip": "See the members of the selected group"
                 }
             },
             "form": {
@@ -164,7 +174,7 @@
                 },
                 "main": {
                     "extra-role-ids": {
-                        "empty": "This group has no extra roles yet.",
+                        "empty": "This group has no additional roles yet.",
                         "label": "Additional roles",
                         "placeholder": "Search a role by its name"
                     },
@@ -200,7 +210,8 @@
                     "extra-role-count": "Roles",
                     "member-count": "Members",
                     "name": "Name",
-                    "organization": "Organization"
+                    "organization": "Organization",
+                    "role-count": "Roles"
                 },
                 "empty": "No group matches the search",
                 "tooltips": {
@@ -208,14 +219,35 @@
                     "extra-role-count": "How many additional roles it gives its members",
                     "member-count": "How many users belong to it",
                     "name": "The name of the group",
-                    "organization": "The organization the group belongs to"
-                }
+                    "organization": "The organization the group belongs to",
+                    "role-count": "How many additional roles it gives its members"
+                },
+                "view-group": "See its members"
             },
             "title": "Groups",
             "toast": {
                 "create-success": "Group created",
                 "delete-success": "Groups deleted",
                 "edit-success": "Group saved"
+            },
+            "view": {
+                "buttons": {
+                    "close": "Close"
+                },
+                "main": {
+                    "extra-roles": {
+                        "empty": "This group gives no additional roles.",
+                        "label": "Additional roles"
+                    },
+                    "members": {
+                        "empty": "This group has no members yet.",
+                        "label": "Members"
+                    },
+                    "name": {
+                        "label": "Group"
+                    }
+                },
+                "title": "Group details"
             }
         },
         "header": {
@@ -307,7 +339,9 @@
                 "move-target-unchanged": "The item is already located in this category.",
                 "not-found": "The requested resource was not found.",
                 "organizations": {
+                    "active": "Only a deactivated organization can be deleted. Deactivate it first.",
                     "existing-name": "There is already an organization named {{name}}.",
+                    "name-mismatch": "The name typed does not match the name of the organization.",
                     "not-found": "This organization does not exist or has been deactivated. Reload the page and try again."
                 },
                 "password": {
@@ -336,13 +370,16 @@
                 "users": {
                     "existing-user": "There is already an account with the email {{email}}.",
                     "invalid-extra-roles": "Some of the additional roles chosen do not belong to the organization of the user, or no longer exist. Reload the page and try again.",
+                    "invalid-transfer-target": "The person chosen cannot receive this content: they must be an active user of the same organization. Reload the page and try again.",
                     "invitation-not-sent": "The user {{email}} was created, but the invitation email could not be sent. Use \"Resend invitation\" to try again.",
                     "last-superadmin": "This change would leave no active superadmin.",
+                    "not-deletable": "This user cannot be deleted: only inactive users and pending invitations can, never a superadmin nor your own account.",
                     "not-found": "This user does not exist. Reload the page and try again.",
                     "not-invited": "This account is no longer waiting for an invitation.",
                     "own-account": "You cannot change your own account here: neither its status, its roles nor its name. Change your name on your account page.",
                     "superadmin-only": "Only a superadmin can change a superadmin account.",
                     "superadmin-role-fixed": "The superadmin role cannot be granted nor removed.",
+                    "transfer-source-not-inactive": "Only the content of an inactive user can be transferred. Deactivate the user first.",
                     "unknown-role": "The role \"{{role}}\" does not exist."
                 }
             },
@@ -441,7 +478,9 @@
                 "move-target-unchanged": "No change",
                 "not-found": "Not found",
                 "organizations": {
+                    "active": "Organization still active",
                     "existing-name": "Name already in use",
+                    "name-mismatch": "Name does not match",
                     "not-found": "Organization not found"
                 },
                 "password": {
@@ -469,13 +508,16 @@
                 "users": {
                     "existing-user": "Account already exists",
                     "invalid-extra-roles": "Additional roles not valid",
+                    "invalid-transfer-target": "Recipient not valid",
                     "invitation-not-sent": "Invitation not sent",
                     "last-superadmin": "Last superadmin",
+                    "not-deletable": "User not deletable",
                     "not-found": "User not found",
                     "not-invited": "No pending invitation",
                     "own-account": "Your own account",
                     "superadmin-only": "Superadmins only",
                     "superadmin-role-fixed": "Fixed role",
+                    "transfer-source-not-inactive": "User still active",
                     "unknown-role": "Unknown role"
                 }
             }
@@ -648,16 +690,96 @@
             "label": "Options",
             "search": "Search"
         },
+        "organization-summary": {
+            "administrators": {
+                "empty": "No administrators yet.",
+                "label": "Administrators"
+            },
+            "breakdown": {
+                "active": {
+                    "one": "{{count}} active",
+                    "other": "{{count}} active"
+                },
+                "inactive": {
+                    "one": "{{count}} inactive",
+                    "other": "{{count}} inactive"
+                },
+                "invited": {
+                    "one": "{{count}} pending invitation",
+                    "other": "{{count}} pending invitations"
+                },
+                "unverified": {
+                    "one": "{{count}} unverified",
+                    "other": "{{count}} unverified"
+                }
+            },
+            "created-at": "Created on {{date}}",
+            "extra-roles": {
+                "empty": "This organization has no additional roles yet.",
+                "label": "Additional roles"
+            },
+            "groups": {
+                "empty": "This organization has no groups yet.",
+                "hide-members": "Hide members",
+                "label": "Groups",
+                "members": {
+                    "one": "{{count}} member",
+                    "other": "{{count}} members"
+                },
+                "no-members": "No members.",
+                "show-members": "Show members",
+                "ungrouped": "No group"
+            },
+            "stats": {
+                "extra-roles": {
+                    "one": "Additional role",
+                    "other": "Additional roles"
+                },
+                "groups": {
+                    "one": "Group",
+                    "other": "Groups"
+                },
+                "members": {
+                    "one": "Member",
+                    "other": "Members"
+                }
+            },
+            "title": "Organization"
+        },
         "organizations": {
             "actions": {
                 "create": {
                     "label": "New organization",
                     "tooltip": "Create an organization"
                 },
+                "delete": {
+                    "label": "Delete",
+                    "tooltip": "Delete the selected deactivated organization and everything in it"
+                },
                 "edit": {
                     "label": "Edit",
                     "tooltip": "Edit the name and the status of the selected organization"
                 }
+            },
+            "content": {
+                "count": "{{label}}: {{count}}",
+                "empty": "It holds nothing.",
+                "groups": "Groups",
+                "label": "Content",
+                "roles": "Additional roles",
+                "users": "Users"
+            },
+            "delete": {
+                "confirm": "Type «{{name}}» to confirm",
+                "main": {
+                    "name": {
+                        "placeholder": "The name of the organization, exactly"
+                    }
+                },
+                "message": "The organization «{{name}}» and everything in it will be deleted for good: its users of any status with everything they own, its groups, its additional roles and what it shares.",
+                "name-mismatch": "The name does not match.",
+                "submit": "Delete",
+                "title": "Delete organization"
             },
             "form": {
                 "create": {
@@ -710,10 +832,17 @@
             "title": "Organizations",
             "toast": {
                 "create-success": "Organization created",
+                "delete-success": "Organization deleted",
                 "edit-success": "Organization saved"
             }
         },
         "page": {
+            "actions": {
+                "view": {
+                    "label": "View",
+                    "tooltip": "See the selected item without changing it"
+                }
+            },
             "count": {
                 "many": "({{count}} items)",
                 "one": "({{count}} item)"
@@ -827,6 +956,7 @@
                 "empty": "No attachments found",
                 "search": "Search attachments",
                 "too-large": "This file exceeds the {{maxSizeMB}} MB limit.",
+                "unknown": "Unknown",
                 "upload": "Upload a new file",
                 "use-variable": "Use a variable",
                 "wrong-type": "This file type is not accepted ({{accept}})."
@@ -896,6 +1026,9 @@
                 "edit": {
                     "label": "Edit",
                     "tooltip": "Edit the selected role"
+                },
+                "view": {
+                    "tooltip": "See the permissions of the selected role"
                 }
             },
             "duplicate": {
@@ -943,6 +1076,22 @@
                     "manage": {
                         "description": "Can manage the groups of the organization and reach everything its members create.",
                         "label": "Manage the organization"
+                    },
+                    "read": {
+                        "description": "Can see the name, the status, the administrators and the counts of their organization, and every group with its members and every additional role.",
+                        "label": "See the organization summary"
+                    },
+                    "read-group-roles": {
+                        "description": "Can see the additional roles their groups give, with their permissions. It shows nothing without \"See their groups and members\".",
+                        "label": "See the roles and permissions of their groups"
+                    },
+                    "read-groups": {
+                        "description": "Can see the groups they belong to and who else is in them.",
+                        "label": "See their groups and members"
+                    },
+                    "read-roles": {
+                        "description": "Can see the roles they hold, directly or through their groups, with their permissions.",
+                        "label": "See their roles and permissions"
                     }
                 },
                 "roles": {
@@ -969,6 +1118,10 @@
                     "read": {
                         "description": "Can see the users of the organization.",
                         "label": "See users"
+                    },
+                    "transfer-content": {
+                        "description": "Can move everything of an inactive user to an active user of their organization.",
+                        "label": "Transfer content"
                     }
                 }
             },
@@ -976,6 +1129,10 @@
                 "fields": {
                     "text": "Name"
                 }
+            },
+            "sources": {
+                "direct": "Direct",
+                "group": "Group {{names}}"
             },
             "table": {
                 "columns": {
@@ -985,6 +1142,7 @@
                     "name": "Name",
                     "organization": "Organization",
                     "permission-count": "Permissions",
+                    "sources": "Origin",
                     "type": "Type"
                 },
                 "empty": "No role matches the search",
@@ -996,6 +1154,7 @@
                     "name": "The name of the role",
                     "organization": "The organization the role belongs to",
                     "permission-count": "How many permissions it gives",
+                    "sources": "Whether the role is held directly or through a group",
                     "type": "Whether it is a base role of the application or an additional role of the organization"
                 },
                 "view-permissions": "See permissions"
@@ -1088,11 +1247,18 @@
             "collapse": "Collapse",
             "expand": "Expand"
         },
+        "user-name": {
+            "unknown": "Unknown"
+        },
         "users": {
             "actions": {
                 "create": {
                     "label": "Invite user",
                     "tooltip": "Invite someone to create their account"
+                },
+                "delete": {
+                    "label": "Delete",
+                    "tooltip": "Delete the selected users and everything they still own"
                 },
                 "edit": {
                     "label": "Edit",
@@ -1101,7 +1267,38 @@
                 "resend-invitation": {
                     "label": "Resend invitation",
                     "tooltip": "Send the invitation email again"
+                },
+                "transfer": {
+                    "label": "Transfer content",
+                    "tooltip": "Move everything the selected inactive user owns to another user"
                 }
+            },
+            "content": {
+                "count": "{{label}}: {{count}}",
+                "empty": "Owns nothing.",
+                "label": "Content",
+                "used-by": "{{entity}} «{{name}}»: {{users}}"
+            },
+            "delete": {
+                "invitation": {
+                    "one": "The invitation will stop working.",
+                    "other": "The pending invitations will stop working."
+                },
+                "main": {
+                    "used-by-others": {
+                        "label": "Used by others"
+                    }
+                },
+                "message": {
+                    "one": "{{name}} will be deleted, together with everything they still own.",
+                    "other": "{{count}} users will be deleted, together with everything they still own."
+                },
+                "submit": "Delete",
+                "title": {
+                    "one": "Delete user",
+                    "other": "Delete users"
+                },
+                "used-by-others": "Some of it is used by what others own. Those references will show as «{{unknown}}» and will need fixing."
             },
             "form": {
                 "create": {
@@ -1189,8 +1386,22 @@
             "title": "Users",
             "toast": {
                 "create-success": "Invitation sent",
+                "delete-success": "Users deleted",
                 "edit-success": "User saved",
-                "resend-invitation-success": "Invitation sent again"
+                "resend-invitation-success": "Invitation sent again",
+                "transfer-success": "Content transferred"
+            },
+            "transfer": {
+                "main": {
+                    "target-user-id": {
+                        "label": "Transfer to",
+                        "placeholder": "Search a person by name or email"
+                    }
+                },
+                "no-targets": "No active user matches",
+                "note": "Everything moves into a folder «{{name}}» at the root of the person you choose.",
+                "submit": "Transfer",
+                "title": "Transfer {{name}}'s content"
             }
         }
     }

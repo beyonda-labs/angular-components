@@ -1,3 +1,4 @@
+import { UNKNOWN_USER_NAME_KEY } from '../../../internal/user-name/models/user-name.model';
 import { SearchField, SearchFieldType } from '../../search/models/search.model';
 import { SearchFilter, SearchFilterOperator } from '../../search/models/search-filter.model';
 import { PageConfig } from '../models/page.model';
@@ -10,7 +11,10 @@ export function buildPageOwnerField(owners: PageOwner[]): SearchField | null {
               key: PAGE_OWNER_FIELD,
               label: PAGE_OWNER_FILTER_LABEL,
               operators: [SearchFilterOperator.Equals],
-              options: owners.map(({ id, name }) => ({ label: name, value: id })),
+              options: owners.map(({ id, name }) => ({
+                  label: name?.trim() ? name : UNKNOWN_USER_NAME_KEY,
+                  value: id
+              })),
               type: SearchFieldType.Select
           });
 }

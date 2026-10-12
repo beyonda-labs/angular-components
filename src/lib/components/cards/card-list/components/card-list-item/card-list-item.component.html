@@ -1,0 +1,76 @@
+@let current = item();
+
+<div class="bey-cards-list-item">
+    @if (current.onClick) {
+        <button
+            class="bey-cards-list-item-main bey-cards-list-item-button"
+            type="button"
+            [attr.aria-describedby]="describedBy()"
+            [attr.aria-labelledby]="ids.title"
+            (click)="open()"
+        >
+            <ng-container [ngTemplateOutlet]="content"></ng-container>
+
+            @if (hasChevron()) {
+                <fa-icon class="bey-cards-list-item-chevron" aria-hidden="true" [icon]="chevronIcon"></fa-icon>
+            }
+        </button>
+    } @else {
+        <div class="bey-cards-list-item-main">
+            <ng-container [ngTemplateOutlet]="content"></ng-container>
+        </div>
+    }
+
+    @if (current.fold) {
+        <button
+            class="bey-cards-list-item-toggle"
+            type="button"
+            [attr.aria-controls]="controlsId()"
+            [attr.aria-describedby]="ids.title"
+            [attr.aria-expanded]="isOpen()"
+            (click)="toggle()"
+        >
+            {{ toggleLabel() | translate }}
+            <fa-icon
+                class="bey-cards-list-item-toggle-icon"
+                aria-hidden="true"
+                [class.is-expanded]="isOpen()"
+                [icon]="chevronIcon"
+            ></fa-icon>
+        </button>
+    }
+</div>
+
+@if (current.fold; as fold) {
+    @if (isOpen()) {
+        @if (hasFoldItems()) {
+            <ul class="bey-cards-list-fold" [attr.aria-labelledby]="ids.title" [id]="ids.fold">
+                @for (child of fold.items; track child.key) {
+                    <li class="bey-cards-list-fold-entry">
+                        <bey-card-list-item [item]="child"></bey-card-list-item>
+                    </li>
+                }
+            </ul>
+        } @else {
+            <p class="bey-cards-list-fold-empty" [id]="ids.fold">{{ fold.emptyLabel | translate }}</p>
+        }
+    }
+}
+
+<ng-template #content>
+    @if (current.avatar) {
+        <bey-avatar [config]="current.avatar"></bey-avatar>
+    } @else if (current.icon) {
+        <fa-icon class="bey-cards-list-item-icon" aria-hidden="true" [icon]="current.icon"></fa-icon>
+    }
+
+    <span class="bey-cards-list-item-text">
+        <span class="bey-cards-list-item-title" [id]="ids.title">{{ current.title | translate }}</span>
+
+        @if (current.subtitle) {
+            <span class="bey-cards-list-item-subtitle" [id]="ids.subtitle">
+                {{ current.subtitle | translate: current.subtitleParameters }}
+            </span>
+        }
+    </span>
+</ng-template>

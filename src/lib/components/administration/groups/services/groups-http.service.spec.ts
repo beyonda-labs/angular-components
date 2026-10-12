@@ -109,4 +109,19 @@ describe('GroupsHttpService', () => {
 
         expect([translate.instant(error.title), translate.instant(error.message)]).toEqual([title, message]);
     });
+
+    it('reads a group a member belongs to, with its members and the roles it gives', () => {
+        const answers: unknown[] = [];
+        const view = {
+            extraRoles: [{ id: 'r1', name: 'Reviewers', permissions: ['templates.edit'] }],
+            id: 'g1',
+            members: [{ ...ada, surname: 'Lovelace' }],
+            name: 'Sales'
+        };
+
+        service.loadGroupView('/teams', 'g1').subscribe(group => answers.push(group));
+        httpTesting.expectOne(GROUP_URL).flush(view);
+
+        expect(answers).toEqual([view]);
+    });
 });

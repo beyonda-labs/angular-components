@@ -13,6 +13,12 @@
             }
         },
         "page": {
+            "actions": {
+                "view": {
+                    "label": "View",
+                    "tooltip": "See the selected item without changing it"
+                }
+            },
             "count": {
                 "many": "({{count}} items)",
                 "one": "({{count}} item)"

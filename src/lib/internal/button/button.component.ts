@@ -8,6 +8,7 @@ import { ButtonConfig, ButtonType } from './models/button-config.model';
 const BASE_CLASSES = 'bey-button btn d-flex align-items-center';
 const SMALL_BUTTON_CLASSES = 'btn-sm fw-semibold';
 const TYPE_CLASSES: Record<ButtonType, string> = {
+    [ButtonType.Danger]: `${SMALL_BUTTON_CLASSES} btn-danger`,
     [ButtonType.IconOutline]: 'bey-button--icon-outline',
     [ButtonType.LinkSecondary]: `${SMALL_BUTTON_CLASSES} btn-link btn-link-secondary`,
     [ButtonType.Primary]: `${SMALL_BUTTON_CLASSES} btn-dark`,

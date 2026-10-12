@@ -20,6 +20,7 @@ export enum ModalFormSize {
 }
 
 export class ModalFormConfig<TValue = unknown> extends FormConfig<TValue> {
+    isSubmitDanger: boolean;
     isSubmitHidden: boolean;
     size: ModalFormSize;
     title: string;
@@ -29,6 +30,7 @@ export class ModalFormConfig<TValue = unknown> extends FormConfig<TValue> {
 
     constructor({
         cancelLabel,
+        isSubmitDanger = false,
         isSubmitHidden = false,
         prefix,
         size = ModalFormSize.Large,
@@ -45,6 +47,7 @@ export class ModalFormConfig<TValue = unknown> extends FormConfig<TValue> {
                     type: FormButtonType.Cancel
                 }),
                 new FormButton({
+                    isDanger: isSubmitDanger,
                     isHidden: isSubmitHidden,
                     label: submitLabel ?? `${prefix}.buttons.submit`,
                     type: FormButtonType.Submit
@@ -54,6 +57,7 @@ export class ModalFormConfig<TValue = unknown> extends FormConfig<TValue> {
         });
 
         this.cancelLabel = cancelLabel;
+        this.isSubmitDanger = isSubmitDanger;
         this.isSubmitHidden = isSubmitHidden;
         this.size = size;
         this.submitLabel = submitLabel;
@@ -70,6 +74,7 @@ export interface ModalFormConfigParameters<TValue = unknown> {
     cancelLabel?: string;
     footer?: FormFooter;
     initialValue?: TValue;
+    isSubmitDanger?: boolean;
     isSubmitHidden?: boolean;
     onReady?: (handle: FormHandle<TValue>) => void;
     onStepChange?: (key: string) => void;

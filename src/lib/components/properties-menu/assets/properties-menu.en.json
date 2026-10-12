@@ -6,6 +6,7 @@
                 "empty": "No attachments found",
                 "search": "Search attachments",
                 "too-large": "This file exceeds the {{maxSizeMB}} MB limit.",
+                "unknown": "Unknown",
                 "upload": "Upload a new file",
                 "use-variable": "Use a variable",
                 "wrong-type": "This file type is not accepted ({{accept}})."
