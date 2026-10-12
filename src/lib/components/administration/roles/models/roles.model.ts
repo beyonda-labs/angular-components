@@ -68,6 +68,14 @@ export interface RoleRow extends PageOrganizationItem {
     groupCount?: number;
 }
 
+export interface RolesDuplicateFormOptions extends RolesFormOptions {
+    rolePrefix: string;
+}
+
+export interface RolesDuplicateOptions extends RolesDuplicateFormOptions {
+    baseUrl: string;
+}
+
 export interface RolesFormOptions extends RolePermissionsOptions {
     isOrganizationAsked: boolean;
     organizations: PageOrganization[];
@@ -136,6 +144,8 @@ export interface RolesConfigParameters {
     storageKey?: string;
     usersUrl?: string;
 }
+
+export const ROLE_COPY_SEPARATOR = ' ';
 
 export const ROLE_NAME_MAX_LENGTH = 60;
 

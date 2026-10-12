@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, untracked } from '@angular/core';
 
-import { hasOrganizationChoice } from '../../page/functions/page-organization-filter';
 import { PageHandle } from '../../page/models/page.model';
 import { PageComponent } from '../../page/page.component';
 import { UserOrganizationsService } from '../services/user-organizations.service';
-import { RoleRow, RolesConfig } from './models/roles.model';
+import { RoleRow, RolesConfig, RolesFormOptions } from './models/roles.model';
 import { buildRolesPageConfig } from './roles-page-config';
 import { RolePermissionsService } from './services/role-permissions.service';
 import { RolesActionsService } from './services/roles-actions.service';
@@ -34,30 +33,30 @@ export class RolesComponent {
         const isSuperadmin = this.userOrganizationsService.isSuperadmin();
         const organizations = this.userOrganizationsService.organizations();
         const permissions = this.rolePermissionsService.permissions();
-        const { actionOrder, groupIcons, groupOrder, permissionPrefix, prefix, rolePrefix } = config;
+        const { actionOrder, baseUrl, groupIcons, groupOrder, permissionPrefix, prefix, rolePrefix } = config;
 
         if (!organizations || !permissions) {
             return null;
         }
 
-        const isOrganizationShown = isSuperadmin && hasOrganizationChoice(organizations);
+        const formOptions: RolesFormOptions = {
+            actionOrder,
+            groupIcons,
+            groupOrder,
+            isOrganizationAsked: isSuperadmin,
+            organizations,
+            permissionPrefix,
+            permissions,
+            prefix
+        };
 
         return buildRolesPageConfig({
             config,
-            formConfig: this.rolesFormService.buildFormConfig({
-                actionOrder,
-                groupIcons,
-                groupOrder,
-                isOrganizationAsked: isSuperadmin,
-                organizations,
-                permissionPrefix,
-                permissions,
-                prefix
-            }),
-            isOrganizationShown,
+            formConfig: this.rolesFormService.buildFormConfig(formOptions),
+            isOrganizationShown: isSuperadmin,
             loadRow: role =>
                 this.rolesTableService.loadRow(role, {
-                    isOrganizationShown,
+                    isOrganizationShown: isSuperadmin,
                     onEdit: edited => this.page?.openEdit(edited),
                     onView: viewed =>
                         this.rolesActionsService.viewPermissions(
@@ -67,6 +66,8 @@ export class RolesComponent {
                     prefix,
                     rolePrefix
                 }),
+            onDuplicate: role =>
+                this.rolesActionsService.duplicate({ ...formOptions, baseUrl, rolePrefix }, role, this.page),
             onReady: handle => (this.page = handle),
             organizations
         });

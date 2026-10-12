@@ -8,10 +8,11 @@ optional description and a set of permissions that only add to the base role of 
 base roles first, read-only, and then the extra roles of the organization, each with its type ("Base" or
 "Additional"), how many permissions it gives, how many users hold it directly, how many groups hold it ("Groups",
 `groupCount`, whose members all get its permissions) and its description, in the order the server answers them, and searches them by name in the search box; a superadmin also sees the organization of each role and
-filters by it, see [Organizations](#organizations). It creates an extra role, edits one, deletes extra roles after a
-confirmation, and shows the permissions of a base role. Which actions it offers is up to the backend, as on any page:
-`create` when `globalActions` lists it, and `edit` and `delete` for the rows whose `actions` list them, which are the
-extra roles; a base role lists none. The extra roles are given to users on [the users page](../../users/docs/users-readme.md#extra-roles),
+filters by it, see [Organizations](#organizations). It creates an extra role, edits one, duplicates any role into a
+new extra role, deletes extra roles after a confirmation, and shows the permissions of a base role. Which actions it
+offers is up to the backend, as on any page: `create` when `globalActions` lists it, `edit` and `delete` for the rows
+whose `actions` list them, which are the extra roles, and `duplicate` for those that list it, which the roles module of
+express-components gives every role a manager sees, the base roles included. The extra roles are given to users on [the users page](../../users/docs/users-readme.md#extra-roles),
 and to groups on [the groups page](../../groups/docs/groups-readme.md), whose members all get their permissions.
 
 ## Usage
@@ -65,7 +66,8 @@ module, as `baseUrl` of [`bey-users`](../../users/docs/users-readme.md) does.
 | Permissions   | `GET {baseUrl}/permissions`                                                          |                                                                   |
 | Organizations | `GET {usersUrl}/organizations`, for a superadmin only                                |                                                                   |
 | `create`      | `POST {baseUrl}` `{ name, description, permissions, organizationId? }`               | Name, description, the organization for a superadmin (required) and the permissions |
-| `edit`        | `PUT {baseUrl}/{id}` `{ name, description, permissions }`                            | The same, filled in with the role, without the organization       |
+| `edit`        | `PUT {baseUrl}/{id}` `{ name, description, permissions }`                            | The same, filled in with the role; a superadmin sees its organization disabled, never sent |
+| `duplicate`   | `POST {baseUrl}` `{ name, description, permissions, organizationId? }`, as `create`  | The create form, filled in with the role, see [Duplicate](#duplicate) |
 | `delete`      | `DELETE {baseUrl}` `{ ids }`, after a confirmation                                   | None                                                              |
 | Permissions of a base role | None                                                                    | The name, the description and the permissions, read-only           |
 
@@ -93,6 +95,26 @@ The errors of the module are translated under `angular-components.http.error.rol
 `existing-name`, `invalid-permissions` (a permission the caller cannot give, or one that manages users, organizations
 or roles), `not-found`, which a role deleted meanwhile, or of an organization out of reach, answers, and `base-role`,
 a change or a delete of a base role.
+
+## Duplicate
+
+`duplicate`, in the menu of the header while one row is selected, is a shortcut to creating a role: it does not ask
+the server for a copy (`POST {baseUrl}/{id}/duplicate`), it opens the create form, with the same fields, as "Duplicate
+role" (`duplicate.title`) with "Duplicate" on its submit button (`duplicate.buttons.submit`), filled in with the role:
+
+-   **the name** of the role and `duplicate.copy-suffix` ("(copy)"), joined by a space: "Reviewers (copy)". A base
+    role reads under its label of `rolePrefix`, "Administrator (copy)". The name is cut, never the suffix, so the copy
+    fits the 60 characters of a name.
+-   **the description** of the role;
+-   **the permissions** of the role that `GET {baseUrl}/permissions` offers. Those it leaves out, such as the ones of a
+    base role that manage users, the organization or roles, are dropped, since no extra role can hold them.
+-   **the organization**, for a superadmin, in the required select of the create form: the organization of the role
+    while it is among the active ones; otherwise, as for a base role, the only active organization, or none among
+    several, as a create chooses.
+
+The form can be sent as it comes. It sends `POST {baseUrl}` with the body of `create`, then closes, confirms with
+`toast.duplicate-success` ("Role duplicated") and reloads. A refused copy, such as a name already taken
+(`roles.existing-name`), shows the reason of the server and leaves the form open, as a create does.
 
 ## Permissions
 
@@ -172,17 +194,17 @@ The page knows a superadmin by the roles of the session user (`superadmin`), as
 [`bey-groups`](../../groups/docs/groups-readme.md#organizations) does, and reads `GET {usersUrl}/organizations` for it
 alone, before the list shows; a failed answer counts as none, with no error.
 
--   **The column.** With two active organizations or more, every row shows its organization in an "Organization"
-    column after the group count (`table.columns.organization`), and a base role shows "All" there
-    (`table.every-organization`). With one or none the column does not show.
+-   **The column.** A superadmin always sees an "Organization" column after the group count
+    (`table.columns.organization`), however many organizations are active, so the organization of every extra role
+    shows even when there is a single one; a base role shows "All" there (`table.every-organization`).
 -   **The filter.** With two active organizations or more, the filters offer an "Organization" field, `organizationId`
     `equals`, with those organizations by name.
 -   **The create form.** It always asks a superadmin for the organization, required, and sends it as
     `organizationId`. With a single active organization it comes chosen already, with several none is, and with none
     the form cannot be sent; the server offers `create` to a superadmin only while an organization is active. A manager
-    is never asked: the role goes to their organization.
-
-The edit form never offers the organization: roles do not move between organizations.
+    is never asked: the role goes to their organization. A duplicate asks the same, see [Duplicate](#duplicate).
+-   **The edit form** shows a superadmin the organization of the role after the description, in a disabled select,
+    and never sends it: roles do not move between organizations. A manager does not see it.
 
 ## Texts
 
@@ -190,7 +212,8 @@ Every text follows [the page](../../../page/docs/page-readme.md#texts) under `pr
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.every-organization`,
 `table.view-permissions`, `type.base` and `.extra`, `search.fields.<key>`, `form.create.title`, `form.edit.title`,
 `form.main.<field>.label` and `.placeholder`, `form.permissions.label` (the label above the checklist) and `.empty`
-(when there is nothing to give), `modal.delete.title` and `.message`, `toast.<key>-success`, and for the read-only view
+(when there is nothing to give), `duplicate.title`, `duplicate.buttons.submit` and `duplicate.copy-suffix`,
+`modal.delete.title` and `.message`, `toast.<key>-success`, and for the read-only view
 `view.title`, `view.buttons.close`, `view.main.name.label`, `view.main.description.label`,
 `view.permissions.label` and `.empty` (a role with no permission to show). The module ships all of them in English
 and Spanish.

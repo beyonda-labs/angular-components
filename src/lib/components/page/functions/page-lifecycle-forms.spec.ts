@@ -6,6 +6,7 @@ describe('buildDuplicateForm', () => {
         const form = buildDuplicateForm('shop.products', 'title', 'Oats (copy)');
         const [field] = form.sections[0]?.rows[0]?.fields ?? [];
 
+        expect(form.allowSubmitWithoutChanges).toBe(true);
         expect(form.prefix).toBe('shop.products.duplicate');
         expect(form.title).toBe('shop.products.duplicate.title');
         expect(form.initialValue).toEqual({ main: { title: 'Oats (copy)' } });
@@ -18,6 +19,7 @@ describe('buildChangeStatusForm', () => {
         const form = buildChangeStatusForm('shop.products', 'status', ['published', 'archived']);
         const [field] = form.sections[0]?.rows[0]?.fields ?? [];
 
+        expect(form.allowSubmitWithoutChanges).toBe(false);
         expect(form.prefix).toBe('shop.products.change-status');
         expect(form.initialValue).toEqual({ main: { status: '' } });
         expect((field as FormSelectField).options).toEqual([

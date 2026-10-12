@@ -27,6 +27,7 @@ export interface RolesPageConfigOptions {
     formConfig: PageFormConfig<RoleFormValue, RoleRow>;
     isOrganizationShown: boolean;
     loadRow: (role: RoleRow) => TableCell[];
+    onDuplicate: (role: RoleRow) => void;
     onReady: (handle: PageHandle<RoleRow>) => void;
     organizations: PageOrganization[];
 }
@@ -36,6 +37,7 @@ export function buildRolesPageConfig({
     formConfig,
     isOrganizationShown,
     loadRow,
+    onDuplicate,
     onReady,
     organizations
 }: RolesPageConfigOptions): PageConfig<RoleFormValue, RoleRow> {
@@ -49,6 +51,7 @@ export function buildRolesPageConfig({
             actions: [
                 pageStandardAction<RoleRow>(PageStandardAction.Create),
                 pageStandardAction<RoleRow>(PageStandardAction.Edit),
+                pageStandardAction<RoleRow>(PageStandardAction.Duplicate, { handler: ([role]) => onDuplicate(role) }),
                 pageStandardAction<RoleRow>(PageStandardAction.Delete)
             ],
             title: `${prefix}.title`

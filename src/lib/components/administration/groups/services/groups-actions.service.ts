@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 
 import { PageHandle } from '../../../page/models/page.model';
-import { GroupEditFields, GroupRow, GroupsConfig } from '../models/groups.model';
+import { GroupEditFields, GroupEditFormFields, GroupRow, GroupsConfig } from '../models/groups.model';
 import { GroupsFormService } from './groups-form.service';
 import { GroupsHttpService } from './groups-http.service';
 
@@ -12,7 +12,12 @@ export class GroupsActionsService {
     private readonly groupsFormService = inject(GroupsFormService);
     private readonly groupsHttpService = inject(GroupsHttpService);
 
-    edit({ baseUrl, prefix }: GroupsConfig, group: GroupRow, page?: PageHandle<GroupRow>): void {
+    edit(
+        { baseUrl, prefix }: GroupsConfig,
+        group: GroupRow,
+        isOrganizationShown: boolean,
+        page?: PageHandle<GroupRow>
+    ): void {
         if (!page) {
             return;
         }
@@ -21,6 +26,7 @@ export class GroupsActionsService {
             page.openForm(
                 this.groupsFormService.buildEditFormConfig({
                     detail,
+                    isOrganizationShown,
                     prefix,
                     searchExtraRoles: (search, limit) =>
                         this.groupsHttpService.searchExtraRoles(baseUrl, group.id, search, limit),
@@ -34,6 +40,6 @@ export class GroupsActionsService {
     }
 }
 
-function toEditRequest({ extraRoleIds, name, userIds }: GroupEditFields): GroupEditFields {
+function toEditRequest({ extraRoleIds, name, userIds }: GroupEditFormFields): GroupEditFields {
     return { extraRoleIds, name: name.trim(), userIds };
 }

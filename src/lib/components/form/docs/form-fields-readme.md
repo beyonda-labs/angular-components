@@ -55,7 +55,9 @@ the info field, it has no control, unless it holds ids (see [Lists that hold ids
 text is `emptyKey`, or else its placeholder.
 
 The date field keeps the value as text in `format` and shows a datepicker in the current language. The
-autocomplete and the variable picker float above their ancestors, so a scrolling modal cannot clip them.
+autocomplete and the variable picker float above their ancestors, so a scrolling modal cannot clip them. The panel
+of an autocomplete grows with its suggestions up to `13rem` and scrolls past that, every suggestion, the empty text
+and the line about more matches keeping their own height.
 The chips field adds a chip on Enter, comma or blur and removes the last one with Backspace on an empty input.
 
 ## Searching and picking

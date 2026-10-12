@@ -7,11 +7,12 @@ import { FormListField, FormListFieldParameters } from '../../../form/models/fie
 import { FormSelectField } from '../../../form/models/fields/form-select-field.model';
 import { FormTextField } from '../../../form/models/fields/form-text-field.model';
 import { FormRow, FormSection } from '../../../form/models/form.model';
-import { FormFieldOption, FormValue } from '../../../form/models/form-field.model';
+import { FormFieldColumn, FormFieldOption, FormValue } from '../../../form/models/form-field.model';
 import { FormFieldEmailValidator } from '../../../form/models/form-field-validator.model';
 import { hasOrganizationChoice } from '../../../page/functions/page-organization-filter';
 import { PageFormConfig } from '../../../page/models/page-form.model';
 import { PageOrganization } from '../../../page/models/page-organization.model';
+import { buildDisabledOrganizationField } from '../../functions/organization-fields';
 import { userRoleLabel } from '../../functions/user-role-labels';
 import {
     USER_STATUS_CHOICES,
@@ -29,6 +30,7 @@ import {
     UserStatus
 } from '../models/users.model';
 
+const STATUS_COLUMNS: FormFieldColumn = 6;
 const TEXT_FIELDS = ['email', 'language', 'name', 'organizationId', 'surname'] as const;
 
 @Injectable({
@@ -53,6 +55,8 @@ export class UsersFormService {
             buildSections: user => [
                 this.buildSection(user, {
                     extraRolesRows: buildExtraRolesRows(extraRoles, isOrganizationAsked, user, prefix),
+                    organizationField:
+                        isOrganizationAsked && user ? buildDisabledOrganizationField(user, STATUS_COLUMNS) : null,
                     organizationOptions,
                     prefix,
                     roleOptions: this.buildRoleOptions([...roles, ...(user?.roles ?? [])], rolePrefix)
@@ -61,7 +65,11 @@ export class UsersFormService {
             prefix: `${prefix}.form`,
             toFormValue: user =>
                 user
-                    ? toEditValue(user, editChoices(extraRoles, isOrganizationAsked, user).length > 0)
+                    ? toEditValue(
+                          user,
+                          editChoices(extraRoles, isOrganizationAsked, user).length > 0,
+                          isOrganizationAsked
+                      )
                     : toInviteValue(initialOrganizationId),
             toItem: (value, user) => toUserRequest(value[USERS_FORM_SECTION], extraRoles, user)
         });
@@ -102,8 +110,21 @@ export class UsersFormService {
 
     private buildSection(
         user: UserRow | undefined,
-        { extraRolesRows, organizationOptions, prefix, roleOptions }: UserSectionOptions
+        { extraRolesRows, organizationField, organizationOptions, prefix, roleOptions }: UserSectionOptions
     ): FormSection {
+        const statusFields = user?.editableFields
+            ? [
+                  new FormSelectField({
+                      columns: STATUS_COLUMNS,
+                      isDisabled: isLocked(user, UserEditableField.Status),
+                      isRequired: true,
+                      key: 'status',
+                      options: toStatusOptions(user.status, prefix)
+                  })
+              ]
+            : [];
+        const statusRowFields = [...statusFields, ...(organizationField ? [organizationField] : [])];
+
         return new FormSection({
             isTitleVisible: false,
             key: USERS_FORM_SECTION,
@@ -133,21 +154,7 @@ export class UsersFormService {
                         })
                     ]
                 }),
-                ...(user?.editableFields
-                    ? [
-                          new FormRow({
-                              fields: [
-                                  new FormSelectField({
-                                      columns: 6,
-                                      isDisabled: isLocked(user, UserEditableField.Status),
-                                      isRequired: true,
-                                      key: 'status',
-                                      options: toStatusOptions(user.status, prefix)
-                                  })
-                              ]
-                          })
-                      ]
-                    : []),
+                ...(statusRowFields.length > 0 ? [new FormRow({ fields: statusRowFields })] : []),
                 ...(!user && organizationOptions
                     ? [
                           new FormRow({
@@ -266,13 +273,14 @@ function onlyEditable(request: Partial<UserFormFields>, user: UserRow | undefine
         : request;
 }
 
-function toEditValue(user: UserRow, hasExtraRoles: boolean): UserFormValue {
+function toEditValue(user: UserRow, hasExtraRoles: boolean, isOrganizationShown: boolean): UserFormValue {
     return {
         [USERS_FORM_SECTION]: {
             name: user.name ?? '',
             roles: [...user.roles],
             surname: user.surname ?? '',
             ...(hasExtraRoles ? { extraRoleIds: (user.extraRoles ?? []).map(({ id }) => id) } : {}),
+            ...(isOrganizationShown && user.organizationId ? { organizationId: user.organizationId } : {}),
             ...(user.editableFields ? { status: user.status } : {})
         }
     };

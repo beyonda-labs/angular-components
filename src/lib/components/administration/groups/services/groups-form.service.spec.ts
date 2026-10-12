@@ -49,6 +49,7 @@ describe('GroupsFormService', () => {
     function buildEditOptions(overrides: Partial<GroupEditOptions> = {}): GroupEditOptions {
         return {
             detail,
+            isOrganizationShown: false,
             prefix: 'demo.teams',
             searchExtraRoles: jest.fn(() => of([reviewers, writers])),
             searchMembers: jest.fn(() => of([ada, grace])),
@@ -148,6 +149,43 @@ describe('GroupsFormService', () => {
             key: 'extraRoleIds',
             options: [{ label: 'Reviewers', value: 'r1' }]
         });
+        expect(form.initialValue).toEqual({ main: { extraRoleIds: ['r1'], name: 'Sales', userIds: ['u1'] } });
+    });
+
+    it('shows a superadmin the organization of the group it edits after the name, in a disabled select', async () => {
+        const translate = TestBed.inject(TranslateService);
+        translate.setTranslation('en', formEn);
+        translate.setTranslation('en', groupsEn, true);
+        translate.use('en');
+        const form = service.buildEditFormConfig(
+            buildEditOptions({
+                detail: { ...detail, organizationId: 'o2', organizationName: 'Globex' },
+                isOrganizationShown: true,
+                prefix: 'angular-components.groups'
+            })
+        );
+        const fixture = await renderComponent(FormComponent, { config: form });
+        const organization = controlByName<HTMLSelectElement>(fixture, 'Organization');
+
+        expect(fieldsOf(form.sections).map(({ key }) => key)).toEqual([
+            'name',
+            'organizationId',
+            'userIds',
+            'extraRoleIds'
+        ]);
+        expect(organization.disabled).toBe(true);
+        expect(organization.selectedOptions[0]?.textContent?.trim()).toBe('Globex');
+        expect(form.initialValue?.main.organizationId).toBe('o2');
+
+        fixture.destroy();
+    });
+
+    it('shows a manager no organization of the group it edits', () => {
+        const form = service.buildEditFormConfig(
+            buildEditOptions({ detail: { ...detail, organizationId: 'o2', organizationName: 'Globex' } })
+        );
+
+        expect(fieldsOf(form.sections).map(({ key }) => key)).toEqual(['name', 'userIds', 'extraRoleIds']);
         expect(form.initialValue).toEqual({ main: { extraRoleIds: ['r1'], name: 'Sales', userIds: ['u1'] } });
     });
 

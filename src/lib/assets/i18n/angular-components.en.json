@@ -889,10 +889,21 @@
                     "label": "Delete",
                     "tooltip": "Delete the selected roles"
                 },
+                "duplicate": {
+                    "label": "Duplicate",
+                    "tooltip": "Create a role from the selected one, with its description and permissions"
+                },
                 "edit": {
                     "label": "Edit",
                     "tooltip": "Edit the selected role"
                 }
+            },
+            "duplicate": {
+                "buttons": {
+                    "submit": "Duplicate"
+                },
+                "copy-suffix": "(copy)",
+                "title": "Duplicate role"
             },
             "form": {
                 "create": {
@@ -993,6 +1004,7 @@
             "toast": {
                 "create-success": "Role created",
                 "delete-success": "Roles deleted",
+                "duplicate-success": "Role duplicated",
                 "edit-success": "Role saved"
             },
             "type": {

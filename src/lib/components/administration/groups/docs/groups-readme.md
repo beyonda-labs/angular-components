@@ -67,6 +67,7 @@ the groups, and the server drops their memberships with them.
 [{ id, name }] }`, and opens one form on the page, "Edit group", with:
 
 -   **the name**, filled in with the current one;
+-   **the organization**, for a superadmin only, disabled, see [Organizations](#organizations);
 -   **"Members"** (`form.main.user-ids`), a search above the list of the members, each "name (email)", or the email
     alone when the user has no name, with a remove button; "This group has no members yet." (`form.main.user-ids.empty`)
     while it has none;
@@ -111,19 +112,18 @@ it reads `GET {usersUrl}/organizations`, the active organizations by name, befor
 counts as none, with no error. Groups have no source of organizations of their own, and that answer is the one the
 users page invites into, so a group is created in the same organizations a user is invited into.
 
--   **The column.** With two active organizations or more, every row shows its organization in an "Organization"
-    column after the extra role count (`table.columns.organization`), sortable by `organizationName`. The groups of a
-    deactivated organization stay, and show theirs. With one or none the column does not show, since every group
-    belongs to an organization and there would be nothing to tell apart. The page decides before the list shows, from
-    those organizations, so paging or filtering never makes the column come and go.
+-   **The column.** A superadmin always sees an "Organization" column after the extra role count
+    (`table.columns.organization`), sortable by `organizationName`, however many organizations are active, so the
+    organization of every group shows even when there is a single one. The groups of a deactivated organization stay,
+    and show theirs.
 -   **The filter.** With two active organizations or more, the filters offer an "Organization" field, `organizationId`
     `equals`, with those organizations by name.
 -   **The create form.** It always asks a superadmin for the organization, required, and sends it as
     `organizationId`. With a single active organization it comes chosen already, with several none is, and with none
     the form cannot be sent; the server offers `create` to a superadmin only while an organization is active. A manager
     is never asked: the group goes to their organization.
-
-The edit form never offers the organization: groups do not move between organizations.
+-   **The edit form** shows a superadmin the organization of the group after the name, in a disabled select, and never
+    sends it: groups do not move between organizations. A manager does not see it.
 
 ## Texts
 

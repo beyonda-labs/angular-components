@@ -32,25 +32,25 @@ permissions.
 
 ## BeyUsersConfig
 
-| Field        | Default                      | Meaning                                                                               |
-| ------------ | ---------------------------- | ------------------------------------------------------------------------------------- |
-| `baseUrl`    | `'/users'`                   | Path of the users, resolved against the environment's `baseUrl` and `webApiPath`      |
-| `prefix`     | `'angular-components.users'` | i18n prefix of the page, as `bey-page` reads it                                       |
-| `rolePrefix` | `<prefix>.roles`             | i18n prefix the labels of the roles are read from, see [Roles](#roles)                |
-| `storageKey` | `'users'`                    | Key under which the table remembers the columns the user hid                          |
-| `height`     | `'calc(100vh - 220px)'`      | Height of the table                                                                   |
+| Field        | Default                      | Meaning                                                                          |
+| ------------ | ---------------------------- | -------------------------------------------------------------------------------- |
+| `baseUrl`    | `'/users'`                   | Path of the users, resolved against the environment's `baseUrl` and `webApiPath` |
+| `prefix`     | `'angular-components.users'` | i18n prefix of the page, as `bey-page` reads it                                  |
+| `rolePrefix` | `<prefix>.roles`             | i18n prefix the labels of the roles are read from, see [Roles](#roles)           |
+| `storageKey` | `'users'`                    | Key under which the table remembers the columns the user hid                     |
+| `height`     | `'calc(100vh - 220px)'`      | Height of the table                                                              |
 
 `baseUrl` follows the `path` of the users module of express-components.
 
 ## Requests
 
-| Action              | Request                                                       | Form                                                         |
-| ------------------- | ------------------------------------------------------------- | ------------------------------------------------------------ |
-| List                | `GET {baseUrl}?search=<base64>`                               |                                                              |
-| Organizations       | `GET {baseUrl}/organizations`, for a superadmin only          |                                                              |
+| Action              | Request                                                                                         | Form                                                                                                                      |
+| ------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| List                | `GET {baseUrl}?search=<base64>`                                                                 |                                                                                                                           |
+| Organizations       | `GET {baseUrl}/organizations`, for a superadmin only                                            |                                                                                                                           |
 | Invite (`create`)   | `POST {baseUrl}` `{ email, roles, extraRoleIds?, name?, surname?, language?, organizationId? }` | Email, name, surname, the organization for a superadmin (required), roles, extra roles and the language of the invitation |
-| `edit`              | `PUT {baseUrl}/{id}` `{ name?, surname?, status?, roles?, extraRoleIds? }` | The email to read, name, surname, status, roles and extra roles, see [Editable fields](#editable-fields) |
-| `resend-invitation` | `POST {baseUrl}/{id}/invitation`                              | None                                                         |
+| `edit`              | `PUT {baseUrl}/{id}` `{ name?, surname?, status?, roles?, extraRoleIds? }`                      | The email to read, name, surname, status, roles and extra roles, see [Editable fields](#editable-fields)                  |
+| `resend-invitation` | `POST {baseUrl}/{id}/invitation`                                                                | None                                                                                                                      |
 
 A name, a surname or a language left empty is not sent, and "Roles" must hold one role at least. The search box sends its
 text as the `text` of the search, which the backend matches against the email, the name and the surname at once
@@ -119,11 +119,12 @@ none, with no error.
     organization it comes chosen already, with several none is, and with none the form cannot be sent. The server offers
     `create` to a superadmin only while an organization is active, so the invitation is not offered when it cannot
     succeed.
+-   **The edit form.** It shows a superadmin the organization of the user, disabled, next to the status, so it can be
+    checked without going back to the table. It is never sent: users do not move between organizations.
 
-The edit form never offers the organization: users do not move between organizations. Nor does the page ever offer
-the superadmin role, which is fixed and comes from the seeding only: `GET {baseUrl}/roles` never lists it, the row of
-a superadmin never lets its roles change, and the server refuses an invitation or an edit that grants or removes it
-with `users.superadmin-role-fixed`. The row of another superadmin lists `edit` to a superadmin, with only its status to
+Nor does the page ever offer the superadmin role, which is fixed and comes from the seeding only:
+`GET {baseUrl}/roles` never lists it, the row of a superadmin never lets its roles change, and the server refuses an
+invitation or an edit that grants or removes it with `users.superadmin-role-fixed`. The row of another superadmin lists `edit` to a superadmin, with only its status to
 change; the own row lists nothing.
 
 ## Roles

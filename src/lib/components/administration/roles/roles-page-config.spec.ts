@@ -1,3 +1,4 @@
+import { PageActionZone } from '../../page/models/page-action.model';
 import { PageFormConfig } from '../../page/models/page-form.model';
 import { RoleFormValue, RoleRow, RolesConfig } from './models/roles.model';
 import { buildRolesPageConfig, RolesPageConfigOptions } from './roles-page-config';
@@ -17,6 +18,7 @@ describe('buildRolesPageConfig', () => {
             }),
             isOrganizationShown: false,
             loadRow: () => [],
+            onDuplicate: jest.fn(),
             onReady: jest.fn(),
             organizations: [],
             ...overrides
@@ -70,7 +72,25 @@ describe('buildRolesPageConfig', () => {
         expect(organization).toMatchObject({ key: 'organizationId', operators: ['equals'] });
     });
 
-    it('offers to create, edit and delete a role', () => {
-        expect(build().headerConfig?.actions.map(({ key }) => key)).toEqual(['create', 'edit', 'delete']);
+    it('offers to create, edit, duplicate and delete a role', () => {
+        expect(build().headerConfig?.actions.map(({ key }) => key)).toEqual(['create', 'edit', 'duplicate', 'delete']);
+    });
+
+    it('duplicates the role selected through onDuplicate, in the menu of the header', () => {
+        const onDuplicate = jest.fn();
+        const role: RoleRow = {
+            actions: ['duplicate'],
+            id: 'r1',
+            isBase: false,
+            memberCount: 0,
+            name: 'Reviewers',
+            permissions: []
+        };
+        const duplicate = build({ onDuplicate }).headerConfig?.actions.find(({ key }) => key === 'duplicate');
+
+        duplicate?.handler?.([role]);
+
+        expect(duplicate?.zone).toBe(PageActionZone.Menu);
+        expect(onDuplicate).toHaveBeenCalledWith(role);
     });
 });

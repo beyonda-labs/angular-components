@@ -12,7 +12,7 @@ import { FormHandle } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
 import { PageOrganization } from '../../page/models/page-organization.model';
 import { PageSearch } from '../../page/models/page-search.model';
-import { RoleRow, RolesConfig } from './models/roles.model';
+import { RoleFormValue, RoleRow, RolesConfig } from './models/roles.model';
 import { RolesComponent } from './roles.component';
 
 const ORGANIZATIONS: PageOrganization[] = [
@@ -30,7 +30,7 @@ describe('RolesComponent — organizations and callers', () => {
 
     function buildBase(): RoleRow {
         return {
-            actions: [],
+            actions: ['duplicate'],
             id: 'normaluser',
             isBase: true,
             memberCount: 5,
@@ -43,7 +43,7 @@ describe('RolesComponent — organizations and callers', () => {
 
     function buildRole(overrides: Partial<RoleRow> = {}): RoleRow {
         return {
-            actions: ['edit', 'delete'],
+            actions: ['edit', 'duplicate', 'delete'],
             id: 'r1',
             isBase: false,
             memberCount: 2,
@@ -122,6 +122,10 @@ describe('RolesComponent — organizations and callers', () => {
         return queryAll<HTMLSelectElement>(queryAll(fixture, '[role="group"]')[0], 'select');
     }
 
+    function initialOrganizationId(): string | undefined {
+        return (lastForm()?.initialValue as RoleFormValue | undefined)?.main.organizationId;
+    }
+
     function lastForm(): ModalFormConfig | undefined {
         return TestBed.inject(FakeModalFormService).forms().at(-1);
     }
@@ -158,6 +162,17 @@ describe('RolesComponent — organizations and callers', () => {
         return httpTesting.expectOne(current => current.url === ROLES_URL && current.method === 'POST');
     }
 
+    async function duplicate(name: string): Promise<void> {
+        await click(rowWith(name));
+        await click(buttonByName(fixture, 'angular-components.header.menu'));
+        await click(buttonByName(fixture, `${PREFIX}.actions.duplicate.label`));
+    }
+
+    async function openFilter(): Promise<void> {
+        await click(queryAll<HTMLButtonElement>(fixture, 'bey-search [aria-expanded]')[0]);
+        await click(buttonByName(fixture, 'angular-components.search.add'));
+    }
+
     afterEach(() => {
         httpTesting.verify();
     });
@@ -180,8 +195,7 @@ describe('RolesComponent — organizations and callers', () => {
         });
 
         it('filters the roles by the organization chosen, with equals', async () => {
-            await click(queryAll<HTMLButtonElement>(fixture, 'bey-search [aria-expanded]')[0]);
-            await click(buttonByName(fixture, 'angular-components.search.add'));
+            await openFilter();
             await choose(filterSelects()[0], 'organizationId');
             await choose(filterSelects()[2], 'o1');
             await click(buttonByName(fixture, 'angular-components.search.apply'));
@@ -212,10 +226,50 @@ describe('RolesComponent — organizations and callers', () => {
             });
         });
 
-        it('edits a role without offering to move it to another organization', async () => {
+        it('edits a role showing its organization disabled, and never sends it', async () => {
             await click(buttonByName(fixture, 'Reviewers'));
+            lastForm()?.onSubmit?.(
+                { main: { name: 'Reviewers', organizationId: 'o2' }, permissions: { permissions: ['templates.edit'] } },
+                buildHandle()
+            );
+            const request = httpTesting.expectOne(`${ROLES_URL}/r1`);
+            request.flush(buildRole());
+            await settle(fixture);
+            answerList();
 
-            expect(organizationField()).toBeUndefined();
+            expect(organizationField()).toMatchObject({
+                isDisabled: true,
+                options: [{ label: 'Globex', value: 'o2' }]
+            });
+            expect(initialOrganizationId()).toBe('o2');
+            expect(request.request.body).toEqual({
+                name: 'Reviewers',
+                description: '',
+                permissions: ['templates.edit']
+            });
+        });
+
+        it('duplicates an extra role into its own organization, which the create form lets the superadmin change', async () => {
+            await duplicate('Auditors');
+            lastForm()?.onSubmit?.(
+                { main: { name: 'Auditors (copy)', organizationId: 'o2' }, permissions: { permissions: [] } },
+                buildHandle()
+            );
+            const request = httpTesting.expectOne(current => current.url === ROLES_URL && current.method === 'POST');
+            request.flush(buildRole({ id: 'r3' }));
+            await settle(fixture);
+            answerList();
+
+            expect(organizationField()).toMatchObject({ isDisabled: false, isRequired: true });
+            expect(initialOrganizationId()).toBe('o1');
+            expect(request.request.body).toEqual(expect.objectContaining({ organizationId: 'o2' }));
+        });
+
+        it('duplicates a base role choosing no organization among several, as a create does', async () => {
+            await duplicate('normaluser');
+
+            expect(organizationField()).toMatchObject({ isRequired: true });
+            expect(initialOrganizationId()).toBeUndefined();
         });
     });
 
@@ -225,9 +279,21 @@ describe('RolesComponent — organizations and callers', () => {
             await render([{ id: 'o2', name: 'Globex' }]);
         });
 
-        it('shows no organization column, since there is nothing to tell apart', () => {
-            expect(rowWith('Reviewers')).toBeTruthy();
-            expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.table.columns.organization`);
+        it('shows the organization column all the same, but no organization filter with nothing to choose', async () => {
+            await openFilter();
+
+            expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.organization`);
+            expect(rowWith('Reviewers').textContent).toContain('Globex');
+            expect(rowWith('normaluser').textContent).toContain(`${PREFIX}.table.every-organization`);
+            expect(queryAll<HTMLOptionElement>(filterSelects()[0], 'option').map(({ value }) => value)).not.toContain(
+                'organizationId'
+            );
+        });
+
+        it('duplicates a base role into the only organization, chosen already', async () => {
+            await duplicate('normaluser');
+
+            expect(initialOrganizationId()).toBe('o2');
         });
 
         it('still asks for the organization when creating, chosen already, and sends it', async () => {

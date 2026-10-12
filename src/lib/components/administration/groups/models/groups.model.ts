@@ -13,12 +13,17 @@ export interface GroupEditFields {
     userIds: string[];
 }
 
+export interface GroupEditFormFields extends GroupEditFields {
+    organizationId?: string;
+}
+
 export interface GroupEditFormValue {
-    main: GroupEditFields;
+    main: GroupEditFormFields;
 }
 
 export interface GroupEditOptions {
     detail: GroupDetail;
+    isOrganizationShown: boolean;
     prefix: string;
     searchExtraRoles: (search: string, limit: number) => Observable<GroupExtraRole[]>;
     searchMembers: (search: string, limit: number) => Observable<GroupMember[]>;

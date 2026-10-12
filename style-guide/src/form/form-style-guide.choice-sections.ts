@@ -11,6 +11,9 @@ import {
     BeyFormTextareaField
 } from '@beyonda-labs/angular-components';
 
+const AUTOCOMPLETE_OPTION_COUNT = 4;
+const LONG_AUTOCOMPLETE_OPTION_COUNT = 30;
+
 export function buildChoiceSections(): BeyFormSection[] {
     return [
         new BeyFormSection({
@@ -97,6 +100,11 @@ export function buildChoiceSections(): BeyFormSection[] {
                             columns: 6,
                             isDisabled: true,
                             options: buildAutocompleteOptions('autocomplete3')
+                        }),
+                        new BeyFormAutocompleteField({
+                            key: 'autocomplete4',
+                            columns: 6,
+                            options: buildAutocompleteOptions('autocomplete4', LONG_AUTOCOMPLETE_OPTION_COUNT)
                         })
                     ]
                 })
@@ -242,10 +250,10 @@ export function buildChoiceSections(): BeyFormSection[] {
     ];
 }
 
-function buildAutocompleteOptions(fieldKey: string): BeyFormFieldOption[] {
+function buildAutocompleteOptions(fieldKey: string, count = AUTOCOMPLETE_OPTION_COUNT): BeyFormFieldOption[] {
     const prefix = `angular-components-style-guide.form.section-autocomplete.${fieldKey}.options`;
 
-    return ['option1', 'option2', 'option3', 'option4'].map(option => ({
+    return Array.from({ length: count }, (_, index) => `option${index + 1}`).map(option => ({
         label: `${prefix}.${option}`,
         value: option
     }));

@@ -5,8 +5,9 @@ page is built on [`bey-page`](../../page/docs/page-readme.md) over the matching 
 meant as the content of an app page inside `bey-app-layout`, and offers only what the backend lets its caller do. The
 pages live in sub-folders of the module, each with its own README, texts and specs; what more than one of them uses
 sits at the root of the module: `UserOrganizationsService` (the organizations a superadmin reads from
-`GET {usersUrl}/organizations`, through `UserOrganizationsHttpService`) and `userRoleLabel` (the label of a role under
-a `rolePrefix`). Each page owns its texts under `angular-components.<page>.*`, the `prefix` its config defaults to.
+`GET {usersUrl}/organizations`, through `UserOrganizationsHttpService`), `userRoleLabel` (the label of a role under
+a `rolePrefix`) and `buildDisabledOrganizationField` (the organization of a row in a disabled select, which the edit
+forms of roles and groups show a superadmin). Each page owns its texts under `angular-components.<page>.*`, the `prefix` its config defaults to.
 
 ## Usage
 

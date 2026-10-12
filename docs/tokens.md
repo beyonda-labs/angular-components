@@ -56,18 +56,22 @@ colours as bare channels, for the rules that need `rgba()`.
 
 ### Text
 
-| Token                   | Light                           | Dark                            | Used for                               |
-| ----------------------- | ------------------------------- | ------------------------------- | -------------------------------------- |
-| `--bey-text-primary`    | `--bey-gray-900`                | `--bey-gray-50`                 | Body copy and headings                 |
-| `--bey-text-secondary`  | `--bey-gray-700`                | `--bey-gray-400`                | Supporting copy                        |
-| `--bey-text-muted`      | `--bey-gray-500`                | `--bey-gray-500`                | Labels, placeholders, hints            |
-| `--bey-text-disabled`   | `--bey-gray-400`                | `--bey-gray-600`                | Disabled controls                      |
-| `--bey-text-inverse`    | `--bey-white`                   | `--bey-gray-900`                | Text over an inverse surface           |
-| `--bey-text-link`       | `--bey-blue`                    | `--bey-blue`                    | A text button that reads as a link     |
-| `--bey-text-link-hover` | `--bey-blue`, 25% `--bey-black` | `--bey-blue`, 25% `--bey-white` | That link under the pointer or focused |
+| Token                   | Light                                | Dark                                 | Used for                               |
+| ----------------------- | ------------------------------------ | ------------------------------------ | -------------------------------------- |
+| `--bey-text-primary`    | `--bey-gray-900`                     | `--bey-gray-50`                      | Body copy and headings                 |
+| `--bey-text-secondary`  | `--bey-gray-700`                     | `--bey-gray-400`                     | Supporting copy                        |
+| `--bey-text-muted`      | `--bey-gray-500`                     | `--bey-gray-500`                     | Labels, placeholders, hints            |
+| `--bey-text-disabled`   | `--bey-gray-400`                     | `--bey-gray-600`                     | Disabled controls                      |
+| `--bey-text-inverse`    | `--bey-white`                        | `--bey-gray-900`                     | Text over an inverse surface           |
+| `--bey-text-link`       | `--bey-primary`                      | `--bey-primary`                      | A text button that reads as a link     |
+| `--bey-text-link-hover` | `--bey-primary`, 25% `--bey-bg-page` | `--bey-primary`, 25% `--bey-bg-page` | That link under the pointer or focused |
 
-`--bey-text-link-hover` mixes the blue with black in the light theme and with white in the dark one
-(`color-mix(in srgb, var(--bey-blue) 75%, …)`), so the hover moves away from the page in both.
+`--bey-text-link` is the primary colour, black in the light theme and white in the dark one, so a link reads in the
+colour of the actions around it. `--bey-text-link-hover` mixes it with a quarter of the page
+(`color-mix(in srgb, var(--bey-primary) 75%, var(--bey-bg-page))`), the same expression in both themes, so the hover
+softens toward the page in each; the underline a link takes under the pointer and on focus stays the main cue. Both
+are declared again under `body.dark`, so they read the dark primary and page. An app that wants its links in
+another colour sets `--bey-text-link` and `--bey-text-link-hover`, or the variables of a single module.
 
 ### Borders
 
