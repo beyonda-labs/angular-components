@@ -52,11 +52,21 @@ permissions.
 | `edit`              | `PUT {baseUrl}/{id}` `{ name?, surname?, status?, roles?, extraRoleIds? }` | The email to read, name, surname, status, roles and extra roles, see [Editable fields](#editable-fields) |
 | `resend-invitation` | `POST {baseUrl}/{id}/invitation`                              | None                                                         |
 
-A name, a surname or a language left empty is not sent, and at least one role must be checked. The search box sends its
+A name, a surname or a language left empty is not sent, and "Roles" must hold one role at least. The search box sends its
 text as the `text` of the search, which the backend matches against the email, the name and the surname at once
 (`textField` of [the page](../../../page/docs/page-readme.md#search)); the filters send `status` and `role`. The languages
 of the invitation are the `languages` of the [preferences](../../../../services/preferences/docs/preferences-readme.md),
 and none picked sends the invitation in the default language of the mail.
+
+The roles (`form.main.roles`) and the extra roles (`form.main.extra-role-ids`) of both forms are
+[lists that hold ids](../../../form/docs/form-fields-readme.md#lists-that-hold-ids), as the members of
+[a group](../../groups/docs/groups-readme.md) are: a search above the rows, "Search a role by its name"
+(`form.main.<field>.placeholder`), and a row per role with a remove button. The search suggests the roles the list
+does not hold yet, from what `GET {baseUrl}/roles` answered, matching the text typed anywhere in the label whatever
+its case and accents; nothing more is asked of the server. While a list holds nothing it says so,
+`form.main.roles.empty` ("Choose one role at least.") and `form.main.extra-role-ids.empty` ("No additional roles.").
+A field the row does not let change (see [Editable fields](#editable-fields)) shows its rows without the search and
+without the remove buttons. The requests send the lists as `roles` and `extraRoleIds`, as they hold them.
 
 Each status has its badge: `active` success, `invited` info, `unverified` warning and `inactive` neutral. Every guard
 (nobody deactivates themselves, only a superadmin touches a superadmin, the last superadmin stays, nobody grants or
@@ -141,13 +151,13 @@ every organization for a superadmin. A server that answers no `extraRoles` count
 row lists the extra roles of its user as `extraRoles: [{ id, name }]`.
 
 -   **The table.** The roles column shows the extra roles of the user by name after its roles, in a badge of their own.
--   **The forms.** The invite and edit forms offer the extra roles of the organization of the user as checkboxes,
-    "Additional roles" (`form.main.extra-role-ids`), after the roles, and send the ones checked as `extraRoleIds`; an
-    edit sends them all, so unchecking one takes it away. For a superadmin, the invitation offers those of the
-    organization chosen in the form and follows the choice, sending only those of the organization chosen at last, and
-    the edit offers those of the organization of the user. An extra role the user holds and the answer does not name is
-    offered too, so it can be unchecked. The group does not show, and nothing is sent, when the organization has no
-    extra roles.
+-   **The forms.** The invite and edit forms offer the extra roles of the organization of the user in "Additional
+    roles" (`form.main.extra-role-ids`), a list with a search after the roles, and send the ones it holds as
+    `extraRoleIds`; an edit sends them all, so removing one takes it away. For a superadmin, the invitation offers those
+    of the organization chosen in the form and follows the choice: choosing another organization drops from the list
+    the extra roles of the one before, and only those of the organization chosen at last are sent. The edit offers
+    those of the organization of the user. An extra role the user holds and the answer does not name shows too, so it
+    can be removed. The list does not show, and nothing is sent, when the organization has no extra roles.
 -   **The filter.** The role filter offers the extra roles after the roles, by name, and for a superadmin of two active
     organizations or more with the organization of each, "Reviewers (Acme)"; it sends the `id` of the extra role as the
     value of `role`.
@@ -160,4 +170,5 @@ roles of a user reaches them at the next refresh of their session, within the li
 Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.no-name` (the name of a user who has
 none), `table.system` (the organization of a superadmin), `search.fields.<key>`, `status.<status>`,
-`form.create.title`, `form.edit.title`, `form.main.<field>.label` and `.placeholder`, and `toast.<key>-success`. The module ships all of them in English and Spanish.
+`form.create.title`, `form.edit.title`, `form.main.<field>.label` and `.placeholder`, `form.main.roles.empty` and
+`form.main.extra-role-ids.empty`, and `toast.<key>-success`. The module ships all of them in English and Spanish.

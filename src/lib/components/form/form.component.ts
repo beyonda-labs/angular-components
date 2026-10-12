@@ -19,7 +19,9 @@ import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
 import { FormSectionComponent } from './components/section/section.component';
 import { resolveRule } from './functions/form-rule-resolution';
+import { holdsListValue } from './functions/list-value';
 import { FormAutocompleteField } from './models/fields/form-autocomplete-field.model';
+import { FormListField } from './models/fields/form-list-field.model';
 import { FormButton, FormButtonType, FormConfig, FormHandle, FormSection } from './models/form.model';
 import { FormField, FormFieldOption, FormFieldType, FormRule, FormValue } from './models/form-field.model';
 import { FORM_HOST } from './models/form-host.model';
@@ -361,6 +363,8 @@ export class FormComponent<TValue = unknown> {
 
                     if (OPTION_FIELD_TYPES.has(field.type) && !isFreeText(field)) {
                         this.dropUnlistedValue(control, field, state, previous?.fieldStates.get(key));
+                    } else if (offersOwnOptions(field)) {
+                        dropUnlistedIds(control, state, previous?.fieldStates.get(key));
                     }
                 }
             }
@@ -370,6 +374,20 @@ export class FormComponent<TValue = unknown> {
 
 export function fieldStateKey(sectionKey: string, fieldKey: string): string {
     return `${sectionKey}.${fieldKey}`;
+}
+
+function dropUnlistedIds(control: AbstractControl, state: FormFieldState, previous: FormFieldState | undefined): void {
+    const ids: unknown = control.value;
+
+    if (!previous || !Array.isArray(ids) || haveSameOptions(previous.options, state.options)) {
+        return;
+    }
+
+    const listed = ids.filter(id => state.options.some(option => option.value === id));
+
+    if (listed.length !== ids.length) {
+        control.setValue(listed);
+    }
 }
 
 function fieldsOf(section: FormSection): FormField[] {
@@ -393,6 +411,10 @@ function nextNoteId(): string {
 }
 
 function noop(): void {}
+
+function offersOwnOptions(field: FormField): boolean {
+    return holdsListValue(field) && !(field as FormListField).picker?.search;
+}
 
 function readState(formGroup: FormGroup): FormState {
     return { isDirty: formGroup.dirty, isValid: formGroup.valid, value: formGroup.getRawValue() as FormValue };

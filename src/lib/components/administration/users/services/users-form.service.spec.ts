@@ -1,12 +1,27 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
+import {
+    buttonByName,
+    controlByName,
+    queryAll,
+    queryButton,
+    queryControl,
+    renderComponent,
+    settle,
+    textsOf
+} from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
-import { FormCheckboxGroupField } from '../../../form/models/fields/form-checkbox-group-field.model';
+import formEn from '../../../form/assets/form.en.json';
+import { FormComponent } from '../../../form/form.component';
 import { FormInfoField } from '../../../form/models/fields/form-info-field.model';
+import { FormListField } from '../../../form/models/fields/form-list-field.model';
 import { FormSelectField } from '../../../form/models/fields/form-select-field.model';
+import { FormButton, FormButtonType, FormConfig } from '../../../form/models/form.model';
 import { FormField, FormFieldOption } from '../../../form/models/form-field.model';
 import { PageFormConfig } from '../../../page/models/page-form.model';
+import usersEn from '../assets/users.en.json';
 import { UserEditableField, UserFormValue, UserOrganizationRole, UserRow, UserStatus } from '../models/users.model';
 import { UsersFormService } from './users-form.service';
 
@@ -52,10 +67,16 @@ describe('UsersFormService', () => {
 
         expect(form.prefix).toBe('demo.users.form');
         expect(fields.map(field => field.key)).toEqual(['email', 'name', 'surname', 'roles', 'language']);
-        expect((fields[3] as FormCheckboxGroupField).options).toEqual([
-            { label: 'Administrator', value: 'admin' },
-            { label: 'editor', value: 'editor' }
-        ]);
+        expect(fields[3]).toMatchObject({
+            emptyKey: 'demo.users.form.main.roles.empty',
+            isRemovable: true,
+            isRequired: true,
+            options: [
+                { label: 'Administrator', value: 'admin' },
+                { label: 'editor', value: 'editor' }
+            ],
+            picker: {}
+        });
         expect(form.toFormValue()).toBeUndefined();
     });
 
@@ -64,9 +85,11 @@ describe('UsersFormService', () => {
 
         expect(fields.map(field => field.key)).toEqual(['email', 'name', 'surname', 'roles']);
         expect((fields[0] as FormInfoField).items).toEqual([{ label: 'ada@example.test' }]);
-        expect(
-            ((fields[3] as FormCheckboxGroupField).options as { value: string }[]).map(({ value }) => value)
-        ).toEqual(['admin', 'editor', 'owner']);
+        expect(((fields[3] as FormListField).options as FormFieldOption[]).map(({ value }) => value)).toEqual([
+            'admin',
+            'editor',
+            'owner'
+        ]);
         expect(form.toFormValue(user)).toEqual({ main: { name: 'Ada', roles: ['owner'], surname: '' } });
     });
 
@@ -226,8 +249,8 @@ describe('UsersFormService', () => {
             { id: 'r2', name: 'Auditors', organizationId: 'o2' }
         ];
 
-        function extraRolesField(row?: UserRow): FormCheckboxGroupField | undefined {
-            return fieldsFor(row).find(field => field.key === 'extraRoleIds') as FormCheckboxGroupField | undefined;
+        function extraRolesField(row?: UserRow): FormListField | undefined {
+            return fieldsFor(row).find(field => field.key === 'extraRoleIds') as FormListField | undefined;
         }
 
         function build(isOrganizationAsked: boolean, roles = extraRoles): void {
@@ -244,7 +267,7 @@ describe('UsersFormService', () => {
             });
         }
 
-        function optionsAt(field: FormCheckboxGroupField | undefined, organizationId?: string): FormFieldOption[] {
+        function optionsAt(field: FormListField | undefined, organizationId?: string): FormFieldOption[] {
             const { options } = field ?? {};
 
             return typeof options === 'function'
@@ -263,6 +286,11 @@ describe('UsersFormService', () => {
                 'extraRoleIds',
                 'language'
             ]);
+            expect(extraRolesField()).toMatchObject({
+                emptyKey: 'demo.users.form.main.extra-role-ids.empty',
+                isRemovable: true,
+                picker: {}
+            });
             expect(optionsAt(extraRolesField())).toEqual([{ label: 'Reviewers', value: 'r1' }]);
             expect(
                 form.toItem({ main: { email: 'grace@example.test', extraRoleIds: ['r1'], roles: ['admin'] } })
@@ -344,6 +372,182 @@ describe('UsersFormService', () => {
                 'Reviewers',
                 'Auditors'
             ]);
+        });
+    });
+
+    describe('rendered', () => {
+        const SUBMIT = 'demo.submit';
+        const extraRoles: UserOrganizationRole[] = [
+            { id: 'r1', name: 'Reviewers', organizationId: 'o1' },
+            { id: 'r2', name: 'Auditors', organizationId: 'o2' }
+        ];
+        let fixture: ComponentFixture<FormComponent<UserFormValue>>;
+        let sent: unknown[];
+
+        function build(isOrganizationAsked = false): void {
+            form = service.buildFormConfig({
+                extraRoles,
+                isOrganizationAsked,
+                organizations: [
+                    { id: 'o1', name: 'Acme' },
+                    { id: 'o2', name: 'Globex' },
+                    { id: 'o3', name: 'Initech' }
+                ],
+                prefix: 'angular-components.users',
+                rolePrefix: 'demo.roles',
+                roles: ['admin', 'editor']
+            });
+        }
+
+        async function renderForm(row?: UserRow): Promise<void> {
+            fixture = await renderComponent(FormComponent<UserFormValue>, {
+                config: new FormConfig<UserFormValue>({
+                    buttons: [new FormButton({ label: SUBMIT, type: FormButtonType.Submit })],
+                    initialValue: form.toFormValue(row),
+                    onSubmit: value => sent.push(form.toItem(value, row)),
+                    prefix: form.prefix,
+                    sections: form.buildSections(row)
+                })
+            });
+        }
+
+        function listNamed(name: string): HTMLElement {
+            const list = queryAll(fixture, 'ul').find(candidate => candidate.getAttribute('aria-label') === name);
+
+            if (!list) {
+                throw new Error(`No list named ${name}`);
+            }
+
+            return list;
+        }
+
+        function rowsOf(name: string): string[] {
+            return textsOf(queryAll(listNamed(name), 'li'));
+        }
+
+        function suggestions(): HTMLButtonElement[] {
+            return queryAll<HTMLButtonElement>(document.body, '[role="option"]');
+        }
+
+        async function openSearch(name: string): Promise<void> {
+            controlByName(fixture, name).dispatchEvent(new Event('focus'));
+            await settle(fixture);
+        }
+
+        async function pick(name: string, label: string): Promise<void> {
+            await openSearch(name);
+            const option = suggestions().find(candidate => candidate.textContent?.trim() === label);
+
+            if (!option) {
+                throw new Error(`No suggestion ${label}`);
+            }
+
+            option.dispatchEvent(new MouseEvent('mousedown'));
+            await settle(fixture);
+        }
+
+        async function chooseOrganization(id: string): Promise<void> {
+            const select = controlByName<HTMLSelectElement>(fixture, 'Organization');
+
+            select.value = id;
+            select.dispatchEvent(new Event('change'));
+            await settle(fixture);
+        }
+
+        beforeEach(() => {
+            const translate = TestBed.inject(TranslateService);
+
+            translate.setTranslation('en', formEn, true);
+            translate.setTranslation('en', usersEn, true);
+            translate.use('en');
+            sent = [];
+        });
+
+        afterEach(() => {
+            fixture.destroy();
+        });
+
+        it('adds a role picked from the search above "Roles" and takes one away with its remove button', async () => {
+            build();
+            await renderForm(user);
+
+            await pick('Roles', 'Administrator');
+            buttonByName(fixture, 'Remove owner').click();
+            await settle(fixture);
+            buttonByName(fixture, SUBMIT).click();
+
+            expect(controlByName(fixture, 'Roles').getAttribute('placeholder')).toBe('Search a role by its name');
+            expect(rowsOf('Roles')).toEqual(['Administrator']);
+            expect(sent).toEqual([{ extraRoleIds: [], name: 'Ada', roles: ['admin'] }]);
+        });
+
+        it('suggests only the roles the list lacks, matching what is typed whatever its case and accents', async () => {
+            build();
+            await renderForm({ ...user, roles: ['admin'] });
+
+            await openSearch('Roles');
+            const search = controlByName(fixture, 'Roles');
+            search.value = 'ÉDIT';
+            search.dispatchEvent(new Event('input'));
+            await settle(fixture);
+
+            expect(textsOf(suggestions())).toEqual(['editor']);
+        });
+
+        it('holds the invitation back until one role at least is in "Roles"', async () => {
+            build();
+            await renderForm();
+            const email = controlByName(fixture, 'Email');
+
+            email.value = 'grace@example.test';
+            email.dispatchEvent(new Event('input'));
+            await settle(fixture);
+
+            expect(fixture.nativeElement.textContent).toContain('Choose one role at least.');
+            expect(buttonByName(fixture, SUBMIT).disabled).toBe(true);
+
+            await pick('Roles', 'editor');
+
+            expect(buttonByName(fixture, SUBMIT).disabled).toBe(false);
+        });
+
+        it('shows the roles and the extra roles a row does not let change without search nor remove buttons', async () => {
+            build();
+            await renderForm({
+                ...user,
+                editableFields: [UserEditableField.Name],
+                extraRoles: [{ id: 'r1', name: 'Reviewers' }]
+            });
+
+            expect(rowsOf('Roles')).toEqual(['owner']);
+            expect(rowsOf('Additional roles')).toEqual(['Reviewers']);
+            expect(queryControl(fixture, 'Roles')).toBeNull();
+            expect(queryControl(fixture, 'Additional roles')).toBeNull();
+            expect(queryButton(fixture, 'Remove owner')).toBeNull();
+            expect(queryButton(fixture, 'Remove Reviewers')).toBeNull();
+        });
+
+        it('offers in an invitation the extra roles of the organization chosen, dropping those of the one before', async () => {
+            build(true);
+            await renderForm();
+
+            expect(queryControl(fixture, 'Additional roles')).toBeNull();
+
+            await chooseOrganization('o1');
+            await pick('Additional roles', 'Reviewers');
+
+            expect(rowsOf('Additional roles')).toEqual(['Reviewers']);
+
+            await chooseOrganization('o2');
+            await openSearch('Additional roles');
+
+            expect(fixture.nativeElement.textContent).toContain('No additional roles.');
+            expect(textsOf(suggestions())).toEqual(['Auditors']);
+
+            await chooseOrganization('o3');
+
+            expect(queryControl(fixture, 'Additional roles')).toBeNull();
+            expect(fixture.nativeElement.textContent).not.toContain('No additional roles.');
         });
     });
 });

@@ -2,8 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { PreferencesService } from '../../../../services/preferences/preferences.service';
-import { FormCheckboxGroupField } from '../../../form/models/fields/form-checkbox-group-field.model';
 import { FormInfoField } from '../../../form/models/fields/form-info-field.model';
+import { FormListField, FormListFieldParameters } from '../../../form/models/fields/form-list-field.model';
 import { FormSelectField } from '../../../form/models/fields/form-select-field.model';
 import { FormTextField } from '../../../form/models/fields/form-text-field.model';
 import { FormRow, FormSection } from '../../../form/models/form.model';
@@ -52,7 +52,7 @@ export class UsersFormService {
         return new PageFormConfig<UserFormValue, UserRow>({
             buildSections: user => [
                 this.buildSection(user, {
-                    extraRolesRows: buildExtraRolesRows(extraRoles, isOrganizationAsked, user),
+                    extraRolesRows: buildExtraRolesRows(extraRoles, isOrganizationAsked, user, prefix),
                     organizationOptions,
                     prefix,
                     roleOptions: this.buildRoleOptions([...roles, ...(user?.roles ?? [])], rolePrefix)
@@ -163,7 +163,8 @@ export class UsersFormService {
                     : []),
                 new FormRow({
                     fields: [
-                        new FormCheckboxGroupField({
+                        buildRoleList({
+                            emptyKey: `${prefix}.form.main.roles.empty`,
                             isDisabled: isLocked(user, UserEditableField.Roles),
                             isRequired: true,
                             key: 'roles',
@@ -181,8 +182,11 @@ export class UsersFormService {
 function buildExtraRolesRows(
     extraRoles: UserOrganizationRole[],
     isOrganizationAsked: boolean,
-    user: UserRow | undefined
+    user: UserRow | undefined,
+    prefix: string
 ): FormRow[] {
+    const emptyKey = `${prefix}.form.main.extra-role-ids.empty`;
+
     if (!user && isOrganizationAsked) {
         const optionsOf = (value: FormValue): FormFieldOption[] =>
             toExtraRoleOptions(
@@ -195,7 +199,8 @@ function buildExtraRolesRows(
             ? [
                   new FormRow({
                       fields: [
-                          new FormCheckboxGroupField({
+                          buildRoleList({
+                              emptyKey,
                               isHidden: value => optionsOf(value).length === 0,
                               key: USERS_EXTRA_ROLES_FIELD,
                               options: optionsOf
@@ -212,7 +217,8 @@ function buildExtraRolesRows(
         ? [
               new FormRow({
                   fields: [
-                      new FormCheckboxGroupField({
+                      buildRoleList({
+                          emptyKey,
                           isDisabled: isLocked(user, UserEditableField.ExtraRoleIds),
                           key: USERS_EXTRA_ROLES_FIELD,
                           options: toExtraRoleOptions(choices)
@@ -221,6 +227,10 @@ function buildExtraRolesRows(
               })
           ]
         : [];
+}
+
+function buildRoleList(parameters: FormListFieldParameters): FormListField {
+    return new FormListField({ isRemovable: true, picker: {}, ...parameters });
 }
 
 function editChoices(extraRoles: UserOrganizationRole[], isOrganizationAsked: boolean, user: UserRow): UserExtraRole[] {

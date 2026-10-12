@@ -75,6 +75,7 @@
             "autocomplete-field": {
                 "clear": "Vaciar",
                 "empty": "No se han encontrado opciones",
+                "more": "Hay más coincidencias: escribe más para afinar.",
                 "toggle": "Mostrar opciones"
             },
             "cancel": {
@@ -1103,7 +1104,9 @@
                         "placeholder": "Escribe el correo de la persona"
                     },
                     "extra-role-ids": {
-                        "label": "Roles adicionales"
+                        "empty": "Sin roles adicionales.",
+                        "label": "Roles adicionales",
+                        "placeholder": "Busca un rol por su nombre"
                     },
                     "language": {
                         "label": "Idioma de la invitación",
@@ -1118,7 +1121,9 @@
                         "placeholder": "Elige una organización"
                     },
                     "roles": {
-                        "label": "Roles"
+                        "empty": "Elige al menos un rol.",
+                        "label": "Roles",
+                        "placeholder": "Busca un rol por su nombre"
                     },
                     "status": {
                         "label": "Estado",

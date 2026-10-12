@@ -264,7 +264,7 @@
                     "label": "Roles",
                     "placeholder": "Pick a role"
                 },
-                "tooltip": "A removable list holding ids, fed by a search on top: from the server, debounced, or from its own options"
+                "tooltip": "A removable list holding ids, fed by a search on top: from the server, debounced and saying when there are more matches than it shows, or from its own options. Past seven rows the list scrolls under its search"
             },
             "section-radio": {
                 "label": "Radio Fields",

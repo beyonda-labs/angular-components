@@ -2,6 +2,9 @@
     --bey-form-list-border: var(--bey-border-default);
     --bey-form-list-empty: var(--bey-text-disabled);
     --bey-form-list-fg: var(--bey-text-primary);
+    --bey-form-list-max-height: calc(
+        7.5 * var(--bey-font-size-md) * var(--bey-line-height-base) + 2 * var(--bey-space-xs)
+    );
 
     display: block;
     min-width: 0;
@@ -19,6 +22,8 @@
     line-height: var(--bey-line-height-base);
     list-style: none;
     margin: 0;
+    max-height: var(--bey-form-list-max-height);
+    overflow-y: auto;
     padding: var(--bey-space-xs) var(--bey-space-md);
 }
 

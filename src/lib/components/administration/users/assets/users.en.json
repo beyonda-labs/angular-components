@@ -58,7 +58,9 @@
                         "placeholder": "Type the email of the person"
                     },
                     "extra-role-ids": {
-                        "label": "Additional roles"
+                        "empty": "No additional roles.",
+                        "label": "Additional roles",
+                        "placeholder": "Search a role by its name"
                     },
                     "language": {
                         "label": "Language of the invitation",
@@ -73,7 +75,9 @@
                         "placeholder": "Choose an organization"
                     },
                     "roles": {
-                        "label": "Roles"
+                        "empty": "Choose one role at least.",
+                        "label": "Roles",
+                        "placeholder": "Search a role by its name"
                     },
                     "status": {
                         "label": "Status",

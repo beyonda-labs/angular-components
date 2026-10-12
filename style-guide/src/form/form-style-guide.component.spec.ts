@@ -7,6 +7,7 @@ import {
     queryButton,
     queryControl,
     renderComponent,
+    settle,
     textsOf
 } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
@@ -79,11 +80,29 @@ describe('FormStyleGuideComponent', () => {
         expect(queryAll(people, 'button')).toHaveLength(2);
         expect(textsOf(queryAll(readOnly, 'li'))).toEqual([
             'Nora Lectora (nora@empresa.com)',
-            'Ada Lovelace (ada@empresa.com)'
+            'Ada Lovelace (ada@empresa.com)',
+            'Grace Hopper (grace@empresa.com)',
+            'Alan Turing (alan@empresa.com)',
+            'Margaret Hamilton (margaret@empresa.com)',
+            'Katherine Johnson (katherine@empresa.com)',
+            'Edsger Dijkstra (edsger@empresa.com)',
+            'Barbara Liskov (barbara@empresa.com)',
+            'Donald Knuth (donald@empresa.com)',
+            'Frances Allen (frances@empresa.com)',
+            'Linus Torvalds (linus@empresa.com)'
         ]);
         expect(queryAll(readOnly, 'button')).toEqual([]);
         expect(queryControl(fixture, `${PREFIX}.section-picked-list.read-only-people.label`)).toBeNull();
         expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.section-picked-list.roles.empty`);
+    });
+
+    it('says there are more people than the search of the picked list shows', async () => {
+        controlByName(fixture, `${PREFIX}.section-picked-list.people.label`).dispatchEvent(new Event('focus'));
+        await settle(fixture);
+
+        expect(document.body.querySelector('[role="listbox"]')?.textContent).toContain(
+            'angular-components.form.autocomplete-field.more'
+        );
     });
 
     it('lists every rule of a password policy under the field that has one', () => {

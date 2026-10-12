@@ -149,7 +149,9 @@ A custom validator is also run again whenever the form value changes, so one tha
 When the options of a select, a radio or an autocomplete change and no longer list the value of the field, the
 form clears it, and `value()`, `onValueChange` and `onSubmit` see it cleared. Only a change of the options
 drops a value: an initial value is kept while its options are still loading, and cleared only if they arrive
-without it. The options of a list field only name its ids, so a list keeps every id it holds.
+without it. A list that holds ids and suggests its own options, with no `search` in its picker, drops the ids its
+options no longer list in the same way; the options of a list fed by a `search` only name its rows, so it keeps every
+id it holds.
 
 ## Steps
 
@@ -226,4 +228,5 @@ See [form-fields-readme.md](./form-fields-readme.md).
 | `--bey-form-field-control-height`  | `2.125rem`            |
 | `--bey-form-field-label`           | `--bey-text-muted`    |
 | `--bey-form-field-hint`            | `--bey-text-muted`    |
+| `--bey-form-list-max-height`       | seven and a half rows of `--bey-font-size-md` at `--bey-line-height-base`, and the padding of the box |
 | `--bey-modal-form-max-height`      | `--bey-dialog-max-height` |

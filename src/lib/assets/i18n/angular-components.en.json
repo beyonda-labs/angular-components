@@ -75,6 +75,7 @@
             "autocomplete-field": {
                 "clear": "Clear",
                 "empty": "No options found",
+                "more": "There are more matches: type more to narrow them down.",
                 "toggle": "Show options"
             },
             "cancel": {
@@ -1103,7 +1104,9 @@
                         "placeholder": "Type the email of the person"
                     },
                     "extra-role-ids": {
-                        "label": "Additional roles"
+                        "empty": "No additional roles.",
+                        "label": "Additional roles",
+                        "placeholder": "Search a role by its name"
                     },
                     "language": {
                         "label": "Language of the invitation",
@@ -1118,7 +1121,9 @@
                         "placeholder": "Choose an organization"
                     },
                     "roles": {
-                        "label": "Roles"
+                        "empty": "Choose one role at least.",
+                        "label": "Roles",
+                        "placeholder": "Search a role by its name"
                     },
                     "status": {
                         "label": "Status",
