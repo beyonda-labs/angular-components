@@ -33,28 +33,29 @@ permissions.
 
 ## BeyUsersConfig
 
-| Field        | Default                      | Meaning                                                                          |
-| ------------ | ---------------------------- | -------------------------------------------------------------------------------- |
-| `baseUrl`    | `'/users'`                   | Path of the users, resolved against the environment's `baseUrl` and `webApiPath` |
-| `prefix`     | `'angular-components.users'` | i18n prefix of the page, as `bey-page` reads it                                  |
-| `rolePrefix` | `<prefix>.roles`             | i18n prefix the labels of the roles are read from, see [Roles](#roles)           |
-| `contentLabels` | `{}`                      | The translation key that labels each kind of content a user owns, by the key the server counts it under, see [Transfer and deletion](#transfer-and-deletion) |
-| `storageKey` | `'users'`                    | Key under which the table remembers the columns the user hid                     |
-| `height`     | `'calc(100vh - 220px)'`      | Height of the table                                                              |
+| Field           | Default                      | Meaning                                                                                                                                                      |
+| --------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `baseUrl`       | `'/users'`                   | Path of the users, resolved against the environment's `baseUrl` and `webApiPath`                                                                             |
+| `prefix`        | `'angular-components.users'` | i18n prefix of the page, as `bey-page` reads it                                                                                                              |
+| `rolePrefix`    | `<prefix>.roles`             | i18n prefix the labels of the roles are read from, see [Roles](#roles)                                                                                       |
+| `contentLabels` | `{}`                         | The translation key that labels each kind of content a user owns, by the key the server counts it under, see [Transfer and deletion](#transfer-and-deletion) |
+| `storageKey`    | `'users'`                    | Key under which the table remembers the columns the user hid                                                                                                 |
+| `foldersHeight` | `'calc(100vh - 255px)'`      | Height of the table while it shows the folders of the superadmin, under their breadcrumb                                                                     |
+| `height`        | `'calc(100vh - 220px)'`      | Height of the table                                                                                                                                          |
 
 `baseUrl` follows the `path` of the users module of express-components.
 
 ## Requests
 
-| Action              | Request                                                                                         | Form                                                                                                                      |
-| ------------------- | ----------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| List                | `GET {baseUrl}?search=<base64>`                                                                 |                                                                                                                           |
-| Organizations       | `GET {baseUrl}/organizations`, for a superadmin only                                            |                                                                                                                           |
-| Invite (`create`)   | `POST {baseUrl}` `{ email, roles, extraRoleIds?, name?, surname?, language?, organizationId? }` | Email, name, surname, the organization for a superadmin (required), roles, extra roles and the language of the invitation |
-| `edit`              | `PUT {baseUrl}/{id}` `{ name?, surname?, status?, roles?, extraRoleIds? }`                      | The email to read, name, surname, status, roles and extra roles, see [Editable fields](#editable-fields)                  |
-| `resend-invitation` | `POST {baseUrl}/{id}/invitation`                                                                | None                                                                                                                      |
-| `transfer`          | `GET {baseUrl}/{id}/content`, then `POST {baseUrl}/{id}/transfer` `{ targetUserId }`            | What the user owns, to read, and the user who receives it, searched with `GET {baseUrl}/{id}/transfer-targets?search=&limit=` |
-| `delete`            | `GET {baseUrl}/{id}/content` for each row, then `DELETE {baseUrl}/{id}` for each, one after the other | A confirmation, see [Transfer and deletion](#transfer-and-deletion)                                                      |
+| Action              | Request                                                                                                | Form                                                                                                                          |
+| ------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| List                | `GET {baseUrl}?search=<base64>`, with `parentId` for a superadmin, see [Organizations](#organizations) |                                                                                                                               |
+| Organizations       | `GET {baseUrl}/organizations`, for a superadmin only                                                   |                                                                                                                               |
+| Invite (`create`)   | `POST {baseUrl}` `{ email, roles, extraRoleIds?, name?, surname?, language?, organizationId? }`        | Email, name, surname, the organization for a superadmin (required), roles, extra roles and the language of the invitation     |
+| `edit`              | `PUT {baseUrl}/{id}` `{ name?, surname?, status?, roles?, extraRoleIds? }`                             | The email to read, name, surname, status, roles and extra roles, see [Editable fields](#editable-fields)                      |
+| `resend-invitation` | `POST {baseUrl}/{id}/invitation`                                                                       | None                                                                                                                          |
+| `transfer`          | `GET {baseUrl}/{id}/content`, then `POST {baseUrl}/{id}/transfer` `{ targetUserId }`                   | What the user owns, to read, and the user who receives it, searched with `GET {baseUrl}/{id}/transfer-targets?search=&limit=` |
+| `delete`            | `GET {baseUrl}/{id}/content` for each row, then `DELETE {baseUrl}/{id}` for each, one after the other  | A confirmation, see [Transfer and deletion](#transfer-and-deletion)                                                           |
 
 A name, a surname or a language left empty is not sent, and "Roles" must hold one role at least. The search box sends its
 text as the `text` of the search, which the backend matches against the email, the name and the surname at once
@@ -152,11 +153,12 @@ none, with no error.
 
 -   **The column.** A superadmin sees every user, the superadmins included and itself among them, so what it sees spans
     the active organizations plus the superadmins, who count as one value more. With one active organization or more,
-    every row shows its organization in an "Organization" column after the email (`table.columns.organization`),
-    sortable by `organizationName`, and the row of a superadmin shows "System" there (`table.system`). The users of a
-    deactivated organization still show theirs. With no active organization only the superadmins are left to tell
-    apart, and the column does not show. The page decides before the list shows, from those organizations, not from the
-    rows of the page in view, so paging or filtering never makes the column come and go.
+    every row of a search at the root shows its organization in an "Organization" column after the email
+    (`table.columns.organization`), sortable by `organizationName`, and the row of a superadmin shows "System" there
+    (`table.system`). The users of a deactivated organization still show theirs. With no active organization only the
+    superadmins are left to tell apart, and the column does not show. The page decides before the list shows, from
+    those organizations, not from the rows of the page in view, so paging never makes the column come and go; browsing
+    the folders does, since the column shows only where users of several organizations meet, see the folders below.
 -   **The filter.** With two active organizations or more, the filters offer an "Organization" field, `organizationId`
     `equals`, with those organizations by name. It offers only the active organizations, the ones a user can be invited
     into, so the users of a deactivated organization are found through the search box. A superadmin matches no
@@ -166,6 +168,12 @@ none, with no error.
     organization it comes chosen already, with several none is, and with none the form cannot be sent. The server offers
     `create` to a superadmin only while an organization is active, so the invitation is not offered when it cannot
     succeed.
+-   **The folders.** A superadmin sees one folder per organization at the root, next to the superadmins, and the users of
+    an organization inside its folder; a search text or a filter at the root finds the users of every organization, the
+    one list with the organization column. Browsing the root and inside a folder, searching or not, every row is a
+    folder or of the same organization, and the column leaves the table. An invitation sent from inside a folder comes
+    with its organization chosen, which the superadmin may still change. See
+    [folders per organization](../../docs/administration-readme.md#folders-per-organization).
 -   **The edit form.** It shows a superadmin the organization of the user, disabled, next to the status, so it can be
     checked without going back to the table. It is never sent: users do not move between organizations.
 
@@ -217,7 +225,7 @@ roles of a user reaches them at the next refresh of their session, within the li
 
 Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.no-name` (the name of a user who has
-none), `table.system` (the organization of a superadmin), `search.fields.<key>`, `status.<status>`,
+none), `table.system` (the organization of a superadmin), `categories.root` (the root of its breadcrumb), `search.fields.<key>`, `status.<status>`,
 `form.create.title`, `form.edit.title`, `form.main.<field>.label` and `.placeholder`, `form.main.roles.empty` and
 `form.main.extra-role-ids.empty`, `content.label`, `.count`, `.empty` and `.used-by`, `transfer.title`, `.note`,
 `.submit`, `.no-targets` and `.main.target-user-id.label` and `.placeholder`, `delete.title.one` and `.other`,

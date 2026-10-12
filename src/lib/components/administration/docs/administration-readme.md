@@ -11,8 +11,11 @@ forms of roles and groups show a superadmin), `RoleViewFormService` with the rol
 model (the read-only view of the permissions of a role, which the roles page, the groups of a member and the
 organization summary open, and the checklist the role forms share), `userFullName`, `userDisplayName` and `userContactLabel` ("Name Surname (email)"),
 `buildGroupMemberListRows` (each group under its name with its members in a read-only list, which the superadmin's
-organization form shows) and the content counts the deletions of users and organizations
-list. Each page owns its texts under `angular-components.<page>.*`, the `prefix` its config defaults to.
+organization form shows for its administrators, its groups and its members in none), the content counts the deletions
+of users and organizations list, and the [folders per organization](#folders-per-organization) of the superadmin:
+`buildOrganizationFoldersConfig`, `OrganizationFolderTableService`, `withoutOrganizationFolders`,
+`isColumnShownInFolders` (the organization column only in a search at the root) and `initialOrganizationId` (the
+organization a create form comes with). Each page owns its texts under `angular-components.<page>.*`, the `prefix` its config defaults to.
 
 ## Usage
 
@@ -44,6 +47,44 @@ The errors of the server keep their own keys, `angular-components.http.error.<pa
 Wherever the name of a row opens something, a header action does the same for the selected row: Edit where the row
 lists `edit`, and View, the standard `view` action of [the page](../../page/docs/page-readme.md#header-actions), where it
 lists `view`, as the groups and the roles a caller may only read do.
+
+## Folders per organization
+
+A superadmin belongs to no organization and sees the users, the groups and the roles of all of them, so those three
+pages show it one folder per organization, browsed with the [categories](../../page/docs/page-readme.md#categories-and-trash)
+of `bey-page`. Nobody else gets folders: a manager or a member keeps the flat list of their own organization, and the
+page sends them no `parentId`. The page knows a superadmin by the roles of the session, as for the
+[organization column](../users/docs/users-readme.md#organizations).
+
+-   **The root** lists one folder per organization, deactivated ones included, and the rows that belong to none: the
+    superadmins on the users page and the base roles on the roles page; nothing else on the groups page.
+-   **A folder** is a row of the list with `entryType: 'category'`, its `id` the id of the organization, its `name`,
+    `actions: []` and optionally `itemCount`. Its name, with a folder icon, opens it, with no tooltip, as the folders of
+    every page; once open, the breadcrumb counts its rows. The page reads the folders by `entryType` (`typeField`), as base-entity does where rows have a type of their
+    own, so a folder never clashes with a field of the rows, such as the type the roles show; the rows answered to the
+    superadmin may carry `entryType: 'item'`.
+-   **Inside a folder** the list shows the rows of that organization, under a breadcrumb "Users › Acme Legal" that
+    starts at `categories.root` and counts what the folder holds.
+-   **The folders are fixed**: they list no action, and the header offers none of the category actions, so none is
+    created, renamed, moved, shared or deleted.
+-   **A create inside a folder**, an invitation, a group or a role, comes with the organization of the folder chosen in
+    its form, which the superadmin may still change; at the root it comes with none, or with the only active one. The
+    form learns the folder from the open category `bey-page` hands to `toFormValue`, and the organization comes chosen
+    only while the form offers it, never for a deactivated one.
+-   **The search.** A search text or a filter at the root answers the matching rows of every organization, each with
+    its organization in its column; inside a folder it stays within that folder. The page sends the search as usual and
+    the backend decides what it spans.
+-   **The organization column** shows only in that search at the root, the one list where rows of several
+    organizations meet. Browsing the root, where every row is a folder or belongs to none, and inside a folder, with a
+    search or without, it leaves the table with its cells. The pages give `bey-page` `isColumnShownInFolders` as
+    [`isColumnShown`](../../page/docs/page-readme.md#sort-and-columns), which reads the column by its key,
+    `organization`, so the column changes with the list that answers. The organization filter does not depend on it.
+
+The list is asked as on any page with categories: `GET {baseUrl}?parentId=null&search=…` at the root and
+`?parentId=<organizationId>` inside a folder, the breadcrumb from `GET {baseUrl}/categories/<organizationId>/path`,
+which answers `[{ id, name }]`, and a create sends the `parentId` of the folder, or `null`, next to its
+`organizationId`, the organization the row is created in. The users, groups and roles modules of express-components serve it
+for the superadmin and ignore `parentId` for everyone else.
 
 ## Members
 

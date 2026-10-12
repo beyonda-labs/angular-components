@@ -4,7 +4,8 @@ The organizations page of an app, built on [`bey-page`](../../../page/docs/page-
 of express-components, for the superadmin only, and meant as the content of an app page inside `bey-app-layout`. It
 lists every organization with its name, its status, how many users belong to it, active or not, and its creation date,
 sorted by name, and searches them by name in the search box and by status in the filters. It creates an organization
-and edits one: its name and its status in one form, which also shows its groups and their members; and it deletes a
+and edits one: its name and its status in one form, which also shows its administrators, its groups with their members
+and its members in no group; and it deletes a
 deactivated one with everything in it, see [Deletion](#deletion). Which actions it offers is up to the backend, as on
 any page: `create` when `globalActions` lists it, and `edit` and `delete` for the rows whose `actions` list them. The name of an organization opens the edit form when the row lists `edit`. The
 first admin of an organization is invited from [the users page](../../users/docs/users-readme.md#organizations), where
@@ -48,7 +49,7 @@ anyone else gets `404` from `/organizations`.
 | ---------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------- |
 | List             | `GET {baseUrl}?search=<base64>`                                                        |                                                       |
 | `create`         | `POST {baseUrl}` `{ name }`                                                            | The name                                              |
-| `edit`           | `GET {baseUrl}/{id}`, then `PUT {baseUrl}/{id}` `{ name, status? }`                    | The name and the status, and the groups read-only     |
+| `edit`           | `GET {baseUrl}/{id}`, then `PUT {baseUrl}/{id}` `{ name, status? }`                    | The name and the status, and its people read-only     |
 | `delete`         | `GET {baseUrl}/{id}/content`, then `DELETE {baseUrl}/{id}` `{ name }`                 | The counts of what goes, and the name to type         |
 
 The name is required, at most 100 characters and sent trimmed; the server keeps it unique app-wide, without regard to
@@ -56,14 +57,21 @@ case. The search box sends its text as the `text` of the search, which the backe
 filter sends `status`. The columns sort by `name`, `userCount` and `createdAt`, the fields the server sorts by; the
 status does not sort.
 
-`edit` reads the organization first, `{ ...row, groups: [{ id, name, members: [{ id, name, email }] }] }`, its groups
-by name, and opens one form on the page, "Edit organization", with:
+`edit` reads the organization first, `{ ...row, administrators, groups: [{ id, name, members }], ungroupedMembers }`,
+every member as `{ id, name, email }` and its groups by name, and opens one form on the page, "Edit organization", with:
 
 -   **the name**, filled in with the current one;
 -   **"Status"** (`form.main.status`), "Active" or "Inactive", filled in with the current one;
--   **"Groups"** (`form.groups.label`), read-only: each group under its name with its members, "name (email)" or the
-    email alone when the user has no name, or `form.groups.no-members` for a group without members, and
-    `form.groups.empty` ("This organization has no groups yet.") when it has none.
+-   **"Administrators"** (`form.administrators.label`), read-only: the users holding a base role that manages the
+    organization, or `form.administrators.no-members` ("No administrators yet") when none is active;
+-   **"Groups"** (`form.groups.label`), read-only: each group under its name with its members, or
+    `form.groups.no-members` for a group without members, and `form.groups.empty` ("This organization has no groups
+    yet.") when it has none; last, **"No group"** (`form.groups.ungrouped`), the members who are in no group, which is
+    not a group and shows only when someone is in it.
+
+Every list names a member "name (email)", or by the email alone when the user has no name, and holds active members
+only, as [the organization summary](../../organization-summary/docs/organization-summary-readme.md) does; the server
+answers them so.
 
 Saving sends the name, trimmed, and the status only when it changes; then the form closes, confirms with
 `toast.edit-success` and reloads. The status changes `active → inactive` and `inactive → active`, for every
@@ -93,7 +101,8 @@ active) and `name-mismatch`.
 Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `search.fields.<key>`, `status.<status>`,
 `form.create.title`, `form.edit.title`, `form.main.name.label` and `.placeholder`, `form.main.status.label` and
-`.placeholder`, `form.groups.label`, `.empty` and `.no-members`, `content.label`, `.count`, `.empty`, `.users`, `.groups`
+`.placeholder`, `form.administrators.label` and `.no-members`, `form.groups.label`, `.empty`, `.no-members` and
+`.ungrouped`, `content.label`, `.count`, `.empty`, `.users`, `.groups`
 and `.roles`, `delete.title`, `.message`, `.confirm`, `.name-mismatch`, `.submit` and `.main.name.placeholder`, and
 `toast.<key>-success`. The module ships all of them
 in English and Spanish.

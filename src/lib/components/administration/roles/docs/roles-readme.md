@@ -44,34 +44,35 @@ The route must be in the `allowedPaths` of whoever holds `roles.manage`, which t
 
 ## BeyRolesConfig
 
-| Field              | Default                                  | Meaning                                                                            |
-| ------------------ | ---------------------------------------- | ---------------------------------------------------------------------------------- |
-| `baseUrl`          | `'/roles'`                               | Path of the roles, resolved against the environment's `baseUrl` and `webApiPath`   |
-| `usersUrl`         | `'/users'`                               | Path of the users, where a superadmin reads the organizations from                 |
-| `prefix`           | `'angular-components.roles'`             | i18n prefix of the page, as `bey-page` reads it                                    |
-| `rolePrefix`       | `'angular-components.users.roles'`       | i18n prefix the labels of the base roles are read from, the `rolePrefix` of the users page |
-| `permissionPrefix` | `'angular-components.roles.permissions'` | i18n prefix the labels of the permissions are read from, see [Permissions](#permissions) |
-| `groupIcons`       | `{}`                                     | The icon of the section of each permission group, by group, see [Permissions](#permissions) |
+| Field              | Default                                  | Meaning                                                                                                                |
+| ------------------ | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `baseUrl`          | `'/roles'`                               | Path of the roles, resolved against the environment's `baseUrl` and `webApiPath`                                       |
+| `usersUrl`         | `'/users'`                               | Path of the users, where a superadmin reads the organizations from                                                     |
+| `prefix`           | `'angular-components.roles'`             | i18n prefix of the page, as `bey-page` reads it                                                                        |
+| `rolePrefix`       | `'angular-components.users.roles'`       | i18n prefix the labels of the base roles are read from, the `rolePrefix` of the users page                             |
+| `permissionPrefix` | `'angular-components.roles.permissions'` | i18n prefix the labels of the permissions are read from, see [Permissions](#permissions)                               |
+| `groupIcons`       | `{}`                                     | The icon of the section of each permission group, by group, see [Permissions](#permissions)                            |
 | `groupOrder`       | `[]`                                     | The groups whose sections come first, in this order; the others follow in the order of the server, see [Order](#order) |
-| `actionOrder`      | The default order of [Order](#order)     | The actions whose permissions come first in each section, in this order; the others follow in the order of the server |
-| `storageKey`       | `'roles'`                                | Key under which the table remembers the columns the user hid                       |
-| `height`           | `'calc(100vh - 220px)'`                  | Height of the table                                                                |
+| `actionOrder`      | The default order of [Order](#order)     | The actions whose permissions come first in each section, in this order; the others follow in the order of the server  |
+| `storageKey`       | `'roles'`                                | Key under which the table remembers the columns the user hid                                                           |
+| `foldersHeight`    | `'calc(100vh - 255px)'`                  | Height of the table while it shows the folders of the superadmin, under their breadcrumb                               |
+| `height`           | `'calc(100vh - 220px)'`                  | Height of the table                                                                                                    |
 
 `baseUrl` follows the `path` of the roles module of express-components, and `usersUrl` the `path` of its users
 module, as `baseUrl` of [`bey-users`](../../users/docs/users-readme.md) does.
 
 ## Requests
 
-| Action        | Request                                                                              | Form                                                              |
-| ------------- | ------------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
-| List          | `GET {baseUrl}?search=<base64>`                                                      |                                                                   |
-| Permissions   | `GET {baseUrl}/permissions`                                                          |                                                                   |
-| Organizations | `GET {usersUrl}/organizations`, for a superadmin only                                |                                                                   |
-| `create`      | `POST {baseUrl}` `{ name, description, permissions, organizationId? }`               | Name, description, the organization for a superadmin (required) and the permissions |
-| `edit`        | `PUT {baseUrl}/{id}` `{ name, description, permissions }`                            | The same, filled in with the role; a superadmin sees its organization disabled, never sent |
-| `duplicate`   | `POST {baseUrl}` `{ name, description, permissions, organizationId? }`, as `create`  | The create form, filled in with the role, see [Duplicate](#duplicate) |
-| `delete`      | `DELETE {baseUrl}` `{ ids }`, after a confirmation                                   | None                                                              |
-| `view`, the permissions of a role | None                                                             | The name, the description and the permissions, read-only           |
+| Action                            | Request                                                                                                | Form                                                                                       |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| List                              | `GET {baseUrl}?search=<base64>`, with `parentId` for a superadmin, see [Organizations](#organizations) |                                                                                            |
+| Permissions                       | `GET {baseUrl}/permissions`                                                                            |                                                                                            |
+| Organizations                     | `GET {usersUrl}/organizations`, for a superadmin only                                                  |                                                                                            |
+| `create`                          | `POST {baseUrl}` `{ name, description, permissions, organizationId? }`                                 | Name, description, the organization for a superadmin (required) and the permissions        |
+| `edit`                            | `PUT {baseUrl}/{id}` `{ name, description, permissions }`                                              | The same, filled in with the role; a superadmin sees its organization disabled, never sent |
+| `duplicate`                       | `POST {baseUrl}` `{ name, description, permissions, organizationId? }`, as `create`                    | The create form, filled in with the role, see [Duplicate](#duplicate)                      |
+| `delete`                          | `DELETE {baseUrl}` `{ ids }`, after a confirmation                                                     | None                                                                                       |
+| `view`, the permissions of a role | None                                                                                                   | The name, the description and the permissions, read-only                                   |
 
 The page reads, before the list shows, what the caller may put in a role: `GET {baseUrl}/permissions` answers
 `{ permissions: [{ group, key }] }`, the permissions the caller holds, every one for a superadmin, without those that
@@ -221,9 +222,10 @@ The page knows a superadmin by the roles of the session user (`superadmin`), as
 [`bey-groups`](../../groups/docs/groups-readme.md#organizations) does, and reads `GET {usersUrl}/organizations` for it
 alone, before the list shows; a failed answer counts as none, with no error.
 
--   **The column.** A superadmin always sees an "Organization" column after the group count
+-   **The column.** A superadmin sees an "Organization" column after the group count in a search at the root
     (`table.columns.organization`), however many organizations are active, so the organization of every extra role
-    shows even when there is a single one; a base role shows "All" there (`table.every-organization`).
+    found shows even when there is a single one; a base role shows "All" there (`table.every-organization`). Browsing
+    the folders the column leaves the table, see the folders below.
 -   **The filter.** With two active organizations or more, the filters offer an "Organization" field, `organizationId`
     `equals`, with those organizations by name.
 -   **The create form.** It always asks a superadmin for the organization, required, and sends it as
@@ -232,11 +234,18 @@ alone, before the list shows; a failed answer counts as none, with no error.
     is never asked: the role goes to their organization. A duplicate asks the same, see [Duplicate](#duplicate).
 -   **The edit form** shows a superadmin the organization of the role after the description, in a disabled select,
     and never sends it: roles do not move between organizations. A manager does not see it.
+-   **The folders.** A superadmin sees one folder per organization at the root, next to the base roles, and the extra
+    roles of an organization inside its folder; a search text or a filter at the root finds the roles of every
+    organization, the one list with the organization column: at the root without one, every row is a folder or a base
+    role, and inside a folder, searching or not, every role is of that organization, so the column leaves the table
+    there. A role created inside a folder comes with its organization chosen, which the superadmin may still
+    change; a duplicate keeps the organization of the role it copies. See
+    [folders per organization](../../docs/administration-readme.md#folders-per-organization).
 
 ## Texts
 
 Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
-`.tooltip` (only the tooltip for `view`, whose label is the page module's), `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.every-organization`,
+`.tooltip` (only the tooltip for `view`, whose label is the page module's), `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.every-organization`, `categories.root` (the root of its breadcrumb),
 `table.view-permissions`, `type.base` and `.extra`, `search.fields.<key>`, `form.create.title`, `form.edit.title`,
 `form.main.<field>.label` and `.placeholder`, `form.permissions.label` (the label above the checklist) and `.empty`
 (when there is nothing to give), `duplicate.title`, `duplicate.buttons.submit` and `duplicate.copy-suffix`,
