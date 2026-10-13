@@ -12,17 +12,15 @@ describe('EditLockHttpService', () => {
     const originalFetch = globalThis.fetch;
     let fetchSpy: jest.Mock;
     let httpTesting: HttpTestingController;
-
-    function setup(token?: string): EditLockHttpService {
-        TestBed.configureTestingModule({ providers: [provideBeyTesting({ token })] });
-        httpTesting = TestBed.inject(HttpTestingController);
-
-        return TestBed.inject(EditLockHttpService);
-    }
+    let service: EditLockHttpService;
 
     beforeEach(() => {
         fetchSpy = jest.fn().mockResolvedValue(undefined);
         globalThis.fetch = fetchSpy;
+        TestBed.configureTestingModule({ providers: [provideBeyTesting({ translations: { en: editLockEn } })] });
+
+        httpTesting = TestBed.inject(HttpTestingController);
+        service = TestBed.inject(EditLockHttpService);
     });
 
     afterEach(() => {
@@ -31,7 +29,7 @@ describe('EditLockHttpService', () => {
     });
 
     it('releases on leaving with a path of the app, without a bearer while nobody is signed in', () => {
-        setup().releaseOnLeave('/api/templates/t1/lock?mode=edit', 'window-1');
+        service.releaseOnLeave('/api/templates/t1/lock?mode=edit', 'window-1');
 
         expect(fetchSpy).toHaveBeenCalledWith('http://localhost/api/templates/t1/lock?mode=edit&token=window-1', {
             headers: {},
@@ -49,9 +47,7 @@ describe('EditLockHttpService', () => {
                 'it again.'
         ]
     ])('ships the texts of a save the lock refuses with %s', (messageKey, title, message) => {
-        setup();
         const translate = TestBed.inject(TranslateService);
-        translate.setTranslation('en', editLockEn);
 
         TestBed.inject(HttpService)
             .put('https://api.test/api/template-definitions/d1', {})

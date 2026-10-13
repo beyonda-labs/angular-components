@@ -2,6 +2,8 @@
     --bey-cards-card-bg: var(--bey-bg-surface);
     --bey-cards-card-border: var(--bey-border-subtle);
     --bey-cards-card-padding: var(--bey-space-xl);
+    --bey-cards-count-bg: var(--bey-bg-active);
+    --bey-cards-count-fg: var(--bey-text-secondary);
 
     display: block;
     width: 100%;

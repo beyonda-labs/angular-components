@@ -4,11 +4,11 @@
     --bey-floating-preferences-fg-muted: var(--bey-text-muted);
     --bey-floating-preferences-bg-hover: var(--bey-bg-hover);
     --bey-floating-preferences-border-focus: var(--bey-border-default);
-    --bey-floating-preferences-pill-bg: color-mix(in srgb, var(--bey-bg-page) 70%, transparent);
+    --bey-floating-preferences-pill-bg: var(--bey-bg-page-translucent);
     --bey-floating-preferences-pill-border: var(--bey-border-subtle);
+
     align-items: center;
     animation: bey-floating-preferences-in var(--bey-duration-slow) var(--bey-easing-standard);
-
     display: inline-flex;
     gap: var(--bey-space-2xs);
 }

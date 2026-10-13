@@ -1,6 +1,12 @@
+import { Signal } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { PageBackendResponse, PageHandle } from '../../../page/models/page.model';
+import { PageCategoriesConfig } from '../../../page/models/page-categories.model';
+import { PageFormConfig } from '../../../page/models/page-form.model';
 import { PageOrganization, PageOrganizationItem } from '../../../page/models/page-organization.model';
+import { TableCell } from '../../../table/models/table-cell.model';
+import { OrganizationFolder } from '../../models/organization-folders.model';
 import { ROLE_VIEW_DEFAULTS, RoleViewSettings } from '../../models/role-permissions.model';
 import { NamedUser } from '../../models/user-names.model';
 
@@ -81,6 +87,21 @@ export interface GroupsFormOptions {
     isOrganizationAsked: boolean;
     organizations: PageOrganization[];
     prefix: string;
+}
+
+export interface GroupsPageConfigOptions {
+    config: GroupsConfig;
+    formConfig: PageFormConfig<GroupFormValue, GroupRow>;
+    isOrganizationShown: boolean;
+    loadRow: (group: GroupRow) => TableCell[];
+    mode: Signal<GroupsPageMode>;
+    onDataLoaded: (response: PageBackendResponse<GroupRow | OrganizationFolder>) => void;
+    onEdit: (group: GroupRow) => void;
+    onReady: (handle: PageHandle<GroupRow, OrganizationFolder>) => void;
+    onView: (group: GroupRow) => void;
+    organizations: PageOrganization[];
+
+    categoriesConfig?: PageCategoriesConfig<OrganizationFolder>;
 }
 
 export interface GroupsRowOptions {

@@ -7,7 +7,7 @@ import {
     BeyModalFormConfig
 } from '@beyonda-labs/angular-components';
 
-export const LONG_FORM_PREFIX = 'angular-components-style-guide.modal.long-form';
+import { LONG_FORM_PREFIX } from './models/modal-style-guide.model';
 
 const SECTIONS = [
     { fields: ['name', 'surname', 'email', 'phone'], key: 'person' },

@@ -9,19 +9,10 @@ import {
     BeyFormValue
 } from '@beyonda-labs/angular-components';
 
+import { StyleGuideRegion } from './models/form-style-guide.model';
+
 const PREFIX = 'angular-components-style-guide.form.section-dependent';
 const SECTION_KEY = 'section-dependent';
-
-export interface StyleGuideRegion {
-    isProOnly: boolean;
-    key: string;
-}
-
-export const STYLE_GUIDE_REGIONS: StyleGuideRegion[] = [
-    { isProOnly: false, key: 'eu' },
-    { isProOnly: true, key: 'us' },
-    { isProOnly: true, key: 'asia' }
-];
 
 export function buildDependentSections(regions: Signal<StyleGuideRegion[]>): BeyFormSection[] {
     return [

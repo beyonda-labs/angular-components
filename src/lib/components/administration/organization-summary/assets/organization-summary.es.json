@@ -36,7 +36,6 @@
                     "one": "{{count}} miembro",
                     "other": "{{count}} miembros"
                 },
-                "no-members": "Sin miembros.",
                 "show-members": "Ver miembros",
                 "ungrouped": "Sin grupo"
             },

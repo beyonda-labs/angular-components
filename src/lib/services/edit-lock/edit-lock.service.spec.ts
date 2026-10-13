@@ -35,6 +35,7 @@ const RELEASABLE: EditLock = { ...COLLEAGUE, canRelease: true };
 
 describe('EditLockService', () => {
     const originalFetch = globalThis.fetch;
+    let fetchSpy: jest.Mock;
     let httpTesting: HttpTestingController;
     let injector: EnvironmentInjector;
     let service: EditLockService;
@@ -69,6 +70,8 @@ describe('EditLockService', () => {
 
     beforeEach(() => {
         jest.useFakeTimers();
+        fetchSpy = jest.fn().mockResolvedValue(undefined);
+        globalThis.fetch = fetchSpy;
         TestBed.configureTestingModule({ providers: [provideBeyTesting({ token: 'session-token' })] });
 
         httpTesting = TestBed.inject(HttpTestingController);
@@ -163,7 +166,7 @@ describe('EditLockService', () => {
 
         service.takeOver();
 
-        expect(answer('POST', OWN).body).toEqual({ takeOver: true, token: service.token });
+        expect(answer('POST', OWN).body).toEqual({ isTakeOver: true, token: service.token });
         expect(service.state()).toEqual({ lock: OWN, status: 'own' });
     });
 
@@ -345,8 +348,6 @@ describe('EditLockService', () => {
     });
 
     it('releases its lock on leaving the page with a request that outlives it, carrying the session token', () => {
-        const fetchSpy = jest.fn().mockResolvedValue(undefined);
-        globalThis.fetch = fetchSpy;
         service.start(LOCK_URL);
         answer('POST', OWN);
 
@@ -363,8 +364,6 @@ describe('EditLockService', () => {
     });
 
     it('sends nothing on leaving the page while somebody else holds the lock', () => {
-        const fetchSpy = jest.fn().mockResolvedValue(undefined);
-        globalThis.fetch = fetchSpy;
         service.start(LOCK_URL);
         answer('POST', COLLEAGUE);
 

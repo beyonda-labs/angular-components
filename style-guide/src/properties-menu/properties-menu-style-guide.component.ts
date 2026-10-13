@@ -10,7 +10,8 @@ import {
 } from '@beyonda-labs/angular-components';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { buildPropertiesMenuConfig, EXAMPLE_VARIABLES } from './properties-menu-style-guide.config';
+import { EXAMPLE_VARIABLES } from './models/properties-menu-style-guide.model';
+import { buildPropertiesMenuConfig } from './properties-menu-style-guide.config';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,

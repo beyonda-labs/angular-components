@@ -84,7 +84,7 @@ describe('PageComponent — sharing', () => {
     }
 
     function breadcrumb(): string {
-        return fixture.nativeElement.querySelector('bey-breadcrumb')?.textContent ?? '';
+        return queryAll(fixture, '[aria-label="angular-components.breadcrumb.label"]')[0]?.textContent ?? '';
     }
 
     async function click(element: HTMLElement): Promise<void> {

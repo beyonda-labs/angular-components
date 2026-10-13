@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { renderComponent } from '@testing/dom';
+import { accessibleName, renderComponent } from '@testing/dom';
 
 import { FormCheckboxField } from '../../../models/fields/form-checkbox-field.model';
 import { FormCheckboxFieldComponent } from './field-checkbox.component';
@@ -32,7 +32,7 @@ describe('FormCheckboxFieldComponent', () => {
     it('renders a labelled checkbox bound to the control', async () => {
         await render(new FormCheckboxField({ key: 'subscribed' }));
 
-        expect(fixture.nativeElement.querySelector('label').textContent.trim()).toBe('demo.person.subscribed.label');
+        expect(accessibleName(input())).toBe('demo.person.subscribed.label');
         expect(input().getAttribute('role')).toBeNull();
 
         input().click();

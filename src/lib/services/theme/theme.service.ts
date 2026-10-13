@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-export type Theme = 'light' | 'dark';
+import { Theme } from './models/theme.model';
 
 const STORAGE_KEY = 'bey-theme';
 

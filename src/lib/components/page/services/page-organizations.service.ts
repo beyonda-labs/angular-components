@@ -2,7 +2,8 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { SearchFilter } from '../../search/models/search-filter.model';
-import { hasOrganizationColumn, hiddenOrganizationColumn, withoutColumn } from '../functions/page-organization-column';
+import { withoutColumn } from '../functions/page-columns';
+import { hasOrganizationColumn, hiddenOrganizationColumn } from '../functions/page-organization-column';
 import { hasOrganizationFilter, readOrganizationsUrl } from '../functions/page-organization-filter';
 import { PageConfig } from '../models/page.model';
 import { PageOrganization, PageOrganizationsAnswer } from '../models/page-organization.model';

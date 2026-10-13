@@ -1,7 +1,13 @@
+import { Signal } from '@angular/core';
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
 import { BadgeVariant } from '../../../badge/models/badge.model';
+import { PageBackendResponse, PageHandle } from '../../../page/models/page.model';
+import { PageCategoriesConfig } from '../../../page/models/page-categories.model';
+import { PageFormConfig } from '../../../page/models/page-form.model';
 import { PageOrganization, PageOrganizationItem } from '../../../page/models/page-organization.model';
+import { TableCell } from '../../../table/models/table-cell.model';
+import { OrganizationFolder } from '../../models/organization-folders.model';
 import {
     RolePermissionEntry,
     RolePermissionsFields,
@@ -77,9 +83,23 @@ export interface RolesFormOptions extends RolePermissionsOptions {
     prefix: string;
 }
 
+export interface RolesPageConfigOptions {
+    config: RolesConfig;
+    formConfig: PageFormConfig<RoleFormValue, RoleRow>;
+    isOrganizationShown: boolean;
+    loadRow: (role: RoleRow) => TableCell[];
+    mode: Signal<RolesPageMode>;
+    onDataLoaded: (response: PageBackendResponse<RoleRow | OrganizationFolder>) => void;
+    onDuplicate: (role: RoleRow) => void;
+    onReady: (handle: PageHandle<RoleRow, OrganizationFolder>) => void;
+    onView: (role: RoleRow) => void;
+    organizations: PageOrganization[];
+
+    categoriesConfig?: PageCategoriesConfig<OrganizationFolder>;
+}
+
 export interface RolesRowOptions {
     isOrganizationShown: boolean;
-    isReadOnly: boolean;
     onEdit: (role: RoleRow) => void;
     onView: (role: RoleRow) => void;
     prefix: string;
@@ -102,9 +122,9 @@ export class RolesConfig {
     constructor({
         actionOrder = [...ROLES_DEFAULT_ACTION_ORDER],
         baseUrl = '/roles',
+        foldersHeight = 'calc(100vh - 255px)',
         groupIcons = {},
         groupOrder = [],
-        foldersHeight = 'calc(100vh - 255px)',
         height = 'calc(100vh - 220px)',
         permissionPrefix = ROLES_LIBRARY_PERMISSION_PREFIX,
         prefix = ROLES_DEFAULT_PREFIX,
@@ -114,9 +134,9 @@ export class RolesConfig {
     }: RolesConfigParameters = {}) {
         this.actionOrder = actionOrder;
         this.baseUrl = baseUrl;
+        this.foldersHeight = foldersHeight;
         this.groupIcons = groupIcons;
         this.groupOrder = groupOrder;
-        this.foldersHeight = foldersHeight;
         this.height = height;
         this.permissionPrefix = permissionPrefix;
         this.prefix = prefix;

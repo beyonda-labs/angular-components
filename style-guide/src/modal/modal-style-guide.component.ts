@@ -4,7 +4,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { isObservable, of } from 'rxjs';
 
 import { StyleGuideButton } from '../models/style-guide-button.model';
-import { buildLongForm, LONG_FORM_PREFIX } from './modal-style-guide.long-form';
+import { buildLongForm } from './modal-style-guide.long-form';
+import { LONG_FORM_PREFIX } from './models/modal-style-guide.model';
 
 const UNSAVED_CHANGES = 'angular-components-style-guide.modal.unsaved-changes';
 
@@ -13,7 +14,7 @@ const UNSAVED_CHANGES = 'angular-components-style-guide.modal.unsaved-changes';
     imports: [TranslateModule],
     selector: 'bey-modal-style-guide',
     standalone: true,
-    styleUrls: ['../style-guide-shared.css', './modal-style-guide.component.css'],
+    styleUrls: ['../style-guide-shared.css'],
     templateUrl: './modal-style-guide.component.html'
 })
 export class ModalStyleGuideComponent {

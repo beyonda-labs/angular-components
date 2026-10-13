@@ -7,13 +7,22 @@ import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { OrganizationSummaryStyleGuideComponent } from './organization-summary-style-guide.component';
 
 describe('OrganizationSummaryStyleGuideComponent', () => {
-    it('shows the organization the demo backend answers', async () => {
+    let httpTesting: HttpTestingController;
+
+    beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [OrganizationSummaryStyleGuideComponent],
             providers: [provideRouter([]), provideBeyTesting()]
         }).compileComponents();
-        const httpTesting = TestBed.inject(HttpTestingController);
 
+        httpTesting = TestBed.inject(HttpTestingController);
+    });
+
+    afterEach(() => {
+        httpTesting.verify();
+    });
+
+    it('shows the organization the demo backend answers', async () => {
         const fixture = await renderComponent(OrganizationSummaryStyleGuideComponent);
         httpTesting.expectOne('https://api.test/api/style-guide/organizations/current').flush({
             administrators: [],
@@ -39,6 +48,5 @@ describe('OrganizationSummaryStyleGuideComponent', () => {
         expect(hostOf(fixture).textContent).toContain('Acme');
         expect(hostOf(fixture).textContent).toContain('Sales');
         expect(hostOf(fixture).textContent).toContain('Review the templates');
-        httpTesting.verify();
     });
 });

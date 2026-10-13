@@ -8,14 +8,14 @@ import { ModalFormService } from '../../form/components/modal/services/modal-for
 import { FormHandle } from '../../form/models/form.model';
 import { ConfirmationModalConfig } from '../../modal/models/modal.model';
 import { ModalService } from '../../modal/services/modal.service';
-import { PageFormConfig, PageSaveMode } from '../models/page-form.model';
+import {
+    PAGE_FORM_CANCEL_LABEL,
+    PAGE_FORM_SUBMIT_LABEL,
+    PageFormConfig,
+    PageSaveMode
+} from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
 import { PageCategoryPathEntry } from '../models/page-state.model';
-
-const CANCEL_LABEL_KEY = 'angular-components.page.form.cancel';
-const SUBMIT_LABEL_KEY = 'angular-components.page.form.submit';
-
-const ignoreError = (): void => undefined;
 
 @Injectable({
     providedIn: 'root'
@@ -36,7 +36,7 @@ export class PageFormService {
         return this.modalFormService.open(
             new ModalFormConfig<TValue>({
                 allowSubmitWithoutChanges: pageForm.allowSubmitWithoutChanges,
-                cancelLabel: CANCEL_LABEL_KEY,
+                cancelLabel: PAGE_FORM_CANCEL_LABEL,
                 initialValue: pageForm.toFormValue(item, category),
                 onReady: handle => pageForm.onReady?.(handle),
                 onSubmit: (value, handle) => {
@@ -56,7 +56,7 @@ export class PageFormService {
                 prefix: pageForm.prefix,
                 sections: pageForm.buildSections(item, category),
                 size: pageForm.size,
-                submitLabel: SUBMIT_LABEL_KEY,
+                submitLabel: PAGE_FORM_SUBMIT_LABEL,
                 title: `${pagePrefix}.form.${mode}.title`
             })
         );
@@ -84,3 +84,5 @@ export class PageFormService {
         );
     }
 }
+
+function ignoreError(): void {}

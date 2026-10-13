@@ -100,5 +100,5 @@
     cursor: default;
     flex-shrink: 0;
     font-size: var(--bey-font-size-sm);
-    letter-spacing: 0.1em;
+    letter-spacing: var(--bey-letter-spacing-widest);
 }

@@ -34,10 +34,6 @@ export function pageOrganizationColumn(overrides: Partial<TableColumnParameters>
     });
 }
 
-export function withoutColumn<T>(entries: T[], index: number): T[] {
-    return index < 0 ? entries : entries.filter((_, current) => current !== index);
-}
-
 function isOrganizationColumn({ key }: TableColumn): boolean {
     return key === PAGE_ORGANIZATION_NAME_FIELD;
 }

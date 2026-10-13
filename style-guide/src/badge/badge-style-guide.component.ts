@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
     imports: [BeyBadgeComponent, TranslateModule],
     selector: 'bey-badge-style-guide',
     standalone: true,
-    styleUrls: ['../style-guide-shared.css', './badge-style-guide.component.css'],
+    styleUrls: ['../style-guide-shared.css'],
     templateUrl: './badge-style-guide.component.html'
 })
 export class BadgeStyleGuideComponent {

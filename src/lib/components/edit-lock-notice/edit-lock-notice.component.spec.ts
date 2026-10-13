@@ -2,6 +2,7 @@ import { HttpRequest } from '@angular/common/http';
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateService } from '@ngx-translate/core';
 import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
@@ -36,6 +37,7 @@ const COLLEAGUE: EditLock = {
 const RELEASABLE: EditLock = { ...COLLEAGUE, canRelease: true };
 
 const TEXTS = {
+    'angular-components': { ...editLockNoticeEn['angular-components'], 'user-name': { unknown: 'Unknown' } },
     demo: {
         lock: {
             actions: { edit: 'Edit', release: 'Release', 'save-copy': 'Save as a copy', 'take-over': 'Edit here' },
@@ -87,9 +89,14 @@ describe('EditLockNoticeComponent', () => {
         await settle(fixture);
     }
 
-    async function render(lock: EditLock | null, config: EditLockNoticeConfig = buildConfig()): Promise<void> {
+    async function open(config: EditLockNoticeConfig = buildConfig()): Promise<void> {
         fixture = await renderComponent(HostComponent, { config });
         fixture.componentInstance.editLockService.start(LOCK_URL);
+        await settle(fixture);
+    }
+
+    async function render(lock: EditLock | null, config: EditLockNoticeConfig = buildConfig()): Promise<void> {
+        await open(config);
         await answer('POST', lock);
     }
 
@@ -97,19 +104,18 @@ describe('EditLockNoticeComponent', () => {
         return textsOf(queryAll(fixture, '[role="status"], [role="alert"]')).join(' ');
     }
 
-    function setup(language = 'en', translations: Record<string, unknown> = TEXTS): void {
-        TestBed.configureTestingModule({
-            imports: [HostComponent],
-            providers: [
-                provideBeyTesting({ language, token: 'session-token', translations: { [language]: translations } })
-            ]
-        });
-
-        httpTesting = TestBed.inject(HttpTestingController);
+    function buttonTexts(): string[] {
+        return textsOf(queryAll(fixture, 'button'));
     }
 
     beforeEach(() => {
         jest.useFakeTimers({ doNotFake: ['nextTick', 'queueMicrotask', 'setImmediate'], now: NOW });
+        TestBed.configureTestingModule({
+            imports: [HostComponent],
+            providers: [provideBeyTesting({ token: 'session-token', translations: { en: TEXTS, es: TEXTS } })]
+        });
+
+        httpTesting = TestBed.inject(HttpTestingController);
     });
 
     afterEach(() => {
@@ -117,10 +123,7 @@ describe('EditLockNoticeComponent', () => {
     });
 
     it('shows nothing while the window acquires the lock nor once it holds it', async () => {
-        setup();
-        fixture = await renderComponent(HostComponent, { config: buildConfig() });
-        fixture.componentInstance.editLockService.start(LOCK_URL);
-        await settle(fixture);
+        await open();
 
         expect(notice()).toBe('');
 
@@ -130,29 +133,26 @@ describe('EditLockNoticeComponent', () => {
     });
 
     it('names a colleague who has been editing since today, with nothing to release for a normal user', async () => {
-        setup();
         await render(COLLEAGUE);
 
         expect(notice()).toBe('Grace Hopper since 9:05 AM.');
-        expect(queryAll(fixture, 'button')).toHaveLength(0);
+        expect(buttonTexts()).toEqual([]);
     });
 
     it('names as unknown a colleague whose name resolves to nothing', async () => {
-        setup('en', { ...TEXTS, 'angular-components': { 'user-name': { unknown: 'Unknown' } } });
         await render({ ...COLLEAGUE, holderName: null });
 
         expect(notice()).toBe('Unknown since 9:05 AM.');
     });
 
     it('gives the date as well when the editing started on an earlier day, in the language in use', async () => {
-        setup('es');
+        TestBed.inject(TranslateService).use('es');
         await render({ ...COLLEAGUE, acquiredAt: new Date(2026, 9, 9, 16, 30).getTime() });
 
         expect(notice()).toBe('Grace Hopper since 9 oct 2026 at 16:30.');
     });
 
     it('lets a manager or a superadmin release the lock of a colleague once confirmed', async () => {
-        setup();
         await render(RELEASABLE);
         TestBed.inject(FakeModalService).setConfirmationAnswer(true);
 
@@ -170,7 +170,6 @@ describe('EditLockNoticeComponent', () => {
     });
 
     it('keeps the lock of a colleague when the release is not confirmed', async () => {
-        setup();
         await render(RELEASABLE);
 
         buttonByName(fixture, 'Release').click();
@@ -179,7 +178,6 @@ describe('EditLockNoticeComponent', () => {
     });
 
     it('offers the same user to edit here, taking the lock over from the other window', async () => {
-        setup();
         await render(OTHER_WINDOW);
 
         expect(notice()).toContain('In another window.');
@@ -187,14 +185,13 @@ describe('EditLockNoticeComponent', () => {
         buttonByName(fixture, 'Edit here').click();
 
         expect(lockRequest('POST').request.body).toEqual({
-            takeOver: true,
+            isTakeOver: true,
             token: fixture.componentInstance.editLockService.token
         });
     });
 
     it('lets the product reload before taking the lock over', async () => {
         const onEdit = jest.fn();
-        setup();
         await render(OTHER_WINDOW, buildConfig({ onEdit }));
 
         buttonByName(fixture, 'Edit here').click();
@@ -203,12 +200,11 @@ describe('EditLockNoticeComponent', () => {
 
         onEdit.mock.calls[0][0]();
 
-        expect(lockRequest('POST').request.body).toEqual(expect.objectContaining({ takeOver: true }));
+        expect(lockRequest('POST').request.body).toEqual(expect.objectContaining({ isTakeOver: true }));
     });
 
     it('says the editing was lost and offers to save the changes as a copy', async () => {
         const onSaveCopy = jest.fn();
-        setup();
         await render(OWN, buildConfig({ onSaveCopy }));
         jest.advanceTimersByTime(30000);
         await answer('POST', COLLEAGUE);
@@ -221,7 +217,6 @@ describe('EditLockNoticeComponent', () => {
     });
 
     it('says the editing moved to another window of the same user', async () => {
-        setup();
         await render(OWN);
         jest.advanceTimersByTime(30000);
         await answer('POST', OTHER_WINDOW);
@@ -230,7 +225,6 @@ describe('EditLockNoticeComponent', () => {
     });
 
     it('says the editing was released, with no copy to save while the product has no changes', async () => {
-        setup();
         await render(OWN);
         jest.advanceTimersByTime(30000);
         lockRequest('POST').flush({ lifetimeMs: 120000, lock: { ...OWN, acquiredAt: OWN.acquiredAt + 1 } });
@@ -243,11 +237,10 @@ describe('EditLockNoticeComponent', () => {
 
     it('offers to edit once the lock is free, letting the product reload before acquiring it', async () => {
         const onEdit = jest.fn();
-        setup();
         await render(null, buildConfig({ onEdit, onSaveCopy: jest.fn() }));
 
         expect(notice()).toContain('It is free.');
-        expect(textsOf(queryAll(fixture, 'button'))).toEqual(['Edit', 'Save as a copy']);
+        expect(buttonTexts()).toEqual(['Edit', 'Save as a copy']);
 
         buttonByName(fixture, 'Edit').click();
         onEdit.mock.calls[0][0]();
@@ -256,7 +249,6 @@ describe('EditLockNoticeComponent', () => {
     });
 
     it('acquires a free lock at once when the product has nothing to reload', async () => {
-        setup();
         await render(null);
 
         buttonByName(fixture, 'Edit').click();
@@ -265,18 +257,15 @@ describe('EditLockNoticeComponent', () => {
     });
 
     it('says the row is no longer available, with nothing to do about it', async () => {
-        setup();
-        fixture = await renderComponent(HostComponent, { config: buildConfig() });
-        fixture.componentInstance.editLockService.start(LOCK_URL);
+        await open();
         lockRequest('POST').flush({ errorCode: 'not-found' }, { status: 404, statusText: 'Not Found' });
         await settle(fixture);
 
         expect(notice()).toBe('Gone.');
-        expect(queryAll(fixture, 'button')).toHaveLength(0);
+        expect(buttonTexts()).toEqual([]);
     });
 
     it('speaks with the texts of the library unless the product gives a prefix', async () => {
-        setup('en', editLockNoticeEn);
         await render(COLLEAGUE, new EditLockNoticeConfig());
 
         expect(notice()).toBe('Grace Hopper has been editing it since 9:05 AM. You can look at it, but not change it.');

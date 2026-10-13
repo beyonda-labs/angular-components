@@ -1,16 +1,12 @@
 import { buildPageOrganizationField } from '../../page/functions/page-organization-filter';
 import { pageStandardAction } from '../../page/functions/page-standard-actions';
-import { PageConfig, PageHandle } from '../../page/models/page.model';
+import { PageConfig } from '../../page/models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../../page/models/page-action.model';
-import { PageCategoriesConfig } from '../../page/models/page-categories.model';
-import { PageFormConfig } from '../../page/models/page-form.model';
 import { PageHeaderConfig } from '../../page/models/page-header.model';
-import { PageOrganization } from '../../page/models/page-organization.model';
 import { SearchSort, SearchSortDirection } from '../../page/models/page-search.model';
 import { PageTableConfig, PageTableSearchConfig } from '../../page/models/page-table.model';
 import { SearchField, SearchFieldOption, SearchFieldType } from '../../search/models/search.model';
 import { TableColumn } from '../../table/models/table.model';
-import { TableCell } from '../../table/models/table-cell.model';
 import { isColumnShownInFolders } from '../functions/organization-folders';
 import { ORGANIZATION_COLUMN_KEY, OrganizationFolder } from '../models/organization-folders.model';
 import {
@@ -18,7 +14,7 @@ import {
     UserRow,
     USERS_RESEND_INVITATION_ACTION,
     USERS_TRANSFER_ACTION,
-    UsersConfig,
+    UsersPageConfigOptions,
     UserStatus
 } from './models/users.model';
 
@@ -40,21 +36,6 @@ const TRAILING_COLUMNS = [
     new TableColumn({ isSortable: true, key: 'lastLoginAt', width: 2 }),
     new TableColumn({ isSortable: true, isVisible: false, key: 'createdAt', width: 2 })
 ];
-
-export interface UsersPageConfigOptions {
-    config: UsersConfig;
-    formConfig: PageFormConfig<UserFormValue, UserRow>;
-    isOrganizationShown: boolean;
-    loadRow: (user: UserRow) => TableCell[];
-    onDelete: (users: UserRow[]) => void;
-    onReady: (handle: PageHandle<UserRow, OrganizationFolder>) => void;
-    onResendInvitation: (user: UserRow) => void;
-    onTransfer: (user: UserRow) => void;
-    organizations: PageOrganization[];
-    roleOptions: SearchFieldOption[];
-
-    categoriesConfig?: PageCategoriesConfig<OrganizationFolder>;
-}
 
 export function buildUsersPageConfig({
     categoriesConfig,

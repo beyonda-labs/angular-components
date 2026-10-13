@@ -7,8 +7,6 @@ import { PasswordPolicyParameters } from './models/password-policy.model';
 
 const POLICY_PATH = '/password-policy';
 
-const ignoreError = (): void => undefined;
-
 @Injectable({
     providedIn: 'root'
 })
@@ -24,3 +22,5 @@ export class PasswordPolicyHttpService {
             .pipe(catchError(() => EMPTY));
     }
 }
+
+function ignoreError(): void {}

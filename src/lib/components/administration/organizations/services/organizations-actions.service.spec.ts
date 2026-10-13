@@ -25,6 +25,7 @@ describe('OrganizationsActionsService', () => {
         submit: (value: OrganizationEditFormValue) => Observable<unknown>;
     }[];
     let page: PageHandle<OrganizationRow>;
+    let service: OrganizationsActionsService;
 
     const organization: OrganizationRow = {
         actions: ['edit'],
@@ -36,11 +37,7 @@ describe('OrganizationsActionsService', () => {
     };
 
     function edit(): void {
-        TestBed.inject(OrganizationsActionsService).edit(
-            new OrganizationsConfig({ baseUrl: '/tenants', prefix: 'demo.tenants' }),
-            organization,
-            page
-        );
+        service.edit(new OrganizationsConfig({ baseUrl: '/tenants', prefix: 'demo.tenants' }), organization, page);
         httpTesting
             .expectOne(ORGANIZATION_URL)
             .flush({ ...organization, administrators: [], groups: [], ungroupedMembers: [] });
@@ -63,6 +60,7 @@ describe('OrganizationsActionsService', () => {
             selected: () => [],
             viewMode: () => PageViewMode.Table
         };
+        service = TestBed.inject(OrganizationsActionsService);
     });
 
     afterEach(() => {
@@ -91,7 +89,7 @@ describe('OrganizationsActionsService', () => {
     });
 
     it('does nothing before the page is ready', () => {
-        TestBed.inject(OrganizationsActionsService).edit(new OrganizationsConfig(), organization);
+        service.edit(new OrganizationsConfig(), organization);
 
         httpTesting.expectNone(() => true);
         expect(opened).toEqual([]);

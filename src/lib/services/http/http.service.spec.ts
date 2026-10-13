@@ -94,14 +94,11 @@ const ERROR_CASES: ErrorCase[] = [
     },
     {
         name: 'a nested error code',
-        respond: failWith(422, { errorCode: 'document-generation.pagination-stuck' }),
-        title: `${TITLE}document-generation.pagination-stuck`,
-        message: `${ERROR}document-generation.pagination-stuck`,
+        respond: failWith(413, { errorCode: 'attachments.content-too-large' }),
+        title: `${TITLE}attachments.content-too-large`,
+        message: `${ERROR}attachments.content-too-large`,
         messageParameters: {},
-        texts: [
-            'Pagination error',
-            'The document could not be paginated correctly. Check the content: an item may be too large or misconfigured.'
-        ]
+        texts: ['File too large', 'The file is larger than the maximum size allowed.']
     },
     {
         name: 'an error code with a translated field name',

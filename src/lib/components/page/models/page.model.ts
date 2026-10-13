@@ -1,5 +1,7 @@
+import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Observable } from 'rxjs';
 
+import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { PageViewMode } from './page-categories.model';
 import { PageFormConfig } from './page-form.model';
@@ -7,9 +9,27 @@ import { PageHeaderConfig } from './page-header.model';
 import { PageItem } from './page-item.model';
 import { PageDuplicationConfig, PageStatusConfig } from './page-lifecycle.model';
 import { PageSearch } from './page-search.model';
+import { PageCategoryPathEntry } from './page-state.model';
 import { PageTableConfig } from './page-table.model';
 import { PageUsagesConfig } from './page-usages.model';
 import { PageView } from './page-view.model';
+
+export interface PageActionsContext {
+    config: PageConfig;
+    getCurrentCategoryId: () => string | number | null;
+    onCategoryDeleted: () => void;
+    onCategoryFormModalOpened: (reference: BsModalRef<ModalFormDialogComponent>) => void;
+    onCategorySaved: () => void;
+    onDeleted: () => void;
+    onFormModalOpened: (reference: BsModalRef<ModalFormDialogComponent>) => void;
+    onMoved: () => void;
+    onSaved: () => void;
+    onTrashItemDeleted: () => void;
+    selectedItems: () => PageItem[];
+
+    getCurrentCategory?: () => PageCategoryPathEntry | null;
+    getSharedRoot?: () => PageCategoryPathEntry | null;
+}
 
 export interface PageBackendResponse<TRow extends PageItem = PageItem> {
     globalActions: string[];

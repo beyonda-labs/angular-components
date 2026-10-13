@@ -11,7 +11,7 @@ describe('TableRowComponent', () => {
     let changes: boolean[];
 
     async function render(
-        overrides: { isHeader?: boolean; selectable?: boolean; selected?: boolean } = {}
+        overrides: { isHeader?: boolean; isSelected?: boolean; selectable?: boolean } = {}
     ): Promise<void> {
         fixture = TestBed.createComponent(TableRowComponent);
         fixture.componentRef.setInput('gridTemplateColumns', '3.25rem minmax(0, 1fr)');
@@ -21,7 +21,7 @@ describe('TableRowComponent', () => {
             new TableRow<{ name: string }>({
                 cells: [new TextTableCell({ content: 'Ada' })],
                 content: { name: 'Ada' },
-                selected: overrides.selected ?? false
+                isSelected: overrides.isSelected ?? false
             })
         );
         fixture.componentRef.setInput('selectable', overrides.selectable ?? true);
@@ -48,7 +48,7 @@ describe('TableRowComponent', () => {
     });
 
     it('reports the opposite of its selection when clicked, and the checkbox state when ticked', async () => {
-        await render({ selected: true });
+        await render({ isSelected: true });
 
         (fixture.nativeElement.querySelector('[role="row"]') as HTMLElement).click();
         checkbox()?.click();

@@ -7,13 +7,13 @@ import { ModalFormConfig } from '../../form/components/modal/models/modal-form.m
 import { FormHandle, FormSection } from '../../form/models/form.model';
 import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
 import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
-import { PageConfig } from '../models/page.model';
+import { PageActionsContext, PageConfig } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageItemType, PageTrashItem } from '../models/page-categories.model';
 import { PageFormConfig } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
 import { PageTableConfig } from '../models/page-table.model';
-import { PageActionsContext, PageActionsService } from './page-actions.service';
+import { PageActionsService } from './page-actions.service';
 import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
 

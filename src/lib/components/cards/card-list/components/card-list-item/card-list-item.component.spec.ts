@@ -1,5 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { accessibleDescription, accessibleName, buttonByName, queryAll, renderComponent, settle } from '@testing/dom';
+import {
+    accessibleDescription,
+    accessibleName,
+    buttonByName,
+    queryAll,
+    renderComponent,
+    settle,
+    textsOf,
+    visibleText
+} from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import cardsEn from '../../../assets/cards.en.json';
@@ -29,7 +38,7 @@ describe('CardListItemComponent', () => {
     }
 
     function nestedTitles(): string[] {
-        return queryAll(fixture, 'li').map(item => item.textContent?.trim() ?? '');
+        return textsOf(queryAll(fixture, 'li'));
     }
 
     async function render(item: CardListItem = buildItem()): Promise<void> {
@@ -69,6 +78,7 @@ describe('CardListItemComponent', () => {
         await settle(fixture);
 
         expect(buttonByName(fixture, 'Show members').getAttribute('aria-expanded')).toBe('false');
+        expect(buttonByName(fixture, 'Show members').hasAttribute('aria-controls')).toBe(false);
         expect(nestedTitles()).toEqual([]);
     });
 
@@ -76,7 +86,7 @@ describe('CardListItemComponent', () => {
         await render(buildItem({ isOpen: true, items: [] }));
 
         expect(buttonByName(fixture, 'Hide members').getAttribute('aria-expanded')).toBe('true');
-        expect(fixture.nativeElement.textContent).toContain('Nothing here yet.');
+        expect(visibleText(fixture)).toContain('Nothing here yet.');
     });
 
     it('offers the default toggle texts of the module when the fold gives none', async () => {

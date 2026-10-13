@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { nextDomId } from '../../../../internal/dom-ids/dom-ids';
 import { toKeySegment } from '../../../../utilities/key-segment';
 import { resolvePropertyLabelKey } from '../../functions/property-i18n';
 import { PropertyAttachmentField } from '../../models/fields/property-attachment-field.model';
@@ -12,7 +13,11 @@ import { PropertyNumberField } from '../../models/fields/property-number-field.m
 import { PropertySegmentedField } from '../../models/fields/property-segmented-field.model';
 import { PropertySelectField } from '../../models/fields/property-select-field.model';
 import { PropertySpacingField } from '../../models/fields/property-spacing-field.model';
-import { PropertyTextField } from '../../models/fields/property-text-field.model';
+import {
+    PropertyTextField,
+    PropertyTextFieldActionTrigger,
+    PropertyTextFieldVariableInsertion
+} from '../../models/fields/property-text-field.model';
 import { PropertyToggleField } from '../../models/fields/property-toggle-field.model';
 import { PropertyField } from '../../models/property-field.model';
 import { PropertyFieldLabelling } from '../../models/property-field-labelling.model';
@@ -27,11 +32,7 @@ import { PropertyNumberFieldComponent } from '../fields/property-number-field/pr
 import { PropertySegmentedFieldComponent } from '../fields/property-segmented-field/property-segmented-field.component';
 import { PropertySelectFieldComponent } from '../fields/property-select-field/property-select-field.component';
 import { PropertySpacingFieldComponent } from '../fields/property-spacing-field/property-spacing-field.component';
-import {
-    PropertyTextFieldActionTrigger,
-    PropertyTextFieldComponent,
-    PropertyTextFieldVariableInsertion
-} from '../fields/property-text-field/property-text-field.component';
+import { PropertyTextFieldComponent } from '../fields/property-text-field/property-text-field.component';
 import { PropertyToggleFieldComponent } from '../fields/property-toggle-field/property-toggle-field.component';
 
 const FIELD_TYPES_WITH_LABELABLE_CONTROL = new Set<PropertyFieldType>([
@@ -74,9 +75,7 @@ export class PropertyFieldComponent {
         () =>
             `${this.propertiesMenuService.config().prefix}.fields.${toKeySegment(this.field().id)}.action-button.tooltip`
     );
-
-    private static nextInstanceId = 0;
-    readonly controlId = `bey-property-field-${PropertyFieldComponent.nextInstanceId++}`;
+    readonly controlId = nextDomId('bey-property-field');
     readonly fieldType = PropertyFieldType;
     readonly labelFor = computed(() =>
         FIELD_TYPES_WITH_LABELABLE_CONTROL.has(this.field().type) ? this.controlId : null

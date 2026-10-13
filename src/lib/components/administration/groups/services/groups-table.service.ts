@@ -12,20 +12,12 @@ const CREATED_FORMAT = 'yyyy-MM-dd';
 })
 export class GroupsTableService {
     loadRow(group: GroupRow, options: GroupsRowOptions): TableCell[] {
-        const { isOrganizationShown, mode } = options;
-
         return [
             buildNameCell(group, options),
             new TextTableCell({ content: String(group.memberCount) }),
-            ...(mode === GroupsPageMode.Manage
-                ? [
-                      new TextTableCell({ content: String(group.extraRoleCount ?? 0) }),
-                      ...(isOrganizationShown ? [pageOrganizationCell(group)] : [])
-                  ]
-                : []),
-            ...(mode === GroupsPageMode.ReadWithRoles
-                ? [new TextTableCell({ content: String(group.roleCount ?? 0) })]
-                : []),
+            new TextTableCell({ content: String(group.extraRoleCount ?? 0) }),
+            ...(options.isOrganizationShown ? [pageOrganizationCell(group)] : []),
+            new TextTableCell({ content: String(group.roleCount ?? 0) }),
             new DateTableCell({ format: CREATED_FORMAT, value: group.createdAt })
         ];
     }

@@ -88,7 +88,7 @@ export class TableRowComponent<T> {
 
     onRowClick(): void {
         if (this.selectable() && !this.isHeader()) {
-            this.selectionChange.emit(!this.row().selected);
+            this.selectionChange.emit(!this.row().isSelected);
         }
     }
 

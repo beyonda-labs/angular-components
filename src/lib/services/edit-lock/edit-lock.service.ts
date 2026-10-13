@@ -19,8 +19,6 @@ const HEARTBEATS_PER_LIFETIME = 4;
 const NOT_FOUND_STATUS = 404;
 const TOKEN_BYTES = 16;
 
-const ignoreError = (): void => undefined;
-
 @Injectable()
 export class EditLockService {
     private readonly destroyRef = inject(DestroyRef);
@@ -215,6 +213,8 @@ function createToken(): string {
         byte.toString(16).padStart(2, '0')
     ).join('');
 }
+
+function ignoreError(): void {}
 
 function isHolding({ status }: EditLockState): boolean {
     return status === 'acquiring' || status === 'own';

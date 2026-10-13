@@ -1,3 +1,12 @@
+export interface LockNoticeOptions {
+    config: EditLockNoticeConfig;
+    language: string;
+    onAcquire: () => void;
+    onRelease: (name: string) => void;
+    onTakeOver: () => void;
+    translate: (key: string) => string;
+}
+
 export interface LockTime {
     date: string;
     isToday: boolean;

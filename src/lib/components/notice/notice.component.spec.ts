@@ -61,7 +61,7 @@ describe('NoticeComponent', () => {
 
     it('offers no button without actions, and one per action in order otherwise', async () => {
         await render();
-        expect(queryAll(fixture, 'button')).toHaveLength(0);
+        expect(textsOf(queryAll(fixture, 'button'))).toEqual([]);
 
         await render(
             buildConfig({

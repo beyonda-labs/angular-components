@@ -23,6 +23,10 @@ export function withColumnTooltips(columns: TableColumn[], tablePrefix: string):
     );
 }
 
+export function withoutColumn<T>(entries: T[], index: number): T[] {
+    return index < 0 ? entries : entries.filter((_, current) => current !== index);
+}
+
 export function withShownColumns<T>(
     entries: T[],
     columns: TableColumn[],

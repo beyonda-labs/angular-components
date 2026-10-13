@@ -1,7 +1,7 @@
 import { StringFilter } from '../../search/models/search-filter.model';
 import { TableColumn } from '../../table/models/table.model';
 import { PageColumnContext } from '../models/page-table.model';
-import { buildColumnContext, withColumnTooltips, withShownColumns } from './page-columns';
+import { buildColumnContext, withColumnTooltips, withoutColumn, withShownColumns } from './page-columns';
 
 describe('buildColumnContext', () => {
     it('tells the columns the category open, if any, and whether the search sends a text or a filter', () => {
@@ -27,6 +27,14 @@ describe('withColumnTooltips', () => {
             { key: 'createdAt', tooltip: 'demo.table.tooltips.created-at' },
             { key: 'ownerName', tooltip: 'shared.owner' }
         ]);
+    });
+});
+
+describe('withoutColumn', () => {
+    it('leaves out the entry of the hidden column, and keeps every entry when none is hidden', () => {
+        expect(withoutColumn(['name', 'organization', 'status'], 1)).toEqual(['name', 'status']);
+        expect(withoutColumn(['name', 'status'], -1)).toEqual(['name', 'status']);
+        expect(withoutColumn(['name'], 1)).toEqual(['name']);
     });
 });
 

@@ -33,7 +33,7 @@ const COLLEAGUE: BeyEditLock = {
     providers: [StyleGuideEditLockService, { provide: BeyEditLockService, useExisting: StyleGuideEditLockService }],
     selector: 'bey-edit-lock-notice-style-guide',
     standalone: true,
-    styleUrls: ['../style-guide-shared.css', './edit-lock-notice-style-guide.component.css'],
+    styleUrls: ['../style-guide-shared.css'],
     templateUrl: './edit-lock-notice-style-guide.component.html'
 })
 export class EditLockNoticeStyleGuideComponent {

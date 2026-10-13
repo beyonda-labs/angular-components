@@ -1,19 +1,15 @@
 import { buildPageOrganizationField } from '../../page/functions/page-organization-filter';
 import { pageStandardAction } from '../../page/functions/page-standard-actions';
-import { PageBackendResponse, PageConfig, PageHandle } from '../../page/models/page.model';
+import { PageConfig } from '../../page/models/page.model';
 import { PageStandardAction } from '../../page/models/page-action.model';
-import { PageCategoriesConfig } from '../../page/models/page-categories.model';
-import { PageFormConfig } from '../../page/models/page-form.model';
 import { PageHeaderConfig } from '../../page/models/page-header.model';
-import { PageOrganization } from '../../page/models/page-organization.model';
 import { SearchSort, SearchSortDirection } from '../../page/models/page-search.model';
 import { PageTableConfig, PageTableSearchConfig } from '../../page/models/page-table.model';
 import { SearchField, SearchFieldType } from '../../search/models/search.model';
 import { TableColumn } from '../../table/models/table.model';
-import { TableCell } from '../../table/models/table-cell.model';
 import { isColumnShownInFolders } from '../functions/organization-folders';
 import { ORGANIZATION_COLUMN_KEY, OrganizationFolder } from '../models/organization-folders.model';
-import { GroupFormValue, GroupRow, GroupsConfig, GroupsPageMode } from './models/groups.model';
+import { GroupFormValue, GroupRow, GroupsPageConfigOptions, GroupsPageMode } from './models/groups.model';
 
 const CREATED_AT_COLUMN = new TableColumn({ isSortable: true, key: 'createdAt', width: 2 });
 const EXTRA_ROLE_COUNT_COLUMN = new TableColumn({ isSortable: true, key: 'extraRoleCount', width: 2 });
@@ -30,21 +26,6 @@ const ORGANIZATION_COLUMN = new TableColumn({
 });
 const ROLE_COUNT_COLUMN = new TableColumn({ key: 'roleCount', width: 2 });
 const TEXT_FIELD = 'text';
-
-export interface GroupsPageConfigOptions {
-    config: GroupsConfig;
-    formConfig: PageFormConfig<GroupFormValue, GroupRow>;
-    isOrganizationShown: boolean;
-    loadRow: (group: GroupRow) => TableCell[];
-    mode: GroupsPageMode;
-    onDataLoaded: (response: PageBackendResponse<GroupRow | OrganizationFolder>) => void;
-    onEdit: (group: GroupRow) => void;
-    onReady: (handle: PageHandle<GroupRow, OrganizationFolder>) => void;
-    onView: (group: GroupRow) => void;
-    organizations: PageOrganization[];
-
-    categoriesConfig?: PageCategoriesConfig<OrganizationFolder>;
-}
 
 export function buildGroupsPageConfig({
     categoriesConfig,
@@ -82,9 +63,16 @@ export function buildGroupsPageConfig({
         prefix,
         tableConfig: new PageTableConfig<GroupRow, OrganizationFolder>({
             categoriesConfig,
-            columns: [...LEADING_COLUMNS, ...modeColumns(mode, isOrganizationShown), CREATED_AT_COLUMN],
+            columns: [
+                ...LEADING_COLUMNS,
+                EXTRA_ROLE_COUNT_COLUMN,
+                ...(isOrganizationShown ? [ORGANIZATION_COLUMN] : []),
+                ROLE_COUNT_COLUMN,
+                CREATED_AT_COLUMN
+            ],
             height: categoriesConfig ? foldersHeight : height,
-            isColumnShown: categoriesConfig ? isColumnShownInFolders : undefined,
+            isColumnShown: (column, context) =>
+                isColumnShownInMode(column, mode()) && (!categoriesConfig || isColumnShownInFolders(column, context)),
             loadRow,
             order: ORDER,
             search: new PageTableSearchConfig({
@@ -100,13 +88,14 @@ export function buildGroupsPageConfig({
     });
 }
 
-function modeColumns(mode: GroupsPageMode, isOrganizationShown: boolean): TableColumn[] {
-    switch (mode) {
-        case GroupsPageMode.Manage:
-            return [EXTRA_ROLE_COUNT_COLUMN, ...(isOrganizationShown ? [ORGANIZATION_COLUMN] : [])];
-        case GroupsPageMode.ReadWithRoles:
-            return [ROLE_COUNT_COLUMN];
+function isColumnShownInMode({ key }: TableColumn, mode: GroupsPageMode): boolean {
+    switch (key) {
+        case EXTRA_ROLE_COUNT_COLUMN.key:
+        case ORGANIZATION_COLUMN_KEY:
+            return mode === GroupsPageMode.Manage;
+        case ROLE_COUNT_COLUMN.key:
+            return mode === GroupsPageMode.ReadWithRoles;
         default:
-            return [];
+            return true;
     }
 }

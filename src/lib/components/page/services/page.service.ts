@@ -20,14 +20,14 @@ import { findStandardMoveAction, isMoveDragAllowed, isMoveDropAllowed } from '..
 import { buildPageSearchConfig } from '../functions/page-search-config';
 import { hasSortableColumn, toSearchSort } from '../functions/page-sort';
 import { buildPageTabs, readViewFilters } from '../functions/page-tabs';
-import { PageBackendResponse, PageConfig, PageHandle } from '../models/page.model';
+import { PageActionsContext, PageBackendResponse, PageConfig, PageHandle } from '../models/page.model';
 import { PageAction, PageActionZone } from '../models/page-action.model';
 import { PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
 import { PageSearch } from '../models/page-search.model';
 import { PageCategoryPathEntry } from '../models/page-state.model';
 import { PageColumnContext } from '../models/page-table.model';
-import { PageActionsContext, PageActionsService } from './page-actions.service';
+import { PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
 import { PageOrganizationsService } from './page-organizations.service';
 import { PageOwnersService } from './page-owners.service';

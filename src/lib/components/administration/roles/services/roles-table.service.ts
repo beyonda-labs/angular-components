@@ -24,7 +24,7 @@ export class RolesTableService {
     private readonly translateService = inject(TranslateService);
 
     loadRow(role: RoleRow, options: RolesRowOptions): TableCell[] {
-        const { isOrganizationShown, isReadOnly, onEdit, onView, prefix, rolePrefix } = options;
+        const { isOrganizationShown, onEdit, onView, prefix, rolePrefix } = options;
         const name = roleLabel(role, rolePrefix, key => this.translateService.instant(key) as string);
         const type = role.isBase ? 'base' : 'extra';
 
@@ -41,12 +41,9 @@ export class RolesTableService {
                 translate: true
             }),
             new TextTableCell({ content: String(role.permissions.length) }),
-            ...(isReadOnly
-                ? [this.buildSourcesCell(role.sources ?? [], prefix)]
-                : [
-                      new TextTableCell({ content: String(role.memberCount ?? 0) }),
-                      new TextTableCell({ content: String(role.groupCount ?? 0) })
-                  ]),
+            new TextTableCell({ content: String(role.memberCount ?? 0) }),
+            new TextTableCell({ content: String(role.groupCount ?? 0) }),
+            this.buildSourcesCell(role.sources ?? [], prefix),
             ...(isOrganizationShown ? [buildOrganizationCell(role, prefix)] : []),
             new TextTableCell({ content: role.description ?? '', tooltip: role.description })
         ];

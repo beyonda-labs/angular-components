@@ -7,7 +7,7 @@ import { config as rxjsConfig, of, throwError } from 'rxjs';
 import { ModalFormConfig, ModalFormSize } from '../../form/components/modal/models/modal-form.model';
 import { FormTextField } from '../../form/models/fields/form-text-field.model';
 import { FormHandle, FormRow, FormSection } from '../../form/models/form.model';
-import { PageFormConfig } from '../models/page-form.model';
+import { PageFormConfig, PageFormConfigParameters } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
 import { PageFormService } from './page-form.service';
 
@@ -44,12 +44,7 @@ describe('PageFormService', () => {
 
     it('opens the modal form in the size the page form config asks for, large by default', () => {
         service.open(buildPageForm(), undefined, 'testPage', jest.fn());
-        service.open(
-            new PageFormConfig({ ...buildPageForm(), size: ModalFormSize.Medium }),
-            undefined,
-            'testPage',
-            jest.fn()
-        );
+        service.open(buildPageForm({ size: ModalFormSize.Medium }), undefined, 'testPage', jest.fn());
 
         const [large, medium] = modalForm.forms() as ModalFormConfig<unknown>[];
 
@@ -68,9 +63,9 @@ describe('PageFormService', () => {
     });
 
     it('takes a create-mode initial value from toFormValue without an item', () => {
-        const pageForm = buildPageForm();
-
-        pageForm.toFormValue = item => ({ section1: { text1: item ? String(item.id) : 'default' } });
+        const pageForm = buildPageForm({
+            toFormValue: item => ({ section1: { text1: item ? String(item.id) : 'default' } })
+        });
 
         service.open(pageForm, undefined, 'testPage', jest.fn());
 
@@ -78,11 +73,10 @@ describe('PageFormService', () => {
     });
 
     it('builds the form for the category open in the page, and for the root without one', () => {
-        const pageForm = new PageFormConfig<TestFormValue>({
+        const pageForm = buildPageForm({
             buildSections: (_, category) => [
                 new FormSection({ key: category ? `in-${category.id}` : 'root', rows: [] })
             ],
-            prefix: 'testPage.form',
             toFormValue: (_, category) => ({ section1: { text1: category?.label ?? '' } })
         });
 
@@ -100,12 +94,10 @@ describe('PageFormService', () => {
 
     it('forwards every value change of the modal form with its handle', () => {
         const onValueChange = jest.fn();
-        const pageForm = buildPageForm();
         const handle = {} as FormHandle<TestFormValue>;
         const value: TestFormValue = { section1: { text1: 'Ada' } };
 
-        pageForm.onValueChange = onValueChange;
-        service.open(pageForm, undefined, 'testPage', jest.fn());
+        service.open(buildPageForm({ onValueChange }), undefined, 'testPage', jest.fn());
         getOpenedConfig().onValueChange?.(value, handle);
 
         expect(onValueChange).toHaveBeenCalledWith(value, handle);
@@ -145,10 +137,11 @@ describe('PageFormService', () => {
     it('maps an edit through toItem with the item it started from', () => {
         const onSave = jest.fn();
         const item: PageItem = { id: 7 };
-        const pageForm = buildPageForm();
+        const pageForm = buildPageForm({
+            toItem: (value, original) => ({ id: original?.id, text: value.section1.text1 })
+        });
         const currentValue: TestFormValue = { section1: { text1: 'value' } };
 
-        pageForm.toItem = (value, original) => ({ id: original?.id, text: value.section1.text1 });
         service.open(pageForm, item, 'testPage', onSave);
         getOpenedConfig().onSubmit?.(currentValue, {} as FormHandle<TestFormValue>);
 
@@ -158,13 +151,13 @@ describe('PageFormService', () => {
     it('asks with the confirmation of confirmSave before saving, and saves only once confirmed', () => {
         const modal = TestBed.inject(FakeModalService);
         const onSave = jest.fn();
-        const pageForm = buildPageForm();
         const item: PageItem = { id: 7 };
         const confirmation = { message: 'testPage.modal.rename.message', title: 'testPage.modal.rename.title' };
         const currentValue: TestFormValue = { section1: { text1: 'renamed' } };
+        const pageForm = buildPageForm({
+            confirmSave: (value, original) => (value.section1.text1 !== String(original?.id) ? confirmation : null)
+        });
 
-        pageForm.confirmSave = (value, original) =>
-            value.section1.text1 !== String(original?.id) ? confirmation : null;
         service.open(pageForm, item, 'testPage', onSave);
 
         getOpenedConfig().onSubmit?.(currentValue, {} as FormHandle<TestFormValue>);
@@ -179,10 +172,8 @@ describe('PageFormService', () => {
     it('saves without asking when confirmSave answers no confirmation', () => {
         const modal = TestBed.inject(FakeModalService);
         const onSave = jest.fn();
-        const pageForm = buildPageForm();
 
-        pageForm.confirmSave = () => of(null);
-        service.open(pageForm, { id: 7 }, 'testPage', onSave);
+        service.open(buildPageForm({ confirmSave: () => of(null) }), { id: 7 }, 'testPage', onSave);
         getOpenedConfig().onSubmit?.({ section1: { text1: '7' } }, {} as FormHandle<TestFormValue>);
 
         expect(modal.confirmations()).toEqual([]);
@@ -193,9 +184,8 @@ describe('PageFormService', () => {
         const previousHandler = rxjsConfig.onUnhandledError;
         const unhandled = jest.fn();
         const onSave = jest.fn();
-        const pageForm = buildPageForm();
+        const pageForm = buildPageForm({ confirmSave: () => throwError(() => new Error('refused')) });
 
-        pageForm.confirmSave = () => throwError(() => new Error('refused'));
         service.open(pageForm, { id: 7 }, 'testPage', onSave);
         rxjsConfig.onUnhandledError = unhandled;
 
@@ -234,10 +224,9 @@ describe('PageFormService', () => {
     }
 });
 
-function buildPageForm(callbacks?: {
-    onCreate?: (value: TestFormValue, handle: FormHandle<TestFormValue>) => void;
-    onEdit?: (value: TestFormValue, handle: FormHandle<TestFormValue>) => void;
-}): PageFormConfig<TestFormValue> {
+function buildPageForm(
+    overrides: Partial<PageFormConfigParameters<TestFormValue>> = {}
+): PageFormConfig<TestFormValue> {
     return new PageFormConfig<TestFormValue>({
         buildSections: () => [
             new FormSection({
@@ -245,10 +234,9 @@ function buildPageForm(callbacks?: {
                 rows: [new FormRow({ fields: [new FormTextField({ key: 'text1' })] })]
             })
         ],
-        onCreate: callbacks?.onCreate,
-        onEdit: callbacks?.onEdit,
         prefix: 'testPage.form',
         toFormValue: item => (item ? { section1: { text1: String(item.id) } } : undefined),
-        toItem: value => ({ mapped: value })
+        toItem: value => ({ mapped: value }),
+        ...overrides
     });
 }

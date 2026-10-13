@@ -133,7 +133,7 @@ describe('AppLayoutComponent', () => {
     describe('breadcrumb', () => {
         it('shows nothing until the service has items, and hides again when they are cleared', async () => {
             await render();
-            expect(fixture.nativeElement.querySelector('bey-breadcrumb')).toBeNull();
+            expect(breadcrumbLabels()).toEqual([]);
 
             service.setBreadcrumb([new AppLayoutBreadcrumbItem({ id: 1, label: 'Home' })]);
             await settle(fixture);
@@ -141,7 +141,7 @@ describe('AppLayoutComponent', () => {
 
             service.clearBreadcrumb();
             await settle(fixture);
-            expect(fixture.nativeElement.querySelector('bey-breadcrumb')).toBeNull();
+            expect(breadcrumbLabels()).toEqual([]);
         });
 
         it('starts with the items the config carries', async () => {
@@ -335,7 +335,7 @@ describe('AppLayoutComponent', () => {
             await router.navigateByUrl('/elsewhere');
             await settle(fixture);
             expect(service.activeActionKey()).toBeNull();
-            expect(fixture.nativeElement.querySelector('bey-breadcrumb')).toBeNull();
+            expect(breadcrumbLabels()).toEqual([]);
         });
 
         it('navigates to the route of a top or bottom action used from the menu, and activates it', async () => {

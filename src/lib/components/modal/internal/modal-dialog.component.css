@@ -1,52 +1,47 @@
 :host {
-    --bey-modal-fg: var(--bey-text-primary);
-    --bey-modal-fg-muted: var(--bey-text-muted);
-    --bey-modal-fg-message: var(--bey-text-secondary);
-    --bey-modal-close-hover-bg: var(--bey-bg-active);
-    --bey-modal-max-height: var(--bey-dialog-max-height);
-    color: var(--bey-modal-fg);
-
+    color: var(--bey-modal-fg, var(--bey-text-primary));
     display: block;
 }
 
 .bey-modal {
     --bey-modal-accent: var(--bey-primary);
-    --bey-modal-accent-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);
+    --bey-modal-accent-soft: var(--bey-primary-soft);
     --bey-modal-border: var(--bey-border-subtle);
     --bey-modal-surface: var(--bey-bg-surface);
+
     background: var(--bey-modal-surface);
     border: var(--bey-border-width) solid var(--bey-modal-border);
     border-radius: var(--bey-radius-md);
     box-shadow: var(--bey-shadow-lg);
     display: flex;
     flex-direction: column;
-    max-height: var(--bey-modal-max-height);
+    max-height: var(--bey-modal-max-height, var(--bey-dialog-max-height));
     padding: var(--bey-space-xl) var(--bey-space-lg);
     width: min(100%, 32rem);
 }
 
-.bey-modal-header {
-    flex-shrink: 0;
-}
-
 .bey-modal-info {
     --bey-modal-accent: var(--bey-primary);
-    --bey-modal-accent-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);
+    --bey-modal-accent-soft: var(--bey-primary-soft);
 }
 
 .bey-modal-warning {
     --bey-modal-accent: var(--bey-warning);
-    --bey-modal-accent-soft: color-mix(in srgb, var(--bey-warning) 12%, transparent);
+    --bey-modal-accent-soft: var(--bey-warning-soft);
 }
 
 .bey-modal-error {
     --bey-modal-accent: var(--bey-danger);
-    --bey-modal-accent-soft: color-mix(in srgb, var(--bey-danger) 10%, transparent);
+    --bey-modal-accent-soft: var(--bey-danger-soft);
 }
 
 .bey-modal-confirmation {
     --bey-modal-accent: var(--bey-primary);
-    --bey-modal-accent-soft: color-mix(in srgb, var(--bey-primary) 10%, transparent);
+    --bey-modal-accent-soft: var(--bey-primary-soft);
+}
+
+.bey-modal-header {
+    flex-shrink: 0;
 }
 
 .bey-modal-icon {
@@ -66,38 +61,38 @@
     color: var(--bey-modal-accent);
     font-size: var(--bey-font-size-xs);
     font-weight: var(--bey-font-weight-bold);
-    letter-spacing: 0.08em;
+    letter-spacing: var(--bey-letter-spacing-wider);
     text-transform: uppercase;
 }
 
 .bey-modal-title {
-    color: var(--bey-modal-fg);
+    color: var(--bey-modal-fg, var(--bey-text-primary));
     font-size: var(--bey-font-size-xl);
     font-weight: var(--bey-font-weight-bold);
-    letter-spacing: -0.03em;
+    letter-spacing: var(--bey-letter-spacing-tight);
 }
 
 .bey-modal-close {
-    color: var(--bey-modal-fg-muted);
+    color: var(--bey-modal-fg-muted, var(--bey-text-muted));
     font-size: var(--bey-font-size-2xl);
-    height: 2rem;
+    height: var(--bey-space-2xl);
     line-height: var(--bey-line-height-none);
     transition:
         border-color var(--bey-duration-base) var(--bey-easing-standard),
         background-color var(--bey-duration-base) var(--bey-easing-standard),
         color var(--bey-duration-base) var(--bey-easing-standard),
         transform var(--bey-duration-base) var(--bey-easing-standard);
-    width: 2rem;
+    width: var(--bey-space-2xl);
 }
 
 .bey-modal-close:hover {
-    background-color: var(--bey-modal-close-hover-bg);
-    color: var(--bey-modal-fg);
+    background-color: var(--bey-modal-close-hover-bg, var(--bey-bg-active));
+    color: var(--bey-modal-fg, var(--bey-text-primary));
     transform: translateY(-1px);
 }
 
 .bey-modal-message {
-    color: var(--bey-modal-fg-message);
+    color: var(--bey-modal-fg-message, var(--bey-text-secondary));
     flex: 1 1 auto;
     font-size: var(--bey-font-size-md);
     line-height: var(--bey-line-height-loose);
@@ -110,12 +105,6 @@
     flex-shrink: 0;
 }
 
-.bey-modal-action {
-    font-size: var(--bey-font-size-sm);
-    line-height: var(--bey-line-height-tight);
-    min-width: 7rem;
-}
-
 .bey-modal-action-slot {
     display: inline-flex;
 }
@@ -123,7 +112,7 @@
 @media (max-width: 575.98px) {
     .bey-modal {
         border-radius: var(--bey-radius-xl);
-        padding: 1.15rem;
+        padding: var(--bey-space-lg);
     }
 
     .bey-modal-actions {

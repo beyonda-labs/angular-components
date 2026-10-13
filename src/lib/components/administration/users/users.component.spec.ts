@@ -89,12 +89,16 @@ describe('UsersComponent', () => {
         return form?.sections.flatMap(section => section.rows.flatMap(row => row.fields)) ?? [];
     }
 
-    async function useMenuAction(rowText: string, action: string): Promise<void> {
+    async function openMenu(rowText: string): Promise<void> {
         rowWith(rowText).click();
         await settle(fixture);
         buttonByName(fixture, 'angular-components.header.menu').click();
         await settle(fixture);
-        buttonByName(fixture, `${PREFIX}.actions.${action}.label`).click();
+    }
+
+    async function useMenuAction(rowText: string, label: string): Promise<void> {
+        await openMenu(rowText);
+        buttonByName(fixture, label).click();
         await settle(fixture);
     }
 
@@ -251,10 +255,7 @@ describe('UsersComponent', () => {
     it('offers no status change action of its own, the status being part of the edit', async () => {
         await render();
 
-        rowWith('ada@example.test').click();
-        await settle(fixture);
-        buttonByName(fixture, 'angular-components.header.menu').click();
-        await settle(fixture);
+        await openMenu('ada@example.test');
 
         expect(queryButton(fixture, `${PREFIX}.actions.change-status.label`)).toBeNull();
         expect(queryButton(fixture, `${PREFIX}.actions.resend-invitation.label`)).not.toBeNull();
@@ -263,7 +264,7 @@ describe('UsersComponent', () => {
     it('sends the invitation again to an invited user', async () => {
         await render([buildUser({ actions: ['resend-invitation'], status: UserStatus.Invited })]);
 
-        await useMenuAction('ada@example.test', 'resend-invitation');
+        await useMenuAction('ada@example.test', `${PREFIX}.actions.resend-invitation.label`);
         const request = httpTesting.expectOne(`${USERS_URL}/u1/invitation`);
         request.flush(null);
 
@@ -402,15 +403,6 @@ describe('UsersComponent', () => {
             return fieldsOf(form).find(field => field.key === key) as T;
         }
 
-        async function useNamedAction(label: string): Promise<void> {
-            rowWith('ada@example.test').click();
-            await settle(fixture);
-            buttonByName(fixture, 'angular-components.header.menu').click();
-            await settle(fixture);
-            buttonByName(fixture, label).click();
-            await settle(fixture);
-        }
-
         async function deleteSelected(): Promise<void> {
             controlByName(fixture, 'angular-components.table.select-all').click();
             await settle(fixture);
@@ -438,7 +430,7 @@ describe('UsersComponent', () => {
                 new UsersConfig({ contentLabels: CONTENT_LABELS })
             );
 
-            await useNamedAction('Transfer content');
+            await useMenuAction('ada@example.test', 'Transfer content');
             httpTesting
                 .expectOne(`${USERS_URL}/u1/content`)
                 .flush({ counts: { attachments: 1, documents: 2, templates: 0 }, usedByOthers: {} });
@@ -534,7 +526,7 @@ describe('UsersComponent', () => {
         it('names the one user deleted and warns of nothing when nobody else uses what they own', async () => {
             await render([buildUser({ actions: ['delete'], status: UserStatus.Inactive })], []);
 
-            await useNamedAction('Delete');
+            await useMenuAction('ada@example.test', 'Delete');
             httpTesting.expectOne(`${USERS_URL}/u1/content`).flush({ counts: { documents: 0 } });
             await settle(fixture);
             const form = modalForms.forms().at(-1);

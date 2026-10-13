@@ -54,9 +54,6 @@ export class FormConfig<TValue = unknown> {
     onValueChange?: (value: TValue, handle: FormHandle<TValue>) => void;
 
     constructor({
-        prefix,
-        sections,
-
         allowSubmitWithoutChanges = false,
         buttonLayout = 'end',
         buttons = [],
@@ -67,6 +64,8 @@ export class FormConfig<TValue = unknown> {
         onStepChange,
         onSubmit,
         onValueChange,
+        prefix,
+        sections,
         steps = []
     }: FormConfigParameters<TValue>) {
         this.allowSubmitWithoutChanges = allowSubmitWithoutChanges;
@@ -100,7 +99,7 @@ export class FormRow {
     alignment: 'start' | 'end';
     fields: FormField[];
 
-    constructor({ fields, alignment = 'start' }: FormRowParameters) {
+    constructor({ alignment = 'start', fields }: FormRowParameters) {
         this.alignment = alignment;
         this.fields = fields;
     }
@@ -117,14 +116,13 @@ export class FormSection {
     label?: string;
 
     constructor({
-        key,
-        rows,
-
         isHidden = false,
         isTitleVisible = true,
         isTooltipVisible = false,
+        key,
         label,
-        prefix = key
+        prefix = key,
+        rows
     }: FormSectionParameters) {
         this.isHidden = isHidden;
         this.isTitleVisible = isTitleVisible;

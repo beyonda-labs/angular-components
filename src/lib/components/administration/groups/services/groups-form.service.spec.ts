@@ -1,11 +1,11 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { buttonByName, controlByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { of } from 'rxjs';
 
 import formEn from '../../../form/assets/form.en.json';
-import { ModalFormSize } from '../../../form/components/modal/models/modal-form.model';
+import { ModalFormConfig, ModalFormSize } from '../../../form/components/modal/models/modal-form.model';
 import { FormComponent } from '../../../form/form.component';
 import { FormAutocompleteSearchResult } from '../../../form/models/fields/form-autocomplete-field.model';
 import { FormListField } from '../../../form/models/fields/form-list-field.model';
@@ -13,7 +13,13 @@ import { FormSection } from '../../../form/models/form.model';
 import { FormField } from '../../../form/models/form-field.model';
 import { FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
 import groupsEn from '../assets/groups.en.json';
-import { GroupDetail, GroupEditOptions, GroupMember, GroupsFormOptions } from '../models/groups.model';
+import {
+    GroupDetail,
+    GroupEditFormValue,
+    GroupEditOptions,
+    GroupMember,
+    GroupsFormOptions
+} from '../models/groups.model';
 import { GroupsFormService } from './groups-form.service';
 
 describe('GroupsFormService', () => {
@@ -63,6 +69,16 @@ describe('GroupsFormService', () => {
             id: `p${index}`,
             name: `User ${index}`
         }));
+    }
+
+    function renderInEnglish(config: ModalFormConfig<GroupEditFormValue>): Promise<ComponentFixture<FormComponent>> {
+        const translate = TestBed.inject(TranslateService);
+
+        translate.setTranslation('en', formEn);
+        translate.setTranslation('en', groupsEn, true);
+        translate.use('en');
+
+        return renderComponent(FormComponent, { config });
     }
 
     function search(list: FormField, text: string, chosenIds: string[]): FormAutocompleteSearchResult {
@@ -161,10 +177,6 @@ describe('GroupsFormService', () => {
     });
 
     it('shows a superadmin the organization of the group it edits after the name, in a disabled select', async () => {
-        const translate = TestBed.inject(TranslateService);
-        translate.setTranslation('en', formEn);
-        translate.setTranslation('en', groupsEn, true);
-        translate.use('en');
         const form = service.buildEditFormConfig(
             buildEditOptions({
                 detail: { ...detail, organizationId: 'o2', organizationName: 'Globex' },
@@ -172,7 +184,7 @@ describe('GroupsFormService', () => {
                 prefix: 'angular-components.groups'
             })
         );
-        const fixture = await renderComponent(FormComponent, { config: form });
+        const fixture = await renderInEnglish(form);
         const organization = controlByName<HTMLSelectElement>(fixture, 'Organization');
 
         expect(fieldsOf(form.sections).map(({ key }) => key)).toEqual([
@@ -265,18 +277,14 @@ describe('GroupsFormService', () => {
     });
 
     it('shows the members and the extra roles as lists to search, pick into and remove from', async () => {
-        const translate = TestBed.inject(TranslateService);
-        translate.setTranslation('en', formEn);
-        translate.setTranslation('en', groupsEn, true);
-        translate.use('en');
-        const fixture = await renderComponent(FormComponent, {
-            config: service.buildEditFormConfig(
+        const fixture = await renderInEnglish(
+            service.buildEditFormConfig(
                 buildEditOptions({
                     detail: { ...detail, extraRoles: [] },
                     prefix: 'angular-components.groups'
                 })
             )
-        });
+        );
         const members = controlByName(fixture, 'Members');
 
         expect(fixture.nativeElement.textContent).toContain('This group has no additional roles yet.');

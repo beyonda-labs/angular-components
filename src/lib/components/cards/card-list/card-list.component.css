@@ -1,7 +1,14 @@
 :host {
+    --bey-cards-count-bg: var(--bey-bg-active);
+    --bey-cards-count-fg: var(--bey-text-secondary);
     --bey-cards-list-bg: var(--bey-bg-page);
     --bey-cards-list-border: var(--bey-border-subtle);
     --bey-cards-list-empty: var(--bey-text-muted);
+    --bey-cards-list-item-hover: var(--bey-bg-hover);
+    --bey-cards-list-item-icon: var(--bey-text-secondary);
+    --bey-cards-list-item-link: var(--bey-text-link);
+    --bey-cards-list-item-link-hover: var(--bey-text-link-hover);
+    --bey-cards-list-item-muted: var(--bey-text-muted);
 
     display: block;
     min-width: 0;
@@ -21,11 +28,6 @@
     padding: 0;
 }
 
-.bey-cards-list-entry {
-    background: var(--bey-cards-list-bg);
-    min-width: 0;
-}
-
 .bey-cards-list--grouped .bey-cards-list-items {
     background: var(--bey-cards-list-bg);
     border: var(--bey-border-width) solid var(--bey-cards-list-border);
@@ -33,12 +35,17 @@
     overflow: hidden;
 }
 
-.bey-cards-list--grouped .bey-cards-list-entry + .bey-cards-list-entry {
-    border-top: var(--bey-border-width) solid var(--bey-cards-list-border);
-}
-
 .bey-cards-list--separate .bey-cards-list-items {
     gap: var(--bey-space-sm);
+}
+
+.bey-cards-list-entry {
+    background: var(--bey-cards-list-bg);
+    min-width: 0;
+}
+
+.bey-cards-list--grouped .bey-cards-list-entry + .bey-cards-list-entry {
+    border-top: var(--bey-border-width) solid var(--bey-cards-list-border);
 }
 
 .bey-cards-list--separate .bey-cards-list-entry {

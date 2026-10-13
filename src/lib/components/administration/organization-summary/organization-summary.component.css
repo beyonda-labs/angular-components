@@ -17,14 +17,6 @@
     min-width: 0;
 }
 
-.bey-organization-summary-created,
-.bey-organization-summary-breakdown {
-    color: var(--bey-text-muted);
-    font-size: var(--bey-font-size-sm);
-    line-height: var(--bey-line-height-base);
-    margin: 0;
-}
-
 .bey-organization-summary-name {
     color: var(--bey-text-primary);
     font-size: var(--bey-font-size-3xl);
@@ -33,6 +25,14 @@
     margin: 0;
     min-width: 0;
     overflow-wrap: anywhere;
+}
+
+.bey-organization-summary-created,
+.bey-organization-summary-breakdown {
+    color: var(--bey-text-muted);
+    font-size: var(--bey-font-size-sm);
+    line-height: var(--bey-line-height-base);
+    margin: 0;
 }
 
 .bey-organization-summary-stats {

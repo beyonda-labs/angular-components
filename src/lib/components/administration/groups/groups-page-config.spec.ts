@@ -1,9 +1,13 @@
+import { signal } from '@angular/core';
+
 import { PageActionZone } from '../../page/models/page-action.model';
 import { PageFormConfig } from '../../page/models/page-form.model';
+import { PageColumnContext } from '../../page/models/page-table.model';
 import { buildOrganizationFoldersConfig } from '../functions/organization-folders';
-import { buildGroupsPageConfig, GroupsPageConfigOptions } from './groups-page-config';
-import { GroupFormValue, GroupRow, GroupsConfig, GroupsPageMode } from './models/groups.model';
+import { buildGroupsPageConfig } from './groups-page-config';
+import { GroupFormValue, GroupRow, GroupsConfig, GroupsPageConfigOptions, GroupsPageMode } from './models/groups.model';
 
+const BROWSING: PageColumnContext = { isSearching: false };
 const FOLDER_ACTIONS = new Set(['create-category', 'delete-category', 'edit-category', 'move', 'share']);
 
 describe('buildGroupsPageConfig', () => {
@@ -21,7 +25,7 @@ describe('buildGroupsPageConfig', () => {
             }),
             isOrganizationShown: false,
             loadRow: () => [],
-            mode: GroupsPageMode.Manage,
+            mode: signal(GroupsPageMode.Manage),
             onDataLoaded: jest.fn(),
             onEdit: jest.fn(),
             onReady: jest.fn(),
@@ -29,6 +33,12 @@ describe('buildGroupsPageConfig', () => {
             organizations: [],
             ...overrides
         });
+    }
+
+    function shownKeys(config: ReturnType<typeof buildGroupsPageConfig>, context = BROWSING): string[] {
+        const { columns = [], isColumnShown } = config.tableConfig ?? {};
+
+        return columns.filter(column => isColumnShown?.(column, context) ?? true).map(({ key }) => key);
     }
 
     it('lists the groups of the address of the config, by name, remembering the hidden columns', () => {
@@ -41,13 +51,14 @@ describe('buildGroupsPageConfig', () => {
         expect(config.tableConfig?.storageKey).toBe('teams');
     });
 
-    it('declares the name, the member count, the extra role count and the creation, sortable as the server sorts them', () => {
+    it('declares the name, the member count, the extra and the base role counts and the creation, sortable as the server sorts them', () => {
         const columns = build().tableConfig?.columns ?? [];
 
         expect(columns.map(({ isHideable, isSortable, key }) => [key, isSortable, isHideable])).toEqual([
             ['name', true, false],
             ['memberCount', true, true],
             ['extraRoleCount', true, true],
+            ['roleCount', false, true],
             ['createdAt', true, true]
         ]);
     });
@@ -60,16 +71,33 @@ describe('buildGroupsPageConfig', () => {
             ['memberCount', 'memberCount'],
             ['extraRoleCount', 'extraRoleCount'],
             ['organization', 'organizationName'],
+            ['roleCount', 'roleCount'],
             ['createdAt', 'createdAt']
         ]);
     });
 
-    it('declares the name, the member count and the creation for a member, the roles only with their count', () => {
+    it('shows a manager the extra role count and the organization, and a member the roles only with their count', () => {
         const keysOf = (mode: GroupsPageMode): string[] =>
-            (build({ isOrganizationShown: true, mode }).tableConfig?.columns ?? []).map(({ key }) => key);
+            shownKeys(build({ isOrganizationShown: true, mode: signal(mode) }));
 
+        expect(keysOf(GroupsPageMode.Manage)).toEqual([
+            'name',
+            'memberCount',
+            'extraRoleCount',
+            'organization',
+            'createdAt'
+        ]);
         expect(keysOf(GroupsPageMode.Read)).toEqual(['name', 'memberCount', 'createdAt']);
         expect(keysOf(GroupsPageMode.ReadWithRoles)).toEqual(['name', 'memberCount', 'roleCount', 'createdAt']);
+    });
+
+    it('shows the columns of the mode the page turns to without being built again', () => {
+        const mode = signal(GroupsPageMode.Manage);
+        const config = build({ mode });
+
+        mode.set(GroupsPageMode.ReadWithRoles);
+
+        expect(shownKeys(config)).toEqual(['name', 'memberCount', 'roleCount', 'createdAt']);
     });
 
     it('hands what each load answers to the page', () => {
@@ -134,7 +162,12 @@ describe('buildGroupsPageConfig', () => {
         expect(config.tableConfig?.categoriesConfig).toBe(categoriesConfig);
         expect(keys.filter(key => FOLDER_ACTIONS.has(key))).toEqual([]);
         expect(build().tableConfig?.categoriesConfig).toBeUndefined();
-        expect(config.tableConfig?.height).toBe('calc(100vh - 255px)');
+    });
+
+    it('gives the table the folders height with the folders and the plain height without them', () => {
+        expect(build({ categoriesConfig: buildOrganizationFoldersConfig(() => []) }).tableConfig?.height).toBe(
+            'calc(100vh - 255px)'
+        );
         expect(build().tableConfig?.height).toBe('calc(100vh - 220px)');
     });
 
@@ -144,15 +177,16 @@ describe('buildGroupsPageConfig', () => {
             isOrganizationShown: true
         });
         const flat = build({ isOrganizationShown: true });
-        const column = folders.tableConfig?.columns.find(({ key }) => key === 'organization');
         const category = { id: 'o1', label: 'Acme' };
+        const contexts: PageColumnContext[] = [
+            { isSearching: true },
+            { isSearching: false },
+            { category, isSearching: true }
+        ];
+        const isOrganizationShown = (config: typeof flat): boolean[] =>
+            contexts.map(context => shownKeys(config, context).includes('organization'));
 
-        expect(column).toBeDefined();
-        expect(
-            [{ isSearching: true }, { isSearching: false }, { category, isSearching: true }].map(context =>
-                column ? folders.tableConfig?.isColumnShown?.(column, context) : undefined
-            )
-        ).toEqual([true, false, false]);
-        expect(flat.tableConfig?.isColumnShown).toBeUndefined();
+        expect(isOrganizationShown(folders)).toEqual([true, false, false]);
+        expect(isOrganizationShown(flat)).toEqual([true, true, true]);
     });
 });

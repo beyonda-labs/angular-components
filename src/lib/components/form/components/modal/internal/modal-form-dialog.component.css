@@ -1,25 +1,16 @@
 :host {
-    --bey-modal-form-fg: var(--bey-text-primary);
-    --bey-modal-form-fg-muted: var(--bey-text-muted);
-    --bey-modal-form-accent: var(--bey-primary);
-    --bey-modal-form-accent-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);
-    --bey-modal-form-border: var(--bey-border-subtle);
-    --bey-modal-form-surface: var(--bey-bg-surface);
-    --bey-modal-form-close-bg-hover: var(--bey-bg-active);
-    --bey-modal-form-max-height: var(--bey-dialog-max-height);
-    color: var(--bey-modal-form-fg);
-
+    color: var(--bey-modal-form-fg, var(--bey-text-primary));
     display: block;
 }
 
 .bey-modal-form {
-    background: var(--bey-modal-form-surface);
-    border: var(--bey-border-width) solid var(--bey-modal-form-border);
+    background: var(--bey-modal-form-surface, var(--bey-bg-surface));
+    border: var(--bey-border-width) solid var(--bey-modal-form-border, var(--bey-border-subtle));
     border-radius: var(--bey-radius-md);
     box-shadow: var(--bey-shadow-lg);
     display: flex;
     flex-direction: column;
-    max-height: var(--bey-modal-form-max-height);
+    max-height: var(--bey-modal-form-max-height, var(--bey-dialog-max-height));
     padding: var(--bey-space-xl) var(--bey-space-lg);
     width: 100%;
 }
@@ -33,9 +24,9 @@
 
 .bey-modal-form-icon {
     align-items: center;
-    background: var(--bey-modal-form-accent-soft);
+    background: var(--bey-modal-form-accent-soft, var(--bey-primary-soft));
     border-radius: var(--bey-radius-lg);
-    color: var(--bey-modal-form-accent);
+    color: var(--bey-modal-form-accent, var(--bey-primary));
     display: inline-flex;
     flex: 0 0 auto;
     font-size: var(--bey-font-size-lg);
@@ -50,14 +41,14 @@
 }
 
 .bey-modal-form-type {
-    color: var(--bey-modal-form-accent);
+    color: var(--bey-modal-form-accent, var(--bey-primary));
     font-size: var(--bey-font-size-2xs);
     font-weight: var(--bey-font-weight-bold);
     text-transform: uppercase;
 }
 
 .bey-modal-form-title {
-    color: var(--bey-modal-form-fg);
+    color: var(--bey-modal-form-fg, var(--bey-text-primary));
     font-size: var(--bey-font-size-xl);
     font-weight: var(--bey-font-weight-bold);
     line-height: var(--bey-line-height-tight);
@@ -67,7 +58,7 @@
 .bey-modal-form-close {
     align-items: center;
     border-radius: var(--bey-radius-circle);
-    color: var(--bey-modal-form-fg-muted);
+    color: var(--bey-modal-form-fg-muted, var(--bey-text-muted));
     display: inline-flex;
     flex-shrink: 0;
     font-size: var(--bey-font-size-2xl);
@@ -81,8 +72,8 @@
 }
 
 .bey-modal-form-close:hover {
-    background-color: var(--bey-modal-form-close-bg-hover);
-    color: var(--bey-modal-form-fg);
+    background-color: var(--bey-modal-form-close-bg-hover, var(--bey-bg-active));
+    color: var(--bey-modal-form-fg, var(--bey-text-primary));
 }
 
 .bey-modal-form-body {

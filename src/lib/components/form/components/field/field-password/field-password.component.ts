@@ -5,6 +5,7 @@ import { faCircle } from '@fortawesome/free-regular-svg-icons';
 import { faCircleCheck, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { nextDomId } from '../../../../../internal/dom-ids/dom-ids';
 import { PasswordPolicy } from '../../../../../services/password-policy/models/password-policy.model';
 import { checkPasswordRules, resolvePasswordPolicy } from '../../../functions/password-rules';
 import { FormPasswordField, PasswordRule, PasswordRuleCheck } from '../../../models/fields/form-password-field.model';
@@ -12,9 +13,7 @@ import { trackControl } from '../functions/control-state';
 
 const RULE_KEY_PREFIX = 'angular-components.form.password-field.policy.';
 
-let rulesCount = 0;
-
-export interface PasswordRuleItem {
+interface PasswordRuleItem {
     icon: IconDefinition;
     isInvalid: boolean;
     isMet: boolean;
@@ -58,7 +57,7 @@ export class FormPasswordFieldComponent {
 
         return checkPasswordRules(current, password).map(check => toRuleItem(check, current, isFlagged));
     });
-    readonly rulesId = nextRulesId();
+    readonly rulesId = nextDomId('bey-form-password-rules');
     readonly toggleIcon = computed(() => (this.isVisible() ? faEyeSlash : faEye));
     readonly toggleLabel = computed(() =>
         this.isVisible() ? 'angular-components.form.password-field.hide' : 'angular-components.form.password-field.show'
@@ -75,12 +74,6 @@ export class FormPasswordFieldComponent {
     toggleVisibility(): void {
         this.isVisible.update(isVisible => !isVisible);
     }
-}
-
-function nextRulesId(): string {
-    rulesCount += 1;
-
-    return `bey-form-password-rules-${rulesCount}`;
 }
 
 function toRuleItem(

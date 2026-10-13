@@ -9,6 +9,7 @@ import {
     UserRoles,
     UserRolesResponse,
     USERS_CONTENT_PATH,
+    USERS_INVITATION_PATH,
     USERS_ROLES_PATH,
     USERS_TRANSFER_PATH,
     USERS_TRANSFER_TARGETS_PATH,
@@ -49,7 +50,7 @@ export class UsersHttpService {
     }
 
     resendInvitation(baseUrl: string, id: string, successToast: string): Observable<void> {
-        return this.httpService.post<void>(this.url(baseUrl, id, '/invitation'), null, { successToast });
+        return this.httpService.post<void>(this.url(baseUrl, id, USERS_INVITATION_PATH), null, { successToast });
     }
 
     searchTransferTargets(

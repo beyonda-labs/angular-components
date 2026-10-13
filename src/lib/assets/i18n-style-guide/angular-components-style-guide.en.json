@@ -158,7 +158,6 @@
         },
         "cards-section": "Cards",
         "collapse-all": "Collapse all",
-        "components": "Components",
         "compound": "Compound",
         "edit-lock-notice": {
             "example": "What the editor of a row shows for each state of its edit lock. Pick a state; the actions of the notice move it on as the real lock would.",
@@ -173,7 +172,6 @@
                 "unavailable": "No longer available"
             },
             "statuses": {
-                "acquiring": "Status: acquiring",
                 "free": "Status: free",
                 "held": "Status: held",
                 "lost": "Status: lost",

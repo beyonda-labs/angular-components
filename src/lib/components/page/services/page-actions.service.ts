@@ -1,8 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { isObservable, map, Observable, of, switchMap } from 'rxjs';
 
-import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { FormHandle } from '../../form/models/form.model';
 import { HeaderAction } from '../../header/models/header.model';
@@ -13,36 +11,16 @@ import { ModalTreeService } from '../../tree/components/modal/services/modal-tre
 import { readMoveOwnerId } from '../functions/page-move-owner';
 import { buildMoveTargetNodes } from '../functions/page-move-targets';
 import { isActionVisible, isCategoryRow, toHandlerItems, toTrashItems } from '../functions/page-row';
-import { PageConfig } from '../models/page.model';
+import { PageActionsContext } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageMoveTarget } from '../models/page-categories.model';
 import { PageFormConfig } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
-import { PageCategoryPathEntry } from '../models/page-state.model';
 import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
 import { PageLifecycleActionsService } from './page-lifecycle-actions.service';
 import { PageShareActionsService } from './page-share-actions.service';
 import { PageUsagesService } from './page-usages.service';
-
-const ignoreError = (): void => undefined;
-
-export interface PageActionsContext {
-    config: PageConfig;
-    getCurrentCategoryId: () => string | number | null;
-    onCategoryDeleted: () => void;
-    onCategoryFormModalOpened: (reference: BsModalRef<ModalFormDialogComponent>) => void;
-    onCategorySaved: () => void;
-    onDeleted: () => void;
-    onFormModalOpened: (reference: BsModalRef<ModalFormDialogComponent>) => void;
-    onMoved: () => void;
-    onSaved: () => void;
-    onTrashItemDeleted: () => void;
-    selectedItems: () => PageItem[];
-
-    getCurrentCategory?: () => PageCategoryPathEntry | null;
-    getSharedRoot?: () => PageCategoryPathEntry | null;
-}
 
 interface BulkActionOptions<T> {
     confirm: boolean;
@@ -176,11 +154,6 @@ export class PageActionsService {
         onSaved: () => void
     ): void {
         this.pageFormService.openWithRequest(config, submit, onSaved);
-    }
-
-    private completeSave(handle: FormHandle, options: SaveEntityOptions): void {
-        handle.close();
-        options.onSaved();
     }
 
     private executeBulkAction<T>(
@@ -352,19 +325,6 @@ export class PageActionsService {
         }
     }
 
-    private mergeParentField(context: PageActionsContext, value: unknown, original?: PageItem): unknown {
-        const categoriesConfig = context.config.tableConfig?.categoriesConfig;
-
-        if (original || !categoriesConfig) {
-            return value;
-        }
-
-        return {
-            ...(value as Record<string, unknown>),
-            [categoriesConfig.parentField]: context.getCurrentCategoryId()
-        };
-    }
-
     private openCategoryForm(context: PageActionsContext, item?: PageItem): void {
         const categoriesConfig = context.config.tableConfig?.categoriesConfig;
 
@@ -403,7 +363,7 @@ export class PageActionsService {
     }
 
     private save(context: PageActionsContext, value: unknown, handle: FormHandle, original?: PageItem): void {
-        this.saveEntity(context, this.mergeParentField(context, value, original), handle, original, {
+        this.saveEntity(context, mergeParentField(context, value, original), handle, original, {
             afterCreate: created => context.config.formConfig?.afterCreate?.(created),
             create: (baseUrl, entityValue, successToast) =>
                 this.pageHttpService.create(baseUrl, entityValue, successToast),
@@ -415,7 +375,7 @@ export class PageActionsService {
     }
 
     private saveCategories(context: PageActionsContext, value: unknown, handle: FormHandle, original?: PageItem): void {
-        this.saveEntity(context, this.mergeParentField(context, value, original), handle, original, {
+        this.saveEntity(context, mergeParentField(context, value, original), handle, original, {
             create: (baseUrl, entityValue, successToast) =>
                 this.pageHttpService.createCategory(baseUrl, entityValue, successToast),
             edit: (baseUrl, id, entityValue, successToast) =>
@@ -451,15 +411,35 @@ export class PageActionsService {
                 const followUp = original ? undefined : options.afterCreate?.(created as PageItem);
 
                 if (!followUp) {
-                    this.completeSave(handle, options);
+                    completeSave(handle, options);
 
                     return;
                 }
 
-                followUp.subscribe({ error: () => options.onSaved(), next: () => this.completeSave(handle, options) });
+                followUp.subscribe({ error: () => options.onSaved(), next: () => completeSave(handle, options) });
             }
         });
     }
+}
+
+function completeSave(handle: FormHandle, options: SaveEntityOptions): void {
+    handle.close();
+    options.onSaved();
+}
+
+function ignoreError(): void {}
+
+function mergeParentField(context: PageActionsContext, value: unknown, original?: PageItem): unknown {
+    const categoriesConfig = context.config.tableConfig?.categoriesConfig;
+
+    if (original || !categoriesConfig) {
+        return value;
+    }
+
+    return {
+        ...(value as Record<string, unknown>),
+        [categoriesConfig.parentField]: context.getCurrentCategoryId()
+    };
 }
 
 function toHeaderAction(action: PageAction, execute: (action: PageAction) => void): HeaderAction {

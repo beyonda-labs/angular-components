@@ -17,8 +17,6 @@ import { PageUrlService } from './page-url.service';
 
 type QueryParameters = Record<string, string | number>;
 
-const ignoreError = (): void => undefined;
-
 @Injectable({
     providedIn: 'root'
 })
@@ -177,3 +175,5 @@ export class PageHttpService {
         return `${this.pageUrlService.resolve(relativeUrl)}${suffix}`;
     }
 }
+
+function ignoreError(): void {}

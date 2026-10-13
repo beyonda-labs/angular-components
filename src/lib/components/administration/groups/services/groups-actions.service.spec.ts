@@ -19,6 +19,7 @@ import { RolesConfig } from '../../roles/models/roles.model';
 import { GroupEditFormValue, GroupRow, GroupsConfig } from '../models/groups.model';
 import { GroupsActionsService } from './groups-actions.service';
 
+const CONFIG = new GroupsConfig({ baseUrl: '/teams', prefix: 'demo.teams' });
 const GROUP_URL = 'https://api.test/api/teams/g1';
 
 describe('GroupsActionsService', () => {
@@ -28,6 +29,7 @@ describe('GroupsActionsService', () => {
         submit: (value: GroupEditFormValue) => Observable<unknown>;
     }[];
     let page: PageHandle<GroupRow, OrganizationFolder>;
+    let service: GroupsActionsService;
 
     const ada = { email: 'ada@example.test', id: 'u1', name: 'Ada Lovelace' };
     const grace = { email: 'grace@example.test', id: 'u2', name: 'Grace Hopper' };
@@ -45,10 +47,16 @@ describe('GroupsActionsService', () => {
         httpTesting.expectOne(GROUP_URL).flush({ ...group, extraRoles: [reviewers], members: [ada] });
     }
 
+    function edit(isOrganizationShown = false): void {
+        service.edit(CONFIG, group, isOrganizationShown, page);
+    }
+
     function fieldOf(key: string): FormField | undefined {
-        return opened[0].config.sections
-            .flatMap(section => section.rows.flatMap(row => row.fields))
-            .find(current => current.key === key);
+        return fieldsOf(opened[0].config).find(current => current.key === key);
+    }
+
+    function fieldsOf({ sections }: Pick<ModalFormConfig, 'sections'>): FormField[] {
+        return sections.flatMap(section => section.rows.flatMap(row => row.fields));
     }
 
     function listField(key: string): FormListField {
@@ -72,6 +80,7 @@ describe('GroupsActionsService', () => {
             selected: () => [],
             viewMode: () => PageViewMode.Table
         };
+        service = TestBed.inject(GroupsActionsService);
     });
 
     afterEach(() => {
@@ -79,12 +88,7 @@ describe('GroupsActionsService', () => {
     });
 
     it('opens the edit form once the group is read, and saves its name, members and extra roles at once', () => {
-        TestBed.inject(GroupsActionsService).edit(
-            new GroupsConfig({ baseUrl: '/teams', prefix: 'demo.teams' }),
-            group,
-            false,
-            page
-        );
+        edit();
 
         expect(opened).toEqual([]);
 
@@ -102,7 +106,7 @@ describe('GroupsActionsService', () => {
     });
 
     it('shows a superadmin the organization of the group, disabled, and never sends it', () => {
-        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, true, page);
+        edit(true);
         httpTesting.expectOne(GROUP_URL).flush({
             ...group,
             extraRoles: [],
@@ -120,7 +124,7 @@ describe('GroupsActionsService', () => {
     });
 
     it('searches the users of the organization for the members, asking for 20 more than those chosen', () => {
-        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, false, page);
+        edit();
         answerGroup();
         const answers: unknown[] = [];
 
@@ -138,7 +142,7 @@ describe('GroupsActionsService', () => {
 
     it('searches the extra roles of the organization by name, and leaves out those chosen', () => {
         const writers = { id: 'r2', name: 'Writers' };
-        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, false, page);
+        edit();
         answerGroup();
         const answers: unknown[] = [];
 
@@ -153,7 +157,7 @@ describe('GroupsActionsService', () => {
     });
 
     it('opens nothing and shows the reason once when the group cannot be read', () => {
-        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, false, page);
+        edit();
         httpTesting
             .expectOne(GROUP_URL)
             .flush({ errorCode: 'not-found', messageKey: 'groups.not-found' }, { status: 404, statusText: '' });
@@ -165,7 +169,7 @@ describe('GroupsActionsService', () => {
     });
 
     it('does nothing before the page is ready', () => {
-        TestBed.inject(GroupsActionsService).edit(new GroupsConfig({ baseUrl: '/teams' }), group, false);
+        service.edit(CONFIG, group, false);
 
         httpTesting.expectNone(GROUP_URL);
         expect(opened).toEqual([]);
@@ -178,10 +182,10 @@ describe('GroupsActionsService', () => {
             permissionPrefix: 'my-app.permissions'
         });
 
-        TestBed.inject(GroupsActionsService).view(
-            new GroupsConfig({ baseUrl: '/teams', prefix: 'demo.teams', rolesConfig }),
-            { ...group, actions: [] }
-        );
+        service.view(new GroupsConfig({ baseUrl: '/teams', prefix: 'demo.teams', rolesConfig }), {
+            ...group,
+            actions: []
+        });
         httpTesting.expectOne(GROUP_URL).flush({
             extraRoles: [{ description: 'Review', id: 'r1', name: 'Reviewers', permissions: ['templates.edit'] }],
             id: 'g1',
@@ -189,12 +193,10 @@ describe('GroupsActionsService', () => {
             name: 'Sales'
         });
         const [view] = modalForms.forms();
-        const roles = view.sections.flatMap(section => section.rows.flatMap(row => row.fields)).at(-1) as FormListField;
+        const roles = fieldsOf(view).at(-1) as FormListField;
         roles.onItemClick?.('Reviewers', 0);
         const permissions = modalForms.forms()[1];
-        const checklist = permissions.sections
-            .flatMap(section => section.rows.flatMap(row => row.fields))
-            .find(({ key }) => key === 'permissions') as FormCheckboxSectionsField;
+        const checklist = fieldsOf(permissions).find(({ key }) => key === 'permissions') as FormCheckboxSectionsField;
 
         expect(view.title).toBe('demo.teams.view.title');
         expect(permissions.title).toBe('angular-components.roles.view.title');

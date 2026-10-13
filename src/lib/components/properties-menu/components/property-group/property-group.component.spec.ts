@@ -86,6 +86,26 @@ describe('PropertyGroupComponent', () => {
         expect(fixture.nativeElement.textContent).not.toContain('Encabezado');
     });
 
+    it('points its header at the body only while the body is there', () => {
+        fixture.componentRef.setInput(
+            'group',
+            new PropertyGroup({ id: 'content', label: 'Contenido', expanded: false, content: listContent() })
+        );
+        fixture.detectChanges();
+
+        expect(header()?.hasAttribute('aria-controls')).toBe(false);
+
+        fixture.componentRef.setInput(
+            'group',
+            new PropertyGroup({ id: 'content', label: 'Contenido', expanded: true, content: listContent() })
+        );
+        fixture.detectChanges();
+
+        const controlled = fixture.nativeElement.querySelector(`#${header()?.getAttribute('aria-controls')}`);
+
+        expect(controlled?.textContent).toContain('Encabezado');
+    });
+
     it('shows the default label as a prefixed translation key', () => {
         propertiesMenuService.setConfig(new PropertiesMenuConfig({ prefix: 'app.properties-menu' }));
         fixture.componentRef.setInput('group', new PropertyGroup({ id: 'content' }));

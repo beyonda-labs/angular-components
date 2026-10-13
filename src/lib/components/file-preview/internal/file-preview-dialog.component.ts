@@ -9,8 +9,13 @@ import { ButtonConfig, ButtonType } from '../../../internal/button/models/button
 import { PdfViewerConfig } from '../../pdf-viewer/models/pdf-viewer-config.model';
 import { PdfViewerToolbar } from '../../pdf-viewer/models/pdf-viewer-value.model';
 import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
-import { FilePreviewConfig, FilePreviewContent, FilePreviewType } from '../models/file-preview.model';
-import { FILE_PREVIEW_CONFIG, FILE_PREVIEW_TITLE_ID } from './file-preview-dialog.token';
+import {
+    FILE_PREVIEW_TITLE_ID,
+    FilePreviewConfig,
+    FilePreviewContent,
+    FilePreviewType
+} from '../models/file-preview.model';
+import { FILE_PREVIEW_CONFIG } from './file-preview-dialog.token';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,

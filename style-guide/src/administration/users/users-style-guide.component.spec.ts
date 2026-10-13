@@ -7,7 +7,9 @@ import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { UsersStyleGuideComponent } from './users-style-guide.component';
 
 describe('UsersStyleGuideComponent', () => {
-    it('lists the users of the demo backend, with the roles labelled by the demo', async () => {
+    let httpTesting: HttpTestingController;
+
+    beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [UsersStyleGuideComponent],
             providers: [
@@ -19,8 +21,11 @@ describe('UsersStyleGuideComponent', () => {
                 })
             ]
         }).compileComponents();
-        const httpTesting = TestBed.inject(HttpTestingController);
 
+        httpTesting = TestBed.inject(HttpTestingController);
+    });
+
+    it('lists the users of the demo backend, with the roles labelled by the demo', async () => {
         const fixture = await renderComponent(UsersStyleGuideComponent);
         httpTesting.expectOne('https://api.test/api/style-guide/users/roles').flush({ roles: ['editor'] });
         await settle(fixture);

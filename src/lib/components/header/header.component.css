@@ -26,7 +26,7 @@
     color: var(--bey-header-fg);
     font-size: var(--bey-font-size-2xl);
     font-weight: var(--bey-font-weight-bold);
-    letter-spacing: -0.03em;
+    letter-spacing: var(--bey-letter-spacing-tight);
     line-height: var(--bey-line-height-tight);
     margin: 0;
     max-width: 500px;

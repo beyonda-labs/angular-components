@@ -1,5 +1,8 @@
 import { BadgeVariant } from '../../../badge/models/badge.model';
+import { PageHandle } from '../../../page/models/page.model';
+import { PageFormConfig } from '../../../page/models/page-form.model';
 import { PageItem } from '../../../page/models/page-item.model';
+import { TableCell } from '../../../table/models/table-cell.model';
 
 export enum OrganizationStatus {
     Active = 'active',
@@ -77,6 +80,15 @@ export interface OrganizationRow extends PageItem {
     name: string;
     status: OrganizationStatus;
     userCount: number;
+}
+
+export interface OrganizationsPageConfigOptions {
+    config: OrganizationsConfig;
+    formConfig: PageFormConfig<OrganizationFormValue, OrganizationRow>;
+    loadRow: (organization: OrganizationRow) => TableCell[];
+    onDelete: (organization: OrganizationRow) => void;
+    onEdit: (organization: OrganizationRow) => void;
+    onReady: (handle: PageHandle<OrganizationRow>) => void;
 }
 
 export interface OrganizationsRowOptions {

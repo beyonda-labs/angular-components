@@ -1,7 +1,4 @@
 :host {
-    --bey-cards-count-bg: var(--bey-bg-active);
-    --bey-cards-count-fg: var(--bey-text-secondary);
-
     display: block;
 }
 

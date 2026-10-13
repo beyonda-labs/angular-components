@@ -9,8 +9,8 @@ import {
     FormCheckboxSectionsField,
     FormCheckboxSectionView
 } from '../../../models/fields/form-checkbox-sections-field.model';
-import { checkboxSectionViews, toggleOptionValues, toggleSectionValues } from '../functions/checkbox-sections';
 import { trackControl } from '../functions/control-state';
+import { checkboxSectionViews, toggleOptionValues, toggleSectionValues } from './functions/checkbox-sections';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -43,6 +43,8 @@ export class FormCheckboxSectionsFieldComponent {
         })
     );
 
+    private readonly values = computed(() => this.controlState.value() ?? []);
+
     isInvalid(): boolean {
         const control = this.control();
 
@@ -71,10 +73,6 @@ export class FormCheckboxSectionsFieldComponent {
 
             return next;
         });
-    }
-
-    private values(): string[] {
-        return this.controlState.value() ?? [];
     }
 
     private write(values: string[]): void {

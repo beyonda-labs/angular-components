@@ -11,8 +11,8 @@ import {
 } from '../models/role-permissions.model';
 
 const DESCRIPTION_KEY = 'description';
-const LABEL_KEY = 'label';
 const GROUP_SEPARATOR = '.';
+const LABEL_KEY = 'label';
 const WORD_SEPARATORS = /[\s._-]+/u;
 
 export function groupRolePermissions(

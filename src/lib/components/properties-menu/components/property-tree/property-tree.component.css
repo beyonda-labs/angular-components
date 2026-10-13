@@ -6,7 +6,7 @@
     --bey-property-tree-hover: var(--bey-bg-hover);
     --bey-property-tree-text: var(--bey-text-primary);
     --bey-property-tree-text-muted: var(--bey-text-muted);
-    --bey-property-tree-dragged-opacity: 0.45;
+    --bey-property-tree-dragged-opacity: var(--bey-opacity-disabled);
     --bey-property-tree-drop-ring-inside: inset 0 0 0 var(--bey-border-width-thick) var(--bey-property-tree-drop);
     --bey-property-tree-drop-ring-before: inset 0 var(--bey-border-width-thick) 0 0 var(--bey-property-tree-drop);
     --bey-property-tree-drop-ring-after: inset 0 calc(-1 * var(--bey-border-width-thick)) 0 0

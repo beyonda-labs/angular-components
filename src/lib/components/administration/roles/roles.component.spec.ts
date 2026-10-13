@@ -457,8 +457,11 @@ describe('RolesComponent', () => {
 
         beforeEach(async () => {
             await render(own, []);
-            reload().flush({ globalActions: [], results: own, search: { filters: [], page: 1, size: 25, total: 2 } });
-            await settle(fixture);
+        });
+
+        it('asks for the roles once, though what the server answers turns the page read-only', () => {
+            expect(httpTesting.match(request => request.url === ROLES_URL && request.method === 'GET')).toEqual([]);
+            expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.sources`);
         });
 
         it('says where each role comes from instead of who holds it', () => {

@@ -4,7 +4,7 @@ import {
     FormCheckboxSectionOption,
     FormCheckboxSectionsViewOptions,
     FormCheckboxSectionView
-} from '../../../models/fields/form-checkbox-sections-field.model';
+} from '../../../../models/fields/form-checkbox-sections-field.model';
 
 export function checkboxSectionViews(
     sections: FormCheckboxSection[],

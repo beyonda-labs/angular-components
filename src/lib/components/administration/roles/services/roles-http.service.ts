@@ -6,8 +6,6 @@ import { PageUrlService } from '../../../page/services/page-url.service';
 import { RolePermissionEntry } from '../../models/role-permissions.model';
 import { RolePermissionsResponse, RoleRequest, RoleRow, ROLES_PERMISSIONS_PATH } from '../models/roles.model';
 
-const ignoreError = (): void => undefined;
-
 @Injectable({
     providedIn: 'root'
 })
@@ -27,3 +25,5 @@ export class RolesHttpService {
             .pipe(map(({ permissions }) => permissions));
     }
 }
+
+function ignoreError(): void {}

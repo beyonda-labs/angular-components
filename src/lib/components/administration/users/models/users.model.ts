@@ -4,7 +4,13 @@ import { BadgeVariant } from '../../../badge/models/badge.model';
 import { FormSelectField } from '../../../form/models/fields/form-select-field.model';
 import { FormRow } from '../../../form/models/form.model';
 import { FormFieldOption } from '../../../form/models/form-field.model';
+import { PageHandle } from '../../../page/models/page.model';
+import { PageCategoriesConfig } from '../../../page/models/page-categories.model';
+import { PageFormConfig } from '../../../page/models/page-form.model';
 import { PageOrganization, PageOrganizationItem } from '../../../page/models/page-organization.model';
+import { SearchFieldOption } from '../../../search/models/search.model';
+import { TableCell } from '../../../table/models/table-cell.model';
+import { OrganizationFolder } from '../../models/organization-folders.model';
 
 export enum UserEditableField {
     ExtraRoleIds = 'extraRoleIds',
@@ -121,6 +127,21 @@ export interface UsersFormOptions {
     roles: string[];
 }
 
+export interface UsersPageConfigOptions {
+    config: UsersConfig;
+    formConfig: PageFormConfig<UserFormValue, UserRow>;
+    isOrganizationShown: boolean;
+    loadRow: (user: UserRow) => TableCell[];
+    onDelete: (users: UserRow[]) => void;
+    onReady: (handle: PageHandle<UserRow, OrganizationFolder>) => void;
+    onResendInvitation: (user: UserRow) => void;
+    onTransfer: (user: UserRow) => void;
+    organizations: PageOrganization[];
+    roleOptions: SearchFieldOption[];
+
+    categoriesConfig?: PageCategoriesConfig<OrganizationFolder>;
+}
+
 export interface UsersRowOptions {
     isOrganizationShown: boolean;
     onEdit: (user: UserRow) => void;
@@ -213,9 +234,11 @@ export const USERS_EXTRA_ROLES_FIELD = 'extraRoleIds';
 
 export const USERS_FORM_SECTION = 'main';
 
-export const USERS_RESEND_INVITATION_ACTION = 'resend-invitation';
+export const USERS_INVITATION_PATH = '/invitation';
 
 export const USERS_LIST_SEPARATOR = ', ';
+
+export const USERS_RESEND_INVITATION_ACTION = 'resend-invitation';
 
 export const USERS_ROLES_PATH = '/roles';
 

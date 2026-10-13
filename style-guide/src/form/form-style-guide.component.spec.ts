@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import {
     accessibleDescription,
+    accessibleName,
     buttonByName,
     controlByName,
     queryAll,
@@ -15,6 +16,7 @@ import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FormStyleGuideComponent } from './form-style-guide.component';
 
 const PREFIX = 'angular-components-style-guide.form';
+const TEXTS = { 'angular-components': { form: { 'list-field': { remove: 'Remove {{label}}' } } } };
 
 describe('FormStyleGuideComponent', () => {
     let fixture: ComponentFixture<FormStyleGuideComponent>;
@@ -22,7 +24,7 @@ describe('FormStyleGuideComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [FormStyleGuideComponent],
-            providers: [provideBeyTesting()]
+            providers: [provideBeyTesting({ translations: { en: TEXTS } })]
         }).compileComponents();
 
         fixture = await renderComponent(FormStyleGuideComponent);
@@ -77,7 +79,10 @@ describe('FormStyleGuideComponent', () => {
             'Nora Lectora (nora@empresa.com)',
             'Íñigo Ruiz (inigo@empresa.com)'
         ]);
-        expect(queryAll(people, 'button')).toHaveLength(2);
+        expect(queryAll(people, 'button').map(button => accessibleName(button))).toEqual([
+            'Remove Nora Lectora (nora@empresa.com)',
+            'Remove Íñigo Ruiz (inigo@empresa.com)'
+        ]);
         expect(textsOf(queryAll(readOnly, 'li'))).toEqual([
             'Nora Lectora (nora@empresa.com)',
             'Ada Lovelace (ada@empresa.com)',

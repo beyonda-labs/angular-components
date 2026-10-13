@@ -13,7 +13,6 @@
                 "unavailable": "No longer available"
             },
             "statuses": {
-                "acquiring": "Status: acquiring",
                 "free": "Status: free",
                 "held": "Status: held",
                 "lost": "Status: lost",

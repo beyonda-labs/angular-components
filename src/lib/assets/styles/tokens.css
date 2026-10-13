@@ -33,6 +33,7 @@
 
     /* Surfaces */
     --bey-bg-page: var(--bey-white);
+    --bey-bg-page-translucent: color-mix(in srgb, var(--bey-bg-page) 70%, transparent);
     --bey-bg-surface: var(--bey-gray-50);
     --bey-bg-muted: var(--bey-gray-100);
     --bey-bg-subtle: var(--bey-gray-50);
@@ -59,12 +60,16 @@
     /* Intent */
     --bey-primary: var(--bey-black);
     --bey-primary-fg: var(--bey-white);
+    --bey-primary-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);
     --bey-secondary: #949b98;
     --bey-success: var(--bey-teal);
+    --bey-success-soft: color-mix(in srgb, var(--bey-success) 8%, transparent);
     --bey-danger: var(--bey-red);
     --bey-danger-fg: var(--bey-white);
     --bey-danger-hover: color-mix(in srgb, var(--bey-danger) 85%, var(--bey-black));
+    --bey-danger-soft: color-mix(in srgb, var(--bey-danger) 10%, transparent);
     --bey-warning: var(--bey-orange);
+    --bey-warning-soft: color-mix(in srgb, var(--bey-warning) 12%, transparent);
 
     /* Highlight */
     --bey-highlight: rgba(var(--bey-orange-rgb), 0.35);
@@ -109,6 +114,12 @@
     --bey-line-height-tight: 1.2;
     --bey-line-height-base: 1.35;
     --bey-line-height-loose: 1.6;
+
+    --bey-letter-spacing-tight: -0.03em;
+    --bey-letter-spacing-snug: -0.01em;
+    --bey-letter-spacing-wide: 0.04em;
+    --bey-letter-spacing-wider: 0.08em;
+    --bey-letter-spacing-widest: 0.1em;
 
     /* Layout */
     --bey-dialog-margin: var(--bey-space-2xl);
@@ -159,6 +170,7 @@ body.dark {
 
     /* Surfaces */
     --bey-bg-page: var(--bey-black);
+    --bey-bg-page-translucent: color-mix(in srgb, var(--bey-bg-page) 70%, transparent);
     --bey-bg-surface: var(--bey-gray-900);
     --bey-bg-muted: var(--bey-gray-700);
     --bey-bg-subtle: var(--bey-gray-800);
@@ -183,12 +195,16 @@ body.dark {
     /* Intent */
     --bey-primary: var(--bey-white);
     --bey-primary-fg: var(--bey-black);
+    --bey-primary-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);
     --bey-secondary: #7a8380;
     --bey-success: var(--bey-teal);
+    --bey-success-soft: color-mix(in srgb, var(--bey-success) 8%, transparent);
     --bey-danger: var(--bey-red);
     --bey-danger-fg: var(--bey-black);
     --bey-danger-hover: color-mix(in srgb, var(--bey-danger) 85%, var(--bey-white));
+    --bey-danger-soft: color-mix(in srgb, var(--bey-danger) 10%, transparent);
     --bey-warning: var(--bey-orange);
+    --bey-warning-soft: color-mix(in srgb, var(--bey-warning) 12%, transparent);
 
     /* Highlight */
     --bey-highlight: rgba(var(--bey-orange-rgb), 0.35);

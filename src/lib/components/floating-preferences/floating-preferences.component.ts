@@ -6,7 +6,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 
 import { PreferencesService } from '../../services/preferences/preferences.service';
-import { Theme, ThemeService } from '../../services/theme/theme.service';
+import { Theme } from '../../services/theme/models/theme.model';
+import { ThemeService } from '../../services/theme/theme.service';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,

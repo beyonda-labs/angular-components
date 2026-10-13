@@ -26,17 +26,15 @@ export class OrganizationsComponent {
     readonly pageConfig = computed(() => {
         const config = this.config();
         const { prefix } = config;
+        const onEdit = (organization: OrganizationRow): void =>
+            this.organizationsActionsService.edit(config, organization, this.page);
 
         return buildOrganizationsPageConfig({
             config,
             formConfig: this.organizationsFormService.buildFormConfig(prefix),
-            loadRow: organization =>
-                this.organizationsTableService.loadRow(organization, {
-                    onEdit: edited => this.organizationsActionsService.edit(config, edited, this.page),
-                    prefix
-                }),
+            loadRow: organization => this.organizationsTableService.loadRow(organization, { onEdit, prefix }),
             onDelete: organization => this.organizationsActionsService.delete(config, organization, this.page),
-            onEdit: organization => this.organizationsActionsService.edit(config, organization, this.page),
+            onEdit,
             onReady: handle => (this.page = handle)
         });
     });

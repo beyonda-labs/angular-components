@@ -4,8 +4,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { toKeySegment } from '../../../../utilities/key-segment';
-import { fieldStateKey, FormFieldStates } from '../../form.component';
+import { fieldStateKey } from '../../functions/field-state-key';
 import { FormRow, FormSection } from '../../models/form.model';
+import { FormFieldStates } from '../../models/form-field-state.model';
 import { FormRowComponent } from '../row/row.component';
 
 @Component({
