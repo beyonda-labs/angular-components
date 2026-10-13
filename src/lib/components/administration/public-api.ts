@@ -52,3 +52,13 @@ export type {
     OrganizationRow as BeyOrganizationRow,
     OrganizationsConfigParameters as BeyOrganizationsConfigParameters
 } from './organizations/models/organizations.model';
+
+export { AuditComponent as BeyAuditComponent } from './audit/audit.component';
+export {
+    AUDIT_READ_PERMISSION as BEY_AUDIT_READ_PERMISSION,
+    AuditConfig as BeyAuditConfig
+} from './audit/models/audit.model';
+export type {
+    AuditConfigParameters as BeyAuditConfigParameters,
+    AuditEventRow as BeyAuditEventRow
+} from './audit/models/audit.model';

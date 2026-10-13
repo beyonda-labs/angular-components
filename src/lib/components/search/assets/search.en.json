@@ -4,6 +4,11 @@
             "add": "Add filter",
             "apply": "Apply filter",
             "clear": "Clear all",
+            "date-operators": {
+                "between": "Between",
+                "greater-than-or-equals": "On or after",
+                "less-than-or-equals": "On or before"
+            },
             "empty": {
                 "description": "Add filters to narrow down results.",
                 "title": "No filters applied"
@@ -11,6 +16,8 @@
             "field-placeholder": "Select filter",
             "filters": "Filters",
             "from-placeholder": "From",
+            "more-matches": "There are more matches: type more to narrow them down.",
+            "no-matches": "No matches found",
             "operators": {
                 "between": "Between",
                 "contains": "Contains",
@@ -24,6 +31,7 @@
                 "not-equals": "Not equals",
                 "starts-with": "Starts with"
             },
+            "option-placeholder": "Type to search",
             "placeholder": "Search",
             "remove": "Remove filter",
             "row": "Filter",

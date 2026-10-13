@@ -170,7 +170,7 @@ new BeyRolesConfig({ permissionPrefix: 'myApp.permissions' });
 ```
 
 The icon of a section is the one `groupIcons` gives its group, an `IconDefinition` such as an outline icon of
-`@fortawesome/free-regular-svg-icons`; the library's own groups have theirs (`users`, `organization`, `roles`), and any
+`@fortawesome/free-regular-svg-icons`; the library's own groups have theirs (`users`, `organization`, `roles`, `audit`), and any
 other group shows `faRectangleList`.
 
 The module ships the labels and descriptions of the library's own permissions: `users.read`, `users.invite`,
@@ -178,7 +178,8 @@ The module ships the labels and descriptions of the library's own permissions: `
 `roles.manage`, with the labels of their groups, and
 the four an extra role may give in the "Organization" section: `organization.read` ("See the organization summary"),
 `organization.read-groups` ("See their groups and members"), `organization.read-group-roles` ("See the roles and
-permissions of their groups") and `organization.read-roles` ("See their roles and permissions"). Nothing checks one of
+permissions of their groups") and `organization.read-roles` ("See their roles and permissions"), and `audit.read` ("See
+the audit") in the "Audit" section, which the [audit page](../../audit/docs/audit-readme.md) needs. Nothing checks one of
 them with another: "See the roles and permissions of their groups" alone shows nothing, since the groups page needs
 "See their groups and members".
 
@@ -189,7 +190,7 @@ the order the server answers them. `groupOrder` is empty by default, so the sect
 Inside a section the permissions follow `actionOrder`, matched on the action of each key (`templates.read` is `read`,
 `templates.category.create` is `category.create`): the ones it lists come first, in its order, and the others after
 them, in the order of the server. A permission the role holds that the answer leaves out is ordered by the same rule,
-as if the server had answered it last. The library's own groups, `users`, `organization` and `roles`, follow both
+as if the server had answered it last. The library's own groups, `users`, `organization`, `roles` and `audit`, follow both
 lists like any other. Nothing else sorts them on the way: neither the request nor the checklist. The roles module of
 express-components answers the permissions sorted by group and key, so with both lists empty they read in that order.
 

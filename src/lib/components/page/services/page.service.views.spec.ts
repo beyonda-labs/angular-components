@@ -15,6 +15,7 @@ import { PageView } from '../models/page-view.model';
 import { PageService } from './page.service';
 import { PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
+import { PageLinkService } from './page-link.service';
 import { PageOrganizationsService } from './page-organizations.service';
 import { PageOwnersService } from './page-owners.service';
 
@@ -91,6 +92,7 @@ describe('PageService — views, counts and origins', () => {
 
         TestBed.configureTestingModule({
             providers: [
+                PageLinkService,
                 PageOrganizationsService,
                 PageOwnersService,
                 PageService,

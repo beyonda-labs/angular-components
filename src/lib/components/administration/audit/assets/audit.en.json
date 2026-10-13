@@ -1,0 +1,113 @@
+{
+    "angular-components": {
+        "audit": {
+            "actions": {
+                "export": {
+                    "label": "Export",
+                    "tooltip": "Download the events the search and the filters select, as a CSV file"
+                },
+                "view": {
+                    "tooltip": "See every detail of the selected event"
+                }
+            },
+            "entities": {
+                "account": "Account",
+                "auth": "Session",
+                "groups": "Groups",
+                "organizations": "Organizations",
+                "roles": "Roles",
+                "users": "Users"
+            },
+            "search": {
+                "fields": {
+                    "action": "Action",
+                    "entity": "Entity",
+                    "text": "Text",
+                    "user-id": "User"
+                }
+            },
+            "table": {
+                "columns": {
+                    "action": "Action",
+                    "entity-name": "Row",
+                    "ip": "IP",
+                    "occurred-at": "Date and time",
+                    "organization": "Organization",
+                    "user": "User"
+                },
+                "empty": "No event matches the search",
+                "tooltips": {
+                    "action": "What was done, and to what",
+                    "entity-name": "The name of the row, as it was then",
+                    "ip": "Where the request came from",
+                    "occurred-at": "When it happened",
+                    "organization": "The organization the event belongs to",
+                    "user": "Who did it, as they were named then"
+                }
+            },
+            "title": "Audit",
+            "verbs": {
+                "accept-invitation": "Accept invitation",
+                "change-password": "Change password",
+                "change-status": "Change status",
+                "create": "Create",
+                "create-category": "Create folder",
+                "delete": "Delete",
+                "delete-category": "Delete folder",
+                "delete-trash-item": "Delete from the trash",
+                "duplicate": "Duplicate",
+                "edit": "Edit",
+                "edit-category": "Edit folder",
+                "empty-trash": "Empty the trash",
+                "import": "Import",
+                "invite": "Invite",
+                "locked": "Lockout",
+                "move": "Move",
+                "register": "Register",
+                "resend-invitation": "Resend invitation",
+                "reset-password": "Reset password",
+                "restore": "Restore",
+                "share": "Share",
+                "sign-in": "Sign in",
+                "sign-in-failed": "Failed sign-in",
+                "sign-out": "Sign out",
+                "transfer-content": "Transfer content",
+                "unshare": "Stop sharing",
+                "verify-email": "Verify email"
+            },
+            "view": {
+                "buttons": {
+                    "close": "Close"
+                },
+                "main": {
+                    "action": {
+                        "label": "Action"
+                    },
+                    "details": {
+                        "label": "Details"
+                    },
+                    "entity": {
+                        "label": "Row"
+                    },
+                    "ip": {
+                        "label": "IP"
+                    },
+                    "occurred-at": {
+                        "label": "Date and time"
+                    },
+                    "organization": {
+                        "label": "Organization"
+                    },
+                    "request-id": {
+                        "label": "Request id"
+                    },
+                    "user": {
+                        "label": "User"
+                    }
+                },
+                "none": "Not recorded",
+                "title": "Audit event"
+            }
+        }
+    }
+}

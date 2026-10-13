@@ -7,28 +7,30 @@ import { BreadcrumbConfig, BreadcrumbItem } from '../../breadcrumb/models/breadc
 import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { HeaderConfig } from '../../header/models/header.model';
-import { PAGINATION_SIZE_DEFAULT, PaginationConfig } from '../../pagination/models/pagination.model';
+import { PaginationConfig } from '../../pagination/models/pagination.model';
 import { SearchConfig } from '../../search/models/search.model';
 import { SearchFilter } from '../../search/models/search-filter.model';
 import { TableConfig, TableSort } from '../../table/models/table.model';
 import { TabsConfig } from '../../tabs/models/tabs.model';
-import { buildPageBreadcrumbItems, fromSharedRoot } from '../functions/page-breadcrumb';
+import { buildCategoryPath, buildPageBreadcrumbItems, fromSharedRoot } from '../functions/page-breadcrumb';
 import { buildColumnContext, withColumnTooltips, withShownColumns } from '../functions/page-columns';
 import { withFolderCount } from '../functions/page-folder-count';
-import { readRowField } from '../functions/page-row';
+import { keepListedRows } from '../functions/page-row';
 import { findStandardMoveAction, isMoveDragAllowed, isMoveDropAllowed } from '../functions/page-row-drop';
 import { buildPageSearchConfig } from '../functions/page-search-config';
+import { withSearchText } from '../functions/page-search-text';
 import { hasSortableColumn, toSearchSort } from '../functions/page-sort';
 import { buildPageTabs, readViewFilters } from '../functions/page-tabs';
 import { PageActionsContext, PageBackendResponse, PageConfig, PageHandle } from '../models/page.model';
 import { PageAction, PageActionZone } from '../models/page-action.model';
 import { PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
-import { PageSearch } from '../models/page-search.model';
-import { PageCategoryPathEntry } from '../models/page-state.model';
+import { PAGE_INITIAL_SEARCH, PageSearch } from '../models/page-search.model';
+import { PageCategoryPathEntry, PageState } from '../models/page-state.model';
 import { PageColumnContext } from '../models/page-table.model';
 import { PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
+import { PageLinkService } from './page-link.service';
 import { PageOrganizationsService } from './page-organizations.service';
 import { PageOwnersService } from './page-owners.service';
 import { PageSearchService } from './page-search.service';
@@ -40,13 +42,12 @@ interface PageLoad {
     search: PageSearch;
 }
 
-const INITIAL_SEARCH: PageSearch = { filters: [], page: 1, size: PAGINATION_SIZE_DEFAULT };
-
 @Injectable()
 export class PageService {
     private readonly destroyRef = inject(DestroyRef);
     private readonly pageActionsService = inject(PageActionsService);
     private readonly pageHttpService = inject(PageHttpService);
+    private readonly pageLinkService = inject(PageLinkService);
     private readonly pageOrganizationsService = inject(PageOrganizationsService);
     private readonly pageOwnersService = inject(PageOwnersService);
     private readonly pageSearchService = inject(PageSearchService);
@@ -60,6 +61,7 @@ export class PageService {
     private readonly globalActions = signal<string[] | null>(null);
     private readonly loads = new Subject<PageLoad>();
     private readonly location = computed(() => `${this.activeTab()}:${this.currentCategoryId() ?? ''}`);
+    private readonly sentSearch = signal<PageSearch>(PAGE_INITIAL_SEARCH);
     private readonly statePath = this.pageStateService.currentPath();
     private readonly tableSort = signal<TableSort | null>(null);
 
@@ -84,6 +86,7 @@ export class PageService {
         openEdit: row => this.openEdit(row),
         openForm: (config, submit) => this.openForm(config, submit),
         refresh: () => this.refresh(),
+        search: () => this.sentSearch(),
         selected: () => this.selected(),
         viewMode: () => this.viewMode()
     };
@@ -108,7 +111,7 @@ export class PageService {
     });
     readonly items = signal<PageItem[]>([]);
     readonly loading = signal(false);
-    readonly pageSearch = signal<PageSearch>(INITIAL_SEARCH);
+    readonly pageSearch = signal<PageSearch>(PAGE_INITIAL_SEARCH);
     readonly paginationConfig = computed<PaginationConfig | null>(() => {
         const config = this.config();
 
@@ -216,11 +219,13 @@ export class PageService {
             )
             .subscribe();
 
+        this.pageLinkService.watch(() => this.config()).subscribe(state => this.restoreState(state));
+
         effect(() => {
             const config = this.config();
             const search = this.pageSearch();
 
-            if (config) {
+            if (config && !this.pageLinkService.isPending()) {
                 untracked(() => this.loads.next({ config, search }));
             }
         });
@@ -249,10 +254,7 @@ export class PageService {
         const sharedRootId = this.viewMode() === PageViewMode.Shared ? (this.categoryPath()[0]?.id ?? item.id) : null;
 
         this.pageHttpService.loadCategoryPath(config.baseUrl, item.id).subscribe(path => {
-            const entries = path.map(ancestor => ({
-                id: ancestor.id,
-                label: String(readRowField(ancestor, categoriesConfig.nameField) ?? '')
-            }));
+            const entries = buildCategoryPath(path, categoriesConfig.nameField);
 
             this.categoryPath.set(sharedRootId === null ? entries : fromSharedRoot(entries, sharedRootId));
             this.currentCategoryId.set(item.id);
@@ -299,7 +301,8 @@ export class PageService {
         }
 
         if (isFirstConfig) {
-            this.restoreState(config);
+            this.restoreState(this.pageStateService.restore(this.statePath, config.prefix));
+            this.pageLinkService.follow(config);
         }
 
         this.pageOrganizationsService.loadForPage(config, this.pageSearch().filters);
@@ -394,6 +397,7 @@ export class PageService {
             queryParameters[categoriesConfig.parentField] = this.currentCategoryId() ?? 'null';
         }
 
+        this.sentSearch.set(withSearchText(sentSearch, textField));
         this.loading.set(true);
 
         return this.requestList(baseUrl, queryParameters).pipe(
@@ -403,7 +407,7 @@ export class PageService {
                 this.totalItems.set(response.search?.total ?? response.results.length);
                 this.countedLocation.set(location);
                 this.globalActions.set(response.globalActions ?? []);
-                this.restoreSelection();
+                this.setSelected(keepListedRows(this.selected(), this.items()));
                 config.onDataLoaded?.(response);
             }),
             catchError(() => EMPTY),
@@ -424,16 +428,10 @@ export class PageService {
             : this.pageHttpService.load(baseUrl, queryParameters);
     }
 
-    private restoreSelection(): void {
-        const ids = new Set(this.selected().map(item => item.id));
+    private restoreState(state: PageState | undefined): void {
+        const config = this.config();
 
-        this.setSelected(this.items().filter(item => ids.has(item.id)));
-    }
-
-    private restoreState(config: PageConfig): void {
-        const state = this.pageStateService.restore(this.statePath, config.prefix);
-
-        if (!state) {
+        if (!config || !state) {
             return;
         }
 

@@ -4,6 +4,8 @@ import { buttonByName, queryAll, queryButton, renderComponent, settle } from '@t
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of, Subject } from 'rxjs';
 
+import { SearchField, SearchFieldType } from '../search/models/search.model';
+import { SearchFilterOperator, StringFilter } from '../search/models/search-filter.model';
 import { TableColumn } from '../table/models/table.model';
 import { TableCell, TextTableCell } from '../table/models/table-cell.model';
 import { pageStandardAction } from './functions/page-standard-actions';
@@ -12,7 +14,9 @@ import { PageStandardAction } from './models/page-action.model';
 import { PageCategoriesConfig, PageItemType, PageViewMode } from './models/page-categories.model';
 import { PageHeaderConfig } from './models/page-header.model';
 import { PageItem } from './models/page-item.model';
+import { SearchSortDirection } from './models/page-search.model';
 import { PageTableConfig, PageTableSearchConfig } from './models/page-table.model';
+import { PageView } from './models/page-view.model';
 import { PageComponent } from './page.component';
 import { PageActionsService } from './services/page-actions.service';
 import { PageHttpService } from './services/page-http.service';
@@ -26,6 +30,7 @@ interface Team extends PageItem {
     type: PageItemType;
 }
 
+const SEARCH_DEBOUNCE_MS = 350;
 const PEOPLE: Person[] = [
     { id: 1, name: 'Ada' },
     { id: 2, name: 'Grace' }
@@ -148,6 +153,50 @@ describe('PageComponent', () => {
 
         expect(text()).toContain('Linus');
         expect(text()).not.toContain('Ada');
+    });
+
+    it('hands the consumer the search of the list in view, as the page sends it', async () => {
+        const onReady = jest.fn();
+        await render(
+            buildConfig({
+                onReady,
+                tableConfig: new PageTableConfig({
+                    columns: [new TableColumn({ key: 'name' })],
+                    loadRow: person => [new TextTableCell({ content: person.name })],
+                    order: { direction: SearchSortDirection.Desc, field: 'name' },
+                    search: new PageTableSearchConfig({
+                        fields: [new SearchField({ key: 'text', type: SearchFieldType.Text })],
+                        mainField: 'text',
+                        textField: 'text'
+                    })
+                }),
+                views: [
+                    new PageView({
+                        filters: [
+                            new StringFilter({ field: 'team', operator: SearchFilterOperator.Equals, value: 'a' })
+                        ],
+                        key: 'team-a'
+                    })
+                ]
+            })
+        );
+
+        buttonByName(fixture, 'demo.tabs.team-a.label').click();
+        const box = fixture.nativeElement.querySelector('[role="searchbox"]') as HTMLInputElement;
+        box.value = 'ada';
+        box.dispatchEvent(new Event('input'));
+        await new Promise(resolve => {
+            setTimeout(resolve, SEARCH_DEBOUNCE_MS);
+        });
+        await settle(fixture);
+
+        expect(onReady.mock.calls.at(-1)[0].search()).toEqual({
+            filters: [new StringFilter({ field: 'team', operator: SearchFilterOperator.Equals, value: 'a' })],
+            page: 1,
+            size: expect.any(Number),
+            sort: { direction: SearchSortDirection.Desc, field: 'name' },
+            text: 'ada'
+        });
     });
 
     it('shows the rows of the newest load when an older one answers last', async () => {

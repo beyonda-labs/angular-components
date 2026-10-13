@@ -1,0 +1,14 @@
+{
+    "angular-components-style-guide": {
+        "audit": {
+            "entities": {
+                "documents": "Documentos",
+                "templates": "Plantillas"
+            },
+            "example": "La página de auditoría sobre el backend de demostración: la lista de solo lectura de quién hizo qué, cuándo y desde dónde, con lo más reciente primero. Busca por usuario, nombre de la fila o IP, filtra por un intervalo de fechas de un día a otro, por usuario, escrito con sugerencias del backend, por entidad y por acción y, con la sesión de un superadministrador, por organización. Exportar descarga en un fichero CSV los eventos que seleccionan la búsqueda y los filtros actuales, y el nombre de la fila o la acción Ver abre una vista de solo lectura de todos los campos del evento con sus detalles. Las entidades y los verbos adicionales de la aplicación leen sus etiquetas, aquí documentos, plantillas y publicar, y la columna de organización solo aparece para un superadministrador mientras la lista abarca varias organizaciones.",
+            "verbs": {
+                "publish": "Publicar"
+            }
+        }
+    }
+}

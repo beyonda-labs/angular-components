@@ -77,6 +77,7 @@ describe('GroupsActionsService', () => {
                     submit: submit as unknown as (value: GroupEditFormValue) => Observable<unknown>
                 }),
             refresh: jest.fn(),
+            search: () => ({ filters: [], page: 1, size: 10 }),
             selected: () => [],
             viewMode: () => PageViewMode.Table
         };

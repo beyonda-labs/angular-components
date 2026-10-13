@@ -39,6 +39,7 @@ const menu = new BeyLeftMenuConfig({
 | `topActions`       | no       | `[]`    | Main navigation                                       |
 | `bottomActions`    | no       | `[]`    | Secondary group, pinned below                         |
 | `userInfo`         | no       | none    | Shows the signed-in user at the foot                  |
+| `notifications`    | no       | none    | Shows the bell of the notifications at the foot       |
 
 ## BeyLeftMenuAction
 
@@ -70,6 +71,12 @@ With a `route`, the avatar, the name and the email become one `routerLink`, reac
 `angular-components.left-menu.open-account` ("Open my account"), with a hover and a focus state of its own. While the
 route is the current page the link carries `aria-current="page"` and the active look of the menu actions. Without a
 `route` the user is plain text.
+
+## Notifications
+
+With `notifications`, a `BeyNotificationsConfig`, the foot of the menu holds the bell of the
+[notifications centre](../../notifications/docs/notifications-readme.md): after the user while the menu is expanded,
+under it while collapsed, and alone when there is no `userInfo`. Without it the menu shows no bell and asks nothing.
 
 ## Expanding and collapsing
 

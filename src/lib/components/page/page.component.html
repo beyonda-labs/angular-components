@@ -21,7 +21,7 @@
 
     @if (service.tableConfig(); as tableConfig) {
         <div class="bey-page-body">
-            @if (service.loading()) {
+            @if (isLoading()) {
                 <bey-loading-overlay></bey-loading-overlay>
             }
 

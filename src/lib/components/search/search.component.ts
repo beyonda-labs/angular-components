@@ -7,17 +7,19 @@ import {
     inject,
     input,
     linkedSignal,
-    signal
+    signal,
+    untracked
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faFilter, faMagnifyingGlass, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
-import { debounceTime, Subject } from 'rxjs';
+import { catchError, debounceTime, map, Observable, of, Subject, switchMap } from 'rxjs';
 
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
 import { toKeySegment } from '../../utilities/key-segment';
+import { dateInputValue, dayEnd, dayStart } from './functions/search-dates';
 import { searchFieldOperators } from './functions/search-field-operators';
 import { SearchConfig, SearchField, SearchFieldOption, SearchFieldType } from './models/search.model';
 import {
@@ -33,12 +35,26 @@ import {
 
 const DEFAULT_PLACEHOLDER = 'angular-components.search.placeholder';
 const SEARCH_DEBOUNCE_MS = 300;
+const TERM_TYPES = new Set<SearchFieldType>([SearchFieldType.Number, SearchFieldType.Tags, SearchFieldType.Text]);
 
 interface SearchDraftRow {
     fieldKey: string;
     operator: SearchFilterOperator | '';
     value: string;
+    valueLabel: string;
     valueTo: string;
+}
+
+interface SearchSuggestionRequest {
+    field: SearchField;
+    index: number;
+    text: string;
+}
+
+interface SearchSuggestions {
+    hasMore: boolean;
+    index: number;
+    options: SearchFieldOption[];
 }
 
 @Component({
@@ -78,21 +94,38 @@ export class SearchComponent {
     readonly isPanelOpen = signal(false);
     readonly placeholder = computed(() => this.config().placeholder ?? DEFAULT_PLACEHOLDER);
     readonly removeIcon = faXmark;
-    readonly rows = linkedSignal<SearchDraftRow[]>(() => this.config().filters.map(filter => toDraftRow(filter)));
+
+    private readonly knownLabels = signal<ReadonlyMap<string, string>>(new Map());
+    readonly rows = linkedSignal<SearchDraftRow[]>(() => {
+        const { fields, filters } = this.config();
+        const labels = untracked(() => this.knownLabels());
+
+        return filters.map(filter => toDraftRow(filter, fields, labels));
+    });
     readonly searchIcon = faMagnifyingGlass;
     readonly searchTerm = linkedSignal(() => findMainTerm(this.config()));
+    readonly suggestions = signal<SearchSuggestions | null>(null);
 
     private readonly searchTerm$ = new Subject<void>();
+    private readonly suggestionRequests$ = new Subject<SearchSuggestionRequest>();
 
     constructor() {
         this.searchTerm$.pipe(debounceTime(SEARCH_DEBOUNCE_MS), takeUntilDestroyed()).subscribe(() => {
             this.syncMainRow();
             this.applyRows(false);
         });
+
+        this.suggestionRequests$
+            .pipe(
+                debounceTime(SEARCH_DEBOUNCE_MS),
+                switchMap(request => requestSuggestions(request)),
+                takeUntilDestroyed()
+            )
+            .subscribe(suggestions => this.suggestions.set(suggestions));
     }
 
     addRow(): void {
-        this.rows.update(rows => [...rows, { fieldKey: '', operator: '', value: '', valueTo: '' }]);
+        this.rows.update(rows => [...rows, emptyRow('')]);
     }
 
     applyFilters(): void {
@@ -100,8 +133,21 @@ export class SearchComponent {
         this.syncSearchTermFromMainRow();
     }
 
+    chooseOption(index: number, option: SearchFieldOption): void {
+        const fieldKey = this.rows()[index]?.fieldKey ?? '';
+
+        this.knownLabels.update(labels => new Map(labels).set(labelKey(fieldKey, option.value), option.label));
+        this.rows.update(rows =>
+            rows.map((row, currentIndex) =>
+                currentIndex === index ? { ...row, value: option.value, valueLabel: option.label } : row
+            )
+        );
+        this.suggestions.set(null);
+    }
+
     clearFilters(): void {
         this.rows.set([]);
+        this.suggestions.set(null);
         this.appliedFilters.set([]);
         this.searchTerm.set('');
         this.emitFilters();
@@ -115,8 +161,10 @@ export class SearchComponent {
         return this.getField(row)?.options ?? [];
     }
 
-    getOperatorLabel(operator: SearchFilterOperator): string {
-        return `angular-components.search.operators.${toKeySegment(operator)}`;
+    getOperatorLabel(row: SearchDraftRow, operator: SearchFilterOperator): string {
+        const node = this.getRowType(row) === SearchFieldType.Date ? 'date-operators' : 'operators';
+
+        return `angular-components.search.${node}.${toKeySegment(operator)}`;
     }
 
     getOperators(row: SearchDraftRow): SearchFilterOperator[] {
@@ -127,6 +175,12 @@ export class SearchComponent {
 
     getRowType(row: SearchDraftRow): SearchFieldType | null {
         return this.getField(row)?.type ?? null;
+    }
+
+    getSuggestions(index: number): SearchSuggestions | null {
+        const suggestions = this.suggestions();
+
+        return suggestions?.index === index ? suggestions : null;
     }
 
     isBetween(row: SearchDraftRow): boolean {
@@ -146,11 +200,10 @@ export class SearchComponent {
 
         this.rows.update(rows =>
             rows.map((row, currentIndex) =>
-                currentIndex === index
-                    ? { fieldKey, operator: field ? searchFieldOperators(field)[0] : '', value: '', valueTo: '' }
-                    : row
+                currentIndex === index ? emptyRow(fieldKey, field ? searchFieldOperators(field)[0] : '') : row
             )
         );
+        this.suggestions.set(null);
     }
 
     onOperatorChange(index: number, event: Event): void {
@@ -159,6 +212,19 @@ export class SearchComponent {
         this.rows.update(rows =>
             rows.map((row, currentIndex) => (currentIndex === index ? { ...row, operator, valueTo: '' } : row))
         );
+    }
+
+    onOptionSearch(index: number, event: Event): void {
+        const text = (event.target as HTMLInputElement).value;
+        const field = this.getField(this.rows()[index]);
+
+        this.rows.update(rows =>
+            rows.map((row, currentIndex) => (currentIndex === index ? { ...row, value: '', valueLabel: text } : row))
+        );
+
+        if (field?.searchOptions) {
+            this.suggestionRequests$.next({ field, index, text: text.trim() });
+        }
     }
 
     onSearchTermChange(event: Event): void {
@@ -180,6 +246,7 @@ export class SearchComponent {
 
     removeRow(index: number): void {
         this.rows.update(rows => rows.filter((_, currentIndex) => currentIndex !== index));
+        this.suggestions.set(null);
     }
 
     togglePanel(): void {
@@ -210,8 +277,8 @@ export class SearchComponent {
         this.config().onFiltersChange?.([...this.appliedFilters()]);
     }
 
-    private getField(row: SearchDraftRow): SearchField | undefined {
-        return this.config().fields.find(current => current.key === row.fieldKey);
+    private getField(row: SearchDraftRow | undefined): SearchField | undefined {
+        return row ? this.config().fields.find(current => current.key === row.fieldKey) : undefined;
     }
 
     private getMainRow(): SearchDraftRow | undefined {
@@ -234,6 +301,11 @@ export class SearchComponent {
         switch (field.type) {
             case SearchFieldType.Boolean:
                 return row.value === 'true' || row.value === 'false';
+
+            case SearchFieldType.Date:
+                return this.isBetween(row)
+                    ? dayStart(row.value) !== null && dayEnd(row.valueTo) !== null
+                    : dayStart(row.value) !== null;
 
             case SearchFieldType.Number:
                 if (this.isBetween(row)) {
@@ -270,7 +342,7 @@ export class SearchComponent {
 
             this.rows.update(rows => [
                 ...rows,
-                { fieldKey: mainField, operator: field ? searchFieldOperators(field)[0] : '', value: term, valueTo: '' }
+                { ...emptyRow(mainField, field ? searchFieldOperators(field)[0] : ''), value: term }
             ]);
 
             return;
@@ -288,9 +360,8 @@ export class SearchComponent {
 
         const mainRow = this.getMainRow();
         const rowType = mainRow ? this.getRowType(mainRow) : null;
-        const isDropdownType = rowType === SearchFieldType.Boolean || rowType === SearchFieldType.Select;
 
-        this.searchTerm.set(mainRow && !isDropdownType ? mainRow.value : '');
+        this.searchTerm.set(mainRow && rowType && TERM_TYPES.has(rowType) ? mainRow.value : '');
     }
 
     private toFilter(row: SearchDraftRow): SearchFilter {
@@ -302,6 +373,13 @@ export class SearchComponent {
                     field: field.key,
                     operator: row.operator as BooleanFilterOperator,
                     value: row.value === 'true'
+                });
+
+            case SearchFieldType.Date:
+                return new NumberFilter({
+                    field: field.key,
+                    operator: row.operator as NumberFilterOperator,
+                    value: toDateFilterValue(row)
                 });
 
             case SearchFieldType.Number:
@@ -321,19 +399,68 @@ export class SearchComponent {
     }
 }
 
+function emptyRow(fieldKey: string, operator: SearchFilterOperator | '' = ''): SearchDraftRow {
+    return { fieldKey, operator, value: '', valueLabel: '', valueTo: '' };
+}
+
 function findMainTerm({ fields, filters, mainField }: SearchConfig): string {
     const field = fields.find(current => current.key === mainField);
     const filter = filters.find(current => current.field === mainField);
 
-    if (!field || !filter || field.type === SearchFieldType.Boolean || field.type === SearchFieldType.Select) {
+    if (!field || !filter || !TERM_TYPES.has(field.type)) {
         return '';
     }
 
     return String(filter.value ?? '');
 }
 
-function toDraftRow({ field, operator, value }: SearchFilter): SearchDraftRow {
-    const [from, to] = Array.isArray(value) ? value : [value, ''];
+function labelKey(fieldKey: string, value: string): string {
+    return `${fieldKey}:${value}`;
+}
 
-    return { fieldKey: field, operator, value: String(from ?? ''), valueTo: String(to ?? '') };
+function requestSuggestions({ field, index, text }: SearchSuggestionRequest): Observable<SearchSuggestions | null> {
+    if (!field.searchOptions) {
+        return of(null);
+    }
+
+    return field.searchOptions(text).pipe(
+        map(({ hasMore = false, options }): SearchSuggestions | null => ({ hasMore, index, options })),
+        catchError(() => of(null))
+    );
+}
+
+function toDateFilterValue({ operator, value, valueTo }: SearchDraftRow): number | [number, number] {
+    switch (operator) {
+        case SearchFilterOperator.Between:
+            return [dayStart(value) ?? 0, dayEnd(valueTo) ?? 0];
+
+        case SearchFilterOperator.LessThanOrEquals:
+            return dayEnd(value) ?? 0;
+
+        default:
+            return dayStart(value) ?? 0;
+    }
+}
+
+function toDraftRow(
+    { field, operator, value }: SearchFilter,
+    fields: SearchField[],
+    labels: ReadonlyMap<string, string>
+): SearchDraftRow {
+    const [from, to] = Array.isArray(value) ? value : [value, ''];
+    const searchField = fields.find(current => current.key === field);
+
+    if (searchField?.type === SearchFieldType.Date) {
+        return { ...emptyRow(field, operator), value: dateInputValue(from), valueTo: dateInputValue(to) };
+    }
+
+    const text = String(from ?? '');
+    const valueLabel =
+        searchField?.type === SearchFieldType.Autocomplete
+            ? (labels.get(labelKey(field, text)) ??
+              searchField.options?.find(option => option.value === text)?.label ??
+              text)
+            : '';
+
+    return { fieldKey: field, operator, value: text, valueLabel, valueTo: String(to ?? '') };
 }

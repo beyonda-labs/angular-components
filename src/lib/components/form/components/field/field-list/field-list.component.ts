@@ -26,6 +26,7 @@ export class FormListFieldComponent {
 
     readonly control = input<FormControl<string[] | null> | null>(null);
     readonly describedBy = input<string | null>(null);
+    readonly excludedValues = input<string[]>([]);
     readonly field = input.required<FormListField>();
     readonly label = input.required<string>();
     readonly options = input<FormFieldOption[]>([]);
@@ -62,6 +63,7 @@ export class FormListFieldComponent {
             : null;
     });
     readonly pickerControl = new FormControl<string | null>('');
+    readonly pickerExcludedValues = computed(() => [...this.values(), ...this.excludedValues()]);
     readonly removeIcon = faXmark;
     readonly rows = computed<FormFieldOption[]>(() => {
         const labels = new Map(

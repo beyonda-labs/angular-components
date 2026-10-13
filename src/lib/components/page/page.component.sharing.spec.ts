@@ -5,6 +5,7 @@ import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 import { FakeToastService } from '@testing/services/fake-toast.service';
 
+import { FormListField } from '../form/models/fields/form-list-field.model';
 import { FormHandle } from '../form/models/form.model';
 import { TableColumn } from '../table/models/table.model';
 import { LinkTableCell, TextTableCell } from '../table/models/table-cell.model';
@@ -163,18 +164,28 @@ describe('PageComponent — sharing', () => {
         expect(breadcrumb()).not.toContain('Clients');
     });
 
-    it('shares a folder that offers it with the choice of the form, and confirms it', async () => {
+    it('shares a folder that offers it with the grantees its lists hold, found by a search, and confirms it', async () => {
         await select('Drafts');
         await click(buttonByName(fixture, 'angular-components.header.menu'));
         await click(buttonByName(fixture, 'demo.actions.share.label'));
         httpTesting.expectOne(SHARES_URL).flush({ inherited: [], shares: [] });
-        httpTesting
-            .expectOne(`${LIST_URL}/categories/drafts/share-targets`)
-            .flush({ groups: [], users: [{ id: 'u2', name: 'Grace Hopper' }] });
 
         const [form] = TestBed.inject(FakeModalFormService).forms();
+        const editList = form.sections
+            .flatMap(section => section.rows.flatMap(row => row.fields))
+            .find(field => field.key === 'write') as FormListField;
+        let suggestions: string[] = [];
+        editList.picker?.search?.('gra', []).subscribe(result => {
+            suggestions = (Array.isArray(result) ? result : result.options).map(({ value }) => value);
+        });
+        const search = httpTesting.expectOne(current => current.url === `${LIST_URL}/categories/drafts/share-targets`);
+        search.flush({ groups: [], hasMore: false, users: [{ id: 'u2', name: 'Grace Hopper' }] });
+
+        expect(search.request.params.toString()).toBe('search=gra&limit=20');
+        expect(suggestions).toEqual(['user:u2']);
+
         form.onSubmit?.(
-            { users: { 'user-0': 'write' } } as PageShareFormValue,
+            { grantees: { read: [], write: ['user:u2'] } } as PageShareFormValue,
             { close: jest.fn() } as never as FormHandle
         );
         const save = httpTesting.expectOne(SHARES_URL);

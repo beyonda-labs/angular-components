@@ -1,26 +1,33 @@
 import { inject, Injectable } from '@angular/core';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { TranslateService } from '@ngx-translate/core';
+import { map, Observable } from 'rxjs';
 
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
+import { FormAutocompleteSearchResult } from '../../form/models/fields/form-autocomplete-field.model';
 import { FormInfoField } from '../../form/models/fields/form-info-field.model';
 import { FormListField } from '../../form/models/fields/form-list-field.model';
-import { FormSelectField } from '../../form/models/fields/form-select-field.model';
 import { FormRow, FormSection } from '../../form/models/form.model';
-import { toShareFormValue } from '../functions/page-shares';
+import { FormFieldOption, FormValue } from '../../form/models/form-field.model';
+import { coveredGrantees, shareGranteeValue, toShareFormValue } from '../functions/page-shares';
 import { PAGE_FORM_CANCEL_LABEL, PAGE_FORM_SUBMIT_LABEL } from '../models/page-form.model';
 import {
     PAGE_SHARE_FORM_PREFIX as PREFIX,
+    PAGE_SHARE_FORM_SECTION as SECTION,
+    PAGE_SHARE_SEARCH_LIMIT,
+    PAGE_SHARE_SEARCH_MAX_LIMIT,
     PageInheritedShare,
+    PageShare,
     PageShareAccess,
-    PageShareChoice,
+    PageShareFormOptions,
     PageShareFormValue,
     PageShareGranteeType,
-    PageShareSection
+    PageShareTarget,
+    PageShareTargets
 } from '../models/page-sharing.model';
 
-const FIELDS_PER_ROW = 2;
-const SECTIONS: PageShareSection[] = ['groups', 'users'];
+const MEMBERS_ONE = 'one';
+const MEMBERS_OTHER = 'other';
 
 @Injectable({
     providedIn: 'root'
@@ -28,56 +35,54 @@ const SECTIONS: PageShareSection[] = ['groups', 'users'];
 export class PageShareFormService {
     private readonly translateService = inject(TranslateService);
 
-    buildShareForm(
-        folderName: string,
-        choices: PageShareChoice[],
-        inherited: PageInheritedShare[]
-    ): ModalFormConfig<PageShareFormValue> {
-        const choiceSections = SECTIONS.map(section => choices.filter(choice => choice.section === section))
-            .filter(sectionChoices => sectionChoices.length > 0)
-            .map(sectionChoices => this.buildChoicesSection(sectionChoices));
+    buildShareForm({
+        folderName,
+        inherited,
+        searchTargets,
+        shares
+    }: PageShareFormOptions): ModalFormConfig<PageShareFormValue> {
+        const buildList = (access: PageShareAccess, other: PageShareAccess) =>
+            this.buildGranteeList(access, other, { inherited, searchTargets, shares });
 
         return new ModalFormConfig<PageShareFormValue>({
             cancelLabel: PAGE_FORM_CANCEL_LABEL,
-            initialValue: toShareFormValue(choices),
+            initialValue: toShareFormValue(shares),
             prefix: PREFIX,
             sections: [
                 this.buildIntroSection(),
-                ...(inherited.length > 0 ? [this.buildInheritedSection(inherited)] : []),
-                ...(choiceSections.length > 0 ? choiceSections : [buildEmptySection()])
+                new FormSection({
+                    isTitleVisible: false,
+                    key: SECTION,
+                    rows: [
+                        new FormRow({ fields: [buildList(PageShareAccess.Read, PageShareAccess.Write)] }),
+                        new FormRow({ fields: [buildList(PageShareAccess.Write, PageShareAccess.Read)] })
+                    ]
+                }),
+                ...(inherited.length > 0 ? [this.buildInheritedSection(inherited)] : [])
             ],
             submitLabel: PAGE_FORM_SUBMIT_LABEL,
             title: this.translate(`${PREFIX}.title`, { name: folderName })
         });
     }
 
-    private buildChoiceField(choice: PageShareChoice): FormSelectField {
-        const { email, field, inherited, name, options } = choice;
+    private buildGranteeList(
+        access: PageShareAccess,
+        other: PageShareAccess,
+        { inherited, searchTargets, shares }: Omit<PageShareFormOptions, 'folderName'>
+    ): FormListField {
+        const covered = coveredGrantees(inherited, access);
 
-        return new FormSelectField({
-            columns: 6,
-            hint: email,
-            isDisabled: options.length === 0,
-            key: field,
-            label: name,
-            options: options.map(access => ({ label: accessLabel(access), value: access })),
-            placeholder: inherited
-                ? this.translate(`${PREFIX}.access.inherited`, {
-                      access: this.translate(accessLabel(inherited.access)),
-                      folder: inherited.folderName
-                  })
-                : `${PREFIX}.access.none`
+        return new FormListField({
+            emptyKey: `${PREFIX}.${SECTION}.${access}.empty`,
+            excludedValues: value => [...listedIn(value, other), ...covered],
+            isRemovable: true,
+            key: access,
+            options: shares.filter(share => share.access === access).map(share => this.toShareOption(share)),
+            picker: {
+                emptyKey: `${PREFIX}.${SECTION}.no-match`,
+                search: (text, excludedValues) => this.searchOptions(searchTargets, text, excludedValues)
+            }
         });
-    }
-
-    private buildChoicesSection(choices: PageShareChoice[]): FormSection {
-        const fields = choices.map(choice => this.buildChoiceField(choice));
-        const rows = Array.from(
-            { length: Math.ceil(fields.length / FIELDS_PER_ROW) },
-            (_, index) => new FormRow({ fields: fields.slice(index * FIELDS_PER_ROW, (index + 1) * FIELDS_PER_ROW) })
-        );
-
-        return new FormSection({ key: choices[0].section, rows });
     }
 
     private buildInheritedSection(inherited: PageInheritedShare[]): FormSection {
@@ -85,7 +90,7 @@ export class PageShareFormService {
             this.translate(
                 `${PREFIX}.inherited.${share.granteeType === PageShareGranteeType.Group ? 'group' : 'user'}`,
                 {
-                    access: this.translate(accessLabel(share.access)),
+                    access: this.translate(`${PREFIX}.access.${share.access}`),
                     folder: share.folderName,
                     name: share.granteeName
                 }
@@ -127,29 +132,68 @@ export class PageShareFormService {
         });
     }
 
+    private groupLabel(name: string, memberCount?: number): string {
+        return memberCount === undefined
+            ? this.translate(`${PREFIX}.grantee.group`, { name })
+            : this.translate(`${PREFIX}.grantee.members.${memberCount === 1 ? MEMBERS_ONE : MEMBERS_OTHER}`, {
+                  count: memberCount,
+                  name
+              });
+    }
+
+    private searchOptions(
+        searchTargets: PageShareFormOptions['searchTargets'],
+        text: string,
+        excludedValues: string[]
+    ): Observable<FormAutocompleteSearchResult> {
+        const excluded = new Set(excludedValues);
+        const limit = Math.min(PAGE_SHARE_SEARCH_MAX_LIMIT, PAGE_SHARE_SEARCH_LIMIT + excluded.size);
+
+        return searchTargets(text, limit).pipe(
+            map(targets => {
+                const options = this.toTargetOptions(targets).filter(({ value }) => !excluded.has(value));
+
+                return {
+                    hasMore: (targets.hasMore ?? false) || options.length > PAGE_SHARE_SEARCH_LIMIT,
+                    options: options.slice(0, PAGE_SHARE_SEARCH_LIMIT)
+                };
+            })
+        );
+    }
+
+    private toShareOption(share: PageShare): FormFieldOption {
+        const { granteeName, granteeType } = share;
+
+        return {
+            label: granteeType === PageShareGranteeType.Group ? this.groupLabel(granteeName) : granteeName,
+            value: shareGranteeValue(share)
+        };
+    }
+
+    private toTargetOptions({ groups, users }: PageShareTargets): FormFieldOption[] {
+        return [
+            ...groups.map(({ id, memberCount, name }) => ({
+                label: this.groupLabel(name, memberCount),
+                value: shareGranteeValue({ granteeId: id, granteeType: PageShareGranteeType.Group })
+            })),
+            ...users.map(user => ({
+                label: userLabel(user),
+                value: shareGranteeValue({ granteeId: user.id, granteeType: PageShareGranteeType.User })
+            }))
+        ];
+    }
+
     private translate(key: string, parameters?: Record<string, unknown>): string {
         return this.translateService.instant(key, parameters) as string;
     }
 }
 
-function accessLabel(access: PageShareAccess): string {
-    return `${PREFIX}.access.${access}`;
+function listedIn(value: FormValue, access: PageShareAccess): string[] {
+    const listed = value[SECTION]?.[access];
+
+    return Array.isArray(listed) ? (listed as string[]) : [];
 }
 
-function buildEmptySection(): FormSection {
-    return new FormSection({
-        key: 'targets',
-        rows: [
-            new FormRow({
-                fields: [
-                    new FormListField({
-                        isLabelVisible: false,
-                        key: 'targets',
-                        label: `${PREFIX}.targets.label`,
-                        placeholder: `${PREFIX}.empty`
-                    })
-                ]
-            })
-        ]
-    });
+function userLabel({ email, name }: PageShareTarget): string {
+    return name && email && name !== email ? `${name} (${email})` : name || (email ?? '');
 }

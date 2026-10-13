@@ -80,6 +80,7 @@ const form = new BeyFormConfig({
 | Component            | Selector                                                            | Status                      |
 | -------------------- | ------------------------------------------------------------------- | --------------------------- |
 | Account data         | `<bey-account-data>`                                                | Stable                      |
+| Audit                | `<bey-audit>`                                                       | Stable                      |
 | Cards                | `<bey-card>`, `<bey-card-list>`, `<bey-card-stats>`, `<bey-avatar>` | Stable                      |
 | Edit lock notice     | `<bey-edit-lock-notice>`                                            | Stable                      |
 | Form                 | `<bey-form>`                                                        | Stable                      |
@@ -87,6 +88,7 @@ const form = new BeyFormConfig({
 | Header               | `<bey-header>`                                                      | Stable                      |
 | Left Menu            | `<bey-left-menu>`                                                   | Stable                      |
 | Notice               | `<bey-notice>`                                                      | Stable                      |
+| Notifications        | `<bey-notifications>`                                               | Stable                      |
 | Organization summary | `<bey-organization-summary>`                                        | Stable                      |
 | Organizations        | `<bey-organizations>`                                               | Stable                      |
 | Password change      | `<bey-password-change>`                                             | Stable                      |
@@ -124,7 +126,8 @@ Component documentation:
     [Users](src/lib/components/administration/users/docs/users-readme.md),
     [Groups](src/lib/components/administration/groups/docs/groups-readme.md),
     [Roles](src/lib/components/administration/roles/docs/roles-readme.md),
-    [Organizations](src/lib/components/administration/organizations/docs/organizations-readme.md) and
+    [Organizations](src/lib/components/administration/organizations/docs/organizations-readme.md),
+    [Audit](src/lib/components/administration/audit/docs/audit-readme.md) and
     [Organization summary](src/lib/components/administration/organization-summary/docs/organization-summary-readme.md)
 -   [Cards](src/lib/components/cards/docs/cards-readme.md)
 -   [Edit lock notice](src/lib/components/edit-lock-notice/docs/edit-lock-notice-readme.md)
@@ -132,6 +135,7 @@ Component documentation:
 -   [Header](src/lib/components/header/docs/header-readme.md)
 -   [Left Menu](src/lib/components/left-menu/docs/left-menu-readme.md)
 -   [Notice](src/lib/components/notice/docs/notice-readme.md)
+-   [Notifications](src/lib/components/notifications/docs/notifications-readme.md)
 -   [Password change](src/lib/components/password-change/docs/password-change-readme.md)
 -   [Table](src/lib/components/table/docs/table-readme.md)
 

@@ -1,8 +1,7 @@
 import { inject, Injectable } from '@angular/core';
-import { forkJoin } from 'rxjs';
 
 import { readRowField } from '../functions/page-row';
-import { buildShareChoices, readShareEntries } from '../functions/page-shares';
+import { readShareEntries } from '../functions/page-shares';
 import { PageConfig } from '../models/page.model';
 import { PageItem } from '../models/page-item.model';
 import { PageFormService } from './page-form.service';
@@ -25,20 +24,22 @@ export class PageShareActionsService {
             return;
         }
 
-        forkJoin([
-            this.pageHttpService.findShares(baseUrl, folder.id),
-            this.pageHttpService.findShareTargets(baseUrl, folder.id)
-        ]).subscribe(([shares, targets]) => {
-            const choices = buildShareChoices(shares, targets);
+        this.pageHttpService.findShares(baseUrl, folder.id).subscribe(({ inherited, shares }) => {
             const folderName = String(readRowField(folder, categoriesConfig.nameField) ?? '');
 
             this.pageFormService.openWithRequest(
-                this.pageShareFormService.buildShareForm(folderName, choices, shares.inherited),
+                this.pageShareFormService.buildShareForm({
+                    folderName,
+                    inherited,
+                    searchTargets: (search, limit) =>
+                        this.pageHttpService.searchShareTargets(baseUrl, folder.id, search, limit),
+                    shares
+                }),
                 value =>
                     this.pageHttpService.saveShares(
                         baseUrl,
                         folder.id,
-                        readShareEntries(choices, value, shares.shares),
+                        readShareEntries(value),
                         `${prefix}.toast.share-success`
                     ),
                 onSaved

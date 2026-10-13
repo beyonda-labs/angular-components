@@ -49,14 +49,16 @@ describe('PageHttpService', () => {
         expect(answer('GET', '/items/categories/tree').request.params.keys()).toEqual([]);
     });
 
-    it('reads the folders shared with the user, and the shares and share targets of a folder', () => {
+    it('reads the folders shared with the user, the shares of a folder and the targets that match a search', () => {
         service.loadShared('/items', { search: 'z' }).subscribe();
         service.findShares('/items', 'clients').subscribe();
-        service.findShareTargets('/items', 'clients').subscribe();
+        service.searchShareTargets('/items', 'clients', 'gra', 20).subscribe();
 
         expect(answer('GET', '/items/shared').request.params.toString()).toBe('search=z');
         answer('GET', '/items/categories/clients/shares');
-        answer('GET', '/items/categories/clients/share-targets');
+        expect(answer('GET', '/items/categories/clients/share-targets').request.params.toString()).toBe(
+            'search=gra&limit=20'
+        );
     });
 
     it('replaces the shares of a folder with the success toast', () => {
@@ -188,6 +190,19 @@ describe('PageHttpService', () => {
         httpTesting.expectOne(url).flush(null, { status: 404, statusText: 'Not Found' });
 
         expect(answers).toEqual([[{ id: 'o1', name: 'Acme' }], 'failed']);
+        expect(TestBed.inject(FakeModalService).errors()).toEqual([]);
+    });
+
+    it('asks quietly for the path of a folder a link names, escaping its id', () => {
+        const answers: unknown[] = [];
+        const url = 'https://api.test/api/items/categories/a%2Fb/path';
+
+        service.loadCategoryPathQuietly('/items', 'a/b').subscribe(path => answers.push(path));
+        httpTesting.expectOne(url).flush([{ id: 'a/b', name: 'Clients' }]);
+        service.loadCategoryPathQuietly('/items', 'a/b').subscribe({ error: () => answers.push('failed') });
+        httpTesting.expectOne(url).flush(null, { status: 404, statusText: 'Not Found' });
+
+        expect(answers).toEqual([[{ id: 'a/b', name: 'Clients' }], 'failed']);
         expect(TestBed.inject(FakeModalService).errors()).toEqual([]);
     });
 

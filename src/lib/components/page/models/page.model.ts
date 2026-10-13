@@ -43,6 +43,7 @@ export interface PageHandle<TItem extends PageItem = PageItem, TCategory extends
     openEdit(row: TItem | TCategory): void;
     openForm<TValue>(config: ModalFormConfig<TValue>, submit: (value: TValue) => Observable<unknown>): void;
     refresh(): void;
+    search(): PageSearch;
     selected(): (TItem | TCategory)[];
     viewMode(): PageViewMode;
 }

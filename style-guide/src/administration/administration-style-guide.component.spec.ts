@@ -21,6 +21,7 @@ describe('AdministrationStyleGuideComponent', () => {
                         en: {
                             'angular-components-style-guide': {
                                 administration: {
+                                    audit: 'Audit',
                                     groups: 'Groups',
                                     'organization-summary': 'Organization summary',
                                     organizations: 'Organizations',
@@ -41,7 +42,7 @@ describe('AdministrationStyleGuideComponent', () => {
         httpTesting.verify();
     });
 
-    it('renders the pages of the module and the summary of the organization, each under its heading', async () => {
+    it('renders the pages of the module, the audit log and the summary of the organization, each under its heading', async () => {
         const fixture = await renderComponent(AdministrationStyleGuideComponent);
         httpTesting.expectOne(`${API_URL}/users/roles`).flush({ roles: [] });
         httpTesting.expectOne(`${API_URL}/roles/permissions`).flush({ permissions: [] });
@@ -92,6 +93,28 @@ describe('AdministrationStyleGuideComponent', () => {
                 globalActions: [],
                 results: [{ actions: [], createdAt: 0, id: 'o1', name: 'Acme', status: 'active', userCount: 3 }]
             });
+        httpTesting
+            .expectOne(request => request.url === `${API_URL}/audit`)
+            .flush({
+                globalActions: [],
+                results: [
+                    {
+                        action: 'create',
+                        actions: ['view'],
+                        entity: 'templates',
+                        entityId: 't1',
+                        entityName: 'Invoice',
+                        id: 'e1',
+                        ip: '203.0.113.7',
+                        occurredAt: 0,
+                        organizationId: 'o1',
+                        requestId: 'req-1',
+                        userEmail: 'grace@example.test',
+                        userId: 'u2',
+                        userName: 'Grace Hopper'
+                    }
+                ]
+            });
         await settle(fixture);
 
         const text = hostOf(fixture).textContent;
@@ -104,6 +127,8 @@ describe('AdministrationStyleGuideComponent', () => {
         expect(text).toContain('auditor');
         expect(text).toContain('Organizations');
         expect(text).toContain('Acme');
+        expect(text).toContain('Audit');
+        expect(text).toContain('Invoice');
         expect(text).toContain('Organization summary');
         expect(text).toContain('Ada Lovelace');
     });

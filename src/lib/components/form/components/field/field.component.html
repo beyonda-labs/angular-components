@@ -25,6 +25,7 @@
     <bey-form-list-field
         [control]="formControl()"
         [describedBy]="describedBy()"
+        [excludedValues]="state().excludedValues"
         [field]="$any(field())"
         [label]="label()"
         [options]="state().options"

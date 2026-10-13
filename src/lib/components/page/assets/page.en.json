@@ -29,20 +29,36 @@
             },
             "search": {
                 "fields": {
+                    "from": "From",
                     "organization-id": "Organization",
-                    "owner-id": "Owner"
+                    "owner-id": "Owner",
+                    "to": "To"
                 }
             },
             "share": {
                 "access": {
-                    "inherited": "{{access}} (from {{folder}})",
-                    "none": "No access",
                     "read": "View",
                     "write": "Edit"
                 },
-                "empty": "There is nobody else in the organization to share it with.",
-                "groups": {
-                    "label": "Groups"
+                "grantee": {
+                    "group": "{{name}} (group)",
+                    "members": {
+                        "one": "{{name}} ({{count}} member)",
+                        "other": "{{name}} ({{count}} members)"
+                    }
+                },
+                "grantees": {
+                    "no-match": "No user or group matches.",
+                    "read": {
+                        "empty": "Nobody added yet.",
+                        "label": "Can view",
+                        "placeholder": "Add a user or a group"
+                    },
+                    "write": {
+                        "empty": "Nobody added yet.",
+                        "label": "Can edit",
+                        "placeholder": "Add a user or a group"
+                    }
                 },
                 "inherited": {
                     "group": "{{name}} (group): {{access}}, from {{folder}}",
@@ -50,13 +66,7 @@
                     "user": "{{name}}: {{access}}, from {{folder}}"
                 },
                 "intro": "Sharing decides where people can work. What they can do there still depends on their permissions.",
-                "targets": {
-                    "label": "Share with"
-                },
-                "title": "Share \"{{name}}\"",
-                "users": {
-                    "label": "Users"
-                }
+                "title": "Share \"{{name}}\""
             },
             "shared": {
                 "label": "Shared with me"

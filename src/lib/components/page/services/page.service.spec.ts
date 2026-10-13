@@ -25,6 +25,7 @@ import { PageColumnContext, PageTableConfig, PageTableSearchConfig } from '../mo
 import { PageService } from './page.service';
 import { PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
+import { PageLinkService } from './page-link.service';
 import { PageOrganizationsService } from './page-organizations.service';
 import { PageOwnersService } from './page-owners.service';
 
@@ -92,6 +93,7 @@ describe('PageService', () => {
 
         TestBed.configureTestingModule({
             providers: [
+                PageLinkService,
                 PageOrganizationsService,
                 PageOwnersService,
                 PageService,

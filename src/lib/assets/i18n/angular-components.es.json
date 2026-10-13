@@ -25,6 +25,115 @@
         "app-layout": {
             "main-content": "Contenido principal"
         },
+        "audit": {
+            "actions": {
+                "export": {
+                    "label": "Exportar",
+                    "tooltip": "Descarga en un fichero CSV los eventos que seleccionan la búsqueda y los filtros"
+                },
+                "view": {
+                    "tooltip": "Ver todos los datos del evento seleccionado"
+                }
+            },
+            "entities": {
+                "account": "Cuenta",
+                "auth": "Sesión",
+                "groups": "Grupos",
+                "organizations": "Organizaciones",
+                "roles": "Roles",
+                "users": "Usuarios"
+            },
+            "search": {
+                "fields": {
+                    "action": "Acción",
+                    "entity": "Entidad",
+                    "text": "Texto",
+                    "user-id": "Usuario"
+                }
+            },
+            "table": {
+                "columns": {
+                    "action": "Acción",
+                    "entity-name": "Registro",
+                    "ip": "IP",
+                    "occurred-at": "Fecha y hora",
+                    "organization": "Organización",
+                    "user": "Usuario"
+                },
+                "empty": "Ningún evento coincide con la búsqueda",
+                "tooltips": {
+                    "action": "Qué se hizo, y sobre qué",
+                    "entity-name": "El nombre del registro, tal como era entonces",
+                    "ip": "Desde dónde llegó la petición",
+                    "occurred-at": "Cuándo ocurrió",
+                    "organization": "La organización a la que pertenece el evento",
+                    "user": "Quién lo hizo, con el nombre que tenía entonces"
+                }
+            },
+            "title": "Auditoría",
+            "verbs": {
+                "accept-invitation": "Aceptar invitación",
+                "change-password": "Cambiar contraseña",
+                "change-status": "Cambiar estado",
+                "create": "Crear",
+                "create-category": "Crear carpeta",
+                "delete": "Eliminar",
+                "delete-category": "Eliminar carpeta",
+                "delete-trash-item": "Eliminar de la papelera",
+                "duplicate": "Duplicar",
+                "edit": "Editar",
+                "edit-category": "Editar carpeta",
+                "empty-trash": "Vaciar la papelera",
+                "import": "Importar",
+                "invite": "Invitar",
+                "locked": "Bloqueo",
+                "move": "Mover",
+                "register": "Registrarse",
+                "resend-invitation": "Reenviar invitación",
+                "reset-password": "Restablecer contraseña",
+                "restore": "Restaurar",
+                "share": "Compartir",
+                "sign-in": "Iniciar sesión",
+                "sign-in-failed": "Inicio de sesión fallido",
+                "sign-out": "Cerrar sesión",
+                "transfer-content": "Transferir contenido",
+                "unshare": "Dejar de compartir",
+                "verify-email": "Verificar el correo"
+            },
+            "view": {
+                "buttons": {
+                    "close": "Cerrar"
+                },
+                "main": {
+                    "action": {
+                        "label": "Acción"
+                    },
+                    "details": {
+                        "label": "Detalles"
+                    },
+                    "entity": {
+                        "label": "Registro"
+                    },
+                    "ip": {
+                        "label": "IP"
+                    },
+                    "occurred-at": {
+                        "label": "Fecha y hora"
+                    },
+                    "organization": {
+                        "label": "Organización"
+                    },
+                    "request-id": {
+                        "label": "Id de la petición"
+                    },
+                    "user": {
+                        "label": "Usuario"
+                    }
+                },
+                "none": "No registrado",
+                "title": "Evento de auditoría"
+            }
+        },
         "breadcrumb": {
             "label": "Migas de pan"
         },
@@ -326,6 +435,9 @@
                 },
                 "move-target-unchanged": "El elemento ya se encuentra en esta categoría.",
                 "not-found": "El recurso solicitado no fue encontrado.",
+                "notifications": {
+                    "not-found": "Esta notificación ya no existe."
+                },
                 "organizations": {
                     "active": "Solo se puede eliminar una organización desactivada. Desactívala primero.",
                     "existing-name": "Ya hay una organización llamada {{name}}.",
@@ -450,6 +562,9 @@
                 },
                 "move-target-unchanged": "Sin cambios",
                 "not-found": "No encontrado",
+                "notifications": {
+                    "not-found": "Notificación no encontrada"
+                },
                 "organizations": {
                     "active": "Organización todavía activa",
                     "existing-name": "Nombre ya en uso",
@@ -657,6 +772,43 @@
                 "title": "Cambios sin guardar"
             }
         },
+        "notifications": {
+            "access": {
+                "read": "solo lectura",
+                "write": "lectura y escritura"
+            },
+            "actions": {
+                "mark-all-read": "Marcar todas como leídas",
+                "refresh": "Actualizar",
+                "show-more": "Ver más"
+            },
+            "bell": {
+                "label": "Notificaciones",
+                "unread": "Notificaciones, {{count}} sin leer"
+            },
+            "empty": "No tienes notificaciones",
+            "loading": "Cargando notificaciones…",
+            "time": {
+                "days": "hace {{count}} d",
+                "hours": "hace {{count}} h",
+                "minutes": "hace {{count}} min",
+                "now": "Ahora mismo"
+            },
+            "title": "Notificaciones",
+            "types": {
+                "edit-locks": {
+                    "released": "{{byName}} ha liberado tu edición de «{{rowName}}» ({{entity}})"
+                },
+                "sharing": {
+                    "folder-shared": "{{byName}} ha compartido contigo la carpeta «{{folderName}}» de {{entity}}, {{access}}"
+                },
+                "users": {
+                    "content-transferred": "{{byName}} te ha transferido el contenido de {{fromName}}. Elementos transferidos: {{count}}"
+                }
+            },
+            "unknown-type": "Tienes una notificación nueva",
+            "unread": "Sin leer"
+        },
         "option-picker": {
             "close": "Cerrar",
             "empty": "No se han encontrado opciones",
@@ -830,20 +982,36 @@
             },
             "search": {
                 "fields": {
+                    "from": "Desde",
                     "organization-id": "Organización",
-                    "owner-id": "Propietario"
+                    "owner-id": "Propietario",
+                    "to": "Hasta"
                 }
             },
             "share": {
                 "access": {
-                    "inherited": "{{access}} (heredado de {{folder}})",
-                    "none": "Sin acceso",
                     "read": "Ver",
                     "write": "Editar"
                 },
-                "empty": "No hay nadie más en la organización con quien compartirla.",
-                "groups": {
-                    "label": "Grupos"
+                "grantee": {
+                    "group": "{{name}} (grupo)",
+                    "members": {
+                        "one": "{{name}} ({{count}} miembro)",
+                        "other": "{{name}} ({{count}} miembros)"
+                    }
+                },
+                "grantees": {
+                    "no-match": "Ningún usuario ni grupo coincide.",
+                    "read": {
+                        "empty": "Nadie añadido todavía.",
+                        "label": "Pueden ver",
+                        "placeholder": "Añade un usuario o un grupo"
+                    },
+                    "write": {
+                        "empty": "Nadie añadido todavía.",
+                        "label": "Pueden editar",
+                        "placeholder": "Añade un usuario o un grupo"
+                    }
                 },
                 "inherited": {
                     "group": "{{name}} (grupo): {{access}}, desde {{folder}}",
@@ -851,13 +1019,7 @@
                     "user": "{{name}}: {{access}}, desde {{folder}}"
                 },
                 "intro": "Compartir decide dónde puede trabajar cada persona; lo que puede hacer ahí sigue dependiendo de sus permisos.",
-                "targets": {
-                    "label": "Compartir con"
-                },
-                "title": "Compartir \"{{name}}\"",
-                "users": {
-                    "label": "Usuarios"
-                }
+                "title": "Compartir \"{{name}}\""
             },
             "shared": {
                 "label": "Compartido conmigo"
@@ -1051,6 +1213,13 @@
                 }
             },
             "permissions": {
+                "audit": {
+                    "label": "Auditoría",
+                    "read": {
+                        "description": "Puede ver quién hizo qué, cuándo y desde dónde en su organización, y exportarlo.",
+                        "label": "Ver la auditoría"
+                    }
+                },
                 "organization": {
                     "label": "Organización",
                     "manage": {
@@ -1173,6 +1342,11 @@
             "add": "Añadir filtro",
             "apply": "Aplicar filtros",
             "clear": "Limpiar todo",
+            "date-operators": {
+                "between": "Entre",
+                "greater-than-or-equals": "Desde el",
+                "less-than-or-equals": "Hasta el"
+            },
             "empty": {
                 "description": "Añade filtros para acotar los resultados.",
                 "title": "Sin filtros aplicados"
@@ -1180,6 +1354,8 @@
             "field-placeholder": "Selecciona un filtro",
             "filters": "Filtros",
             "from-placeholder": "Desde",
+            "more-matches": "Hay más coincidencias: escribe más para afinar.",
+            "no-matches": "No se han encontrado coincidencias",
             "operators": {
                 "between": "Entre",
                 "contains": "Contiene",
@@ -1193,6 +1369,7 @@
                 "not-equals": "Distinto de",
                 "starts-with": "Empieza por"
             },
+            "option-placeholder": "Escribe para buscar",
             "placeholder": "Buscar",
             "remove": "Eliminar filtro",
             "row": "Filtro",
