@@ -36,6 +36,76 @@
                     "title": "Acción confirmada"
                 }
             },
+            "long-form": {
+                "address": {
+                    "city": {
+                        "label": "Ciudad",
+                        "placeholder": "Escribe la ciudad"
+                    },
+                    "country": {
+                        "label": "País",
+                        "placeholder": "Escribe el país"
+                    },
+                    "label": "Dirección",
+                    "postcode": {
+                        "label": "Código postal",
+                        "placeholder": "Escribe el código postal"
+                    },
+                    "street": {
+                        "label": "Calle",
+                        "placeholder": "Escribe la calle y el número"
+                    }
+                },
+                "buttons": {
+                    "cancel": "Cancelar",
+                    "submit": "Guardar"
+                },
+                "example": "Un diálogo nunca crece más que la ventana: abre un formulario más largo que la pantalla y verás que el título y los botones se quedan en su sitio mientras los campos se desplazan entre ellos, también en un teléfono.",
+                "notes": {
+                    "label": "Notas",
+                    "notes": {
+                        "label": "Notas",
+                        "placeholder": "Cualquier cosa que convenga saber"
+                    }
+                },
+                "open": "Abrir un formulario largo",
+                "person": {
+                    "email": {
+                        "label": "Correo electrónico",
+                        "placeholder": "Escribe el correo"
+                    },
+                    "label": "Persona",
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Escribe el nombre"
+                    },
+                    "phone": {
+                        "label": "Teléfono",
+                        "placeholder": "Escribe el número de teléfono"
+                    },
+                    "surname": {
+                        "label": "Apellidos",
+                        "placeholder": "Escribe los apellidos"
+                    }
+                },
+                "sent": "Se ha guardado el formulario largo.",
+                "title": "Ficha de contacto",
+                "work": {
+                    "company": {
+                        "label": "Empresa",
+                        "placeholder": "Escribe la empresa"
+                    },
+                    "department": {
+                        "label": "Departamento",
+                        "placeholder": "Escribe el departamento"
+                    },
+                    "label": "Trabajo",
+                    "position": {
+                        "label": "Cargo",
+                        "placeholder": "Escribe el cargo"
+                    }
+                }
+            },
             "unsaved-changes": {
                 "example": "Un guard de ruta sobre señales registradas: marca la casilla para simular cambios sin guardar e intenta salir. Mientras está marcada, cerrar o recargar la pestaña también pregunta.",
                 "leave": "Salir de esta página",

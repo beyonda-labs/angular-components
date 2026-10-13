@@ -59,7 +59,8 @@ The value is one object per section, keyed by the section key, with one entry pe
 `isTooltipVisible`, `prefix`, which lets two sections share the same texts, and `label`, a title that replaces
 `<prefix>.<key>.label`. `BeyFormRow` takes `fields`
 and an `alignment` of `start` or `end`. `BeyFormButton` takes `label`, `type`, an optional `action` that
-receives the handle, `isHidden` and `tooltip`.
+receives the handle, `isHidden`, `tooltip` and `isDanger`, which paints a submit button in the danger colour
+(`--bey-danger`, `--bey-danger-fg` and `--bey-danger-hover`) for a form whose submit deletes for good.
 
 ## Buttons
 
@@ -107,8 +108,8 @@ The config never changes once built. Whatever has to happen to the live form goe
 
 ## Rules
 
-A field's `isHidden`, `isDisabled`, `isRequired` and `options`, and a section's `isHidden`, take a value, a
-signal or a function of the current form value. The form evaluates them on every change:
+A field's `isHidden`, `isDisabled`, `isRequired` and `options`, an autocomplete's `excludedValues`, and a section's
+`isHidden`, take a value, a signal or a function of the current form value. The form evaluates them on every change:
 
 ```ts
 new BeyFormSelectField({ key: 'fileType', isHidden: value => value['main']['type'] !== 'file' }),
@@ -149,7 +150,8 @@ A custom validator is also run again whenever the form value changes, so one tha
 When the options of a select, a radio or an autocomplete change and no longer list the value of the field, the
 form clears it, and `value()`, `onValueChange` and `onSubmit` see it cleared. Only a change of the options
 drops a value: an initial value is kept while its options are still loading, and cleared only if they arrive
-without it.
+without it. A list that holds ids and has no `search` in its picker, or no picker, drops the ids its options no longer
+list in the same way; the options of a list fed by a `search` only name its rows, so it keeps every id it holds.
 
 ## Steps
 
@@ -192,33 +194,85 @@ is used as it is.
 `BeyModalFormService.open(config)` shows the same form inside a modal. `BeyModalFormConfig` takes everything
 `BeyFormConfig` does, `footer` among it, except `buttons`, which it builds itself, plus:
 
-| Field         | Default                   | Meaning                    |
-| ------------- | ------------------------- | -------------------------- |
-| `title`       | `<prefix>.title`          | Title of the dialog        |
-| `size`        | `BeyModalFormSize.Large`  | Bootstrap modal size       |
-| `cancelLabel` | `<prefix>.buttons.cancel` | Label of the cancel button |
-| `submitLabel` | `<prefix>.buttons.submit` | Label of the submit button |
+| Field            | Default                   | Meaning                                                                        |
+| ---------------- | ------------------------- | ------------------------------------------------------------------------------ |
+| `title`          | `<prefix>.title`          | Title of the dialog                                                            |
+| `size`           | `BeyModalFormSize.Large`  | Bootstrap modal size                                                           |
+| `cancelLabel`    | `<prefix>.buttons.cancel` | Label of the cancel button                                                     |
+| `submitLabel`    | `<prefix>.buttons.submit` | Label of the submit button                                                     |
+| `isSubmitHidden` | `false`                   | Leaves only the cancel button, for a form that only shows                      |
+| `isSubmitDanger` | `false`                   | Paints the submit button as a danger, for a confirmation that deletes for good |
 
 Submit does not close the dialog: call `handle.close()` once the operation succeeds, or open it with
 `BeyModalFormService.openWithRequest(config, submit)`, whose submit sends `submit(value)` and closes the dialog once
-that request answers, keeping it open when it fails; the config's own `onSubmit` is replaced. A config spread into a
-new one keeps its labels, so it can be copied. Cancel, the cross and
-`handle.requestClose()` ask for confirmation when there are changes. The backdrop and Escape do nothing, so
-the confirmation cannot be skipped. `beyModalFormGuard` on a route closes pristine dialogs on navigation and
-asks before leaving a changed one.
+that request answers, keeping it open when it fails and reporting nothing beyond what the request shows, such as the
+error modal of `BeyHttpService`; the config's own `onSubmit` is replaced. A config spread into a new one keeps its
+labels, `isSubmitHidden` and `isSubmitDanger`, so it can be copied. A form that only shows, with every field disabled
+or an info field, sets `isSubmitHidden` and names its cancel button "Close" through `cancelLabel`.
+
+The dialog is at most `--bey-modal-form-max-height` high, by default the `--bey-dialog-max-height` token: its title
+and its buttons stay in place and the sections scroll between them, so a long form never makes the page scroll, and a
+short one keeps its own height. Cancel, the cross and `handle.requestClose()` ask for confirmation when there are
+changes. The backdrop and Escape do nothing, so the confirmation cannot be skipped. `beyModalFormGuard` on a route
+closes pristine dialogs on navigation and asks before leaving a changed one.
 
 ## Fields
 
 See [form-fields-readme.md](./form-fields-readme.md).
 
-## Customisation
+## Theming
 
-| Variable                           | Default               |
-| ---------------------------------- | --------------------- |
-| `--bey-form-sections-max-height`   | `none`                |
-| `--bey-form-field-fg`              | `--bey-text-primary`  |
-| `--bey-form-field-placeholder`     | `--bey-text-disabled` |
-| `--bey-form-field-control-height`  | `2.125rem`            |
-| `--bey-form-field-label`           | `--bey-text-muted`    |
-| `--bey-form-field-hint`            | `--bey-text-muted`    |
-| `--bey-modal-form-body-max-height` | `min(70vh, 34rem)`    |
+| Variable                                   | Default                                                                                               |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| `--bey-form-sections-max-height`           | `none`                                                                                                |
+| `--bey-form-field-fg`                      | `--bey-text-primary`                                                                                  |
+| `--bey-form-field-placeholder`             | `--bey-text-disabled`                                                                                 |
+| `--bey-form-field-control-height`          | `2.125rem`                                                                                            |
+| `--bey-form-field-label`                   | `--bey-text-muted`                                                                                    |
+| `--bey-form-field-hint`                    | `--bey-text-muted`                                                                                    |
+| `--bey-form-field-error`                   | `--bey-danger`                                                                                        |
+| `--bey-form-field-required`                | `--bey-text-disabled`                                                                                 |
+| `--bey-form-field-required-invalid`        | `--bey-danger`                                                                                        |
+| `--bey-form-field-action-fg`               | `--bey-secondary`                                                                                     |
+| `--bey-form-field-action-fg-hover`         | `--bey-text-primary`                                                                                  |
+| `--bey-form-field-action-bg-hover`         | `--bey-bg-active`                                                                                     |
+| `--bey-form-field-action-bg-active`        | `--bey-bg-hover`                                                                                      |
+| `--bey-form-textarea-min-height`           | `5.25rem`                                                                                             |
+| `--bey-form-autocomplete-panel-max-height` | `13rem`                                                                                               |
+| `--bey-form-checkbox-switch-track`         | `--bey-bg-muted`                                                                                      |
+| `--bey-form-checkbox-switch-track-on`      | `--bey-primary`                                                                                       |
+| `--bey-form-checkbox-switch-border`        | `--bey-secondary`                                                                                     |
+| `--bey-form-checkbox-switch-knob`          | `--bey-bg-page`                                                                                       |
+| `--bey-form-checkbox-switch-width`         | `2.125rem`                                                                                            |
+| `--bey-form-checkbox-switch-height`        | `1.125rem`                                                                                            |
+| `--bey-form-chips-chip-bg`                 | `--bey-bg-active`                                                                                     |
+| `--bey-form-chips-input-min-width`         | `6rem`                                                                                                |
+| `--bey-form-file-button-bg`                | `--bey-bg-active`                                                                                     |
+| `--bey-form-file-button-bg-hover`          | `--bey-bg-hover`                                                                                      |
+| `--bey-form-file-muted`                    | `--bey-secondary`                                                                                     |
+| `--bey-form-file-error`                    | `--bey-danger`                                                                                        |
+| `--bey-form-list-border`                   | `--bey-border-default`                                                                                |
+| `--bey-form-list-empty`                    | `--bey-text-disabled`                                                                                 |
+| `--bey-form-list-fg`                       | `--bey-text-primary`                                                                                  |
+| `--bey-form-list-max-height`               | seven and a half rows of `--bey-font-size-md` at `--bey-line-height-base`, and the padding of the box |
+| `--bey-form-list-link`                     | `--bey-text-link`                                                                                     |
+| `--bey-form-list-link-hover`               | `--bey-text-link-hover`                                                                               |
+
+The panel of an autocomplete floats in `document.body`, so it reads `--bey-form-autocomplete-panel-max-height` from its
+field every time it opens: a length set on the field, on an ancestor or on `:root` reaches it.
+
+The variables of the checkbox sections are in [form-fields-readme.md](./form-fields-readme.md#checkbox-sections).
+The modal form renders in `document.body`, so its variables are read from `:root` or an ancestor of the dialog, and
+one set nowhere takes its default:
+
+| Variable                          | Default               |
+| --------------------------------- | --------------------- |
+| `--bey-modal-form-fg`             | `--bey-text-primary`  |
+| `--bey-modal-form-fg-muted`       | `--bey-text-muted`    |
+| `--bey-modal-form-accent`         | `--bey-primary`       |
+| `--bey-modal-form-accent-soft`    | `--bey-primary-soft`  |
+| `--bey-modal-form-border`         | `--bey-border-subtle` |
+| `--bey-modal-form-surface`        | `--bey-bg-surface`    |
+| `--bey-modal-form-close-bg-hover` | `--bey-bg-active`     |
+
+The dialog stops at `--bey-modal-form-max-height`, read the same way; set nowhere, at `--bey-dialog-max-height`.

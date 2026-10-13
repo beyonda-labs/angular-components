@@ -1,0 +1,205 @@
+{
+    "angular-components": {
+        "http": {
+            "error": {
+                "roles": {
+                    "base-role": "The base roles of the application cannot be changed nor deleted.",
+                    "existing-name": "There is already a role with this name in this organization, or it is the name of a base role.",
+                    "invalid-permissions": "Some of the permissions chosen cannot go into a role: they are not yours to give, or they manage users, organizations or roles. Reload the page and try again.",
+                    "not-found": "This role does not exist or is out of your reach. Reload the page and try again."
+                }
+            },
+            "title": {
+                "roles": {
+                    "base-role": "Base role",
+                    "existing-name": "Name already in use",
+                    "invalid-permissions": "Permissions not valid",
+                    "not-found": "Role not found"
+                }
+            }
+        },
+        "roles": {
+            "actions": {
+                "create": {
+                    "label": "New role",
+                    "tooltip": "Create an additional role for the users of the organization"
+                },
+                "delete": {
+                    "label": "Delete",
+                    "tooltip": "Delete the selected roles"
+                },
+                "duplicate": {
+                    "label": "Duplicate",
+                    "tooltip": "Create a role from the selected one, with its description and permissions"
+                },
+                "edit": {
+                    "label": "Edit",
+                    "tooltip": "Edit the selected role"
+                },
+                "view": {
+                    "tooltip": "See the permissions of the selected role"
+                }
+            },
+            "categories": {
+                "root": "Roles"
+            },
+            "duplicate": {
+                "buttons": {
+                    "submit": "Duplicate"
+                },
+                "copy-suffix": "(copy)",
+                "title": "Duplicate role"
+            },
+            "form": {
+                "create": {
+                    "title": "New role"
+                },
+                "edit": {
+                    "title": "Edit role"
+                },
+                "main": {
+                    "description": {
+                        "label": "Description",
+                        "placeholder": "Say what the role is for"
+                    },
+                    "name": {
+                        "label": "Name",
+                        "placeholder": "Type the name of the role"
+                    },
+                    "organization-id": {
+                        "label": "Organization",
+                        "placeholder": "Choose an organization"
+                    }
+                },
+                "permissions": {
+                    "empty": "There are no permissions you can give.",
+                    "label": "Permissions:"
+                }
+            },
+            "modal": {
+                "delete": {
+                    "message": "This will delete {{count}} role(s), and the users who hold them will lose the permissions they give. Do you want to continue?",
+                    "title": "Delete roles"
+                }
+            },
+            "permissions": {
+                "organization": {
+                    "label": "Organization",
+                    "manage": {
+                        "description": "Can manage the groups of the organization and reach everything its members create.",
+                        "label": "Manage the organization"
+                    },
+                    "read": {
+                        "description": "Can see the name, the status, the administrators and the counts of their organization, and every group with its members and every additional role.",
+                        "label": "See the organization summary"
+                    },
+                    "read-group-roles": {
+                        "description": "Can see the additional roles their groups give, with their permissions. It shows nothing without \"See their groups and members\".",
+                        "label": "See the roles and permissions of their groups"
+                    },
+                    "read-groups": {
+                        "description": "Can see the groups they belong to and who else is in them.",
+                        "label": "See their groups and members"
+                    },
+                    "read-roles": {
+                        "description": "Can see the roles they hold, directly or through their groups, with their permissions.",
+                        "label": "See their roles and permissions"
+                    }
+                },
+                "roles": {
+                    "label": "Roles",
+                    "manage": {
+                        "description": "Can create, edit and delete the additional roles of the organization.",
+                        "label": "Manage roles and permissions"
+                    }
+                },
+                "users": {
+                    "change-status": {
+                        "description": "Can activate and deactivate the accounts of the users.",
+                        "label": "Activate and deactivate users"
+                    },
+                    "edit": {
+                        "description": "Can change the names and the roles of the users.",
+                        "label": "Edit users"
+                    },
+                    "invite": {
+                        "description": "Can invite people to join the organization.",
+                        "label": "Invite users"
+                    },
+                    "label": "Users",
+                    "read": {
+                        "description": "Can see the users of the organization.",
+                        "label": "See users"
+                    },
+                    "transfer-content": {
+                        "description": "Can move everything of an inactive user to an active user of their organization.",
+                        "label": "Transfer content"
+                    }
+                }
+            },
+            "search": {
+                "fields": {
+                    "text": "Name"
+                }
+            },
+            "sources": {
+                "direct": "Direct",
+                "group": "Group {{names}}"
+            },
+            "table": {
+                "columns": {
+                    "description": "Description",
+                    "group-count": "Groups",
+                    "member-count": "Users",
+                    "name": "Name",
+                    "organization": "Organization",
+                    "permission-count": "Permissions",
+                    "sources": "Origin",
+                    "type": "Type"
+                },
+                "empty": "No role matches the search",
+                "every-organization": "All",
+                "tooltips": {
+                    "description": "What the role is for",
+                    "group-count": "How many groups hold it",
+                    "member-count": "How many users hold it directly",
+                    "name": "The name of the role",
+                    "organization": "The organization the role belongs to",
+                    "permission-count": "How many permissions it gives",
+                    "sources": "Whether the role is held directly or through a group",
+                    "type": "Whether it is a base role of the application or an additional role of the organization"
+                },
+                "view-permissions": "See permissions"
+            },
+            "title": "Roles and permissions",
+            "toast": {
+                "create-success": "Role created",
+                "delete-success": "Roles deleted",
+                "duplicate-success": "Role duplicated",
+                "edit-success": "Role saved"
+            },
+            "type": {
+                "base": "Base",
+                "extra": "Additional"
+            },
+            "view": {
+                "buttons": {
+                    "close": "Close"
+                },
+                "main": {
+                    "description": {
+                        "label": "Description"
+                    },
+                    "name": {
+                        "label": "Role"
+                    }
+                },
+                "permissions": {
+                    "empty": "This role gives no permissions.",
+                    "label": "Permissions:"
+                },
+                "title": "Permissions of the role"
+            }
+        }
+    }
+}

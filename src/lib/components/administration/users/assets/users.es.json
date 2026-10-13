@@ -1,0 +1,197 @@
+{
+    "angular-components": {
+        "http": {
+            "error": {
+                "users": {
+                    "existing-user": "Ya hay una cuenta con el correo {{email}}.",
+                    "invalid-extra-roles": "Algunos de los roles adicionales elegidos no pertenecen a la organización del usuario o ya no existen. Recarga la página y vuelve a intentarlo.",
+                    "invalid-transfer-target": "La persona elegida no puede recibir este contenido: debe ser un usuario activo de la misma organización. Recarga la página y vuelve a intentarlo.",
+                    "invitation-not-sent": "Se ha creado el usuario {{email}}, pero no se ha podido enviar el correo de invitación. Usa «Reenviar invitación» para intentarlo de nuevo.",
+                    "last-superadmin": "Este cambio dejaría sin ningún superadministrador activo.",
+                    "not-deletable": "Este usuario no se puede eliminar: solo se eliminan usuarios inactivos e invitaciones pendientes, nunca un superadministrador ni tu propia cuenta.",
+                    "not-found": "Este usuario no existe. Recarga la página y vuelve a intentarlo.",
+                    "not-invited": "Esta cuenta ya no está pendiente de una invitación.",
+                    "own-account": "No puedes cambiar tu propia cuenta desde aquí: ni su estado, ni sus roles, ni tu nombre. Cambia tu nombre en la página de tu cuenta.",
+                    "superadmin-only": "Solo un superadministrador puede cambiar la cuenta de un superadministrador.",
+                    "superadmin-role-fixed": "El rol de superadministrador no se puede asignar ni quitar.",
+                    "transfer-source-not-inactive": "Solo se puede transferir el contenido de un usuario inactivo. Desactívalo primero.",
+                    "unknown-role": "El rol \"{{role}}\" no existe."
+                }
+            },
+            "title": {
+                "users": {
+                    "existing-user": "La cuenta ya existe",
+                    "invalid-extra-roles": "Roles adicionales no válidos",
+                    "invalid-transfer-target": "Destinatario no válido",
+                    "invitation-not-sent": "Invitación no enviada",
+                    "last-superadmin": "Último superadministrador",
+                    "not-deletable": "Usuario no eliminable",
+                    "not-found": "Usuario no encontrado",
+                    "not-invited": "Sin invitación pendiente",
+                    "own-account": "Tu propia cuenta",
+                    "superadmin-only": "Solo para superadministradores",
+                    "superadmin-role-fixed": "Rol fijo",
+                    "transfer-source-not-inactive": "Usuario todavía activo",
+                    "unknown-role": "Rol desconocido"
+                }
+            }
+        },
+        "users": {
+            "actions": {
+                "create": {
+                    "label": "Invitar usuario",
+                    "tooltip": "Invita a alguien a crear su cuenta"
+                },
+                "delete": {
+                    "label": "Eliminar",
+                    "tooltip": "Elimina los usuarios seleccionados y todo lo que aún poseen"
+                },
+                "edit": {
+                    "label": "Editar",
+                    "tooltip": "Edita el usuario seleccionado"
+                },
+                "resend-invitation": {
+                    "label": "Reenviar invitación",
+                    "tooltip": "Vuelve a enviar el correo de invitación"
+                },
+                "transfer": {
+                    "label": "Transferir contenido",
+                    "tooltip": "Pasa todo lo que posee el usuario inactivo seleccionado a otro usuario"
+                }
+            },
+            "categories": {
+                "root": "Usuarios"
+            },
+            "content": {
+                "count": "{{label}}: {{count}}",
+                "empty": "No posee nada.",
+                "label": "Contenido",
+                "used-by": "{{entity}} «{{name}}»: {{users}}"
+            },
+            "delete": {
+                "invitation": {
+                    "one": "La invitación dejará de funcionar.",
+                    "other": "Las invitaciones pendientes dejarán de funcionar."
+                },
+                "main": {
+                    "used-by-others": {
+                        "label": "Lo usan otros"
+                    }
+                },
+                "message": {
+                    "one": "Se eliminará a {{name}} junto con todo lo que aún posee.",
+                    "other": "Se eliminarán {{count}} usuarios junto con todo lo que aún poseen."
+                },
+                "submit": "Eliminar",
+                "title": {
+                    "one": "Eliminar usuario",
+                    "other": "Eliminar usuarios"
+                },
+                "used-by-others": "Parte de ello lo usa lo que poseen otros. Esas referencias se mostrarán como «{{unknown}}» y habrá que corregirlas."
+            },
+            "form": {
+                "create": {
+                    "title": "Invitar usuario"
+                },
+                "edit": {
+                    "title": "Editar usuario"
+                },
+                "main": {
+                    "email": {
+                        "label": "Correo electrónico",
+                        "placeholder": "Escribe el correo de la persona"
+                    },
+                    "extra-role-ids": {
+                        "empty": "Sin roles adicionales.",
+                        "label": "Roles adicionales",
+                        "placeholder": "Busca un rol por su nombre"
+                    },
+                    "language": {
+                        "label": "Idioma de la invitación",
+                        "placeholder": "Idioma por defecto"
+                    },
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Escribe el nombre"
+                    },
+                    "organization-id": {
+                        "label": "Organización",
+                        "placeholder": "Elige una organización"
+                    },
+                    "roles": {
+                        "empty": "Elige al menos un rol.",
+                        "label": "Roles",
+                        "placeholder": "Busca un rol por su nombre"
+                    },
+                    "status": {
+                        "label": "Estado",
+                        "placeholder": "Elige un estado"
+                    },
+                    "surname": {
+                        "label": "Apellidos",
+                        "placeholder": "Escribe los apellidos"
+                    }
+                }
+            },
+            "roles": {
+                "superadmin": "Superadministrador"
+            },
+            "search": {
+                "fields": {
+                    "role": "Rol",
+                    "status": "Estado",
+                    "text": "Nombre o correo"
+                }
+            },
+            "status": {
+                "active": "Activo",
+                "inactive": "Inactivo",
+                "invited": "Invitado",
+                "unverified": "Sin verificar"
+            },
+            "table": {
+                "columns": {
+                    "created-at": "Creado",
+                    "email": "Correo electrónico",
+                    "last-login-at": "Último acceso",
+                    "name": "Nombre",
+                    "organization": "Organización",
+                    "roles": "Roles",
+                    "status": "Estado"
+                },
+                "empty": "Ningún usuario coincide con la búsqueda",
+                "no-name": "Sin nombre",
+                "system": "Sistema",
+                "tooltips": {
+                    "created-at": "Cuándo se creó la cuenta",
+                    "email": "El correo con el que entra el usuario",
+                    "last-login-at": "La última vez que el usuario inició sesión",
+                    "name": "Nombre y apellidos del usuario",
+                    "organization": "La organización a la que pertenece el usuario",
+                    "roles": "Lo que el usuario puede hacer",
+                    "status": "Si el usuario puede iniciar sesión"
+                }
+            },
+            "title": "Usuarios",
+            "toast": {
+                "create-success": "Invitación enviada",
+                "delete-success": "Usuarios eliminados",
+                "edit-success": "Usuario guardado",
+                "resend-invitation-success": "Invitación reenviada",
+                "transfer-success": "Contenido transferido"
+            },
+            "transfer": {
+                "main": {
+                    "target-user-id": {
+                        "label": "Pasar a",
+                        "placeholder": "Busca a una persona por nombre o correo"
+                    }
+                },
+                "no-targets": "Ningún usuario activo coincide",
+                "note": "Todo pasará a una carpeta «{{name}}» en la raíz de la persona elegida.",
+                "submit": "Transferir",
+                "title": "Transferir el contenido de {{name}}"
+            }
+        }
+    }
+}

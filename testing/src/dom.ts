@@ -1,7 +1,7 @@
 import { Type } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-export type QueryScope = ComponentFixture<unknown> | Element;
+import { QueryScope } from './models/testing.model';
 
 const CONTROL_SELECTOR = [
     'input',
@@ -106,6 +106,21 @@ export async function settle(fixture: ComponentFixture<unknown>): Promise<void> 
 
 export function textsOf(elements: Element[]): string[] {
     return elements.map(element => element.textContent?.trim() ?? '');
+}
+
+export function visibleText(scope: QueryScope): string {
+    const walker = document.createTreeWalker(hostOf(scope), NodeFilter.SHOW_TEXT);
+    const texts: string[] = [];
+
+    while (walker.nextNode()) {
+        const text = walker.currentNode.textContent?.replaceAll(/\s+/gu, ' ').trim();
+
+        if (text) {
+            texts.push(text);
+        }
+    }
+
+    return texts.join(' ');
 }
 
 function labelTextOf(label: HTMLLabelElement): string {

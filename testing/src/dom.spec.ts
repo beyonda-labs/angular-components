@@ -10,7 +10,8 @@ import {
     queryButton,
     queryControl,
     renderComponent,
-    textsOf
+    textsOf,
+    visibleText
 } from './dom';
 
 @Component({
@@ -22,6 +23,10 @@ import {
                 <li>{{ item }}</li>
             }
         </ul>
+        <p>
+            <strong>Ada</strong>
+            <em>Lovelace</em>
+        </p>
         <button type="button">Save</button>
         <button aria-label="Close" type="button">x</button>
         <span role="button">Toggle</span>
@@ -99,5 +104,12 @@ describe('testing/dom', () => {
 
         expect(queryControl(fixture, 'Notes')).toBeNull();
         expect(() => controlByName(fixture, 'Notes')).toThrow('No control named Notes');
+    });
+
+    it('reads the text of an element as a reader sees it, one space between the texts of its nodes', async () => {
+        const fixture = await renderComponent(DomProbeComponent, { items: ['Draft', 'Final'] });
+
+        expect(visibleText(queryAll(fixture, 'p')[0])).toBe('Ada Lovelace');
+        expect(visibleText(queryAll(fixture, 'ul')[0])).toBe('Draft Final');
     });
 });

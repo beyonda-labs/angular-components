@@ -27,6 +27,7 @@ export class PropertySelectFieldComponent {
 
     readonly valueChange = output<unknown>();
 
+    readonly controlsId = computed(() => (this.isOpen() ? this.optionsId() : null));
     readonly filteredOptions = computed(() => {
         const term = this.query().trim().toLowerCase();
         const { options } = this.field();

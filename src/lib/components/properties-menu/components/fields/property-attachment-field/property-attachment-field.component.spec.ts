@@ -3,6 +3,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 
 import propertiesMenuEn from '../../../assets/properties-menu.en.json';
+import propertiesMenuEs from '../../../assets/properties-menu.es.json';
 import {
     PropertyAttachmentField,
     PropertyAttachmentFieldParameters,
@@ -87,6 +88,32 @@ describe('PropertyAttachmentFieldComponent', () => {
         expect(queryButton(fixture, 'Clear')).not.toBeNull();
     });
 
+    it('names the attachment picked as unknown once the options came and none is it', async () => {
+        await render({ options: OPTIONS, value: 'deleted-id' });
+
+        expect(control('Source').value).toBe('Unknown');
+
+        await render({ options: [], value: 'deleted-id' });
+
+        expect(control('Source').value).toBe('deleted-id');
+
+        await render({ options: OPTIONS, value: '{{ logo_cliente }}', variables: VARIABLES });
+
+        expect(control('Source').value).toBe('{{ logo_cliente }}');
+    });
+
+    it('names an unknown attachment in the language switched to', async () => {
+        await render({ options: OPTIONS, value: 'deleted-id' });
+
+        const translate = TestBed.inject(TranslateService);
+
+        translate.setTranslation('es', propertiesMenuEs);
+        translate.use('es');
+        await settle(fixture);
+
+        expect(control('Source').value).toBe('Desconocido');
+    });
+
     it('filters the options by the typed query', async () => {
         await render({ options: OPTIONS });
         await dispatch(new Event('focus'));
@@ -108,6 +135,22 @@ describe('PropertyAttachmentFieldComponent', () => {
 
         expect(emitted).toEqual(['a2']);
         expect(control('Source').getAttribute('aria-expanded')).toBe('false');
+    });
+
+    it('points the picker at its attachments only while they are there', async () => {
+        await render({ options: OPTIONS });
+
+        expect(control('Source').hasAttribute('aria-controls')).toBe(false);
+
+        await dispatch(new Event('focus'));
+
+        const listId = control('Source').getAttribute('aria-controls');
+
+        expect(textsOf(queryAll(fixture, `#${listId} [role="option"]`))).toEqual(['Logo A4', 'Imagen migrado 1']);
+
+        await dispatch(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+        expect(control('Source').hasAttribute('aria-controls')).toBe(false);
     });
 
     it('offers a variable button only when the field carries variables', async () => {
@@ -142,6 +185,20 @@ describe('PropertyAttachmentFieldComponent', () => {
 
         expect(buttonByName(fixture, 'Use a variable').getAttribute('aria-expanded')).toBe('true');
         expect(control('Source').getAttribute('aria-expanded')).toBe('false');
+    });
+
+    it('offers no upload when the field disables it, and still picks an existing attachment', async () => {
+        await render({ isUploadEnabled: false, options: OPTIONS });
+
+        expect(control('Upload a new file')).toBeUndefined();
+
+        await dispatch(new Event('focus'));
+        await dispatch(
+            new MouseEvent('mousedown'),
+            options().find(option => option.textContent?.trim() === 'Logo A4') as HTMLElement
+        );
+
+        expect(emitted).toEqual(['a1']);
     });
 
     describe('picking a file to upload', () => {

@@ -1,0 +1,12 @@
+{
+    "angular-components-style-guide": {
+        "administration": {
+            "example": "The management pages of an app, one module: users, groups, roles and permissions, and organizations, each on bey-page over the matching module of express-components and each reading what it may do from the backend, and the read-only summary of the organization of a member.",
+            "groups": "Groups",
+            "organization-summary": "Organization summary",
+            "organizations": "Organizations",
+            "roles": "Roles and permissions",
+            "users": "Users"
+        }
+    }
+}

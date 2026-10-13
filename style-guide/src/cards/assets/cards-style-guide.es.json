@@ -1,0 +1,38 @@
+{
+    "angular-components-style-guide": {
+        "cards": {
+            "avatars": "Avatares, sólido y suave",
+            "card": {
+                "title": "Resumen del equipo"
+            },
+            "empty": {
+                "label": "Nadie ha pedido acceso todavía.",
+                "title": "Solicitudes de acceso"
+            },
+            "example": "Las piezas de una página de resumen: una tarjeta con un título y un contador opcionales, una franja de cifras y listas de elementos con un avatar o un icono, un título, un subtítulo y un despliegue o una flecha que los abre. Una lista agrupada reúne sus elementos en una sola caja; una separada da a cada uno la suya.",
+            "people": {
+                "title": "Personas"
+            },
+            "roles": {
+                "editors": "Crean y editan las plantillas",
+                "title": "Roles",
+                "toast": "Aquí se abriría el rol."
+            },
+            "stats": {
+                "people": "Personas",
+                "projects": "Proyectos",
+                "teams": "Equipos"
+            },
+            "teams": {
+                "empty": "Aún no hay nadie en este equipo.",
+                "hide": "Ocultar personas",
+                "members": {
+                    "one": "{{count}} persona",
+                    "other": "{{count}} personas"
+                },
+                "show": "Ver personas",
+                "title": "Equipos"
+            }
+        }
+    }
+}

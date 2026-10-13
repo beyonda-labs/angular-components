@@ -1,5 +1,17 @@
 import { PropertyField, PropertyFieldParameters } from '../property-field.model';
 import { PropertyFieldType } from '../property-field-type.model';
+import { PropertyVariable } from '../property-variable.model';
+
+export interface PropertyTextFieldActionTrigger {
+    key: string;
+    selectionEnd: number;
+    selectionStart: number;
+}
+
+export interface PropertyTextFieldVariableInsertion {
+    value: string;
+    variable: PropertyVariable;
+}
 
 export class PropertyTextField extends PropertyField<string> {
     multiline: boolean;

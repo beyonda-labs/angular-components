@@ -1,0 +1,28 @@
+{
+    "angular-components-style-guide": {
+        "edit-lock-notice": {
+            "example": "Lo que muestra el editor de una fila en cada estado de su bloqueo de edición. Elige un estado; las acciones del aviso lo hacen avanzar como lo haría el bloqueo real.",
+            "scenarios": {
+                "colleague": "Lo edita un compañero",
+                "earlier": "Desde ayer",
+                "free": "Libre de nuevo",
+                "manager": "Visto por un responsable",
+                "other-window": "Otra ventana tuya",
+                "released": "Tu edición liberada",
+                "taken": "Tomado por un compañero",
+                "unavailable": "Ya no disponible"
+            },
+            "statuses": {
+                "free": "Estado: libre",
+                "held": "Estado: ocupado",
+                "lost": "Estado: perdido",
+                "own": "Estado: propio, así que el editor se puede editar y no se muestra ningún aviso",
+                "unavailable": "Estado: no disponible"
+            },
+            "toast": {
+                "copy-saved": "El producto guardaría los cambios como una copia",
+                "reloaded": "El producto recargaría la fila antes de editarla"
+            }
+        }
+    }
+}

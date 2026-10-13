@@ -1,0 +1,15 @@
+{
+    "angular-components-style-guide": {
+        "users": {
+            "content": {
+                "documents": "Documents",
+                "templates": "Templates"
+            },
+            "example": "The users page on the demo backend: search by name or email, filter by status and role, invite a user, edit their names, roles and status, each field enabled only when the row lets it change, send their invitation again, transfer the content of an inactive user to another one and delete inactive users and pending invitations with everything they own, as far as the backend allows each row. The content counts read the labels of the app, here documents and templates. Signed in as a superadmin, the page opens on one folder per organization next to the superadmins, a search at the root spans every organization and is the only list with the organization column, and an invitation sent from inside a folder comes with its organization chosen.",
+            "roles": {
+                "admin": "Administrator",
+                "editor": "Editor"
+            }
+        }
+    }
+}

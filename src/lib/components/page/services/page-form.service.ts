@@ -8,11 +8,14 @@ import { ModalFormService } from '../../form/components/modal/services/modal-for
 import { FormHandle } from '../../form/models/form.model';
 import { ConfirmationModalConfig } from '../../modal/models/modal.model';
 import { ModalService } from '../../modal/services/modal.service';
-import { PageFormConfig, PageSaveMode } from '../models/page-form.model';
+import {
+    PAGE_FORM_CANCEL_LABEL,
+    PAGE_FORM_SUBMIT_LABEL,
+    PageFormConfig,
+    PageSaveMode
+} from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
-
-const CANCEL_LABEL_KEY = 'angular-components.page.form.cancel';
-const SUBMIT_LABEL_KEY = 'angular-components.page.form.submit';
+import { PageCategoryPathEntry } from '../models/page-state.model';
 
 @Injectable({
     providedIn: 'root'
@@ -25,31 +28,35 @@ export class PageFormService {
         pageForm: PageFormConfig<TValue>,
         item: PageItem | undefined,
         pagePrefix: string,
-        onSave: (value: unknown, handle: FormHandle<TValue>) => void
+        onSave: (value: unknown, handle: FormHandle<TValue>) => void,
+        category?: PageCategoryPathEntry
     ): BsModalRef<ModalFormDialogComponent> {
         const mode: PageSaveMode = item ? 'edit' : 'create';
 
         return this.modalFormService.open(
             new ModalFormConfig<TValue>({
                 allowSubmitWithoutChanges: pageForm.allowSubmitWithoutChanges,
-                cancelLabel: CANCEL_LABEL_KEY,
-                initialValue: pageForm.toFormValue(item),
+                cancelLabel: PAGE_FORM_CANCEL_LABEL,
+                initialValue: pageForm.toFormValue(item, category),
                 onReady: handle => pageForm.onReady?.(handle),
                 onSubmit: (value, handle) => {
                     const callback = item ? pageForm.onEdit : pageForm.onCreate;
 
-                    this.confirmSave(pageForm, value, item).subscribe(isConfirmed => {
-                        if (isConfirmed) {
-                            callback?.(value, handle);
-                            onSave(pageForm.toItem(value), handle);
+                    this.confirmSave(pageForm, value, item).subscribe({
+                        error: ignoreError,
+                        next: isConfirmed => {
+                            if (isConfirmed) {
+                                callback?.(value, handle);
+                                onSave(pageForm.toItem(value, item), handle);
+                            }
                         }
                     });
                 },
                 onValueChange: (value, handle) => pageForm.onValueChange?.(value, handle),
                 prefix: pageForm.prefix,
-                sections: pageForm.buildSections(item),
+                sections: pageForm.buildSections(item, category),
                 size: pageForm.size,
-                submitLabel: SUBMIT_LABEL_KEY,
+                submitLabel: PAGE_FORM_SUBMIT_LABEL,
                 title: `${pagePrefix}.form.${mode}.title`
             })
         );
@@ -77,3 +84,5 @@ export class PageFormService {
         );
     }
 }
+
+function ignoreError(): void {}

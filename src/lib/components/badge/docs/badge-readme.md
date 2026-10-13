@@ -32,9 +32,9 @@ readonly status = new BeyBadgeConfig({ label: 'myApp.status.active', variant: Be
 | `Secondary`, `Success`, `Warning`, `Danger`, `Info` | A light tint of the semantic colour, legible in both themes |
 | `Purple`, `Teal`, `Pink`                            | The same tint on the extra palette hues                     |
 
-## Tokens
+## Theming
 
-| Token                | Default                      |
+| Variable             | Default                      |
 | -------------------- | ---------------------------- |
 | `--bey-badge-bg`     | Set by the variant           |
 | `--bey-badge-fg`     | Set by the variant           |

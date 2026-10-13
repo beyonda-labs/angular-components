@@ -1,6 +1,24 @@
 {
     "angular-components": {
+        "http": {
+            "error": {
+                "sharing": {
+                    "invalid-grantees": "Algunos de los usuarios o grupos elegidos no pueden tener acceso a esta carpeta: pertenecen a otra organización, son sus propietarios o ya no existen. Recarga la página y vuelve a intentarlo."
+                }
+            },
+            "title": {
+                "sharing": {
+                    "invalid-grantees": "Destinatarios no válidos"
+                }
+            }
+        },
         "page": {
+            "actions": {
+                "view": {
+                    "label": "Ver",
+                    "tooltip": "Muestra el elemento seleccionado sin cambiarlo"
+                }
+            },
             "count": {
                 "many": "({{count}} elementos)",
                 "one": "({{count}} elemento)"
@@ -11,14 +29,45 @@
             },
             "search": {
                 "fields": {
+                    "organization-id": "Organización",
                     "owner-id": "Propietario"
                 }
             },
+            "share": {
+                "access": {
+                    "inherited": "{{access}} (heredado de {{folder}})",
+                    "none": "Sin acceso",
+                    "read": "Ver",
+                    "write": "Editar"
+                },
+                "empty": "No hay nadie más en la organización con quien compartirla.",
+                "groups": {
+                    "label": "Grupos"
+                },
+                "inherited": {
+                    "group": "{{name}} (grupo): {{access}}, desde {{folder}}",
+                    "label": "Acceso heredado de las carpetas superiores",
+                    "user": "{{name}}: {{access}}, desde {{folder}}"
+                },
+                "intro": "Compartir decide dónde puede trabajar cada persona; lo que puede hacer ahí sigue dependiendo de sus permisos.",
+                "targets": {
+                    "label": "Compartir con"
+                },
+                "title": "Compartir \"{{name}}\"",
+                "users": {
+                    "label": "Usuarios"
+                }
+            },
+            "shared": {
+                "label": "Compartido conmigo"
+            },
             "table": {
                 "columns": {
+                    "organization-name": "Organización",
                     "owner-name": "Propietario"
                 },
                 "tooltips": {
+                    "organization-name": "La organización a la que pertenece",
                     "owner-name": "El usuario al que pertenece"
                 }
             },

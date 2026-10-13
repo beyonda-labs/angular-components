@@ -4,10 +4,18 @@
             "autocomplete-field": {
                 "clear": "Vaciar",
                 "empty": "No se han encontrado opciones",
+                "more": "Hay más coincidencias: escribe más para afinar.",
                 "toggle": "Mostrar opciones"
             },
             "cancel": {
                 "without-changes": "No se han realizado cambios en el formulario."
+            },
+            "checkbox-sections": {
+                "clear-all": "Desmarcar todos",
+                "clear-all-in": "Desmarcar todos en {{section}}",
+                "count": "{{checked}} de {{total}} marcados",
+                "select-all": "Marcar todos",
+                "select-all-in": "Marcar todos en {{section}}"
             },
             "chips": {
                 "remove": "Eliminar"
@@ -19,6 +27,9 @@
                 "max-size": "Tamaño máximo: {{maxSize}}",
                 "too-large": "El archivo supera el tamaño máximo de {{maxSize}}",
                 "unsupported-type": "Tipo de archivo no admitido. Permitidos: {{accept}}"
+            },
+            "list-field": {
+                "remove": "Quitar {{label}}"
             },
             "modal": {
                 "close-confirmation": {

@@ -1,0 +1,197 @@
+{
+    "angular-components": {
+        "http": {
+            "error": {
+                "users": {
+                    "existing-user": "There is already an account with the email {{email}}.",
+                    "invalid-extra-roles": "Some of the additional roles chosen do not belong to the organization of the user, or no longer exist. Reload the page and try again.",
+                    "invalid-transfer-target": "The person chosen cannot receive this content: they must be an active user of the same organization. Reload the page and try again.",
+                    "invitation-not-sent": "The user {{email}} was created, but the invitation email could not be sent. Use \"Resend invitation\" to try again.",
+                    "last-superadmin": "This change would leave no active superadmin.",
+                    "not-deletable": "This user cannot be deleted: only inactive users and pending invitations can, never a superadmin nor your own account.",
+                    "not-found": "This user does not exist. Reload the page and try again.",
+                    "not-invited": "This account is no longer waiting for an invitation.",
+                    "own-account": "You cannot change your own account here: neither its status, its roles nor its name. Change your name on your account page.",
+                    "superadmin-only": "Only a superadmin can change a superadmin account.",
+                    "superadmin-role-fixed": "The superadmin role cannot be granted nor removed.",
+                    "transfer-source-not-inactive": "Only the content of an inactive user can be transferred. Deactivate the user first.",
+                    "unknown-role": "The role \"{{role}}\" does not exist."
+                }
+            },
+            "title": {
+                "users": {
+                    "existing-user": "Account already exists",
+                    "invalid-extra-roles": "Additional roles not valid",
+                    "invalid-transfer-target": "Recipient not valid",
+                    "invitation-not-sent": "Invitation not sent",
+                    "last-superadmin": "Last superadmin",
+                    "not-deletable": "User not deletable",
+                    "not-found": "User not found",
+                    "not-invited": "No pending invitation",
+                    "own-account": "Your own account",
+                    "superadmin-only": "Superadmins only",
+                    "superadmin-role-fixed": "Fixed role",
+                    "transfer-source-not-inactive": "User still active",
+                    "unknown-role": "Unknown role"
+                }
+            }
+        },
+        "users": {
+            "actions": {
+                "create": {
+                    "label": "Invite user",
+                    "tooltip": "Invite someone to create their account"
+                },
+                "delete": {
+                    "label": "Delete",
+                    "tooltip": "Delete the selected users and everything they still own"
+                },
+                "edit": {
+                    "label": "Edit",
+                    "tooltip": "Edit the selected user"
+                },
+                "resend-invitation": {
+                    "label": "Resend invitation",
+                    "tooltip": "Send the invitation email again"
+                },
+                "transfer": {
+                    "label": "Transfer content",
+                    "tooltip": "Move everything the selected inactive user owns to another user"
+                }
+            },
+            "categories": {
+                "root": "Users"
+            },
+            "content": {
+                "count": "{{label}}: {{count}}",
+                "empty": "Owns nothing.",
+                "label": "Content",
+                "used-by": "{{entity}} «{{name}}»: {{users}}"
+            },
+            "delete": {
+                "invitation": {
+                    "one": "The invitation will stop working.",
+                    "other": "The pending invitations will stop working."
+                },
+                "main": {
+                    "used-by-others": {
+                        "label": "Used by others"
+                    }
+                },
+                "message": {
+                    "one": "{{name}} will be deleted, together with everything they still own.",
+                    "other": "{{count}} users will be deleted, together with everything they still own."
+                },
+                "submit": "Delete",
+                "title": {
+                    "one": "Delete user",
+                    "other": "Delete users"
+                },
+                "used-by-others": "Some of it is used by what others own. Those references will show as «{{unknown}}» and will need fixing."
+            },
+            "form": {
+                "create": {
+                    "title": "Invite user"
+                },
+                "edit": {
+                    "title": "Edit user"
+                },
+                "main": {
+                    "email": {
+                        "label": "Email",
+                        "placeholder": "Type the email of the person"
+                    },
+                    "extra-role-ids": {
+                        "empty": "No additional roles.",
+                        "label": "Additional roles",
+                        "placeholder": "Search a role by its name"
+                    },
+                    "language": {
+                        "label": "Language of the invitation",
+                        "placeholder": "Default language"
+                    },
+                    "name": {
+                        "label": "Name",
+                        "placeholder": "Type the name"
+                    },
+                    "organization-id": {
+                        "label": "Organization",
+                        "placeholder": "Choose an organization"
+                    },
+                    "roles": {
+                        "empty": "Choose one role at least.",
+                        "label": "Roles",
+                        "placeholder": "Search a role by its name"
+                    },
+                    "status": {
+                        "label": "Status",
+                        "placeholder": "Choose a status"
+                    },
+                    "surname": {
+                        "label": "Surname",
+                        "placeholder": "Type the surname"
+                    }
+                }
+            },
+            "roles": {
+                "superadmin": "Superadmin"
+            },
+            "search": {
+                "fields": {
+                    "role": "Role",
+                    "status": "Status",
+                    "text": "Name or email"
+                }
+            },
+            "status": {
+                "active": "Active",
+                "inactive": "Inactive",
+                "invited": "Invited",
+                "unverified": "Unverified"
+            },
+            "table": {
+                "columns": {
+                    "created-at": "Created",
+                    "email": "Email",
+                    "last-login-at": "Last sign-in",
+                    "name": "Name",
+                    "organization": "Organization",
+                    "roles": "Roles",
+                    "status": "Status"
+                },
+                "empty": "No user matches the search",
+                "no-name": "No name",
+                "system": "System",
+                "tooltips": {
+                    "created-at": "When the account was created",
+                    "email": "The email the user signs in with",
+                    "last-login-at": "When the user last signed in",
+                    "name": "Name and surname of the user",
+                    "organization": "The organization the user belongs to",
+                    "roles": "What the user may do",
+                    "status": "Whether the user can sign in"
+                }
+            },
+            "title": "Users",
+            "toast": {
+                "create-success": "Invitation sent",
+                "delete-success": "Users deleted",
+                "edit-success": "User saved",
+                "resend-invitation-success": "Invitation sent again",
+                "transfer-success": "Content transferred"
+            },
+            "transfer": {
+                "main": {
+                    "target-user-id": {
+                        "label": "Transfer to",
+                        "placeholder": "Search a person by name or email"
+                    }
+                },
+                "no-targets": "No active user matches",
+                "note": "Everything moves into a folder «{{name}}» at the root of the person you choose.",
+                "submit": "Transfer",
+                "title": "Transfer {{name}}'s content"
+            }
+        }
+    }
+}

@@ -2,9 +2,18 @@
     --bey-form-list-border: var(--bey-border-default);
     --bey-form-list-empty: var(--bey-text-disabled);
     --bey-form-list-fg: var(--bey-text-primary);
+    --bey-form-list-link: var(--bey-text-link);
+    --bey-form-list-link-hover: var(--bey-text-link-hover);
+    --bey-form-list-max-height: calc(
+        7.5 * var(--bey-font-size-md) * var(--bey-line-height-base) + 2 * var(--bey-space-xs)
+    );
 
     display: block;
     min-width: 0;
+}
+
+.bey-form-list-picker {
+    margin-bottom: var(--bey-space-xs);
 }
 
 .bey-form-list {
@@ -15,11 +24,49 @@
     line-height: var(--bey-line-height-base);
     list-style: none;
     margin: 0;
+    max-height: var(--bey-form-list-max-height);
+    overflow-y: auto;
     padding: var(--bey-space-xs) var(--bey-space-md);
+}
+
+.bey-form-list-row {
+    align-items: center;
+    display: flex;
+    gap: var(--bey-space-xs);
+}
+
+.bey-form-list-row-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.bey-form-list-row-remove {
+    border-radius: var(--bey-radius-circle);
+    flex-shrink: 0;
+    font-size: var(--bey-font-size-2xs);
+    height: var(--bey-space-lg);
+    width: var(--bey-space-lg);
 }
 
 .bey-form-list-item {
     overflow-wrap: anywhere;
+}
+
+.bey-form-list-item-link {
+    background: none;
+    border: 0;
+    color: var(--bey-form-list-link);
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
+    text-align: start;
+}
+
+.bey-form-list-item-link:hover,
+.bey-form-list-item-link:focus-visible {
+    color: var(--bey-form-list-link-hover);
+    text-decoration: underline;
 }
 
 .bey-form-list-empty {

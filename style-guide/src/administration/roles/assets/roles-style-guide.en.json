@@ -1,0 +1,7 @@
+{
+    "angular-components-style-guide": {
+        "roles": {
+            "example": "The roles and permissions page of a manager or the superadmin: the base roles of the application with their permissions to see, from their name or from View in the header, and the additional roles of the organization to create, edit, duplicate and delete, their permissions chosen in foldable sections by resource, each permission with its description, as far as the backend allows each row; a base role can be duplicated too, as the start of a new additional role. A superadmin sees one folder per organization next to the base roles, a search at the root spans all of them and is the only list with the organization column, and a role created inside a folder comes with its organization chosen. The demo backend serves no roles, so the list stays empty."
+        }
+    }
+}

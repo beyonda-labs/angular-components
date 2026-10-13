@@ -7,7 +7,7 @@
             autocomplete="off"
             role="combobox"
             type="text"
-            [attr.aria-controls]="attachmentsId()"
+            [attr.aria-controls]="controlsId()"
             [attr.aria-expanded]="isOpen()"
             [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
             [disabled]="current.disabled"
@@ -81,22 +81,24 @@
             </button>
         }
 
-        <label
-            class="bey-property-field-action bey-property-attachment-field-upload"
-            container="body"
-            [class.is-disabled]="current.disabled"
-            [tooltip]="'angular-components.properties-menu.attachment-field.upload' | translate"
-        >
-            <fa-icon [icon]="uploadIcon"></fa-icon>
-            <input
-                class="bey-property-attachment-field-upload-input"
-                type="file"
-                [accept]="current.accept ?? '*/*'"
-                [attr.aria-label]="'angular-components.properties-menu.attachment-field.upload' | translate"
-                [disabled]="current.disabled"
-                (change)="onFileSelected($event)"
-            />
-        </label>
+        @if (current.isUploadEnabled) {
+            <label
+                class="bey-property-field-action bey-property-attachment-field-upload"
+                container="body"
+                [class.is-disabled]="current.disabled"
+                [tooltip]="'angular-components.properties-menu.attachment-field.upload' | translate"
+            >
+                <fa-icon [icon]="uploadIcon"></fa-icon>
+                <input
+                    class="bey-property-attachment-field-upload-input"
+                    type="file"
+                    [accept]="current.accept ?? '*/*'"
+                    [attr.aria-label]="'angular-components.properties-menu.attachment-field.upload' | translate"
+                    [disabled]="current.disabled"
+                    (change)="onFileSelected($event)"
+                />
+            </label>
+        }
 
         @if (current.value) {
             <button

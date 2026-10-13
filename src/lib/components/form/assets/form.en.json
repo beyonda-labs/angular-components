@@ -4,10 +4,18 @@
             "autocomplete-field": {
                 "clear": "Clear",
                 "empty": "No options found",
+                "more": "There are more matches: type more to narrow them down.",
                 "toggle": "Show options"
             },
             "cancel": {
                 "without-changes": "No changes have been made to the form."
+            },
+            "checkbox-sections": {
+                "clear-all": "Clear all",
+                "clear-all-in": "Clear all in {{section}}",
+                "count": "{{checked}} of {{total}} checked",
+                "select-all": "Select all",
+                "select-all-in": "Select all in {{section}}"
             },
             "chips": {
                 "remove": "Remove"
@@ -19,6 +27,9 @@
                 "max-size": "Maximum size: {{maxSize}}",
                 "too-large": "The file exceeds the maximum size of {{maxSize}}",
                 "unsupported-type": "Unsupported file type. Allowed: {{accept}}"
+            },
+            "list-field": {
+                "remove": "Remove {{label}}"
             },
             "modal": {
                 "close-confirmation": {

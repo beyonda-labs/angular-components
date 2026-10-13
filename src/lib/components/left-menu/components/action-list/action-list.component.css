@@ -199,6 +199,6 @@
     color: var(--bey-left-menu-text);
     font-size: var(--bey-font-size-sm);
     font-weight: var(--bey-font-weight-bold);
-    letter-spacing: -0.01em;
+    letter-spacing: var(--bey-letter-spacing-snug);
     margin-bottom: var(--bey-space-md);
 }

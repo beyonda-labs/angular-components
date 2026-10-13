@@ -28,9 +28,24 @@ describe('PageStyleGuideComponent', () => {
         http.expectOne(request => request.url === 'https://api.test/api/products').flush({
             globalActions: ['create'],
             results: [
-                { id: 1, name: 'Keyboard', category: 'Hardware', ownerId: 'u1', ownerName: 'Ada Lovelace', price: 49.9 }
+                {
+                    id: 1,
+                    name: 'Keyboard',
+                    category: 'Hardware',
+                    organizationId: 'o1',
+                    organizationName: 'Acme',
+                    ownerId: 'u1',
+                    ownerName: 'Ada Lovelace',
+                    price: 49.9
+                }
             ],
             search: { filters: [], page: 1, size: 25, total: 1 }
+        });
+        http.expectOne('https://api.test/api/products/organizations').flush({
+            organizations: [
+                { id: 'o1', name: 'Acme' },
+                { id: 'o2', name: 'Globex' }
+            ]
         });
         http.expectOne(request => request.url === FOLDERS_URL).flush({
             globalActions: [],
@@ -55,6 +70,11 @@ describe('PageStyleGuideComponent', () => {
         await settle(fixture);
 
         http.expectOne('https://api.test/api/products/owners').flush({ owners: [{ id: 'u1', name: 'Ada Lovelace' }] });
+    });
+
+    it('shows the organization of each product, since its rows span two organizations', () => {
+        expect(fixture.nativeElement.textContent).toContain('angular-components.page.table.columns.organization-name');
+        expect(fixture.nativeElement.textContent).toContain('Acme');
     });
 
     it('offers the available view and counts the rows of the folder in the folders example', () => {

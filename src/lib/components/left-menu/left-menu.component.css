@@ -1,6 +1,6 @@
 :host {
     --bey-left-menu-accent: var(--bey-primary);
-    --bey-left-menu-focus-ring: 0 0 0 0.2rem color-mix(in srgb, var(--bey-primary) 8%, transparent);
+    --bey-left-menu-focus-ring: 0 0 0 0.2rem var(--bey-primary-soft);
     --bey-left-menu-marker-ring: 0 0 0 0.16rem var(--bey-bg-surface);
     --bey-left-menu-marker-ring-active: 0 0 0 0.16rem color-mix(in srgb, var(--bey-bg-page) 18%, transparent);
     --bey-left-menu-surface: var(--bey-bg-surface);
@@ -18,6 +18,7 @@
     --bey-left-menu-border-subtle-hover: var(--bey-border-strong);
     --bey-left-menu-text-secondary: var(--bey-text-secondary);
     --bey-left-menu-text-secondary-hover: var(--bey-text-primary);
+
     display: block;
     height: 100%;
 }
@@ -117,7 +118,7 @@
     color: var(--bey-left-menu-text);
     font-size: var(--bey-left-menu-title-font-size);
     font-weight: var(--bey-font-weight-bold);
-    letter-spacing: -0.03em;
+    letter-spacing: var(--bey-letter-spacing-tight);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -183,7 +184,7 @@
     color: var(--bey-left-menu-text-soft);
     font-size: var(--bey-font-size-2xs);
     font-weight: var(--bey-font-weight-bold);
-    letter-spacing: 0.08em;
+    letter-spacing: var(--bey-letter-spacing-wider);
     padding-inline: var(--bey-space-md);
     text-transform: uppercase;
 }
@@ -238,23 +239,13 @@
 }
 
 .bey-left-menu-user-avatar {
-    align-items: center;
-    background: var(--bey-left-menu-accent);
-    border-radius: var(--bey-radius-circle);
-    color: var(--bey-left-menu-surface);
-    display: inline-flex;
-    flex: 0 0 auto;
-    font-size: var(--bey-font-size-sm);
-    font-weight: var(--bey-font-weight-bold);
-    height: 2.45rem;
-    justify-content: center;
-    letter-spacing: 0.04em;
-    width: 2.45rem;
+    --bey-cards-avatar-bg: var(--bey-left-menu-accent);
+    --bey-cards-avatar-fg: var(--bey-left-menu-surface);
 }
 
 .bey-left-menu-user--link.is-active .bey-left-menu-user-avatar {
-    background: var(--bey-left-menu-surface);
-    color: var(--bey-left-menu-accent);
+    --bey-cards-avatar-bg: var(--bey-left-menu-surface);
+    --bey-cards-avatar-fg: var(--bey-left-menu-accent);
 }
 
 .bey-left-menu-user-copy {

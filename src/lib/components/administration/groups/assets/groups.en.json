@@ -1,0 +1,128 @@
+{
+    "angular-components": {
+        "groups": {
+            "actions": {
+                "create": {
+                    "label": "New group",
+                    "tooltip": "Create a group"
+                },
+                "delete": {
+                    "label": "Delete",
+                    "tooltip": "Delete the selected groups"
+                },
+                "edit": {
+                    "label": "Edit",
+                    "tooltip": "Edit the name, the members and the additional roles of the selected group"
+                },
+                "view": {
+                    "tooltip": "See the members of the selected group"
+                }
+            },
+            "categories": {
+                "root": "Groups"
+            },
+            "form": {
+                "create": {
+                    "title": "New group"
+                },
+                "edit": {
+                    "title": "Edit group"
+                },
+                "main": {
+                    "extra-role-ids": {
+                        "empty": "This group has no additional roles yet.",
+                        "label": "Additional roles",
+                        "placeholder": "Search a role by its name"
+                    },
+                    "name": {
+                        "label": "Name",
+                        "placeholder": "Type the name of the group"
+                    },
+                    "organization-id": {
+                        "label": "Organization",
+                        "placeholder": "Choose an organization"
+                    },
+                    "user-ids": {
+                        "empty": "This group has no members yet.",
+                        "label": "Members",
+                        "placeholder": "Search a person by name or email"
+                    }
+                }
+            },
+            "modal": {
+                "delete": {
+                    "message": "This will delete {{count}} group(s), and their members will lose the folders shared with them. Do you want to continue?",
+                    "title": "Delete groups"
+                }
+            },
+            "search": {
+                "fields": {
+                    "text": "Name"
+                }
+            },
+            "table": {
+                "columns": {
+                    "created-at": "Created",
+                    "extra-role-count": "Roles",
+                    "member-count": "Members",
+                    "name": "Name",
+                    "organization": "Organization",
+                    "role-count": "Roles"
+                },
+                "empty": "No group matches the search",
+                "tooltips": {
+                    "created-at": "When the group was created",
+                    "extra-role-count": "How many additional roles it gives its members",
+                    "member-count": "How many users belong to it",
+                    "name": "The name of the group",
+                    "organization": "The organization the group belongs to",
+                    "role-count": "How many additional roles it gives its members"
+                },
+                "view-group": "See its members"
+            },
+            "title": "Groups",
+            "toast": {
+                "create-success": "Group created",
+                "delete-success": "Groups deleted",
+                "edit-success": "Group saved"
+            },
+            "view": {
+                "buttons": {
+                    "close": "Close"
+                },
+                "main": {
+                    "extra-roles": {
+                        "empty": "This group gives no additional roles.",
+                        "label": "Additional roles"
+                    },
+                    "members": {
+                        "empty": "This group has no members yet.",
+                        "label": "Members"
+                    },
+                    "name": {
+                        "label": "Group"
+                    }
+                },
+                "title": "Group details"
+            }
+        },
+        "http": {
+            "error": {
+                "groups": {
+                    "existing-name": "There is already a group named {{name}} in this organization.",
+                    "invalid-extra-roles": "Some of the additional roles chosen do not belong to the organization of the group or no longer exist. Reload the page and try again.",
+                    "invalid-members": "Some of the people chosen cannot join this group: they belong to another organization or no longer exist. Reload the page and try again.",
+                    "not-found": "This group does not exist or is out of your reach. Reload the page and try again."
+                }
+            },
+            "title": {
+                "groups": {
+                    "existing-name": "Name already in use",
+                    "invalid-extra-roles": "Additional roles not valid",
+                    "invalid-members": "Members not valid",
+                    "not-found": "Group not found"
+                }
+            }
+        }
+    }
+}

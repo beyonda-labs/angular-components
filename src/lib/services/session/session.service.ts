@@ -109,6 +109,8 @@ function decodeJwtUser(token: string): SessionUser | null {
             allowedPaths,
             redirectPath: allowedPaths[0] ?? '',
             roles: (payload['roles'] as string[] | undefined) ?? [],
+            extraPermissions: payload['extraPermissions'] as string[] | undefined,
+            organizationId: payload['organizationId'] as string | undefined,
             name: payload['name'] as string | undefined,
             surname: payload['surname'] as string | undefined,
             language: payload['language'] as string | undefined,

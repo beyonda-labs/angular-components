@@ -5,13 +5,13 @@ import { of } from 'rxjs';
 import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
 import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
 import { pageStandardAction } from '../functions/page-standard-actions';
-import { PageConfig } from '../models/page.model';
+import { PageActionsContext, PageConfig } from '../models/page.model';
 import { PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageItemType } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
 import { PageOwnedItem } from '../models/page-owner.model';
 import { PageTableConfig } from '../models/page-table.model';
-import { PageActionsContext, PageActionsService } from './page-actions.service';
+import { PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
 
 describe('PageActionsService — move to a category', () => {
@@ -65,7 +65,7 @@ describe('PageActionsService — move to a category', () => {
     });
 
     it('moves the given rows straight into a category, with the move toast and the refresh', () => {
-        const context = buildContext();
+        const context = buildContext(buildFoldersConfig());
         const onMoved = jest.fn();
         const rows: PageItem[] = [
             { actions: ['move'], id: 'item-1', type: PageItemType.Item } as PageItem,
@@ -120,5 +120,27 @@ describe('PageActionsService — move to a category', () => {
             null,
             'testPage.toast.move-success'
         );
+    });
+
+    it('picks inside a shared folder only among that folder and the folders below it', () => {
+        const rows: (PageOwnedItem & { type: PageItemType })[] = [
+            { id: 'item-1', ownerId: 'ada', ownerName: 'Ada', type: PageItemType.Item }
+        ];
+        loadCategoryTree.mockReturnValue(
+            of([
+                { id: 'home', name: 'Home', ownerId: 'ada', parentId: null },
+                { id: 'clients', name: 'Clients', ownerId: 'ada', parentId: 'home' },
+                { id: 'acme', name: 'Acme', ownerId: 'ada', parentId: 'clients' }
+            ])
+        );
+        openTree.mockReturnValue({ hide: jest.fn() });
+
+        service.executeAction(pageStandardAction(PageStandardAction.Move), {
+            ...buildContext(buildFoldersConfig(), rows),
+            getSharedRoot: () => ({ id: 'clients', label: 'Clients' })
+        });
+        const [root] = (openTree.mock.calls[0][0] as ModalTreeConfig).treeConfig.nodes;
+
+        expect([root.key, root.label, root.children.map(node => node.key)]).toEqual(['clients', 'Clients', ['acme']]);
     });
 });

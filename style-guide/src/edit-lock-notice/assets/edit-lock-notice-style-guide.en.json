@@ -1,0 +1,28 @@
+{
+    "angular-components-style-guide": {
+        "edit-lock-notice": {
+            "example": "What the editor of a row shows for each state of its edit lock. Pick a state; the actions of the notice move it on as the real lock would.",
+            "scenarios": {
+                "colleague": "A colleague edits it",
+                "earlier": "Since yesterday",
+                "free": "Free again",
+                "manager": "Seen by a manager",
+                "other-window": "Another window of yours",
+                "released": "Your editing released",
+                "taken": "Taken over by a colleague",
+                "unavailable": "No longer available"
+            },
+            "statuses": {
+                "free": "Status: free",
+                "held": "Status: held",
+                "lost": "Status: lost",
+                "own": "Status: own, so the editor is editable and no notice shows",
+                "unavailable": "Status: unavailable"
+            },
+            "toast": {
+                "copy-saved": "The product would save the changes as a copy",
+                "reloaded": "The product would reload the row before editing it"
+            }
+        }
+    }
+}

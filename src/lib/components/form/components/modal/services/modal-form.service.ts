@@ -76,7 +76,7 @@ export class ModalFormService {
                 onSubmit: (value, handle) =>
                     submit(value)
                         .pipe(take(1))
-                        .subscribe(() => handle.close())
+                        .subscribe({ error: ignoreError, next: () => handle.close() })
             })
         );
     }
@@ -90,3 +90,5 @@ export class ModalFormService {
         return this.openDialogs.some(reference => reference.content?.isDirty() ?? false);
     }
 }
+
+function ignoreError(): void {}

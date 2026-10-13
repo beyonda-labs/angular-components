@@ -69,9 +69,24 @@ describe('page standard actions', () => {
                 scope: PageActionScope.Item,
                 type: HeaderActionType.Text,
                 zone: PageActionZone.Left
-            }
+            },
+            { key: 'share', scope: PageActionScope.Single, type: HeaderActionType.Text, zone: PageActionZone.Menu },
+            { key: 'view', scope: PageActionScope.Single, type: HeaderActionType.Text, zone: PageActionZone.Left }
         ]);
         expect(pageStandardAction(PageStandardAction.Create).icon).toBe(faPlus);
+    });
+
+    it('labels view with the texts of the page module, which a page may still override', () => {
+        const view = pageStandardAction(PageStandardAction.View);
+
+        expect([view.label, view.tooltip]).toEqual([
+            'angular-components.page.actions.view.label',
+            'angular-components.page.actions.view.tooltip'
+        ]);
+        expect(pageStandardAction(PageStandardAction.View, { tooltip: 'demo.actions.view.tooltip' }).tooltip).toBe(
+            'demo.actions.view.tooltip'
+        );
+        expect(pageStandardAction(PageStandardAction.Edit).label).toBeUndefined();
     });
 
     it('keeps its key and takes whatever else the caller overrides, handler included', () => {

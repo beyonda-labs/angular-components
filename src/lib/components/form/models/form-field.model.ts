@@ -6,11 +6,13 @@ export enum FormFieldType {
     Autocomplete = 'autocomplete',
     Checkbox = 'checkbox',
     CheckboxGroup = 'checkboxGroup',
+    CheckboxSections = 'checkboxSections',
     Chips = 'chips',
     Date = 'date',
     File = 'file',
     Info = 'info',
     List = 'list',
+    Notice = 'notice',
     Number = 'number',
     Password = 'password',
     Radio = 'radio',
@@ -52,9 +54,6 @@ export abstract class FormField {
     placeholder?: string;
 
     constructor({
-        key,
-        type,
-
         asyncValidators = [],
         autocomplete,
         columns = 12,
@@ -64,8 +63,10 @@ export abstract class FormField {
         isLabelTooltipVisible = false,
         isLabelVisible = true,
         isRequired = false,
+        key,
         label,
         placeholder,
+        type,
         validators = []
     }: FormFieldParameters) {
         this.asyncValidators = asyncValidators;

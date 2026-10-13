@@ -5,20 +5,23 @@ import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { nextDomId } from '../../../../internal/dom-ids/dom-ids';
 import { toKeySegment } from '../../../../utilities/key-segment';
-import { FormFieldState } from '../../form.component';
 import { fieldErrorOf } from '../../functions/field-error';
 import { FormPasswordField } from '../../models/fields/form-password-field.model';
 import { FormField, FormFieldType } from '../../models/form-field.model';
+import { FormFieldState } from '../../models/form-field-state.model';
 import { FormFieldError } from '../../models/form-field-validator.model';
 import { FormAutocompleteFieldComponent } from './field-autocomplete/field-autocomplete.component';
 import { FormCheckboxFieldComponent } from './field-checkbox/field-checkbox.component';
 import { FormCheckboxGroupFieldComponent } from './field-checkbox-group/field-checkbox-group.component';
+import { FormCheckboxSectionsFieldComponent } from './field-checkbox-sections/field-checkbox-sections.component';
 import { FormChipsFieldComponent } from './field-chips/field-chips.component';
 import { FormDateFieldComponent } from './field-date/field-date.component';
 import { FormFileFieldComponent } from './field-file/field-file.component';
 import { FormInfoFieldComponent } from './field-info/field-info.component';
 import { FormListFieldComponent } from './field-list/field-list.component';
+import { FormNoticeFieldComponent } from './field-notice/field-notice.component';
 import { FormNumberFieldComponent } from './field-number/field-number.component';
 import { FormPasswordFieldComponent } from './field-password/field-password.component';
 import { FormRadioFieldComponent } from './field-radio/field-radio.component';
@@ -27,8 +30,6 @@ import { FormTextFieldComponent } from './field-text/field-text.component';
 import { FormTextVariableFieldComponent } from './field-text-variable/field-text-variable.component';
 import { FormTextareaFieldComponent } from './field-textarea/field-textarea.component';
 
-let messageCount = 0;
-
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -36,11 +37,13 @@ let messageCount = 0;
         FormAutocompleteFieldComponent,
         FormCheckboxFieldComponent,
         FormCheckboxGroupFieldComponent,
+        FormCheckboxSectionsFieldComponent,
         FormChipsFieldComponent,
         FormDateFieldComponent,
         FormFileFieldComponent,
         FormInfoFieldComponent,
         FormListFieldComponent,
+        FormNoticeFieldComponent,
         FormNumberFieldComponent,
         FormPasswordFieldComponent,
         FormRadioFieldComponent,
@@ -69,7 +72,7 @@ export class FormFieldComponent {
     readonly hint = computed(() => (hasPasswordPolicy(this.field()) ? '' : (this.field().hint ?? '')));
     readonly infoIcon = faInfoCircle;
     readonly label = computed(() => this.field().label ?? `${this.fieldPrefix()}.label`);
-    readonly messageId = nextMessageId();
+    readonly messageId = nextDomId('bey-form-field-message');
     readonly tooltip = computed(() => `${this.fieldPrefix()}.tooltip`);
     readonly type = computed(() => this.field().type);
 
@@ -86,10 +89,4 @@ export class FormFieldComponent {
 
 function hasPasswordPolicy(field: FormField): boolean {
     return field instanceof FormPasswordField && field.policy !== undefined;
-}
-
-function nextMessageId(): string {
-    messageCount += 1;
-
-    return `bey-form-field-message-${messageCount}`;
 }

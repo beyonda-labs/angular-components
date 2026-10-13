@@ -1,0 +1,28 @@
+:host {
+    --bey-cards-avatar-font-size: var(--bey-font-size-sm);
+    --bey-cards-avatar-size: calc(var(--bey-space-2xl) + var(--bey-space-sm));
+
+    display: inline-flex;
+    flex: 0 0 auto;
+}
+
+.bey-cards-avatar {
+    align-items: center;
+    background: var(--bey-cards-avatar-bg, var(--bey-primary));
+    border-radius: var(--bey-radius-circle);
+    color: var(--bey-cards-avatar-fg, var(--bey-primary-fg));
+    display: inline-flex;
+    font-size: var(--bey-cards-avatar-font-size);
+    font-weight: var(--bey-font-weight-bold);
+    height: var(--bey-cards-avatar-size);
+    justify-content: center;
+    letter-spacing: var(--bey-letter-spacing-wide);
+    line-height: var(--bey-line-height-none);
+    user-select: none;
+    width: var(--bey-cards-avatar-size);
+}
+
+.bey-cards-avatar--soft {
+    background: var(--bey-cards-avatar-bg, var(--bey-bg-active));
+    color: var(--bey-cards-avatar-fg, var(--bey-text-primary));
+}

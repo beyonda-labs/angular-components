@@ -1,3 +1,4 @@
+import { UNKNOWN_USER_NAME_KEY } from '../../../internal/user-name/models/user-name.model';
 import { TableColumn, TableColumnParameters } from '../../table/models/table.model';
 import { TextTableCell } from '../../table/models/table-cell.model';
 import {
@@ -9,8 +10,17 @@ import {
     PageOwnedItem
 } from '../models/page-owner.model';
 
-export function pageOwnerCell({ ownerName }: Pick<PageOwnedItem, 'ownerName'>): TextTableCell {
-    return new TextTableCell({ content: ownerName ?? '', tooltip: ownerName ?? undefined });
+export function pageOwnerCell({
+    ownerId,
+    ownerName
+}: Partial<Pick<PageOwnedItem, 'ownerId'>> & Pick<PageOwnedItem, 'ownerName'>): TextTableCell {
+    if (ownerName) {
+        return new TextTableCell({ content: ownerName, tooltip: ownerName });
+    }
+
+    return ownerId
+        ? new TextTableCell({ content: UNKNOWN_USER_NAME_KEY, translate: true })
+        : new TextTableCell({ content: '' });
 }
 
 export function pageOwnerColumn(overrides: Partial<TableColumnParameters> = {}): TableColumn {

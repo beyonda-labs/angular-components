@@ -7,13 +7,13 @@ import { ModalFormConfig } from '../../form/components/modal/models/modal-form.m
 import { FormHandle, FormSection } from '../../form/models/form.model';
 import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
 import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
-import { PageConfig } from '../models/page.model';
+import { PageActionsContext, PageConfig } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageItemType, PageTrashItem } from '../models/page-categories.model';
 import { PageFormConfig } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
 import { PageTableConfig } from '../models/page-table.model';
-import { PageActionsContext, PageActionsService } from './page-actions.service';
+import { PageActionsService } from './page-actions.service';
 import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
 
@@ -144,12 +144,7 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.Create, PageActionScope.Global), context);
 
-            expect(openForm).toHaveBeenCalledWith(
-                context.config.formConfig,
-                undefined,
-                'testPage',
-                expect.any(Function)
-            );
+            expect(openForm).toHaveBeenCalledWith(...formArguments(context.config.formConfig, undefined, 'testPage'));
             expect(context.onFormModalOpened).toHaveBeenCalled();
         });
 
@@ -167,7 +162,7 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.Edit, PageActionScope.Item), context);
 
-            expect(openForm).toHaveBeenCalledWith(context.config.formConfig, item, 'testPage', expect.any(Function));
+            expect(openForm).toHaveBeenCalledWith(...formArguments(context.config.formConfig, item, 'testPage'));
         });
 
         it('does not open the edit modal form with multiple selected items', () => {
@@ -275,10 +270,11 @@ describe('PageActionsService', () => {
             service.executeAction(buildAction(PageStandardAction.CreateCategory, PageActionScope.Global), context);
 
             expect(openForm).toHaveBeenCalledWith(
-                context.config.tableConfig?.categoriesConfig?.formConfig,
-                undefined,
-                'testPage.category.form',
-                expect.any(Function)
+                ...formArguments(
+                    context.config.tableConfig?.categoriesConfig?.formConfig,
+                    undefined,
+                    'testPage.category.form'
+                )
             );
         });
 
@@ -296,10 +292,11 @@ describe('PageActionsService', () => {
             service.executeAction(buildAction(PageStandardAction.CreateCategory, PageActionScope.Global), context);
 
             expect(openForm).toHaveBeenCalledWith(
-                context.config.tableConfig?.categoriesConfig?.formConfig,
-                undefined,
-                'testPage.category.form',
-                expect.any(Function)
+                ...formArguments(
+                    context.config.tableConfig?.categoriesConfig?.formConfig,
+                    undefined,
+                    'testPage.category.form'
+                )
             );
         });
 
@@ -328,10 +325,11 @@ describe('PageActionsService', () => {
             service.executeAction(buildAction(PageStandardAction.EditCategory, PageActionScope.Item), context);
 
             expect(openForm).toHaveBeenCalledWith(
-                context.config.tableConfig?.categoriesConfig?.formConfig,
-                item,
-                'testPage.category.form',
-                expect.any(Function)
+                ...formArguments(
+                    context.config.tableConfig?.categoriesConfig?.formConfig,
+                    item,
+                    'testPage.category.form'
+                )
             );
         });
 
@@ -536,7 +534,7 @@ describe('PageActionsService', () => {
                 { id: 1, type: PageItemType.Item },
                 { id: 2, type: PageItemType.Category }
             ];
-            const context = buildContext({ selectedItems: () => items });
+            const context = buildCategoryContext({ selectedItems: () => items });
 
             service.executeAction(buildAction(PageStandardAction.DeleteTrashItem, PageActionScope.Item), context);
 
@@ -556,7 +554,7 @@ describe('PageActionsService', () => {
         it('restores the selected trash items without asking for confirmation', () => {
             restoreTrashItems.mockReturnValue(of([]));
             const items: PageTrashItem[] = [{ id: 3, type: PageItemType.Category }];
-            const context = buildContext({ selectedItems: () => items });
+            const context = buildCategoryContext({ selectedItems: () => items });
 
             service.executeAction(buildAction(PageStandardAction.RestoreTrashItem, PageActionScope.Item), context);
 
@@ -759,4 +757,8 @@ function buildCategories(): PageItem[] {
         { id: 'cat-2', name: 'Phones', parentId: 'cat-1' },
         { id: 'cat-3', name: 'Books', parentId: null }
     ] as unknown as PageItem[];
+}
+
+function formArguments(formConfig: PageFormConfig | undefined, item: PageItem | undefined, prefix: string): unknown[] {
+    return [formConfig, item, prefix, expect.any(Function), undefined];
 }

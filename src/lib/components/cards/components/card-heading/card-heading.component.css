@@ -1,0 +1,33 @@
+:host {
+    display: block;
+}
+
+.bey-cards-heading {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--bey-space-sm);
+}
+
+.bey-cards-heading-title {
+    color: var(--bey-text-primary);
+    font-size: var(--bey-font-size-xl);
+    font-weight: var(--bey-font-weight-bold);
+    line-height: var(--bey-line-height-tight);
+    margin: 0;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.bey-cards-heading-count {
+    background: var(--bey-cards-count-bg);
+    border-radius: var(--bey-radius-pill);
+    color: var(--bey-cards-count-fg);
+    flex-shrink: 0;
+    font-size: var(--bey-font-size-xs);
+    font-weight: var(--bey-font-weight-semibold);
+    line-height: var(--bey-line-height-base);
+    min-width: var(--bey-space-xl);
+    padding: 0 var(--bey-space-xs);
+    text-align: center;
+}

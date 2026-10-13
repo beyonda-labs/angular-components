@@ -1,0 +1,51 @@
+:host {
+    --bey-notice-tint: 10%;
+    --bey-notice-edge: 35%;
+
+    display: block;
+}
+
+.bey-notice {
+    --bey-notice-accent: var(--bey-blue);
+    --bey-notice-bg: color-mix(in srgb, var(--bey-notice-accent) var(--bey-notice-tint), var(--bey-bg-page));
+    --bey-notice-border: color-mix(in srgb, var(--bey-notice-accent) var(--bey-notice-edge), var(--bey-bg-page));
+
+    align-items: center;
+    background-color: var(--bey-notice-bg);
+    border: var(--bey-border-width) solid var(--bey-notice-border);
+    border-radius: var(--bey-radius-md);
+    color: var(--bey-text-primary);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--bey-space-xs) var(--bey-space-md);
+    padding: var(--bey-space-xs) var(--bey-space-md);
+    width: 100%;
+}
+
+.bey-notice--warning {
+    --bey-notice-accent: var(--bey-warning);
+}
+
+.bey-notice--danger {
+    --bey-notice-accent: var(--bey-danger);
+}
+
+.bey-notice-icon {
+    color: var(--bey-notice-accent);
+    flex: 0 0 auto;
+    font-size: var(--bey-font-size-md);
+}
+
+.bey-notice-message {
+    flex: 1 1 16rem;
+    font-size: var(--bey-font-size-sm);
+    line-height: var(--bey-line-height-base);
+    margin: 0;
+    min-width: 0;
+}
+
+.bey-notice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--bey-space-xs);
+}

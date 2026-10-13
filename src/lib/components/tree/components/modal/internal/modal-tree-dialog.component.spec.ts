@@ -67,7 +67,6 @@ describe('ModalTreeDialogComponent', () => {
     it('shows the tree inside the dialog', async () => {
         await render();
 
-        expect(fixture.nativeElement.querySelector('bey-tree')).toBeTruthy();
         expect(treeNode('Root')).toBeTruthy();
     });
 

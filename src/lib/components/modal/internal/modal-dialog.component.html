@@ -1,5 +1,5 @@
 <div class="bey-modal" [class]="'bey-modal bey-modal-' + config.type">
-    <div class="d-flex align-items-start justify-content-between gap-3">
+    <div class="bey-modal-header d-flex align-items-start justify-content-between gap-3">
         <div class="d-flex align-items-start gap-3 grow min-w-0">
             <span class="bey-modal-icon" aria-hidden="true">
                 <fa-icon [icon]="getIcon()"></fa-icon>
@@ -22,7 +22,9 @@
         </button>
     </div>
 
-    <p class="bey-modal-message mt-3 mb-0">{{ config.message | translate: config.messageParameters }}</p>
+    <p class="bey-modal-message bey-thin-scroll mt-3 mb-0">
+        {{ config.message | translate: config.messageParameters }}
+    </p>
 
     <div class="d-flex justify-content-end gap-2 mt-4 bey-modal-actions">
         @if (hasSecondaryAction()) {

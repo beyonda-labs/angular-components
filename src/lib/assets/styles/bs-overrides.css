@@ -56,6 +56,22 @@ body.dark .btn-outline-dark {
     --bs-btn-disabled-border-color: var(--bey-gray-600);
 }
 
+/* ─── btn-danger (Danger) ───────────────────────────────────────────────── */
+.btn-danger {
+    --bs-btn-color: var(--bey-danger-fg);
+    --bs-btn-bg: var(--bey-danger);
+    --bs-btn-border-color: var(--bey-danger);
+    --bs-btn-hover-color: var(--bey-danger-fg);
+    --bs-btn-hover-bg: var(--bey-danger-hover);
+    --bs-btn-hover-border-color: var(--bey-danger-hover);
+    --bs-btn-active-color: var(--bey-danger-fg);
+    --bs-btn-active-bg: var(--bey-danger-hover);
+    --bs-btn-active-border-color: var(--bey-danger-hover);
+    --bs-btn-disabled-color: var(--bey-danger-fg);
+    --bs-btn-disabled-bg: var(--bey-danger);
+    --bs-btn-disabled-border-color: var(--bey-danger);
+}
+
 /* ─── btn-link (Tertiary) ────────────────────────────────────────────────── */
 .btn-link {
     --bs-btn-color: var(--bey-primary);

@@ -9,6 +9,15 @@
             "name-hint": "Shown on the documents you sign"
         },
         "account-data-section": "Account data",
+        "administration": {
+            "example": "The management pages of an app, one module: users, groups, roles and permissions, and organizations, each on bey-page over the matching module of express-components and each reading what it may do from the backend, and the read-only summary of the organization of a member.",
+            "groups": "Groups",
+            "organization-summary": "Organization summary",
+            "organizations": "Organizations",
+            "roles": "Roles and permissions",
+            "users": "Users"
+        },
+        "administration-section": "Administration",
         "app-layout": {
             "actions": {
                 "dashboard": {
@@ -113,8 +122,69 @@
             }
         },
         "breadcrumbs": "Breadcrumbs",
-        "components": "Components",
+        "cards": {
+            "avatars": "Avatars, solid and soft",
+            "card": {
+                "title": "Team overview"
+            },
+            "empty": {
+                "label": "Nobody has asked for access yet.",
+                "title": "Access requests"
+            },
+            "example": "The pieces of a summary page: a card with an optional title and count, a strip of figures, and lists of items with an avatar or an icon, a title, a subtitle and either a fold or a chevron that opens them. A grouped list holds its items in one box, a separate one gives each its own.",
+            "people": {
+                "title": "People"
+            },
+            "roles": {
+                "editors": "Create and edit the templates",
+                "title": "Roles",
+                "toast": "Here the role would open."
+            },
+            "stats": {
+                "people": "People",
+                "projects": "Projects",
+                "teams": "Teams"
+            },
+            "teams": {
+                "empty": "Nobody in this team yet.",
+                "hide": "Hide people",
+                "members": {
+                    "one": "{{count}} person",
+                    "other": "{{count}} people"
+                },
+                "show": "Show people",
+                "title": "Teams"
+            }
+        },
+        "cards-section": "Cards",
+        "collapse-all": "Collapse all",
         "compound": "Compound",
+        "edit-lock-notice": {
+            "example": "What the editor of a row shows for each state of its edit lock. Pick a state; the actions of the notice move it on as the real lock would.",
+            "scenarios": {
+                "colleague": "A colleague edits it",
+                "earlier": "Since yesterday",
+                "free": "Free again",
+                "manager": "Seen by a manager",
+                "other-window": "Another window of yours",
+                "released": "Your editing released",
+                "taken": "Taken over by a colleague",
+                "unavailable": "No longer available"
+            },
+            "statuses": {
+                "free": "Status: free",
+                "held": "Status: held",
+                "lost": "Status: lost",
+                "own": "Status: own, so the editor is editable and no notice shows",
+                "unavailable": "Status: unavailable"
+            },
+            "toast": {
+                "copy-saved": "The product would save the changes as a copy",
+                "reloaded": "The product would reload the row before editing it"
+            }
+        },
+        "edit-lock-notice-section": "Edit lock notice",
+        "expand-all": "Expand all",
         "file-preview": {
             "buttons": {
                 "image": "Preview an image",
@@ -216,8 +286,44 @@
                     },
                     "placeholder": "Disabled typeahead"
                 },
+                "autocomplete4": {
+                    "label": "Typeahead with many options",
+                    "options": {
+                        "option1": "Item 1",
+                        "option10": "Item 10",
+                        "option11": "Item 11",
+                        "option12": "Item 12",
+                        "option13": "Item 13",
+                        "option14": "Item 14",
+                        "option15": "Item 15",
+                        "option16": "Item 16",
+                        "option17": "Item 17",
+                        "option18": "Item 18",
+                        "option19": "Item 19",
+                        "option2": "Item 2",
+                        "option20": "Item 20",
+                        "option21": "Item 21",
+                        "option22": "Item 22",
+                        "option23": "Item 23",
+                        "option24": "Item 24",
+                        "option25": "Item 25",
+                        "option26": "Item 26",
+                        "option27": "Item 27",
+                        "option28": "Item 28",
+                        "option29": "Item 29",
+                        "option3": "Item 3",
+                        "option30": "Item 30",
+                        "option4": "Item 4",
+                        "option5": "Item 5",
+                        "option6": "Item 6",
+                        "option7": "Item 7",
+                        "option8": "Item 8",
+                        "option9": "Item 9"
+                    },
+                    "placeholder": "Search among thirty options"
+                },
                 "label": "Searchable fields",
-                "tooltip": "Typeahead variants with basic, required and disabled behaviour"
+                "tooltip": "Typeahead variants with basic, required and disabled behaviour, and one with thirty options to scroll"
             },
             "section-checkbox": {
                 "checkbox1": {
@@ -234,6 +340,59 @@
                 },
                 "label": "Checkbox Fields",
                 "tooltip": "Checkbox variants with basic, required, disabled and switch states"
+            },
+            "section-checkbox-sections": {
+                "documents": {
+                    "label": "Documents"
+                },
+                "documents-create": {
+                    "description": "Can fill in a template to make a document.",
+                    "label": "Create"
+                },
+                "documents-delete": {
+                    "label": "Delete"
+                },
+                "documents-read": {
+                    "description": "Can see the documents.",
+                    "label": "See"
+                },
+                "folders": {
+                    "label": "Folders"
+                },
+                "folders-read": {
+                    "description": "Can see the folders and what they hold.",
+                    "label": "See"
+                },
+                "folders-share": {
+                    "description": "Can share a folder with groups and users.",
+                    "label": "Share"
+                },
+                "label": "Checkbox Sections",
+                "sections1": {
+                    "label": "Permissions:"
+                },
+                "sections2": {
+                    "label": "Permissions of a base role (read-only):"
+                },
+                "templates": {
+                    "label": "Templates"
+                },
+                "templates-delete": {
+                    "label": "Delete"
+                },
+                "templates-edit": {
+                    "description": "Can change the templates.",
+                    "label": "Edit"
+                },
+                "templates-publish": {
+                    "description": "Can make a template available to everyone.",
+                    "label": "Publish"
+                },
+                "templates-read": {
+                    "description": "Can see the templates.",
+                    "label": "See"
+                },
+                "tooltip": "Long checklists folded by section, with a counter, select all and a description per checkbox"
             },
             "section-chips": {
                 "chips1": {
@@ -348,6 +507,24 @@
                 },
                 "tooltip": "Password fields with a length validator, a policy, toggle, required and disabled states"
             },
+            "section-picked-list": {
+                "label": "Picked lists",
+                "people": {
+                    "empty": "This group has no members yet.",
+                    "label": "Members",
+                    "placeholder": "Search a person by name or email"
+                },
+                "read-only-people": {
+                    "empty": "This group has no members yet.",
+                    "label": "Read-only members"
+                },
+                "roles": {
+                    "empty": "This group has no roles yet.",
+                    "label": "Roles",
+                    "placeholder": "Pick a role"
+                },
+                "tooltip": "A removable list holding ids, fed by a search on top: from the server, debounced and saying when there are more matches than it shows, or from its own options. Past seven rows the list scrolls under its search"
+            },
             "section-radio": {
                 "label": "Radio Fields",
                 "radio1": {
@@ -441,6 +618,9 @@
             "submitted": "The form has been submitted: "
         },
         "forms": "Forms",
+        "groups": {
+            "example": "The groups page of a manager or the superadmin: search by name, create a group, edit its name, its members and its additional roles in one form, and delete groups, as far as the backend allows each row. A superadmin sees one folder per organization, a search at the root spans all of them and is the only list with the organization column, and a group created inside a folder comes with its organization chosen. The demo backend serves no groups, so the list stays empty."
+        },
         "header": {
             "actions": {
                 "archive": {
@@ -626,6 +806,76 @@
                     "title": "Action confirmed"
                 }
             },
+            "long-form": {
+                "address": {
+                    "city": {
+                        "label": "City",
+                        "placeholder": "Type the city"
+                    },
+                    "country": {
+                        "label": "Country",
+                        "placeholder": "Type the country"
+                    },
+                    "label": "Address",
+                    "postcode": {
+                        "label": "Postcode",
+                        "placeholder": "Type the postcode"
+                    },
+                    "street": {
+                        "label": "Street",
+                        "placeholder": "Type the street and number"
+                    }
+                },
+                "buttons": {
+                    "cancel": "Cancel",
+                    "submit": "Save"
+                },
+                "example": "A dialog never grows past the window: open a form longer than the screen, and its title and its buttons stay in place while the fields scroll between them, on a phone as well.",
+                "notes": {
+                    "label": "Notes",
+                    "notes": {
+                        "label": "Notes",
+                        "placeholder": "Anything worth knowing"
+                    }
+                },
+                "open": "Open a long form",
+                "person": {
+                    "email": {
+                        "label": "Email",
+                        "placeholder": "Type the email"
+                    },
+                    "label": "Person",
+                    "name": {
+                        "label": "Name",
+                        "placeholder": "Type the name"
+                    },
+                    "phone": {
+                        "label": "Phone",
+                        "placeholder": "Type the phone number"
+                    },
+                    "surname": {
+                        "label": "Surname",
+                        "placeholder": "Type the surname"
+                    }
+                },
+                "sent": "The long form has been saved.",
+                "title": "Contact card",
+                "work": {
+                    "company": {
+                        "label": "Company",
+                        "placeholder": "Type the company"
+                    },
+                    "department": {
+                        "label": "Department",
+                        "placeholder": "Type the department"
+                    },
+                    "label": "Work",
+                    "position": {
+                        "label": "Position",
+                        "placeholder": "Type the position"
+                    }
+                }
+            },
             "unsaved-changes": {
                 "example": "A route guard over tracked signals: tick the box to pretend there are unsaved changes, then try to leave. While it is ticked, closing or reloading the tab asks as well.",
                 "leave": "Leave this page",
@@ -641,6 +891,29 @@
             }
         },
         "modals": "Modals",
+        "notice": {
+            "actions": {
+                "dismiss": "Not now",
+                "reload": "Reload"
+            },
+            "example": "An inline banner across its container, one per variant: information, warning with its actions, and danger.",
+            "messages": {
+                "danger": "This item was deleted while you were looking at it.",
+                "info": "This item is shared with your whole organization.",
+                "warning": "{{name}} changed this item a moment ago."
+            },
+            "toast": {
+                "dismiss": "The notice stays as it is",
+                "reload": "The item would reload now"
+            }
+        },
+        "notice-section": "Notices",
+        "organization-summary": {
+            "example": "The summary of the organization of the signed-in member, read-only, built with the cards module: its name, status and creation, a strip with its active members, groups and additional roles, with the members by status for whoever may see the users; its administrators; every group folded with its count, unfolding its active members in place, and those in no group last; and every additional role, opening its permissions for whoever may already see them. The demo backend serves no organization, so nothing shows: the cards section shows the same pieces."
+        },
+        "organizations": {
+            "example": "The organizations page of a superadmin: search by name, filter by status, create an organization and edit one, its name and its status, with its active administrators, its groups and their members, and its members in no group to read, as far as the backend allows each row. The demo backend serves no organizations, so the list stays empty."
+        },
         "page": {
             "actions": {
                 "create": {
@@ -656,7 +929,7 @@
                     "tooltip": "Edit the selected product"
                 }
             },
-            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form. The Available tab is a view: the same list with a filter of its own, searchable too. The headers sort the list and the columns menu hides the category or the price. The Owner column names who each product belongs to, and the filters panel offers to filter by owner once the products have two owners or more.",
+            "example": "A self-managing page: header actions, search, table and pagination wired to the demo backend, with create and edit in a modal form. The Available tab is a view: the same list with a filter of its own, searchable too. The headers sort the list and the columns menu hides the category or the price. The Owner column names who each product belongs to, and the filters panel offers to filter by owner once the products have two owners or more. The Organization column and its filter show only while the products you see belong to two organizations or more, as a superadmin's do.",
             "folders": {
                 "actions": {
                     "move": {
@@ -780,6 +1053,9 @@
             }
         },
         "properties-menu-section": "Properties Menu",
+        "roles": {
+            "example": "The roles and permissions page of a manager or the superadmin: the base roles of the application with their permissions to see, from their name or from View in the header, and the additional roles of the organization to create, edit, duplicate and delete, their permissions chosen in foldable sections by resource, each permission with its description, as far as the backend allows each row; a base role can be duplicated too, as the start of a new additional role. A superadmin sees one folder per organization next to the base roles, a search at the root spans all of them and is the only list with the organization column, and a role created inside a folder comes with its organization chosen. The demo backend serves no roles, so the list stays empty."
+        },
         "search": {
             "applied": "Applied filters",
             "example": "Quick search box plus a panel of typed filter rows. It starts from the filters of its config, here the editor role; every change is reported through onFiltersChange and the consumer runs the query.",
@@ -948,12 +1224,15 @@
         },
         "trees": "Trees",
         "users": {
-            "example": "The users page on the demo backend: search by name or email, filter by status and role, invite a user, edit their roles, change their status and send their invitation again, as far as the backend allows each row.",
+            "content": {
+                "documents": "Documents",
+                "templates": "Templates"
+            },
+            "example": "The users page on the demo backend: search by name or email, filter by status and role, invite a user, edit their names, roles and status, each field enabled only when the row lets it change, send their invitation again, transfer the content of an inactive user to another one and delete inactive users and pending invitations with everything they own, as far as the backend allows each row. The content counts read the labels of the app, here documents and templates. Signed in as a superadmin, the page opens on one folder per organization next to the superadmins, a search at the root spans every organization and is the only list with the organization column, and an invitation sent from inside a folder comes with its organization chosen.",
             "roles": {
                 "admin": "Administrator",
                 "editor": "Editor"
             }
-        },
-        "users-section": "Users"
+        }
     }
 }

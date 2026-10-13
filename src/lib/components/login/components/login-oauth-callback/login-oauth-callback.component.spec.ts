@@ -36,12 +36,15 @@ describe('LoginOAuthCallbackComponent', () => {
         httpTesting.verify();
     });
 
-    it('returns to the login page without restoring when the provider reports an error', async () => {
-        await land({ error: 'unauthorized' });
+    it.each(['unauthorized', 'account-inactive', 'organization-inactive'])(
+        'returns to the login page without restoring when the server reports %s',
+        async error => {
+            await land({ error });
 
-        httpTesting.expectNone(REFRESH_URL);
-        expect(navigate).toHaveBeenCalledWith(['/login']);
-    });
+            httpTesting.expectNone(REFRESH_URL);
+            expect(navigate).toHaveBeenCalledWith(['/login']);
+        }
+    );
 
     it('opens the session the server set in its cookie and goes where the user is allowed', async () => {
         const accessToken = buildAccessToken(['/home']);

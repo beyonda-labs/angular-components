@@ -1,0 +1,128 @@
+{
+    "angular-components": {
+        "groups": {
+            "actions": {
+                "create": {
+                    "label": "Nuevo grupo",
+                    "tooltip": "Crea un grupo"
+                },
+                "delete": {
+                    "label": "Eliminar",
+                    "tooltip": "Elimina los grupos seleccionados"
+                },
+                "edit": {
+                    "label": "Editar",
+                    "tooltip": "Edita el nombre, los miembros y los roles adicionales del grupo seleccionado"
+                },
+                "view": {
+                    "tooltip": "Muestra los miembros del grupo seleccionado"
+                }
+            },
+            "categories": {
+                "root": "Grupos"
+            },
+            "form": {
+                "create": {
+                    "title": "Nuevo grupo"
+                },
+                "edit": {
+                    "title": "Editar grupo"
+                },
+                "main": {
+                    "extra-role-ids": {
+                        "empty": "Este grupo aún no tiene roles adicionales.",
+                        "label": "Roles adicionales",
+                        "placeholder": "Busca un rol por su nombre"
+                    },
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Escribe el nombre del grupo"
+                    },
+                    "organization-id": {
+                        "label": "Organización",
+                        "placeholder": "Elige una organización"
+                    },
+                    "user-ids": {
+                        "empty": "Este grupo aún no tiene miembros.",
+                        "label": "Miembros",
+                        "placeholder": "Busca a una persona por nombre o correo"
+                    }
+                }
+            },
+            "modal": {
+                "delete": {
+                    "message": "Se eliminarán {{count}} grupo(s) y sus miembros perderán las carpetas compartidas con ellos. ¿Quieres continuar?",
+                    "title": "Eliminar grupos"
+                }
+            },
+            "search": {
+                "fields": {
+                    "text": "Nombre"
+                }
+            },
+            "table": {
+                "columns": {
+                    "created-at": "Creado",
+                    "extra-role-count": "Roles",
+                    "member-count": "Miembros",
+                    "name": "Nombre",
+                    "organization": "Organización",
+                    "role-count": "Roles"
+                },
+                "empty": "Ningún grupo coincide con la búsqueda",
+                "tooltips": {
+                    "created-at": "Cuándo se creó el grupo",
+                    "extra-role-count": "Cuántos roles adicionales da a sus miembros",
+                    "member-count": "Cuántos usuarios pertenecen a él",
+                    "name": "El nombre del grupo",
+                    "organization": "La organización a la que pertenece el grupo",
+                    "role-count": "Cuántos roles adicionales da a sus miembros"
+                },
+                "view-group": "Ver sus miembros"
+            },
+            "title": "Grupos",
+            "toast": {
+                "create-success": "Grupo creado",
+                "delete-success": "Grupos eliminados",
+                "edit-success": "Grupo guardado"
+            },
+            "view": {
+                "buttons": {
+                    "close": "Cerrar"
+                },
+                "main": {
+                    "extra-roles": {
+                        "empty": "Este grupo no da roles adicionales.",
+                        "label": "Roles adicionales"
+                    },
+                    "members": {
+                        "empty": "Este grupo aún no tiene miembros.",
+                        "label": "Miembros"
+                    },
+                    "name": {
+                        "label": "Grupo"
+                    }
+                },
+                "title": "Detalle del grupo"
+            }
+        },
+        "http": {
+            "error": {
+                "groups": {
+                    "existing-name": "Ya hay un grupo llamado {{name}} en esta organización.",
+                    "invalid-extra-roles": "Algunos de los roles adicionales elegidos no pertenecen a la organización del grupo o ya no existen. Recarga la página y vuelve a intentarlo.",
+                    "invalid-members": "Algunas de las personas elegidas no pueden unirse a este grupo: pertenecen a otra organización o ya no existen. Recarga la página y vuelve a intentarlo.",
+                    "not-found": "Este grupo no existe o está fuera de tu alcance. Recarga la página y vuelve a intentarlo."
+                }
+            },
+            "title": {
+                "groups": {
+                    "existing-name": "Nombre ya en uso",
+                    "invalid-extra-roles": "Roles adicionales no válidos",
+                    "invalid-members": "Miembros no válidos",
+                    "not-found": "Grupo no encontrado"
+                }
+            }
+        }
+    }
+}

@@ -1,6 +1,6 @@
 import { SearchFilterOperator, StringFilter } from '../../search/models/search-filter.model';
 import { PageConfig } from '../models/page.model';
-import { PageTableConfig } from '../models/page-table.model';
+import { PageTableConfig, PageTableConfigParameters } from '../models/page-table.model';
 import { PageView } from '../models/page-view.model';
 import { buildPageTabs, readViewFilters } from './page-tabs';
 
@@ -9,10 +9,14 @@ const BLOCKS = new PageView({
     key: 'blocks'
 });
 
-function buildConfig(isTrashEnabled: boolean, views: PageView[] = []): PageConfig {
+function buildConfig(
+    isTrashEnabled: boolean,
+    views: PageView[] = [],
+    overrides: Partial<PageTableConfigParameters> = {}
+): PageConfig {
     return new PageConfig({
         prefix: 'demo',
-        tableConfig: new PageTableConfig({ columns: [], isTrashEnabled, loadRow: () => [] }),
+        tableConfig: new PageTableConfig({ columns: [], isTrashEnabled, loadRow: () => [], ...overrides }),
         views
     });
 }
@@ -35,6 +39,19 @@ describe('buildPageTabs', () => {
             'blocks'
         ]);
         expect(buildPageTabs(buildConfig(false), 'table', jest.fn())).toBeNull();
+    });
+
+    it('offers the shared view before the trash, labelled by the library, also as the only extra tab', () => {
+        const withTrash = buildPageTabs(buildConfig(true, [BLOCKS], { isSharedEnabled: true }), 'shared', jest.fn());
+        const alone = buildPageTabs(buildConfig(false, [], { isSharedEnabled: true }), 'table', jest.fn());
+
+        expect(withTrash?.tabs.map(({ key, label }) => ({ key, label }))).toEqual([
+            { key: 'table', label: 'table.label' },
+            { key: 'blocks', label: 'blocks.label' },
+            { key: 'shared', label: 'angular-components.page.shared.label' },
+            { key: 'trash', label: 'trash.label' }
+        ]);
+        expect(alone?.tabs.map(tab => tab.key)).toEqual(['table', 'shared']);
     });
 });
 

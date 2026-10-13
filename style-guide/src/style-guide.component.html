@@ -3,108 +3,201 @@
         <div class="container py-4">
             <h1 class="mb-4 fs-1">{{ 'angular-components-style-guide.title' | translate }}</h1>
 
+            <div class="d-flex flex-wrap gap-2 mb-4">
+                <button class="btn btn-sm btn-outline-secondary" type="button" (click)="expandAll()">
+                    {{ 'angular-components-style-guide.expand-all' | translate }}
+                </button>
+
+                <button class="btn btn-sm btn-outline-secondary" type="button" (click)="collapseAll()">
+                    {{ 'angular-components-style-guide.collapse-all' | translate }}
+                </button>
+            </div>
+
             <h2 class="bey-style-guide-group-title">{{ 'angular-components-style-guide.simple' | translate }}</h2>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.badge-section">
-                <bey-badge-style-guide></bey-badge-style-guide>
+            <bey-style-guide-section key="badge" titleKey="angular-components-style-guide.badge-section">
+                <ng-template>
+                    <bey-badge-style-guide></bey-badge-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.breadcrumbs">
-                <bey-breadcrumb-style-guide></bey-breadcrumb-style-guide>
+            <bey-style-guide-section key="breadcrumb" titleKey="angular-components-style-guide.breadcrumbs">
+                <ng-template>
+                    <bey-breadcrumb-style-guide></bey-breadcrumb-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.forms">
-                <bey-form-style-guide></bey-form-style-guide>
+            <bey-style-guide-section key="cards" titleKey="angular-components-style-guide.cards-section">
+                <ng-template>
+                    <bey-cards-style-guide></bey-cards-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.headers">
-                <bey-header-style-guide></bey-header-style-guide>
+            <bey-style-guide-section key="form" titleKey="angular-components-style-guide.forms">
+                <ng-template>
+                    <bey-form-style-guide></bey-form-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.footers">
-                <bey-footer-style-guide></bey-footer-style-guide>
+            <bey-style-guide-section key="header" titleKey="angular-components-style-guide.headers">
+                <ng-template>
+                    <bey-header-style-guide></bey-header-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.floating-preferences-section">
-                <bey-floating-preferences-style-guide></bey-floating-preferences-style-guide>
+            <bey-style-guide-section key="footer" titleKey="angular-components-style-guide.footers">
+                <ng-template>
+                    <bey-footer-style-guide></bey-footer-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.left-menu-section">
-                <bey-left-menu-style-guide></bey-left-menu-style-guide>
+            <bey-style-guide-section
+                key="floating-preferences"
+                titleKey="angular-components-style-guide.floating-preferences-section"
+            >
+                <ng-template>
+                    <bey-floating-preferences-style-guide></bey-floating-preferences-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.loadings">
-                <bey-loading-style-guide></bey-loading-style-guide>
+            <bey-style-guide-section key="left-menu" titleKey="angular-components-style-guide.left-menu-section">
+                <ng-template>
+                    <bey-left-menu-style-guide></bey-left-menu-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.modals">
-                <bey-modal-style-guide></bey-modal-style-guide>
+            <bey-style-guide-section key="loading" titleKey="angular-components-style-guide.loadings">
+                <ng-template>
+                    <bey-loading-style-guide></bey-loading-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.file-preview-section">
-                <bey-file-preview-style-guide></bey-file-preview-style-guide>
+            <bey-style-guide-section key="modal" titleKey="angular-components-style-guide.modals">
+                <ng-template>
+                    <bey-modal-style-guide></bey-modal-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.lists">
-                <bey-list-style-guide></bey-list-style-guide>
+            <bey-style-guide-section key="notice" titleKey="angular-components-style-guide.notice-section">
+                <ng-template>
+                    <bey-notice-style-guide></bey-notice-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.pagination-section">
-                <bey-pagination-style-guide></bey-pagination-style-guide>
+            <bey-style-guide-section key="file-preview" titleKey="angular-components-style-guide.file-preview-section">
+                <ng-template>
+                    <bey-file-preview-style-guide></bey-file-preview-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.pdf-viewer-section">
-                <bey-pdf-viewer-style-guide></bey-pdf-viewer-style-guide>
+            <bey-style-guide-section key="list" titleKey="angular-components-style-guide.lists">
+                <ng-template>
+                    <bey-list-style-guide></bey-list-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.properties-menu-section">
-                <bey-properties-menu-style-guide></bey-properties-menu-style-guide>
+            <bey-style-guide-section key="pagination" titleKey="angular-components-style-guide.pagination-section">
+                <ng-template>
+                    <bey-pagination-style-guide></bey-pagination-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.search-section">
-                <bey-search-style-guide></bey-search-style-guide>
+            <bey-style-guide-section key="pdf-viewer" titleKey="angular-components-style-guide.pdf-viewer-section">
+                <ng-template>
+                    <bey-pdf-viewer-style-guide></bey-pdf-viewer-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.tables">
-                <bey-table-style-guide></bey-table-style-guide>
+            <bey-style-guide-section
+                key="properties-menu"
+                titleKey="angular-components-style-guide.properties-menu-section"
+            >
+                <ng-template>
+                    <bey-properties-menu-style-guide></bey-properties-menu-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.tabs-section">
-                <bey-tabs-style-guide></bey-tabs-style-guide>
+            <bey-style-guide-section key="search" titleKey="angular-components-style-guide.search-section">
+                <ng-template>
+                    <bey-search-style-guide></bey-search-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.toasts">
-                <bey-toast-style-guide></bey-toast-style-guide>
+            <bey-style-guide-section key="table" titleKey="angular-components-style-guide.tables">
+                <ng-template>
+                    <bey-table-style-guide></bey-table-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.trees">
-                <bey-tree-style-guide></bey-tree-style-guide>
+            <bey-style-guide-section key="tabs" titleKey="angular-components-style-guide.tabs-section">
+                <ng-template>
+                    <bey-tabs-style-guide></bey-tabs-style-guide>
+                </ng-template>
+            </bey-style-guide-section>
+
+            <bey-style-guide-section key="toast" titleKey="angular-components-style-guide.toasts">
+                <ng-template>
+                    <bey-toast-style-guide></bey-toast-style-guide>
+                </ng-template>
+            </bey-style-guide-section>
+
+            <bey-style-guide-section key="tree" titleKey="angular-components-style-guide.trees">
+                <ng-template>
+                    <bey-tree-style-guide></bey-tree-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
             <h2 class="bey-style-guide-group-title">{{ 'angular-components-style-guide.compound' | translate }}</h2>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.account-data-section">
-                <bey-account-data-style-guide></bey-account-data-style-guide>
+            <bey-style-guide-section key="account-data" titleKey="angular-components-style-guide.account-data-section">
+                <ng-template>
+                    <bey-account-data-style-guide></bey-account-data-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.app-layout-section">
-                <bey-app-layout-style-guide></bey-app-layout-style-guide>
+            <bey-style-guide-section
+                key="administration"
+                titleKey="angular-components-style-guide.administration-section"
+            >
+                <ng-template>
+                    <bey-administration-style-guide></bey-administration-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.login-section">
-                <bey-login-style-guide></bey-login-style-guide>
+            <bey-style-guide-section key="app-layout" titleKey="angular-components-style-guide.app-layout-section">
+                <ng-template>
+                    <bey-app-layout-style-guide></bey-app-layout-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.page-section">
-                <bey-page-style-guide></bey-page-style-guide>
+            <bey-style-guide-section
+                key="edit-lock-notice"
+                titleKey="angular-components-style-guide.edit-lock-notice-section"
+            >
+                <ng-template>
+                    <bey-edit-lock-notice-style-guide></bey-edit-lock-notice-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.password-change-section">
-                <bey-password-change-style-guide></bey-password-change-style-guide>
+            <bey-style-guide-section key="login" titleKey="angular-components-style-guide.login-section">
+                <ng-template>
+                    <bey-login-style-guide></bey-login-style-guide>
+                </ng-template>
             </bey-style-guide-section>
 
-            <bey-style-guide-section titleKey="angular-components-style-guide.users-section">
-                <bey-users-style-guide></bey-users-style-guide>
+            <bey-style-guide-section key="page" titleKey="angular-components-style-guide.page-section">
+                <ng-template>
+                    <bey-page-style-guide></bey-page-style-guide>
+                </ng-template>
+            </bey-style-guide-section>
+
+            <bey-style-guide-section
+                key="password-change"
+                titleKey="angular-components-style-guide.password-change-section"
+            >
+                <ng-template>
+                    <bey-password-change-style-guide></bey-password-change-style-guide>
+                </ng-template>
             </bey-style-guide-section>
         </div>
     </div>

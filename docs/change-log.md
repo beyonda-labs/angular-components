@@ -1,5 +1,262 @@
 # Change Log
 
+## [1.5.0] - 2026-10-13
+
+### Added
+
+-   Cards module: `bey-card`, `bey-card-stats`, `bey-card-list` and `bey-avatar`, the pieces of a summary page: a card
+    with a title and a count, a strip of figures, lists of items that fold or open, and the initials of a person.
+-   Cards module: `BeyCardStat`, `BeyCardListItem`, `BeyCardListFold`, `BeyCardListVariant` and `BeyAvatarVariant`,
+    the entries and the variants those configs take.
+-   Cards module: the `--bey-cards-*` variables, each declared on the public element of its piece; both variants of an
+    avatar follow `--bey-cards-avatar-bg` and `-fg` set on it, on any ancestor or on `:root`.
+-   Edit lock notice module: `bey-edit-lock-notice`, who edits the row and since when, with Release (confirmed), Edit
+    here, Edit once free (`onEdit` reloads first) and Save as a copy (`onSaveCopy`), its texts under `prefix`.
+-   Edit lock service: `BeyEditLockService`, provided by the component that edits a row: `start(lockUrl)` acquires the
+    edit lock of base-entity for a token of the window, keeps it with a heartbeat and watches it while others hold it.
+-   Edit lock service: `acquire()`, `takeOver()`, `release()`, `releaseOther()` and `headers()`, the `X-Edit-Lock-Token`
+    of the save; the lock is released on destroy and on `pagehide`, through a `keepalive` fetch with the bearer.
+-   Edit lock service: `BeyEditLock`, `BeyEditLockState` and `BeyEditLockStatus`; `holderName` is `null` for a holder
+    the server no longer names, whom `bey-edit-lock-notice` calls "Unknown".
+-   Edit lock service: the texts of the `edit-locks.held`, `edit-locks.released` and `edit-locks.release-forbidden`
+    errors.
+-   Form module: `BeyFormCheckboxSectionsField`, checkboxes in a card per `BeyFormCheckboxSection`, folded at first,
+    with a counter and select all, a description under each option; its value lists every checked one.
+-   Form module: `BeyFormNoticeField`, a `bey-notice` of a `BeyNoticeVariant` inside a form, with its message and its
+    parameters and no control.
+-   Form module: `BeyFormFieldType.CheckboxSections` and `BeyFormFieldType.Notice`, the types of those two fields, and
+    `BeyFormCheckboxSectionOption`.
+-   Form module: `filter`, `search` (`BeyFormAutocompleteSearch`, debounced, asked with the values left out),
+    `onSelect`, `isClearedOnSelect` and `excludedValues` (a value or a rule) on `BeyFormAutocompleteField`.
+-   Form module: `search` of `BeyFormAutocompleteField` may answer a `BeyFormAutocompleteSearchResult`,
+    `{ options, hasMore? }`; with `hasMore` the suggestions end with "There are more matches: type more…".
+-   Form module: a `BeyFormListField` with `options` or a `picker` (`BeyFormListPicker`) holds ids: a row per id with
+    its label, a search above that adds rows, a remove button per row with `isRemovable`, and `emptyKey`.
+-   Form module: a `BeyFormListField` that holds ids and has no `search` drops the ids its options no longer list once
+    they change, as a select clears a value its options no longer list.
+-   Form module: `onItemClick` on a `BeyFormListField` of texts makes every text a link and calls it with the text and
+    its index.
+-   Form module: `isSubmitHidden` on `BeyModalFormConfig` leaves only the cancel button, for a form that only shows.
+-   Form module: `isSubmitDanger` on `BeyModalFormConfig` and `isDanger` on `BeyFormButton` paint a submit button in
+    the danger colour.
+-   Groups page: `bey-groups`, the groups of users of an organization over `/groups` on `bey-page`, for its managers and
+    the superadmin: create and delete (confirmed) a group, and edit its name, members and extra roles in one form.
+-   Groups page: `BeyGroupRow` and `BeyGroupMember`, the rows and the members the server answers; a "Roles" column
+    shows the `extraRoleCount` of each group, the extra roles its members all get.
+-   Groups page: the edit form reads `GET {baseUrl}/{id}`; its members and extra roles, always shown and always sent,
+    are removable lists searched over `{id}/member-options` and `{id}/role-options` (`?search=&limit=`).
+-   Groups page: those searches say there are more matches when the server answers as many as asked for, or more than
+    20 are left once those chosen are left out.
+-   Groups page: for a superadmin, an organization column, the organization in the create form (required, chosen
+    already when only one is active) and disabled in the edit form, and with two active or more a filter by it.
+-   Groups page: rows with no action but `view`, and no `create`, turn the page read-only, with no second request,
+    "Roles" only with a `roleCount`, and the name opening the members and roles of a group, each role its permissions.
+-   Groups page: "View" in the header opens the selected group read-only when its row lists `view`, as its name does.
+-   Groups page: `rolesConfig` on `BeyGroupsConfig` (`BeyRoleViewSettings`, a `BeyRolesConfig` fits), the sections and
+    order of the permissions of a role opened from a group.
+-   Groups page: the texts of the `groups.existing-name`, `.invalid-members`, `.invalid-extra-roles` and `.not-found`
+    errors.
+-   HTTP service: the texts of the `entities.owner-required` error, a create with no user to own the row.
+-   Login module: the texts of the `login.organization-inactive` error, a sign-in refused because the organization of
+    the user is deactivated.
+-   Modal, form, tree and file preview modules: `--bey-modal-max-height`, `--bey-modal-form-max-height`,
+    `--bey-modal-tree-max-height` and `--bey-file-preview-max-height`, on `:root`, `--bey-dialog-max-height` by default.
+-   Notice module: `bey-notice`, a compact banner across its container: a `BeyNoticeVariant` (`Info`, `Warning`,
+    `Danger`, announced as an alert), an icon, a translated message with its parameters, and its `BeyNoticeAction`s.
+-   Notice module: `BeyNoticeActionType`, `Primary` or `Secondary`, the look of an action of the banner.
+-   Organization summary page: `bey-organization-summary`, the organization of a member read-only from
+    `GET {organizationsUrl}/current` in one card under its page title: name, creation, figures and administrators.
+-   Organization summary page: the members by status when answered, every group with its members folded, "No group"
+    last, and every extra role, opening the `permissions` answered with it in the view of `rolesConfig`.
+-   Organization summary page: `BeyOrganizationSummary`, the answer, with its `…Administrator`, `…Counts`,
+    `…StatusCounts`, `…Group`, `…Member` and `…ExtraRole`.
+-   Organizations page: `bey-organizations`, the superadmin's page over `/organizations` on `bey-page`: create an
+    organization, and edit its name and status in one form showing its administrators, groups and "No group".
+-   Organizations page: `BeyOrganizationRow` and `BeyOrganizationStatus`, the rows the server answers, searched by name
+    and filtered by status.
+-   Organizations page: `delete`, on a deactivated organization that lists it, confirms with what it holds and its
+    exact name typed, then sends `DELETE {baseUrl}/{id}` `{ name }`; `contentLabels` on `BeyOrganizationsConfig`.
+-   Organizations page: the texts of the `organizations.existing-name`, `.not-found`, `.active` and `.name-mismatch`
+    errors.
+-   Page module: `beyPageOrganizationColumn(overrides?)` and `beyPageOrganizationCell(row)` show the `organizationName`
+    of a `BeyPageOrganizationItem`, only while `GET {baseUrl}/organizations` names two organizations or more.
+-   Page module: `isOrganizationFilterEnabled` on `BeyPageTableSearchConfig` adds an "Organization" filter,
+    `organizationId` `equals`, from the same answer (`BeyPageOrganization`), shown only with two organizations or more.
+-   Page module: `isSharedEnabled` on `BeyPageTableConfig` adds a "Shared with me" tab, `BeyPageViewMode.Shared`, that
+    lists `GET {baseUrl}/shared` and opens its folders as usual, its breadcrumb starting at the shared folder.
+-   Page module: inside a shared folder rows drag onto its folders, and `move` picks only among it and those below.
+-   Page module: `BeyPageStandardAction.Share` on a folder sets no access, view or edit per group and user of
+    `/categories/{id}/share-targets`, above what the folder inherits, with `PUT /categories/{id}/shares`.
+-   Page module: the texts of the `sharing.invalid-grantees` error, and `BeyPageShare`, `BeyPageInheritedShare`,
+    `BeyPageShareTarget`, `BeyPageShareAccess` and `BeyPageShareGranteeType` for the answers of the share routes.
+-   Page module: `BeyPageStandardAction.View`, one row, next to `edit`, labelled "View" by the page module
+    (`angular-components.page.actions.view.*`); it has no behaviour of its own, so it takes a `handler`.
+-   Page module: `toItem` of `BeyPageFormConfig` receives the row an edit started from as its second argument.
+-   Page module: `buildSections` and `toFormValue` of `BeyPageFormConfig` receive the category open in the page, a
+    `BeyPageCategoryPathEntry` `{ id, label }`, or `undefined` at the root, so a create form can preselect from it.
+-   Page module: `isColumnShown(column, context)` on `BeyPageTableConfig` leaves a column and its cells out by the
+    `BeyPageColumnContext` of the list in view, `{ category?, isSearching }`, asked again once each list answers.
+-   Properties menu module: `isUploadEnabled` on `BeyPropertyAttachmentField`, `true` by default; with `false` the
+    field shows no upload button and its existing attachments stay selectable.
+-   Roles page: `bey-roles`, the roles and permissions page over `/roles` on `bey-page`: the base roles read-only and
+    the extra roles of the organization, created, edited and deleted (confirmed) with a checklist of permissions.
+-   Roles page: `BeyRoleRow`, the rows the server answers, and `BeyRolePermissionEntry`, a permission `{ group, key }`
+    as `GET /roles/permissions` answers it.
+-   Roles page: those permissions in a foldable section per resource, each labelled
+    `<permissionPrefix>.<group>.<action>.label` and described by `.description`, the library's keys as fallbacks.
+-   Roles page: `groupIcons` on `BeyRolesConfig`, the icon of the section of each permission group; the library's own
+    groups have theirs and any other one `faRectangleList`.
+-   Roles page: `groupOrder` and `actionOrder` on `BeyRolesConfig` put the groups and actions they list first, in
+    their order, the rest in server order; `groupOrder` is empty by default, `actionOrder` lists reading first.
+-   Roles page: the name of a role the caller cannot edit, such as a base role, opens its permissions read-only, in the
+    same sections disabled; a "Groups" column shows the `groupCount` of each role.
+-   Roles page: for a superadmin, an organization column, the organization in the create form and, disabled, in the
+    edit form, and with two active organizations or more an organization filter.
+-   Roles page: `duplicate`, for the rows whose `actions` list it, opens the create form filled in with the role,
+    "<name> (copy)" and the permissions the caller can give, and sends it as a `create`.
+-   Roles page: rows with `sources` turn the page read-only, with no second request, an "Origin" column, "Direct" or
+    "Group <names>", instead of the user and group counts; `BeyRoleSource` and `BeyRoleSourceType`.
+-   Roles page: "View" in the header opens the permissions of the selected role when its row lists `view`, as its name
+    does, for a member's roles and a manager's base roles.
+-   Roles page: the labels and descriptions of the library's own permissions, `users.*`, `roles.manage` and
+    `organization.*`, among them `organization.read`, `.read-groups`, `.read-group-roles` and `.read-roles`.
+-   Roles page: the texts of the `roles.existing-name`, `.invalid-permissions`, `.not-found` and `.base-role` errors.
+-   Session service: `organizationId` (absent for a superadmin) and `extraPermissions` (absent when the extra roles of
+    the user add none) on `BeySessionUser`, read from the token.
+-   Style guide: "Expand all" and "Collapse all" at the top, and a hash naming a module (`#tabs`, `#administration`)
+    that opens its section and scrolls to it, on arrival or when a link changes it.
+-   Styles: the `--bey-dialog-margin`, `--bey-dialog-max-height`, `--bey-grid-column-min-width`,
+    `--bey-control-height` and `--bey-z-toolbar` tokens.
+-   Styles: the `--bey-text-link` and `--bey-text-link-hover` tokens, the colour of a text button that reads as a link:
+    the primary colour, mixed on hover with a quarter of the page.
+-   Styles: the `--bey-danger-fg` and `--bey-danger-hover` tokens, the text and the hover of a danger button.
+-   Styles: the `--bey-letter-spacing-tight`, `-snug`, `-wide`, `-wider` and `-widest` tokens, read by every letter
+    spacing of the library.
+-   Styles: the `--bey-primary-soft`, `--bey-success-soft`, `--bey-warning-soft` and `--bey-danger-soft` tokens, the
+    soft accent of each intent, at 8%, 8%, 12% and 10% over transparent.
+-   Styles: the `--bey-bg-page-translucent` token, the page at 70% over transparent, read by the floating preferences
+    and the loading overlay.
+-   Testing: `beyVisibleText(scope)`, the text of a fixture or an element as a reader sees it, one space between nodes.
+-   Users page: for a superadmin, an organization column after the email, "System" on the superadmins' rows
+    (`table.system`), from `GET {baseUrl}/organizations`, and with two active organizations or more a filter by it.
+-   Users page: `organizationId` and `organizationName` on `BeyUserRow`, answered to a superadmin, both `null` on the
+    row of a superadmin.
+-   Users page: the invite form always asks a superadmin for the organization, required and chosen already when only
+    one is active; a superadmin belongs to none, so nothing comes from the session.
+-   Users page: the edit form shows a superadmin the organization of the user, disabled, next to the status; it is
+    never sent, since users do not move.
+-   Users page: the invite and edit forms offer the extra roles of the organization of the user as "Additional roles",
+    a removable list searched above its rows, sent as `extraRoleIds`; for a superadmin they follow that organization.
+-   Users page: the extra roles of each user after its roles in the table, and in the role filter by their `id`;
+    `extraRoles` on `BeyUserRow`, `BeyUserExtraRole`, and the texts of the `users.invalid-extra-roles` error.
+-   Users page: `editableFields` on `BeyUserRow` (`BeyUserEditableField`); the edit form disables every field the row
+    leaves out and sends only those it names.
+-   Users page: the edit form asks for the status, "Active" or "Inactive", sent as `status` with `PUT {baseUrl}/{id}`
+    only when it changes.
+-   Users page: `transfer`, on an inactive row that lists it, moves what the user owns (`GET {baseUrl}/{id}/content`)
+    to the active user picked over `transfer-targets`, into a folder named after them (`POST {baseUrl}/{id}/transfer`).
+-   Users page: `delete`, on one row or several that list it, confirms with what they own, what others use of it and
+    the invitations that stop working, then sends `DELETE {baseUrl}/{id}` for each, one after the other.
+-   Users page: `contentLabels` on `BeyUsersConfig` labels each kind of content the counts name; the texts of the
+    `users.not-deletable`, `.transfer-source-not-inactive` and `.invalid-transfer-target` errors.
+-   Users page: the texts of the `users.superadmin-role-fixed` error.
+-   Users, groups and roles pages: a superadmin browses one folder per organization (`entryType: 'category'`), the
+    list sending `parentId`, `null` at the root, with the rows of no organization at the root and a breadcrumb inside.
+-   Users, groups and roles pages: a create from a folder comes with its organization and sends the `parentId` of the
+    folder, or `null`, next to `organizationId`; a search at the root spans every organization.
+-   Users, groups and roles pages: the text `categories.root`, the root of the breadcrumb of the folders, and
+    `foldersHeight` (`'calc(100vh - 255px)'`), the height of the table while it shows the folders.
+-   Users, groups and roles pages: with the folders, the organization column shows only in a search or a filter at
+    the root, the one list where rows of several organizations meet.
+
+### Changed
+
+-   Administration module: the users module of 1.4.0 is now the users page of `administration`, the module of the
+    users, groups, roles, organizations and organization summary pages; every export and text key stays as it was.
+-   Floating preferences module: `--bey-floating-preferences-pill-bg` defaults to `--bey-bg-page-translucent`, the same
+    colour.
+-   Form module: an autocomplete also ignores accents and runs of spaces when it matches the typed text against the
+    labels, with the fold express-components searches with.
+-   Form module: a `BeyFormListField` grows up to seven and a half rows, `--bey-form-list-max-height`, and scrolls
+    inside past them, the search of a list that holds ids staying above the rows.
+-   Form module (breaking for types): `validators` of `BeyFormListField` takes `BeyFormFieldCustomValidator[]`, as the
+    number, checkbox, chips and file fields do, so a length, pattern, email or url validator no longer compiles there.
+-   Form module: `bey-form` is a flex column that may shrink (`min-height: 0`) instead of a block, so its sections
+    scroll inside a dialog of bounded height.
+-   Form and file preview modules: `--bey-modal-form-accent-soft` and `--bey-file-preview-accent-soft` default to
+    `--bey-primary-soft`, the same colour.
+-   Left menu module: the avatar of the user is `bey-avatar` of the cards module, painted through
+    `--bey-cards-avatar-*`, its initials hidden from assistive technology.
+-   Modal and tree modules: on a phone the dialog is padded with `--bey-space-lg`, `1rem`, instead of `1.15rem`.
+-   Modal module: the icon of a confirmation sits on `--bey-primary-soft`, the primary at 8% instead of 10%, as the icon
+    of an info does.
+-   Modal, form, tree and file preview modules: every dialog is at most `--bey-dialog-max-height` high, its title and
+    buttons fixed while its body scrolls (shrinks, in the file preview), so a long form no longer makes the page scroll.
+-   Modal, form, tree and file preview modules: the other variables of a dialog, such as `--bey-modal-fg`,
+    `--bey-modal-form-accent` or `--bey-file-preview-body-height`, are read from `:root` too, with the same defaults.
+-   Page module: with `usagesConfig` and categories, `delete-category` asks `GET {baseUrl}/categories/usages?ids=` and
+    warns with `<prefix>.modal.delete-category-in-use.title` and `.message` when what the folders hold is in use.
+-   Page module: `name` of `BeyPageUser` and `BeyPageOwner` may be `null` and reads "Unknown"
+    (`angular-components.user-name.unknown`), as does `beyPageOwnerCell` for an `ownerId` with a `null` `ownerName`.
+-   Properties menu module: the attachment field names "Unknown", in the language in use, an attachment id none of its
+    options is, once it has any, such as a deleted file; a variable reference still shows as typed.
+-   Properties menu module: a disabled option of a segmented field and the node dragged in a tree fade to
+    `--bey-opacity-disabled`, `0.5`, instead of `0.4` and `0.45`.
+-   Style guide: every section folds under its title and a chevron, collapsed at first, rendered and controlled by its
+    title only while open, the open ones remembered in `sessionStorage`; Users is now Administration, with every page.
+-   Styles: `.bey-floating-preferences-anchor` sits `--bey-space-lg`, `1rem`, from the bottom and the right of the
+    window, instead of `15px` and `20px`.
+-   Toast module: the title and the message at `--bey-font-size-sm`, `0.8125rem` instead of `0.84rem`; the message at
+    `--bey-line-height-loose`, `1.6` instead of `1.5`, `0.125rem` under the title instead of `0.15rem`.
+-   Toast module: the stripe at `--bey-border-width-thick`, `2px` instead of `3px`, and the progress bar at
+    `--bey-opacity-disabled`, `0.5` instead of `0.4`.
+-   Users page: "Roles" of the invite and edit forms is a list with a search above and a remove button per row
+    instead of checkboxes, saying "Choose one role at least." while empty; the requests do not change.
+-   Users page: `GET {baseUrl}/roles` is read as `{ roles, extraRoles }`; a server that answers no `extraRoles` counts
+    as one without extra roles.
+-   Users page: the `users.superadmin-only` text speaks only of changing a superadmin account, since nobody grants
+    nor removes the superadmin role any more.
+-   Users page: the `users.own-account` text also names the name, which is changed on the account page.
+
+### Fixed
+
+-   Form module: a form of `openWithRequest`, also in `BeyFakeModalFormService`, stays open without an unhandled error
+    when its request fails.
+-   Form module: the suggestions of an autocomplete keep their height and its panel scrolls past `13rem`, so ten or
+    more no longer squeeze into it, overlapping and cut.
+-   Form module: `--bey-form-autocomplete-panel-max-height`, set on the field, an ancestor or `:root`, now decides the
+    height of the autocomplete panel, `13rem` by default; an inline `208px` used to win.
+-   Form module: an autocomplete points its input at its suggestions through `aria-controls` only while they show, no
+    longer at a panel that is not there.
+-   Header module: the header keeps `--bey-control-height`, the height of a text button, as its least height, so its
+    title no longer moves when the actions of a selection show or hide.
+-   Page module: the trash origin on the tooltip of a row ends with the row's own name, so it reads as the place of
+    that row.
+-   Page module: the menus of the header open over the search toolbar again; the search sits in the `--bey-z-toolbar`
+    layer, over the sticky header of the table and under the menus.
+-   Page module: the entries of a move and of the trash read their type from the `typeField` of the categories, still
+    sent as `{ id, type }`, so rows may keep a `type` field of their own; without categories every entry is an `item`.
+-   Page module: a failed create, edit, `afterCreate` or `confirmSave` leaves no unhandled error; when `afterCreate`
+    fails the form stays open and the table reloads, and sending the form again creates the row anew.
+-   Page module: the duplicate form takes the proposed copy name as it is; its submit no longer waits for an edit.
+-   Properties menu module: `aria-controls` names only what is there: the body of a group while it is expanded, and the
+    options of a searchable select or an attachment picker while they show.
+-   Session service: `beyAuthGuard` lets a path of `allowedPaths` open that page and the pages under it only, no
+    longer one whose path merely begins with it, as `/administration/organizations` for `/administration/organization`.
+-   Tree module: the icon of the tree dialog sits on `--bey-primary-soft`, so it shows in the dark theme too, where a
+    black tint vanished on the dark surface.
+
+### Removed
+
+-   Form module: `--bey-modal-form-body-max-height`, which never took effect; `--bey-modal-form-max-height` caps the
+    whole dialog.
+-   HTTP service: the `document-generation.*` error texts and their titles, which only the document builder service
+    sends; the app that sends those requests writes them, under `angular-components.http.*.document-generation`.
+-   Style guide: the `angular-components-style-guide.components` text, which nothing showed.
+-   Toast module: `--bey-toast-accent-soft`, which every kind of toast declared and nothing read.
+-   Users page: the `change-status` action, with its `actions.change-status.*`, `change-status.*` and
+    `toast.change-status-success` texts; the status is changed in the edit form.
+
 ## [1.4.0] - 2026-10-10
 
 ### Added

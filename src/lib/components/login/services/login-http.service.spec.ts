@@ -1,9 +1,11 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { TranslateService } from '@ngx-translate/core';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 
 import { LoadingService } from '../../loading/services/loading.service';
+import loginEn from '../assets/login.en.json';
 import { LoginHttpService } from './login-http.service';
 
 describe('LoginHttpService', () => {
@@ -12,7 +14,9 @@ describe('LoginHttpService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [provideBeyTesting({ environment: { accessControlUrl: 'https://auth' } })]
+            providers: [
+                provideBeyTesting({ environment: { accessControlUrl: 'https://auth' }, translations: { en: loginEn } })
+            ]
         });
 
         httpTesting = TestBed.inject(HttpTestingController);
@@ -129,5 +133,23 @@ describe('LoginHttpService', () => {
             .flush(invitation);
 
         expect(received).toHaveBeenCalledWith(invitation);
+    });
+
+    it('tells a user of a deactivated organization, refused after the right password, why they cannot sign in', () => {
+        const translate = TestBed.inject(TranslateService);
+
+        service.login({ email: 'ada@example.com', password: 'secret' }).subscribe({ error: () => {} });
+        httpTesting
+            .expectOne({ method: 'POST', url: 'https://auth/login' })
+            .flush(
+                { errorCode: 'forbidden', messageKey: 'login.organization-inactive' },
+                { status: 403, statusText: 'Forbidden' }
+            );
+        const [error] = TestBed.inject(FakeModalService).errors();
+
+        expect([translate.instant(error.title), translate.instant(error.message)]).toEqual([
+            'Organization deactivated',
+            'Your organization has been deactivated. Contact an administrator if you need access again.'
+        ]);
     });
 });

@@ -3,6 +3,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { nextDomId } from '../../../../internal/dom-ids/dom-ids';
 import { resolvePropertyLabelKey } from '../../functions/property-i18n';
 import { PropertyField } from '../../models/property-field.model';
 import { PropertyGroup, PropertyGroupVariant } from '../../models/property-group.model';
@@ -33,11 +34,10 @@ export class PropertyGroupComponent {
         return active?.fields.filter(field => !field.hidden) ?? [];
     });
     readonly addIcon = faPlus;
-
-    private static nextInstanceId = 0;
-    readonly bodyId = `bey-property-group-${PropertyGroupComponent.nextInstanceId++}`;
+    readonly bodyId = nextDomId('bey-property-group');
     readonly chevronIcon = faChevronDown;
     readonly content = computed(() => this.group().content);
+    readonly controlsId = computed(() => (this.group().expanded ? this.bodyId : null));
     readonly fieldsContent = computed(() => {
         const content = this.content();
 

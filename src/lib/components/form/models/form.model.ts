@@ -19,6 +19,7 @@ export interface FormHandle<TValue = unknown> {
 }
 
 export class FormButton {
+    isDanger: boolean;
     isHidden: boolean;
     label: string;
     tooltip: string;
@@ -26,8 +27,9 @@ export class FormButton {
 
     action?: (handle: FormHandle) => void;
 
-    constructor({ label, type, action, isHidden = false, tooltip = '' }: FormButtonParameters) {
+    constructor({ action, isDanger = false, isHidden = false, label, tooltip = '', type }: FormButtonParameters) {
         this.action = action;
+        this.isDanger = isDanger;
         this.isHidden = isHidden;
         this.label = label;
         this.tooltip = tooltip;
@@ -52,9 +54,6 @@ export class FormConfig<TValue = unknown> {
     onValueChange?: (value: TValue, handle: FormHandle<TValue>) => void;
 
     constructor({
-        prefix,
-        sections,
-
         allowSubmitWithoutChanges = false,
         buttonLayout = 'end',
         buttons = [],
@@ -65,6 +64,8 @@ export class FormConfig<TValue = unknown> {
         onStepChange,
         onSubmit,
         onValueChange,
+        prefix,
+        sections,
         steps = []
     }: FormConfigParameters<TValue>) {
         this.allowSubmitWithoutChanges = allowSubmitWithoutChanges;
@@ -98,7 +99,7 @@ export class FormRow {
     alignment: 'start' | 'end';
     fields: FormField[];
 
-    constructor({ fields, alignment = 'start' }: FormRowParameters) {
+    constructor({ alignment = 'start', fields }: FormRowParameters) {
         this.alignment = alignment;
         this.fields = fields;
     }
@@ -115,14 +116,13 @@ export class FormSection {
     label?: string;
 
     constructor({
-        key,
-        rows,
-
         isHidden = false,
         isTitleVisible = true,
         isTooltipVisible = false,
+        key,
         label,
-        prefix = key
+        prefix = key,
+        rows
     }: FormSectionParameters) {
         this.isHidden = isHidden;
         this.isTitleVisible = isTitleVisible;
@@ -149,6 +149,7 @@ export interface FormButtonParameters {
     type: FormButtonType;
 
     action?: (handle: FormHandle) => void;
+    isDanger?: boolean;
     isHidden?: boolean;
     tooltip?: string;
 }

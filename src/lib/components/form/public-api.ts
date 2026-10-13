@@ -39,18 +39,33 @@ export {
 } from './models/form-field-validator.model';
 export type { FormFieldError as BeyFormFieldError } from './models/form-field-validator.model';
 export { FormAutocompleteField as BeyFormAutocompleteField } from './models/fields/form-autocomplete-field.model';
+export type {
+    FormAutocompleteSearch as BeyFormAutocompleteSearch,
+    FormAutocompleteSearchResult as BeyFormAutocompleteSearchResult
+} from './models/fields/form-autocomplete-field.model';
 export { FormTextField as BeyFormTextField } from './models/fields/form-text-field.model';
 export { FormTextVariableField as BeyFormTextVariableField } from './models/fields/form-text-variable-field.model';
 export { FormCheckboxField as BeyFormCheckboxField } from './models/fields/form-checkbox-field.model';
 export { FormCheckboxGroupField as BeyFormCheckboxGroupField } from './models/fields/form-checkbox-group-field.model';
 export type { FormCheckboxGroupFieldParameters as BeyFormCheckboxGroupFieldParameters } from './models/fields/form-checkbox-group-field.model';
+export { FormCheckboxSectionsField as BeyFormCheckboxSectionsField } from './models/fields/form-checkbox-sections-field.model';
+export type {
+    FormCheckboxSection as BeyFormCheckboxSection,
+    FormCheckboxSectionOption as BeyFormCheckboxSectionOption,
+    FormCheckboxSectionsFieldParameters as BeyFormCheckboxSectionsFieldParameters
+} from './models/fields/form-checkbox-sections-field.model';
 export { FormChipsField as BeyFormChipsField } from './models/fields/form-chips-field.model';
 export { FormDateField as BeyFormDateField } from './models/fields/form-date-field.model';
 export { FormFileField as BeyFormFileField } from './models/fields/form-file-field.model';
 export { FormInfoField as BeyFormInfoField } from './models/fields/form-info-field.model';
 export { FormListField as BeyFormListField } from './models/fields/form-list-field.model';
-export type { FormListFieldParameters as BeyFormListFieldParameters } from './models/fields/form-list-field.model';
+export type {
+    FormListFieldParameters as BeyFormListFieldParameters,
+    FormListPicker as BeyFormListPicker
+} from './models/fields/form-list-field.model';
 export type { FormInfoItem as BeyFormInfoItem } from './models/fields/form-info-field.model';
+export { FormNoticeField as BeyFormNoticeField } from './models/fields/form-notice-field.model';
+export type { FormNoticeFieldParameters as BeyFormNoticeFieldParameters } from './models/fields/form-notice-field.model';
 export { FormNumberField as BeyFormNumberField } from './models/fields/form-number-field.model';
 export { FormPasswordField as BeyFormPasswordField } from './models/fields/form-password-field.model';
 export { FormRadioField as BeyFormRadioField } from './models/fields/form-radio-field.model';

@@ -11,7 +11,7 @@ import { LoginSessionService } from '../../services/login-session.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     selector: 'bey-login-oauth-callback',
     standalone: true,
-    template: ''
+    templateUrl: './login-oauth-callback.component.html'
 })
 export class LoginOAuthCallbackComponent {
     private readonly loginSessionService = inject(LoginSessionService);

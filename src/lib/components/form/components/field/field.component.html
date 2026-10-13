@@ -19,11 +19,15 @@
 
 @if (type() === fieldType.Info) {
     <bey-form-info-field [describedBy]="describedBy()" [field]="$any(field())"></bey-form-info-field>
+} @else if (type() === fieldType.Notice) {
+    <bey-form-notice-field [field]="$any(field())"></bey-form-notice-field>
 } @else if (type() === fieldType.List) {
     <bey-form-list-field
+        [control]="formControl()"
         [describedBy]="describedBy()"
         [field]="$any(field())"
         [label]="label()"
+        [options]="state().options"
         [prefix]="fieldPrefix()"
     ></bey-form-list-field>
 } @else if (formControl()) {
@@ -89,6 +93,7 @@
             <bey-form-autocomplete-field
                 [control]="control"
                 [describedBy]="describedBy()"
+                [excludedValues]="state().excludedValues"
                 [field]="$any(field())"
                 [isRequired]="state().isRequired"
                 [options]="state().options"
@@ -134,6 +139,15 @@
                 [options]="state().options"
                 [prefix]="fieldPrefix()"
             ></bey-form-checkbox-group-field>
+        }
+        @case (fieldType.CheckboxSections) {
+            <bey-form-checkbox-sections-field
+                [control]="control"
+                [describedBy]="describedBy()"
+                [field]="$any(field())"
+                [isRequired]="state().isRequired"
+                [label]="label()"
+            ></bey-form-checkbox-sections-field>
         }
         @case (fieldType.Chips) {
             <bey-form-chips-field

@@ -1,0 +1,11 @@
+{
+    "angular-components": {
+        "cards": {
+            "empty": "Aún no hay nada.",
+            "fold": {
+                "hide": "Ocultar",
+                "show": "Mostrar"
+            }
+        }
+    }
+}

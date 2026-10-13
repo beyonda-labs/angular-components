@@ -1,8 +1,6 @@
 import { inject, Injectable } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap/modal';
 import { isObservable, map, Observable, of, switchMap } from 'rxjs';
 
-import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { FormHandle } from '../../form/models/form.model';
 import { HeaderAction } from '../../header/models/header.model';
@@ -13,7 +11,7 @@ import { ModalTreeService } from '../../tree/components/modal/services/modal-tre
 import { readMoveOwnerId } from '../functions/page-move-owner';
 import { buildMoveTargetNodes } from '../functions/page-move-targets';
 import { isActionVisible, isCategoryRow, toHandlerItems, toTrashItems } from '../functions/page-row';
-import { PageConfig } from '../models/page.model';
+import { PageActionsContext } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageMoveTarget } from '../models/page-categories.model';
 import { PageFormConfig } from '../models/page-form.model';
@@ -21,21 +19,8 @@ import { PageItem } from '../models/page-item.model';
 import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
 import { PageLifecycleActionsService } from './page-lifecycle-actions.service';
+import { PageShareActionsService } from './page-share-actions.service';
 import { PageUsagesService } from './page-usages.service';
-
-export interface PageActionsContext {
-    config: PageConfig;
-    getCurrentCategoryId: () => string | number | null;
-    onCategoryDeleted: () => void;
-    onCategoryFormModalOpened: (reference: BsModalRef<ModalFormDialogComponent>) => void;
-    onCategorySaved: () => void;
-    onDeleted: () => void;
-    onFormModalOpened: (reference: BsModalRef<ModalFormDialogComponent>) => void;
-    onMoved: () => void;
-    onSaved: () => void;
-    onTrashItemDeleted: () => void;
-    selectedItems: () => PageItem[];
-}
 
 interface BulkActionOptions<T> {
     confirm: boolean;
@@ -63,6 +48,7 @@ export class PageActionsService {
     private readonly pageFormService = inject(PageFormService);
     private readonly pageHttpService = inject(PageHttpService);
     private readonly pageLifecycleActionsService = inject(PageLifecycleActionsService);
+    private readonly pageShareActionsService = inject(PageShareActionsService);
     private readonly pageUsagesService = inject(PageUsagesService);
 
     private readonly actionHandlers: Record<string, (context: PageActionsContext, action: PageAction) => void> = {
@@ -78,7 +64,8 @@ export class PageActionsService {
         [PageStandardAction.EmptyTrash]: (context, action) =>
             this.pageLifecycleActionsService.emptyTrash(context.config, action, () => context.onTrashItemDeleted()),
         [PageStandardAction.Move]: context => this.executeMove(context),
-        [PageStandardAction.RestoreTrashItem]: context => this.executeRestoreTrashItem(context)
+        [PageStandardAction.RestoreTrashItem]: context => this.executeRestoreTrashItem(context),
+        [PageStandardAction.Share]: context => this.executeShare(context)
     };
 
     buildHeaderActions(
@@ -86,30 +73,7 @@ export class PageActionsService {
         zone: PageActionZone,
         execute: (action: PageAction) => void
     ): HeaderAction[] {
-        return actions
-            .filter(action => action.zone === zone)
-            .map(
-                action =>
-                    new HeaderAction({
-                        action: () => execute(action),
-                        icon: action.icon,
-                        key: action.key,
-                        label: action.label,
-                        subActions: action.subActions?.map(
-                            subAction =>
-                                new HeaderAction({
-                                    action: () => execute(subAction),
-                                    icon: subAction.icon,
-                                    key: subAction.key,
-                                    label: subAction.label,
-                                    tooltip: subAction.tooltip,
-                                    type: subAction.type
-                                })
-                        ),
-                        tooltip: action.tooltip,
-                        type: action.type
-                    })
-            );
+        return actions.filter(action => action.zone === zone).map(action => toHeaderAction(action, execute));
     }
 
     executeAction(action: PageAction, context: PageActionsContext): void {
@@ -162,18 +126,18 @@ export class PageActionsService {
         targetId: string | number | null,
         onMoved?: () => void
     ): void {
-        const { baseUrl, prefix } = context.config;
+        const { baseUrl, prefix, tableConfig } = context.config;
 
         if (items.length === 0 || !baseUrl) {
             return;
         }
 
-        this.pageHttpService
-            .moveItems(baseUrl, toTrashItems(items), targetId, `${prefix}.toast.move-success`)
-            .subscribe(() => {
-                onMoved?.();
-                context.onMoved();
-            });
+        const entries = toTrashItems(items, tableConfig?.categoriesConfig);
+
+        this.pageHttpService.moveItems(baseUrl, entries, targetId, `${prefix}.toast.move-success`).subscribe(() => {
+            onMoved?.();
+            context.onMoved();
+        });
     }
 
     openEditForm(context: PageActionsContext, row: PageItem): void {
@@ -190,11 +154,6 @@ export class PageActionsService {
         onSaved: () => void
     ): void {
         this.pageFormService.openWithRequest(config, submit, onSaved);
-    }
-
-    private completeSave(handle: FormHandle, options: SaveEntityOptions): void {
-        handle.close();
-        options.onSaved();
     }
 
     private executeBulkAction<T>(
@@ -291,7 +250,7 @@ export class PageActionsService {
             {
                 confirm: true,
                 key: 'delete-trash-item',
-                mapPayload: toTrashItems,
+                mapPayload: items => toTrashItems(items, context.config.tableConfig?.categoriesConfig),
                 onComplete: () => context.onTrashItemDeleted(),
                 request: (baseUrl, items, successToast) =>
                     this.pageHttpService.deleteTrashItems(baseUrl, items, successToast)
@@ -334,9 +293,10 @@ export class PageActionsService {
         }
 
         this.pageHttpService.loadCategoryTree(baseUrl, readMoveOwnerId(items)).subscribe(categories => {
+            const sharedRoot = context.getSharedRoot?.() ?? null;
             const reference = this.modalTreeService.open(
                 new ModalTreeConfig<PageMoveTarget>({
-                    nodes: buildMoveTargetNodes(prefix, categories, categoriesConfig, items),
+                    nodes: buildMoveTargetNodes(prefix, categories, categoriesConfig, items, sharedRoot),
                     prefix: `${prefix}.move`,
                     onConfirm: node => this.moveItems(context, items, node?.data?.id ?? null, () => reference.hide())
                 })
@@ -348,7 +308,7 @@ export class PageActionsService {
         this.executeBulkAction(context, {
             confirm: false,
             key: 'restore-trash-item',
-            mapPayload: toTrashItems,
+            mapPayload: items => toTrashItems(items, context.config.tableConfig?.categoriesConfig),
             onComplete: () => context.onSaved(),
             request: (baseUrl, items, successToast) =>
                 this.pageHttpService
@@ -357,17 +317,12 @@ export class PageActionsService {
         });
     }
 
-    private mergeParentField(context: PageActionsContext, value: unknown, original?: PageItem): unknown {
-        const categoriesConfig = context.config.tableConfig?.categoriesConfig;
+    private executeShare(context: PageActionsContext): void {
+        const items = context.selectedItems();
 
-        if (original || !categoriesConfig) {
-            return value;
+        if (items.length === 1 && isCategoryRow(items[0], context.config.tableConfig?.categoriesConfig)) {
+            this.pageShareActionsService.share(context.config, items[0], () => context.onSaved());
         }
-
-        return {
-            ...(value as Record<string, unknown>),
-            [categoriesConfig.parentField]: context.getCurrentCategoryId()
-        };
     }
 
     private openCategoryForm(context: PageActionsContext, item?: PageItem): void {
@@ -395,7 +350,8 @@ export class PageActionsService {
             return;
         }
 
-        const reference = this.pageFormService.open(formConfig, item, prefix, save);
+        const category = context.getCurrentCategory?.() ?? undefined;
+        const reference = this.pageFormService.open(formConfig, item, prefix, save, category);
 
         context.onFormModalOpened(reference);
     }
@@ -407,7 +363,7 @@ export class PageActionsService {
     }
 
     private save(context: PageActionsContext, value: unknown, handle: FormHandle, original?: PageItem): void {
-        this.saveEntity(context, this.mergeParentField(context, value, original), handle, original, {
+        this.saveEntity(context, mergeParentField(context, value, original), handle, original, {
             afterCreate: created => context.config.formConfig?.afterCreate?.(created),
             create: (baseUrl, entityValue, successToast) =>
                 this.pageHttpService.create(baseUrl, entityValue, successToast),
@@ -419,7 +375,7 @@ export class PageActionsService {
     }
 
     private saveCategories(context: PageActionsContext, value: unknown, handle: FormHandle, original?: PageItem): void {
-        this.saveEntity(context, this.mergeParentField(context, value, original), handle, original, {
+        this.saveEntity(context, mergeParentField(context, value, original), handle, original, {
             create: (baseUrl, entityValue, successToast) =>
                 this.pageHttpService.createCategory(baseUrl, entityValue, successToast),
             edit: (baseUrl, id, entityValue, successToast) =>
@@ -449,18 +405,48 @@ export class PageActionsService {
             ? options.edit(baseUrl, original.id, value, successToast)
             : options.create(baseUrl, value, successToast);
 
-        request.subscribe(created => {
-            const followUp = original ? undefined : options.afterCreate?.(created as PageItem);
+        request.subscribe({
+            error: ignoreError,
+            next: created => {
+                const followUp = original ? undefined : options.afterCreate?.(created as PageItem);
 
-            if (!followUp) {
-                this.completeSave(handle, options);
+                if (!followUp) {
+                    completeSave(handle, options);
 
-                return;
+                    return;
+                }
+
+                followUp.subscribe({ error: () => options.onSaved(), next: () => completeSave(handle, options) });
             }
-
-            followUp.subscribe(() => this.completeSave(handle, options));
         });
     }
+}
+
+function completeSave(handle: FormHandle, options: SaveEntityOptions): void {
+    handle.close();
+    options.onSaved();
+}
+
+function ignoreError(): void {}
+
+function mergeParentField(context: PageActionsContext, value: unknown, original?: PageItem): unknown {
+    const categoriesConfig = context.config.tableConfig?.categoriesConfig;
+
+    if (original || !categoriesConfig) {
+        return value;
+    }
+
+    return {
+        ...(value as Record<string, unknown>),
+        [categoriesConfig.parentField]: context.getCurrentCategoryId()
+    };
+}
+
+function toHeaderAction(action: PageAction, execute: (action: PageAction) => void): HeaderAction {
+    const { icon, key, label, tooltip, type } = action;
+    const subActions = action.subActions?.map(subAction => toHeaderAction(subAction, execute));
+
+    return new HeaderAction({ action: () => execute(action), icon, key, label, subActions, tooltip, type });
 }
 
 function toObservable<T>(value: T | Observable<T>): Observable<T> {

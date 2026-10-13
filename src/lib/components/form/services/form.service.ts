@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
 
+import { holdsListValue } from '../functions/list-value';
 import { passwordPolicyValidator } from '../functions/password-rules';
 import { FormChipsField } from '../models/fields/form-chips-field.model';
 import { FormDateField } from '../models/fields/form-date-field.model';
@@ -16,6 +17,7 @@ const EMPTY_VALUES: Partial<Record<FormFieldType, unknown>> = {
     [FormFieldType.Autocomplete]: '',
     [FormFieldType.Checkbox]: false,
     [FormFieldType.CheckboxGroup]: [],
+    [FormFieldType.CheckboxSections]: [],
     [FormFieldType.Chips]: [],
     [FormFieldType.Date]: '',
     [FormFieldType.File]: null,
@@ -65,11 +67,15 @@ export class FormService {
     getCustomValidator(field: FormField): ValidatorFn | null {
         return Validators.compose([
             ...this.formValidatorService.getCustomValidators(field),
-            ...this.getPasswordValidators(field)
+            ...getPasswordValidators(field)
         ]);
     }
 
     initFieldControl(field: FormField, initialValue?: unknown): FormControl | undefined {
+        if (holdsListValue(field)) {
+            return this.buildControl<unknown>(field, initialValue ?? []);
+        }
+
         if (!(field.type in EMPTY_VALUES)) {
             return undefined;
         }
@@ -86,22 +92,6 @@ export class FormService {
                 validators: this.getValidators(field)
             }
         ) as FormControl<T>;
-    }
-
-    private getChipsValidators(field: FormChipsField): ValidatorFn[] {
-        if (field.maxItems === undefined) {
-            return [];
-        }
-
-        const { maxItems } = field;
-
-        return [
-            control => {
-                const value = control.value as string[] | null;
-
-                return value && value.length > maxItems ? { maxItems: { maxItems, actual: value.length } } : null;
-            }
-        ];
     }
 
     private getDateRangeValidators(field: FormDateField): ValidatorFn[] {
@@ -135,76 +125,18 @@ export class FormService {
         return validators;
     }
 
-    private getFileValidators(field: FormFileField): ValidatorFn[] {
-        const validators: ValidatorFn[] = [];
-
-        if (field.maxSizeBytes !== undefined) {
-            const { maxSizeBytes } = field;
-
-            validators.push(control => {
-                const file = control.value as File | null;
-
-                return file && file.size > maxSizeBytes ? { maxSizeBytes: { maxSizeBytes, actual: file.size } } : null;
-            });
-        }
-
-        if (field.accept.length > 0) {
-            validators.push(control => {
-                const file = control.value as File | null;
-
-                return file && !field.accept.some(pattern => matchesAcceptPattern(pattern, file.type))
-                    ? { accept: { accept: field.accept, actual: file.type } }
-                    : null;
-            });
-        }
-
-        return validators;
-    }
-
-    private getNumberRangeValidators(field: FormNumberField): ValidatorFn[] {
-        const validators: ValidatorFn[] = [];
-
-        if (field.min !== undefined) {
-            const { min } = field;
-
-            validators.push(control => {
-                const value = control.value as number | null;
-
-                return value !== null && value < min ? { min: { min, actual: value } } : null;
-            });
-        }
-
-        if (field.max !== undefined) {
-            const { max } = field;
-
-            validators.push(control => {
-                const value = control.value as number | null;
-
-                return value !== null && value > max ? { max: { max, actual: value } } : null;
-            });
-        }
-
-        return validators;
-    }
-
-    private getPasswordValidators(field: FormField): ValidatorFn[] {
-        const { policy } = field as FormPasswordField;
-
-        return field.type === FormFieldType.Password && policy ? [passwordPolicyValidator(policy)] : [];
-    }
-
     private getTypeValidators(field: FormField): ValidatorFn[] {
         switch (field.type) {
             case FormFieldType.Chips:
-                return this.getChipsValidators(field as FormChipsField);
+                return getChipsValidators(field as FormChipsField);
             case FormFieldType.Date:
                 return this.getDateRangeValidators(field as FormDateField);
             case FormFieldType.File:
-                return this.getFileValidators(field as FormFileField);
+                return getFileValidators(field as FormFileField);
             case FormFieldType.Number:
-                return this.getNumberRangeValidators(field as FormNumberField);
+                return getNumberRangeValidators(field as FormNumberField);
             case FormFieldType.Password:
-                return this.getPasswordValidators(field);
+                return getPasswordValidators(field);
             default:
                 return [];
         }
@@ -217,4 +149,78 @@ export class FormService {
             ...this.getTypeValidators(field)
         ];
     }
+}
+
+function getChipsValidators(field: FormChipsField): ValidatorFn[] {
+    if (field.maxItems === undefined) {
+        return [];
+    }
+
+    const { maxItems } = field;
+
+    return [
+        control => {
+            const value = control.value as string[] | null;
+
+            return value && value.length > maxItems ? { maxItems: { maxItems, actual: value.length } } : null;
+        }
+    ];
+}
+
+function getFileValidators(field: FormFileField): ValidatorFn[] {
+    const validators: ValidatorFn[] = [];
+
+    if (field.maxSizeBytes !== undefined) {
+        const { maxSizeBytes } = field;
+
+        validators.push(control => {
+            const file = control.value as File | null;
+
+            return file && file.size > maxSizeBytes ? { maxSizeBytes: { maxSizeBytes, actual: file.size } } : null;
+        });
+    }
+
+    if (field.accept.length > 0) {
+        validators.push(control => {
+            const file = control.value as File | null;
+
+            return file && !field.accept.some(pattern => matchesAcceptPattern(pattern, file.type))
+                ? { accept: { accept: field.accept, actual: file.type } }
+                : null;
+        });
+    }
+
+    return validators;
+}
+
+function getNumberRangeValidators(field: FormNumberField): ValidatorFn[] {
+    const validators: ValidatorFn[] = [];
+
+    if (field.min !== undefined) {
+        const { min } = field;
+
+        validators.push(control => {
+            const value = control.value as number | null;
+
+            return value !== null && value < min ? { min: { min, actual: value } } : null;
+        });
+    }
+
+    if (field.max !== undefined) {
+        const { max } = field;
+
+        validators.push(control => {
+            const value = control.value as number | null;
+
+            return value !== null && value > max ? { max: { max, actual: value } } : null;
+        });
+    }
+
+    return validators;
+}
+
+function getPasswordValidators(field: FormField): ValidatorFn[] {
+    const { policy } = field as FormPasswordField;
+
+    return field.type === FormFieldType.Password && policy ? [passwordPolicyValidator(policy)] : [];
 }

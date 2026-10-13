@@ -27,13 +27,17 @@ describe('page rows', () => {
         expect(isActionVisible(duplicate, [], [FOLDER])).toBe(false);
     });
 
-    it('asks for exactly one row for edit and edit-category, whatever their scope', () => {
+    it('asks for exactly one row for edit, edit-category and view, whatever their scope', () => {
         const edit = buildAction(PageStandardAction.Edit, PageActionScope.Item);
         const editCategory = buildAction(PageStandardAction.EditCategory, PageActionScope.Item);
+        const view = buildAction(PageStandardAction.View, PageActionScope.Item);
+        const readable: Row = { ...REPORT, actions: [PageStandardAction.View] };
 
         expect(isActionVisible(edit, [], [REPORT])).toBe(true);
         expect(isActionVisible(edit, [], [REPORT, SUMMARY])).toBe(false);
         expect(isActionVisible(editCategory, [], [FOLDER, OTHER_FOLDER], CATEGORIES)).toBe(false);
+        expect(isActionVisible(view, [], [readable])).toBe(true);
+        expect(isActionVisible(view, [], [readable, { ...readable, id: 2 }])).toBe(false);
     });
 
     it('shows move only while the selected rows have a single owner, or none of them has owners', () => {
@@ -69,6 +73,18 @@ describe('page rows', () => {
         expect(toHandlerItems(create, [REPORT], CATEGORIES)).toEqual([]);
     });
 
+    it('hands a share handler the folder it shares, and shows it only on a folder that lists it', () => {
+        const share = buildAction(PageStandardAction.Share, PageActionScope.Single, jest.fn());
+        const sharedFolder: Row = { ...FOLDER, actions: [PageStandardAction.Share] };
+
+        expect(toHandlerItems(share, [sharedFolder], CATEGORIES)).toEqual([sharedFolder]);
+        expect(isActionVisible(share, [], [sharedFolder], CATEGORIES)).toBe(true);
+        expect(isActionVisible(share, [], [FOLDER], CATEGORIES)).toBe(false);
+        expect(isActionVisible(share, [], [{ ...REPORT, actions: [PageStandardAction.Share] }], CATEGORIES)).toBe(
+            false
+        );
+    });
+
     it('tells a category apart by the type field the categories config names', () => {
         const kind = new PageCategoriesConfig({ typeField: 'kind' });
         const folder: PageItem & { kind: PageItemType } = { id: 'k', kind: PageItemType.Category };
@@ -79,8 +95,27 @@ describe('page rows', () => {
     });
 
     it('keeps only the id and the type of each row for a trash request', () => {
-        expect(toTrashItems([{ id: 1, name: 'One', type: PageItemType.Item } as PageItem])).toEqual([
-            { id: 1, type: PageItemType.Item }
+        expect(toTrashItems([REPORT, FOLDER], CATEGORIES)).toEqual([
+            { id: 1, type: PageItemType.Item },
+            { id: 'f', type: PageItemType.Category }
+        ]);
+    });
+
+    it('reads the entry type from the type field the categories config names, and sends it as the type', () => {
+        const entryType = new PageCategoriesConfig({ typeField: 'entryType' });
+        const variable = { entryType: PageItemType.Item, id: 'v', type: 'string' } as PageItem;
+        const folder = { entryType: PageItemType.Category, id: 'g' } as PageItem;
+
+        expect(toTrashItems([variable, folder], entryType)).toEqual([
+            { id: 'v', type: PageItemType.Item },
+            { id: 'g', type: PageItemType.Category }
+        ]);
+    });
+
+    it('sends every row as an item without categories', () => {
+        expect(toTrashItems([{ id: 1, type: 'string' } as PageItem, FOLDER])).toEqual([
+            { id: 1, type: PageItemType.Item },
+            { id: 'f', type: PageItemType.Item }
         ]);
     });
 });

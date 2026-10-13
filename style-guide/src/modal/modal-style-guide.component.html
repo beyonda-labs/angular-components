@@ -53,6 +53,22 @@
 </div>
 
 <p class="bey-style-guide-description text-muted mt-4 mb-3">
+    {{ 'angular-components-style-guide.modal.long-form.example' | translate }}
+</p>
+
+<div class="d-flex flex-wrap align-items-center gap-3 bey-style-guide-actions">
+    <span class="bey-style-guide-action-slot">
+        <button class="btn btn-sm btn-outline-dark" type="button" (click)="longFormButton.action()">
+            {{ longFormButton.label | translate }}
+        </button>
+    </span>
+
+    @if (isLongFormSent()) {
+        <span class="text-muted">{{ 'angular-components-style-guide.modal.long-form.sent' | translate }}</span>
+    }
+</div>
+
+<p class="bey-style-guide-description text-muted mt-4 mb-3">
     {{ 'angular-components-style-guide.modal.unsaved-changes.example' | translate }}
 </p>
 

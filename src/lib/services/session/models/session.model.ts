@@ -14,8 +14,10 @@ export interface SessionUser {
     redirectPath: string;
 
     app?: unknown;
+    extraPermissions?: string[];
     language?: string;
     name?: string;
+    organizationId?: string;
     roles?: string[];
     surname?: string;
     theme?: string;

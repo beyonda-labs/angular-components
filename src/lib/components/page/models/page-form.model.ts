@@ -4,6 +4,7 @@ import { ModalFormSize } from '../../form/components/modal/models/modal-form.mod
 import { FormHandle, FormSection } from '../../form/models/form.model';
 import { ConfirmationModalConfig } from '../../modal/models/modal.model';
 import { PageItem } from './page-item.model';
+import { PageCategoryPathEntry } from './page-state.model';
 
 export type PageSaveConfirmation<TValue = unknown, TItem extends PageItem = PageItem> = (
     value: TValue,
@@ -14,11 +15,11 @@ export type PageSaveMode = 'create' | 'edit';
 
 export class PageFormConfig<TValue = unknown, TItem extends PageItem = PageItem> {
     allowSubmitWithoutChanges: boolean;
-    buildSections: (item?: TItem) => FormSection[];
+    buildSections: (item?: TItem, category?: PageCategoryPathEntry) => FormSection[];
     prefix: string;
     size: ModalFormSize;
-    toFormValue: (item?: TItem) => TValue | undefined;
-    toItem: (value: TValue) => unknown;
+    toFormValue: (item?: TItem, category?: PageCategoryPathEntry) => TValue | undefined;
+    toItem: (value: TValue, item?: TItem) => unknown;
 
     afterCreate?: (created: TItem) => Observable<unknown> | undefined;
     confirmSave?: PageSaveConfirmation<TValue, TItem>;
@@ -57,7 +58,7 @@ export class PageFormConfig<TValue = unknown, TItem extends PageItem = PageItem>
 }
 
 export interface PageFormConfigParameters<TValue = unknown, TItem extends PageItem = PageItem> {
-    buildSections: (item?: TItem) => FormSection[];
+    buildSections: (item?: TItem, category?: PageCategoryPathEntry) => FormSection[];
     prefix: string;
 
     afterCreate?: (created: TItem) => Observable<unknown> | undefined;
@@ -68,6 +69,10 @@ export interface PageFormConfigParameters<TValue = unknown, TItem extends PageIt
     onReady?: (handle: FormHandle<TValue>) => void;
     onValueChange?: (value: TValue, handle: FormHandle<TValue>) => void;
     size?: ModalFormSize;
-    toFormValue?: (item?: TItem) => TValue | undefined;
-    toItem?: (value: TValue) => unknown;
+    toFormValue?: (item?: TItem, category?: PageCategoryPathEntry) => TValue | undefined;
+    toItem?: (value: TValue, item?: TItem) => unknown;
 }
+
+export const PAGE_FORM_CANCEL_LABEL = 'angular-components.page.form.cancel';
+
+export const PAGE_FORM_SUBMIT_LABEL = 'angular-components.page.form.submit';

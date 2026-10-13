@@ -4,7 +4,7 @@
     --bey-property-segmented-bg: var(--bey-bg-muted);
     --bey-property-segmented-text: var(--bey-text-primary);
     --bey-property-segmented-text-muted: var(--bey-text-muted);
-    --bey-property-segmented-disabled-opacity: 0.4;
+    --bey-property-segmented-disabled-opacity: var(--bey-opacity-disabled);
 
     display: block;
 }

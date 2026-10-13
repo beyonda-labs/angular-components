@@ -1,0 +1,21 @@
+:host {
+    --bey-cards-card-bg: var(--bey-bg-surface);
+    --bey-cards-card-border: var(--bey-border-subtle);
+    --bey-cards-card-padding: var(--bey-space-xl);
+    --bey-cards-count-bg: var(--bey-bg-active);
+    --bey-cards-count-fg: var(--bey-text-secondary);
+
+    display: block;
+    width: 100%;
+}
+
+.bey-cards-card {
+    background: var(--bey-cards-card-bg);
+    border: var(--bey-border-width) solid var(--bey-cards-card-border);
+    border-radius: var(--bey-radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--bey-space-lg);
+    min-width: 0;
+    padding: var(--bey-cards-card-padding);
+}

@@ -1,0 +1,14 @@
+@let current = config();
+
+<section class="bey-cards-card" [attr.aria-labelledby]="labelledBy()">
+    @if (current.title) {
+        <bey-card-heading
+            [count]="current.count"
+            [headingId]="headingId"
+            [level]="headingLevel"
+            [title]="current.title"
+        ></bey-card-heading>
+    }
+
+    <ng-content></ng-content>
+</section>

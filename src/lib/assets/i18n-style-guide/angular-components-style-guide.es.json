@@ -9,6 +9,15 @@
             "name-hint": "Aparece en los documentos que firmas"
         },
         "account-data-section": "Datos de la cuenta",
+        "administration": {
+            "example": "Las páginas de gestión de una aplicación, en un solo módulo: usuarios, grupos, roles y permisos, y organizaciones, cada una sobre bey-page con el módulo correspondiente de express-components y cada una leyendo del backend lo que puede hacer, y el resumen de solo lectura de la organización de un miembro.",
+            "groups": "Grupos",
+            "organization-summary": "Resumen de la organización",
+            "organizations": "Organizaciones",
+            "roles": "Roles y permisos",
+            "users": "Usuarios"
+        },
+        "administration-section": "Administración",
         "app-layout": {
             "actions": {
                 "dashboard": {
@@ -113,8 +122,69 @@
             }
         },
         "breadcrumbs": "Breadcrumbs",
-        "components": "Componentes",
+        "cards": {
+            "avatars": "Avatares, sólido y suave",
+            "card": {
+                "title": "Resumen del equipo"
+            },
+            "empty": {
+                "label": "Nadie ha pedido acceso todavía.",
+                "title": "Solicitudes de acceso"
+            },
+            "example": "Las piezas de una página de resumen: una tarjeta con un título y un contador opcionales, una franja de cifras y listas de elementos con un avatar o un icono, un título, un subtítulo y un despliegue o una flecha que los abre. Una lista agrupada reúne sus elementos en una sola caja; una separada da a cada uno la suya.",
+            "people": {
+                "title": "Personas"
+            },
+            "roles": {
+                "editors": "Crean y editan las plantillas",
+                "title": "Roles",
+                "toast": "Aquí se abriría el rol."
+            },
+            "stats": {
+                "people": "Personas",
+                "projects": "Proyectos",
+                "teams": "Equipos"
+            },
+            "teams": {
+                "empty": "Aún no hay nadie en este equipo.",
+                "hide": "Ocultar personas",
+                "members": {
+                    "one": "{{count}} persona",
+                    "other": "{{count}} personas"
+                },
+                "show": "Ver personas",
+                "title": "Equipos"
+            }
+        },
+        "cards-section": "Tarjetas",
+        "collapse-all": "Contraer todo",
         "compound": "Compuestos",
+        "edit-lock-notice": {
+            "example": "Lo que muestra el editor de una fila en cada estado de su bloqueo de edición. Elige un estado; las acciones del aviso lo hacen avanzar como lo haría el bloqueo real.",
+            "scenarios": {
+                "colleague": "Lo edita un compañero",
+                "earlier": "Desde ayer",
+                "free": "Libre de nuevo",
+                "manager": "Visto por un responsable",
+                "other-window": "Otra ventana tuya",
+                "released": "Tu edición liberada",
+                "taken": "Tomado por un compañero",
+                "unavailable": "Ya no disponible"
+            },
+            "statuses": {
+                "free": "Estado: libre",
+                "held": "Estado: ocupado",
+                "lost": "Estado: perdido",
+                "own": "Estado: propio, así que el editor se puede editar y no se muestra ningún aviso",
+                "unavailable": "Estado: no disponible"
+            },
+            "toast": {
+                "copy-saved": "El producto guardaría los cambios como una copia",
+                "reloaded": "El producto recargaría la fila antes de editarla"
+            }
+        },
+        "edit-lock-notice-section": "Aviso de bloqueo de edición",
+        "expand-all": "Expandir todo",
         "file-preview": {
             "buttons": {
                 "image": "Previsualizar una imagen",
@@ -216,8 +286,44 @@
                     },
                     "placeholder": "Typeahead deshabilitado"
                 },
+                "autocomplete4": {
+                    "label": "Typeahead con muchas opciones",
+                    "options": {
+                        "option1": "Elemento 1",
+                        "option10": "Elemento 10",
+                        "option11": "Elemento 11",
+                        "option12": "Elemento 12",
+                        "option13": "Elemento 13",
+                        "option14": "Elemento 14",
+                        "option15": "Elemento 15",
+                        "option16": "Elemento 16",
+                        "option17": "Elemento 17",
+                        "option18": "Elemento 18",
+                        "option19": "Elemento 19",
+                        "option2": "Elemento 2",
+                        "option20": "Elemento 20",
+                        "option21": "Elemento 21",
+                        "option22": "Elemento 22",
+                        "option23": "Elemento 23",
+                        "option24": "Elemento 24",
+                        "option25": "Elemento 25",
+                        "option26": "Elemento 26",
+                        "option27": "Elemento 27",
+                        "option28": "Elemento 28",
+                        "option29": "Elemento 29",
+                        "option3": "Elemento 3",
+                        "option30": "Elemento 30",
+                        "option4": "Elemento 4",
+                        "option5": "Elemento 5",
+                        "option6": "Elemento 6",
+                        "option7": "Elemento 7",
+                        "option8": "Elemento 8",
+                        "option9": "Elemento 9"
+                    },
+                    "placeholder": "Busque entre treinta opciones"
+                },
                 "label": "Campos con búsqueda",
-                "tooltip": "Variantes de typeahead con comportamiento básico, obligatorio y deshabilitado"
+                "tooltip": "Variantes de typeahead con comportamiento básico, obligatorio y deshabilitado, y una con treinta opciones para desplazarse"
             },
             "section-checkbox": {
                 "checkbox1": {
@@ -234,6 +340,59 @@
                 },
                 "label": "Campos de checkbox",
                 "tooltip": "Variantes de checkbox con estado básico, obligatorio, deshabilitado e interruptor"
+            },
+            "section-checkbox-sections": {
+                "documents": {
+                    "label": "Documentos"
+                },
+                "documents-create": {
+                    "description": "Puede rellenar una plantilla para crear un documento.",
+                    "label": "Crear"
+                },
+                "documents-delete": {
+                    "label": "Eliminar"
+                },
+                "documents-read": {
+                    "description": "Puede ver los documentos.",
+                    "label": "Ver"
+                },
+                "folders": {
+                    "label": "Carpetas"
+                },
+                "folders-read": {
+                    "description": "Puede ver las carpetas y lo que contienen.",
+                    "label": "Ver"
+                },
+                "folders-share": {
+                    "description": "Puede compartir una carpeta con grupos y usuarios.",
+                    "label": "Compartir"
+                },
+                "label": "Secciones de casillas",
+                "sections1": {
+                    "label": "Permisos:"
+                },
+                "sections2": {
+                    "label": "Permisos de un rol base (solo lectura):"
+                },
+                "templates": {
+                    "label": "Plantillas"
+                },
+                "templates-delete": {
+                    "label": "Eliminar"
+                },
+                "templates-edit": {
+                    "description": "Puede cambiar las plantillas.",
+                    "label": "Editar"
+                },
+                "templates-publish": {
+                    "description": "Puede poner una plantilla a disposición de todos.",
+                    "label": "Publicar"
+                },
+                "templates-read": {
+                    "description": "Puede ver las plantillas.",
+                    "label": "Ver"
+                },
+                "tooltip": "Listas largas de casillas plegadas por sección, con contador, marcar todos y una descripción por casilla"
             },
             "section-chips": {
                 "chips1": {
@@ -348,6 +507,24 @@
                 },
                 "tooltip": "Campos de contraseña con validador de longitud, política, toggle, obligatorio y deshabilitado"
             },
+            "section-picked-list": {
+                "label": "Listas elegidas",
+                "people": {
+                    "empty": "Este grupo aún no tiene miembros.",
+                    "label": "Miembros",
+                    "placeholder": "Busca a una persona por nombre o correo"
+                },
+                "read-only-people": {
+                    "empty": "Este grupo aún no tiene miembros.",
+                    "label": "Miembros de solo lectura"
+                },
+                "roles": {
+                    "empty": "Este grupo aún no tiene roles.",
+                    "label": "Roles",
+                    "placeholder": "Elige un rol"
+                },
+                "tooltip": "Una lista de ids con filas que se quitan, alimentada por una búsqueda encima: en el servidor, con espera y avisando cuando hay más coincidencias de las que muestra, o en sus propias opciones. Pasadas siete filas, la lista se desplaza bajo su búsqueda"
+            },
             "section-radio": {
                 "label": "Campos de radio",
                 "radio1": {
@@ -441,6 +618,9 @@
             "submitted": "El formulario ha sido enviado: "
         },
         "forms": "Formularios",
+        "groups": {
+            "example": "La página de grupos de un administrador o del superadministrador: busca por nombre, crea un grupo, edita en un solo formulario su nombre, sus miembros y sus roles adicionales, y elimina grupos, en la medida en que el backend lo permita en cada fila. El superadministrador ve una carpeta por organización, una búsqueda en la raíz las abarca todas y es la única lista con la columna de organización, y un grupo creado dentro de una carpeta llega con su organización elegida. El backend de demostración no sirve grupos, así que la lista se queda vacía."
+        },
         "header": {
             "actions": {
                 "archive": {
@@ -626,6 +806,76 @@
                     "title": "Acción confirmada"
                 }
             },
+            "long-form": {
+                "address": {
+                    "city": {
+                        "label": "Ciudad",
+                        "placeholder": "Escribe la ciudad"
+                    },
+                    "country": {
+                        "label": "País",
+                        "placeholder": "Escribe el país"
+                    },
+                    "label": "Dirección",
+                    "postcode": {
+                        "label": "Código postal",
+                        "placeholder": "Escribe el código postal"
+                    },
+                    "street": {
+                        "label": "Calle",
+                        "placeholder": "Escribe la calle y el número"
+                    }
+                },
+                "buttons": {
+                    "cancel": "Cancelar",
+                    "submit": "Guardar"
+                },
+                "example": "Un diálogo nunca crece más que la ventana: abre un formulario más largo que la pantalla y verás que el título y los botones se quedan en su sitio mientras los campos se desplazan entre ellos, también en un teléfono.",
+                "notes": {
+                    "label": "Notas",
+                    "notes": {
+                        "label": "Notas",
+                        "placeholder": "Cualquier cosa que convenga saber"
+                    }
+                },
+                "open": "Abrir un formulario largo",
+                "person": {
+                    "email": {
+                        "label": "Correo electrónico",
+                        "placeholder": "Escribe el correo"
+                    },
+                    "label": "Persona",
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Escribe el nombre"
+                    },
+                    "phone": {
+                        "label": "Teléfono",
+                        "placeholder": "Escribe el número de teléfono"
+                    },
+                    "surname": {
+                        "label": "Apellidos",
+                        "placeholder": "Escribe los apellidos"
+                    }
+                },
+                "sent": "Se ha guardado el formulario largo.",
+                "title": "Ficha de contacto",
+                "work": {
+                    "company": {
+                        "label": "Empresa",
+                        "placeholder": "Escribe la empresa"
+                    },
+                    "department": {
+                        "label": "Departamento",
+                        "placeholder": "Escribe el departamento"
+                    },
+                    "label": "Trabajo",
+                    "position": {
+                        "label": "Cargo",
+                        "placeholder": "Escribe el cargo"
+                    }
+                }
+            },
             "unsaved-changes": {
                 "example": "Un guard de ruta sobre señales registradas: marca la casilla para simular cambios sin guardar e intenta salir. Mientras está marcada, cerrar o recargar la pestaña también pregunta.",
                 "leave": "Salir de esta página",
@@ -641,6 +891,29 @@
             }
         },
         "modals": "Modales",
+        "notice": {
+            "actions": {
+                "dismiss": "Ahora no",
+                "reload": "Recargar"
+            },
+            "example": "Un aviso en línea a todo el ancho de su contenedor, uno por variante: información, advertencia con sus acciones y peligro.",
+            "messages": {
+                "danger": "Este elemento se ha eliminado mientras lo consultabas.",
+                "info": "Este elemento está compartido con toda tu organización.",
+                "warning": "{{name}} ha cambiado este elemento hace un momento."
+            },
+            "toast": {
+                "dismiss": "El aviso se queda como está",
+                "reload": "El elemento se recargaría ahora"
+            }
+        },
+        "notice-section": "Avisos",
+        "organization-summary": {
+            "example": "El resumen de la organización del miembro que ha iniciado sesión, de solo lectura, hecho con el módulo de tarjetas: su nombre, su estado y su alta, una franja con sus miembros activos, sus grupos y sus roles adicionales, con los miembros por estado para quien pueda ver los usuarios; sus administradores; cada grupo plegado con su número de miembros, que despliega sus miembros activos en su sitio, y al final los que no están en ningún grupo; y cada rol adicional, que abre sus permisos a quien ya pueda verlos. El backend de demostración no sirve ninguna organización, así que no se muestra nada: la sección de tarjetas enseña las mismas piezas."
+        },
+        "organizations": {
+            "example": "La página de organizaciones de un superadministrador: busca por nombre, filtra por estado, crea una organización y edita su nombre y su estado, con sus administradores activos, sus grupos con sus miembros y sus miembros sin grupo a la vista, en la medida en que el backend lo permita en cada fila. El backend de demostración no sirve organizaciones, así que la lista se queda vacía."
+        },
         "page": {
             "actions": {
                 "create": {
@@ -656,7 +929,7 @@
                     "tooltip": "Editar el producto seleccionado"
                 }
             },
-            "example": "Una página autogestionada: acciones de cabecera, búsqueda, tabla y paginación conectadas al backend de demostración, con alta y edición en un formulario modal. La pestaña Disponibles es una vista: la misma lista con un filtro propio, en la que también se puede buscar. Las cabeceras ordenan la lista y el menú de columnas oculta la categoría o el precio. La columna Propietario dice de quién es cada producto, y el panel de filtros permite filtrar por propietario cuando los productos tienen dos propietarios o más.",
+            "example": "Una página autogestionada: acciones de cabecera, búsqueda, tabla y paginación conectadas al backend de demostración, con alta y edición en un formulario modal. La pestaña Disponibles es una vista: la misma lista con un filtro propio, en la que también se puede buscar. Las cabeceras ordenan la lista y el menú de columnas oculta la categoría o el precio. La columna Propietario dice de quién es cada producto, y el panel de filtros permite filtrar por propietario cuando los productos tienen dos propietarios o más. La columna Organización y su filtro solo aparecen cuando los productos que ves pertenecen a dos organizaciones o más, como le pasa a un superadministrador.",
             "folders": {
                 "actions": {
                     "move": {
@@ -780,6 +1053,9 @@
             }
         },
         "properties-menu-section": "Menú de propiedades",
+        "roles": {
+            "example": "La página de roles y permisos de un administrador o del superadministrador: los roles base de la aplicación, cuyos permisos se pueden consultar desde su nombre o desde Ver en la cabecera, y los roles adicionales de la organización, que se crean, editan, duplican y eliminan eligiendo sus permisos en secciones plegables por recurso, cada permiso con su descripción, en la medida en que el backend lo permita en cada fila; también un rol base se puede duplicar, como punto de partida de un rol adicional nuevo. El superadministrador ve una carpeta por organización junto a los roles base, una búsqueda en la raíz las abarca todas y es la única lista con la columna de organización, y un rol creado dentro de una carpeta llega con su organización elegida. El backend de demostración no sirve roles, así que la lista se queda vacía."
+        },
         "search": {
             "applied": "Filtros aplicados",
             "example": "Caja de búsqueda rápida más un panel de filtros tipados. Parte de los filtros de su config, aquí el rol de editor; cada cambio se informa por onFiltersChange y la consulta la ejecuta el consumidor.",
@@ -948,12 +1224,15 @@
         },
         "trees": "Árboles",
         "users": {
-            "example": "La página de usuarios sobre el backend de demostración: busca por nombre o correo, filtra por estado y rol, invita a un usuario, edita sus roles, cambia su estado y vuelve a enviarle la invitación, en la medida en que el backend lo permita en cada fila.",
+            "content": {
+                "documents": "Documentos",
+                "templates": "Plantillas"
+            },
+            "example": "La página de usuarios sobre el backend de demostración: busca por nombre o correo, filtra por estado y rol, invita a un usuario, edita su nombre, sus roles y su estado, cada campo activo solo cuando la fila deja cambiarlo, vuelve a enviarle la invitación, transfiere el contenido de un usuario inactivo a otro y elimina usuarios inactivos e invitaciones pendientes con todo lo que poseen, en la medida en que el backend lo permita en cada fila. Los recuentos de contenido leen las etiquetas de la aplicación, aquí documentos y plantillas. Con la sesión de un superadministrador, la página abre una carpeta por organización junto a los superadministradores, una búsqueda en la raíz abarca todas las organizaciones y es la única lista con la columna de organización, y una invitación enviada desde dentro de una carpeta llega con su organización elegida.",
             "roles": {
                 "admin": "Administrador",
                 "editor": "Editor"
             }
-        },
-        "users-section": "Usuarios"
+        }
     }
 }

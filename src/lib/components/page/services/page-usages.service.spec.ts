@@ -17,6 +17,7 @@ const USAGES_CONFIG = new PageUsagesConfig({ suffixes: { 'content-block': 'files
 describe('PageUsagesService', () => {
     let service: PageUsagesService;
 
+    const findCategoryUsages = jest.fn();
     const findUsages = jest.fn();
 
     function buildConfig(overrides: Partial<PageConfig> = {}): PageConfig {
@@ -24,10 +25,11 @@ describe('PageUsagesService', () => {
     }
 
     beforeEach(() => {
+        findCategoryUsages.mockReset();
         findUsages.mockReset();
 
         TestBed.configureTestingModule({
-            providers: [provideBeyTesting(), { provide: PageHttpService, useValue: { findUsages } }]
+            providers: [provideBeyTesting(), { provide: PageHttpService, useValue: { findCategoryUsages, findUsages } }]
         });
 
         service = TestBed.inject(PageUsagesService);
@@ -73,15 +75,56 @@ describe('PageUsagesService', () => {
             expect(findUsages).toHaveBeenCalledWith('/files', ['a']);
         });
 
+        it('asks for the usages of the folders of a folder delete and warns with its in-use texts', () => {
+            findCategoryUsages.mockReturnValue(
+                of([
+                    { id: 'clients', total: 2, users: [OFFER, HEADER] },
+                    { id: 'drafts', total: 1, users: [OFFER] }
+                ])
+            );
+            let shown: unknown;
+
+            service
+                .confirmInUse(buildConfig(), 'delete-category', [{ id: 'clients' }, { id: 'drafts' }], {
+                    ...CONFIRMATION,
+                    messageParameters: { count: 2 }
+                })
+                .subscribe(config => {
+                    shown = config;
+                });
+
+            expect(findCategoryUsages).toHaveBeenCalledWith('/files', ['clients', 'drafts']);
+            expect(findUsages).not.toHaveBeenCalled();
+            expect(shown).toEqual({
+                message: 'files.modal.delete-category-in-use.message',
+                messageParameters: { count: 2, usageCount: 2, users: 'Offer, Header (files.usages.block)' },
+                title: 'files.modal.delete-category-in-use.title'
+            });
+        });
+
+        it('keeps the confirmation of a folder delete when nothing in the folders is used', () => {
+            findCategoryUsages.mockReturnValue(of([{ id: 'clients', total: 0, users: [] }]));
+            let shown: unknown;
+
+            service
+                .confirmInUse(buildConfig(), 'delete-category', [{ id: 'clients' }], CONFIRMATION)
+                .subscribe(config => {
+                    shown = config;
+                });
+
+            expect(shown).toBe(CONFIRMATION);
+        });
+
         it('keeps the confirmation of any other action without asking', () => {
             let shown: unknown;
 
-            service.confirmInUse(buildConfig(), 'delete-category', [{ id: 'a' }], CONFIRMATION).subscribe(config => {
+            service.confirmInUse(buildConfig(), 'move', [{ id: 'a' }], CONFIRMATION).subscribe(config => {
                 shown = config;
             });
 
             expect(shown).toBe(CONFIRMATION);
             expect(findUsages).not.toHaveBeenCalled();
+            expect(findCategoryUsages).not.toHaveBeenCalled();
         });
 
         it('keeps the confirmation without asking when the page has no usages, or only folders are selected', () => {
@@ -91,9 +134,13 @@ describe('PageUsagesService', () => {
                 .confirmInUse(buildConfig({ usagesConfig: undefined }), 'delete', [{ id: 'a' }], CONFIRMATION)
                 .subscribe(config => answers.push(config));
             service.confirmInUse(buildConfig(), 'delete', [], CONFIRMATION).subscribe(config => answers.push(config));
+            service
+                .confirmInUse(buildConfig({ usagesConfig: undefined }), 'delete-category', [{ id: 'f' }], CONFIRMATION)
+                .subscribe(config => answers.push(config));
 
-            expect(answers).toEqual([CONFIRMATION, CONFIRMATION]);
+            expect(answers).toEqual([CONFIRMATION, CONFIRMATION, CONFIRMATION]);
             expect(findUsages).not.toHaveBeenCalled();
+            expect(findCategoryUsages).not.toHaveBeenCalled();
         });
     });
 

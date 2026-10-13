@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
+import { buttonByName, controlByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { PropertyTextField } from './models/fields/property-text-field.model';
 import { PropertiesMenuConfig, PropertiesMenuConfigParameters } from './models/properties-menu-config.model';
@@ -115,18 +115,6 @@ describe('PropertiesMenuComponent', () => {
         return found;
     }
 
-    function field(name: string): HTMLInputElement {
-        const label = queryAll<HTMLLabelElement>(fixture, 'label').find(
-            candidate => candidate.textContent?.trim() === name
-        );
-
-        if (!label?.control) {
-            throw new Error(`No field named ${name}`);
-        }
-
-        return label.control as HTMLInputElement;
-    }
-
     function tabNames(): string[] {
         return textsOf(queryAll(fixture, '[role="tab"]'));
     }
@@ -176,7 +164,7 @@ describe('PropertiesMenuComponent', () => {
 
         expect(tabNames()).toEqual(['Properties', 'Page', 'Structure', 'Add']);
         expect(byRole('tab', 'Properties').getAttribute('aria-selected')).toBe('true');
-        expect(field('Text').value).toBe('INVOICE');
+        expect(controlByName(fixture, 'Text').value).toBe('INVOICE');
     });
 
     it('hides the tab strip with a single visible tab', () => {
@@ -206,8 +194,8 @@ describe('PropertiesMenuComponent', () => {
         const onFieldValueChange = jest.fn();
 
         render(buildConfig({ onFieldValueChange }));
-        field('Text').value = 'NEW TEXT';
-        field('Text').dispatchEvent(new Event('input'));
+        controlByName(fixture, 'Text').value = 'NEW TEXT';
+        controlByName(fixture, 'Text').dispatchEvent(new Event('input'));
         await settle(fixture);
 
         expect(onFieldValueChange).toHaveBeenCalledWith({

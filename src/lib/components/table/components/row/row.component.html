@@ -6,7 +6,7 @@
     [class.bey-table-row--selectable]="selectable() && !isHeader()"
     [class.is-dragged]="isDragged()"
     [class.is-drop-target]="isDropTarget()"
-    [class.is-selected]="row().selected"
+    [class.is-selected]="row().isSelected"
     [style.grid-template-columns]="gridTemplateColumns()"
     (click)="onRowClick()"
     (dragend)="onDragEnd()"
@@ -22,7 +22,7 @@
                 class="bey-table-row-checkbox"
                 type="checkbox"
                 [attr.aria-label]="selectionLabel() | translate"
-                [checked]="row().selected"
+                [checked]="row().isSelected"
                 [indeterminate]="selectionIndeterminate()"
                 (change)="onCheckboxChange($event)"
             />

@@ -1,0 +1,11 @@
+<div class="bey-cards-heading">
+    @if (isCard()) {
+        <h2 class="bey-cards-heading-title" [id]="headingId()">{{ title() | translate }}</h2>
+    } @else {
+        <h3 class="bey-cards-heading-title" [id]="headingId()">{{ title() | translate }}</h3>
+    }
+
+    @if (hasCount()) {
+        <span class="bey-cards-heading-count">{{ count() }}</span>
+    }
+</div>

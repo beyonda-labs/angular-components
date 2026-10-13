@@ -33,6 +33,7 @@
 
     /* Surfaces */
     --bey-bg-page: var(--bey-white);
+    --bey-bg-page-translucent: color-mix(in srgb, var(--bey-bg-page) 70%, transparent);
     --bey-bg-surface: var(--bey-gray-50);
     --bey-bg-muted: var(--bey-gray-100);
     --bey-bg-subtle: var(--bey-gray-50);
@@ -46,6 +47,8 @@
     --bey-text-muted: var(--bey-gray-500);
     --bey-text-disabled: var(--bey-gray-400);
     --bey-text-inverse: var(--bey-white);
+    --bey-text-link: var(--bey-primary);
+    --bey-text-link-hover: color-mix(in srgb, var(--bey-primary) 75%, var(--bey-bg-page));
 
     /* Borders */
     --bey-border-subtle: var(--bey-gray-200);
@@ -57,10 +60,16 @@
     /* Intent */
     --bey-primary: var(--bey-black);
     --bey-primary-fg: var(--bey-white);
+    --bey-primary-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);
     --bey-secondary: #949b98;
     --bey-success: var(--bey-teal);
+    --bey-success-soft: color-mix(in srgb, var(--bey-success) 8%, transparent);
     --bey-danger: var(--bey-red);
+    --bey-danger-fg: var(--bey-white);
+    --bey-danger-hover: color-mix(in srgb, var(--bey-danger) 85%, var(--bey-black));
+    --bey-danger-soft: color-mix(in srgb, var(--bey-danger) 10%, transparent);
     --bey-warning: var(--bey-orange);
+    --bey-warning-soft: color-mix(in srgb, var(--bey-warning) 12%, transparent);
 
     /* Highlight */
     --bey-highlight: rgba(var(--bey-orange-rgb), 0.35);
@@ -106,6 +115,20 @@
     --bey-line-height-base: 1.35;
     --bey-line-height-loose: 1.6;
 
+    --bey-letter-spacing-tight: -0.03em;
+    --bey-letter-spacing-snug: -0.01em;
+    --bey-letter-spacing-wide: 0.04em;
+    --bey-letter-spacing-wider: 0.08em;
+    --bey-letter-spacing-widest: 0.1em;
+
+    /* Layout */
+    --bey-dialog-margin: var(--bey-space-2xl);
+    --bey-dialog-max-height: calc(100dvh - 2 * var(--bey-dialog-margin));
+    --bey-grid-column-min-width: 10rem;
+    --bey-control-height: calc(
+        var(--bey-font-size-sm) * var(--bey-line-height-tight) + 2 * var(--bey-space-sm) + 2 * var(--bey-border-width)
+    );
+
     /* Elevation */
     --bey-shadow-rgb: var(--bey-black-rgb);
     --bey-shadow-sm: 0 1px 2px rgba(var(--bey-shadow-rgb), 0.25);
@@ -126,6 +149,7 @@
     --bey-z-base: 1;
     --bey-z-raised: 10;
     --bey-z-sticky: 20;
+    --bey-z-toolbar: 30;
     --bey-z-dropdown: 1000;
     --bey-z-modal: 1050;
     --bey-z-loading: 1070;
@@ -146,6 +170,7 @@ body.dark {
 
     /* Surfaces */
     --bey-bg-page: var(--bey-black);
+    --bey-bg-page-translucent: color-mix(in srgb, var(--bey-bg-page) 70%, transparent);
     --bey-bg-surface: var(--bey-gray-900);
     --bey-bg-muted: var(--bey-gray-700);
     --bey-bg-subtle: var(--bey-gray-800);
@@ -159,6 +184,8 @@ body.dark {
     --bey-text-muted: var(--bey-gray-500);
     --bey-text-disabled: var(--bey-gray-600);
     --bey-text-inverse: var(--bey-gray-900);
+    --bey-text-link: var(--bey-primary);
+    --bey-text-link-hover: color-mix(in srgb, var(--bey-primary) 75%, var(--bey-bg-page));
 
     /* Borders */
     --bey-border-subtle: var(--bey-gray-800);
@@ -168,10 +195,16 @@ body.dark {
     /* Intent */
     --bey-primary: var(--bey-white);
     --bey-primary-fg: var(--bey-black);
+    --bey-primary-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);
     --bey-secondary: #7a8380;
     --bey-success: var(--bey-teal);
+    --bey-success-soft: color-mix(in srgb, var(--bey-success) 8%, transparent);
     --bey-danger: var(--bey-red);
+    --bey-danger-fg: var(--bey-black);
+    --bey-danger-hover: color-mix(in srgb, var(--bey-danger) 85%, var(--bey-white));
+    --bey-danger-soft: color-mix(in srgb, var(--bey-danger) 10%, transparent);
     --bey-warning: var(--bey-orange);
+    --bey-warning-soft: color-mix(in srgb, var(--bey-warning) 12%, transparent);
 
     /* Highlight */
     --bey-highlight: rgba(var(--bey-orange-rgb), 0.35);

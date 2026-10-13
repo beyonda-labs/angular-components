@@ -1,0 +1,59 @@
+{
+    "angular-components": {
+        "organization-summary": {
+            "administrators": {
+                "empty": "Aún no hay administradores.",
+                "label": "Administradores"
+            },
+            "breakdown": {
+                "active": {
+                    "one": "{{count}} activo",
+                    "other": "{{count}} activos"
+                },
+                "inactive": {
+                    "one": "{{count}} inactivo",
+                    "other": "{{count}} inactivos"
+                },
+                "invited": {
+                    "one": "{{count}} invitación pendiente",
+                    "other": "{{count}} invitaciones pendientes"
+                },
+                "unverified": {
+                    "one": "{{count}} sin verificar",
+                    "other": "{{count}} sin verificar"
+                }
+            },
+            "created-at": "Creada el {{date}}",
+            "extra-roles": {
+                "empty": "Esta organización aún no tiene roles adicionales.",
+                "label": "Roles adicionales"
+            },
+            "groups": {
+                "empty": "Esta organización aún no tiene grupos.",
+                "hide-members": "Ocultar miembros",
+                "label": "Grupos",
+                "members": {
+                    "one": "{{count}} miembro",
+                    "other": "{{count}} miembros"
+                },
+                "show-members": "Ver miembros",
+                "ungrouped": "Sin grupo"
+            },
+            "stats": {
+                "extra-roles": {
+                    "one": "Rol adicional",
+                    "other": "Roles adicionales"
+                },
+                "groups": {
+                    "one": "Grupo",
+                    "other": "Grupos"
+                },
+                "members": {
+                    "one": "Miembro",
+                    "other": "Miembros"
+                }
+            },
+            "title": "Organización"
+        }
+    }
+}

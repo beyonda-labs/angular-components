@@ -138,7 +138,7 @@ highlighted while the pointer is over it, and dropping there runs `onRowDrop(tar
 refuses the drop. Drag and drop is mouse only, so whatever it does needs another way in from the keyboard, such as
 the `move` action of `bey-page`.
 
-## Customisation
+## Theming
 
 | Variable                           | Default                |
 | ---------------------------------- | ---------------------- |

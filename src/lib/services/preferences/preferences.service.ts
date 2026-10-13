@@ -4,7 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { SessionUser } from '../session/models/session.model';
 import { SessionService } from '../session/session.service';
 import { StorageService } from '../session/storage.service';
-import { Theme, ThemeService } from '../theme/theme.service';
+import { Theme } from '../theme/models/theme.model';
+import { ThemeService } from '../theme/theme.service';
 import { languageName } from './functions/language-name';
 import {
     AccountPreferences,

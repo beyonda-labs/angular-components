@@ -29,8 +29,10 @@ export class FakeModalFormService implements Pick<BeyModalFormService, 'canDeact
                 onSubmit: (value, handle) =>
                     submit(value)
                         .pipe(take(1))
-                        .subscribe(() => handle.close())
+                        .subscribe({ error: ignoreError, next: () => handle.close() })
             })
         );
     }
 }
+
+function ignoreError(): void {}

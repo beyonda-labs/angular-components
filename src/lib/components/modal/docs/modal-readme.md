@@ -15,32 +15,40 @@ providers: [provideBeyModal()];
 ```ts
 this.modal.openInfo({ title: 'myPage.saved.title', message: 'myPage.saved.message' });
 
-this.modal.openConfirmation({ title: 'myPage.delete.title', message: 'myPage.delete.message' })
+this.modal
+    .openConfirmation({ title: 'myPage.delete.title', message: 'myPage.delete.message' })
     .subscribe(confirmed => confirmed && this.delete());
 ```
 
 ## BeyModalService
 
-| Method                       | Returns               | Meaning                                              |
-| ---------------------------- | --------------------- | ---------------------------------------------------- |
-| `openInfo(config)`           | the modal reference   | One button that closes                                |
-| `openWarning(config)`        | the modal reference   | Same, with a warning look                             |
-| `openError(config)`          | the modal reference   | Same, with an error look                              |
-| `openConfirmation(config)`   | `Observable<boolean>` | Two buttons; emits once, `false` if closed any other way |
+| Method                     | Returns               | Meaning                                                  |
+| -------------------------- | --------------------- | -------------------------------------------------------- |
+| `openInfo(config)`         | the modal reference   | One button that closes                                   |
+| `openWarning(config)`      | the modal reference   | Same, with a warning look                                |
+| `openError(config)`        | the modal reference   | Same, with an error look                                 |
+| `openConfirmation(config)` | `Observable<boolean>` | Two buttons; emits once, `false` if closed any other way |
 
 ## Config
 
-| Field               | Required | Default                | Meaning                                      |
-| ------------------- | -------- | ---------------------- | -------------------------------------------- |
-| `title`             | yes      |                        | i18n key or literal                           |
-| `message`           | yes      |                        | i18n key or literal                           |
-| `messageParameters` | no       |                        | Interpolation parameters for the message       |
-| `closeOnBackdrop`   | no       | `true`                 | Whether clicking the backdrop closes it        |
-| `confirmLabel`      | no       | the library's default  | Confirmation only                              |
-| `cancelLabel`       | no       | the library's default  | Confirmation only                              |
+`openInfo`, `openWarning` and `openError` take a `BeyNotificationModalConfig`, `openConfirmation` a
+`BeyConfirmationModalConfig`:
+
+| Field               | Required | Default                                    | Meaning                                        |
+| ------------------- | -------- | ------------------------------------------ | ---------------------------------------------- |
+| `title`             | yes      |                                            | i18n key or literal                            |
+| `message`           | yes      |                                            | i18n key or literal                            |
+| `messageParameters` | no       |                                            | Interpolation parameters for the message       |
+| `closeOnBackdrop`   | no       | `true`                                     | Whether the backdrop and Escape close it       |
+| `closeLabel`        | no       | `angular-components.modal.actions.close`   | Notification only, the label of its one button |
+| `confirmLabel`      | no       | `angular-components.modal.actions.confirm` | Confirmation only                              |
+| `cancelLabel`       | no       | `angular-components.modal.actions.cancel`  | Confirmation only                              |
 
 A confirmation resolves to `false` when it is dismissed with the close button, the backdrop or Escape, so the
 caller never has to handle those cases separately.
+
+A dialog is at most `--bey-modal-max-height` high, by default the `--bey-dialog-max-height` token: the window height
+minus a margin. Its title and its buttons stay in place, and a message longer than that scrolls between them.
 
 ## Unsaved changes
 
@@ -80,11 +88,17 @@ form module, which covers open modal forms; a route can list both.
 
 ## Theming
 
-| Variable                     | Default                |
-| ---------------------------- | ---------------------- |
-| `--bey-modal-fg`             | `--bey-text-primary`   |
-| `--bey-modal-fg-muted`       | `--bey-text-muted`     |
-| `--bey-modal-fg-message`     | `--bey-text-secondary` |
-| `--bey-modal-close-hover-bg` | `--bey-bg-active`      |
+| Variable                     | Default                   |
+| ---------------------------- | ------------------------- |
+| `--bey-modal-fg`             | `--bey-text-primary`      |
+| `--bey-modal-fg-muted`       | `--bey-text-muted`        |
+| `--bey-modal-fg-message`     | `--bey-text-secondary`    |
+| `--bey-modal-close-hover-bg` | `--bey-bg-active`         |
+| `--bey-modal-max-height`     | `--bey-dialog-max-height` |
 
-Each kind sets its own `--bey-modal-accent` and a soft variant of it for the icon background.
+The dialog renders in `document.body`, so these variables are read from `:root` or an ancestor of the dialog; one set
+nowhere takes its default.
+
+Each kind sets its own `--bey-modal-accent` and a soft variant of it, `--bey-modal-accent-soft`, for the icon
+background: `--bey-primary-soft` for an info or a confirmation, `--bey-warning-soft` for a warning and
+`--bey-danger-soft` for an error.

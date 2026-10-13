@@ -24,11 +24,18 @@ describe('PropertyAttachmentField', () => {
         expect(buildField('attachment-missing').selectedOption).toBeUndefined();
     });
 
-    it('defaults to an empty catalog and no variables', () => {
+    it('defaults to an empty catalog, no variables and the upload enabled', () => {
         const field = new PropertyAttachmentField({ id: 'logo' });
 
+        expect(field.isUploadEnabled).toBe(true);
         expect(field.options).toEqual([]);
         expect(field.variables).toEqual([]);
+    });
+
+    it('keeps the upload disabled on a copy with another value', () => {
+        const field = new PropertyAttachmentField({ id: 'logo', isUploadEnabled: false });
+
+        expect(field.withValue('attachment-1').isUploadEnabled).toBe(false);
     });
 
     it('tells a variable reference apart from an attachment id', () => {

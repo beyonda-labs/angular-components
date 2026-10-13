@@ -30,3 +30,5 @@ export interface FilePreviewConfigParameters {
     alt?: string;
     fileName?: string;
 }
+
+export const FILE_PREVIEW_TITLE_ID = 'bey-file-preview-title';

@@ -5,6 +5,7 @@ import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeToastService } from '@testing/services/fake-toast.service';
 
 import { PageItemType } from '../models/page-categories.model';
+import { PageShareAccess, PageShareGranteeType } from '../models/page-sharing.model';
 import { PageHttpService } from './page-http.service';
 
 describe('PageHttpService', () => {
@@ -46,6 +47,25 @@ describe('PageHttpService', () => {
         expect(answer('GET', '/items/trash').request.params.toString()).toBe('search=y');
         answer('GET', '/items/categories/7/path');
         expect(answer('GET', '/items/categories/tree').request.params.keys()).toEqual([]);
+    });
+
+    it('reads the folders shared with the user, and the shares and share targets of a folder', () => {
+        service.loadShared('/items', { search: 'z' }).subscribe();
+        service.findShares('/items', 'clients').subscribe();
+        service.findShareTargets('/items', 'clients').subscribe();
+
+        expect(answer('GET', '/items/shared').request.params.toString()).toBe('search=z');
+        answer('GET', '/items/categories/clients/shares');
+        answer('GET', '/items/categories/clients/share-targets');
+    });
+
+    it('replaces the shares of a folder with the success toast', () => {
+        const shares = [{ access: PageShareAccess.Read, granteeId: 'g1', granteeType: PageShareGranteeType.Group }];
+
+        service.saveShares('/items', 'clients', shares, 'shared').subscribe();
+
+        expect(answer('PUT', '/items/categories/clients/shares').request.body).toEqual({ shares });
+        expect(toast.successes()).toEqual([{ message: 'shared' }]);
     });
 
     it('narrows the category tree to the folders of one owner', () => {
@@ -129,6 +149,23 @@ describe('PageHttpService', () => {
         expect(usages).toEqual([{ id: 'a', total: 0, users: [] }]);
     });
 
+    it('asks for the usages of what several folders hold at once and answers their list', () => {
+        let usages: unknown;
+
+        service.findCategoryUsages('/items', ['clients', 'drafts']).subscribe(answered => {
+            usages = answered;
+        });
+
+        const request = httpTesting.expectOne(
+            current => current.url === 'https://api.test/api/items/categories/usages'
+        );
+
+        request.flush({ usages: [{ id: 'clients', total: 0, users: [] }] });
+
+        expect(request.request.params.toString()).toBe('ids=clients,drafts');
+        expect(usages).toEqual([{ id: 'clients', total: 0, users: [] }]);
+    });
+
     it('asks for the owners of the rows and answers their list, opening no modal when it fails', () => {
         const answers: unknown[] = [];
 
@@ -138,6 +175,19 @@ describe('PageHttpService', () => {
         httpTesting.expectOne('https://api.test/api/items/owners').flush(null, { status: 500, statusText: 'Error' });
 
         expect(answers).toEqual([[{ id: 'u1', name: 'Ada' }], 'failed']);
+        expect(TestBed.inject(FakeModalService).errors()).toEqual([]);
+    });
+
+    it('asks for the organizations of the rows and answers their list, opening no modal when it fails', () => {
+        const answers: unknown[] = [];
+        const url = 'https://api.test/api/items/organizations';
+
+        service.findOrganizations('/items').subscribe(organizations => answers.push(organizations));
+        httpTesting.expectOne(url).flush({ organizations: [{ id: 'o1', name: 'Acme' }] });
+        service.findOrganizations('/items').subscribe({ error: () => answers.push('failed') });
+        httpTesting.expectOne(url).flush(null, { status: 404, statusText: 'Not Found' });
+
+        expect(answers).toEqual([[{ id: 'o1', name: 'Acme' }], 'failed']);
         expect(TestBed.inject(FakeModalService).errors()).toEqual([]);
     });
 

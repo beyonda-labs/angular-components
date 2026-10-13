@@ -50,6 +50,18 @@ describe('ModalFormConfig', () => {
         expect(copy.title).toBe('custom.copy');
     });
 
+    it('hides the submit button of a form that only shows, also in a copy', () => {
+        const config = buildConfig({ cancelLabel: 'custom.close', isSubmitHidden: true });
+        const copy = new ModalFormConfig({ ...config, title: 'custom.copy' });
+
+        expect(config.buttons.map(button => [button.label, button.isHidden])).toEqual([
+            ['custom.close', false],
+            ['demo.modal-form.buttons.submit', true]
+        ]);
+        expect(copy.buttons.map(button => button.isHidden)).toEqual([false, true]);
+        expect(buildConfig().buttons.map(button => button.isHidden)).toEqual([false, false]);
+    });
+
     it('asks the host to close, with confirmation, from the cancel button', () => {
         const handle = { requestClose: jest.fn() } as unknown as FormHandle;
 

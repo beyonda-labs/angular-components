@@ -32,16 +32,19 @@ export function buildDuplicateForm(
     return buildSingleFieldForm(
         `${prefix}.duplicate`,
         { [FORM_SECTION]: { [nameField]: name } },
-        new FormTextField({ columns: 12, isRequired: true, key: nameField, validators })
+        new FormTextField({ columns: 12, isRequired: true, key: nameField, validators }),
+        true
     );
 }
 
 function buildSingleFieldForm(
     prefix: string,
     initialValue: PageLifecycleFormValue,
-    field: FormField
+    field: FormField,
+    allowSubmitWithoutChanges = false
 ): ModalFormConfig<PageLifecycleFormValue> {
     return new ModalFormConfig<PageLifecycleFormValue>({
+        allowSubmitWithoutChanges,
         initialValue,
         prefix,
         sections: [

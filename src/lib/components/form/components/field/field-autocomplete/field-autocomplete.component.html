@@ -6,7 +6,7 @@
             autocomplete="off"
             role="combobox"
             type="text"
-            [attr.aria-controls]="field().key + '-options'"
+            [attr.aria-controls]="controlsId()"
             [attr.aria-describedby]="describedBy()"
             [attr.aria-expanded]="isPanelVisible()"
             [attr.aria-invalid]="isInvalid() || null"
@@ -47,7 +47,7 @@
     </div>
 
     @if (isPanelVisible()) {
-        <div #panel class="bey-form-autocomplete-panel" role="listbox" [id]="field().key + '-options'">
+        <div #panel class="bey-form-autocomplete-panel" role="listbox" [id]="optionsId()">
             @for (option of filteredOptions(); track option.value) {
                 <button
                     class="bey-form-autocomplete-option"
@@ -62,7 +62,15 @@
                     {{ optionLabel(option) }}
                 </button>
             } @empty {
-                <p class="bey-form-autocomplete-empty">{{ emptyKey() | translate }}</p>
+                @if (!hasMore()) {
+                    <p class="bey-form-autocomplete-empty">{{ emptyKey() | translate }}</p>
+                }
+            }
+
+            @if (hasMore()) {
+                <p class="bey-form-autocomplete-more">
+                    {{ 'angular-components.form.autocomplete-field.more' | translate }}
+                </p>
             }
         </div>
     }

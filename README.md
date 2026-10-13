@@ -77,23 +77,35 @@ const form = new BeyFormConfig({
 
 ## Components
 
-| Component       | Selector                | Status                      |
-| --------------- | ----------------------- | --------------------------- |
-| Account data    | `<bey-account-data>`    | Stable                      |
-| Form            | `<bey-form>`            | Stable                      |
-| Header          | `<bey-header>`          | Stable                      |
-| Left Menu       | `<bey-left-menu>`       | Stable                      |
-| Password change | `<bey-password-change>` | Stable                      |
-| Table           | `<bey-table>`           | Stable                      |
-| Users           | `<bey-users>`           | Stable                      |
-| Style Guide     | `<bey-style-guide>`     | Demo, secondary entry point |
+| Component            | Selector                                                            | Status                      |
+| -------------------- | ------------------------------------------------------------------- | --------------------------- |
+| Account data         | `<bey-account-data>`                                                | Stable                      |
+| Cards                | `<bey-card>`, `<bey-card-list>`, `<bey-card-stats>`, `<bey-avatar>` | Stable                      |
+| Edit lock notice     | `<bey-edit-lock-notice>`                                            | Stable                      |
+| Form                 | `<bey-form>`                                                        | Stable                      |
+| Groups               | `<bey-groups>`                                                      | Stable                      |
+| Header               | `<bey-header>`                                                      | Stable                      |
+| Left Menu            | `<bey-left-menu>`                                                   | Stable                      |
+| Notice               | `<bey-notice>`                                                      | Stable                      |
+| Organization summary | `<bey-organization-summary>`                                        | Stable                      |
+| Organizations        | `<bey-organizations>`                                               | Stable                      |
+| Password change      | `<bey-password-change>`                                             | Stable                      |
+| Roles                | `<bey-roles>`                                                       | Stable                      |
+| Table                | `<bey-table>`                                                       | Stable                      |
+| Users                | `<bey-users>`                                                       | Stable                      |
+| Style Guide          | `<bey-style-guide>`                                                 | Demo, secondary entry point |
 
 The interactive style guide ships as `@beyonda-labs/angular-components/style-guide`, a secondary entry point:
 `import { BeyStyleGuideComponent } from '@beyonda-labs/angular-components/style-guide'`. Importing a component
-never pulls the demo in. Its sources live in `style-guide/src/<module>/`, one folder per module. `bey-style-guide`
+never pulls the demo in. Its sources live in `style-guide/src/<module>/`, one folder per module, and the demo of each
+page of a module that gathers pages, as `administration` does, in `style-guide/src/<module>/<page>/`. `bey-style-guide`
 loads its own texts from `assets/angular-components/i18n-style-guide/` for the current language and every change:
 copy that folder in `angular.json` (`input: node_modules/@beyonda-labs/angular-components/assets/i18n-style-guide`,
-`output: assets/angular-components/i18n-style-guide`) and render the component.
+`output: assets/angular-components/i18n-style-guide`) and render the component. Each module is a section that folds
+under its title, collapsed at first and rendered only while open, its title pointing at it with `aria-controls` only
+then; "Expand all" and "Collapse all" at the top open or close every one, the sections left open are remembered in
+`sessionStorage` for the session, and a hash naming a module (`#tabs`, `#administration`) opens its section and
+scrolls to it, on arrival or when a link changes it.
 
 The specs of a consuming app take their helpers from `@beyonda-labs/angular-components/testing`, a second
 secondary entry point that only specs import: `provideBeyTesting(config?)`, the test counterpart of
@@ -108,17 +120,26 @@ Two plain functions are public so an app builds the same texts and keys as the l
 Component documentation:
 
 -   [Account data](src/lib/components/account-data/docs/account-data-readme.md)
+-   [Administration](src/lib/components/administration/docs/administration-readme.md):
+    [Users](src/lib/components/administration/users/docs/users-readme.md),
+    [Groups](src/lib/components/administration/groups/docs/groups-readme.md),
+    [Roles](src/lib/components/administration/roles/docs/roles-readme.md),
+    [Organizations](src/lib/components/administration/organizations/docs/organizations-readme.md) and
+    [Organization summary](src/lib/components/administration/organization-summary/docs/organization-summary-readme.md)
+-   [Cards](src/lib/components/cards/docs/cards-readme.md)
+-   [Edit lock notice](src/lib/components/edit-lock-notice/docs/edit-lock-notice-readme.md)
 -   [Form](src/lib/components/form/docs/form-readme.md)
 -   [Header](src/lib/components/header/docs/header-readme.md)
 -   [Left Menu](src/lib/components/left-menu/docs/left-menu-readme.md)
+-   [Notice](src/lib/components/notice/docs/notice-readme.md)
 -   [Password change](src/lib/components/password-change/docs/password-change-readme.md)
 -   [Table](src/lib/components/table/docs/table-readme.md)
--   [Users](src/lib/components/users/docs/users-readme.md)
 
 Service documentation:
 
 -   [Account](src/lib/services/account/docs/account-readme.md)
 -   [App](src/lib/services/app/docs/app-readme.md)
+-   [Edit lock](src/lib/services/edit-lock/docs/edit-lock-readme.md)
 -   [Environment](src/lib/services/environment/docs/environment-readme.md)
 -   [Http](src/lib/services/http/docs/http-readme.md)
 -   [Password policy](src/lib/services/password-policy/docs/password-policy-readme.md)

@@ -1,0 +1,20 @@
+{
+    "angular-components": {
+        "http": {
+            "error": {
+                "edit-locks": {
+                    "held": "{{holderName}} lo está editando: tus cambios no se han guardado.",
+                    "release-forbidden": "Solo pueden liberar la edición quien lo está editando, un administrador de su organización o un superadministrador.",
+                    "released": "Se ha liberado tu edición, así que tus cambios no se han guardado aquí. Guárdalos como copia o recárgalo para volver a editarlo."
+                }
+            },
+            "title": {
+                "edit-locks": {
+                    "held": "En edición",
+                    "release-forbidden": "No se puede liberar",
+                    "released": "Edición liberada"
+                }
+            }
+        }
+    }
+}

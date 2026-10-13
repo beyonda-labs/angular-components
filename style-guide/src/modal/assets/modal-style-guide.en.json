@@ -36,6 +36,76 @@
                     "title": "Action confirmed"
                 }
             },
+            "long-form": {
+                "address": {
+                    "city": {
+                        "label": "City",
+                        "placeholder": "Type the city"
+                    },
+                    "country": {
+                        "label": "Country",
+                        "placeholder": "Type the country"
+                    },
+                    "label": "Address",
+                    "postcode": {
+                        "label": "Postcode",
+                        "placeholder": "Type the postcode"
+                    },
+                    "street": {
+                        "label": "Street",
+                        "placeholder": "Type the street and number"
+                    }
+                },
+                "buttons": {
+                    "cancel": "Cancel",
+                    "submit": "Save"
+                },
+                "example": "A dialog never grows past the window: open a form longer than the screen, and its title and its buttons stay in place while the fields scroll between them, on a phone as well.",
+                "notes": {
+                    "label": "Notes",
+                    "notes": {
+                        "label": "Notes",
+                        "placeholder": "Anything worth knowing"
+                    }
+                },
+                "open": "Open a long form",
+                "person": {
+                    "email": {
+                        "label": "Email",
+                        "placeholder": "Type the email"
+                    },
+                    "label": "Person",
+                    "name": {
+                        "label": "Name",
+                        "placeholder": "Type the name"
+                    },
+                    "phone": {
+                        "label": "Phone",
+                        "placeholder": "Type the phone number"
+                    },
+                    "surname": {
+                        "label": "Surname",
+                        "placeholder": "Type the surname"
+                    }
+                },
+                "sent": "The long form has been saved.",
+                "title": "Contact card",
+                "work": {
+                    "company": {
+                        "label": "Company",
+                        "placeholder": "Type the company"
+                    },
+                    "department": {
+                        "label": "Department",
+                        "placeholder": "Type the department"
+                    },
+                    "label": "Work",
+                    "position": {
+                        "label": "Position",
+                        "placeholder": "Type the position"
+                    }
+                }
+            },
             "unsaved-changes": {
                 "example": "A route guard over tracked signals: tick the box to pretend there are unsaved changes, then try to leave. While it is ticked, closing or reloading the tab asks as well.",
                 "leave": "Leave this page",

@@ -7,7 +7,7 @@ export interface PageOwnedItem extends PageItem {
 
 export interface PageOwner {
     id: string;
-    name: string;
+    name: string | null;
 }
 
 export interface PageOwnersAnswer {

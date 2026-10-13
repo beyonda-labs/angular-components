@@ -1,5 +1,21 @@
-<h3 class="bey-style-guide-section-title">{{ titleKey() | translate }}</h3>
+<div class="bey-style-guide-section" [id]="key()">
+    <h3 class="bey-style-guide-section-heading">
+        <button
+            class="bey-style-guide-section-toggle"
+            type="button"
+            [attr.aria-controls]="controlsId()"
+            [attr.aria-expanded]="isOpen()"
+            [class.is-expanded]="isOpen()"
+            (click)="toggle()"
+        >
+            <span class="bey-style-guide-section-title">{{ titleKey() | translate }}</span>
+            <fa-icon class="bey-style-guide-section-chevron" aria-hidden="true" [icon]="chevronIcon"></fa-icon>
+        </button>
+    </h3>
 
-<div class="bey-style-guide-section-card">
-    <ng-content></ng-content>
+    @if (isOpen()) {
+        <div class="bey-style-guide-section-body" [id]="bodyId()">
+            <ng-container [ngTemplateOutlet]="content()"></ng-container>
+        </div>
+    }
 </div>

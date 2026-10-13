@@ -63,8 +63,44 @@
                     },
                     "placeholder": "Disabled typeahead"
                 },
+                "autocomplete4": {
+                    "label": "Typeahead with many options",
+                    "options": {
+                        "option1": "Item 1",
+                        "option10": "Item 10",
+                        "option11": "Item 11",
+                        "option12": "Item 12",
+                        "option13": "Item 13",
+                        "option14": "Item 14",
+                        "option15": "Item 15",
+                        "option16": "Item 16",
+                        "option17": "Item 17",
+                        "option18": "Item 18",
+                        "option19": "Item 19",
+                        "option2": "Item 2",
+                        "option20": "Item 20",
+                        "option21": "Item 21",
+                        "option22": "Item 22",
+                        "option23": "Item 23",
+                        "option24": "Item 24",
+                        "option25": "Item 25",
+                        "option26": "Item 26",
+                        "option27": "Item 27",
+                        "option28": "Item 28",
+                        "option29": "Item 29",
+                        "option3": "Item 3",
+                        "option30": "Item 30",
+                        "option4": "Item 4",
+                        "option5": "Item 5",
+                        "option6": "Item 6",
+                        "option7": "Item 7",
+                        "option8": "Item 8",
+                        "option9": "Item 9"
+                    },
+                    "placeholder": "Search among thirty options"
+                },
                 "label": "Searchable fields",
-                "tooltip": "Typeahead variants with basic, required and disabled behaviour"
+                "tooltip": "Typeahead variants with basic, required and disabled behaviour, and one with thirty options to scroll"
             },
             "section-checkbox": {
                 "checkbox1": {
@@ -81,6 +117,59 @@
                 },
                 "label": "Checkbox Fields",
                 "tooltip": "Checkbox variants with basic, required, disabled and switch states"
+            },
+            "section-checkbox-sections": {
+                "documents": {
+                    "label": "Documents"
+                },
+                "documents-create": {
+                    "description": "Can fill in a template to make a document.",
+                    "label": "Create"
+                },
+                "documents-delete": {
+                    "label": "Delete"
+                },
+                "documents-read": {
+                    "description": "Can see the documents.",
+                    "label": "See"
+                },
+                "folders": {
+                    "label": "Folders"
+                },
+                "folders-read": {
+                    "description": "Can see the folders and what they hold.",
+                    "label": "See"
+                },
+                "folders-share": {
+                    "description": "Can share a folder with groups and users.",
+                    "label": "Share"
+                },
+                "label": "Checkbox Sections",
+                "sections1": {
+                    "label": "Permissions:"
+                },
+                "sections2": {
+                    "label": "Permissions of a base role (read-only):"
+                },
+                "templates": {
+                    "label": "Templates"
+                },
+                "templates-delete": {
+                    "label": "Delete"
+                },
+                "templates-edit": {
+                    "description": "Can change the templates.",
+                    "label": "Edit"
+                },
+                "templates-publish": {
+                    "description": "Can make a template available to everyone.",
+                    "label": "Publish"
+                },
+                "templates-read": {
+                    "description": "Can see the templates.",
+                    "label": "See"
+                },
+                "tooltip": "Long checklists folded by section, with a counter, select all and a description per checkbox"
             },
             "section-chips": {
                 "chips1": {
@@ -194,6 +283,24 @@
                     "placeholder": "Every rule on"
                 },
                 "tooltip": "Password fields with a length validator, a policy, toggle, required and disabled states"
+            },
+            "section-picked-list": {
+                "label": "Picked lists",
+                "people": {
+                    "empty": "This group has no members yet.",
+                    "label": "Members",
+                    "placeholder": "Search a person by name or email"
+                },
+                "read-only-people": {
+                    "empty": "This group has no members yet.",
+                    "label": "Read-only members"
+                },
+                "roles": {
+                    "empty": "This group has no roles yet.",
+                    "label": "Roles",
+                    "placeholder": "Pick a role"
+                },
+                "tooltip": "A removable list holding ids, fed by a search on top: from the server, debounced and saying when there are more matches than it shows, or from its own options. Past seven rows the list scrolls under its search"
             },
             "section-radio": {
                 "label": "Radio Fields",

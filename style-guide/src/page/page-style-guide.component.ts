@@ -10,6 +10,9 @@ import {
     BeyPageConfig,
     BeyPageFormConfig,
     BeyPageHeaderConfig,
+    beyPageOrganizationCell,
+    beyPageOrganizationColumn,
+    BeyPageOrganizationItem,
     BeyPageOwnedItem,
     beyPageOwnerCell,
     beyPageOwnerColumn,
@@ -29,7 +32,7 @@ import { TranslateModule } from '@ngx-translate/core';
 const PREFIX = 'angular-components-style-guide.page';
 const FOLDERS_PREFIX = `${PREFIX}.folders`;
 
-interface Product extends BeyPageOwnedItem {
+interface Product extends BeyPageOrganizationItem, BeyPageOwnedItem {
     category: string;
     name: string;
     price: number;
@@ -92,7 +95,8 @@ export class PageStyleGuideComponent {
                 new BeyTableColumn({ isHideable: false, isSortable: true, key: 'name', width: 4 }),
                 new BeyTableColumn({ isSortable: true, key: 'category', width: 3 }),
                 new BeyTableColumn({ isSortable: true, key: 'price', width: 2 }),
-                beyPageOwnerColumn()
+                beyPageOwnerColumn(),
+                beyPageOrganizationColumn()
             ],
             height: '24rem',
             loadRow: product => this.loadRow(product),
@@ -103,6 +107,7 @@ export class PageStyleGuideComponent {
                     new BeySearchField({ key: 'category', type: BeySearchFieldType.Text }),
                     new BeySearchField({ key: 'price', type: BeySearchFieldType.Number })
                 ],
+                isOrganizationFilterEnabled: true,
                 isOwnerFilterEnabled: true,
                 mainField: 'name'
             }),
@@ -142,7 +147,8 @@ export class PageStyleGuideComponent {
             new BeyTextTableCell({ content: name, tooltip: name }),
             new BeyTextTableCell({ content: category, tooltip: category }),
             new BeyTextTableCell({ content: toPrice(price) }),
-            beyPageOwnerCell(product)
+            beyPageOwnerCell(product),
+            beyPageOrganizationCell(product)
         ];
     }
 }

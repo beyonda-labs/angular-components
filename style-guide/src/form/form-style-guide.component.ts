@@ -14,8 +14,8 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 
 import { StyleGuideButton } from '../models/style-guide-button.model';
-import { STYLE_GUIDE_REGIONS, StyleGuideRegion } from './form-style-guide.dependent-sections';
 import { buildStyleGuideSections } from './form-style-guide.sections';
+import { STYLE_GUIDE_REGIONS, StyleGuideRegion } from './models/form-style-guide.model';
 
 const PREFIX = 'angular-components-style-guide.form';
 
@@ -52,6 +52,15 @@ export class FormStyleGuideComponent {
             'section-radio': { radio1: '', radio2: '' },
             'section-textarea': { textarea1: '', textarea2: '', textarea3: 'Disabled long text' },
             'section-checkbox': { checkbox1: false, checkbox2: false, checkbox3: true, checkbox4: false },
+            'section-picked-list': {
+                people: ['p1', 'p2'],
+                readOnlyPeople: ['p1', 'p3', 'p4', 'p5', 'p6', 'p7', 'p8', 'p9', 'p10', 'p11', 'p12'],
+                roles: []
+            },
+            'section-checkbox-sections': {
+                sections1: ['templates.read'],
+                sections2: ['templates.read', 'templates.edit', 'documents.read']
+            },
             'section-chips': { chips1: [], chips2: [], chips3: ['Angular', 'TypeScript'] },
             'section-dependent': { plan: '', region: '', seats: null }
         },

@@ -39,10 +39,28 @@ export type {
 export type { PageHeaderConfigParameters as BeyPageHeaderConfigParameters } from './models/page-header.model';
 export type { PageItem as BeyPageItem } from './models/page-item.model';
 export {
+    pageOrganizationCell as beyPageOrganizationCell,
+    pageOrganizationColumn as beyPageOrganizationColumn
+} from './functions/page-organization-column';
+export type {
+    PageOrganization as BeyPageOrganization,
+    PageOrganizationItem as BeyPageOrganizationItem
+} from './models/page-organization.model';
+export {
     pageOwnerCell as beyPageOwnerCell,
     pageOwnerColumn as beyPageOwnerColumn
 } from './functions/page-owner-column';
 export type { PageOwnedItem as BeyPageOwnedItem, PageOwner as BeyPageOwner } from './models/page-owner.model';
+export {
+    PageShareAccess as BeyPageShareAccess,
+    PageShareGranteeType as BeyPageShareGranteeType
+} from './models/page-sharing.model';
+export type {
+    PageInheritedShare as BeyPageInheritedShare,
+    PageShare as BeyPageShare,
+    PageShareTarget as BeyPageShareTarget
+} from './models/page-sharing.model';
+export type { PageCategoryPathEntry as BeyPageCategoryPathEntry } from './models/page-state.model';
 export { SearchSortDirection as BeySearchSortDirection } from './models/page-search.model';
 export type { PageSearch as BeyPageSearch, SearchSort as BeySearchSort } from './models/page-search.model';
 export {
@@ -50,6 +68,7 @@ export {
     PageTableSearchConfig as BeyPageTableSearchConfig
 } from './models/page-table.model';
 export type {
+    PageColumnContext as BeyPageColumnContext,
     PageTableConfigParameters as BeyPageTableConfigParameters,
     PageTableSearchConfigParameters as BeyPageTableSearchConfigParameters
 } from './models/page-table.model';

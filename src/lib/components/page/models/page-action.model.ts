@@ -31,7 +31,9 @@ export enum PageStandardAction {
     EditCategory = 'edit-category',
     EmptyTrash = 'empty-trash',
     Move = 'move',
-    RestoreTrashItem = 'restore-trash-item'
+    RestoreTrashItem = 'restore-trash-item',
+    Share = 'share',
+    View = 'view'
 }
 
 export type PageActionConfirmation<TItem extends PageItem = PageItem> = (
@@ -39,7 +41,10 @@ export type PageActionConfirmation<TItem extends PageItem = PageItem> = (
     confirmation: ConfirmationModalConfig
 ) => ConfirmationModalConfig | Observable<ConfirmationModalConfig>;
 
-export type PageStandardActionDefaults = Pick<PageActionParameters, 'icon' | 'scope' | 'type' | 'zone'>;
+export type PageStandardActionDefaults = Pick<
+    PageActionParameters,
+    'icon' | 'label' | 'scope' | 'tooltip' | 'type' | 'zone'
+>;
 
 export class PageAction<TItem extends PageItem = PageItem> {
     key: string;
@@ -124,5 +129,12 @@ export const PAGE_STANDARD_ACTION_DEFAULTS: Record<PageStandardAction, PageStand
     [PageStandardAction.EditCategory]: { scope: PageActionScope.Single, zone: PageActionZone.Left },
     [PageStandardAction.EmptyTrash]: { scope: PageActionScope.Global, zone: PageActionZone.Right },
     [PageStandardAction.Move]: { scope: PageActionScope.Item, zone: PageActionZone.Menu },
-    [PageStandardAction.RestoreTrashItem]: { scope: PageActionScope.Item, zone: PageActionZone.Left }
+    [PageStandardAction.RestoreTrashItem]: { scope: PageActionScope.Item, zone: PageActionZone.Left },
+    [PageStandardAction.Share]: { scope: PageActionScope.Single, zone: PageActionZone.Menu },
+    [PageStandardAction.View]: {
+        label: 'angular-components.page.actions.view.label',
+        scope: PageActionScope.Single,
+        tooltip: 'angular-components.page.actions.view.tooltip',
+        zone: PageActionZone.Left
+    }
 };

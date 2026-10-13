@@ -6,7 +6,7 @@ import {
     BeyFormTextField,
     BeyModalFormConfig
 } from '@beyonda-labs/angular-components';
-import { of } from 'rxjs';
+import { config as rxjsConfig, of, throwError } from 'rxjs';
 
 import { FakeModalFormService } from './fake-modal-form.service';
 
@@ -53,5 +53,34 @@ describe('FakeModalFormService', () => {
         modalForm.open(buildConfig());
 
         expect(modalForm.canDeactivate()).toBe(true);
+    });
+
+    describe('when the request of a form fails', () => {
+        let previousHandler: typeof rxjsConfig.onUnhandledError;
+        let unhandled: jest.Mock;
+
+        beforeEach(() => {
+            previousHandler = rxjsConfig.onUnhandledError;
+            unhandled = jest.fn();
+            rxjsConfig.onUnhandledError = unhandled;
+        });
+
+        afterEach(() => {
+            rxjsConfig.onUnhandledError = previousHandler;
+        });
+
+        it('keeps the form open, leaving no error unhandled', async () => {
+            const close = jest.fn();
+            const refused = throwError(() => new Error('refused'));
+
+            modalForm.openWithRequest(buildConfig(), () => refused);
+            modalForm.forms()[0].onSubmit?.({ contact: { name: 'Ada' } }, { close } as unknown as BeyFormHandle);
+            await new Promise(resolve => {
+                setTimeout(resolve);
+            });
+
+            expect(unhandled).not.toHaveBeenCalled();
+            expect(close).not.toHaveBeenCalled();
+        });
     });
 });

@@ -40,10 +40,14 @@
                 {
                     "files": ["src/lib/assets/styles/**/*.css"],
                     "rules": {
-                        "scale-unlimited/declaration-strict-value": null,
-                        "declaration-property-value-disallowed-list": null,
                         "selector-class-pattern": null,
                         "custom-property-pattern": null
+                    }
+                },
+                {
+                    "files": ["src/lib/assets/styles/tokens.css", "src/lib/assets/styles/bs-overrides.css"],
+                    "rules": {
+                        "scale-unlimited/declaration-strict-value": null
                     }
                 },
                 {

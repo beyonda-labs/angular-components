@@ -44,25 +44,39 @@ colours as bare channels, for the rules that need `rgba()`.
 
 ### Surfaces
 
-| Token              | Light            | Dark             | Used for                         |
-| ------------------ | ---------------- | ---------------- | -------------------------------- |
-| `--bey-bg-page`    | `--bey-white`    | `--bey-black`    | The page behind everything       |
-| `--bey-bg-surface` | `--bey-gray-50`  | `--bey-gray-900` | Cards, menus, floating panels    |
-| `--bey-bg-muted`   | `--bey-gray-100` | `--bey-gray-700` | Secondary areas                  |
-| `--bey-bg-subtle`  | `--bey-gray-50`  | `--bey-gray-800` | Barely separated from the page   |
-| `--bey-bg-hover`   | `--bey-gray-100` | `--bey-gray-700` | Hover on any interactive surface |
-| `--bey-bg-active`  | `--bey-gray-200` | `--bey-gray-600` | Selected or pressed              |
-| `--bey-bg-inverse` | `--bey-gray-900` | `--bey-white`    | Inverted areas                   |
+| Token                       | Light                  | Dark                   | Used for                                           |
+| --------------------------- | ---------------------- | ---------------------- | -------------------------------------------------- |
+| `--bey-bg-page`             | `--bey-white`          | `--bey-black`          | The page behind everything                         |
+| `--bey-bg-page-translucent` | `--bey-bg-page` at 70% | `--bey-bg-page` at 70% | What floats over the page and lets it show through |
+| `--bey-bg-surface`          | `--bey-gray-50`        | `--bey-gray-900`       | Cards, menus, floating panels                      |
+| `--bey-bg-muted`            | `--bey-gray-100`       | `--bey-gray-700`       | Secondary areas                                    |
+| `--bey-bg-subtle`           | `--bey-gray-50`        | `--bey-gray-800`       | Barely separated from the page                     |
+| `--bey-bg-hover`            | `--bey-gray-100`       | `--bey-gray-700`       | Hover on any interactive surface                   |
+| `--bey-bg-active`           | `--bey-gray-200`       | `--bey-gray-600`       | Selected or pressed                                |
+| `--bey-bg-inverse`          | `--bey-gray-900`       | `--bey-white`          | Inverted areas                                     |
+
+`--bey-bg-page-translucent` is the page over transparent (`color-mix(in srgb, var(--bey-bg-page) 70%, transparent)`),
+declared again under `body.dark` so it reads the dark page: the pill of `bey-floating-preferences` and the loading
+overlay.
 
 ### Text
 
-| Token                  | Light            | Dark             | Used for                     |
-| ---------------------- | ---------------- | ---------------- | ---------------------------- |
-| `--bey-text-primary`   | `--bey-gray-900` | `--bey-gray-50`  | Body copy and headings       |
-| `--bey-text-secondary` | `--bey-gray-700` | `--bey-gray-400` | Supporting copy              |
-| `--bey-text-muted`     | `--bey-gray-500` | `--bey-gray-500` | Labels, placeholders, hints  |
-| `--bey-text-disabled`  | `--bey-gray-400` | `--bey-gray-600` | Disabled controls            |
-| `--bey-text-inverse`   | `--bey-white`    | `--bey-gray-900` | Text over an inverse surface |
+| Token                   | Light                                | Dark                                 | Used for                               |
+| ----------------------- | ------------------------------------ | ------------------------------------ | -------------------------------------- |
+| `--bey-text-primary`    | `--bey-gray-900`                     | `--bey-gray-50`                      | Body copy and headings                 |
+| `--bey-text-secondary`  | `--bey-gray-700`                     | `--bey-gray-400`                     | Supporting copy                        |
+| `--bey-text-muted`      | `--bey-gray-500`                     | `--bey-gray-500`                     | Labels, placeholders, hints            |
+| `--bey-text-disabled`   | `--bey-gray-400`                     | `--bey-gray-600`                     | Disabled controls                      |
+| `--bey-text-inverse`    | `--bey-white`                        | `--bey-gray-900`                     | Text over an inverse surface           |
+| `--bey-text-link`       | `--bey-primary`                      | `--bey-primary`                      | A text button that reads as a link     |
+| `--bey-text-link-hover` | `--bey-primary`, 25% `--bey-bg-page` | `--bey-primary`, 25% `--bey-bg-page` | That link under the pointer or focused |
+
+`--bey-text-link` is the primary colour, black in the light theme and white in the dark one, so a link reads in the
+colour of the actions around it. `--bey-text-link-hover` mixes it with a quarter of the page
+(`color-mix(in srgb, var(--bey-primary) 75%, var(--bey-bg-page))`), the same expression in both themes, so the hover
+softens toward the page in each; the underline a link takes under the pointer and on focus stays the main cue. Both
+are declared again under `body.dark`, so they read the dark primary and page. An app that wants its links in
+another colour sets `--bey-text-link` and `--bey-text-link-hover`, or the variables of a single module.
 
 ### Borders
 
@@ -74,14 +88,28 @@ colours as bare channels, for the rules that need `rgba()`.
 
 ### Intent
 
-| Token              | Light          | Dark           |
-| ------------------ | -------------- | -------------- |
-| `--bey-primary`    | `--bey-black`  | `--bey-white`  |
-| `--bey-primary-fg` | `--bey-white`  | `--bey-black`  |
-| `--bey-secondary`  | `#949b98`      | `#7a8380`      |
-| `--bey-success`    | `--bey-teal`   | `--bey-teal`   |
-| `--bey-danger`     | `--bey-red`    | `--bey-red`    |
-| `--bey-warning`    | `--bey-orange` | `--bey-orange` |
+| Token                | Light                             | Dark                              |
+| -------------------- | --------------------------------- | --------------------------------- |
+| `--bey-primary`      | `--bey-black`                     | `--bey-white`                     |
+| `--bey-primary-fg`   | `--bey-white`                     | `--bey-black`                     |
+| `--bey-primary-soft` | `--bey-primary` at 8%             | `--bey-primary` at 8%             |
+| `--bey-secondary`    | `#949b98`                         | `#7a8380`                         |
+| `--bey-success`      | `--bey-teal`                      | `--bey-teal`                      |
+| `--bey-success-soft` | `--bey-success` at 8%             | `--bey-success` at 8%             |
+| `--bey-danger`       | `--bey-red`                       | `--bey-red`                       |
+| `--bey-danger-fg`    | `--bey-white`                     | `--bey-black`                     |
+| `--bey-danger-hover` | `--bey-danger`, 15% `--bey-black` | `--bey-danger`, 15% `--bey-white` |
+| `--bey-danger-soft`  | `--bey-danger` at 10%             | `--bey-danger` at 10%             |
+| `--bey-warning`      | `--bey-orange`                    | `--bey-orange`                    |
+| `--bey-warning-soft` | `--bey-warning` at 12%            | `--bey-warning` at 12%            |
+
+`--bey-danger-fg` is the text on a danger button, and `--bey-danger-hover` its background under the pointer or
+pressed: the button of a form whose submit deletes for good (`isSubmitDanger` of `BeyModalFormConfig`).
+
+The `-soft` tokens are the soft accent of each intent, its colour over transparent
+(`color-mix(in srgb, var(--bey-primary) 8%, transparent)`), a tint that reads on any surface of both themes: the
+background of the icon of a dialog, the focus ring of the left menu. They are declared again under `body.dark`, so
+they read the dark colours.
 
 ### Highlight
 
@@ -150,6 +178,30 @@ not `p-4`.
 | `--bey-line-height-base`  | `1.35` | UI text              |
 | `--bey-line-height-loose` | `1.6`  | Paragraphs           |
 
+| Token                         | Value     | Used for                           |
+| ----------------------------- | --------- | ---------------------------------- |
+| `--bey-letter-spacing-tight`  | `-0.03em` | Large titles                       |
+| `--bey-letter-spacing-snug`   | `-0.01em` | Small bold titles                  |
+| `--bey-letter-spacing-wide`   | `0.04em`  | Initials                           |
+| `--bey-letter-spacing-wider`  | `0.08em`  | Uppercase labels                   |
+| `--bey-letter-spacing-widest` | `0.1em`   | Spaced glyphs, such as an ellipsis |
+
+## Layout
+
+| Token                         | Value                                         | Used for                                         |
+| ----------------------------- | --------------------------------------------- | ------------------------------------------------ |
+| `--bey-dialog-margin`         | `--bey-space-2xl`                             | Space a dialog keeps above and below it          |
+| `--bey-dialog-max-height`     | `calc(100dvh - 2 * var(--bey-dialog-margin))` | Tallest a dialog grows; its body scrolls past it |
+| `--bey-grid-column-min-width` | `10rem`                                       | Narrowest column of a grid that fits its width   |
+| `--bey-control-height`        | the height of a text button                   | Least height of a row that may hold buttons      |
+
+Every dialog of the library, a form or not, stops at `--bey-dialog-max-height`: its header and its buttons stay
+in place and its body scrolls. The height reads the dynamic viewport, so the toolbars of a phone browser never hide
+its buttons.
+
+`--bey-control-height` is the height of a text button (its text, its padding and its border). The header of a page
+keeps it as its least height, so its title stays in place whether actions show or not.
+
 ## Borders, elevation and motion
 
 | Token                      | Light                                           | Dark                 |
@@ -176,6 +228,7 @@ Aligned with the Bootstrap scale, so a library panel never lands between two of 
 | `--bey-z-base`     | `1`    | Inside the normal flow                            |
 | `--bey-z-raised`   | `10`   | Anchored elements, chevrons                       |
 | `--bey-z-sticky`   | `20`   | Sticky headers and toolbars                       |
+| `--bey-z-toolbar`  | `30`   | A toolbar whose panels open over sticky headers   |
 | `--bey-z-dropdown` | `1000` | Menus and pickers                                 |
 | `--bey-z-modal`    | `1050` | Dialogs and their backdrop                        |
 | `--bey-z-loading`  | `1070` | The full-screen loading overlay, over the dialogs |
@@ -218,6 +271,10 @@ override needs more specificity:
     --bey-left-menu-title-font-size: var(--bey-font-size-lg);
 }
 ```
+
+A dialog renders in `document.body`, outside every element of the app, so its variables, such as
+`--bey-modal-max-height` or `--bey-modal-form-fg`, are not declared by the dialog at all: it reads them with their
+default as the fallback, and a value set on `:root` reaches it.
 
 ## Where the scales come from
 

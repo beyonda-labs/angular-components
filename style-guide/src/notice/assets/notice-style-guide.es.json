@@ -1,0 +1,20 @@
+{
+    "angular-components-style-guide": {
+        "notice": {
+            "actions": {
+                "dismiss": "Ahora no",
+                "reload": "Recargar"
+            },
+            "example": "Un aviso en línea a todo el ancho de su contenedor, uno por variante: información, advertencia con sus acciones y peligro.",
+            "messages": {
+                "danger": "Este elemento se ha eliminado mientras lo consultabas.",
+                "info": "Este elemento está compartido con toda tu organización.",
+                "warning": "{{name}} ha cambiado este elemento hace un momento."
+            },
+            "toast": {
+                "dismiss": "El aviso se queda como está",
+                "reload": "El elemento se recargaría ahora"
+            }
+        }
+    }
+}

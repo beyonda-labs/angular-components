@@ -13,7 +13,6 @@ import {
 import { of } from 'rxjs';
 
 import { PasswordPolicy } from '../../../../services/password-policy/models/password-policy.model';
-import { FormFieldState } from '../../form.component';
 import { FormAutocompleteField } from '../../models/fields/form-autocomplete-field.model';
 import { FormCheckboxField } from '../../models/fields/form-checkbox-field.model';
 import { FormCheckboxGroupField } from '../../models/fields/form-checkbox-group-field.model';
@@ -30,6 +29,7 @@ import { FormTextField } from '../../models/fields/form-text-field.model';
 import { FormTextVariableField } from '../../models/fields/form-text-variable-field.model';
 import { FormTextareaField } from '../../models/fields/form-textarea-field.model';
 import { FormField, FormFieldOption } from '../../models/form-field.model';
+import { FormFieldState } from '../../models/form-field-state.model';
 import {
     FormFieldAsyncValidator,
     FormFieldCustomValidator,
@@ -40,7 +40,14 @@ import {
 import { FormService } from '../../services/form.service';
 import { FormFieldComponent } from './field.component';
 
-const VALID: FormFieldState = { isDisabled: false, isHidden: false, isRequired: false, isValid: true, options: [] };
+const VALID: FormFieldState = {
+    excludedValues: [],
+    isDisabled: false,
+    isHidden: false,
+    isRequired: false,
+    isValid: true,
+    options: []
+};
 
 describe('FormFieldComponent', () => {
     let fixture: ComponentFixture<FormFieldComponent>;
@@ -66,35 +73,29 @@ describe('FormFieldComponent', () => {
             isRequired: true,
             isValid: false
         });
-        const label = fixture.nativeElement.querySelector('label') as HTMLLabelElement;
 
-        expect(label.textContent?.trim()).toBe('demo.contact.name.label');
-        expect(label.htmlFor).toBe('name');
+        expect(controlByName(fixture, 'demo.contact.name.label').id).toBe('name');
         expect(fixture.nativeElement.textContent).toContain('*');
     });
 
     it('reads the texts of a camelCase key from its kebab-case segment and keeps the key as the control id', async () => {
         await render(new FormTextField({ key: 'valueString', isLabelTooltipVisible: true }));
-        const label = fixture.nativeElement.querySelector('label') as HTMLLabelElement;
-        const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+        const input = controlByName(fixture, 'demo.contact.value-string.label');
 
-        expect(label.textContent?.trim()).toBe('demo.contact.value-string.label');
-        expect(label.htmlFor).toBe('valueString');
+        expect(input.id).toBe('valueString');
         expect(input.placeholder).toBe('demo.contact.value-string.placeholder');
     });
 
     it('shows the label the field is given instead of the one of its prefix', async () => {
         await render(new FormTextField({ key: 'clientName', label: 'client_name' }));
-        const label = fixture.nativeElement.querySelector('label') as HTMLLabelElement;
 
-        expect(label.textContent?.trim()).toBe('client_name');
-        expect(label.htmlFor).toBe('clientName');
+        expect(controlByName(fixture, 'client_name').id).toBe('clientName');
     });
 
     it('labels a checkbox with the label it is given', async () => {
         await render(new FormCheckboxField({ key: 'subscribed', label: 'is_subscribed' }));
 
-        expect(fixture.nativeElement.querySelector('label')?.textContent?.trim()).toBe('is_subscribed');
+        expect(accessibleName(fixture.nativeElement.querySelector('input[type="checkbox"]'))).toBe('is_subscribed');
     });
 
     it('keeps a placeholder given in the config as it is', async () => {
@@ -107,8 +108,9 @@ describe('FormFieldComponent', () => {
     it('leaves the label to the checkbox itself', async () => {
         await render(new FormCheckboxField({ key: 'subscribed' }));
 
-        expect(fixture.nativeElement.querySelectorAll('label')).toHaveLength(1);
-        expect(fixture.nativeElement.querySelector('input[type="checkbox"]')).not.toBeNull();
+        expect(accessibleName(fixture.nativeElement.querySelector('input[type="checkbox"]'))).toBe(
+            'demo.contact.subscribed.label'
+        );
     });
 
     it('names a checkbox group by its label, and holds a required one back until an option is checked', async () => {

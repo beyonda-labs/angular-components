@@ -15,6 +15,7 @@ import { PageView } from '../models/page-view.model';
 import { PageService } from './page.service';
 import { PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
+import { PageOrganizationsService } from './page-organizations.service';
 import { PageOwnersService } from './page-owners.service';
 
 interface Template extends PageItem {
@@ -90,6 +91,7 @@ describe('PageService — views, counts and origins', () => {
 
         TestBed.configureTestingModule({
             providers: [
+                PageOrganizationsService,
                 PageOwnersService,
                 PageService,
                 provideTranslateService(),
@@ -214,7 +216,7 @@ describe('PageService — views, counts and origins', () => {
             translateService.use('en');
         });
 
-        it('names on the first cell of a trashed row the folder a restore puts it back in', () => {
+        it('names on the first cell of a trashed row where a restore puts it back, ending with the row itself', () => {
             const trashed: Template = { id: 2, name: 'Offer', parentPath: ['Clients', '2026'] };
             const folder: Template = { id: 'f', name: 'Old', parentPath: [], type: PageItemType.Category };
             pageHttpService.loadTrash.mockReturnValue(of(buildResponse([trashed, folder])));
@@ -225,8 +227,8 @@ describe('PageService — views, counts and origins', () => {
             flush();
             const tableConfig = service.tableConfig();
 
-            expect(tableConfig?.loadRow(trashed)[0].tooltip).toBe('All templates / Clients / 2026');
-            expect(tableConfig?.loadRow(folder)[0].tooltip).toBe('All templates');
+            expect(tableConfig?.loadRow(trashed)[0].tooltip).toBe('All templates / Clients / 2026 / Offer');
+            expect(tableConfig?.loadRow(folder)[0].tooltip).toBe('All templates / Old');
         });
 
         it('leaves the cells of the list and of a row without a path as the page draws them', () => {

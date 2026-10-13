@@ -1,0 +1,205 @@
+{
+    "angular-components": {
+        "http": {
+            "error": {
+                "roles": {
+                    "base-role": "Los roles base de la aplicación no se pueden cambiar ni eliminar.",
+                    "existing-name": "Ya hay un rol con este nombre en esta organización, o es el nombre de un rol base.",
+                    "invalid-permissions": "Algunos de los permisos elegidos no pueden ir en un rol: no tienes esos permisos para darlos, o sirven para gestionar usuarios, organizaciones o roles. Recarga la página y vuelve a intentarlo.",
+                    "not-found": "Este rol no existe o está fuera de tu alcance. Recarga la página y vuelve a intentarlo."
+                }
+            },
+            "title": {
+                "roles": {
+                    "base-role": "Rol base",
+                    "existing-name": "Nombre ya en uso",
+                    "invalid-permissions": "Permisos no válidos",
+                    "not-found": "Rol no encontrado"
+                }
+            }
+        },
+        "roles": {
+            "actions": {
+                "create": {
+                    "label": "Nuevo rol",
+                    "tooltip": "Crea un rol adicional para los usuarios de la organización"
+                },
+                "delete": {
+                    "label": "Eliminar",
+                    "tooltip": "Elimina los roles seleccionados"
+                },
+                "duplicate": {
+                    "label": "Duplicar",
+                    "tooltip": "Crea un rol a partir del seleccionado, con su descripción y sus permisos"
+                },
+                "edit": {
+                    "label": "Editar",
+                    "tooltip": "Edita el rol seleccionado"
+                },
+                "view": {
+                    "tooltip": "Muestra los permisos del rol seleccionado"
+                }
+            },
+            "categories": {
+                "root": "Roles"
+            },
+            "duplicate": {
+                "buttons": {
+                    "submit": "Duplicar"
+                },
+                "copy-suffix": "(copia)",
+                "title": "Duplicar rol"
+            },
+            "form": {
+                "create": {
+                    "title": "Nuevo rol"
+                },
+                "edit": {
+                    "title": "Editar rol"
+                },
+                "main": {
+                    "description": {
+                        "label": "Descripción",
+                        "placeholder": "Explica para qué sirve el rol"
+                    },
+                    "name": {
+                        "label": "Nombre",
+                        "placeholder": "Escribe el nombre del rol"
+                    },
+                    "organization-id": {
+                        "label": "Organización",
+                        "placeholder": "Elige una organización"
+                    }
+                },
+                "permissions": {
+                    "empty": "No hay permisos que puedas dar.",
+                    "label": "Permisos:"
+                }
+            },
+            "modal": {
+                "delete": {
+                    "message": "Se eliminarán {{count}} rol(es) y los usuarios que los tienen perderán los permisos que dan. ¿Quieres continuar?",
+                    "title": "Eliminar roles"
+                }
+            },
+            "permissions": {
+                "organization": {
+                    "label": "Organización",
+                    "manage": {
+                        "description": "Puede gestionar los grupos de la organización y acceder a todo lo que crean sus miembros.",
+                        "label": "Gestionar la organización"
+                    },
+                    "read": {
+                        "description": "Puede ver el nombre, el estado, los administradores y los recuentos de su organización, y cada grupo con sus miembros y cada rol adicional.",
+                        "label": "Ver el resumen de la organización"
+                    },
+                    "read-group-roles": {
+                        "description": "Puede ver los roles adicionales que dan sus grupos, con sus permisos. Sin «Ver sus grupos y sus miembros» no muestra nada.",
+                        "label": "Ver los roles y permisos de sus grupos"
+                    },
+                    "read-groups": {
+                        "description": "Puede ver los grupos a los que pertenece y quién más está en ellos.",
+                        "label": "Ver sus grupos y sus miembros"
+                    },
+                    "read-roles": {
+                        "description": "Puede ver los roles que tiene, directamente o a través de sus grupos, con sus permisos.",
+                        "label": "Ver sus roles y permisos"
+                    }
+                },
+                "roles": {
+                    "label": "Roles",
+                    "manage": {
+                        "description": "Puede crear, editar y eliminar los roles adicionales de la organización.",
+                        "label": "Gestionar roles y permisos"
+                    }
+                },
+                "users": {
+                    "change-status": {
+                        "description": "Puede activar y desactivar las cuentas de los usuarios.",
+                        "label": "Activar y desactivar usuarios"
+                    },
+                    "edit": {
+                        "description": "Puede cambiar los nombres y los roles de los usuarios.",
+                        "label": "Editar usuarios"
+                    },
+                    "invite": {
+                        "description": "Puede invitar a personas a unirse a la organización.",
+                        "label": "Invitar usuarios"
+                    },
+                    "label": "Usuarios",
+                    "read": {
+                        "description": "Puede ver los usuarios de la organización.",
+                        "label": "Ver usuarios"
+                    },
+                    "transfer-content": {
+                        "description": "Puede pasar todo lo de un usuario inactivo a un usuario activo de su organización.",
+                        "label": "Transferir contenido"
+                    }
+                }
+            },
+            "search": {
+                "fields": {
+                    "text": "Nombre"
+                }
+            },
+            "sources": {
+                "direct": "Directo",
+                "group": "Grupo {{names}}"
+            },
+            "table": {
+                "columns": {
+                    "description": "Descripción",
+                    "group-count": "Grupos",
+                    "member-count": "Usuarios",
+                    "name": "Nombre",
+                    "organization": "Organización",
+                    "permission-count": "Permisos",
+                    "sources": "Origen",
+                    "type": "Tipo"
+                },
+                "empty": "Ningún rol coincide con la búsqueda",
+                "every-organization": "Todas",
+                "tooltips": {
+                    "description": "Para qué sirve el rol",
+                    "group-count": "Cuántos grupos lo tienen",
+                    "member-count": "Cuántos usuarios lo tienen asignado directamente",
+                    "name": "El nombre del rol",
+                    "organization": "La organización a la que pertenece el rol",
+                    "permission-count": "Cuántos permisos da",
+                    "sources": "Si el rol se tiene directamente o a través de un grupo",
+                    "type": "Si es un rol base de la aplicación o un rol adicional de la organización"
+                },
+                "view-permissions": "Ver permisos"
+            },
+            "title": "Roles y permisos",
+            "toast": {
+                "create-success": "Rol creado",
+                "delete-success": "Roles eliminados",
+                "duplicate-success": "Rol duplicado",
+                "edit-success": "Rol guardado"
+            },
+            "type": {
+                "base": "Base",
+                "extra": "Adicional"
+            },
+            "view": {
+                "buttons": {
+                    "close": "Cerrar"
+                },
+                "main": {
+                    "description": {
+                        "label": "Descripción"
+                    },
+                    "name": {
+                        "label": "Rol"
+                    }
+                },
+                "permissions": {
+                    "empty": "Este rol no da ningún permiso.",
+                    "label": "Permisos:"
+                },
+                "title": "Permisos del rol"
+            }
+        }
+    }
+}

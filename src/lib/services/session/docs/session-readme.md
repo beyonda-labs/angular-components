@@ -1,11 +1,17 @@
 # Session
 
 `BeySessionService` keeps the signed-in user of an app: the access token and the user decoded from it (`email`,
-`name`, `surname`, `roles`, the saved `language` and `theme` when the user has them, and `allowedPaths`, whose first
-entry is the `redirectPath`), in signals and only in memory. The refresh token never reaches the front: the server keeps it in an httpOnly cookie it sets on sign-in,
+`name`, `surname`, `roles`, the `extraPermissions` the extra roles of the user add to its base role, absent when they
+add none, the `organizationId` the user belongs to, absent for a superadmin, who belongs to none, the saved `language`
+and `theme` when the user has them, and `allowedPaths`, whose first entry is the `redirectPath`), in signals and only
+in memory. Which pages a user reaches is decided by the server from the permissions, extra ones included, and arrives
+as `allowedPaths`, so the guard and the menu need nothing else. The token names the base roles but not their
+permissions, so `extraPermissions` alone is not everything a user may do. A change of the roles of a user reaches the
+session at the next refresh of the token, within the lifetime of the access token. The refresh token never reaches the front: the server keeps it in an httpOnly cookie it sets on sign-in,
 registration and OAuth, rotates on every refresh and clears on logout, so a reload opens the session again by
 asking the server for a new access token. `beyAuthGuard` lets a route through only to a signed-in user whose
-`allowedPaths` include it, `beyLoginGuard` sends a signed-in user away from the login, and `beySessionInterceptor`
+`allowedPaths` hold it or a page above it (`/templates` opens `/templates/definition/:id`, `/settings` never opens
+`/settingsarchive`), `beyLoginGuard` sends a signed-in user away from the login, and `beySessionInterceptor`
 adds the `Bearer` token to every request and, on a `401`, refreshes the token through the cookie while the other
 requests wait and sends the request again, or clears the session and goes to `loginRoute`. A `401` from
 `accessControlUrl/login`, `/register`, `/refresh` or `/logout` reaches the caller as it is. `provideBeyApp`

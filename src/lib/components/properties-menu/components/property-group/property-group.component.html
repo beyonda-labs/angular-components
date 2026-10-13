@@ -9,7 +9,7 @@
         <button
             class="bey-property-group-header"
             type="button"
-            [attr.aria-controls]="bodyId"
+            [attr.aria-controls]="controlsId()"
             [attr.aria-expanded]="current.expanded"
             [disabled]="current.disabled"
             (click)="toggle()"

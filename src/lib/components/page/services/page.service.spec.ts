@@ -6,18 +6,26 @@ import { of, Subject, throwError } from 'rxjs';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { StringFilter } from '../../search/models/search-filter.model';
 import { TableColumn, TableSortDirection } from '../../table/models/table.model';
+import { TextTableCell } from '../../table/models/table-cell.model';
 import { pageStandardAction } from '../functions/page-standard-actions';
-import { PageBackendResponse, PageConfig, PageConfigParameters, PageHandle } from '../models/page.model';
+import {
+    PageActionsContext,
+    PageBackendResponse,
+    PageConfig,
+    PageConfigParameters,
+    PageHandle
+} from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageItemType, PageViewMode } from '../models/page-categories.model';
 import { PageFormConfig } from '../models/page-form.model';
 import { PageHeaderConfig } from '../models/page-header.model';
 import { PageItem } from '../models/page-item.model';
 import { PageSearch, SearchSortDirection } from '../models/page-search.model';
-import { PageTableConfig, PageTableSearchConfig } from '../models/page-table.model';
+import { PageColumnContext, PageTableConfig, PageTableSearchConfig } from '../models/page-table.model';
 import { PageService } from './page.service';
-import { PageActionsContext, PageActionsService } from './page-actions.service';
+import { PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
+import { PageOrganizationsService } from './page-organizations.service';
 import { PageOwnersService } from './page-owners.service';
 
 interface Team extends PageItem {
@@ -84,6 +92,7 @@ describe('PageService', () => {
 
         TestBed.configureTestingModule({
             providers: [
+                PageOrganizationsService,
                 PageOwnersService,
                 PageService,
                 provideTranslateService(),
@@ -353,6 +362,86 @@ describe('PageService', () => {
             expect(service.currentCategoryId()).toBeNull();
         });
 
+        it('tells the forms which category is open, by its id and the name of its breadcrumb, and none at the root', () => {
+            pageHttpService.loadCategoryPath.mockReturnValue(
+                of([{ id: 'a', name: 'Books' } as never, { id: 'b', name: 'Novels' } as never])
+            );
+            service.setConfig(buildCategorisedConfig());
+            flush();
+            service.handle.openEdit({ id: 1 });
+            const atRoot = pageActionsService.openEditForm.mock.calls[0][0].getCurrentCategory?.();
+            service.openCategory({ id: 'b' });
+            flush();
+            service.handle.openEdit({ id: 1 });
+            const inside = pageActionsService.openEditForm.mock.calls[1][0].getCurrentCategory?.();
+
+            expect(atRoot).toBeNull();
+            expect(inside).toEqual({ id: 'b', label: 'Novels' });
+        });
+
+        describe('columns shown by the open category and the search', () => {
+            const isColumnShown = ({ key }: TableColumn, { category, isSearching }: PageColumnContext): boolean =>
+                key !== 'organization' || (!category && isSearching);
+            const ada = new StringFilter({ field: 'text', value: 'ada' });
+
+            function columnKeys(): string[] {
+                return service.tableConfig()?.columns.map(({ key }) => key) ?? [];
+            }
+
+            function cellTexts(): unknown[] {
+                return (service.tableConfig()?.loadRow(ITEMS[0]) ?? []).map(({ content }) => content);
+            }
+
+            beforeEach(() => {
+                pageHttpService.loadCategoryPath.mockReturnValue(of([{ id: 'a', name: 'Acme' } as never]));
+                service.setConfig(
+                    buildConfig({
+                        tableConfig: new PageTableConfig({
+                            categoriesConfig: new PageCategoriesConfig({}),
+                            columns: [new TableColumn({ key: 'name' }), new TableColumn({ key: 'organization' })],
+                            isColumnShown,
+                            loadRow: () => [
+                                new TextTableCell({ content: 'Ada' }),
+                                new TextTableCell({ content: 'Acme' })
+                            ],
+                            search: new PageTableSearchConfig({ fields: [], textField: 'text' })
+                        })
+                    })
+                );
+                flush();
+            });
+
+            it('shows a column, with its cells, only while the page lets it for the category and the search', () => {
+                const atRoot = [columnKeys(), cellTexts()];
+                service.setFilters([ada]);
+                flush();
+                const searchingAtRoot = [columnKeys(), cellTexts()];
+                service.openCategory({ id: 'a' });
+                flush();
+
+                expect(atRoot).toEqual([['name'], ['Ada']]);
+                expect(searchingAtRoot).toEqual([
+                    ['name', 'organization'],
+                    ['Ada', 'Acme']
+                ]);
+                expect([columnKeys(), cellTexts()]).toEqual([['name'], ['Ada']]);
+            });
+
+            it('changes the columns only once the list asked with the new search answers', () => {
+                const answer = new Subject<PageBackendResponse>();
+                pageHttpService.load.mockReturnValueOnce(answer);
+
+                service.setFilters([ada]);
+                flush();
+                const beforeAnswer = columnKeys();
+                answer.next(buildResponse());
+                answer.complete();
+
+                expect(beforeAnswer).toEqual(['name']);
+                expect(columnKeys()).toEqual(['name', 'organization']);
+            });
+        });
+
         it('switches to the trash, which is flat and has its own breadcrumb, and back', () => {
             service.setConfig(buildCategorisedConfig(true));
             flush();
@@ -587,6 +676,24 @@ describe('PageService', () => {
             service.setViewMode(PageViewMode.Trash);
             flush();
             expect(service.tableConfig()?.isRowDraggable).toBeUndefined();
+        });
+
+        it('lets the rows of a shared folder be dragged onto its folders, and hands the move the shared folder', () => {
+            pageHttpService.loadShared.mockReturnValue(of(buildResponse([FOLDER])));
+            pageHttpService.load.mockReturnValue(of(buildResponse([FOLDER, FILE])));
+            pageHttpService.loadCategoryPath.mockReturnValue(
+                of([{ id: 'home', name: 'Home' } as PageItem, { id: 'folder', name: 'Clients' } as PageItem])
+            );
+            service.setConfig(buildMoveConfig([pageStandardAction(PageStandardAction.Move)]));
+            service.setViewMode(PageViewMode.Shared);
+            flush();
+            service.openCategory(FOLDER);
+            flush();
+            service.tableConfig()?.onRowDrop?.(FOLDER, [FILE]);
+            const [context] = pageActionsService.moveItems.mock.calls[0];
+
+            expect(service.tableConfig()?.isRowDraggable?.(FILE)).toBe(true);
+            expect(context.getSharedRoot?.()).toEqual({ id: 'folder', label: 'Clients' });
         });
     });
 });

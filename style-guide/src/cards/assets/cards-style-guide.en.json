@@ -1,0 +1,38 @@
+{
+    "angular-components-style-guide": {
+        "cards": {
+            "avatars": "Avatars, solid and soft",
+            "card": {
+                "title": "Team overview"
+            },
+            "empty": {
+                "label": "Nobody has asked for access yet.",
+                "title": "Access requests"
+            },
+            "example": "The pieces of a summary page: a card with an optional title and count, a strip of figures, and lists of items with an avatar or an icon, a title, a subtitle and either a fold or a chevron that opens them. A grouped list holds its items in one box, a separate one gives each its own.",
+            "people": {
+                "title": "People"
+            },
+            "roles": {
+                "editors": "Create and edit the templates",
+                "title": "Roles",
+                "toast": "Here the role would open."
+            },
+            "stats": {
+                "people": "People",
+                "projects": "Projects",
+                "teams": "Teams"
+            },
+            "teams": {
+                "empty": "Nobody in this team yet.",
+                "hide": "Hide people",
+                "members": {
+                    "one": "{{count}} person",
+                    "other": "{{count}} people"
+                },
+                "show": "Show people",
+                "title": "Teams"
+            }
+        }
+    }
+}
