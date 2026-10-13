@@ -3,6 +3,7 @@ import { IconDefinition } from '@fortawesome/angular-fontawesome';
 import { BreadcrumbItem } from '../../breadcrumb/models/breadcrumb.model';
 import { FooterConfig } from '../../footer/models/footer.model';
 import { LeftMenuAction, LeftMenuTitle, LeftMenuUserInfo } from '../../left-menu/models/left-menu.model';
+import { NotificationsConfig } from '../../notifications/models/notifications.model';
 
 export class AppLayoutBottomAction extends LeftMenuAction {
     constructor({ action, icon, key, route }: AppLayoutBottomActionParameters) {
@@ -29,6 +30,7 @@ export class AppLayoutConfig {
     topActions: AppLayoutTopAction[];
     useBodyPadding: boolean;
 
+    notifications?: NotificationsConfig;
     onBreadcrumbClick?: (id: number) => void;
     onLayoutInitialized?: () => void;
     onMenuActionClick?: (key: string) => void;
@@ -42,6 +44,7 @@ export class AppLayoutConfig {
         breadcrumb = [],
         iconSrc,
         isRouteBreadcrumbEnabled = true,
+        notifications,
         onBreadcrumbClick,
         onLayoutInitialized,
         onMenuActionClick,
@@ -61,6 +64,7 @@ export class AppLayoutConfig {
         this.footerConfig = new FooterConfig({ iconSrc, orgName, privacyUrl, productName, termsUrl });
         this.iconSrc = iconSrc;
         this.isRouteBreadcrumbEnabled = isRouteBreadcrumbEnabled;
+        this.notifications = notifications;
         this.onBreadcrumbClick = onBreadcrumbClick;
         this.onLayoutInitialized = onLayoutInitialized;
         this.onMenuActionClick = onMenuActionClick;
@@ -114,6 +118,7 @@ export interface AppLayoutConfigParameters {
     bottomActions?: AppLayoutBottomAction[];
     breadcrumb?: AppLayoutBreadcrumbItem[];
     isRouteBreadcrumbEnabled?: boolean;
+    notifications?: NotificationsConfig;
     onBreadcrumbClick?: (id: number) => void;
     onLayoutInitialized?: () => void;
     onMenuActionClick?: (key: string) => void;

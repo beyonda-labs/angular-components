@@ -75,38 +75,44 @@
             }
         </div>
 
-        @if (config().userInfo; as userInfo) {
+        @if (hasFooter()) {
             <footer class="bey-left-menu-footer">
-                @if (userInfo.route) {
-                    <a
-                        #accountLink="routerLinkActive"
-                        class="bey-left-menu-user bey-left-menu-user--link"
-                        ariaCurrentWhenActive="page"
-                        boundariesElement="viewport"
-                        container="body"
-                        routerLinkActive=""
-                        [attr.aria-label]="'angular-components.left-menu.open-account' | translate"
-                        [class.is-active]="accountLink.isActive"
-                        [routerLink]="userInfo.route"
-                        [tooltip]="!expanded() ? userTooltip() : ''"
-                    >
-                        <ng-container
-                            [ngTemplateOutlet]="userContent"
-                            [ngTemplateOutletContext]="{ $implicit: userInfo }"
-                        ></ng-container>
-                    </a>
-                } @else {
-                    <div
-                        class="bey-left-menu-user"
-                        boundariesElement="viewport"
-                        container="body"
-                        [tooltip]="!expanded() ? userTooltip() : ''"
-                    >
-                        <ng-container
-                            [ngTemplateOutlet]="userContent"
-                            [ngTemplateOutletContext]="{ $implicit: userInfo }"
-                        ></ng-container>
-                    </div>
+                @if (config().userInfo; as userInfo) {
+                    @if (userInfo.route) {
+                        <a
+                            #accountLink="routerLinkActive"
+                            class="bey-left-menu-user bey-left-menu-user--link"
+                            ariaCurrentWhenActive="page"
+                            boundariesElement="viewport"
+                            container="body"
+                            routerLinkActive=""
+                            [attr.aria-label]="'angular-components.left-menu.open-account' | translate"
+                            [class.is-active]="accountLink.isActive"
+                            [routerLink]="userInfo.route"
+                            [tooltip]="!expanded() ? userTooltip() : ''"
+                        >
+                            <ng-container
+                                [ngTemplateOutlet]="userContent"
+                                [ngTemplateOutletContext]="{ $implicit: userInfo }"
+                            ></ng-container>
+                        </a>
+                    } @else {
+                        <div
+                            class="bey-left-menu-user"
+                            boundariesElement="viewport"
+                            container="body"
+                            [tooltip]="!expanded() ? userTooltip() : ''"
+                        >
+                            <ng-container
+                                [ngTemplateOutlet]="userContent"
+                                [ngTemplateOutletContext]="{ $implicit: userInfo }"
+                            ></ng-container>
+                        </div>
+                    }
+                }
+
+                @if (config().notifications; as notifications) {
+                    <bey-notifications class="bey-left-menu-notifications" [config]="notifications"></bey-notifications>
                 }
             </footer>
         }

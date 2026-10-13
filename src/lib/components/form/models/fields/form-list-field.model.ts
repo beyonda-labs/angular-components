@@ -10,6 +10,7 @@ export type FormListPicker = Pick<
 >;
 
 export class FormListField extends FormField {
+    excludedValues: FormRule<string[]>;
     isRemovable: boolean;
     items: Signal<string[]> | string[];
 
@@ -20,6 +21,7 @@ export class FormListField extends FormField {
 
     constructor({
         emptyKey,
+        excludedValues = [],
         isRemovable = false,
         items = [],
         onItemClick,
@@ -30,6 +32,7 @@ export class FormListField extends FormField {
         super({ ...base, type: FormFieldType.List });
 
         this.emptyKey = emptyKey;
+        this.excludedValues = excludedValues;
         this.isRemovable = isRemovable;
         this.items = items;
         this.onItemClick = onItemClick;
@@ -40,6 +43,7 @@ export class FormListField extends FormField {
 
 export interface FormListFieldParameters extends FormFieldBaseParameters {
     emptyKey?: string;
+    excludedValues?: FormRule<string[]>;
     isRemovable?: boolean;
     items?: Signal<string[]> | string[];
     onItemClick?: (item: string, index: number) => void;

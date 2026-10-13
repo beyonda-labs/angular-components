@@ -1,7 +1,7 @@
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageItemType } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
-import { isActionVisible, isCategoryRow, toHandlerItems, toTrashItems } from './page-row';
+import { isActionVisible, isCategoryRow, keepListedRows, toHandlerItems, toTrashItems } from './page-row';
 
 interface Row extends PageItem {
     type: PageItemType;
@@ -18,6 +18,12 @@ function buildAction(key: string, scope: PageActionScope, handler?: (items: Page
 }
 
 describe('page rows', () => {
+    it('keeps of a selection the rows the list still shows, as the list shows them', () => {
+        const renamed: Row = { ...REPORT, actions: [] };
+
+        expect(keepListedRows([REPORT, SUMMARY], [FOLDER, renamed])).toEqual([renamed]);
+    });
+
     it('shows a single-row action only while exactly one selected row lists its key', () => {
         const duplicate = buildAction('duplicate', PageActionScope.Single);
 

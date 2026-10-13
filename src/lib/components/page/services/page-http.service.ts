@@ -96,10 +96,6 @@ export class PageHttpService {
         return this.httpService.get<PageShares>(this.url(relativeUrl, `/categories/${folderId}/shares`));
     }
 
-    findShareTargets(relativeUrl: string, folderId: string | number): Observable<PageShareTargets> {
-        return this.httpService.get<PageShareTargets>(this.url(relativeUrl, `/categories/${folderId}/share-targets`));
-    }
-
     findUsages(relativeUrl: string, ids: (string | number)[]): Observable<PageUsages[]> {
         return this.requestUsages(this.url(relativeUrl, '/usages'), ids);
     }
@@ -110,6 +106,15 @@ export class PageHttpService {
 
     loadCategoryPath(relativeUrl: string, categoryId: string | number): Observable<PageItem[]> {
         return this.httpService.get<PageItem[]>(this.url(relativeUrl, `/categories/${categoryId}/path`));
+    }
+
+    loadCategoryPathQuietly(relativeUrl: string, categoryId: string | number): Observable<PageItem[]> {
+        return this.httpService.get<PageItem[]>(
+            this.url(relativeUrl, `/categories/${encodeURIComponent(categoryId)}/path`),
+            {
+                handleError: ignoreError
+            }
+        );
     }
 
     loadCategoryTree(relativeUrl: string, ownerId?: string): Observable<PageItem[]> {
@@ -163,6 +168,17 @@ export class PageHttpService {
             { shares },
             { successToast }
         );
+    }
+
+    searchShareTargets(
+        relativeUrl: string,
+        folderId: string | number,
+        search: string,
+        limit: number
+    ): Observable<PageShareTargets> {
+        return this.httpService.get<PageShareTargets>(this.url(relativeUrl, `/categories/${folderId}/share-targets`), {
+            queryParams: { search, limit }
+        });
     }
 
     private requestUsages(url: string, ids: (string | number)[]): Observable<PageUsages[]> {

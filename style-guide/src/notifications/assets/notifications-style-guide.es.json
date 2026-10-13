@@ -1,0 +1,18 @@
+{
+    "angular-components-style-guide": {
+        "notifications": {
+            "entities": {
+                "templates": "Plantillas"
+            },
+            "example": "La campana del centro de notificaciones con avisos de ejemplo: el distintivo cuenta los no leídos y la campana abre el panel. Abrir un aviso lo marca como leído; un producto además seguiría el enlace que le dé. Elige un conjunto de avisos para ver otro caso.",
+            "scenarios": {
+                "empty": "Sin avisos",
+                "mixed": "Leídos y sin leer",
+                "pages": "Varias páginas"
+            },
+            "types": {
+                "review-requested": "{{byName}} te pide que revises «{{rowName}}»"
+            }
+        }
+    }
+}

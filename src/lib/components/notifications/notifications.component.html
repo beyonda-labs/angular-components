@@ -1,0 +1,96 @@
+@let bellText = bellLabel() | translate: bellParameters();
+
+<button
+    #trigger
+    class="bey-notifications-bell"
+    aria-haspopup="dialog"
+    boundariesElement="viewport"
+    container="body"
+    type="button"
+    [attr.aria-controls]="isOpen() ? panelId : null"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-label]="bellText"
+    [class.is-open]="isOpen()"
+    [tooltip]="bellText"
+    (click)="toggle()"
+>
+    <fa-icon [icon]="bellIcon"></fa-icon>
+
+    @if (badge()) {
+        <span class="bey-notifications-badge" aria-hidden="true">{{ badge() }}</span>
+    }
+</button>
+
+@if (isOpen()) {
+    <div
+        #panel
+        class="bey-notifications-panel"
+        role="dialog"
+        tabindex="-1"
+        [attr.aria-labelledby]="titleId"
+        [id]="panelId"
+        [style.bottom.px]="position().bottom"
+        [style.left.px]="position().left"
+        [style.max-height.px]="position().maxHeight"
+        [style.top.px]="position().top"
+    >
+        <div class="bey-notifications-header">
+            <h2 class="bey-notifications-title" [id]="titleId">
+                {{ 'angular-components.notifications.title' | translate }}
+            </h2>
+
+            <button
+                class="bey-notifications-refresh"
+                type="button"
+                [attr.aria-label]="'angular-components.notifications.actions.refresh' | translate"
+                [disabled]="isLoading()"
+                (click)="reload()"
+            >
+                <fa-icon [icon]="refreshIcon"></fa-icon>
+            </button>
+        </div>
+
+        <button class="bey-notifications-mark-all" type="button" [disabled]="!hasUnread()" (click)="markAllRead()">
+            {{ 'angular-components.notifications.actions.mark-all-read' | translate }}
+        </button>
+
+        @if (items().length > 0) {
+            <ul class="bey-notifications-list bey-thin-scroll">
+                @for (item of items(); track item.notification.id) {
+                    <li class="bey-notifications-entry">
+                        <button
+                            class="bey-notifications-item"
+                            type="button"
+                            [class.is-unread]="item.isUnread"
+                            (click)="open(item.notification)"
+                        >
+                            <span class="bey-notifications-item-mark" aria-hidden="true"></span>
+                            <span class="bey-notifications-item-copy">
+                                <span class="bey-notifications-item-text">{{ item.text }}</span>
+                                <span class="bey-notifications-item-time">{{ item.time }}</span>
+                            </span>
+
+                            @if (item.isUnread) {
+                                <span class="visually-hidden">
+                                    {{ 'angular-components.notifications.unread' | translate }}
+                                </span>
+                            }
+                        </button>
+                    </li>
+                }
+            </ul>
+
+            @if (hasMore()) {
+                <button class="bey-notifications-more" type="button" [disabled]="isLoading()" (click)="showMore()">
+                    {{ 'angular-components.notifications.actions.show-more' | translate }}
+                </button>
+            }
+        } @else if (isLoading()) {
+            <p class="bey-notifications-state" role="status">
+                {{ 'angular-components.notifications.loading' | translate }}
+            </p>
+        } @else {
+            <p class="bey-notifications-state">{{ 'angular-components.notifications.empty' | translate }}</p>
+        }
+    </div>
+}

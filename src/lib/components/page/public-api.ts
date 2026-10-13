@@ -22,6 +22,7 @@ export type {
     PageCategoriesConfigParameters as BeyPageCategoriesConfigParameters,
     PageTrashItem as BeyPageTrashItem
 } from './models/page-categories.model';
+export { pageDateRangeFields as beyPageDateRangeFields } from './functions/page-date-range-filter';
 export { PageFormConfig as BeyPageFormConfig } from './models/page-form.model';
 export type {
     PageFormConfigParameters as BeyPageFormConfigParameters,

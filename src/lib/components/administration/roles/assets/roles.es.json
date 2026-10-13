@@ -83,6 +83,13 @@
                 }
             },
             "permissions": {
+                "audit": {
+                    "label": "Auditoría",
+                    "read": {
+                        "description": "Puede ver quién hizo qué, cuándo y desde dónde en su organización, y exportarlo.",
+                        "label": "Ver la auditoría"
+                    }
+                },
                 "organization": {
                     "label": "Organización",
                     "manage": {

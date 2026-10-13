@@ -3,113 +3,55 @@ import {
     PageInheritedShare,
     PageShare,
     PageShareAccess,
-    PageShareChoice,
     PageShareEntry,
     PageShareFormValue,
-    PageShareGranteeType,
-    PageShares,
-    PageShareSection,
-    PageShareTarget,
-    PageShareTargets
+    PageShareGranteeType
 } from '../models/page-sharing.model';
 
-export function buildShareChoices(
-    { inherited, shares }: PageShares,
-    { groups, users }: PageShareTargets
-): PageShareChoice[] {
-    const strongest = strongestInherited(inherited);
-    const own = new Map(shares.map(share => [granteeKey(share.granteeType, share.granteeId), share.access]));
-    const toChoices = (targets: PageShareTarget[], granteeType: PageShareGranteeType, section: PageShareSection) =>
-        targets.map((target, index) => {
-            const key = granteeKey(granteeType, target.id);
-            const place = { field: `${granteeType}-${index}`, granteeType, section };
+const GRANTEE_SEPARATOR = ':';
+const GRANTEE_TYPES: readonly string[] = Object.values(PageShareGranteeType);
 
-            return buildChoice(target, place, strongest.get(key), own.get(key));
-        });
-
+export function coveredGrantees(inherited: PageInheritedShare[], access: PageShareAccess): string[] {
     return [
-        ...toChoices(groups, PageShareGranteeType.Group, 'groups'),
-        ...toChoices(users, PageShareGranteeType.User, 'users')
+        ...new Set(inherited.filter(share => reaches(share.access, access)).map(share => shareGranteeValue(share)))
     ];
 }
 
-export function readShareEntries(
-    choices: PageShareChoice[],
-    value: PageShareFormValue,
-    shares: PageShare[]
-): PageShareEntry[] {
-    const listed = new Set(choices.map(({ granteeId, granteeType }) => granteeKey(granteeType, granteeId)));
-    const chosen = choices.flatMap(choice => {
-        const access = readChoice(choice, value);
+export function readShareEntries(value: PageShareFormValue): PageShareEntry[] {
+    return PAGE_SHARE_ACCESS_LEVELS.flatMap(access =>
+        (value.grantees?.[access] ?? []).flatMap(granteeValue => {
+            const grantee = parseGranteeValue(granteeValue);
 
-        return access ? [{ access, granteeId: choice.granteeId, granteeType: choice.granteeType }] : [];
-    });
-    const unlisted = shares
-        .filter(({ granteeId, granteeType }) => !listed.has(granteeKey(granteeType, granteeId)))
-        .map(({ access, granteeId, granteeType }) => ({ access, granteeId, granteeType }));
-
-    return [...chosen, ...unlisted];
-}
-
-export function toShareFormValue(choices: PageShareChoice[]): PageShareFormValue {
-    return choices.reduce<PageShareFormValue>(
-        (value, choice) => ({ ...value, [choice.section]: { ...value[choice.section], [choice.field]: choice.value } }),
-        {}
+            return grantee ? [{ access, ...grantee }] : [];
+        })
     );
 }
 
-function buildChoice(
-    { email, id, name }: PageShareTarget,
-    { field, granteeType, section }: Pick<PageShareChoice, 'field' | 'granteeType' | 'section'>,
-    inherited?: PageInheritedShare,
-    own?: PageShareAccess
-): PageShareChoice {
-    const options = PAGE_SHARE_ACCESS_LEVELS.filter(access => !inherited || isAbove(access, inherited.access));
+export function shareGranteeValue({ granteeId, granteeType }: Pick<PageShare, 'granteeId' | 'granteeType'>): string {
+    return `${granteeType}${GRANTEE_SEPARATOR}${granteeId}`;
+}
 
+export function toShareFormValue(shares: PageShare[]): PageShareFormValue {
     return {
-        email,
-        field,
-        granteeId: id,
-        granteeType,
-        inherited,
-        name,
-        options,
-        own,
-        section,
-        value: own && options.includes(own) ? own : ''
+        grantees: Object.fromEntries(
+            PAGE_SHARE_ACCESS_LEVELS.map(access => [
+                access,
+                shares.filter(share => share.access === access).map(share => shareGranteeValue(share))
+            ])
+        )
     };
 }
 
-function granteeKey(granteeType: PageShareGranteeType, granteeId: string): string {
-    return `${granteeType}:${granteeId}`;
+function parseGranteeValue(value: string): Pick<PageShareEntry, 'granteeId' | 'granteeType'> | undefined {
+    const index = value.indexOf(GRANTEE_SEPARATOR);
+    const granteeType = value.slice(0, index);
+    const granteeId = value.slice(index + 1);
+
+    return index > 0 && granteeId && GRANTEE_TYPES.includes(granteeType)
+        ? { granteeId, granteeType: granteeType as PageShareGranteeType }
+        : undefined;
 }
 
-function isAbove(access: PageShareAccess, other: PageShareAccess): boolean {
-    return PAGE_SHARE_ACCESS_LEVELS.indexOf(access) > PAGE_SHARE_ACCESS_LEVELS.indexOf(other);
-}
-
-function readChoice(choice: PageShareChoice, value: PageShareFormValue): PageShareAccess | undefined {
-    const picked = value[choice.section]?.[choice.field] ?? choice.value;
-    const access = PAGE_SHARE_ACCESS_LEVELS.find(level => level === picked);
-
-    if (access) {
-        return access;
-    }
-
-    return choice.inherited && choice.own && !choice.options.includes(choice.own) ? choice.own : undefined;
-}
-
-function strongestInherited(inherited: PageInheritedShare[]): Map<string, PageInheritedShare> {
-    const strongest = new Map<string, PageInheritedShare>();
-
-    for (const share of inherited) {
-        const key = granteeKey(share.granteeType, share.granteeId);
-        const current = strongest.get(key);
-
-        if (!current || isAbove(share.access, current.access)) {
-            strongest.set(key, share);
-        }
-    }
-
-    return strongest;
+function reaches(access: PageShareAccess, other: PageShareAccess): boolean {
+    return PAGE_SHARE_ACCESS_LEVELS.indexOf(access) >= PAGE_SHARE_ACCESS_LEVELS.indexOf(other);
 }

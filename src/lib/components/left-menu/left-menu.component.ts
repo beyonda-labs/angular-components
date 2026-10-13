@@ -8,6 +8,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { AvatarComponent } from '../cards/avatar/avatar.component';
 import { AvatarConfig } from '../cards/avatar/models/avatar.model';
+import { NotificationsComponent } from '../notifications/notifications.component';
 import { ActionListComponent } from './components/action-list/action-list.component';
 import { LeftMenuConfig } from './models/left-menu.model';
 
@@ -18,6 +19,7 @@ import { LeftMenuConfig } from './models/left-menu.model';
         AvatarComponent,
         FontAwesomeModule,
         NgTemplateOutlet,
+        NotificationsComponent,
         RouterLink,
         RouterLinkActive,
         TooltipModule,
@@ -42,6 +44,7 @@ export class LeftMenuComponent {
     readonly collapseIcon = faAnglesLeft;
     readonly expanded = linkedSignal(() => this.config().expanded);
     readonly expandIcon = faAnglesRight;
+    readonly hasFooter = computed(() => Boolean(this.config().userInfo || this.config().notifications));
     readonly titleText = computed(() => {
         const title = this.config().title?.title ?? 'title';
 

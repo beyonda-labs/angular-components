@@ -1,6 +1,7 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
 import { avatarInitials } from '../../cards/avatar/functions/avatar-initials';
+import { NotificationsConfig } from '../../notifications/models/notifications.model';
 
 export class LeftMenuAction {
     active: boolean;
@@ -44,6 +45,7 @@ export class LeftMenuConfig {
     title: LeftMenuTitle;
     topActions: LeftMenuAction[];
 
+    notifications?: NotificationsConfig;
     onExpandedChange?: (expanded: boolean) => void;
     userInfo?: LeftMenuUserInfo;
 
@@ -53,12 +55,14 @@ export class LeftMenuConfig {
         topActions = [],
         bottomActions = [],
         expanded = true,
+        notifications,
         onExpandedChange,
         userInfo
     }: LeftMenuConfigParameters) {
         this.onExpandedChange = onExpandedChange;
         this.bottomActions = bottomActions;
         this.expanded = expanded;
+        this.notifications = notifications;
         this.prefix = prefix;
         this.title = title;
         this.topActions = topActions;
@@ -112,6 +116,7 @@ export interface LeftMenuConfigParameters {
 
     bottomActions?: LeftMenuAction[];
     expanded?: boolean;
+    notifications?: NotificationsConfig;
     onExpandedChange?: (expanded: boolean) => void;
     topActions?: LeftMenuAction[];
     userInfo?: LeftMenuUserInfo;

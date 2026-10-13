@@ -29,20 +29,36 @@
             },
             "search": {
                 "fields": {
+                    "from": "Desde",
                     "organization-id": "Organización",
-                    "owner-id": "Propietario"
+                    "owner-id": "Propietario",
+                    "to": "Hasta"
                 }
             },
             "share": {
                 "access": {
-                    "inherited": "{{access}} (heredado de {{folder}})",
-                    "none": "Sin acceso",
                     "read": "Ver",
                     "write": "Editar"
                 },
-                "empty": "No hay nadie más en la organización con quien compartirla.",
-                "groups": {
-                    "label": "Grupos"
+                "grantee": {
+                    "group": "{{name}} (grupo)",
+                    "members": {
+                        "one": "{{name}} ({{count}} miembro)",
+                        "other": "{{name}} ({{count}} miembros)"
+                    }
+                },
+                "grantees": {
+                    "no-match": "Ningún usuario ni grupo coincide.",
+                    "read": {
+                        "empty": "Nadie añadido todavía.",
+                        "label": "Pueden ver",
+                        "placeholder": "Añade un usuario o un grupo"
+                    },
+                    "write": {
+                        "empty": "Nadie añadido todavía.",
+                        "label": "Pueden editar",
+                        "placeholder": "Añade un usuario o un grupo"
+                    }
                 },
                 "inherited": {
                     "group": "{{name}} (grupo): {{access}}, desde {{folder}}",
@@ -50,13 +66,7 @@
                     "user": "{{name}}: {{access}}, desde {{folder}}"
                 },
                 "intro": "Compartir decide dónde puede trabajar cada persona; lo que puede hacer ahí sigue dependiendo de sus permisos.",
-                "targets": {
-                    "label": "Compartir con"
-                },
-                "title": "Compartir \"{{name}}\"",
-                "users": {
-                    "label": "Usuarios"
-                }
+                "title": "Compartir \"{{name}}\""
             },
             "shared": {
                 "label": "Compartido conmigo"

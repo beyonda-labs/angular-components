@@ -1,7 +1,13 @@
 import { BreadcrumbItem } from '../../breadcrumb/models/breadcrumb.model';
 import { PageViewMode } from '../models/page-categories.model';
+import { PageItem } from '../models/page-item.model';
 import { PAGE_SHARED_LABEL } from '../models/page-sharing.model';
 import { PageCategoryPathEntry } from '../models/page-state.model';
+import { readRowField } from './page-row';
+
+export function buildCategoryPath(path: PageItem[], nameField: string): PageCategoryPathEntry[] {
+    return path.map(ancestor => ({ id: ancestor.id, label: String(readRowField(ancestor, nameField) ?? '') }));
+}
 
 export function buildPageBreadcrumbItems(
     prefix: string,

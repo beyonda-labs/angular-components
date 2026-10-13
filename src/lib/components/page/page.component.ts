@@ -10,6 +10,7 @@ import { TabsComponent } from '../tabs/tabs.component';
 import { PageConfig } from './models/page.model';
 import { PageItem } from './models/page-item.model';
 import { PageService } from './services/page.service';
+import { PageLinkService } from './services/page-link.service';
 import { PageOrganizationsService } from './services/page-organizations.service';
 import { PageOwnersService } from './services/page-owners.service';
 
@@ -24,7 +25,7 @@ import { PageOwnersService } from './services/page-owners.service';
         TableComponent,
         TabsComponent
     ],
-    providers: [PageOrganizationsService, PageOwnersService, PageService],
+    providers: [PageLinkService, PageOrganizationsService, PageOwnersService, PageService],
     selector: 'bey-page',
     standalone: true,
     styleUrls: ['./page.component.css'],
@@ -36,11 +37,13 @@ export class PageComponent<
     TCategory extends PageItem = TItem,
     TCategoryValue = unknown
 > {
+    private readonly pageLinkService = inject(PageLinkService);
     readonly service = inject(PageService);
 
     readonly config = input.required<PageConfig<TValue, TItem, TCategory, TCategoryValue>>();
 
     readonly hasToolbar = computed(() => Boolean(this.service.viewToggleConfig() || this.service.searchConfig()));
+    readonly isLoading = computed(() => this.service.loading() || this.pageLinkService.isPending());
 
     constructor() {
         effect(() => {

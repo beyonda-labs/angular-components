@@ -83,6 +83,13 @@
                 }
             },
             "permissions": {
+                "audit": {
+                    "label": "Audit",
+                    "read": {
+                        "description": "Can see who did what, when and from where in their organization, and export it.",
+                        "label": "See the audit"
+                    }
+                },
                 "organization": {
                     "label": "Organization",
                     "manage": {

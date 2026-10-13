@@ -10,7 +10,8 @@
         },
         "account-data-section": "Account data",
         "administration": {
-            "example": "The management pages of an app, one module: users, groups, roles and permissions, and organizations, each on bey-page over the matching module of express-components and each reading what it may do from the backend, and the read-only summary of the organization of a member.",
+            "audit": "Audit",
+            "example": "The management pages of an app, one module: users, groups, roles and permissions, organizations and the audit log, each on bey-page over the matching module of express-components and each reading what it may do from the backend, and the read-only summary of the organization of a member.",
             "groups": "Groups",
             "organization-summary": "Organization summary",
             "organizations": "Organizations",
@@ -56,6 +57,16 @@
             "title": "Demo App"
         },
         "app-layout-section": "App Layouts",
+        "audit": {
+            "entities": {
+                "documents": "Documents",
+                "templates": "Templates"
+            },
+            "example": "The audit page on the demo backend: the read-only list of who did what, when and from where, newest first. Search by user, row name or IP, filter by a date range from one day to another, by user, typed with suggestions from the backend, by entity and by action and, signed in as a superadmin, by organization. Export downloads as a CSV file the events the current search and filters select, and the row name or the View action opens a read-only view of every field of the event with its details. The entities and the extra verbs of the app read its labels, here documents, templates and publish, and the organization column shows only to a superadmin while the list spans several organizations.",
+            "verbs": {
+                "publish": "Publish"
+            }
+        },
         "badge": {
             "example": "Every variant of the badge, greyscale emphasis first and the semantic hues after."
         },
@@ -908,6 +919,21 @@
             }
         },
         "notice-section": "Notices",
+        "notifications": {
+            "entities": {
+                "templates": "Templates"
+            },
+            "example": "The bell of the notifications centre with sample notices: the badge counts the unread ones, and the bell opens the panel. Opening a notice marks it read; a product would also follow the link it gives. Pick a set of notices to see another case.",
+            "scenarios": {
+                "empty": "No notices",
+                "mixed": "Unread and read",
+                "pages": "Several pages"
+            },
+            "types": {
+                "review-requested": "{{byName}} asks you to review “{{rowName}}”"
+            }
+        },
+        "notifications-section": "Notifications",
         "organization-summary": {
             "example": "The summary of the organization of the signed-in member, read-only, built with the cards module: its name, status and creation, a strip with its active members, groups and additional roles, with the members by status for whoever may see the users; its administrators; every group folded with its count, unfolding its active members in place, and those in no group last; and every additional role, opening its permissions for whoever may already see them. The demo backend serves no organization, so nothing shows: the cards section shows the same pieces."
         },

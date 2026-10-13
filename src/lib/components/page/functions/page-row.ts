@@ -42,6 +42,12 @@ export function isCategoryRow(item: PageItem, categoriesConfig?: PageCategoriesC
     return categoriesConfig !== undefined && readRowField(item, categoriesConfig.typeField) === PageItemType.Category;
 }
 
+export function keepListedRows(selected: PageItem[], items: PageItem[]): PageItem[] {
+    const ids = new Set(selected.map(item => item.id));
+
+    return items.filter(item => ids.has(item.id));
+}
+
 export function readRowField(item: PageItem, field: string): unknown {
     return (item as unknown as Record<string, unknown>)[field];
 }

@@ -1,5 +1,5 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
-import { faBuilding, faIdBadge, faRectangleList, faUser } from '@fortawesome/free-regular-svg-icons';
+import { faBuilding, faClipboard, faIdBadge, faRectangleList, faUser } from '@fortawesome/free-regular-svg-icons';
 
 export interface RolePermissionEntry {
     group: string;
@@ -97,6 +97,7 @@ export const ROLES_DEFAULT_ROLE_PREFIX = 'angular-components.users.roles';
 export const ROLES_FORM_SECTION = 'main';
 
 export const ROLES_LIBRARY_GROUP_ICONS: Readonly<Record<string, IconDefinition>> = {
+    audit: faClipboard,
     organization: faBuilding,
     roles: faIdBadge,
     users: faUser

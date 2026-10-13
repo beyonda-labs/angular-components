@@ -40,12 +40,13 @@ export class AppLayoutComponent implements OnInit {
               });
     });
     readonly leftMenuConfig = computed(() => {
-        const { bottomActions, prefix, title, topActions, userInfo } = this.config();
+        const { bottomActions, notifications, prefix, title, topActions, userInfo } = this.config();
         const activeKey = this.appLayoutService.activeActionKey();
 
         return new LeftMenuConfig({
             bottomActions: this.prepareActions(bottomActions, activeKey),
             expanded: this.appLayoutService.expanded(),
+            notifications,
             onExpandedChange: expanded => this.appLayoutService.setExpanded(expanded),
             prefix,
             title,

@@ -46,7 +46,7 @@
                     </div>
                 } @else {
                     <div class="bey-search-rows">
-                        @for (row of rows(); track $index) {
+                        @for (row of rows(); track $index; let rowIndex = $index) {
                             <div
                                 class="bey-search-row"
                                 role="group"
@@ -73,12 +73,53 @@
                                 >
                                     @for (operator of getOperators(row); track operator) {
                                         <option [selected]="operator === row.operator" [value]="operator">
-                                            {{ getOperatorLabel(operator) | translate }}
+                                            {{ getOperatorLabel(row, operator) | translate }}
                                         </option>
                                     }
                                 </select>
 
                                 @switch (getRowType(row)) {
+                                    @case (fieldTypes.Autocomplete) {
+                                        @let suggestions = getSuggestions($index);
+                                        <div class="bey-search-value bey-search-autocomplete">
+                                            <input
+                                                class="form-control form-control-sm bey-search-control"
+                                                autocomplete="off"
+                                                role="combobox"
+                                                type="text"
+                                                [attr.aria-expanded]="suggestions !== null"
+                                                [placeholder]="
+                                                    'angular-components.search.option-placeholder' | translate
+                                                "
+                                                [value]="row.valueLabel"
+                                                (input)="onOptionSearch($index, $event)"
+                                            />
+                                            @if (suggestions) {
+                                                <div class="bey-search-suggestions" role="listbox">
+                                                    @for (option of suggestions.options; track option.value) {
+                                                        <button
+                                                            class="bey-search-suggestion"
+                                                            role="option"
+                                                            type="button"
+                                                            [attr.aria-selected]="option.value === row.value"
+                                                            (click)="chooseOption(rowIndex, option)"
+                                                        >
+                                                            {{ option.label }}
+                                                        </button>
+                                                    } @empty {
+                                                        <div class="bey-search-suggestions-note">
+                                                            {{ 'angular-components.search.no-matches' | translate }}
+                                                        </div>
+                                                    }
+                                                    @if (suggestions.hasMore) {
+                                                        <div class="bey-search-suggestions-note">
+                                                            {{ 'angular-components.search.more-matches' | translate }}
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    }
                                     @case (fieldTypes.Boolean) {
                                         <select
                                             class="form-select form-select-sm bey-search-control bey-search-value"
@@ -109,6 +150,40 @@
                                                 </option>
                                             }
                                         </select>
+                                    }
+                                    @case (fieldTypes.Date) {
+                                        @if (isBetween(row)) {
+                                            <div class="bey-search-range bey-search-value">
+                                                <input
+                                                    class="form-control form-control-sm bey-search-control bey-search-range-input"
+                                                    type="date"
+                                                    [attr.aria-label]="
+                                                        'angular-components.search.from-placeholder' | translate
+                                                    "
+                                                    [value]="row.value"
+                                                    (input)="onValueChange($index, $event)"
+                                                />
+                                                <span class="bey-search-range-separator" aria-hidden="true">
+                                                    &ndash;
+                                                </span>
+                                                <input
+                                                    class="form-control form-control-sm bey-search-control bey-search-range-input"
+                                                    type="date"
+                                                    [attr.aria-label]="
+                                                        'angular-components.search.to-placeholder' | translate
+                                                    "
+                                                    [value]="row.valueTo"
+                                                    (input)="onValueToChange($index, $event)"
+                                                />
+                                            </div>
+                                        } @else {
+                                            <input
+                                                class="form-control form-control-sm bey-search-control bey-search-value"
+                                                type="date"
+                                                [value]="row.value"
+                                                (input)="onValueChange($index, $event)"
+                                            />
+                                        }
                                     }
                                     @case (fieldTypes.Number) {
                                         @if (isBetween(row)) {
