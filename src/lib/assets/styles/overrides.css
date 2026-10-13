@@ -52,10 +52,10 @@ body.dark {
 
 /* ─── Floating preferences anchor ─────────────────────────────────────── */
 .bey-floating-preferences-anchor {
-    bottom: 15px;
+    bottom: var(--bey-space-lg);
     pointer-events: auto;
     position: absolute;
-    right: 20px;
+    right: var(--bey-space-lg);
     z-index: var(--bey-z-raised);
 }
 

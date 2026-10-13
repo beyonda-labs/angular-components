@@ -7,7 +7,7 @@
             autocomplete="off"
             role="combobox"
             type="text"
-            [attr.aria-controls]="attachmentsId()"
+            [attr.aria-controls]="controlsId()"
             [attr.aria-expanded]="isOpen()"
             [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
             [disabled]="current.disabled"

@@ -6,8 +6,6 @@ import { PageOrganization, PageOrganizationsResponse } from '../../page/models/p
 import { PageUrlService } from '../../page/services/page-url.service';
 import { USERS_ORGANIZATIONS_PATH } from '../models/user-organizations.model';
 
-const ignoreError = (): void => undefined;
-
 @Injectable({
     providedIn: 'root'
 })
@@ -23,3 +21,5 @@ export class UserOrganizationsHttpService {
             .pipe(map(({ organizations }) => organizations));
     }
 }
+
+function ignoreError(): void {}

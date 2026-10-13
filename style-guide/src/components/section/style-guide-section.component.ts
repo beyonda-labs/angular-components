@@ -36,6 +36,7 @@ export class StyleGuideSectionComponent {
     readonly bodyId = computed(() => `${this.key()}-body`);
     readonly chevronIcon = faChevronDown;
     readonly content = contentChild.required(TemplateRef);
+    readonly controlsId = computed(() => (this.isOpen() ? this.bodyId() : null));
     readonly isOpen = computed(() => this.styleGuideSectionsService.isOpen(this.key()));
 
     reveal(): void {

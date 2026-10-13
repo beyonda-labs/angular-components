@@ -158,7 +158,6 @@
         },
         "cards-section": "Tarjetas",
         "collapse-all": "Contraer todo",
-        "components": "Componentes",
         "compound": "Compuestos",
         "edit-lock-notice": {
             "example": "Lo que muestra el editor de una fila en cada estado de su bloqueo de edición. Elige un estado; las acciones del aviso lo hacen avanzar como lo haría el bloqueo real.",
@@ -173,7 +172,6 @@
                 "unavailable": "Ya no disponible"
             },
             "statuses": {
-                "acquiring": "Estado: adquiriendo",
                 "free": "Estado: libre",
                 "held": "Estado: ocupado",
                 "lost": "Estado: perdido",

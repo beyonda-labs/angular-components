@@ -2,13 +2,13 @@ import { TestBed } from '@angular/core/testing';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { FormSection } from '../../form/models/form.model';
-import { PageConfig } from '../models/page.model';
+import { PageActionsContext, PageConfig } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageItemType } from '../models/page-categories.model';
 import { PageFormConfig } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
 import { PageTableConfig } from '../models/page-table.model';
-import { PageActionsContext, PageActionsService } from './page-actions.service';
+import { PageActionsService } from './page-actions.service';
 import { PageFormService } from './page-form.service';
 import { PageLifecycleActionsService } from './page-lifecycle-actions.service';
 

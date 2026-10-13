@@ -36,31 +36,37 @@ describe('GroupsTableService', () => {
         service = TestBed.inject(GroupsTableService);
     });
 
-    it('fills a cell per column: name, member count, extra role count and creation', () => {
-        const [name, memberCount, extraRoleCount, created, ...rest] = service.loadRow(buildGroup(), options);
+    it('fills a cell per column: name, member count, extra role count, role count and creation', () => {
+        const [name, memberCount, extraRoleCount, roleCount, created, ...rest] = service.loadRow(
+            buildGroup({ roleCount: 3 }),
+            options
+        );
 
         expect(name.content).toBe('Sales');
-        expect([memberCount.content, extraRoleCount.content]).toEqual(['4', '2']);
+        expect([memberCount.content, extraRoleCount.content, roleCount.content]).toEqual(['4', '2', '3']);
         expect((created as DateTableCell).value).toBe(1_000);
         expect(rest).toEqual([]);
     });
 
-    it('counts no extra role for a group of a server that answers no count', () => {
-        expect(service.loadRow(buildGroup({ extraRoleCount: undefined }), options)[2].content).toBe('0');
+    it('counts no extra role nor role for a group of a server that answers no count', () => {
+        const cells = service.loadRow(buildGroup({ extraRoleCount: undefined }), options);
+
+        expect([cells[2].content, cells[3].content]).toEqual(['0', '0']);
     });
 
     it('fills the organization after the extra role count when it is shown', () => {
-        const [name, memberCount, extraRoleCount, organization, created] = service.loadRow(buildGroup(), {
+        const [name, memberCount, extraRoleCount, organization, roleCount, created] = service.loadRow(buildGroup(), {
             ...options,
             isOrganizationShown: true
         });
 
-        expect([name.content, memberCount.content, extraRoleCount.content, organization.content]).toEqual([
-            'Sales',
-            '4',
-            '2',
-            'Globex'
-        ]);
+        expect([
+            name.content,
+            memberCount.content,
+            extraRoleCount.content,
+            organization.content,
+            roleCount.content
+        ]).toEqual(['Sales', '4', '2', 'Globex', '0']);
         expect((created as DateTableCell).value).toBe(1_000);
     });
 
@@ -91,17 +97,6 @@ describe('GroupsTableService', () => {
 
     describe('reading the own groups of a member', () => {
         const member = buildGroup({ actions: [], extraRoleCount: undefined, roleCount: 3 });
-
-        it('fills the name, the member count and the creation, the roles only with their count', () => {
-            const read = service.loadRow(member, { ...options, mode: GroupsPageMode.Read });
-            const withRoles = service.loadRow(member, { ...options, mode: GroupsPageMode.ReadWithRoles });
-
-            expect(read.slice(0, 2).map(({ content }) => content)).toEqual(['Sales', '4']);
-            expect((read[2] as DateTableCell).value).toBe(1_000);
-            expect(read).toHaveLength(3);
-            expect(withRoles.slice(0, 3).map(({ content }) => content)).toEqual(['Sales', '4', '3']);
-            expect(withRoles).toHaveLength(4);
-        });
 
         it('opens the view of a group from its name', () => {
             const [name] = service.loadRow(member, { ...options, mode: GroupsPageMode.Read });

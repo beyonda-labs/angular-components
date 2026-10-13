@@ -5,13 +5,13 @@ import { of } from 'rxjs';
 import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
 import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
 import { pageStandardAction } from '../functions/page-standard-actions';
-import { PageConfig } from '../models/page.model';
+import { PageActionsContext, PageConfig } from '../models/page.model';
 import { PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageItemType } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
 import { PageOwnedItem } from '../models/page-owner.model';
 import { PageTableConfig } from '../models/page-table.model';
-import { PageActionsContext, PageActionsService } from './page-actions.service';
+import { PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
 
 describe('PageActionsService — move to a category', () => {

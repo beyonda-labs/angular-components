@@ -14,7 +14,9 @@ describe('LoginHttpService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [provideBeyTesting({ environment: { accessControlUrl: 'https://auth' } })]
+            providers: [
+                provideBeyTesting({ environment: { accessControlUrl: 'https://auth' }, translations: { en: loginEn } })
+            ]
         });
 
         httpTesting = TestBed.inject(HttpTestingController);
@@ -135,7 +137,6 @@ describe('LoginHttpService', () => {
 
     it('tells a user of a deactivated organization, refused after the right password, why they cannot sign in', () => {
         const translate = TestBed.inject(TranslateService);
-        translate.setTranslation('en', loginEn);
 
         service.login({ email: 'ada@example.com', password: 'secret' }).subscribe({ error: () => {} });
         httpTesting

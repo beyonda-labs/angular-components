@@ -57,7 +57,6 @@ describe('RolesTableService', () => {
 
         options = {
             isOrganizationShown: false,
-            isReadOnly: false,
             onEdit: jest.fn(),
             onView: jest.fn(),
             prefix: 'demo.roles',
@@ -66,20 +65,21 @@ describe('RolesTableService', () => {
         service = TestBed.inject(RolesTableService);
     });
 
-    it('fills a cell per column: name, type, permission, member and group counts, and description', () => {
-        const [name, type, permissionCount, memberCount, groupCount, description, ...rest] = service.loadRow(
+    it('fills a cell per column: name, type, permission, member and group counts, origin and description', () => {
+        const [name, type, permissionCount, memberCount, groupCount, origin, description, ...rest] = service.loadRow(
             buildRole(),
             options
         );
 
         expect(name.content).toBe('Reviewers');
         expect((type as BadgeTableCell).badges.map(({ label }) => label)).toEqual(['demo.roles.type.extra']);
-        expect([permissionCount.content, memberCount.content, groupCount.content, description.content]).toEqual([
-            '2',
-            '4',
-            '3',
-            'Review the templates'
-        ]);
+        expect([
+            permissionCount.content,
+            memberCount.content,
+            groupCount.content,
+            origin.content,
+            description.content
+        ]).toEqual(['2', '4', '3', '', 'Review the templates']);
         expect(rest).toEqual([]);
     });
 
@@ -114,18 +114,18 @@ describe('RolesTableService', () => {
         expect(options.onEdit).not.toHaveBeenCalled();
     });
 
-    it('shows the organization after the group count when it is shown, every one for a base role', () => {
+    it('fills the organization after the origin when it is shown, every one for a base role', () => {
         const shown = { ...options, isOrganizationShown: true };
 
-        expect(service.loadRow(buildRole(), shown)[5].content).toBe('Globex');
-        expect(service.loadRow(buildBase(), shown)[5]).toMatchObject({
+        expect(service.loadRow(buildRole(), shown)[6].content).toBe('Globex');
+        expect(service.loadRow(buildBase(), shown)[6]).toMatchObject({
             content: 'demo.roles.table.every-organization',
             translate: true
         });
     });
 
     describe('reading the own roles of a member', () => {
-        it('fills the name, the type, the permission count, the origin and the description, without counts of users', () => {
+        it('says where the role comes from, directly and through each of its groups', () => {
             const role = buildRole({
                 actions: [],
                 groupCount: undefined,
@@ -136,22 +136,13 @@ describe('RolesTableService', () => {
                     { groupId: 'g2', groupName: 'Support', type: RoleSourceType.Group }
                 ]
             });
-            const cells = service.loadRow(role, { ...options, isReadOnly: true });
+            const origin = service.loadRow(role, options)[5];
 
-            expect(cells.map(({ content }) => (typeof content === 'string' ? content : ''))).toEqual([
-                'Reviewers',
-                '',
-                '2',
-                'Direct · Group Sales, Support',
-                'Review the templates'
-            ]);
+            expect(origin.content).toBe('Direct · Group Sales, Support');
         });
 
         it('says only where the role comes from', () => {
-            const origin = service.loadRow(buildRole({ sources: [{ type: RoleSourceType.Direct }] }), {
-                ...options,
-                isReadOnly: true
-            })[3];
+            const origin = service.loadRow(buildRole({ sources: [{ type: RoleSourceType.Direct }] }), options)[5];
 
             expect(origin.content).toBe('Direct');
         });

@@ -8,6 +8,7 @@ import { FormListField } from '../../form/models/fields/form-list-field.model';
 import { FormSelectField } from '../../form/models/fields/form-select-field.model';
 import { FormRow, FormSection } from '../../form/models/form.model';
 import { toShareFormValue } from '../functions/page-shares';
+import { PAGE_FORM_CANCEL_LABEL, PAGE_FORM_SUBMIT_LABEL } from '../models/page-form.model';
 import {
     PAGE_SHARE_FORM_PREFIX as PREFIX,
     PageInheritedShare,
@@ -18,10 +19,8 @@ import {
     PageShareSection
 } from '../models/page-sharing.model';
 
-const CANCEL_LABEL_KEY = 'angular-components.page.form.cancel';
 const FIELDS_PER_ROW = 2;
 const SECTIONS: PageShareSection[] = ['groups', 'users'];
-const SUBMIT_LABEL_KEY = 'angular-components.page.form.submit';
 
 @Injectable({
     providedIn: 'root'
@@ -39,7 +38,7 @@ export class PageShareFormService {
             .map(sectionChoices => this.buildChoicesSection(sectionChoices));
 
         return new ModalFormConfig<PageShareFormValue>({
-            cancelLabel: CANCEL_LABEL_KEY,
+            cancelLabel: PAGE_FORM_CANCEL_LABEL,
             initialValue: toShareFormValue(choices),
             prefix: PREFIX,
             sections: [
@@ -47,7 +46,7 @@ export class PageShareFormService {
                 ...(inherited.length > 0 ? [this.buildInheritedSection(inherited)] : []),
                 ...(choiceSections.length > 0 ? choiceSections : [buildEmptySection()])
             ],
-            submitLabel: SUBMIT_LABEL_KEY,
+            submitLabel: PAGE_FORM_SUBMIT_LABEL,
             title: this.translate(`${PREFIX}.title`, { name: folderName })
         });
     }

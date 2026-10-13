@@ -3,7 +3,7 @@
         <button
             class="bey-style-guide-section-toggle"
             type="button"
-            [attr.aria-controls]="bodyId()"
+            [attr.aria-controls]="controlsId()"
             [attr.aria-expanded]="isOpen()"
             [class.is-expanded]="isOpen()"
             (click)="toggle()"

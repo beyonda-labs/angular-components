@@ -16,7 +16,7 @@ const SAMPLE_PDF_URL = 'https://raw.githubusercontent.com/mozilla/pdf.js/master/
     imports: [TranslateModule],
     selector: 'bey-file-preview-style-guide',
     standalone: true,
-    styleUrls: ['../style-guide-shared.css', './file-preview-style-guide.component.css'],
+    styleUrls: ['../style-guide-shared.css'],
     templateUrl: './file-preview-style-guide.component.html'
 })
 export class FilePreviewStyleGuideComponent {

@@ -6,8 +6,6 @@ import { HttpService } from '../http/http.service';
 import { SessionService } from '../session/session.service';
 import { EDIT_LOCK_TOKEN_PARAMETER, EditLockResponse } from './models/edit-lock.model';
 
-const ignoreError = (): void => undefined;
-
 @Injectable({
     providedIn: 'root'
 })
@@ -17,7 +15,7 @@ export class EditLockHttpService {
     private readonly sessionService = inject(SessionService);
 
     acquire(url: string, token: string, isTakeOver: boolean): Observable<EditLockResponse> {
-        return this.httpService.post<EditLockResponse>(url, isTakeOver ? { takeOver: true, token } : { token }, {
+        return this.httpService.post<EditLockResponse>(url, isTakeOver ? { isTakeOver: true, token } : { token }, {
             handleError: ignoreError
         });
     }
@@ -52,3 +50,5 @@ export class EditLockHttpService {
         return this.httpService.delete<void>(url, undefined);
     }
 }
+
+function ignoreError(): void {}

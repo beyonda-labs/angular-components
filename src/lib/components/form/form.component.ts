@@ -17,13 +17,16 @@ import { debounceTime, map, startWith, switchMap } from 'rxjs';
 
 import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
+import { nextDomId } from '../../internal/dom-ids/dom-ids';
 import { FormSectionComponent } from './components/section/section.component';
+import { fieldStateKey } from './functions/field-state-key';
 import { resolveRule } from './functions/form-rule-resolution';
 import { holdsListValue } from './functions/list-value';
 import { FormAutocompleteField } from './models/fields/form-autocomplete-field.model';
 import { FormListField } from './models/fields/form-list-field.model';
 import { FormButton, FormButtonType, FormConfig, FormHandle, FormSection } from './models/form.model';
 import { FormField, FormFieldOption, FormFieldType, FormRule, FormValue } from './models/form-field.model';
+import { FormFieldState, FormFieldStates } from './models/form-field-state.model';
 import { FORM_HOST } from './models/form-host.model';
 import { FormService } from './services/form.service';
 
@@ -37,19 +40,6 @@ const OPTION_FIELD_TYPES: ReadonlySet<FormFieldType> = new Set([
     FormFieldType.Radio,
     FormFieldType.Select
 ]);
-
-let noteCount = 0;
-
-export interface FormFieldState {
-    excludedValues: string[];
-    isDisabled: boolean;
-    isHidden: boolean;
-    isRequired: boolean;
-    isValid: boolean;
-    options: FormFieldOption[];
-}
-
-export type FormFieldStates = ReadonlyMap<string, FormFieldState>;
 
 type FormValidatorErrors = ReadonlyMap<string, ValidationErrors | null>;
 
@@ -153,7 +143,7 @@ export class FormComponent<TValue = unknown> {
     readonly hasFooter = computed(() => this.config().footer !== undefined);
     readonly isFooterDivided = computed(() => this.config().footer?.isDivided ?? false);
     readonly noteIcon = faCircleInfo;
-    readonly noteId = nextNoteId();
+    readonly noteId = nextDomId('bey-form-note');
     readonly state = linkedSignal(() => readState(this.formGroup()));
     readonly visibleSections = computed(() => {
         const { sections, steps } = this.config();
@@ -372,10 +362,6 @@ export class FormComponent<TValue = unknown> {
     }
 }
 
-export function fieldStateKey(sectionKey: string, fieldKey: string): string {
-    return `${sectionKey}.${fieldKey}`;
-}
-
 function dropUnlistedIds(control: AbstractControl, state: FormFieldState, previous: FormFieldState | undefined): void {
     const ids: unknown = control.value;
 
@@ -402,12 +388,6 @@ function haveSameOptions(previous: FormFieldOption[], current: FormFieldOption[]
 
 function isFreeText(field: FormField): boolean {
     return field.type === FormFieldType.Autocomplete && (field as FormAutocompleteField).isFreeTextAllowed;
-}
-
-function nextNoteId(): string {
-    noteCount += 1;
-
-    return `bey-form-note-${noteCount}`;
 }
 
 function noop(): void {}

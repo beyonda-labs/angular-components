@@ -22,7 +22,14 @@ import { FormButton, FormButtonType, FormConfig } from '../../../form/models/for
 import { FormField, FormFieldOption } from '../../../form/models/form-field.model';
 import { PageFormConfig } from '../../../page/models/page-form.model';
 import usersEn from '../assets/users.en.json';
-import { UserEditableField, UserFormValue, UserOrganizationRole, UserRow, UserStatus } from '../models/users.model';
+import {
+    UserEditableField,
+    UserFormValue,
+    UserOrganizationRole,
+    UserRow,
+    UsersFormOptions,
+    UserStatus
+} from '../models/users.model';
 import { UsersFormService } from './users-form.service';
 
 describe('UsersFormService', () => {
@@ -39,6 +46,18 @@ describe('UsersFormService', () => {
         status: UserStatus.Active
     };
 
+    function buildForm(overrides: Partial<UsersFormOptions> = {}): void {
+        form = service.buildFormConfig({
+            extraRoles: [],
+            isOrganizationAsked: false,
+            organizations: [],
+            prefix: 'demo.users',
+            rolePrefix: 'demo.roles',
+            roles: ['admin', 'editor'],
+            ...overrides
+        });
+    }
+
     function fieldsFor(row?: UserRow): FormField[] {
         return form.buildSections(row).flatMap(section => section.rows.flatMap(row => row.fields));
     }
@@ -52,14 +71,7 @@ describe('UsersFormService', () => {
         });
 
         service = TestBed.inject(UsersFormService);
-        form = service.buildFormConfig({
-            extraRoles: [],
-            isOrganizationAsked: false,
-            organizations: [],
-            prefix: 'demo.users',
-            rolePrefix: 'demo.roles',
-            roles: ['admin', 'editor']
-        });
+        buildForm();
     });
 
     it('asks for the email, the names, the roles and the language of a new user', () => {
@@ -167,14 +179,7 @@ describe('UsersFormService', () => {
         ];
 
         beforeEach(() => {
-            form = service.buildFormConfig({
-                extraRoles: [],
-                isOrganizationAsked: true,
-                organizations,
-                prefix: 'demo.users',
-                rolePrefix: 'demo.roles',
-                roles: ['admin']
-            });
+            buildForm({ isOrganizationAsked: true, organizations, roles: ['admin'] });
         });
 
         it('asks a new user for the organization, required and offering each one by name, with none chosen', () => {
@@ -236,14 +241,7 @@ describe('UsersFormService', () => {
     });
 
     it('asks a superadmin for the organization with a single one too, chosen already', () => {
-        form = service.buildFormConfig({
-            extraRoles: [],
-            isOrganizationAsked: true,
-            organizations: [{ id: 'o1', name: 'Acme' }],
-            prefix: 'demo.users',
-            rolePrefix: 'demo.roles',
-            roles: []
-        });
+        buildForm({ isOrganizationAsked: true, organizations: [{ id: 'o1', name: 'Acme' }], roles: [] });
 
         expect(fieldsFor().find(field => field.key === 'organizationId')).toMatchObject({
             isRequired: true,
@@ -253,14 +251,7 @@ describe('UsersFormService', () => {
     });
 
     it('asks a superadmin for the organization even with none to offer, so nothing is sent without one', () => {
-        form = service.buildFormConfig({
-            extraRoles: [],
-            isOrganizationAsked: true,
-            organizations: [],
-            prefix: 'demo.users',
-            rolePrefix: 'demo.roles',
-            roles: []
-        });
+        buildForm({ isOrganizationAsked: true, roles: [] });
 
         expect(fieldsFor().find(field => field.key === 'organizationId')).toMatchObject({
             isRequired: true,
@@ -280,15 +271,13 @@ describe('UsersFormService', () => {
         }
 
         function build(isOrganizationAsked: boolean, roles = extraRoles): void {
-            form = service.buildFormConfig({
+            buildForm({
                 extraRoles: roles,
                 isOrganizationAsked,
                 organizations: [
                     { id: 'o1', name: 'Acme' },
                     { id: 'o2', name: 'Globex' }
                 ],
-                prefix: 'demo.users',
-                rolePrefix: 'demo.roles',
                 roles: ['admin']
             });
         }
@@ -411,7 +400,7 @@ describe('UsersFormService', () => {
         let sent: unknown[];
 
         function build(isOrganizationAsked = false): void {
-            form = service.buildFormConfig({
+            buildForm({
                 extraRoles,
                 isOrganizationAsked,
                 organizations: [
@@ -419,9 +408,7 @@ describe('UsersFormService', () => {
                     { id: 'o2', name: 'Globex' },
                     { id: 'o3', name: 'Initech' }
                 ],
-                prefix: 'angular-components.users',
-                rolePrefix: 'demo.roles',
-                roles: ['admin', 'editor']
+                prefix: 'angular-components.users'
             });
         }
 

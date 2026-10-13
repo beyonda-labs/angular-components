@@ -3,8 +3,6 @@ import { BeyModalFormConfig, BeyModalFormService } from '@beyonda-labs/angular-c
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { Observable, take } from 'rxjs';
 
-const ignoreError = (): void => undefined;
-
 @Injectable()
 export class FakeModalFormService implements Pick<BeyModalFormService, 'canDeactivate' | 'open' | 'openWithRequest'> {
     private readonly _forms = signal<BeyModalFormConfig[]>([]);
@@ -36,3 +34,5 @@ export class FakeModalFormService implements Pick<BeyModalFormService, 'canDeact
         );
     }
 }
+
+function ignoreError(): void {}

@@ -1,7 +1,7 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { buttonByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
@@ -102,6 +102,18 @@ describe('GroupsComponent', () => {
         await settle(fixture);
     }
 
+    function cellsOf(rowText: string): string[] {
+        return textsOf(queryAll(rowWith(rowText), '[role="cell"]'));
+    }
+
+    async function editFromName(): Promise<ModalFormConfig | undefined> {
+        buttonByName(fixture, 'Sales').click();
+        await settle(fixture);
+        await answerEdit();
+
+        return modalForms.forms().at(-1);
+    }
+
     async function useMenuAction(rowText: string, action: string): Promise<void> {
         await openMenu(rowText);
         buttonByName(fixture, `${PREFIX}.actions.${action}.label`).click();
@@ -123,11 +135,10 @@ describe('GroupsComponent', () => {
     });
 
     it('lists the groups by name, with how many members and extra roles they have', async () => {
-        await render([buildGroup(), buildGroup({ extraRoleCount: 0, id: 'g2', memberCount: 0, name: 'Support' })]);
+        await render([buildGroup(), buildGroup({ extraRoleCount: 1, id: 'g2', memberCount: 0, name: 'Support' })]);
 
-        expect(rowWith('Sales').textContent).toContain('3');
-        expect(rowWith('Sales').textContent).toContain('2');
-        expect(rowWith('Support').textContent).toContain('0');
+        expect(cellsOf('Sales')).toEqual(expect.arrayContaining(['Sales', '3', '2']));
+        expect(cellsOf('Support')).toEqual(expect.arrayContaining(['Support', '0', '1']));
         expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.extra-role-count`);
     });
 
@@ -163,10 +174,7 @@ describe('GroupsComponent', () => {
     it('edits the name, the members and the extra roles of a group from its name, read from the server first', async () => {
         await render();
 
-        buttonByName(fixture, 'Sales').click();
-        await settle(fixture);
-        await answerEdit();
-        const form = modalForms.forms().at(-1);
+        const form = await editFromName();
         form?.onSubmit?.({ main: { extraRoleIds: ['r2'], name: 'Sales team', userIds: ['u2'] } }, buildHandle());
         const request = httpTesting.expectOne(`${GROUPS_URL}/g1`);
         request.flush(buildGroup({ name: 'Sales team' }));
@@ -202,13 +210,8 @@ describe('GroupsComponent', () => {
     it('shows the reason the server gives for a name taken in the organization', async () => {
         await render();
 
-        buttonByName(fixture, 'Sales').click();
-        await settle(fixture);
-        await answerEdit();
-        modalForms
-            .forms()
-            .at(-1)
-            ?.onSubmit?.({ main: { extraRoleIds: [], name: 'Support', userIds: [] } }, buildHandle());
+        const form = await editFromName();
+        form?.onSubmit?.({ main: { extraRoleIds: [], name: 'Support', userIds: [] } }, buildHandle());
         httpTesting
             .expectOne(`${GROUPS_URL}/g1`)
             .flush(
@@ -259,13 +262,8 @@ describe('GroupsComponent', () => {
     it('shows the reason the server gives for refusing the members', async () => {
         await render();
 
-        buttonByName(fixture, 'Sales').click();
-        await settle(fixture);
-        await answerEdit();
-        modalForms
-            .forms()
-            .at(-1)
-            ?.onSubmit?.({ main: { extraRoleIds: [], name: 'Sales', userIds: ['u9'] } }, buildHandle());
+        const form = await editFromName();
+        form?.onSubmit?.({ main: { extraRoleIds: [], name: 'Sales', userIds: ['u9'] } }, buildHandle());
         httpTesting
             .expectOne(current => current.url === `${GROUPS_URL}/g1` && current.method === 'PUT')
             .flush(
@@ -282,12 +280,6 @@ describe('GroupsComponent', () => {
     describe('for a member who reads their own groups', () => {
         async function renderMember(member: GroupRow): Promise<void> {
             await render([member], []);
-            reload().flush({
-                globalActions: [],
-                results: [member],
-                search: { filters: [], page: 1, size: 25, total: 1 }
-            });
-            await settle(fixture);
         }
 
         async function openView(detail: Record<string, unknown>): Promise<ModalFormConfig | undefined> {
@@ -298,6 +290,14 @@ describe('GroupsComponent', () => {
 
             return modalForms.forms().at(-1);
         }
+
+        it('asks for the groups once, though what the server answers turns the page read-only', async () => {
+            await renderMember(buildGroup({ actions: [], extraRoleCount: undefined, roleCount: 1 }));
+
+            expect(httpTesting.match(request => request.url === GROUPS_URL && request.method === 'GET')).toEqual([]);
+            expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.role-count`);
+            expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.table.columns.extra-role-count`);
+        });
 
         it('offers no action, and opens a group from its name with its members to read', async () => {
             await renderMember(buildGroup({ actions: [], extraRoleCount: undefined }));

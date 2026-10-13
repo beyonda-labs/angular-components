@@ -72,3 +72,7 @@ export interface PageFormConfigParameters<TValue = unknown, TItem extends PageIt
     toFormValue?: (item?: TItem, category?: PageCategoryPathEntry) => TValue | undefined;
     toItem?: (value: TValue, item?: TItem) => unknown;
 }
+
+export const PAGE_FORM_CANCEL_LABEL = 'angular-components.page.form.cancel';
+
+export const PAGE_FORM_SUBMIT_LABEL = 'angular-components.page.form.submit';

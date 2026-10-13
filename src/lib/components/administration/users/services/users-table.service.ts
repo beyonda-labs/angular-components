@@ -26,7 +26,7 @@ export class UsersTableService {
 
     loadRow(user: UserRow, { isOrganizationShown, onEdit, prefix, rolePrefix }: UsersRowOptions): TableCell[] {
         return [
-            this.buildNameCell(user, prefix, onEdit),
+            buildNameCell(user, prefix, onEdit),
             new TextTableCell({ content: user.email, tooltip: user.email }),
             ...(isOrganizationShown ? [buildOrganizationCell(user, prefix)] : []),
             new BadgeTableCell({
@@ -62,17 +62,17 @@ export class UsersTableService {
             new DateTableCell({ format: CREATED_FORMAT, value: user.createdAt })
         ];
     }
+}
 
-    private buildNameCell(user: UserRow, prefix: string, onEdit: (user: UserRow) => void): TableCell {
-        const name = userFullName(user);
-        const content = name || `${prefix}.table.no-name`;
-        const tooltip = name || undefined;
-        const translate = !name;
+function buildNameCell(user: UserRow, prefix: string, onEdit: (user: UserRow) => void): TableCell {
+    const name = userFullName(user);
+    const content = name || `${prefix}.table.no-name`;
+    const tooltip = name || undefined;
+    const translate = !name;
 
-        return user.actions.includes(PageStandardAction.Edit)
-            ? new LinkTableCell({ action: () => onEdit(user), content, tooltip, translate })
-            : new TextTableCell({ content, tooltip, translate });
-    }
+    return user.actions.includes(PageStandardAction.Edit)
+        ? new LinkTableCell({ action: () => onEdit(user), content, tooltip, translate })
+        : new TextTableCell({ content, tooltip, translate });
 }
 
 function buildOrganizationCell(user: UserRow, prefix: string): TableCell {

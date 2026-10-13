@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faFileArrowUp, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { map } from 'rxjs';
 
 import { isAcceptedMimeType } from '../../../../../internal/file/accept-pattern';
 import { OptionPickerOption } from '../../../../../internal/option-picker/models/option-picker-option.model';
@@ -16,7 +18,6 @@ import { PropertyFieldLabelling } from '../../../models/property-field-labelling
 import { PROPERTY_VARIABLE_ICON } from '../../../models/property-variable.model';
 
 const BYTES_PER_MB = 1024 * 1024;
-
 const UNKNOWN_ATTACHMENT_KEY = 'angular-components.properties-menu.attachment-field.unknown';
 
 @Component({
@@ -38,6 +39,7 @@ export class PropertyAttachmentFieldComponent {
 
     readonly attachmentsId = computed(() => `${this.labelling().controlId}-attachments`);
     readonly clearIcon = faXmark;
+    readonly controlsId = computed(() => (this.isOpen() ? this.attachmentsId() : null));
     readonly filteredOptions = computed(() => {
         const term = this.query().trim().toLowerCase();
         const { options } = this.field();
@@ -56,14 +58,22 @@ export class PropertyAttachmentFieldComponent {
             return field.selectedOption.label;
         }
 
-        return isUnresolved(field)
-            ? (this.translateService.instant(UNKNOWN_ATTACHMENT_KEY) as string)
-            : (field.value ?? '');
+        if (!isUnresolved(field)) {
+            return field.value ?? '';
+        }
+
+        this.language();
+
+        return this.translateService.instant(UNKNOWN_ATTACHMENT_KEY) as string;
     });
     readonly sizeErrorMaxSizeMB = signal<number | null>(null);
     readonly uploadIcon = faFileArrowUp;
     readonly variableIcon = PROPERTY_VARIABLE_ICON;
     readonly variableOptions = computed(() => toVariableOptions(this.field().variables));
+
+    private readonly language = toSignal(this.translateService.onLangChange.pipe(map(({ lang }) => lang)), {
+        initialValue: this.translateService.currentLang || this.translateService.getDefaultLang()
+    });
 
     close(): void {
         this.isOpen.set(false);
@@ -92,7 +102,7 @@ export class PropertyAttachmentFieldComponent {
 
         this.clearFileErrors();
 
-        if (!isAcceptedMimeType(this.acceptedMimeTypes(accept), file.type)) {
+        if (!isAcceptedMimeType(acceptedMimeTypes(accept), file.type)) {
             this.hasTypeError.set(true);
 
             return;
@@ -147,17 +157,17 @@ export class PropertyAttachmentFieldComponent {
         }
     }
 
-    private acceptedMimeTypes(accept: string | undefined): string[] {
-        return (accept ?? '')
-            .split(',')
-            .map(pattern => pattern.trim())
-            .filter(Boolean);
-    }
-
     private clearFileErrors(): void {
         this.hasTypeError.set(false);
         this.sizeErrorMaxSizeMB.set(null);
     }
+}
+
+function acceptedMimeTypes(accept: string | undefined): string[] {
+    return (accept ?? '')
+        .split(',')
+        .map(pattern => pattern.trim())
+        .filter(Boolean);
 }
 
 function isUnresolved({ holdsVariable, options, value }: PropertyAttachmentField): boolean {

@@ -117,12 +117,12 @@ export class TableConfig<T> {
 export class TableRow<T> {
     cells: TableCell[];
     content: T;
-    selected: boolean;
+    isSelected: boolean;
 
-    constructor({ cells, content, selected = false }: TableRowParameters<T>) {
+    constructor({ cells, content, isSelected = false }: TableRowParameters<T>) {
         this.cells = cells;
         this.content = content;
-        this.selected = selected;
+        this.isSelected = isSelected;
     }
 }
 
@@ -160,5 +160,5 @@ export interface TableRowParameters<T> {
     cells: TableCell[];
     content: T;
 
-    selected?: boolean;
+    isSelected?: boolean;
 }

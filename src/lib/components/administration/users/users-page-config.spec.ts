@@ -1,8 +1,8 @@
 import { PageActionScope, PageActionZone } from '../../page/models/page-action.model';
 import { PageFormConfig } from '../../page/models/page-form.model';
 import { buildOrganizationFoldersConfig } from '../functions/organization-folders';
-import { UserFormValue, UserRow, UsersConfig, UserStatus } from './models/users.model';
-import { buildUsersPageConfig, UsersPageConfigOptions } from './users-page-config';
+import { UserFormValue, UserRow, UsersConfig, UsersPageConfigOptions, UserStatus } from './models/users.model';
+import { buildUsersPageConfig } from './users-page-config';
 
 const FOLDER_ACTIONS = new Set(['create-category', 'delete-category', 'edit-category', 'move', 'share']);
 

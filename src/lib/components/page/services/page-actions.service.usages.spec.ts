@@ -4,11 +4,11 @@ import { FakeModalService } from '@testing/services/fake-modal.service';
 import { of } from 'rxjs';
 
 import { ConfirmationModalConfig } from '../../modal/models/modal.model';
-import { PageConfig } from '../models/page.model';
+import { PageActionsContext, PageConfig } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageItem } from '../models/page-item.model';
 import { PageUsagesConfig } from '../models/page-usages.model';
-import { PageActionsContext, PageActionsService } from './page-actions.service';
+import { PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
 
 describe('PageActionsService — usages', () => {

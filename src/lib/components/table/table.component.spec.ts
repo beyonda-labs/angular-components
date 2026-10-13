@@ -40,7 +40,7 @@ describe('TableComponent', () => {
     }
 
     function rowOf(name: string): HTMLElement {
-        const found = queryAll(fixture, 'bey-table-row').find(row => row.textContent?.includes(name));
+        const found = queryAll(fixture, '[role="row"]').find(row => row.textContent?.includes(name));
 
         if (!found) {
             throw new Error(`No row for ${name}`);
@@ -66,7 +66,7 @@ describe('TableComponent', () => {
     function dragEvent(row: string, type: string): Event {
         const event = new Event(type, { bubbles: true, cancelable: true });
 
-        rowOf(row).querySelector('[role="row"]')?.dispatchEvent(event);
+        rowOf(row).dispatchEvent(event);
 
         return event;
     }
@@ -166,7 +166,7 @@ describe('TableComponent', () => {
         await render(buildConfig({ selectedItemsChange }));
 
         rowOf('Ada')
-            .querySelector('bey-table-cell')
+            .querySelector('[role="cell"]')
             ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
         await settle(fixture);
 

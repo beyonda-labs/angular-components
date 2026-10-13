@@ -12,8 +12,7 @@ export {
     textsOf as beyTextsOf,
     visibleText as beyVisibleText
 } from './dom';
-export type { QueryScope as BeyQueryScope } from './dom';
-export type { TestingConfig as BeyTestingConfig } from './models/testing.model';
+export type { QueryScope as BeyQueryScope, TestingConfig as BeyTestingConfig } from './models/testing.model';
 export { provideBeyTesting } from './providers/testing.providers';
 export { FakeFilePreviewService as BeyFakeFilePreviewService } from './services/fake-file-preview.service';
 export { FakeModalService as BeyFakeModalService } from './services/fake-modal.service';

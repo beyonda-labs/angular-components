@@ -5,11 +5,12 @@ of express-components, for the superadmin only, and meant as the content of an a
 lists every organization with its name, its status, how many users belong to it, active or not, and its creation date,
 sorted by name, and searches them by name in the search box and by status in the filters. It creates an organization
 and edits one: its name and its status in one form, which also shows its administrators, its groups with their members
-and its members in no group; and it deletes a
-deactivated one with everything in it, see [Deletion](#deletion). Which actions it offers is up to the backend, as on
-any page: `create` when `globalActions` lists it, and `edit` and `delete` for the rows whose `actions` list them. The name of an organization opens the edit form when the row lists `edit`. The
-first admin of an organization is invited from [the users page](../../users/docs/users-readme.md#organizations), where
-the superadmin chooses the organization and the roles.
+and its members in no group; and it deletes a deactivated one with everything in it, see [Deletion](#deletion). Which
+actions it offers is up to the backend, as on any page: `create` when `globalActions` lists it, and `edit` and `delete`
+for the rows whose `actions` list them. The name of an organization opens the edit form when the row lists `edit`, as
+Edit in the header does for the selected row. The first admin of an organization is invited from
+[the users page](../../users/docs/users-readme.md#organizations), where the superadmin chooses the organization and the
+roles.
 
 ## Usage
 
@@ -33,24 +34,24 @@ anyone else gets `404` from `/organizations`.
 
 ## BeyOrganizationsConfig
 
-| Field        | Default                              | Meaning                                                                          |
-| ------------ | ------------------------------------ | -------------------------------------------------------------------------------- |
-| `baseUrl`    | `'/organizations'`                   | Path of the organizations, resolved against the environment's `baseUrl` and `webApiPath` |
-| `prefix`     | `'angular-components.organizations'` | i18n prefix of the page, as `bey-page` reads it                                  |
-| `contentLabels` | `{}`                              | The translation key that labels each kind of content of the app the counts of a deletion name, by key, as on [the users page](../../users/docs/users-readme.md#transfer-and-deletion) |
-| `storageKey` | `'organizations'`                    | Key under which the table remembers the columns the user hid                     |
-| `height`     | `'calc(100vh - 220px)'`              | Height of the table                                                              |
+| Field           | Default                              | Meaning                                                                                                                                              |
+| --------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `baseUrl`       | `'/organizations'`                   | Path of the organizations, resolved against the environment's `baseUrl` and `webApiPath`                                                             |
+| `prefix`        | `'angular-components.organizations'` | i18n prefix of the page, as `bey-page` reads it                                                                                                      |
+| `contentLabels` | `{}`                                 | The translation key that labels each kind of content the counts of a deletion name, by the key the server counts it under, see [Deletion](#deletion) |
+| `storageKey`    | `'organizations'`                    | Key under which the table remembers the columns the user hid                                                                                         |
+| `height`        | `'calc(100vh - 220px)'`              | Height of the table                                                                                                                                  |
 
 `baseUrl` follows the path of the organizations module of express-components.
 
 ## Requests
 
-| Action           | Request                                                                                | Form                                                  |
-| ---------------- | -------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| List             | `GET {baseUrl}?search=<base64>`                                                        |                                                       |
-| `create`         | `POST {baseUrl}` `{ name }`                                                            | The name                                              |
-| `edit`           | `GET {baseUrl}/{id}`, then `PUT {baseUrl}/{id}` `{ name, status? }`                    | The name and the status, and its people read-only     |
-| `delete`         | `GET {baseUrl}/{id}/content`, then `DELETE {baseUrl}/{id}` `{ name }`                 | The counts of what goes, and the name to type         |
+| Action   | Request                                                               | Form                                              |
+| -------- | --------------------------------------------------------------------- | ------------------------------------------------- |
+| List     | `GET {baseUrl}?search=<base64>`                                       |                                                   |
+| `create` | `POST {baseUrl}` `{ name }`                                           | The name                                          |
+| `edit`   | `GET {baseUrl}/{id}`, then `PUT {baseUrl}/{id}` `{ name, status? }`   | The name and the status, and its people read-only |
+| `delete` | `GET {baseUrl}/{id}/content`, then `DELETE {baseUrl}/{id}` `{ name }` | The counts of what goes, and the name to type     |
 
 The name is required, at most 100 characters and sent trimmed; the server keeps it unique app-wide, without regard to
 case. The search box sends its text as the `text` of the search, which the backend matches against the name; the
@@ -85,12 +86,13 @@ The server offers `delete` to the superadmin on a deactivated organization, the 
 time, in the menu of the header. The page reads `GET {baseUrl}/{id}/content`, `{ counts: { users, groups, roles, [key]:
 number } }`, `roles` being its extra roles, and opens "Delete organization" (`delete.title`): what goes for good
 (`delete.message`, with the name), the counts of what it holds above zero, "Users: 3" (`content.count`, labelled
-`content.users`, `.groups` and `.roles`, and every other key by `contentLabels` or by the key itself), or "It holds
-nothing." (`content.empty`), and a required text field, "Type «Acme» to confirm" (`delete.confirm`). Its danger button
-"Delete" (`delete.submit`) stays disabled until the field holds the name exactly, case and spaces included; another
-text shows "The name does not match." (`delete.name-mismatch`). It sends `DELETE {baseUrl}/{id}` `{ name }`, confirms
-with `toast.delete-success` and reloads. Every user of the organization, of any status, goes with what they own, and
-its groups, extra roles, shares and edit locks too; the server takes a backup of the database first.
+`content.users`, `.groups` and `.roles` unless `contentLabels` names them, and every other key by `contentLabels` or by
+the key itself), or "It holds nothing." (`content.empty`), and a required text field, "Type «Acme» to confirm"
+(`delete.confirm`). Its danger button "Delete" (`delete.submit`) stays disabled until the field holds the name exactly,
+case and spaces included; another text shows "The name does not match." (`delete.name-mismatch`). It sends
+`DELETE {baseUrl}/{id}` `{ name }`, confirms with `toast.delete-success` and reloads. Every user of the organization, of
+any status, goes with what they own, and its groups, extra roles, shares and edit locks too; the server takes a backup
+of the database first.
 
 The errors of the module are translated under `angular-components.http.error.organizations` and
 `.title.organizations`: `existing-name` (with its `name`), `not-found`, `active` (a delete of an organization still
@@ -102,7 +104,6 @@ Every text follows [the page](../../../page/docs/page-readme.md#texts) under `pr
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `search.fields.<key>`, `status.<status>`,
 `form.create.title`, `form.edit.title`, `form.main.name.label` and `.placeholder`, `form.main.status.label` and
 `.placeholder`, `form.administrators.label` and `.no-members`, `form.groups.label`, `.empty`, `.no-members` and
-`.ungrouped`, `content.label`, `.count`, `.empty`, `.users`, `.groups`
-and `.roles`, `delete.title`, `.message`, `.confirm`, `.name-mismatch`, `.submit` and `.main.name.placeholder`, and
-`toast.<key>-success`. The module ships all of them
-in English and Spanish.
+`.ungrouped`, `content.label`, `.count`, `.empty`, `.users`, `.groups` and `.roles`, `delete.title`, `.message`,
+`.confirm`, `.name-mismatch`, `.submit` and `.main.name.placeholder`, and `toast.<key>-success`. The module ships all of
+them in English and Spanish.

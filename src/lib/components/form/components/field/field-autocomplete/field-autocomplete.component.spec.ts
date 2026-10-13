@@ -54,7 +54,7 @@ describe('FormAutocompleteFieldComponent', () => {
     it('filters the options by the typed text and writes the picked one', async () => {
         input().dispatchEvent(new Event('focus'));
         await settle(fixture);
-        expect(panelOptions()).toHaveLength(3);
+        expect(textsOf(panelOptions())).toEqual(['Madrid', 'Malaga', 'Bilbao']);
 
         input().value = 'ma';
         input().dispatchEvent(new Event('input'));
@@ -111,7 +111,7 @@ describe('FormAutocompleteFieldComponent', () => {
             await settle(fixture);
 
             expect(input().value).toBe('Sales');
-            expect(panelOptions()).toHaveLength(3);
+            expect(textsOf(panelOptions())).toEqual(['Sales', 'Support', 'Billing']);
         });
 
         it('takes the typed text as the value, suggesting the options that match it', async () => {
@@ -287,6 +287,22 @@ describe('FormAutocompleteFieldComponent', () => {
         await settle(fixture);
 
         expect(document.body.querySelector('[role="listbox"]')).toBeNull();
+    });
+
+    it('points the input at its options only while they are there', async () => {
+        expect(input().hasAttribute('aria-controls')).toBe(false);
+
+        input().dispatchEvent(new Event('focus'));
+        await settle(fixture);
+
+        const listId = input().getAttribute('aria-controls');
+
+        expect(textsOf(queryAll(document.body, `#${listId} [role="option"]`))).toEqual(['Madrid', 'Malaga', 'Bilbao']);
+
+        input().dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+        await settle(fixture);
+
+        expect(input().hasAttribute('aria-controls')).toBe(false);
     });
 });
 

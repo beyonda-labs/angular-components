@@ -14,8 +14,8 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 
 import { StyleGuideButton } from '../models/style-guide-button.model';
-import { STYLE_GUIDE_REGIONS, StyleGuideRegion } from './form-style-guide.dependent-sections';
 import { buildStyleGuideSections } from './form-style-guide.sections';
+import { STYLE_GUIDE_REGIONS, StyleGuideRegion } from './models/form-style-guide.model';
 
 const PREFIX = 'angular-components-style-guide.form';
 

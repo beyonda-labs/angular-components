@@ -11,6 +11,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { nextDomId } from '../../internal/dom-ids/dom-ids';
 import { PAGINATION_SIZE_OPTIONS, PaginationConfig } from './models/pagination.model';
 
 const FIRST_LAST_BUTTONS_FROM_PAGES = 6;
@@ -34,9 +35,7 @@ export class PaginationComponent {
     readonly lastPageIcon = faAnglesRight;
     readonly nextPageIcon = faChevronRight;
     readonly page = linkedSignal(() => this.config().page);
-
-    private static nextInstanceId = 0;
-    readonly pageInputId = `bey-pagination-page-input-${PaginationComponent.nextInstanceId}`;
+    readonly pageInputId = nextDomId('bey-pagination-page-input');
     readonly pageInputValue = linkedSignal(() => String(this.config().page));
     readonly pageInputWidth = computed(() => {
         const digits = Math.max(this.pageInputValue().length, String(this.totalPages()).length, 1);
@@ -44,7 +43,7 @@ export class PaginationComponent {
         return `calc(${Math.min(digits, MAX_INPUT_DIGITS)}ch + 1.4rem)`;
     });
     readonly pageSize = linkedSignal(() => this.config().pageSize);
-    readonly pageSizeId = `bey-pagination-page-size-${PaginationComponent.nextInstanceId++}`;
+    readonly pageSizeId = nextDomId('bey-pagination-page-size');
     readonly pageSizeOptions = PAGINATION_SIZE_OPTIONS;
     readonly previousPageIcon = faChevronLeft;
     readonly resultRangeEnd = computed(() =>

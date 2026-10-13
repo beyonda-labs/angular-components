@@ -152,6 +152,24 @@ describe('PropertySelectFieldComponent', () => {
             expect(emitted).toEqual(['a']);
         });
 
+        it('points the combobox at its options only while they are there', async () => {
+            expect(control().hasAttribute('aria-controls')).toBe(false);
+
+            await dispatch(new Event('focus'));
+
+            const listId = control().getAttribute('aria-controls');
+
+            expect(textsOf(queryAll(fixture, `#${listId} [role="option"]`))).toEqual([
+                'Invoice',
+                'Letterhead',
+                'Report'
+            ]);
+
+            await dispatch(new KeyboardEvent('keydown', { key: 'Escape' }));
+
+            expect(control().hasAttribute('aria-controls')).toBe(false);
+        });
+
         it('closes without emitting on Escape', async () => {
             await dispatch(new Event('focus'));
             await dispatch(new KeyboardEvent('keydown', { key: 'Escape' }));

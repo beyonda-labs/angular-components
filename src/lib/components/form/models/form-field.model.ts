@@ -54,9 +54,6 @@ export abstract class FormField {
     placeholder?: string;
 
     constructor({
-        key,
-        type,
-
         asyncValidators = [],
         autocomplete,
         columns = 12,
@@ -66,8 +63,10 @@ export abstract class FormField {
         isLabelTooltipVisible = false,
         isLabelVisible = true,
         isRequired = false,
+        key,
         label,
         placeholder,
+        type,
         validators = []
     }: FormFieldParameters) {
         this.asyncValidators = asyncValidators;

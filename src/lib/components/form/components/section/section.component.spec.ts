@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { renderComponent } from '@testing/dom';
+import { queryControl, renderComponent } from '@testing/dom';
 
-import { FormFieldState } from '../../form.component';
 import { FormTextField } from '../../models/fields/form-text-field.model';
 import { FormRow, FormSection, FormSectionParameters } from '../../models/form.model';
+import { FormFieldState } from '../../models/form-field-state.model';
 import { FormSectionComponent } from './section.component';
 
 const VISIBLE: FormFieldState = {
@@ -47,11 +47,12 @@ describe('FormSectionComponent', () => {
         }).compileComponents();
     });
 
-    it('shows the title from the prefix and the section key, and one row per row with a visible field', async () => {
+    it('shows the title from the prefix and the section key, and every row with a visible field', async () => {
         await render();
 
         expect(fixture.nativeElement.textContent).toContain('demo.contact.label');
-        expect(fixture.nativeElement.querySelectorAll('input')).toHaveLength(2);
+        expect(queryControl(fixture, 'demo.contact.name.label')).not.toBeNull();
+        expect(queryControl(fixture, 'demo.contact.email.label')).not.toBeNull();
     });
 
     it('shows the title it is given instead of the one of its prefix', async () => {
@@ -79,6 +80,7 @@ describe('FormSectionComponent', () => {
         await render({ isTitleVisible: false }, { 'contact.name': VISIBLE, 'contact.email': HIDDEN });
 
         expect(fixture.nativeElement.textContent).not.toContain('demo.contact.label');
-        expect(fixture.nativeElement.querySelectorAll('input')).toHaveLength(1);
+        expect(queryControl(fixture, 'demo.contact.name.label')).not.toBeNull();
+        expect(queryControl(fixture, 'demo.contact.email.label')).toBeNull();
     });
 });

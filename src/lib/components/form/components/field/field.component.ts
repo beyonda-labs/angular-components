@@ -5,11 +5,12 @@ import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
+import { nextDomId } from '../../../../internal/dom-ids/dom-ids';
 import { toKeySegment } from '../../../../utilities/key-segment';
-import { FormFieldState } from '../../form.component';
 import { fieldErrorOf } from '../../functions/field-error';
 import { FormPasswordField } from '../../models/fields/form-password-field.model';
 import { FormField, FormFieldType } from '../../models/form-field.model';
+import { FormFieldState } from '../../models/form-field-state.model';
 import { FormFieldError } from '../../models/form-field-validator.model';
 import { FormAutocompleteFieldComponent } from './field-autocomplete/field-autocomplete.component';
 import { FormCheckboxFieldComponent } from './field-checkbox/field-checkbox.component';
@@ -28,8 +29,6 @@ import { FormSelectFieldComponent } from './field-select/field-select.component'
 import { FormTextFieldComponent } from './field-text/field-text.component';
 import { FormTextVariableFieldComponent } from './field-text-variable/field-text-variable.component';
 import { FormTextareaFieldComponent } from './field-textarea/field-textarea.component';
-
-let messageCount = 0;
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -73,7 +72,7 @@ export class FormFieldComponent {
     readonly hint = computed(() => (hasPasswordPolicy(this.field()) ? '' : (this.field().hint ?? '')));
     readonly infoIcon = faInfoCircle;
     readonly label = computed(() => this.field().label ?? `${this.fieldPrefix()}.label`);
-    readonly messageId = nextMessageId();
+    readonly messageId = nextDomId('bey-form-field-message');
     readonly tooltip = computed(() => `${this.fieldPrefix()}.tooltip`);
     readonly type = computed(() => this.field().type);
 
@@ -90,10 +89,4 @@ export class FormFieldComponent {
 
 function hasPasswordPolicy(field: FormField): boolean {
     return field instanceof FormPasswordField && field.policy !== undefined;
-}
-
-function nextMessageId(): string {
-    messageCount += 1;
-
-    return `bey-form-field-message-${messageCount}`;
 }

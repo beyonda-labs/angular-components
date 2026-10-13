@@ -3,8 +3,7 @@ import {
     hasOrganizationColumn,
     hiddenOrganizationColumn,
     pageOrganizationCell,
-    pageOrganizationColumn,
-    withoutColumn
+    pageOrganizationColumn
 } from './page-organization-column';
 
 const ORGANIZATIONS = [
@@ -68,13 +67,5 @@ describe('hiddenOrganizationColumn', () => {
     it('hides nothing with two organizations or more, or without the column', () => {
         expect(hiddenOrganizationColumn(columns, ORGANIZATIONS)).toBe(-1);
         expect(hiddenOrganizationColumn([new TableColumn({ key: 'name' })], [])).toBe(-1);
-    });
-});
-
-describe('withoutColumn', () => {
-    it('leaves out the entry of the hidden column, and keeps every entry when none is hidden', () => {
-        expect(withoutColumn(['name', 'organization', 'status'], 1)).toEqual(['name', 'status']);
-        expect(withoutColumn(['name', 'status'], -1)).toEqual(['name', 'status']);
-        expect(withoutColumn(['name'], 1)).toEqual(['name']);
     });
 });

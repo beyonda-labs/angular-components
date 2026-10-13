@@ -245,6 +245,89 @@ What `document-builder-front` did by hand that belongs in the library.
 -   [x] `BeyAppLayoutConfig` keeps the footer fields as its own, so a spread copies it whole, and `icon` is optional
         on the app-layout actions
 
+### Pre-release audit
+
+What the audit before the next release left for after it.
+
+-   `PageService`:
+    -   [ ] Nine public writable signals, and private ones without `_`
+    -   [ ] Fixing them pushes the file over `max-lines`, so it needs splitting first
+    -   [x] `PageActionsContext` and the other contracts of the service files moved to model files
+-   Testing:
+    -   [ ] Three page specs mock `BeyModalTreeService` by hand instead of driving the real tree dialog
+            `provideBeyTesting` opens
+    -   [ ] A Jest-free form-handle fake, plus `cellsOf`, `fieldsOf`, `rowWith` and the search decoder, which are
+            copied across 7+ specs
+-   Behaviour in models:
+    -   [ ] `LeftMenuUserInfo` derives `initials` in its constructor
+    -   [ ] `avatarInitials` is shared by cards and the left menu, so it belongs in `internal/`
+    -   [ ] Public model methods: `PropertyAttachmentField.holdsVariable`/`selectedOption`,
+            `PropertyField.withValue`/`withDisabled`, `PropertySelectField.holdsVariable`, and `matchesAcceptPattern`
+            exported from a model file
+-   [ ] `form.component.ts` holds 12 plain functions; its contracts and `fieldStateKey` moved out already
+-   Literal values without a token:
+    -   [ ] Notice `16rem`
+    -   [x] The avatar and header letter-spacing, now `--bey-letter-spacing-*` tokens, as every letter spacing is
+    -   [ ] Header `500px`
+    -   [ ] The dialogs' `3rem` icon, `32rem` width and `min(60vh, 28rem)`
+    -   [ ] File preview `70vh` and `12rem`
+-   Names a rename would break:
+    -   [ ] Modal variants are `bey-modal-<type>`, not `bey-modal--<type>`
+-   Duplicates:
+    -   [ ] `toOrganizationOptions` in groups and roles
+    -   [ ] The folder `categoriesConfig` builder in 3 components
+    -   [ ] `CANCEL_`/`SUBMIT_LABEL_KEY` in 6 services
+    -   [ ] Groups `toMemberOption` against `userContactLabel`
+    -   [ ] The organizations status options, built twice
+-   Style guide gaps:
+    -   [ ] Documented options without a demo: roles `groupIcons`/order, page Share/View/`isSharedEnabled`, form
+            notice/`isSubmitDanger`/autocomplete options, and the edit-lock "Unknown" and lost cases
+    -   [ ] The demo backend serves no groups, roles or current organization
+-   [ ] Spec console noise: "disabled attribute with a reactive form directive" (radio, number and select fields) and
+        the jsdom CSS parse warnings
+-   [ ] `beyAuthGuard` checks only the leaf `routeConfig.path`, so a nested guarded route is checked as `/<leaf>`
+-   [ ] Moving a shared folder: `move` on a top shared folder at the Shared root opens its owner's whole tree, which is
+        fine only while the backend never lists `move` there
+
+## For the next minor
+
+Released public names the reviewed rules refuse. Renaming one breaks every consumer, so they wait for the next
+minor and go out together, with no alias for the old name.
+
+-   [ ] `BeyPageAction.handler` becomes `action`, in `BeyPageActionParameters` and in the overrides of
+        `beyPageStandardAction` too: what an action model runs is its `action`
+-   [ ] `BeyTableConfig.selectedItemsChange` becomes `onSelectionChange`, an event callback prefixed with `on`
+-   [ ] The close button variables of the dialogs: `--bey-close-hover-bg` of the tree dialog has no module prefix
+        (`--bey-modal-tree-close-hover-bg`), and `--bey-modal-form-close-bg-hover` names in another order what
+        `--bey-modal-close-hover-bg` names (`--bey-modal-form-close-hover-bg`)
+-   [ ] Released flags with no boolean prefix (`is*`/`has*`, `can*`, `include*`), renamed with the internal model
+        that mirrors one of them (`closeOnBackdrop` of the internal modal config):
+    -   [ ] `disabled`: `BeyHeaderAction`, `BeyLeftMenuAction`, `BeyPropertyAttachmentOption`, `BeyPropertyField`,
+            `BeyPropertyGroup`, `BeyPropertyListItem`, `BeyPropertyOption`, `BeyPropertyTab`, `BeyPropertyTreeNode`
+    -   [ ] `expanded`: `BeyLeftMenuConfig`, `BeyPropertyGroup`, `BeyPropertyListItem`, `BeyPropertyTreeNode` and the
+            `BeyPropertyGroupToggle`, `BeyPropertyListItemToggle` and `BeyPropertyTreeNodeToggle` events
+    -   [ ] `hidden`: `BeyPropertyField`, `BeyPropertyGroup`, `BeyPropertyListItem`, `BeyPropertyTab`,
+            `BeyPropertyTreeNode`
+    -   [ ] `required` of `BeyPropertyField`, and `readonly` of the color, number, spacing and text property fields
+    -   [ ] `selectable` of `BeyTableConfig`
+    -   [ ] `translate` of `BeyBreadcrumbConfig` and of `BeyTableCell` and its cells
+    -   [ ] `show*`: `BeyFormPasswordField.showToggle`, `BeyPageTableConfig.showPagination`,
+            `BeyPropertyGroup.showHeader`, `BeyPropertyTreeConfig.showEmptyStateAddBlock`
+    -   [ ] `allow*`: `BeyFormConfig.allowSubmitWithoutChanges`, `BeyPageFormConfig.allowSubmitWithoutChanges`,
+            `BeyFormChipsField.allowDuplicates`, `BeyPageTableConfig.allowSelection`
+    -   [ ] `accepts*`: `BeyPropertyField.acceptsVariable`, `BeyPropertyTreeConfig.acceptsRootDrop`,
+            `BeyPropertyTreeNode.acceptsDrop`
+    -   [ ] The `*Button` and `*Buttons` flags of `BeyPdfViewerToolbarButtons`: `downloadButton`, `findButton`,
+            `handToolButton`, `openFileButton`, `pagingButtons`, `presentationModeButton`, `printButton`,
+            `propertiesButton`, `rotateButton`, `secondaryToolbarButton`, `sidebarButton`, `zoomButtons` and
+            `zoomDropdown`
+    -   [ ] And the like: `BeyAppLayoutConfig.useBodyPadding`, `active` of `BeyLeftMenuAction` and
+            `BeyPropertyTreeNode`, `BeyListConfig.bare`, `closeOnBackdrop` of the confirmation and notification
+            modal configs, `BeyPropertiesMenuConfig.embedded`, `BeyPropertySelectField.searchable`,
+            `BeyPropertyTextField.multiline`, `removable` of `BeyPropertyGroup` and `BeyPropertyListItem`,
+            `draggable` and `dropDisabled` of `BeyPropertyTreeNode`, and `loading` and `withCredentials` (named after
+            the `HttpClient` option it passes on) of `BeyHttpRequestOptions`
+
 ---
 
 ## Features

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { buttonByName, queryAll, renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of, Subject } from 'rxjs';
 
@@ -111,7 +111,7 @@ describe('PageComponent', () => {
         expect(text()).toContain('demo.table.columns.name');
         expect(text()).toContain('Ada');
         expect(text()).toContain('Grace');
-        expect(fixture.nativeElement.querySelector('bey-pagination')).not.toBeNull();
+        expect(queryButton(fixture, 'angular-components.pagination.next-page')).not.toBeNull();
     });
 
     it('shows the empty message and no paginator when the backend returns nothing', async () => {
@@ -119,12 +119,12 @@ describe('PageComponent', () => {
         await render();
 
         expect(text()).toContain('demo.table.empty');
-        expect(fixture.nativeElement.querySelector('bey-pagination')).toBeNull();
+        expect(queryButton(fixture, 'angular-components.pagination.next-page')).toBeNull();
     });
 
     it('offers the search when the table declares one', async () => {
         await render();
-        expect(fixture.nativeElement.querySelector('bey-search')).toBeNull();
+        expect(fixture.nativeElement.querySelector('[role="searchbox"]')).toBeNull();
 
         await render(
             buildConfig({
@@ -135,7 +135,7 @@ describe('PageComponent', () => {
                 })
             })
         );
-        expect(fixture.nativeElement.querySelector('bey-search')).not.toBeNull();
+        expect(fixture.nativeElement.querySelector('[role="searchbox"]')).not.toBeNull();
     });
 
     it('reloads from the handle the consumer receives', async () => {

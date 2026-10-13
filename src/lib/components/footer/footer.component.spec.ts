@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { queryAll, renderComponent, settle } from '@testing/dom';
+import { controlByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { FooterComponent } from './footer.component';
@@ -44,7 +44,8 @@ describe('FooterComponent', () => {
     it('offers no legal navigation when neither url is given', async () => {
         await render();
 
-        expect(fixture.nativeElement.querySelector('nav')).toBeNull();
+        expect(queryButton(fixture, 'angular-components.footer.terms')).toBeNull();
+        expect(queryButton(fixture, 'angular-components.footer.privacy')).toBeNull();
     });
 
     it('offers one link per url given', async () => {
@@ -73,11 +74,11 @@ describe('FooterComponent', () => {
         expect(navigate).toHaveBeenCalledWith(['/privacy']);
     });
 
-    it('embeds the preferences selector without its floating pill', async () => {
+    it('embeds the language and theme selectors of the preferences', async () => {
         await render();
 
-        expect(fixture.nativeElement.querySelector('bey-floating-preferences')).toBeTruthy();
-        expect(fixture.nativeElement.querySelector('.is-pill')).toBeNull();
+        expect(controlByName(fixture, 'angular-components.floating-preferences.language')).toBeTruthy();
+        expect(controlByName(fixture, 'angular-components.floating-preferences.theme')).toBeTruthy();
     });
 
     it('follows a replaced config', async () => {

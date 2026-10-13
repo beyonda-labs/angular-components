@@ -44,10 +44,11 @@ describe('OrganizationSummaryComponent', () => {
 
     async function render(
         summary: OrganizationSummary = SUMMARY,
-        config = new OrganizationSummaryConfig()
+        config = new OrganizationSummaryConfig(),
+        url = SUMMARY_URL
     ): Promise<void> {
         fixture = await renderComponent(OrganizationSummaryComponent, { config });
-        httpTesting.expectOne(request => request.url.endsWith('/current')).flush(summary);
+        httpTesting.expectOne(url).flush(summary);
         await settle(fixture);
     }
 
@@ -156,7 +157,7 @@ describe('OrganizationSummaryComponent', () => {
         expect(itemsOf('Groups')).toContain('G grace@example.test');
     });
 
-    it('says so when the organization has no groups, nobody out of them and no extra roles', async () => {
+    it('says so when the organization has no administrators, no groups, nobody out of them and no extra roles', async () => {
         await render({ ...SUMMARY, administrators: [] });
 
         expect(text()).toContain('No administrators yet.');
@@ -195,11 +196,11 @@ describe('OrganizationSummaryComponent', () => {
     });
 
     it('reads the summary under the address of the organizations the config gives', async () => {
-        fixture = await renderComponent(OrganizationSummaryComponent, {
-            config: new OrganizationSummaryConfig({ organizationsUrl: '/companies' })
-        });
-        httpTesting.expectOne('https://api.test/api/companies/current').flush(SUMMARY);
-        await settle(fixture);
+        await render(
+            SUMMARY,
+            new OrganizationSummaryConfig({ organizationsUrl: '/companies' }),
+            'https://api.test/api/companies/current'
+        );
 
         expect(text()).toContain('Acme');
     });

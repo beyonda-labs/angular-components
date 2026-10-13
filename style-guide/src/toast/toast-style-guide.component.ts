@@ -9,7 +9,7 @@ import { StyleGuideButton } from '../models/style-guide-button.model';
     imports: [TranslateModule],
     selector: 'bey-toast-style-guide',
     standalone: true,
-    styleUrls: ['../style-guide-shared.css', './toast-style-guide.component.css'],
+    styleUrls: ['../style-guide-shared.css'],
     templateUrl: './toast-style-guide.component.html'
 })
 export class ToastStyleGuideComponent {

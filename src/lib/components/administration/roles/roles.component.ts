@@ -38,7 +38,6 @@ export class RolesComponent {
         const isSuperadmin = this.userOrganizationsService.isSuperadmin();
         const organizations = this.userOrganizationsService.organizations();
         const permissions = this.rolePermissionsService.permissions();
-        const mode = this.mode();
         const { actionOrder, baseUrl, groupIcons, groupOrder, permissionPrefix, prefix, rolePrefix } = config;
 
         if (!organizations || !permissions) {
@@ -75,13 +74,12 @@ export class RolesComponent {
             loadRow: role =>
                 this.rolesTableService.loadRow(role, {
                     isOrganizationShown: isSuperadmin,
-                    isReadOnly: mode === RolesPageMode.Read,
                     onEdit: edited => this.page?.openEdit(edited),
                     onView,
                     prefix,
                     rolePrefix
                 }),
-            mode,
+            mode: this.mode.asReadonly(),
             onDataLoaded: ({ results }) => this.mode.update(current => rolesPageMode(current, results)),
             onDuplicate: role =>
                 this.rolesActionsService.duplicate({ ...formOptions, baseUrl, rolePrefix }, role, this.page),

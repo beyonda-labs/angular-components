@@ -1,11 +1,8 @@
+import { nextDomId } from '../../../internal/dom-ids/dom-ids';
 import { CardIds } from '../models/cards.model';
 
-let cardCount = 0;
-
 export function nextCardIds(): CardIds {
-    cardCount += 1;
-
-    const id = `bey-cards-${cardCount}`;
+    const id = nextDomId('bey-cards');
 
     return { fold: `${id}-fold`, subtitle: `${id}-subtitle`, title: `${id}-title` };
 }

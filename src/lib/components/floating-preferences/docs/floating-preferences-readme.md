@@ -14,8 +14,8 @@ and what a signed-in user picks is saved to their account as well.
 <bey-floating-preferences [usePill]="false"></bey-floating-preferences>
 ```
 
-| Input     | Default | Meaning                                                                        |
-| --------- | ------- | ------------------------------------------------------------------------------ |
+| Input     | Default | Meaning                                                                                |
+| --------- | ------- | -------------------------------------------------------------------------------------- |
 | `usePill` | `true`  | Wrap the selectors in the floating pill. Turn it off to embed them, as the footer does |
 
 ## Theme
@@ -29,12 +29,12 @@ To react to the theme elsewhere, inject `BeyThemeService` and read `theme$`, or 
 
 ## Theming
 
-| Variable                                    | Default                  |
-| ------------------------------------------- | ------------------------ |
-| `--bey-floating-preferences-fg`             | `--bey-text-secondary`   |
-| `--bey-floating-preferences-fg-hover`       | `--bey-text-primary`     |
-| `--bey-floating-preferences-fg-muted`       | `--bey-text-muted`       |
-| `--bey-floating-preferences-bg-hover`       | `--bey-bg-hover`         |
-| `--bey-floating-preferences-border-focus`   | `--bey-border-default`   |
-| `--bey-floating-preferences-pill-bg`        | translucent page background |
-| `--bey-floating-preferences-pill-border`    | `--bey-border-subtle`    |
+| Variable                                  | Default                     |
+| ----------------------------------------- | --------------------------- |
+| `--bey-floating-preferences-fg`           | `--bey-text-secondary`      |
+| `--bey-floating-preferences-fg-hover`     | `--bey-text-primary`        |
+| `--bey-floating-preferences-fg-muted`     | `--bey-text-muted`          |
+| `--bey-floating-preferences-bg-hover`     | `--bey-bg-hover`            |
+| `--bey-floating-preferences-border-focus` | `--bey-border-default`      |
+| `--bey-floating-preferences-pill-bg`      | `--bey-bg-page-translucent` |
+| `--bey-floating-preferences-pill-border`  | `--bey-border-subtle`       |

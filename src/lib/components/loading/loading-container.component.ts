@@ -8,11 +8,7 @@ import { LoadingService } from './services/loading.service';
     imports: [LoadingOverlayComponent],
     selector: 'bey-loading-container',
     standalone: true,
-    template: `
-        @if (loadingService.isLoading()) {
-            <bey-loading-overlay [fullscreen]="true"></bey-loading-overlay>
-        }
-    `
+    templateUrl: './loading-container.component.html'
 })
 export class LoadingContainerComponent {
     protected readonly loadingService = inject(LoadingService);

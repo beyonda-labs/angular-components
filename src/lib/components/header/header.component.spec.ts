@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { faArrowUp, faGear, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
-import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
+import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf, visibleText } from '@testing/dom';
 
 import { BadgeConfig } from '../badge/models/badge.model';
 import { HeaderComponent } from './header.component';
@@ -53,7 +53,7 @@ describe('HeaderComponent', () => {
         await render();
 
         expect(buttons()).toHaveLength(0);
-        expect(fixture.nativeElement.querySelector('bey-badge')).toBeNull();
+        expect(visibleText(fixture)).toBe('demo.title');
     });
 
     it('drops the title when the config does not give one', async () => {
@@ -69,9 +69,7 @@ describe('HeaderComponent', () => {
             })
         );
 
-        const badges = [...fixture.nativeElement.querySelectorAll('bey-badge')] as HTMLElement[];
-
-        expect(badges.map(badge => badge.textContent?.trim())).toEqual(['demo.status', 'demo.read-only']);
+        expect(visibleText(fixture)).toBe('demo.title demo.status demo.read-only');
     });
 
     it('puts the back action before the title', async () => {

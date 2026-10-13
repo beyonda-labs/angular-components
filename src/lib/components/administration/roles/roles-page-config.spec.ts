@@ -1,9 +1,13 @@
+import { signal } from '@angular/core';
+
 import { PageActionZone } from '../../page/models/page-action.model';
 import { PageFormConfig } from '../../page/models/page-form.model';
+import { PageColumnContext } from '../../page/models/page-table.model';
 import { buildOrganizationFoldersConfig } from '../functions/organization-folders';
-import { RoleFormValue, RoleRow, RolesConfig, RolesPageMode } from './models/roles.model';
-import { buildRolesPageConfig, RolesPageConfigOptions } from './roles-page-config';
+import { RoleFormValue, RoleRow, RolesConfig, RolesPageConfigOptions, RolesPageMode } from './models/roles.model';
+import { buildRolesPageConfig } from './roles-page-config';
 
+const BROWSING: PageColumnContext = { isSearching: false };
 const FOLDER_ACTIONS = new Set(['create-category', 'delete-category', 'edit-category', 'move', 'share']);
 
 describe('buildRolesPageConfig', () => {
@@ -21,7 +25,7 @@ describe('buildRolesPageConfig', () => {
             }),
             isOrganizationShown: false,
             loadRow: () => [],
-            mode: RolesPageMode.Manage,
+            mode: signal(RolesPageMode.Manage),
             onDataLoaded: jest.fn(),
             onDuplicate: jest.fn(),
             onReady: jest.fn(),
@@ -29,6 +33,12 @@ describe('buildRolesPageConfig', () => {
             organizations: [],
             ...overrides
         });
+    }
+
+    function shownKeys(config: ReturnType<typeof buildRolesPageConfig>, context = BROWSING): string[] {
+        const { columns = [], isColumnShown } = config.tableConfig ?? {};
+
+        return columns.filter(column => isColumnShown?.(column, context) ?? true).map(({ key }) => key);
     }
 
     it('lists the roles of the address of the config in the order the server gives, remembering the hidden columns', () => {
@@ -41,7 +51,7 @@ describe('buildRolesPageConfig', () => {
         expect(config.tableConfig?.storageKey).toBe('staff-roles');
     });
 
-    it('declares the name, the type, the counts and the description, none sortable', () => {
+    it('declares the name, the type, the counts, the origin and the description, none sortable', () => {
         const columns = build().tableConfig?.columns ?? [];
 
         expect(columns.map(({ isHideable, isSortable, key }) => [key, isSortable, isHideable])).toEqual([
@@ -50,14 +60,21 @@ describe('buildRolesPageConfig', () => {
             ['permissionCount', false, true],
             ['memberCount', false, true],
             ['groupCount', false, true],
+            ['sources', false, true],
             ['description', false, true]
         ]);
     });
 
-    it('adds the organization after the group count when it is shown', () => {
-        const columns = build({ isOrganizationShown: true }).tableConfig?.columns ?? [];
-
-        expect(columns.map(({ key }) => key)).toEqual([
+    it('shows a manager the user and group counts, with the organization after them when it is shown', () => {
+        expect(shownKeys(build())).toEqual([
+            'name',
+            'type',
+            'permissionCount',
+            'memberCount',
+            'groupCount',
+            'description'
+        ]);
+        expect(shownKeys(build({ isOrganizationShown: true }))).toEqual([
             'name',
             'type',
             'permissionCount',
@@ -68,10 +85,23 @@ describe('buildRolesPageConfig', () => {
         ]);
     });
 
-    it('declares the origin instead of the user and group counts while it reads the roles of a member', () => {
-        const columns = build({ mode: RolesPageMode.Read }).tableConfig?.columns ?? [];
+    it('shows the origin instead of the user and group counts while it reads the roles of a member', () => {
+        expect(shownKeys(build({ mode: signal(RolesPageMode.Read) }))).toEqual([
+            'name',
+            'type',
+            'permissionCount',
+            'sources',
+            'description'
+        ]);
+    });
 
-        expect(columns.map(({ key }) => key)).toEqual(['name', 'type', 'permissionCount', 'sources', 'description']);
+    it('shows the columns of the mode the page turns to without being built again', () => {
+        const mode = signal(RolesPageMode.Manage);
+        const config = build({ mode });
+
+        mode.set(RolesPageMode.Read);
+
+        expect(shownKeys(config)).toEqual(['name', 'type', 'permissionCount', 'sources', 'description']);
     });
 
     it('searches the name with the text of the search, and by organization with two organizations or more', () => {
@@ -142,15 +172,16 @@ describe('buildRolesPageConfig', () => {
             isOrganizationShown: true
         });
         const flat = build({ isOrganizationShown: true });
-        const column = folders.tableConfig?.columns.find(({ key }) => key === 'organization');
         const category = { id: 'o1', label: 'Acme' };
+        const contexts: PageColumnContext[] = [
+            { isSearching: true },
+            { isSearching: false },
+            { category, isSearching: true }
+        ];
+        const isOrganizationShown = (config: typeof flat): boolean[] =>
+            contexts.map(context => shownKeys(config, context).includes('organization'));
 
-        expect(column).toBeDefined();
-        expect(
-            [{ isSearching: true }, { isSearching: false }, { category, isSearching: true }].map(context =>
-                column ? folders.tableConfig?.isColumnShown?.(column, context) : undefined
-            )
-        ).toEqual([true, false, false]);
-        expect(flat.tableConfig?.isColumnShown).toBeUndefined();
+        expect(isOrganizationShown(folders)).toEqual([true, false, false]);
+        expect(isOrganizationShown(flat)).toEqual([true, true, true]);
     });
 });

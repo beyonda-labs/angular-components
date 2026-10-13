@@ -29,8 +29,8 @@ import {
 } from '../models/users.model';
 
 const CANCEL_LABEL_KEY = 'angular-components.page.form.cancel';
-const SINGLE = 'one';
 const SEVERAL = 'other';
+const SINGLE = 'one';
 
 @Injectable({
     providedIn: 'root'

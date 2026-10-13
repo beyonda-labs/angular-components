@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
-import { CardListVariant } from '../../../cards/card-list/models/card-list.model';
 import { OrganizationSummary } from '../models/organization-summary.model';
 import { OrganizationSummaryCardsService } from './organization-summary-cards.service';
 
@@ -37,9 +36,8 @@ describe('OrganizationSummaryCardsService', () => {
         onRoleClick.mockClear();
     });
 
-    it('dates the creation in the language given, and shows no status, since only the members of an active one read it', () => {
+    it('dates the creation in the language given', () => {
         expect(build().createdAtParameters).toEqual({ date: '12 de octubre de 2026' });
-        expect(build()).not.toHaveProperty('badge');
     });
 
     it('picks the singular or the plural key of every count', () => {
@@ -67,7 +65,6 @@ describe('OrganizationSummaryCardsService', () => {
         }).groups.items;
 
         expect(sales.fold).toMatchObject({
-            emptyLabel: `${PREFIX}.groups.no-members`,
             hideLabel: `${PREFIX}.groups.hide-members`,
             isOpen: false,
             showLabel: `${PREFIX}.groups.show-members`
@@ -91,16 +88,13 @@ describe('OrganizationSummaryCardsService', () => {
         ]);
     });
 
-    it('lists the roles in one card, as the groups and the administrators, only those answered with permissions opening them', () => {
-        const { administrators, extraRoles, groups } = build();
-        const [signers, reviewers] = extraRoles.items;
+    it('counts the administrators it lists', () => {
+        expect(build({ ...SUMMARY, administrators: [ADA] }).administrators.count).toBe(1);
+    });
 
-        expect([administrators.variant, groups.variant, extraRoles.variant]).toEqual([
-            CardListVariant.Grouped,
-            CardListVariant.Grouped,
-            CardListVariant.Grouped
-        ]);
-        expect(administrators.count).toBe(SUMMARY.administrators.length);
+    it('leaves out a blank description, and opens only the roles answered with their permissions', () => {
+        const [signers, reviewers] = build().extraRoles.items;
+
         expect(signers.subtitle).toBeUndefined();
         expect(signers.onClick).toBeUndefined();
 

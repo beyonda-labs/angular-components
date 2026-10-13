@@ -66,6 +66,26 @@ describe('StyleGuideSectionComponent', () => {
         expect(fixture.nativeElement.textContent).not.toContain('demo content');
     });
 
+    it('points its header at the demo only while the demo is there', async () => {
+        await render();
+
+        expect(buttonByName(fixture, 'Tabs').hasAttribute('aria-controls')).toBe(false);
+
+        buttonByName(fixture, 'Tabs').click();
+        await settle(fixture);
+
+        const controlled = fixture.nativeElement.querySelector(
+            `#${buttonByName(fixture, 'Tabs').getAttribute('aria-controls')}`
+        );
+
+        expect(controlled?.textContent).toContain('demo content');
+
+        buttonByName(fixture, 'Tabs').click();
+        await settle(fixture);
+
+        expect(buttonByName(fixture, 'Tabs').hasAttribute('aria-controls')).toBe(false);
+    });
+
     it('follows the title key when it changes', async () => {
         await render();
 

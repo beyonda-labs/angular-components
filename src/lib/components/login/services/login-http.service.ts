@@ -14,8 +14,6 @@ import {
     ResetPasswordRequest
 } from '../models/login.model';
 
-const ignoreError = (): void => undefined;
-
 @Injectable({ providedIn: 'root' })
 export class LoginHttpService {
     private readonly envConfig = inject(ENVIRONMENT_CONFIG);
@@ -83,3 +81,5 @@ export class LoginHttpService {
         );
     }
 }
+
+function ignoreError(): void {}

@@ -49,7 +49,7 @@ describe('OrganizationsTableService', () => {
         ]);
     });
 
-    it('opens the rename form from the name of an organization the caller may edit', () => {
+    it('opens the edit form from the name of an organization the caller may edit', () => {
         const organization = buildOrganization();
         const [name] = service.loadRow(organization, options);
 

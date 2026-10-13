@@ -16,7 +16,7 @@ const PREFIX = 'angular-components-style-guide.notice';
     imports: [BeyNoticeComponent, TranslateModule],
     selector: 'bey-notice-style-guide',
     standalone: true,
-    styleUrls: ['../style-guide-shared.css', './notice-style-guide.component.css'],
+    styleUrls: ['../style-guide-shared.css'],
     templateUrl: './notice-style-guide.component.html'
 })
 export class NoticeStyleGuideComponent {

@@ -2,7 +2,15 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, Validators } from '@angular/forms';
 import { faFileLines } from '@fortawesome/free-regular-svg-icons';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { accessibleDescription, buttonByName, controlByName, queryAll, renderComponent, settle } from '@testing/dom';
+import {
+    accessibleDescription,
+    buttonByName,
+    controlByName,
+    queryAll,
+    queryButton,
+    renderComponent,
+    settle
+} from '@testing/dom';
 
 import formEn from '../../../assets/form.en.json';
 import {
@@ -164,7 +172,8 @@ describe('FormCheckboxSectionsFieldComponent', () => {
         await click(header('Documents'));
 
         expect(checkbox('Read').disabled).toBe(true);
-        expect(queryAll(fixture, 'button').some(button => button.textContent?.includes('Select all'))).toBe(false);
+        expect(queryButton(fixture, 'Select all in Templates')).toBeNull();
+        expect(queryButton(fixture, 'Select all in Documents')).toBeNull();
 
         await click(header('Documents'));
 

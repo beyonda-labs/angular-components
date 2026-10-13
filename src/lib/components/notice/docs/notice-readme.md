@@ -2,7 +2,7 @@
 
 A compact banner across the width of its container: an icon, a translated message and, after it, the buttons of its
 actions. The variant sets its colour and its default icon, and how assistive technologies announce it: `Info` and
-`Warning` are a polite `role="status"`, `Danger` an `role="alert"`. It suits what a page must say about itself while
+`Warning` are a polite `role="status"`, `Danger` a `role="alert"`. It suits what a page must say about itself while
 the user stays on it, such as [`bey-edit-lock-notice`](../../edit-lock-notice/docs/edit-lock-notice-readme.md) between
 the header and the body of an editor.
 
@@ -49,9 +49,9 @@ readonly notice = new BeyNoticeConfig({
 
 The config is replaced, never changed in place: to say something else, bind a new `BeyNoticeConfig`.
 
-## Tokens
+## Theming
 
-| Token               | Default                                          |
+| Variable            | Default                                          |
 | ------------------- | ------------------------------------------------ |
 | `--bey-notice-tint` | `10%` of the colour of the variant in the fill   |
 | `--bey-notice-edge` | `35%` of the colour of the variant in the border |

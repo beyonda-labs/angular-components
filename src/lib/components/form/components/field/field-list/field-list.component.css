@@ -29,26 +29,6 @@
     padding: var(--bey-space-xs) var(--bey-space-md);
 }
 
-.bey-form-list-item {
-    overflow-wrap: anywhere;
-}
-
-.bey-form-list-item-link {
-    background: none;
-    border: 0;
-    color: var(--bey-form-list-link);
-    cursor: pointer;
-    font: inherit;
-    padding: 0;
-    text-align: start;
-}
-
-.bey-form-list-item-link:hover,
-.bey-form-list-item-link:focus-visible {
-    color: var(--bey-form-list-link-hover);
-    text-decoration: underline;
-}
-
 .bey-form-list-row {
     align-items: center;
     display: flex;
@@ -67,6 +47,26 @@
     font-size: var(--bey-font-size-2xs);
     height: var(--bey-space-lg);
     width: var(--bey-space-lg);
+}
+
+.bey-form-list-item {
+    overflow-wrap: anywhere;
+}
+
+.bey-form-list-item-link {
+    background: none;
+    border: 0;
+    color: var(--bey-form-list-link);
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
+    text-align: start;
+}
+
+.bey-form-list-item-link:hover,
+.bey-form-list-item-link:focus-visible {
+    color: var(--bey-form-list-link-hover);
+    text-decoration: underline;
 }
 
 .bey-form-list-empty {

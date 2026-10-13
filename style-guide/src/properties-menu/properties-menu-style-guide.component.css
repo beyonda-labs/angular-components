@@ -1,5 +1,5 @@
 .bey-properties-menu-style-guide-actions {
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--bey-space-md);
 }
 
 .bey-properties-menu-style-guide-frame {
@@ -9,5 +9,5 @@
 .bey-properties-menu-style-guide-log {
     color: var(--bey-text-muted);
     font-size: var(--bey-font-size-sm);
-    margin-top: 0.75rem;
+    margin-top: var(--bey-space-md);
 }

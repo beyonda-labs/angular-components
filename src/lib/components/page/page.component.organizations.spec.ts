@@ -1,6 +1,6 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { buttonByName, queryAll, renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 
@@ -115,10 +115,6 @@ describe('PageComponent — organizations', () => {
         return queryAll<HTMLSelectElement>(queryAll(fixture, '[role="group"]')[0], 'select');
     }
 
-    function optionTexts(select: HTMLSelectElement): string[] {
-        return [...select.options].map(option => option.textContent?.trim() ?? '');
-    }
-
     async function openFilter(): Promise<void> {
         await click(filtersToggle());
         await click(buttonByName(fixture, 'angular-components.search.add'));
@@ -174,9 +170,9 @@ describe('PageComponent — organizations', () => {
         await openFilter();
         await choose(filterSelects()[0], 'organizationId');
 
-        expect(optionTexts(filterSelects()[0])).toContain('Organization');
+        expect(textsOf([...filterSelects()[0].options])).toContain('Organization');
         expect([...filterSelects()[1].options].map(option => option.value)).toEqual(['equals']);
-        expect(optionTexts(filterSelects()[2])).toEqual(expect.arrayContaining(['Acme', 'Globex']));
+        expect(textsOf([...filterSelects()[2].options])).toEqual(expect.arrayContaining(['Acme', 'Globex']));
 
         await choose(filterSelects()[2], 'o2');
         await click(buttonByName(fixture, 'angular-components.search.apply'));
@@ -225,6 +221,6 @@ describe('PageComponent — organizations', () => {
         await settle(fixture);
         await click(buttonByName(fixture, 'angular-components.search.add'));
 
-        expect(optionTexts(filterSelects()[0])).toContain('Organization');
+        expect(textsOf([...filterSelects()[0].options])).toContain('Organization');
     });
 });

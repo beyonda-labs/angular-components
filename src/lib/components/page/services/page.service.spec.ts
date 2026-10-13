@@ -8,7 +8,13 @@ import { StringFilter } from '../../search/models/search-filter.model';
 import { TableColumn, TableSortDirection } from '../../table/models/table.model';
 import { TextTableCell } from '../../table/models/table-cell.model';
 import { pageStandardAction } from '../functions/page-standard-actions';
-import { PageBackendResponse, PageConfig, PageConfigParameters, PageHandle } from '../models/page.model';
+import {
+    PageActionsContext,
+    PageBackendResponse,
+    PageConfig,
+    PageConfigParameters,
+    PageHandle
+} from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageItemType, PageViewMode } from '../models/page-categories.model';
 import { PageFormConfig } from '../models/page-form.model';
@@ -17,7 +23,7 @@ import { PageItem } from '../models/page-item.model';
 import { PageSearch, SearchSortDirection } from '../models/page-search.model';
 import { PageColumnContext, PageTableConfig, PageTableSearchConfig } from '../models/page-table.model';
 import { PageService } from './page.service';
-import { PageActionsContext, PageActionsService } from './page-actions.service';
+import { PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
 import { PageOrganizationsService } from './page-organizations.service';
 import { PageOwnersService } from './page-owners.service';

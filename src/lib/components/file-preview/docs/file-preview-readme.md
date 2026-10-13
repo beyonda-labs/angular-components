@@ -1,10 +1,9 @@
 # File preview
 
 A dialog that shows a PDF or an image, opened from a service with one call. The content is a `Blob` or a URL: a
-PDF goes to `bey-pdf-viewer` with its compact toolbar, a download button and the search, an image to an `<img>` that shrinks to
-fit the dialog without scrolling. The object URL the dialog
-creates for a `Blob` image is revoked when the dialog is destroyed, so the caller has nothing to clean up. The
-dialog has the shape of a modal form: an icon of the file type, `angular-components.file-preview.type` over the title
+PDF goes to `bey-pdf-viewer` with its compact toolbar, a download button and the search, an image to an `<img>` that
+shrinks to fit the dialog without scrolling. The object URL the dialog creates for a `Blob` image is revoked when the
+dialog is destroyed, so the caller has nothing to clean up. The dialog has the shape of a modal form: an icon of the file type, `angular-components.file-preview.type` over the title
 and the file name, and a footer with `angular-components.file-preview.cancel`. The dialog component is internal;
 `BeyFilePreviewService` is the whole public surface.
 
@@ -51,15 +50,19 @@ open, Escape closes it first.
 
 ## Theming
 
-Set on `bey-file-preview-dialog`:
+The dialog renders in `document.body`, so its variables are read from `:root` or an ancestor of the dialog, and one set
+nowhere takes its default:
 
-| Variable                            | Default              |
-| ----------------------------------- | -------------------- |
-| `--bey-file-preview-body-height`    | `70vh`               |
-| `--bey-file-preview-fg`             | `--bey-text-primary` |
-| `--bey-file-preview-fg-muted`       | `--bey-text-muted`   |
-| `--bey-file-preview-close-hover-bg` | `--bey-bg-active`    |
-| `--bey-file-preview-max-height`     | `--bey-dialog-max-height` |
+| Variable                            | Default               |
+| ----------------------------------- | --------------------- |
+| `--bey-file-preview-body-height`    | `70vh`                |
+| `--bey-file-preview-fg`             | `--bey-text-primary`  |
+| `--bey-file-preview-fg-muted`       | `--bey-text-muted`    |
+| `--bey-file-preview-close-hover-bg` | `--bey-bg-active`     |
+| `--bey-file-preview-accent`         | `--bey-primary`       |
+| `--bey-file-preview-accent-soft`    | `--bey-primary-soft`  |
+| `--bey-file-preview-border`         | `--bey-border-subtle` |
+| `--bey-file-preview-surface`        | `--bey-bg-surface`    |
 
-The dialog stops at `--bey-file-preview-max-height`: on a window too short for the body, the body shrinks while the
-header and the close button stay in sight.
+The dialog stops at `--bey-file-preview-max-height`, read the same way; set nowhere, at `--bey-dialog-max-height`. On
+a window too short for the body, the body shrinks while the header and the button under it stay in sight.

@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { AbstractControl, FormGroup } from '@angular/forms';
 
-import { fieldStateKey, FormFieldState, FormFieldStates } from '../../form.component';
+import { fieldStateKey } from '../../functions/field-state-key';
 import { FormRow } from '../../models/form.model';
 import { FormField } from '../../models/form-field.model';
+import { FormFieldState, FormFieldStates } from '../../models/form-field-state.model';
 import { FormFieldComponent } from '../field/field.component';
 
 interface RowField {

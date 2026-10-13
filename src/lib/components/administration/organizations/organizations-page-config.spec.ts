@@ -4,9 +4,10 @@ import {
     OrganizationFormValue,
     OrganizationRow,
     OrganizationsConfig,
+    OrganizationsPageConfigOptions,
     OrganizationStatus
 } from './models/organizations.model';
-import { buildOrganizationsPageConfig, OrganizationsPageConfigOptions } from './organizations-page-config';
+import { buildOrganizationsPageConfig } from './organizations-page-config';
 
 describe('buildOrganizationsPageConfig', () => {
     function build(

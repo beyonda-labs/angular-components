@@ -63,24 +63,28 @@ describe('EditLockNoticeStyleGuideComponent', () => {
         expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: `${PREFIX}.toast.copy-saved` }]);
     });
 
-    it.each([
-        ['colleague', 'held.today'],
-        ['earlier', 'held.earlier'],
-        ['released', 'lost.released'],
-        ['free', 'free'],
-        ['unavailable', 'unavailable']
-    ])('shows the %s state with its message', async (scenario, message) => {
-        jest.useFakeTimers({
-            doNotFake: ['nextTick', 'queueMicrotask', 'setImmediate', 'setInterval', 'setTimeout'],
-            now: new Date(2026, 9, 11, 12, 0)
+    describe('at noon', () => {
+        beforeEach(() => {
+            jest.useFakeTimers({
+                doNotFake: ['nextTick', 'queueMicrotask', 'setImmediate', 'setInterval', 'setTimeout'],
+                now: new Date(2026, 9, 11, 12, 0)
+            });
         });
 
-        try {
+        afterEach(() => {
+            jest.useRealTimers();
+        });
+
+        it.each([
+            ['colleague', 'held.today'],
+            ['earlier', 'held.earlier'],
+            ['released', 'lost.released'],
+            ['free', 'free'],
+            ['unavailable', 'unavailable']
+        ])('shows the %s state with its message', async (scenario, message) => {
             await pick(scenario);
 
             expect(notice()).toContain(`${NOTICE}.messages.${message}`);
-        } finally {
-            jest.useRealTimers();
-        }
+        });
     });
 });

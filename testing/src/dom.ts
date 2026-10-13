@@ -1,7 +1,7 @@
 import { Type } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-export type QueryScope = ComponentFixture<unknown> | Element;
+import { QueryScope } from './models/testing.model';
 
 const CONTROL_SELECTOR = [
     'input',

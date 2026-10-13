@@ -51,9 +51,9 @@ readonly config = new BeyPageConfig<UserFormValue, User>({
 | `prefix`            | yes      | i18n prefix every text of the page resolves from                                                                                                                                                                                             |
 | `baseUrl`           | no       | Path of the resource, resolved against the environment's `baseUrl` and `webApiPath`; without it nothing is loaded                                                                                                                            |
 | `headerConfig`      | no       | `title` and the `actions` catalogue                                                                                                                                                                                                          |
-| `tableConfig`       | no       | Columns, `loadRow`, `height`, `order`, `search`, `allowSelection`, `showPagination`, `categoriesConfig`, `isTrashEnabled`, `isSharedEnabled`, `isColumnShown`, `onSelectionChange`, `storageKey`                                             |
+| `tableConfig`       | no       | Columns, `loadRow`, `height` (`60vh`), `order`, `search`, `allowSelection` and `showPagination` (both `true`), `categoriesConfig`, `isTrashEnabled` and `isSharedEnabled` (both `false`), `isColumnShown`, `onSelectionChange`, `storageKey` |
 | `formConfig`        | no       | How the create and edit modal forms are built, see below                                                                                                                                                                                     |
-| `statusConfig`      | no       | `BeyPageStatusConfig`: the status field and its transitions, for `change-status`                                                                                                                                                             |
+| `statusConfig`      | no       | `BeyPageStatusConfig`: the status field (`field`, `status` by default) and its `transitions`, for `change-status`                                                                                                                            |
 | `duplicationConfig` | no       | `BeyPageDuplicationConfig`: the field that names a row (`nameField`, `name` by default), the validators of the name of a copy (`nameValidators`) and what joins the copy suffix to it (`copySeparator`, a space by default), for `duplicate` |
 | `onDataLoaded`      | no       | Run with the backend response after every load                                                                                                                                                                                               |
 | `onReady`           | no       | Run with the page handle once the page exists                                                                                                                                                                                                |
@@ -71,11 +71,11 @@ reloads once that request answers, or stays open when it fails. The config's own
 
 `BeyPageConfig<TValue, TItem, TCategory, TCategoryValue>` is generic over the form value, the rows, the
 category rows and the categories form value. Every callback that sees a row or a form value sees its type:
-`loadRow`, `onSelectionChange`, the action `handler`, `buildSections`, `toFormValue`, `toItem`, `afterCreate`,
-`onDataLoaded` and the handle, so a typed page needs no cast. `TItem` and `TCategory` extend `BeyPageItem`,
-`TCategory` defaults to `TItem`, the rows default to `BeyPageItem` and both form values to `unknown`. The rows
-are typed, not checked: the page trusts the backend to answer with them. A nested config infers its types
-from the page, except a form config, whose value would be inferred from `toFormValue`: it takes them
+`loadRow`, `onSelectionChange`, the action `handler` and `confirmation`, `buildSections`, `toFormValue`, `toItem`,
+`afterCreate`, `confirmSave`, `onDataLoaded` and the handle, so a typed page needs no cast. `TItem` and
+`TCategory` extend `BeyPageItem`, `TCategory` defaults to `TItem`, the rows default to `BeyPageItem` and both form
+values to `unknown`. The rows are typed, not checked: the page trusts the backend to answer with them. A nested config
+infers its types from the page, except a form config, whose value would be inferred from `toFormValue`: it takes them
 explicitly, `new BeyPageFormConfig<UserFormValue, User>`. The categories form works the same way,
 `new BeyPageFormConfig<FolderFormValue, Folder>`, and carries its value up through
 `BeyPageCategoriesConfig<Folder, FolderFormValue>` and `BeyPageTableConfig<User, Folder, FolderFormValue>`, which
@@ -83,17 +83,17 @@ infer it from that form, to `BeyPageConfig<UserFormValue, User, Folder, FolderFo
 
 ## Backend contract
 
-| Operation | Request                                                                                      |
-| --------- | -------------------------------------------------------------------------------------------- |
-| List      | `GET {baseUrl}?search=<base64 json>` when `tableConfig.search` is set, plain `GET` otherwise |
-| Create    | `POST {baseUrl}` with the form value mapped through `toItem`, plus with categories the `parentField` of the open category, `null` at the root |
-| Edit      | `PUT {baseUrl}/{id}`                                                                         |
-| Delete    | `DELETE {baseUrl}` with `{ ids }`                                                            |
-| Duplicate | `POST {baseUrl}/{id}/duplicate` with `{ [nameField]: name }`                                 |
-| Status    | `POST {baseUrl}/{id}/status` with `{ [field]: status }`                                      |
-| Owners    | `GET {baseUrl}/owners` for the owner filter, see [Owners](#owners)                           |
-| Organizations | `GET {baseUrl}/organizations` for the organization column and filter, see [Organizations](#organizations) |
-| Shared    | `GET {baseUrl}/shared` and the shares of a folder, see [Sharing](#sharing)                    |
+| Operation     | Request                                                                                                                                       |
+| ------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| List          | `GET {baseUrl}?search=<base64 json>` when `tableConfig.search` is set, plain `GET` otherwise                                                  |
+| Create        | `POST {baseUrl}` with the form value mapped through `toItem`, plus with categories the `parentField` of the open category, `null` at the root |
+| Edit          | `PUT {baseUrl}/{id}`                                                                                                                          |
+| Delete        | `DELETE {baseUrl}` with `{ ids }`                                                                                                             |
+| Duplicate     | `POST {baseUrl}/{id}/duplicate` with `{ [nameField]: name }`                                                                                  |
+| Status        | `POST {baseUrl}/{id}/status` with `{ [field]: status }`                                                                                       |
+| Owners        | `GET {baseUrl}/owners` for the owner filter, see [Owners](#owners)                                                                            |
+| Organizations | `GET {baseUrl}/organizations` for the organization column and filter, see [Organizations](#organizations)                                     |
+| Shared        | `GET {baseUrl}/shared` and the shares of a folder, see [Sharing](#sharing)                                                                    |
 
 The list answers with `{ globalActions, results, search? }`: `globalActions` names the global actions the
 user may see, each result may carry its own `actions`, and `search.total` feeds the paginator and the count of the
@@ -101,16 +101,18 @@ breadcrumb, so it counts every row the list shows across its pages, categories i
 `{ filters, page, size, sort?, text? }`, with the filters of the search module.
 
 With `categoriesConfig` the resource also serves, under `{baseUrl}`: `/categories/{id}/path`,
-`/categories/tree` (`?ownerId=` narrows it to one owner, see [Owners](#owners)), `POST` and `PUT /categories`, `DELETE /categories` with `{ ids }`, `PUT /move` with
-`{ items: [{ id, type }], targetId }`, `GET`, `PUT` and `DELETE /trash` with `{ items }`, and with `usagesConfig`
-`/categories/usages`, see [Usages](#usages). Every call
-goes through `BeyHttpService`, so errors open the standard modal and writes show their success toast. A new
-load of the list cancels the one still out, so a slow answer never replaces a newer list.
+`/categories/tree` (`?ownerId=` narrows it to one owner, see [Owners](#owners)), `POST /categories`,
+`PUT /categories/{id}`, `DELETE /categories` with `{ ids }`, `PUT /move` with `{ items: [{ id, type }], targetId }`,
+and with `usagesConfig` `/categories/usages`, see [Usages](#usages). With `tableConfig.isTrashEnabled` it serves
+`GET`, `PUT` and `DELETE /trash` with `{ items }` and `DELETE /trash/all`, see
+[Categories and trash](#categories-and-trash). Every call goes through `BeyHttpService`, so errors open the standard
+modal and writes show their success toast. A new load of the list cancels the one still out, so a slow answer never
+replaces a newer list.
 
 ## Header actions
 
-An action has a `key`, a `scope`, a `zone` and optionally an `icon`, a `label`, a `tooltip`, a `type`, a
-`handler`, a `confirmation` and `subActions`.
+An action has a `key`, a `scope`, a `zone` and optionally an `icon`, a `label`, a `tooltip`, a `type` (text in
+`Left` and `Menu`, a secondary button in `Right` by default), a `handler`, a `confirmation` and `subActions`.
 
 | Scope    | Shown when                                                                  | `handler` receives           |
 | -------- | --------------------------------------------------------------------------- | ---------------------------- |
@@ -164,8 +166,8 @@ actions of the page are still listed in the order they should render, standard o
 ## Duplicate and change status
 
 `duplicate` asks for the name of the copy, filled in with the name of the row and `<prefix>.duplicate.copy-suffix`
-("Invoice (copy)"), joined by its `copySeparator` and checked with its `nameValidators`, and sends it in the
-`nameField` of `duplicationConfig`. `change-status` offers the statuses the
+("Invoice (copy)"), joined by its `copySeparator` and checked with its `nameValidators`; the form can be sent as
+filled in, and the name goes in the `nameField` of `duplicationConfig`. `change-status` offers the statuses the
 row's current one reaches in `statusConfig.transitions`, labelled `<prefix>.status.<status>`, and sends the one
 chosen; without a `statusConfig` it does nothing. Both open a modal form with the texts under `<prefix>.duplicate`
 or `<prefix>.change-status` (`title`, `buttons.cancel`, `buttons.submit`, `main.<field>.label`), show
@@ -311,12 +313,13 @@ tableConfig: new BeyPageTableConfig<Contract>({
 
 `isOwnerFilterEnabled` on `BeyPageTableSearchConfig` adds an "Owner" field to the filters panel, after the fields of
 the page (`angular-components.page.search.fields.owner-id`). It is requested lazily: the first time the user opens
-the panel, the page asks `GET {baseUrl}/owners`, which answers `{ owners: [{ id, name }] }`, the owners of the rows the
-user may see, and offers them by name in that order. Picking one sends
-`{ field: 'ownerId', operator: 'equals', value: id }`, the only operator the field offers. With one owner or none
-there is nothing to choose and the field does not show, which is what a user who only sees their own rows gets. The
-page asks once per visit and resource; a failed answer shows no error and leaves the field out. A page the user comes
-back to with an owner filter in force asks at once, so the panel shows the filter as it was left.
+the panel, the page asks `GET {baseUrl}/owners`, which answers `{ owners: [{ id, name }] }` (`BeyPageOwner`), the
+owners of the rows the user may see, and offers them by name in that order, an owner whose `name` is `null` as
+"Unknown". Picking one sends `{ field: 'ownerId', operator: 'equals', value: id }`, the only operator the field
+offers. With one owner or none there is nothing to choose and the field does not show, which is what a user who only
+sees their own rows gets. The page asks once per visit and resource; a failed answer shows no error and leaves the
+field out. A page the user comes back to with an owner filter in force asks at once, so the panel shows the filter as
+it was left.
 
 The owner filter goes with the rest of the search: in a view, in every folder and in the trash, where it narrows the
 trashed rows of every owner to those of one. On base-entity it narrows the folders as well, and since a folder holds
@@ -353,9 +356,9 @@ tableConfig: new BeyPageTableConfig<Contract>({
 ```
 
 The page recognises the column by its key. A page with it asks `GET {baseUrl}/organizations` as soon as it opens,
-which answers `{ organizations: [{ id, name }] }`, the organizations of the rows the user may see, common rows left
-out; until the answer names two or more, the page leaves the column and its cell out of the table, and with one or
-none it never shows them. A failed answer shows no error and leaves them out too.
+which answers `{ organizations: [{ id, name }] }` (`BeyPageOrganization`), the organizations of the rows the user
+may see, common rows left out; until the answer names two or more, the page leaves the column and its cell out of
+the table, and with one or none it never shows them. A failed answer shows no error and leaves them out too.
 
 `isOrganizationFilterEnabled` on `BeyPageTableSearchConfig` adds an "Organization" field to the filters panel, after
 the fields of the page and before the owner filter (`angular-components.page.search.fields.organization-id`), with the
@@ -369,13 +372,13 @@ with an organization filter in force asks at once. The page asks once per visit 
 `tableConfig.categoriesConfig` turns the table into a drill-down browser, and a breadcrumb starting at
 `<prefix>.categories.root` shows where the user is. Its last node counts what the folder holds, the `search.total`
 of the list (`angular-components.page.count.one` or `.many`, with `{{count}}`), once the folder has answered.
-`nameField`, `parentField`, `parentPathField` and `typeField` name the fields the page reads. A row whose
-`typeField` says `category` is drawn by `categoriesConfig.loadRow(category, viewMode)` instead of the table's
-`loadRow`; without one it shows its name as a link that opens it, as plain text in the trash. Every other value, or
-none, makes it an item. The entries the page sends to move rows, restore them or delete them from the trash are
-always `{ id, type }`, with the `type` read from `typeField`, so rows that have a `type` field of their own (the type
-of a variable) name another one, `typeField: 'entryType'`, as base-entity of express-components does with the
-`typeField` of its categories. Without categories every entry is an `item`. A custom cell opens
+`nameField`, `parentField`, `parentPathField` and `typeField` name the fields the page reads, `name`, `parentId`,
+`parentPath` and `type` by default. A row whose `typeField` says `category` is drawn by
+`categoriesConfig.loadRow(category, viewMode)` instead of the table's `loadRow`; without one it shows its name as a
+link that opens it, as plain text in the trash. Every other value, or none, makes it an item. The entries the page
+sends to move rows, restore them or delete them from the trash are always `{ id, type }`, with the `type` read from
+`typeField`, so rows that have a `type` field of their own (the type of a variable) name another one,
+`typeField: 'entryType'`, as base-entity of express-components does with the `typeField` of its categories. Without categories every entry is an `item`. A custom cell opens
 a category through `handle.openCategory(category)`. With `tableConfig.isTrashEnabled`, with or without categories, a segmented toggle
 switches to the flat trash view, where the
 `restore-trash-item` and `delete-trash-item` actions apply, and `empty-trash`, shown while the backend lists it in
@@ -465,7 +468,7 @@ it, so the page needs categories.
     there, so the folders of the owner above it never show.
 -   **The tab** keeps the folders of each side apart: going from the shared view to the main tab or a view, or back,
     starts at the root of that side. The tab, the folder and the search are kept when the user comes back to the
-    page, as for any other tab. `loadRow` and `categoriesConfig.loadRow` receive `PageViewMode.Shared`.
+    page, as for any other tab. `loadRow` and `categoriesConfig.loadRow` receive `BeyPageViewMode.Shared`.
 -   **The rows** carry their owner, so `beyPageOwnerColumn` names whose they are. A shared folder shows no badge: every
     row of the view is shared, and the tab and the breadcrumb already say so.
 -   **Moves.** Inside a shared folder rows drag onto its folders as in the main tab, and `move` picks only among the
@@ -483,6 +486,7 @@ grants to its owner, the managers of its organization and the superadmin. It ask
 -   **A select per group, then per user**, named after it, with the email of a user as hint: "No access", "View" or
     "Edit", the folder's own share chosen. A target that inherits an access is offered only the ones above it, the
     empty choice reading the inherited one ("View (from Clients)"), and one that inherits "Edit" cannot change.
+    Without any target the form says there is nobody else to share it with (`angular-components.page.share.empty`).
 
 Saving sends `PUT {baseUrl}/categories/{id}/shares` with `{ shares: [{ granteeType, granteeId, access }] }`, the own
 shares of the folder, which replace the previous ones, then shows `<prefix>.toast.share-success` and reloads. A target
@@ -504,9 +508,10 @@ those answers for a `handler` of its own.
 
 `BeyPageFormConfig<TValue, TItem>` takes `prefix`, `buildSections(item?, category?)`, and optionally `toFormValue(item?, category?)`,
 `toItem(value, item?)`, `onReady(handle)`, `onValueChange(value, handle)`, `onCreate(value, handle)`,
-`onEdit(value, handle)`, `afterCreate(created)`, `confirmSave(value, item?)`, `allowSubmitWithoutChanges` and `size`
-(a `BeyModalFormSize`, `Large` by default). `toItem` builds the body of the request and receives the row an edit
-started from, so it can send only what that row lets the user change. `onValueChange` runs on every
+`onEdit(value, handle)`, `afterCreate(created)`, `confirmSave(value, item?)`, `allowSubmitWithoutChanges` (`false` by
+default) and `size` (a `BeyModalFormSize`, `Large` by default). `toFormValue` defaults to the row as it is and `toItem`
+to the form value as it is. `toItem` builds the body of the request and receives the row an edit started from, so it
+can send only what that row lets the user change. `onValueChange` runs on every
 change of the open form, so a field can fill another through `handle.patchValue`. Create and edit open a modal form from the form
 module; on success the modal closes and the table reloads, on error it stays open, the reason shown by the error
 modal of the HTTP service and nothing more reported. `afterCreate` returns an observable the page waits for before
@@ -523,7 +528,7 @@ administration pages choose the organization of the folder they are in, while th
 `parentField` with the create.
 
 ```ts
-toFormValue: (contract, category) => (contract ? toEditValue(contract) : { main: { clientId: category?.id ?? null } })
+toFormValue: (contract, category) => (contract ? toEditValue(contract) : { main: { clientId: category?.id ?? null } });
 ```
 
 `confirmSave(value, item?)` asks before a create or an edit is sent: it answers a confirmation, or an observable of
@@ -533,26 +538,29 @@ renaming something other records name.
 
 ## Texts
 
-| Key                                                                                                         | Shown as                                               |
-| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| `<prefix>.title`                                                                                            | Page title                                             |
-| `<prefix>.actions.<key>.label` / `.tooltip`                                                                 | Header actions                                         |
-| `<prefix>.table.columns.<key>` / `.tooltips.<key>` / `.empty`                                               | Table                                                  |
-| `<prefix>.search.fields.<key>`                                                                              | Filters                                                |
-| `<prefix>.modal.<key>.title` / `.message`                                                                   | Confirmation of a destructive action, with `{{count}}` |
-| `<prefix>.modal.<key>-in-use.title` / `.message`                                                            | The same for rows in use, see [Usages](#usages)        |
-| `<prefix>.duplicate.*`, `<prefix>.change-status.*`, `<prefix>.status.<status>`                              | The forms of `duplicate` and `change-status`           |
-| `<prefix>.toast.<key>-success`                                                                              | Success toast of every standard action                 |
-| `<prefix>.categories.root`, `<prefix>.tabs.table.label`, `<prefix>.tabs.trash.label`, `<prefix>.move.title` | Categories and trash                                   |
-| `<prefix>.tabs.<view>.label`                                                                                | The tab of a view                                      |
-| `angular-components.page.count.one` / `.many`                                                               | The count of the breadcrumb, with `{{count}}`          |
-| `angular-components.page.table.columns.owner-name` / `.tooltips.owner-name`                                 | The owner column, see [Owners](#owners)                |
-| `angular-components.page.search.fields.owner-id`                                                            | The owner filter                                       |
-| `angular-components.page.table.columns.organization-name` / `.tooltips.organization-name` | The organization column, see [Organizations](#organizations) |
-| `angular-components.page.search.fields.organization-id` | The organization filter |
-| `angular-components.page.shared.label` | The shared tab and the root of its breadcrumb, see [Sharing](#sharing) |
-| `angular-components.page.share.*` | The form of `share`: its title, sections, access choices and empty text |
-| `angular-components.page.actions.view.label` / `.tooltip` | The standard `view` action, see [Header actions](#header-actions) |
+| Key                                                                                                         | Shown as                                                                                        |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `<prefix>.title`                                                                                            | Page title                                                                                      |
+| `<prefix>.actions.<key>.label` / `.tooltip`                                                                 | Header actions                                                                                  |
+| `<prefix>.table.columns.<key>` / `.tooltips.<key>` / `.empty`                                               | Table                                                                                           |
+| `<prefix>.search.fields.<key>`                                                                              | Filters                                                                                         |
+| `<prefix>.modal.<key>.title` / `.message`                                                                   | Confirmation of a destructive action, with `{{count}}`                                          |
+| `<prefix>.modal.<key>-in-use.title` / `.message`                                                            | The same for rows in use, see [Usages](#usages)                                                 |
+| `<prefix>.duplicate.*`, `<prefix>.change-status.*`, `<prefix>.status.<status>`                              | The forms of `duplicate` and `change-status`                                                    |
+| `<prefix>.toast.<key>-success`                                                                              | Success toast of every standard action                                                          |
+| `<prefix>.categories.root`, `<prefix>.tabs.table.label`, `<prefix>.tabs.trash.label`, `<prefix>.move.title` | Categories and trash                                                                            |
+| `<prefix>.tabs.<view>.label`                                                                                | The tab of a view                                                                               |
+| `angular-components.page.count.one` / `.many`                                                               | The count of the breadcrumb, with `{{count}}`                                                   |
+| `angular-components.page.table.columns.owner-name` / `.tooltips.owner-name`                                 | The owner column, see [Owners](#owners)                                                         |
+| `angular-components.page.search.fields.owner-id`                                                            | The owner filter                                                                                |
+| `angular-components.page.table.columns.organization-name` / `.tooltips.organization-name`                   | The organization column, see [Organizations](#organizations)                                    |
+| `angular-components.page.search.fields.organization-id`                                                     | The organization filter                                                                         |
+| `angular-components.page.shared.label`                                                                      | The shared tab and the root of its breadcrumb, see [Sharing](#sharing)                          |
+| `angular-components.page.share.*`                                                                           | The form of `share`: its title, sections, access choices and empty text                         |
+| `angular-components.page.actions.view.label` / `.tooltip`                                                   | The standard `view` action, see [Header actions](#header-actions)                               |
+| `angular-components.page.form.cancel` / `.submit`                                                           | The buttons of the create, edit and share forms                                                 |
+| `angular-components.page.toast.restored-renamed`                                                            | The rows a restore renamed, with `{{names}}`, see [Categories and trash](#categories-and-trash) |
+| `angular-components.http.error.sharing.invalid-grantees` and its `http.title`                               | A share save refusing a grantee, see [Sharing](#sharing)                                        |
 
 Every `<key>` is the action, column or field key as a kebab-case segment: a column `createdAt` reads
 `<prefix>.table.columns.created-at`. A column with a `label` or a `tooltip` of its own reads those keys instead, as the

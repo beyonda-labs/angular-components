@@ -49,30 +49,38 @@ describe('FakeModalFormService', () => {
         expect(close).toHaveBeenCalledTimes(1);
     });
 
-    it('keeps a form with its own request open, leaving no error unhandled, when the request fails', async () => {
-        const previousHandler = rxjsConfig.onUnhandledError;
-        const close = jest.fn();
-        const unhandled = jest.fn();
-
-        modalForm.openWithRequest(buildConfig(), () => throwError(() => new Error('refused')));
-        rxjsConfig.onUnhandledError = unhandled;
-
-        try {
-            modalForm.forms()[0].onSubmit?.({ contact: { name: 'Ada' } }, { close } as unknown as BeyFormHandle);
-            await new Promise(resolve => {
-                setTimeout(resolve);
-            });
-        } finally {
-            rxjsConfig.onUnhandledError = previousHandler;
-        }
-
-        expect(unhandled).not.toHaveBeenCalled();
-        expect(close).not.toHaveBeenCalled();
-    });
-
     it('lets the route be left, since no dialog is really open', () => {
         modalForm.open(buildConfig());
 
         expect(modalForm.canDeactivate()).toBe(true);
+    });
+
+    describe('when the request of a form fails', () => {
+        let previousHandler: typeof rxjsConfig.onUnhandledError;
+        let unhandled: jest.Mock;
+
+        beforeEach(() => {
+            previousHandler = rxjsConfig.onUnhandledError;
+            unhandled = jest.fn();
+            rxjsConfig.onUnhandledError = unhandled;
+        });
+
+        afterEach(() => {
+            rxjsConfig.onUnhandledError = previousHandler;
+        });
+
+        it('keeps the form open, leaving no error unhandled', async () => {
+            const close = jest.fn();
+            const refused = throwError(() => new Error('refused'));
+
+            modalForm.openWithRequest(buildConfig(), () => refused);
+            modalForm.forms()[0].onSubmit?.({ contact: { name: 'Ada' } }, { close } as unknown as BeyFormHandle);
+            await new Promise(resolve => {
+                setTimeout(resolve);
+            });
+
+            expect(unhandled).not.toHaveBeenCalled();
+            expect(close).not.toHaveBeenCalled();
+        });
     });
 });

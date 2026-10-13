@@ -46,7 +46,7 @@ export class TableComponent<T> {
 
     readonly config = input.required<TableConfig<T>>();
 
-    readonly allSelected = computed(() => this.rows().length > 0 && this.rows().every(row => row.selected));
+    readonly allSelected = computed(() => this.rows().length > 0 && this.rows().every(row => row.isSelected));
     readonly columnChoices = linkedSignal({
         source: () => this.config().storageKey,
         computation: storageKey => this.tableColumnsStorageService.load(storageKey)
@@ -71,7 +71,7 @@ export class TableComponent<T> {
             new TableRow<T | null>({
                 cells: this.visibleColumns().map(({ column }) => this.buildHeaderCell(column)),
                 content: null,
-                selected: this.allSelected()
+                isSelected: this.allSelected()
             })
     );
     readonly rowDragStates = computed<RowDragState[]>(() => {
@@ -100,11 +100,11 @@ export class TableComponent<T> {
             const rows = buildRows(config, columns);
 
             return previous?.source.config === config
-                ? rows.map((row, index) => withSelection(row, previous.value[index]?.selected ?? row.selected))
+                ? rows.map((row, index) => withSelection(row, previous.value[index]?.isSelected ?? row.isSelected))
                 : rows;
         }
     });
-    readonly someSelected = computed(() => !this.allSelected() && this.rows().some(row => row.selected));
+    readonly someSelected = computed(() => !this.allSelected() && this.rows().some(row => row.isSelected));
     readonly sort = linkedSignal<TableSort | null>(() => this.config().sort ?? null);
     readonly sortStates = computed(() =>
         this.visibleColumns().map(({ column }) => toTableSortState(this.sort(), column))
@@ -169,7 +169,7 @@ export class TableComponent<T> {
         const row = rows[index];
 
         this.dragged.set(
-            row.selected ? rows.filter(current => current.selected).map(current => current.content) : [row.content]
+            row.isSelected ? rows.filter(current => current.isSelected).map(current => current.content) : [row.content]
         );
     }
 
@@ -212,7 +212,7 @@ export class TableComponent<T> {
     }
 
     private reportSelection(): void {
-        const indexes = this.rows().flatMap((row, index) => (row.selected ? [index] : []));
+        const indexes = this.rows().flatMap((row, index) => (row.isSelected ? [index] : []));
 
         this.config().selectedItemsChange?.(
             indexes.map(index => this.rows()[index].content),
@@ -228,7 +228,7 @@ function buildRows<T>(config: TableConfig<T>, columns: VisibleTableColumn[]): Ta
         return new TableRow({
             cells: columns.map(({ index }) => cells[index]),
             content: item,
-            selected: config.isRowSelected?.(item) ?? false
+            isSelected: config.isRowSelected?.(item) ?? false
         });
     });
 }
@@ -243,6 +243,6 @@ function toGridTrack({ width }: TableColumn): string {
     return typeof width === 'number' ? `minmax(0, ${Math.max(width, 1)}fr)` : width;
 }
 
-function withSelection<T>(row: TableRow<T>, selected: boolean): TableRow<T> {
-    return new TableRow({ cells: row.cells, content: row.content, selected });
+function withSelection<T>(row: TableRow<T>, isSelected: boolean): TableRow<T> {
+    return new TableRow({ cells: row.cells, content: row.content, isSelected });
 }

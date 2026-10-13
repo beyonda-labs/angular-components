@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { provideRouter } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { buttonByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
@@ -79,6 +79,10 @@ describe('OrganizationsComponent', () => {
         return row;
     }
 
+    function cellsOf(rowText: string): string[] {
+        return textsOf(queryAll(rowWith(rowText), '[role="cell"]'));
+    }
+
     function fieldsOf(form: ModalFormConfig | undefined): FormField[] {
         return form?.sections.flatMap(section => section.rows.flatMap(row => row.fields)) ?? [];
     }
@@ -118,10 +122,8 @@ describe('OrganizationsComponent', () => {
             buildOrganization({ id: 'o3', name: 'Initech', status: OrganizationStatus.Inactive, userCount: 0 })
         ]);
 
-        expect(rowWith('Globex').textContent).toContain(`${PREFIX}.status.active`);
-        expect(rowWith('Globex').textContent).toContain('7');
-        expect(rowWith('Initech').textContent).toContain(`${PREFIX}.status.inactive`);
-        expect(rowWith('Initech').textContent).toContain('0');
+        expect(cellsOf('Globex')).toEqual(expect.arrayContaining(['Globex', `${PREFIX}.status.active`, '7']));
+        expect(cellsOf('Initech')).toEqual(expect.arrayContaining(['Initech', `${PREFIX}.status.inactive`, '0']));
     });
 
     it('sorts the organizations by name at first', async () => {

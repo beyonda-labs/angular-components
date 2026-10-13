@@ -24,7 +24,7 @@ readonly config = new BeyLoginConfig({
 The route the OAuth providers return to renders `BeyLoginOAuthCallbackComponent`. The server lands there once it
 has set the refresh cookie, with no token in the URL, or with `?error=unauthorized` when the provider refused,
 `?error=account-inactive` for a deactivated account or `?error=organization-inactive` for a user of a deactivated
-organization: the component goes back to `loginRoute` on any error, without saying which yet, and otherwise restores
+organization: the component goes back to `loginRoute` on any error, without saying which, and otherwise restores
 the session through the cookie and goes to the `redirectPath` of the user, or to `loginRoute` when nothing can be
 restored:
 
@@ -145,7 +145,7 @@ The views of the account flows read `.title.<view>` (`forgot-password`, `registe
 The body shows `assets/angular-components/images/login-bg-light.avif` or `login-bg-dark.avif` depending on
 the current theme. Both ship with the library assets.
 
-## Customisation
+## Theming
 
 The variables are declared on each of the four pages, `bey-login` and the three of the emailed links, so an
 override names the ones it changes: `:root bey-login, :root bey-login-reset-password { … }`.

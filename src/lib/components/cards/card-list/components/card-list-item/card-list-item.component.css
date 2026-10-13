@@ -1,10 +1,4 @@
 :host {
-    --bey-cards-list-item-hover: var(--bey-bg-hover);
-    --bey-cards-list-item-icon: var(--bey-text-secondary);
-    --bey-cards-list-item-link: var(--bey-text-link);
-    --bey-cards-list-item-link-hover: var(--bey-text-link-hover);
-    --bey-cards-list-item-muted: var(--bey-text-muted);
-
     display: block;
 }
 

@@ -1,23 +1,22 @@
 .toast-container .bey-toast {
     --bey-toast-accent: var(--bey-primary);
-    --bey-toast-accent-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);
-    animation: bey-toast-in 0.3s ease-out;
+
+    animation: bey-toast-in var(--bey-duration-slow) ease-out;
     background: var(--bey-bg-surface);
     border: var(--bey-border-width) solid var(--bey-border-subtle);
-    border-left: 3px solid var(--bey-toast-accent);
+    border-left: var(--bey-border-width-thick) solid var(--bey-toast-accent);
     border-radius: var(--bey-radius-md);
     box-shadow: var(--bey-shadow-md);
     color: var(--bey-text-primary);
     padding: var(--bey-space-md) var(--bey-space-lg);
     pointer-events: auto;
-
     width: min(100%, 24rem);
 }
 
 @keyframes bey-toast-in {
     from {
         opacity: 0;
-        transform: translateX(1.5rem);
+        transform: translateX(var(--bey-space-xl));
     }
     to {
         opacity: 1;
@@ -27,16 +26,16 @@
 
 .toast-container .bey-toast .toast-title {
     color: var(--bey-toast-accent);
-    font-size: 0.84rem;
-    font-weight: 700;
-    letter-spacing: -0.01em;
+    font-size: var(--bey-font-size-sm);
+    font-weight: var(--bey-font-weight-bold);
+    letter-spacing: var(--bey-letter-spacing-snug);
 }
 
 .toast-container .bey-toast .toast-message {
     color: var(--bey-text-secondary);
-    font-size: 0.84rem;
-    line-height: 1.5;
-    margin-top: 0.15rem;
+    font-size: var(--bey-font-size-sm);
+    line-height: var(--bey-line-height-loose);
+    margin-top: var(--bey-space-3xs);
 }
 
 .toast-container .bey-toast .toast-close-button {
@@ -46,25 +45,21 @@
 .toast-container .bey-toast .toast-progress {
     background: var(--bey-toast-accent);
     height: 2px;
-    opacity: 0.4;
+    opacity: var(--bey-opacity-disabled);
 }
 
 .toast-container .bey-toast.toast-info {
     --bey-toast-accent: var(--bey-primary);
-    --bey-toast-accent-soft: color-mix(in srgb, var(--bey-primary) 8%, transparent);
 }
 
 .toast-container .bey-toast.toast-success {
     --bey-toast-accent: var(--bey-success);
-    --bey-toast-accent-soft: rgba(var(--bey-teal-rgb), 0.08);
 }
 
 .toast-container .bey-toast.toast-warning {
     --bey-toast-accent: var(--bey-warning);
-    --bey-toast-accent-soft: color-mix(in srgb, var(--bey-warning) 12%, transparent);
 }
 
 .toast-container .bey-toast.toast-error {
     --bey-toast-accent: var(--bey-danger);
-    --bey-toast-accent-soft: color-mix(in srgb, var(--bey-danger) 10%, transparent);
 }

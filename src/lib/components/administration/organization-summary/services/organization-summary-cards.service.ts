@@ -87,7 +87,6 @@ function buildGroupItem(
         fold:
             members.length > 0
                 ? new CardListFold({
-                      emptyLabel: `${groupsPrefix}.no-members`,
                       hideLabel: `${groupsPrefix}.hide-members`,
                       items: members.map(member => buildMemberItem(member)),
                       showLabel: `${groupsPrefix}.show-members`

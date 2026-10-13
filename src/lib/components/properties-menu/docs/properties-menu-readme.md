@@ -151,7 +151,10 @@ label as the user types, and `Enter` picks the first enabled match. A file field
 in the session; a value it was given shows as _File selected_. The attachment field filters `options` as the
 user types and checks the file type and size before `onAttachmentUpload`; storing the file and adding it to
 `options` is the consumer's job. With `isUploadEnabled: false` (it defaults to `true`) the field shows no upload
-button, for a user who may pick the files there but not add one, and the existing `options` stay selectable.
+button, for a user who may pick the files there but not add one, and the existing `options` stay selectable. An
+attachment id that none of the `options` is, such as a deleted file, shows as
+`angular-components.properties-menu.attachment-field.unknown` ("Unknown"), in the language in use, once `options`
+holds any; while `options` is empty the id shows as it is, and a variable reference always shows as typed.
 
 The label of a field also names its controls for assistive technology: it is tied to the input, the select, the
 colour picker or the toggle, and it names the group of a number array, a segmented or a spacing field and the

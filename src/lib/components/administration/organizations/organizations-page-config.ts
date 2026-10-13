@@ -1,17 +1,15 @@
 import { pageStandardAction } from '../../page/functions/page-standard-actions';
-import { PageConfig, PageHandle } from '../../page/models/page.model';
+import { PageConfig } from '../../page/models/page.model';
 import { PageActionScope, PageStandardAction } from '../../page/models/page-action.model';
-import { PageFormConfig } from '../../page/models/page-form.model';
 import { PageHeaderConfig } from '../../page/models/page-header.model';
 import { SearchSort, SearchSortDirection } from '../../page/models/page-search.model';
 import { PageTableConfig, PageTableSearchConfig } from '../../page/models/page-table.model';
 import { SearchField, SearchFieldOption, SearchFieldType } from '../../search/models/search.model';
 import { TableColumn } from '../../table/models/table.model';
-import { TableCell } from '../../table/models/table-cell.model';
 import {
     OrganizationFormValue,
     OrganizationRow,
-    OrganizationsConfig,
+    OrganizationsPageConfigOptions,
     OrganizationStatus
 } from './models/organizations.model';
 
@@ -23,15 +21,6 @@ const COLUMNS = [
 ];
 const ORDER: SearchSort = { direction: SearchSortDirection.Asc, field: 'name' };
 const TEXT_FIELD = 'text';
-
-export interface OrganizationsPageConfigOptions {
-    config: OrganizationsConfig;
-    formConfig: PageFormConfig<OrganizationFormValue, OrganizationRow>;
-    loadRow: (organization: OrganizationRow) => TableCell[];
-    onDelete: (organization: OrganizationRow) => void;
-    onEdit: (organization: OrganizationRow) => void;
-    onReady: (handle: PageHandle<OrganizationRow>) => void;
-}
 
 export function buildOrganizationsPageConfig({
     config,

@@ -28,7 +28,11 @@ describe('SessionService', () => {
     };
 
     function buildAccessToken(allowedPaths: string[]): string {
-        return `header.${btoa(JSON.stringify({ allowedPaths, email: 'ada@example.com' }))}.signature`;
+        return encodeToken({ allowedPaths, email: 'ada@example.com' });
+    }
+
+    function encodeToken(payload: Record<string, unknown>): string {
+        return `header.${btoa(JSON.stringify(payload))}.signature`;
     }
 
     function restored(): boolean[] {
@@ -107,9 +111,7 @@ describe('SessionService', () => {
         });
 
         it('decodes the saved language and theme of the user from the token', () => {
-            service.setToken(
-                `header.${btoa(JSON.stringify({ email: 'ada@example.com', language: 'es', theme: 'dark' }))}.signature`
-            );
+            service.setToken(encodeToken({ email: 'ada@example.com', language: 'es', theme: 'dark' }));
 
             expect(service.getUser()).toEqual(expect.objectContaining({ language: 'es', theme: 'dark' }));
         });
@@ -117,7 +119,7 @@ describe('SessionService', () => {
         it('decodes the roles and the organization of the user from the token', () => {
             const payload = { email: 'ada@example.com', organizationId: 'o1', roles: ['adminuser'] };
 
-            service.setToken(`header.${btoa(JSON.stringify(payload))}.signature`);
+            service.setToken(encodeToken(payload));
 
             expect(service.getUser()).toEqual(expect.objectContaining({ organizationId: 'o1', roles: ['adminuser'] }));
         });
@@ -125,7 +127,7 @@ describe('SessionService', () => {
         it('decodes a superadmin with no organization, since it belongs to none', () => {
             const payload = { email: 'root@example.com', roles: ['superadmin'] };
 
-            service.setToken(`header.${btoa(JSON.stringify(payload))}.signature`);
+            service.setToken(encodeToken(payload));
 
             expect(service.getUser()).toEqual(expect.objectContaining({ roles: ['superadmin'] }));
             expect(service.getUser()?.organizationId).toBeUndefined();
@@ -134,7 +136,7 @@ describe('SessionService', () => {
         it('decodes the permissions the extra roles of the user add, and none when the token has no claim', () => {
             const payload = { email: 'ada@example.com', extraPermissions: ['templates.edit'], roles: ['normaluser'] };
 
-            service.setToken(`header.${btoa(JSON.stringify(payload))}.signature`);
+            service.setToken(encodeToken(payload));
 
             expect(service.getUser()?.extraPermissions).toEqual(['templates.edit']);
 

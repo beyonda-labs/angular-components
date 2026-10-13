@@ -7,6 +7,7 @@ import {
     inject,
     input,
     Renderer2,
+    RendererStyleFlags2,
     signal,
     viewChild
 } from '@angular/core';
@@ -23,11 +24,11 @@ import {
 } from '../../../models/fields/form-autocomplete-field.model';
 import { FormFieldOption } from '../../../models/form-field.model';
 import { trackControl } from '../functions/control-state';
-import { matchesOptionText } from '../functions/option-match';
+import { matchesOptionText } from './functions/option-match';
 
 const EMPTY_KEY = 'angular-components.form.autocomplete-field.empty';
 const PANEL_GAP_PX = 2;
-const PANEL_MAX_HEIGHT_PX = 208;
+const PANEL_MAX_HEIGHT_VARIABLE = '--bey-form-autocomplete-panel-max-height';
 const SEARCH_DEBOUNCE_MS = 300;
 
 interface SearchRequest {
@@ -63,6 +64,7 @@ export class FormAutocompleteFieldComponent {
         return options.filter(option => !excluded.has(option.value));
     });
     readonly clearIcon = faXmark;
+    readonly controlsId = computed(() => (this.isPanelVisible() ? this.optionsId() : null));
     readonly controlState = trackControl(this.control);
     readonly emptyKey = computed(() => this.field().emptyKey ?? EMPTY_KEY);
     readonly filteredOptions = computed(() => {
@@ -80,6 +82,8 @@ export class FormAutocompleteFieldComponent {
     });
     readonly hasMore = computed(() => this.searchResult()?.hasMore ?? false);
     readonly hasTyped = signal(false);
+    readonly hasValue = computed(() => Boolean(this.controlState.value()));
+    readonly isDisabled = computed(() => this.controlState.isDisabled());
     readonly isOpen = signal(false);
     readonly isPanelVisible = computed(() => {
         const { isFreeTextAllowed, search } = this.field();
@@ -90,6 +94,7 @@ export class FormAutocompleteFieldComponent {
 
         return this.filteredOptions().length > 0 || (!isFreeTextAllowed && (!search || this.searchResult() !== null));
     });
+    readonly optionsId = computed(() => `${this.field().key}-options`);
     readonly placeholder = computed(() => this.field().placeholder ?? `${this.prefix()}.placeholder`);
     readonly query = signal('');
     readonly toggleIcon = faChevronDown;
@@ -142,14 +147,6 @@ export class FormAutocompleteFieldComponent {
         }
 
         return this.selectedLabel();
-    }
-
-    hasValue(): boolean {
-        return Boolean(this.controlState.value());
-    }
-
-    isDisabled(): boolean {
-        return this.controlState.isDisabled();
     }
 
     isInvalid(): boolean {
@@ -282,6 +279,22 @@ export class FormAutocompleteFieldComponent {
         this.requestSearch('', 0);
     }
 
+    private panelMaxHeight(panel: HTMLElement, anchor: HTMLElement): number {
+        const inherited = window.getComputedStyle(anchor).getPropertyValue(PANEL_MAX_HEIGHT_VARIABLE).trim();
+
+        if (inherited) {
+            this.renderer.setStyle(panel, PANEL_MAX_HEIGHT_VARIABLE, inherited, RendererStyleFlags2.DashCase);
+        } else {
+            this.renderer.removeStyle(panel, PANEL_MAX_HEIGHT_VARIABLE, RendererStyleFlags2.DashCase);
+        }
+
+        this.renderer.removeStyle(panel, 'max-height');
+
+        const maxHeight = Number.parseFloat(window.getComputedStyle(panel).maxHeight);
+
+        return Number.isFinite(maxHeight) ? maxHeight : Infinity;
+    }
+
     private positionPanel(): void {
         const panel = this.panel()?.nativeElement;
         const anchor = this.queryInput().nativeElement;
@@ -293,14 +306,15 @@ export class FormAutocompleteFieldComponent {
         const rect = anchor.getBoundingClientRect();
         const spaceBelow = window.innerHeight - rect.bottom;
         const spaceAbove = rect.top;
-        const opensAbove = spaceBelow < PANEL_MAX_HEIGHT_PX && spaceAbove > spaceBelow;
+        const maxHeight = this.panelMaxHeight(panel, anchor);
+        const opensAbove = spaceBelow < maxHeight && spaceAbove > spaceBelow;
 
         this.renderer.setStyle(panel, 'left', `${rect.left}px`);
         this.renderer.setStyle(panel, 'width', `${rect.width}px`);
         this.renderer.setStyle(
             panel,
             'max-height',
-            `${Math.min(PANEL_MAX_HEIGHT_PX, (opensAbove ? spaceAbove : spaceBelow) - PANEL_GAP_PX)}px`
+            `${Math.min(maxHeight, (opensAbove ? spaceAbove : spaceBelow) - PANEL_GAP_PX)}px`
         );
 
         if (opensAbove) {

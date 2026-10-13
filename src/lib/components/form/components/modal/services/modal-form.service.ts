@@ -10,8 +10,6 @@ import {
     ModalFormConfig
 } from '../models/modal-form.model';
 
-const ignoreError = (): void => undefined;
-
 @Injectable({
     providedIn: 'root'
 })
@@ -92,3 +90,5 @@ export class ModalFormService {
         return this.openDialogs.some(reference => reference.content?.isDirty() ?? false);
     }
 }
+
+function ignoreError(): void {}

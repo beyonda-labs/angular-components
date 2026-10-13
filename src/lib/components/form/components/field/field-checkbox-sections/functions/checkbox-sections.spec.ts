@@ -1,4 +1,4 @@
-import { FormCheckboxSection } from '../../../models/fields/form-checkbox-sections-field.model';
+import { FormCheckboxSection } from '../../../../models/fields/form-checkbox-sections-field.model';
 import { checkboxSectionViews, toggleOptionValues, toggleSectionValues } from './checkbox-sections';
 
 const SECTIONS: FormCheckboxSection[] = [

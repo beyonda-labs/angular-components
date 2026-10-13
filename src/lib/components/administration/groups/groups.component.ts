@@ -35,13 +35,15 @@ export class GroupsComponent {
         const config = this.config();
         const isSuperadmin = this.userOrganizationsService.isSuperadmin();
         const organizations = this.userOrganizationsService.organizations();
-        const mode = this.mode();
         const { prefix } = config;
-        const onView = (group: GroupRow): void => this.groupsActionsService.view(config, group);
 
         if (!organizations) {
             return null;
         }
+
+        const onEdit = (group: GroupRow): void =>
+            this.groupsActionsService.edit(config, group, isSuperadmin, this.page);
+        const onView = (group: GroupRow): void => this.groupsActionsService.view(config, group);
 
         return buildGroupsPageConfig({
             categoriesConfig: isSuperadmin
@@ -61,14 +63,14 @@ export class GroupsComponent {
             loadRow: group =>
                 this.groupsTableService.loadRow(group, {
                     isOrganizationShown: isSuperadmin,
-                    mode,
-                    onEdit: edited => this.groupsActionsService.edit(config, edited, isSuperadmin, this.page),
+                    mode: this.mode(),
+                    onEdit,
                     onView,
                     prefix
                 }),
-            mode,
+            mode: this.mode.asReadonly(),
             onDataLoaded: response => this.mode.update(current => groupsPageMode(current, response)),
-            onEdit: group => this.groupsActionsService.edit(config, group, isSuperadmin, this.page),
+            onEdit,
             onReady: handle => (this.page = handle),
             onView,
             organizations

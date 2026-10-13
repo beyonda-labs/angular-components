@@ -4,11 +4,11 @@ import { config as rxjsConfig, of, Subject, throwError } from 'rxjs';
 
 import { FormHandle, FormSection } from '../../form/models/form.model';
 import { pageStandardAction } from '../functions/page-standard-actions';
-import { PageConfig } from '../models/page.model';
+import { PageActionsContext, PageConfig } from '../models/page.model';
 import { PageStandardAction } from '../models/page-action.model';
 import { PageFormConfig } from '../models/page-form.model';
 import { PageItem } from '../models/page-item.model';
-import { PageActionsContext, PageActionsService } from './page-actions.service';
+import { PageActionsService } from './page-actions.service';
 import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
 

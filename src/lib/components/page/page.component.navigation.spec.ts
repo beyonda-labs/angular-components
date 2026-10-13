@@ -82,7 +82,7 @@ describe('PageComponent — coming back from another route', () => {
     }
 
     function breadcrumb(): string {
-        return element().querySelector('nav')?.textContent ?? '';
+        return element().querySelector('[aria-label="angular-components.breadcrumb.label"]')?.textContent ?? '';
     }
 
     function lastQuery(): Record<string, string | number> {

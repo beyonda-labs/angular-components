@@ -9,7 +9,9 @@ import { AdministrationStyleGuideComponent } from './administration-style-guide.
 const API_URL = 'https://api.test/api/style-guide';
 
 describe('AdministrationStyleGuideComponent', () => {
-    it('renders the pages of the module and the summary of the organization, each under its heading', async () => {
+    let httpTesting: HttpTestingController;
+
+    beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [AdministrationStyleGuideComponent],
             providers: [
@@ -31,8 +33,15 @@ describe('AdministrationStyleGuideComponent', () => {
                 })
             ]
         }).compileComponents();
-        const httpTesting = TestBed.inject(HttpTestingController);
 
+        httpTesting = TestBed.inject(HttpTestingController);
+    });
+
+    afterEach(() => {
+        httpTesting.verify();
+    });
+
+    it('renders the pages of the module and the summary of the organization, each under its heading', async () => {
         const fixture = await renderComponent(AdministrationStyleGuideComponent);
         httpTesting.expectOne(`${API_URL}/users/roles`).flush({ roles: [] });
         httpTesting.expectOne(`${API_URL}/roles/permissions`).flush({ permissions: [] });
@@ -97,6 +106,5 @@ describe('AdministrationStyleGuideComponent', () => {
         expect(text).toContain('Acme');
         expect(text).toContain('Organization summary');
         expect(text).toContain('Ada Lovelace');
-        httpTesting.verify();
     });
 });

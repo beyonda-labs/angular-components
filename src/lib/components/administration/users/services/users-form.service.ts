@@ -93,18 +93,18 @@ export class UsersFormService {
         ];
     }
 
-    buildRoleOptions(roles: string[], rolePrefix: string): FormFieldOption[] {
-        return [...new Set(roles)].map(role => ({
-            label: userRoleLabel(role, rolePrefix, key => this.translateService.instant(key) as string),
-            value: role
-        }));
-    }
-
     private buildLanguageField(): FormSelectField {
         return new FormSelectField({
             key: 'language',
             options: this.preferencesService.languages.map(({ code, name }) => ({ label: name, value: code }))
         });
+    }
+
+    private buildRoleOptions(roles: string[], rolePrefix: string): FormFieldOption[] {
+        return [...new Set(roles)].map(role => ({
+            label: userRoleLabel(role, rolePrefix, key => this.translateService.instant(key) as string),
+            value: role
+        }));
     }
 
     private buildSection(
