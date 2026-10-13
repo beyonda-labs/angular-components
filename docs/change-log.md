@@ -1,5 +1,51 @@
 # Change Log
 
+## [Unreleased]
+
+### Added
+
+-   Audit page: `bey-audit` (`BeyAuditComponent`, `BeyAuditConfig`), the read-only audit trail over `/audit` on
+    `bey-page`: who did what, when and from where, newest first, searched by user, row name or IP.
+-   Audit page: filters by date range, by user (typed, over `{baseUrl}/user-options`), by entity and by action, and for
+    the superadmin by organization, with an organization column only while the list spans several organizations.
+-   Audit page: "Export", while the server lists `export` in `globalActions`, saves the CSV of the search and the
+    filters in force, `GET {baseUrl}/export` through the HTTP service, as `audit-<yyyymmdd>.csv`.
+-   Audit page: the row name and "View" open every field of an event read-only, from `GET {baseUrl}/{id}`, its details
+    as "key: value" lines.
+-   Audit page: the labels of every verb the audit records and of the library's own entities, in English and Spanish;
+    `entityLabels` and `actionLabels` label those of the app, and an unlabelled one shows its raw name.
+-   Audit page: `BeyAuditEventRow`, the row the server answers, and `BEY_AUDIT_READ_PERMISSION`, `audit.read`.
+-   Roles page: the label and the description of `audit.read`, in an "Audit" section with its own icon.
+-   Page module: `search()` on `BeyPageHandle`, the search the list in view was asked with, as the page sends it.
+-   Page module: `beyPageDateRangeFields(fromKey?, toKey?)`, a "From" and a "To" date filter, `from` and `to` by default.
+-   Page module: links, `?view=` (`table`, `shared`, `trash` or a view key) and `?folder=` open that tab and folder in
+    place of the kept state, then leave the URL with `replaceUrl`; an unknown view or folder falls back quietly.
+-   Search module: `BeySearchFieldType.Date`, a day or a range of days sent as epoch milliseconds, each bound including
+    its whole day in the time zone of the browser.
+-   Search module: `BeySearchFieldType.Autocomplete` and `searchOptions` on `BeySearchField`, the options asked for the
+    typed text, `BeySearchFieldOptionsResult` `{ options, hasMore? }`; the value of the option picked is the filter.
+-   Notifications module: `bey-notifications` (`BeyNotificationsComponent`, `BeyNotificationsConfig`), the bell of the
+    notifications centre with the unread count as a badge, which opens a panel with the notices, newest first.
+-   Notifications module: opening a notice marks it read and follows the route `link` gives; the panel refreshes at
+    once, marks all as read, shows more while `hasMore`, and says when there is nothing.
+-   Notifications module: `BeyNotificationsService` asks `GET {baseUrl}/unread-count` every `pollIntervalMs` (60 s) and
+    after a navigation while a session is open, with no error modal, and stops on sign-out.
+-   Notifications module: `BeyNotification`, `BeyNotificationTarget`, `BeyNotificationsPage` and `BeyNotificationType`,
+    and the texts of the library's three types; `labels` and `entityLabels` label the types and entities of the app.
+-   App layout module: `notifications` on `BeyAppLayoutConfig` turns the notifications centre on, as a bell in the menu.
+-   Left menu module: `notifications` on `BeyLeftMenuConfig`, the bell at the foot of the menu, next to the user or
+    alone.
+-   Form module: `excludedValues` on `BeyFormListField`, ids its picker never suggests besides those the list holds,
+    a value or a rule, so two lists can keep each other's ids out.
+
+### Changed
+
+-   Page module: the share form shows two lists, "Can view" and "Can edit", each with a search of users and groups
+    above its removable rows, in place of a select per grantee; the inherited access comes under them.
+-   Page module: the share search asks `share-targets?search=&limit=` as the user types, a group named with its
+    `memberCount`, now on `BeyPageShareTarget`, and a user with their email; nobody is offered in one list while the
+    other holds them.
+
 ## [1.5.0] - 2026-10-13
 
 ### Added

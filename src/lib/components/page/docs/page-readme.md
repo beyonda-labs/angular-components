@@ -63,7 +63,8 @@ readonly config = new BeyPageConfig<UserFormValue, User>({
 The config is never written to. What the consumer needs to do to the live page goes through the
 `BeyPageHandle` that `onReady` delivers: `refresh()` reloads the current page, `openCategory(category)` drills
 into a category, `openEdit(row)` opens the edit form of a row as the `edit` action does (the categories form for a
-category), `selected()` and `viewMode()` read the state, and `openForm(config, submit)` opens a
+category), `selected()` and `viewMode()` read the state, `search()` the search the list in view was asked with,
+as the page sends it (the filters of the [view](#views) first and the [`textField`](#search) as its `text`), and `openForm(config, submit)` opens a
 `BeyModalFormConfig` for an action of the page: its submit sends `submit(value)`, and the modal closes and the page
 reloads once that request answers, or stays open when it fails. The config's own `onSubmit` is replaced.
 
@@ -205,6 +206,20 @@ search: new BeyPageTableSearchConfig({
 });
 ```
 
+A date range is two `Date` fields of [the search](../../search/docs/search-readme.md#dates):
+`beyPageDateRangeFields(fromKey?, toKey?)` builds them, `from` and `to` by default, headed "From" and "To"
+(`angular-components.page.search.fields.from` and `.to`), the first with `GreaterThanOrEquals` and the second with
+`LessThanOrEquals`, so they send `{ field: 'from', operator: 'greaterThanOrEquals', value }` with the first millisecond of
+its day and `{ field: 'to', operator: 'lessThanOrEquals', value }` with the last one of its day, both included.
+
+```ts
+search: new BeyPageTableSearchConfig({
+    fields: [textField, ...beyPageDateRangeFields()],
+    mainField: 'text',
+    textField: 'text'
+});
+```
+
 ## Views
 
 `views` adds a tab per `BeyPageView` between the main tab and the trash, each one the same list with the `filters`
@@ -234,6 +249,26 @@ it was left: the folder and its breadcrumb, the tab, the search and its filters,
 page, the page size and the selection, which keeps only the rows that are still listed. Going anywhere else (`/documents`) drops what was kept,
 so the next visit starts fresh, and so does a reload of the browser. Pages on the same URL are told apart by their
 `prefix`. Nothing is kept for a page that is not left through the router.
+
+## Links
+
+A URL can name the tab and the folder the page opens with, as a notice that links to a shared folder does:
+`/templates?view=shared&folder=7`.
+
+| Query parameter | Opens                                                                              |
+| --------------- | ---------------------------------------------------------------------------------- |
+| `view`          | `table`, `shared`, `trash`, or the `key` of one of the page's `views`              |
+| `folder`        | The id of a category, in that view, or in the main tab when the link names no view |
+
+-   **What it opens.** The page opens the view and the folder as a fresh visit would, at its first page and with no
+    search, in place of the state kept for [coming back](#coming-back-to-a-page). The folder's breadcrumb comes from
+    `GET {baseUrl}/categories/{id}/path`, which in the shared view starts at the shared folder the user reaches. The
+    list waits for that answer, so it is asked once, inside the folder.
+-   **The URL.** The page then drops both parameters and keeps every other one, replacing the entry in the history, so
+    a reload or the back button behaves as usual. A link to the page already in view is followed the same way.
+-   **Old links.** A view the page does not have, such as `shared` without `isSharedEnabled`, opens the main tab, and a
+    folder whose path the backend refuses, or answers ending elsewhere, opens the root of the view, with no error
+    modal. The trash, a page without categories and a page without `baseUrl` ignore `folder`.
 
 ## Sort and columns
 
@@ -476,23 +511,28 @@ it, so the page needs categories.
 
 The standard `share` action (`Single`, `Menu`) shows on a folder that lists `share` in its `actions`, which base-entity
 grants to its owner, the managers of its organization and the superadmin. It asks
-`GET {baseUrl}/categories/{id}/shares`, `{ shares, inherited }`, and `GET {baseUrl}/categories/{id}/share-targets`,
-`{ users, groups }`, and opens a form titled after the folder:
+`GET {baseUrl}/categories/{id}/shares`, `{ shares, inherited }`, and opens a form titled after the folder:
 
 -   **A line on what sharing means** (`angular-components.page.share.intro`): it decides where people can work, while
     what they can do there still depends on their permissions.
--   **What it inherits**: the shares of the folders above that already reach it, as a list of who, with which access
-    and from which folder.
--   **A select per group, then per user**, named after it, with the email of a user as hint: "No access", "View" or
-    "Edit", the folder's own share chosen. A target that inherits an access is offered only the ones above it, the
-    empty choice reading the inherited one ("View (from Clients)"), and one that inherits "Edit" cannot change.
-    Without any target the form says there is nobody else to share it with (`angular-components.page.share.empty`).
+-   **Two lists, "Can view" and "Can edit"**, one under the other, each with an autocomplete above its rows ("Add a user
+    or a group") and a remove button on every row. They open with the folder's own shares, a row named after the
+    grantee, a group with "(group)". The access is the list: moving someone from view to edit is removing them from one
+    and adding them to the other, since nobody is offered in a list while the other holds them.
+-   **The search** asks `GET {baseUrl}/categories/{id}/share-targets?search=&limit=` for the typed text, users and
+    groups together in the order the backend answers them, groups first. The limit is 20, raised by the grantees the
+    list leaves out, up to 50, and the hint of more matches shows when the answer says `hasMore` or more than 20 are
+    left. A group reads "Sales (3 members)", from its `memberCount`, and a user "Grace Hopper (grace@test.com)".
+-   **What it inherits**: the shares of the folders above that already reach it, under the lists, as a list of who,
+    with which access and from which folder. A grantee that inherits "View" is offered only in "Can edit", and one that
+    inherits "Edit" in neither.
 
-Saving sends `PUT {baseUrl}/categories/{id}/shares` with `{ shares: [{ granteeType, granteeId, access }] }`, the own
-shares of the folder, which replace the previous ones, then shows `<prefix>.toast.share-success` and reloads. A target
-left on its inherited access keeps an own share the inherited one covers, and the shares of grantees the targets no
-longer list, such as a deactivated user, are sent back as they were. A refused grantee answers
-`sharing.invalid-grantees`, whose text the page ships under `angular-components.http.error.sharing`.
+Saving, once the lists changed, sends `PUT {baseUrl}/categories/{id}/shares` with
+`{ shares: [{ granteeType, granteeId, access }] }`, `read` for the rows of "Can view" and `write` for those of "Can
+edit", which replace the previous shares of the folder, then shows `<prefix>.toast.share-success` and reloads. An own
+share the inherited ones cover, or one of a grantee the search no longer finds, such as a deactivated user, stays as
+long as its row does. A refused grantee answers `sharing.invalid-grantees`, whose text the page ships under
+`angular-components.http.error.sharing`.
 
 ```ts
 headerConfig: new BeyPageHeaderConfig({
@@ -555,8 +595,9 @@ renaming something other records name.
 | `angular-components.page.search.fields.owner-id`                                                            | The owner filter                                                                                |
 | `angular-components.page.table.columns.organization-name` / `.tooltips.organization-name`                   | The organization column, see [Organizations](#organizations)                                    |
 | `angular-components.page.search.fields.organization-id`                                                     | The organization filter                                                                         |
+| `angular-components.page.search.fields.from` / `.to`                                                        | The date range of `beyPageDateRangeFields`, see [Search](#search)                               |
 | `angular-components.page.shared.label`                                                                      | The shared tab and the root of its breadcrumb, see [Sharing](#sharing)                          |
-| `angular-components.page.share.*`                                                                           | The form of `share`: its title, sections, access choices and empty text                         |
+| `angular-components.page.share.*`                                                                           | The form of `share`: its title, intro, two lists, grantee labels and inherited access           |
 | `angular-components.page.actions.view.label` / `.tooltip`                                                   | The standard `view` action, see [Header actions](#header-actions)                               |
 | `angular-components.page.form.cancel` / `.submit`                                                           | The buttons of the create, edit and share forms                                                 |
 | `angular-components.page.toast.restored-renamed`                                                            | The rows a restore renamed, with `{{names}}`, see [Categories and trash](#categories-and-trash) |

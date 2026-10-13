@@ -49,6 +49,7 @@ readonly config = new BeyAppLayoutConfig({
 | `isRouteBreadcrumbEnabled` | no       | `true`           | Builds the breadcrumb from the route, see Routes          |
 | `useBodyPadding`           | no       | `true`           | Pads the projected content                                |
 | `userInfo`                 | no       | none             | Shows the signed-in user at the foot, a link with `route` |
+| `notifications`            | no       | none             | Turns on the notifications centre, see below              |
 | `orgName`                  | no       | `'Beyonda Labs'` | Organisation name in the footer                           |
 | `privacyUrl`               | no       | none             | Route of the privacy link in the footer                   |
 | `termsUrl`                 | no       | none             | Route of the terms link in the footer                     |
@@ -108,6 +109,12 @@ with or what you give `setBreadcrumb`.
 
 Without routes, nothing is activated for you: call `activeMenuAction` and `setBreadcrumb` from
 `onMenuActionClick`, as the style-guide does.
+
+## Notifications
+
+`notifications`, a `BeyNotificationsConfig`, puts the bell of the
+[notifications centre](../../notifications/docs/notifications-readme.md) at the foot of the menu, which asks the server
+for the unread count while a session is open. A layout without it shows no bell and sends no request.
 
 ## BeyAppLayoutService
 

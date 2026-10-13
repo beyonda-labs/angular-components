@@ -23,38 +23,58 @@ const search = new BeySearchConfig({
 
 ## BeySearchConfig
 
-| Field             | Required | Default                | Meaning                                                    |
-| ----------------- | -------- | ---------------------- | ---------------------------------------------------------- |
-| `prefix`          | yes      |                        | i18n prefix the field labels are built from                 |
-| `fields`          | yes      |                        | What can be filtered, and how                               |
-| `mainField`       | no       | none                   | Key of the field the quick search box writes to             |
-| `filters`         | no       | `[]`                   | The filters the box and the panel start from                |
-| `placeholder`     | no       | the library's default  | Placeholder of the quick search box                         |
-| `onFiltersChange` | no       |                        | Called with the complete filters whenever they change       |
-| `onPanelOpen`     | no       |                        | Called every time the filters panel opens                   |
+| Field             | Required | Default               | Meaning                                               |
+| ----------------- | -------- | --------------------- | ----------------------------------------------------- |
+| `prefix`          | yes      |                       | i18n prefix the field labels are built from           |
+| `fields`          | yes      |                       | What can be filtered, and how                         |
+| `mainField`       | no       | none                  | Key of the field the quick search box writes to       |
+| `filters`         | no       | `[]`                  | The filters the box and the panel start from          |
+| `placeholder`     | no       | the library's default | Placeholder of the quick search box                   |
+| `onFiltersChange` | no       |                       | Called with the complete filters whenever they change |
+| `onPanelOpen`     | no       |                       | Called every time the filters panel opens             |
 
 ## BeySearchField
 
-| Field       | Required | Meaning                                                                         |
-| ----------- | -------- | ------------------------------------------------------------------------------- |
-| `key`       | yes      | Field name, reported as the filter's `field`                                     |
-| `type`      | yes      | `Text`, `Number`, `Boolean`, `Select` or `Tags`; decides the operators            |
-| `options`   | no       | Required by `Select`: the values offered                                          |
-| `label`     | no       | A full translation key for the field, used as it is in place of the prefix one    |
-| `operators` | no       | Narrows the operators of the type to these                                        |
+| Field           | Required | Meaning                                                                                                         |
+| --------------- | -------- | --------------------------------------------------------------------------------------------------------------- |
+| `key`           | yes      | Field name, reported as the filter's `field`                                                                    |
+| `type`          | yes      | `Text`, `Number`, `Boolean`, `Select`, `Tags`, `Date` or `Autocomplete`; decides the operators                  |
+| `options`       | no       | Required by `Select`: the values offered                                                                        |
+| `label`         | no       | A full translation key for the field, used as it is in place of the prefix one                                  |
+| `operators`     | no       | Narrows the operators of the type to these                                                                      |
+| `searchOptions` | no       | Required by `Autocomplete`: `(text) => Observable<BeySearchFieldOptionsResult>`, the options for the text typed |
 
 The label of a field uses its key as a kebab-case segment: `createdBy` reads `<prefix>.fields.created-by`,
 while the filter keeps reporting `createdBy` as its `field`. A `label` replaces that key, for a field that the
 screen does not define itself, such as the owner filter `bey-page` adds.
 
-Each type brings its own operators: text compares and matches, number adds ranges and `Between`, boolean and
-select only equality, and tags match a whole element of an array rather than a substring. `operators` keeps only
+Each type brings its own operators: text compares and matches, number adds ranges and `Between`, boolean, select
+and autocomplete only equality, tags match a whole element of an array rather than a substring, and a date is a day,
+with `Between`, `GreaterThanOrEquals` and `LessThanOrEquals`. `operators` keeps only
 the ones it lists, still in the order of the type: `[BeySearchFilterOperator.Equals]` on a select leaves out
 `NotEquals`. `beySearchFieldOperators(field)` returns them in the order the panel offers them; a new row starts with
 the first.
 
 `onPanelOpen` lets a screen fetch what only the panel needs, such as the options of a field, the first time the user
 looks for it. A new config with the new fields keeps the panel open, its rows starting again from its `filters`.
+
+## Dates
+
+A `Date` field shows a date input, two with `Between`, and reports the day as epoch milliseconds in a
+`BeyNumberFilter`, in the time zone of the browser: `GreaterThanOrEquals` sends the first millisecond of the day,
+`LessThanOrEquals` the last one, and `Between` both, so each bound includes its whole day. Its operators read as dates,
+"On or after" and "On or before" (`angular-components.search.date-operators.*`). A filter of the config shows back as
+the day it falls on.
+
+## Typed options
+
+An `Autocomplete` field is for values too many to list, such as users: the row shows a text box, and once typing
+settles (300 ms) it calls `searchOptions` with the trimmed text and lists the options it answers,
+`BeySearchFieldOptionsResult` `{ options, hasMore? }`. Picking one shows its `label` and reports its `value` in a
+`BeyStringFilter`; a text no option was picked for reports nothing. The list says when nothing matches
+(`no-matches`) and, with `hasMore`, that there are more matches (`more-matches`); a failed search lists nothing. A
+filter of the config shows the label of its value from the `options` of the field, or from the option picked while
+the component lives, and the value itself otherwise.
 
 ## Behaviour
 
@@ -72,10 +92,10 @@ the config passes the filters in force, as `bey-page` does when it comes back to
 
 ## Theming
 
-| Variable                      | Default                |
-| ----------------------------- | ---------------------- |
-| `--bey-search-fg`             | `--bey-text-primary`   |
-| `--bey-search-fg-muted`       | `--bey-text-muted`     |
-| `--bey-search-border`         | `--bey-border-subtle`  |
-| `--bey-search-surface`        | `--bey-bg-surface`     |
-| `--bey-search-placeholder`    | `--bey-text-disabled`  |
+| Variable                   | Default               |
+| -------------------------- | --------------------- |
+| `--bey-search-fg`          | `--bey-text-primary`  |
+| `--bey-search-fg-muted`    | `--bey-text-muted`    |
+| `--bey-search-border`      | `--bey-border-subtle` |
+| `--bey-search-surface`     | `--bey-bg-surface`    |
+| `--bey-search-placeholder` | `--bey-text-disabled` |
