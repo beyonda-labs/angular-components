@@ -81,15 +81,16 @@ On a narrow screen the cells stack, divided by horizontal rules.
 
 ## BeyCardListItem
 
-| Field      | Required | Meaning                                                                                          |
-| ---------- | -------- | ------------------------------------------------------------------------------------------------ |
-| `key`      | yes      | Identifies the item                                                                              |
-| `title`    | yes      | The first line, in bold                                                                          |
-| `subtitle` | no       | The second line, muted, translated with `subtitleParameters`; a row without one keeps its height |
-| `avatar`   | no       | A `BeyAvatarConfig` before the texts; takes the place of `icon`                                  |
-| `icon`     | no       | FontAwesome icon before the texts, as wide as an avatar so the titles line up                    |
-| `onClick`  | no       | Makes the item a button with a chevron, named by its title and described by its subtitle         |
-| `fold`     | no       | A `BeyCardListFold`: a link-styled toggle on the right that shows more items in place            |
+| Field                | Required | Meaning                                                                                          |
+| -------------------- | -------- | ------------------------------------------------------------------------------------------------ |
+| `key`                | yes      | Identifies the item                                                                              |
+| `title`              | yes      | The first line, in bold                                                                          |
+| `subtitle`           | no       | The second line, muted, translated with `subtitleParameters`; a row without one keeps its height |
+| `subtitleParameters` | no       | The parameters the subtitle interpolates, such as `{ count: 2 }`                                 |
+| `avatar`             | no       | A `BeyAvatarConfig` before the texts; takes the place of `icon`                                  |
+| `icon`               | no       | FontAwesome icon before the texts, as wide as an avatar so the titles line up                    |
+| `onClick`            | no       | Makes the item a button with a chevron, named by its title and described by its subtitle         |
+| `fold`               | no       | A `BeyCardListFold`: a link-styled toggle on the right that shows more items in place            |
 
 An item with both `onClick` and `fold` keeps the button and shows the toggle instead of the chevron.
 
@@ -123,27 +124,31 @@ The avatar is hidden from assistive technology: the name always goes next to it,
 
 ## Theming
 
-| Variable                           | Default                                      |
-| ---------------------------------- | -------------------------------------------- |
-| `--bey-cards-card-bg`              | `--bey-bg-surface`                           |
-| `--bey-cards-card-border`          | `--bey-border-subtle`                        |
-| `--bey-cards-card-padding`         | `--bey-space-xl`                             |
-| `--bey-cards-count-bg`             | `--bey-bg-active`                            |
-| `--bey-cards-count-fg`             | `--bey-text-secondary`                       |
-| `--bey-cards-stats-bg`             | `--bey-bg-page`                              |
-| `--bey-cards-stats-border`         | `--bey-border-subtle`                        |
-| `--bey-cards-stats-icon`           | `--bey-text-secondary`                       |
-| `--bey-cards-list-bg`              | `--bey-bg-page`                              |
-| `--bey-cards-list-border`          | `--bey-border-subtle`, also the fold's rules |
-| `--bey-cards-list-empty`           | `--bey-text-muted`                           |
-| `--bey-cards-list-item-hover`      | `--bey-bg-hover`, a clickable item           |
-| `--bey-cards-list-item-icon`       | `--bey-text-secondary`                       |
-| `--bey-cards-list-item-link`       | `--bey-text-link`, the toggle of a fold      |
-| `--bey-cards-list-item-link-hover` | `--bey-text-link-hover`                      |
-| `--bey-cards-list-item-muted`      | `--bey-text-muted`, the subtitle             |
-| `--bey-cards-avatar-bg`            | `--bey-primary` (`Solid`)                    |
-| `--bey-cards-avatar-fg`            | `--bey-primary-fg` (`Solid`)                 |
-| `--bey-cards-avatar-size`          | `--bey-space-2xl` plus `--bey-space-sm`      |
-| `--bey-cards-avatar-font-size`     | `--bey-font-size-sm`                         |
+| Variable                           | Set on                      | Default                                                     |
+| ---------------------------------- | --------------------------- | ----------------------------------------------------------- |
+| `--bey-cards-card-bg`              | `bey-card`                  | `--bey-bg-surface`                                          |
+| `--bey-cards-card-border`          | `bey-card`                  | `--bey-border-subtle`                                       |
+| `--bey-cards-card-padding`         | `bey-card`                  | `--bey-space-xl`                                            |
+| `--bey-cards-count-bg`             | `bey-card`, `bey-card-list` | `--bey-bg-active`                                           |
+| `--bey-cards-count-fg`             | `bey-card`, `bey-card-list` | `--bey-text-secondary`                                      |
+| `--bey-cards-stats-bg`             | `bey-card-stats`            | `--bey-bg-page`                                             |
+| `--bey-cards-stats-border`         | `bey-card-stats`            | `--bey-border-subtle`                                       |
+| `--bey-cards-stats-icon`           | `bey-card-stats`            | `--bey-text-secondary`                                      |
+| `--bey-cards-list-bg`              | `bey-card-list`             | `--bey-bg-page`                                             |
+| `--bey-cards-list-border`          | `bey-card-list`             | `--bey-border-subtle`, also the fold's rules                |
+| `--bey-cards-list-empty`           | `bey-card-list`             | `--bey-text-muted`                                          |
+| `--bey-cards-list-item-hover`      | `bey-card-list`             | `--bey-bg-hover`, a clickable item                          |
+| `--bey-cards-list-item-icon`       | `bey-card-list`             | `--bey-text-secondary`                                      |
+| `--bey-cards-list-item-link`       | `bey-card-list`             | `--bey-text-link`, the toggle of a fold                     |
+| `--bey-cards-list-item-link-hover` | `bey-card-list`             | `--bey-text-link-hover`                                     |
+| `--bey-cards-list-item-muted`      | `bey-card-list`             | `--bey-text-muted`, the subtitle                            |
+| `--bey-cards-avatar-bg`            | `bey-avatar` or an ancestor | `--bey-primary` (`Solid`), `--bey-bg-active` (`Soft`)       |
+| `--bey-cards-avatar-fg`            | `bey-avatar` or an ancestor | `--bey-primary-fg` (`Solid`), `--bey-text-primary` (`Soft`) |
+| `--bey-cards-avatar-size`          | `bey-avatar`                | `--bey-space-2xl` plus `--bey-space-sm`                     |
+| `--bey-cards-avatar-font-size`     | `bey-avatar`                | `--bey-font-size-sm`                                        |
 
-Each variable is set on the element of its piece, such as `bey-card-list`, and the dark theme comes from the tokens.
+Each public element declares the variables of its piece on its own host, so they are set on that element with the
+specificity [tokens.md](../../../../../docs/tokens.md) shows, such as `:root bey-card-list`: the count of a title
+reads them from its card or its list, and every item of a list, folded ones too, from the list. The colours of an
+avatar are declared nowhere: set on `bey-avatar`, on any ancestor or on `:root`, they paint both variants, which
+otherwise keep the defaults above. The dark theme comes from the tokens.

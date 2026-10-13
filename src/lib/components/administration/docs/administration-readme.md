@@ -1,21 +1,16 @@
 # Administration
 
-The management pages of an app, gathered in one module: users, groups, roles and permissions, and organizations, and
-the read-only summary of the organization of a member. Each page is built on [`bey-page`](../../page/docs/page-readme.md) over the matching module of express-components, is
-meant as the content of an app page inside `bey-app-layout`, and offers only what the backend lets its caller do. The
-pages live in sub-folders of the module, each with its own README, texts and specs; what more than one of them uses
-sits at the root of the module: `UserOrganizationsService` (the organizations a superadmin reads from
-`GET {usersUrl}/organizations`, through `UserOrganizationsHttpService`), `userRoleLabel` (the label of a role under
-a `rolePrefix`), `buildDisabledOrganizationField` (the organization of a row in a disabled select, which the edit
-forms of roles and groups show a superadmin), `RoleViewFormService` with the role permission functions and their
-model (the read-only view of the permissions of a role, which the roles page, the groups of a member and the
-organization summary open, and the checklist the role forms share), `userFullName`, `userDisplayName` and `userContactLabel` ("Name Surname (email)"),
-`buildGroupMemberListRows` (each group under its name with its members in a read-only list, which the superadmin's
-organization form shows for its administrators, its groups and its members in none), the content counts the deletions
-of users and organizations list, and the [folders per organization](#folders-per-organization) of the superadmin:
-`buildOrganizationFoldersConfig`, `OrganizationFolderTableService`, `withoutOrganizationFolders`,
-`isColumnShownInFolders` (the organization column only in a search at the root) and `initialOrganizationId` (the
-organization a create form comes with). Each page owns its texts under `angular-components.<page>.*`, the `prefix` its config defaults to.
+The management pages of an app, gathered in one module: users, groups, roles and permissions, and organizations, each
+a list on [`bey-page`](../../page/docs/page-readme.md) over the matching module of express-components, and the
+read-only summary of the organization of a member, in cards. Each page is meant as the content of an app page inside
+`bey-app-layout` and offers only what the backend lets its caller do. The pages read alike wherever they meet: a
+person in a list or a search is "Name Surname (email)", or the email alone; a base role is labelled from a
+`rolePrefix`, or by its name; the permissions of a role open read-only in the same sections the role forms check; a
+deletion lists, by kind, what it takes with it; and a superadmin sees the organization of a row, disabled in the edit
+forms, and browses the [folders per organization](#folders-per-organization). Each page has its own README and owns its
+texts under `angular-components.<page>.*`, the `prefix` its config defaults to. Besides the exports of each page, the
+module exports `BeyRoleViewSettings`, the settings the permissions of a role follow wherever a page opens them (a
+`BeyRolesConfig` fits), and `BeyRolePermissionEntry`, a permission `{ group, key }` as the roles page reads them.
 
 ## Usage
 
@@ -60,9 +55,9 @@ page sends them no `parentId`. The page knows a superadmin by the roles of the s
     superadmins on the users page and the base roles on the roles page; nothing else on the groups page.
 -   **A folder** is a row of the list with `entryType: 'category'`, its `id` the id of the organization, its `name`,
     `actions: []` and optionally `itemCount`. Its name, with a folder icon, opens it, with no tooltip, as the folders of
-    every page; once open, the breadcrumb counts its rows. The page reads the folders by `entryType` (`typeField`), as base-entity does where rows have a type of their
-    own, so a folder never clashes with a field of the rows, such as the type the roles show; the rows answered to the
-    superadmin may carry `entryType: 'item'`.
+    every page; once open, the breadcrumb counts its rows. The page reads the folders by `entryType` (`typeField`), as
+    base-entity does where rows have a type of their own, so a folder never clashes with a field of the rows, such as
+    the type the roles show; the rows answered to the superadmin may carry `entryType: 'item'`.
 -   **Inside a folder** the list shows the rows of that organization, under a breadcrumb "Users › Acme Legal" that
     starts at `categories.root` and counts what the folder holds.
 -   **The folders are fixed**: they list no action, and the header offers none of the category actions, so none is
@@ -76,15 +71,15 @@ page sends them no `parentId`. The page knows a superadmin by the roles of the s
     the backend decides what it spans.
 -   **The organization column** shows only in that search at the root, the one list where rows of several
     organizations meet. Browsing the root, where every row is a folder or belongs to none, and inside a folder, with a
-    search or without, it leaves the table with its cells. The pages give `bey-page` `isColumnShownInFolders` as
-    [`isColumnShown`](../../page/docs/page-readme.md#sort-and-columns), which reads the column by its key,
+    search or without, it leaves the table with its cells. The pages give `bey-page` an
+    [`isColumnShown`](../../page/docs/page-readme.md#sort-and-columns) that reads the column by its key,
     `organization`, so the column changes with the list that answers. The organization filter does not depend on it.
 
 The list is asked as on any page with categories: `GET {baseUrl}?parentId=null&search=…` at the root and
 `?parentId=<organizationId>` inside a folder, the breadcrumb from `GET {baseUrl}/categories/<organizationId>/path`,
 which answers `[{ id, name }]`, and a create sends the `parentId` of the folder, or `null`, next to its
-`organizationId`, the organization the row is created in. The users, groups and roles modules of express-components serve it
-for the superadmin and ignore `parentId` for everyone else.
+`organizationId`, the organization the row is created in. The users, groups and roles modules of express-components
+serve it for the superadmin and ignore `parentId` for everyone else.
 
 ## Members
 

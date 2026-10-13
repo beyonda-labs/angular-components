@@ -2,14 +2,14 @@
 
 The users page of an app, built on [`bey-page`](../../../page/docs/page-readme.md) over the users module of
 express-components and meant as the content of an app page inside `bey-app-layout`. It lists every account with its
-name and surname, email, roles and extra roles, status, last sign-in and creation date (hidden at first), sorted by email, and searches
-them by name or email in the search box and by status and role in the filters; a superadmin also sees the organization
-of each user and filters by it, see [Organizations](#organizations). It invites a user, edits one, their status
-included, sends their invitation again, transfers what an inactive user owns to another user and deletes users, see
-[Transfer and deletion](#transfer-and-deletion). The roles it offers come from `GET {baseUrl}/roles`, read before the
-list shows; when they cannot be read the list shows anyway, with no role to offer. Which actions it offers is up to the
-backend, as on any page: `create` when `globalActions` lists it, and `edit`, `resend-invitation`, `transfer` and
-`delete` for the rows whose `actions` list them. A user's name opens the edit form when the row lists `edit`.
+name and surname, email, roles and extra roles, status, last sign-in and creation date (hidden at first), sorted by
+email, and searches them by name or email in the search box and by status and role in the filters; a superadmin
+browses them by organization and filters by it, see [Organizations](#organizations). It invites a user, edits one,
+their status included, sends their invitation again, transfers what an inactive user owns to another user and deletes
+users, see [Transfer and deletion](#transfer-and-deletion). The roles it offers come from `GET {baseUrl}/roles`, read
+before the list shows; when they cannot be read the list shows anyway, with no role to offer. Which actions it offers is
+up to the backend, as on any page: `create` when `globalActions` lists it, and `edit`, `resend-invitation`, `transfer`
+and `delete` for the rows whose `actions` list them. A user's name opens the edit form when the row lists `edit`.
 
 ## Usage
 
@@ -61,7 +61,8 @@ A name, a surname or a language left empty is not sent, and "Roles" must hold on
 text as the `text` of the search, which the backend matches against the email, the name and the surname at once
 (`textField` of [the page](../../../page/docs/page-readme.md#search)); the filters send `status` and `role`. The languages
 of the invitation are the `languages` of the [preferences](../../../../services/preferences/docs/preferences-readme.md),
-and none picked sends the invitation in the default language of the mail.
+and none picked sends the invitation in the default language of the mail. An invitation of a superadmin also sends
+`parentId`, the folder it was sent from or `null`, see [Organizations](#organizations).
 
 The roles (`form.main.roles`) and the extra roles (`form.main.extra-role-ids`) of both forms are
 [lists that hold ids](../../../form/docs/form-fields-readme.md#lists-that-hold-ids), as the members of
@@ -92,7 +93,7 @@ sends only the fields the row names, the status only when it changes. The server
 -   **The own row** lists no `edit`: names are changed on the account page.
 
 A row without `editableFields`, from a server before express-components 1.3.0, keeps every field enabled and shows no
-status, as before. The change of a status follows the server: `active → inactive` and `inactive → active`, an account
+status. The change of a status follows the server: `active → inactive` and `inactive → active`, an account
 brought back coming back as `invited`, `unverified` or `active`, as the backend decides.
 
 ## Transfer and deletion
@@ -179,8 +180,8 @@ none, with no error.
 
 Nor does the page ever offer the superadmin role, which is fixed and comes from the seeding only:
 `GET {baseUrl}/roles` never lists it, the row of a superadmin never lets its roles change, and the server refuses an
-invitation or an edit that grants or removes it with `users.superadmin-role-fixed`. The row of another superadmin lists `edit` to a superadmin, with only its status to
-change; the own row lists nothing.
+invitation or an edit that grants or removes it with `users.superadmin-role-fixed`. The row of another superadmin
+lists `edit` to a superadmin, with only its status to change; the own row lists nothing.
 
 ## Roles
 
@@ -225,9 +226,10 @@ roles of a user reaches them at the next refresh of their session, within the li
 
 Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.no-name` (the name of a user who has
-none), `table.system` (the organization of a superadmin), `categories.root` (the root of its breadcrumb), `search.fields.<key>`, `status.<status>`,
-`form.create.title`, `form.edit.title`, `form.main.<field>.label` and `.placeholder`, `form.main.roles.empty` and
-`form.main.extra-role-ids.empty`, `content.label`, `.count`, `.empty` and `.used-by`, `transfer.title`, `.note`,
-`.submit`, `.no-targets` and `.main.target-user-id.label` and `.placeholder`, `delete.title.one` and `.other`,
-`delete.message.one` and `.other`, `delete.invitation.one` and `.other`, `delete.used-by-others`, `delete.submit` and
-`delete.main.used-by-others.label`, and `toast.<key>-success`. The module ships all of them in English and Spanish.
+none), `table.system` (the organization of a superadmin), `categories.root` (the root of its breadcrumb),
+`search.fields.<key>`, `status.<status>`, `form.create.title`, `form.edit.title`, `form.main.<field>.label` and
+`.placeholder`, `form.main.roles.empty` and `form.main.extra-role-ids.empty`, `content.label`, `.count`, `.empty` and
+`.used-by`, `transfer.title`, `.note`, `.submit`, `.no-targets` and `.main.target-user-id.label` and `.placeholder`,
+`delete.title.one` and `.other`, `delete.message.one` and `.other`, `delete.invitation.one` and `.other`,
+`delete.used-by-others`, `delete.submit` and `delete.main.used-by-others.label`, and `toast.<key>-success`. The module
+ships all of them in English and Spanish.

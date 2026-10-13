@@ -97,13 +97,15 @@ const form = new BeyFormConfig({
 
 The interactive style guide ships as `@beyonda-labs/angular-components/style-guide`, a secondary entry point:
 `import { BeyStyleGuideComponent } from '@beyonda-labs/angular-components/style-guide'`. Importing a component
-never pulls the demo in. Its sources live in `style-guide/src/<module>/`, one folder per module. `bey-style-guide`
+never pulls the demo in. Its sources live in `style-guide/src/<module>/`, one folder per module, and the demo of each
+page of a module that gathers pages, as `administration` does, in `style-guide/src/<module>/<page>/`. `bey-style-guide`
 loads its own texts from `assets/angular-components/i18n-style-guide/` for the current language and every change:
 copy that folder in `angular.json` (`input: node_modules/@beyonda-labs/angular-components/assets/i18n-style-guide`,
 `output: assets/angular-components/i18n-style-guide`) and render the component. Each module is a section that folds
-under its title, collapsed at first and rendered only while open; "Expand all" and "Collapse all" at the top open or
-close every one, the sections left open are remembered in `sessionStorage` for the session, and a hash naming a module
-(`#tabs`, `#administration`) opens its section and scrolls to it, on arrival or when a link changes it.
+under its title, collapsed at first and rendered only while open, its title pointing at it with `aria-controls` only
+then; "Expand all" and "Collapse all" at the top open or close every one, the sections left open are remembered in
+`sessionStorage` for the session, and a hash naming a module (`#tabs`, `#administration`) opens its section and
+scrolls to it, on arrival or when a link changes it.
 
 The specs of a consuming app take their helpers from `@beyonda-labs/angular-components/testing`, a second
 secondary entry point that only specs import: `provideBeyTesting(config?)`, the test counterpart of

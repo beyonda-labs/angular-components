@@ -2,7 +2,8 @@
 
 The title bar of a page: an optional back action, the title, its badges, and the actions, all grouped
 to the right. Actions that do not fit a toolbar can be pushed into an overflow menu, and any action can open a
-set of sub-actions.
+set of sub-actions. The bar is never lower than a text button, `--bey-control-height`, so the title keeps its place
+while actions show or hide.
 
 ## Usage
 

@@ -25,7 +25,7 @@ The HTTP client with the session interceptor and then `interceptors`, backed by 
 requests are answered with `HttpTestingController`; `provideBeyHttp`, so a failed request whose error modal the
 fake recorded raises nothing in a spec that subscribes without an `error` callback; the environment; the session,
 which lives in memory; ngx-translate without a loader; the ngx-bootstrap modals, so the dialogs of the services
-without a fake (the tree dialog) open for real; and the fakes.
+without a fake (the tree dialog) open for real; and the fakes. Its `config` is a `BeyTestingConfig`:
 
 | Field          | Default                              | Meaning                                                  |
 | -------------- | ------------------------------------ | -------------------------------------------------------- |
@@ -70,16 +70,17 @@ TestBed.inject(HttpTestingController)
 
 ## Fakes
 
-| Fake                        | Stands for              | Records                                                                                                           | Answers                                                                     |
-| --------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `BeyFakeModalService`       | `BeyModalService`       | `confirmations()`, `errors()`, `infos()`, `warnings()`                                                            | Each confirmation with `false`, or what `setConfirmationAnswer(answer)` set |
-| `BeyFakeToastService`       | `BeyToastService`       | `errors()`, `infos()`, `successes()`, `warnings()`                                                                | Nothing                                                                     |
-| `BeyFakeModalFormService`   | `BeyModalFormService`   | `forms()`, whose callbacks the spec calls; a form opened `openWithRequest` sends its request and closes on submit | `canDeactivate()` with `true`                                               |
-| `BeyFakeFilePreviewService` | `BeyFilePreviewService` | `previews()`                                                                                                      | A `BsModalRef`                                                              |
-| `BeyFakeStorageService`     | `BeyStorageService`     | What is `set`, in memory                                                                                          | `get(key)`; nothing reaches `localStorage`, so no spec leaks into the next  |
+| Fake                        | Stands for              | Records                                                                                                                                                 | Answers                                                                     |
+| --------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `BeyFakeModalService`       | `BeyModalService`       | `confirmations()`, `errors()`, `infos()`, `warnings()`                                                                                                  | Each confirmation with `false`, or what `setConfirmationAnswer(answer)` set |
+| `BeyFakeToastService`       | `BeyToastService`       | `errors()`, `infos()`, `successes()`, `warnings()`                                                                                                      | Nothing                                                                     |
+| `BeyFakeModalFormService`   | `BeyModalFormService`   | `forms()`, whose callbacks the spec calls; a form of `openWithRequest` sends its request on submit, closes once it answers and stays open when it fails | `canDeactivate()` with `true`                                               |
+| `BeyFakeFilePreviewService` | `BeyFilePreviewService` | `previews()`                                                                                                                                            | A `BsModalRef`                                                              |
+| `BeyFakeStorageService`     | `BeyStorageService`     | What is `set`, in memory                                                                                                                                | `get(key)`; nothing reaches `localStorage`, so no spec leaks into the next  |
 
-Each record is the config exactly as the caller passed it. A confirmation emits at once, with the answer set
-when it was opened. The modal methods return a `BsModalRef` whose `hide()` does nothing.
+Each record is the config exactly as the caller passed it, but for that `onSubmit` of `openWithRequest`. A
+confirmation emits at once, with the answer set when it was opened. The modal methods return a `BsModalRef` whose
+`hide()` does nothing.
 
 ## DOM helpers
 
@@ -97,7 +98,7 @@ A `BeyQueryScope` is a fixture or an element.
 | `beyAccessibleDescription(element)`      | The text of what its `aria-describedby` points at, such as the hint or the error of a field; `''` when nothing        |
 | `beyQueryAll(scope, selector)`           | Every match, as an array                                                                                              |
 | `beyTextsOf(elements)`                   | Their trimmed texts                                                                                                   |
-| `beyVisibleText(scope)`                  | Its text as a reader sees it: the text of every text node, trimmed, one space apart                                   |
+| `beyVisibleText(scope)`                  | Its text as a reader sees it: the text of every text node, its spaces collapsed and trimmed, one space apart          |
 | `beyHostOf(scope)`                       | The element of a fixture, or the element itself                                                                       |
 
 ## Usage

@@ -131,7 +131,7 @@ A root singleton, so a page can update the shell from anywhere.
 The expanded state is stored under `bey-left-menu-expanded` in `localStorage`, so it survives a reload and
 defaults to expanded the first time. Where `localStorage` is unavailable the state lives only in the service.
 
-## Customisation
+## Theming
 
 | Variable                             | Default               |
 | ------------------------------------ | --------------------- |

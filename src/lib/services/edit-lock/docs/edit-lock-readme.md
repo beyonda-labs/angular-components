@@ -72,7 +72,7 @@ its life is the life of that component.
 | Field        | Meaning                                                                                        |
 | ------------ | ---------------------------------------------------------------------------------------------- |
 | `holderId`   | The user who holds it                                                                          |
-| `holderName` | Their name and surname, or their email; `null` when the server no longer resolves the holder    |
+| `holderName` | Their name and surname, or their email; `null` when the server no longer resolves the holder   |
 | `acquiredAt` | When their editing started, in milliseconds                                                    |
 | `expiresAt`  | When it expires unless a heartbeat comes first                                                 |
 | `isOwn`      | This window holds it                                                                           |
@@ -83,7 +83,8 @@ its life is the life of that component.
 
 Once started, the service sends a request every quarter of the `lifetimeMs` the server answers, two minutes unless it
 says otherwise: a `POST` with the token while it holds the lock, which keeps it alive, and a `GET ?token=` while it does
-not. A lock the window stops refreshing, a closed tab or a crash, expires on the server once its lifetime goes by.
+not. `takeOver()` sends that `POST` with `isTakeOver: true`, which the server honours only while the same user holds the
+lock. A lock the window stops refreshing, a closed tab or a crash, expires on the server once its lifetime goes by.
 
 -   **Holding**: a heartbeat that answers somebody else turns the status `lost`, and so does one that answers no lock at
     all: a manager or a superadmin released it, and the server keeps that heartbeat from taking it back. Should a
@@ -94,7 +95,7 @@ not. A lock the window stops refreshing, a closed tab or a crash, expires on the
     holds it. The service never acquires on its own: the editor reloads the row first, then calls `acquire()`.
 -   **Failures**: a `404` on any request turns the status `unavailable` and stops everything: the row is gone, or the user
     cannot see it. So does an acquire or a heartbeat refused with `403` (the user lacks the action that edits it) or with
-    `409 action-unavailable` (the row no longer offers it, such as a template locked meanwhile): the editor stays
+    any `409`, such as `action-unavailable` (the row no longer offers it, a template locked meanwhile): the editor stays
     read-only, with its changes on screen. Any other failure, a network one among them, keeps the status and is tried
     again on the next tick. A tick waits while the previous request is on its way, and `acquire()`, `takeOver()`,
     `release()` and `releaseOther()` cancel it.

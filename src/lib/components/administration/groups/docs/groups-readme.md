@@ -58,6 +58,7 @@ module, as `baseUrl` of [`bey-users`](../../users/docs/users-readme.md) does.
 | `edit`        | `GET {baseUrl}/{id}`, then `PUT {baseUrl}/{id}` `{ name, userIds, extraRoleIds }`                                                                      | The name, the members and the extra roles, filled in with what the group holds |
 | Searches      | `GET {baseUrl}/{id}/member-options?search=<text>&limit=<n>` and `GET {baseUrl}/{id}/role-options?search=<text>&limit=<n>`, while the edit form is open |                                                                                |
 | `delete`      | `DELETE {baseUrl}` `{ ids }`, after a confirmation                                                                                                     | None                                                                           |
+| `view`        | `GET {baseUrl}/{id}`, for a member, see [Members](#members)                                                                                            | The name, the members and, when answered, the roles, read-only                 |
 
 The name is required, at most 100 characters and sent trimmed; the server keeps it unique within the organization,
 without regard to case, and refuses a taken one with `groups.existing-name`. The search box sends its text as the
@@ -76,7 +77,7 @@ the groups, and the server drops their memberships with them.
     alone when the user has no name, with a remove button; "This group has no members yet." (`form.main.user-ids.empty`)
     while it has none;
 -   **"Additional roles"** (`form.main.extra-role-ids`), the same for the extra roles, each by name; "This group has no
-    extra roles yet." (`form.main.extra-role-ids.empty`) while it has none.
+    additional roles yet." (`form.main.extra-role-ids.empty`) while it has none.
 
 Both are [lists that hold ids](../../../form/docs/form-fields-readme.md#lists-that-hold-ids), so the organization is
 never read whole, however many users it has:
@@ -108,8 +109,8 @@ meanwhile, or of an organization out of reach, answers.
 The groups module of express-components answers a member who holds `organization.read-groups`, and not
 `organization.manage`, only the groups they belong to, `{ id, name, memberCount, createdAt, actions: ['view'] }`, with
 `roleCount` too when they also hold `organization.read-group-roles`, and no `globalActions`. The page reads that from the
-answer: rows whose actions list nothing but `view`, and no `create`, turn it read-only, and it builds itself again for
-that.
+answer: rows whose actions list nothing but `view`, and no `create`, turn it read-only where it stands, its columns
+following, without asking for the groups again.
 
 -   **The columns** are "Name", "Members", "Roles" (`table.columns.role-count`, the `roleCount` of each group) only while
     the rows count them, and "Created". An empty answer leaves the columns as they were.
@@ -164,7 +165,9 @@ users page invites into, so a group is created in the same organizations a user 
 ## Texts
 
 Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
-`.tooltip` (only the tooltip for `view`, whose label is the page module's), `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `categories.root` (the root of its breadcrumb), `search.fields.<key>`, `form.create.title`,
+`.tooltip` (only the tooltip for `view`, whose label is the page module's), `table.columns.<key>`,
+`table.tooltips.<key>`, `table.empty`, `categories.root` (the root of its breadcrumb), `search.fields.<key>`,
+`form.create.title`,
 `form.edit.title`, `form.main.<field>.label` and `.placeholder`, the placeholder of a search, `form.main.user-ids.empty`
 and `form.main.extra-role-ids.empty`, `modal.delete.title` and `.message`, `table.view-group`, `view.title`,
 `view.buttons.close`, `view.main.<field>.label`, `view.main.members.empty` and `view.main.extra-roles.empty`, and
