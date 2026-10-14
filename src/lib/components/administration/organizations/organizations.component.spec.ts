@@ -3,7 +3,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { provideRouter } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
+import { buttonByName, cellsOf, queryButton, renderComponent, rowWith, settle } from '@testing/dom';
+import { fieldsOf } from '@testing/form-fields';
+import { FakeFormHandle } from '@testing/handles/fake-form-handle';
+import { searchOf } from '@testing/page-search';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
@@ -12,7 +15,6 @@ import { FakeToastService } from '@testing/services/fake-toast.service';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { FormInfoField } from '../../form/models/fields/form-info-field.model';
 import { FormListField } from '../../form/models/fields/form-list-field.model';
-import { FormHandle } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
 import { FormFieldCustomValidator } from '../../form/models/form-field-validator.model';
 import organizationsEn from './assets/organizations.en.json';
@@ -39,18 +41,6 @@ describe('OrganizationsComponent', () => {
         };
     }
 
-    function buildHandle(): FormHandle<unknown> {
-        return {
-            close: jest.fn(),
-            goToStep: jest.fn(),
-            isDirty: jest.fn(() => true),
-            patchValue: jest.fn(),
-            requestClose: jest.fn(),
-            reset: jest.fn(),
-            value: jest.fn()
-        };
-    }
-
     async function render(
         organizations: OrganizationRow[] = [buildOrganization()],
         globalActions: string[] = ['create'],
@@ -67,24 +57,6 @@ describe('OrganizationsComponent', () => {
 
     function reload(url = ORGANIZATIONS_URL): TestRequest {
         return httpTesting.expectOne(request => request.url === url && request.method === 'GET');
-    }
-
-    function rowWith(text: string): HTMLElement {
-        const row = queryAll(fixture, '[role="row"]').find(candidate => candidate.textContent?.includes(text));
-
-        if (!row) {
-            throw new Error(`No row with ${text}`);
-        }
-
-        return row;
-    }
-
-    function cellsOf(rowText: string): string[] {
-        return textsOf(queryAll(rowWith(rowText), '[role="cell"]'));
-    }
-
-    function fieldsOf(form: ModalFormConfig | undefined): FormField[] {
-        return form?.sections.flatMap(section => section.rows.flatMap(row => row.fields)) ?? [];
     }
 
     function answerDetail(): void {
@@ -122,8 +94,10 @@ describe('OrganizationsComponent', () => {
             buildOrganization({ id: 'o3', name: 'Initech', status: OrganizationStatus.Inactive, userCount: 0 })
         ]);
 
-        expect(cellsOf('Globex')).toEqual(expect.arrayContaining(['Globex', `${PREFIX}.status.active`, '7']));
-        expect(cellsOf('Initech')).toEqual(expect.arrayContaining(['Initech', `${PREFIX}.status.inactive`, '0']));
+        expect(cellsOf(fixture, 'Globex')).toEqual(expect.arrayContaining(['Globex', `${PREFIX}.status.active`, '7']));
+        expect(cellsOf(fixture, 'Initech')).toEqual(
+            expect.arrayContaining(['Initech', `${PREFIX}.status.inactive`, '0'])
+        );
     });
 
     it('sorts the organizations by name at first', async () => {
@@ -132,9 +106,7 @@ describe('OrganizationsComponent', () => {
         request.flush({ globalActions: [], results: [] });
         await settle(fixture);
 
-        expect(JSON.parse(atob(request.request.params.get('search') ?? ''))).toEqual(
-            expect.objectContaining({ sort: { direction: 'asc', field: 'name' } })
-        );
+        expect(searchOf(request)).toEqual(expect.objectContaining({ sort: { direction: 'asc', field: 'name' } }));
     });
 
     it('creates an organization with the name typed, trimmed', async () => {
@@ -143,7 +115,7 @@ describe('OrganizationsComponent', () => {
         buttonByName(fixture, `${PREFIX}.actions.create.label`).click();
         await settle(fixture);
         const form = modalForms.forms().at(-1);
-        form?.onSubmit?.({ main: { name: '  Initech ' } }, buildHandle());
+        form?.onSubmit?.({ main: { name: '  Initech ' } }, new FakeFormHandle());
         const request = httpTesting.expectOne(
             current => current.url === ORGANIZATIONS_URL && current.method === 'POST'
         );
@@ -165,7 +137,10 @@ describe('OrganizationsComponent', () => {
         answerDetail();
         await settle(fixture);
         const form = modalForms.forms().at(-1);
-        form?.onSubmit?.({ main: { name: 'Globex Corporation', status: OrganizationStatus.Inactive } }, buildHandle());
+        form?.onSubmit?.(
+            { main: { name: 'Globex Corporation', status: OrganizationStatus.Inactive } },
+            new FakeFormHandle()
+        );
         const request = httpTesting.expectOne(`${ORGANIZATIONS_URL}/o2`);
         request.flush(buildOrganization({ name: 'Globex Corporation', status: OrganizationStatus.Inactive }));
         await settle(fixture);
@@ -193,7 +168,7 @@ describe('OrganizationsComponent', () => {
     it('edits an organization from the edit action of the header, with no status change nor invitation of its own', async () => {
         await render();
 
-        rowWith('Globex').click();
+        rowWith(fixture, 'Globex').click();
         await settle(fixture);
 
         expect(queryButton(fixture, 'angular-components.header.menu')).toBeNull();
@@ -225,7 +200,7 @@ describe('OrganizationsComponent', () => {
     it('offers only the actions the backend lists', async () => {
         await render([buildOrganization({ actions: [] })], []);
 
-        rowWith('Globex').click();
+        rowWith(fixture, 'Globex').click();
         await settle(fixture);
 
         expect(queryButton(fixture, `${PREFIX}.actions.create.label`)).toBeNull();
@@ -245,7 +220,7 @@ describe('OrganizationsComponent', () => {
         }
 
         async function openDelete(): Promise<ModalFormConfig | undefined> {
-            rowWith('Globex').click();
+            rowWith(fixture, 'Globex').click();
             await settle(fixture);
             buttonByName(fixture, 'angular-components.header.menu').click();
             await settle(fixture);
@@ -277,7 +252,7 @@ describe('OrganizationsComponent', () => {
             const form = await openDelete();
             const name = fieldOf(form, 'name');
             const [validator] = name.validators as FormFieldCustomValidator[];
-            form?.onSubmit?.({ main: { name: 'Globex' } }, buildHandle());
+            form?.onSubmit?.({ main: { name: 'Globex' } }, new FakeFormHandle());
             const request = httpTesting.expectOne(
                 current => current.url === `${ORGANIZATIONS_URL}/o2` && current.method === 'DELETE'
             );
@@ -304,7 +279,7 @@ describe('OrganizationsComponent', () => {
             await render([inactive], []);
 
             const form = await openDelete();
-            form?.onSubmit?.({ main: { name: 'Globex' } }, buildHandle());
+            form?.onSubmit?.({ main: { name: 'Globex' } }, new FakeFormHandle());
             httpTesting
                 .expectOne(current => current.url === `${ORGANIZATIONS_URL}/o2` && current.method === 'DELETE')
                 .flush(

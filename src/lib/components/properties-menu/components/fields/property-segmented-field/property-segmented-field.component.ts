@@ -22,7 +22,7 @@ export class PropertySegmentedFieldComponent {
 
     readonly valueChange = output<unknown>();
 
-    readonly enabledOptions = computed(() => this.field().options.filter(option => !option.disabled));
+    readonly enabledOptions = computed(() => this.field().options.filter(option => !option.isDisabled));
 
     isActive(option: PropertyOption): boolean {
         return this.field().value === option.value;
@@ -61,7 +61,7 @@ export class PropertySegmentedFieldComponent {
     }
 
     selectOption(option: PropertyOption): void {
-        if (option.disabled || this.field().disabled) {
+        if (option.isDisabled || this.field().isDisabled) {
             return;
         }
 

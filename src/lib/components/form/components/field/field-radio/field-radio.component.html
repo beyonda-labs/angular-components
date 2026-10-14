@@ -10,11 +10,13 @@
             <input
                 class="form-check-input bey-form-field-check-input"
                 type="radio"
-                [disabled]="option.isDisabled ?? false"
-                [formControl]="control()"
+                [checked]="isChecked(option.value)"
+                [disabled]="isDisabled(option)"
                 [id]="field().key + '_' + option.value"
                 [name]="field().key"
                 [value]="option.value"
+                (blur)="onBlur()"
+                (change)="select(option.value)"
             />
             <label class="form-check-label bey-form-field-check-label" [for]="field().key + '_' + option.value">
                 {{ option.label | translate }}

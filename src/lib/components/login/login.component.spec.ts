@@ -9,7 +9,7 @@ import { LoginComponent } from './login.component';
 import { LoginConfig, LoginConfigParameters, RegisterField } from './models/login.model';
 import { LoginHttpService } from './services/login-http.service';
 
-const REGISTER_FIELDS: RegisterField[] = [{ name: 'name', type: 'text', required: true }];
+const REGISTER_FIELDS: RegisterField[] = [{ name: 'name', type: 'text', isRequired: true }];
 const FORGOT_PASSWORD = 'angular-components.login.login.forgot-password';
 const FORGOT_EMAIL = 'angular-components.login.forgot-password.email.label';
 const BACK_TO_SIGN_IN = 'angular-components.login.back-to-sign-in';
@@ -142,7 +142,7 @@ describe('LoginComponent', () => {
 
     it('asks to check the inbox when the registration needs a verified email', async () => {
         loginHttpService.getRegisterFields.mockReturnValue(of(REGISTER_FIELDS));
-        loginHttpService.register.mockReturnValue(of({ verificationRequired: true }));
+        loginHttpService.register.mockReturnValue(of({ isVerificationRequired: true }));
         await render();
 
         await press('angular-components.login.register.button.register');

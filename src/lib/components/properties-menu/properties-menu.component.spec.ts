@@ -32,14 +32,14 @@ function buildConfig(overrides: Partial<PropertiesMenuConfigParameters> = {}): P
                         content: new PropertyFieldsContent({
                             fields: [
                                 new PropertyTextField({
-                                    acceptsVariable: true,
+                                    canAcceptVariable: true,
                                     id: 'text',
                                     label: 'Text',
                                     value: 'INVOICE'
                                 })
                             ]
                         }),
-                        expanded: true,
+                        isExpanded: true,
                         id: 'content',
                         label: 'Content'
                     })
@@ -57,7 +57,7 @@ function buildConfig(overrides: Partial<PropertiesMenuConfigParameters> = {}): P
                             })
                         }),
                         id: 'structure-tree',
-                        showHeader: false
+                        isHeaderShown: false
                     })
                 ],
                 id: 'structure',
@@ -70,7 +70,7 @@ function buildConfig(overrides: Partial<PropertiesMenuConfigParameters> = {}): P
                             list: [new PropertyListItem({ id: 'block-heading', label: 'Heading' })]
                         }),
                         id: 'simple-blocks',
-                        showHeader: false
+                        isHeaderShown: false
                     })
                 ],
                 id: 'add',
@@ -142,7 +142,7 @@ describe('PropertiesMenuComponent', () => {
     });
 
     it('hides the header when embedded', () => {
-        render(buildConfig({ embedded: true }));
+        render(buildConfig({ isEmbedded: true }));
 
         expect(element.textContent).not.toContain('Title');
     });
@@ -211,7 +211,7 @@ describe('PropertiesMenuComponent', () => {
         render(buildConfig({ onGroupToggle }));
         await click(buttonByName(fixture, 'Content'));
 
-        expect(onGroupToggle).toHaveBeenCalledWith({ expanded: false, groupId: 'content', tabId: 'properties' });
+        expect(onGroupToggle).toHaveBeenCalledWith({ isExpanded: false, groupId: 'content', tabId: 'properties' });
     });
 
     it('calls onTreeNodeSelect when a tree node is selected', async () => {
@@ -280,7 +280,7 @@ describe('PropertiesMenuComponent · replacing the config', () => {
         activeNodeId: string | undefined,
         children: PropertyTreeNode[] = []
     ): PropertyTreeNode {
-        return new PropertyTreeNode({ active: id === activeNodeId, children, expanded: false, id, label });
+        return new PropertyTreeNode({ isActive: id === activeNodeId, children, isExpanded: false, id, label });
     }
 
     function buildStatefulConfig({
@@ -298,7 +298,7 @@ describe('PropertiesMenuComponent · replacing the config', () => {
                             content: new PropertyFieldsContent({
                                 fields: [new PropertyTextField({ id: 'text', label: 'Text' })]
                             }),
-                            expanded: contentExpanded,
+                            isExpanded: contentExpanded,
                             id: 'content',
                             label: 'Content'
                         }),
@@ -309,7 +309,7 @@ describe('PropertiesMenuComponent · replacing the config', () => {
                                     new PropertyGroupTab({ id: 'left', label: 'Left' })
                                 ]
                             }),
-                            expanded: true,
+                            isExpanded: true,
                             id: 'borders',
                             label: 'Borders'
                         })
@@ -332,7 +332,7 @@ describe('PropertiesMenuComponent · replacing the config', () => {
                                 })
                             }),
                             id: 'structure-tree',
-                            showHeader: false
+                            isHeaderShown: false
                         })
                     ],
                     id: 'structure',
@@ -351,7 +351,7 @@ describe('PropertiesMenuComponent · replacing the config', () => {
                                 ]
                             }),
                             id: 'variables-list',
-                            showHeader: false
+                            isHeaderShown: false
                         })
                     ],
                     id: 'variables',

@@ -1,5 +1,5 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivateFn, Router, UrlTree } from '@angular/router';
 import { map } from 'rxjs';
 
 import { SESSION_CONFIG } from './models/session.model';
@@ -17,7 +17,7 @@ export const authGuard: CanActivateFn = route => {
             return router.createUrlTree([config.loginRoute]);
         }
 
-        const targetPath = `/${route.routeConfig?.path ?? ''}`;
+        const targetPath = matchedPath(route);
         const isAllowed = user.allowedPaths.some(allowed => isWithin(targetPath, allowed));
 
         if (!isAllowed) {
@@ -36,4 +36,12 @@ export const authGuard: CanActivateFn = route => {
 
 function isWithin(path: string, allowed: string): boolean {
     return path === allowed || path.startsWith(allowed.endsWith('/') ? allowed : `${allowed}/`);
+}
+
+function matchedPath(route: ActivatedRouteSnapshot): string {
+    const segments = route.pathFromRoot
+        .flatMap(snapshot => (snapshot.routeConfig?.path ?? '').split('/'))
+        .filter(segment => segment !== '');
+
+    return `/${segments.join('/')}`;
 }

@@ -9,9 +9,12 @@ import {
 } from '../models/organization-folders.model';
 
 export function buildOrganizationFoldersConfig(
-    loadRow: (folder: OrganizationFolder) => TableCell[]
+    loadRow: (folder: OrganizationFolder) => TableCell[],
+    prefix: string
 ): PageCategoriesConfig<OrganizationFolder> {
     return new PageCategoriesConfig<OrganizationFolder>({
+        countLabels: { one: `${prefix}.count.categories.one`, other: `${prefix}.count.categories.other` },
+        itemCountLabels: { one: `${prefix}.count.items.one`, other: `${prefix}.count.items.other` },
         loadRow,
         typeField: ORGANIZATION_FOLDER_TYPE_FIELD
     });

@@ -1,14 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { provideRouter } from '@angular/router';
+import { fieldsOf } from '@testing/form-fields';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { ModalFormSize } from '../../../form/components/modal/models/modal-form.model';
 import { FormInfoField } from '../../../form/models/fields/form-info-field.model';
 import { FormListField } from '../../../form/models/fields/form-list-field.model';
 import { FormSelectField } from '../../../form/models/fields/form-select-field.model';
-import { FormSection } from '../../../form/models/form.model';
-import { FormField } from '../../../form/models/form-field.model';
 import { FormFieldCustomValidator, FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
 import { OrganizationDetail, OrganizationStatus } from '../models/organizations.model';
 import { OrganizationsFormService } from './organizations-form.service';
@@ -37,12 +36,6 @@ describe('OrganizationsFormService', () => {
         ungroupedMembers: [],
         userCount: 3
     };
-
-    function fieldsOf(sections: FormSection[], key: string): FormField[] {
-        return sections
-            .filter(section => section.key === key)
-            .flatMap(section => section.rows.flatMap(row => row.fields));
-    }
 
     beforeEach(() => {
         TestBed.configureTestingModule({ providers: [provideRouter([]), provideBeyTesting()] });

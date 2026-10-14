@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
+import { fieldsOf } from '@testing/form-fields';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeToastService } from '@testing/services/fake-toast.service';
@@ -99,7 +100,7 @@ describe('PageLifecycleActionsService', () => {
                 onSaved
             );
 
-            const [field] = openedForm().sections[0].rows[0].fields;
+            const [field] = fieldsOf(openedForm());
 
             expect(openedForm().initialValue).toEqual({ main: { name: 'client_(copy)' } });
             expect(field.validators).toEqual([validator]);
@@ -159,7 +160,7 @@ describe('PageLifecycleActionsService', () => {
         it('offers the statuses the current one reaches and sends the one chosen', () => {
             service.changeStatus(buildConfig(), { id: 'oats', status: 'draft' } as never, onSaved);
 
-            const [field] = openedForm().sections[0]?.rows[0]?.fields ?? [];
+            const [field] = fieldsOf(openedForm());
 
             expect((field as FormSelectField).options).toEqual([
                 { label: 'shop.products.status.published', value: 'published' }
@@ -178,7 +179,7 @@ describe('PageLifecycleActionsService', () => {
         it('offers nothing for a status the transitions do not list', () => {
             service.changeStatus(buildConfig(), { id: 'oats', status: 'lost' } as never, onSaved);
 
-            const [field] = openedForm().sections[0]?.rows[0]?.fields ?? [];
+            const [field] = fieldsOf(openedForm());
 
             expect((field as FormSelectField).options).toEqual([]);
         });

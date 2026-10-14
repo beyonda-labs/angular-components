@@ -5,7 +5,7 @@
     --bey-property-toggle-width: 2.1rem;
     --bey-property-toggle-height: 1.2rem;
     --bey-property-toggle-thumb-size: 0.9rem;
-    --bey-property-toggle-padding: 0.15rem;
+    --bey-property-toggle-padding: var(--bey-space-3xs);
 
     display: inline-block;
 }

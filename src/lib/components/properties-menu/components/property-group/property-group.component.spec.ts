@@ -45,7 +45,7 @@ describe('PropertyGroupComponent', () => {
             group: new PropertyGroup({
                 id: 'content',
                 label: 'Contenido',
-                expanded: true,
+                isExpanded: true,
                 content: new PropertyFieldsContent({})
             })
         });
@@ -65,7 +65,7 @@ describe('PropertyGroupComponent', () => {
     it('does not toggle a disabled group', () => {
         fixture.componentRef.setInput(
             'group',
-            new PropertyGroup({ id: 'content', label: 'Contenido', disabled: true })
+            new PropertyGroup({ id: 'content', label: 'Contenido', isDisabled: true })
         );
         fixture.detectChanges();
 
@@ -79,7 +79,7 @@ describe('PropertyGroupComponent', () => {
     it('does not render the body while collapsed', () => {
         fixture.componentRef.setInput(
             'group',
-            new PropertyGroup({ id: 'content', label: 'Contenido', expanded: false, content: listContent() })
+            new PropertyGroup({ id: 'content', label: 'Contenido', isExpanded: false, content: listContent() })
         );
         fixture.detectChanges();
 
@@ -89,7 +89,7 @@ describe('PropertyGroupComponent', () => {
     it('points its header at the body only while the body is there', () => {
         fixture.componentRef.setInput(
             'group',
-            new PropertyGroup({ id: 'content', label: 'Contenido', expanded: false, content: listContent() })
+            new PropertyGroup({ id: 'content', label: 'Contenido', isExpanded: false, content: listContent() })
         );
         fixture.detectChanges();
 
@@ -97,7 +97,7 @@ describe('PropertyGroupComponent', () => {
 
         fixture.componentRef.setInput(
             'group',
-            new PropertyGroup({ id: 'content', label: 'Contenido', expanded: true, content: listContent() })
+            new PropertyGroup({ id: 'content', label: 'Contenido', isExpanded: true, content: listContent() })
         );
         fixture.detectChanges();
 
@@ -130,7 +130,7 @@ describe('PropertyGroupComponent', () => {
     });
 
     it('renders no header when showHeader is false', () => {
-        fixture.componentRef.setInput('group', new PropertyGroup({ id: 'content', showHeader: false }));
+        fixture.componentRef.setInput('group', new PropertyGroup({ id: 'content', isHeaderShown: false }));
         fixture.detectChanges();
 
         expect(header()).toBeNull();
@@ -139,7 +139,7 @@ describe('PropertyGroupComponent', () => {
     it('stays expanded when showHeader is false', () => {
         fixture.componentRef.setInput(
             'group',
-            new PropertyGroup({ id: 'content', showHeader: false, content: listContent() })
+            new PropertyGroup({ id: 'content', isHeaderShown: false, content: listContent() })
         );
         fixture.detectChanges();
 
@@ -149,7 +149,7 @@ describe('PropertyGroupComponent', () => {
     it('renders the list content alone', () => {
         fixture.componentRef.setInput(
             'group',
-            new PropertyGroup({ id: 'add-block', expanded: true, content: listContent() })
+            new PropertyGroup({ id: 'add-block', isExpanded: true, content: listContent() })
         );
         fixture.detectChanges();
 
@@ -162,7 +162,7 @@ describe('PropertyGroupComponent', () => {
             'group',
             new PropertyGroup({
                 id: 'structure',
-                expanded: true,
+                isExpanded: true,
                 content: new PropertyTreeContent({
                     tree: new PropertyTreeConfig({ nodes: [new PropertyTreeNode({ id: 'page-1', label: 'Página 1' })] })
                 })
@@ -179,12 +179,12 @@ describe('PropertyGroupComponent', () => {
             'group',
             new PropertyGroup({
                 id: 'structure',
-                expanded: true,
+                isExpanded: true,
                 content: new PropertyTreeContent({
                     tree: new PropertyTreeConfig({
                         nodes: [new PropertyTreeNode({ id: 'page-1' })],
                         addBlockLabel: 'add.label',
-                        showEmptyStateAddBlock: true
+                        isEmptyStateAddBlockShown: true
                     })
                 })
             })
@@ -200,7 +200,7 @@ describe('PropertyGroupComponent', () => {
             'group',
             new PropertyGroup({
                 id: 'structure',
-                expanded: true,
+                isExpanded: true,
                 content: new PropertyTreeContent({ tree: new PropertyTreeConfig({ addBlockLabel: 'add.label' }) })
             })
         );
@@ -214,9 +214,9 @@ describe('PropertyGroupComponent', () => {
             'group',
             new PropertyGroup({
                 id: 'structure',
-                expanded: true,
+                isExpanded: true,
                 content: new PropertyTreeContent({
-                    tree: new PropertyTreeConfig({ addBlockLabel: 'add.label', showEmptyStateAddBlock: true })
+                    tree: new PropertyTreeConfig({ addBlockLabel: 'add.label', isEmptyStateAddBlockShown: true })
                 })
             })
         );
@@ -230,9 +230,9 @@ describe('PropertyGroupComponent', () => {
             'group',
             new PropertyGroup({
                 id: 'structure',
-                expanded: true,
+                isExpanded: true,
                 content: new PropertyTreeContent({
-                    tree: new PropertyTreeConfig({ addBlockLabel: 'add.label', showEmptyStateAddBlock: true })
+                    tree: new PropertyTreeConfig({ addBlockLabel: 'add.label', isEmptyStateAddBlockShown: true })
                 })
             })
         );
@@ -269,7 +269,7 @@ describe('PropertyGroupComponent · label parameters', () => {
                         new PropertyGroupTab({ id: 'left', label: 'borders.side', labelParameters: { side: 'Left' } })
                     ]
                 }),
-                expanded: true,
+                isExpanded: true,
                 id: 'borders',
                 label: 'borders.title',
                 labelParameters: { name: 'Heading' }

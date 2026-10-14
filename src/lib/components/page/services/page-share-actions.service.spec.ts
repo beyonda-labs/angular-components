@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { fieldsOf } from '@testing/form-fields';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { firstValueFrom, Observable, of } from 'rxjs';
 
@@ -59,9 +60,7 @@ describe('PageShareActionsService', () => {
     }
 
     function openedList(access: PageShareAccess): FormListField {
-        return openedForm()
-            .sections.flatMap(section => section.rows.flatMap(row => row.fields))
-            .find(field => field.key === access) as FormListField;
+        return fieldsOf(openedForm()).find(field => field.key === access) as FormListField;
     }
 
     function submit(value: PageShareFormValue): void {
@@ -134,7 +133,7 @@ describe('PageShareActionsService', () => {
     it('waits for a change before saving, and sends the shares back as they were when the lists did not move', () => {
         submit(openedForm().initialValue as PageShareFormValue);
 
-        expect(openedForm().allowSubmitWithoutChanges).toBe(false);
+        expect(openedForm().canSubmitWithoutChanges).toBe(false);
         expect(savedShares()).toEqual([
             { access: 'read', granteeId: 'u2', granteeType: 'user' },
             { access: 'write', granteeId: 'g1', granteeType: 'group' }

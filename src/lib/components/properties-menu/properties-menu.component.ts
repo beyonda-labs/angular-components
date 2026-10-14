@@ -53,7 +53,7 @@ export class PropertiesMenuComponent {
 
         return title === 'title' ? `${prefix}.title` : title;
     });
-    readonly visibleTabs = computed(() => this.config().tabs.filter(tab => !tab.hidden));
+    readonly visibleTabs = computed(() => this.config().tabs.filter(tab => !tab.isHidden));
 
     private readonly menuBody = viewChild<ElementRef<HTMLElement>>('menuBody');
 

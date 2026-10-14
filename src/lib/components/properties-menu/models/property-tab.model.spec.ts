@@ -5,8 +5,8 @@ describe('PropertyTab', () => {
     it('applies the defaults', () => {
         const tab = new PropertyTab({ id: 'properties', label: 'Propiedades' });
 
-        expect(tab.disabled).toBe(false);
-        expect(tab.hidden).toBe(false);
+        expect(tab.isDisabled).toBe(false);
+        expect(tab.isHidden).toBe(false);
         expect(tab.icon).toBeUndefined();
         expect(tab.addLabel).toBeUndefined();
     });

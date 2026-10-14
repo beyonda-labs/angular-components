@@ -1,15 +1,14 @@
 import { PropertyTextField } from './fields/property-text-field.model';
-import { PropertyToggleField } from './fields/property-toggle-field.model';
 
 describe('PropertyField', () => {
     it('applies the defaults of the optional properties', () => {
         const field = new PropertyTextField({ id: 'text' });
 
-        expect(field.acceptsVariable).toBe(false);
-        expect(field.disabled).toBe(false);
-        expect(field.hidden).toBe(false);
+        expect(field.canAcceptVariable).toBe(false);
+        expect(field.isDisabled).toBe(false);
+        expect(field.isHidden).toBe(false);
         expect(field.label).toBe('text.label');
-        expect(field.required).toBe(false);
+        expect(field.isRequired).toBe(false);
     });
 
     it('falls back to defaultValue when no value is given', () => {
@@ -22,38 +21,5 @@ describe('PropertyField', () => {
         const field = new PropertyTextField({ id: 'text', defaultValue: 'FACTURA', value: 'custom' });
 
         expect(field.value).toBe('custom');
-    });
-
-    describe('withDisabled', () => {
-        it('returns a disabled copy of the same subclass, leaving the original enabled', () => {
-            const field = new PropertyTextField({ id: 'text', placeholder: 'Enter text', value: 'FACTURA' });
-            const disabled = field.withDisabled();
-
-            expect(disabled).toBeInstanceOf(PropertyTextField);
-            expect([disabled.disabled, disabled.value, disabled.placeholder]).toEqual([true, 'FACTURA', 'Enter text']);
-            expect(field.disabled).toBe(false);
-            expect(disabled.withDisabled(false).disabled).toBe(false);
-        });
-    });
-
-    describe('withValue', () => {
-        it('returns a new instance with the updated value, of the same subclass', () => {
-            const field = new PropertyTextField({ id: 'text', placeholder: 'Enter text', value: 'FACTURA' });
-            const updated = field.withValue('NUEVO TEXTO');
-
-            expect(updated).not.toBe(field);
-            expect(updated).toBeInstanceOf(PropertyTextField);
-            expect(updated.value).toBe('NUEVO TEXTO');
-            expect(updated.placeholder).toBe('Enter text');
-            expect(field.value).toBe('FACTURA');
-        });
-
-        it('works for any concrete subclass', () => {
-            const field = new PropertyToggleField({ id: 'visible', value: false });
-            const updated = field.withValue(true);
-
-            expect(updated).toBeInstanceOf(PropertyToggleField);
-            expect(updated.value).toBe(true);
-        });
     });
 });

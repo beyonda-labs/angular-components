@@ -4,12 +4,14 @@ import { TestBed } from '@angular/core/testing';
 import {
     accessibleDescription,
     buttonByName,
+    cellsOf,
     controlByName,
     hostOf,
     queryAll,
     queryButton,
     queryControl,
     renderComponent,
+    rowWith,
     textsOf,
     visibleText
 } from './dom';
@@ -43,6 +45,16 @@ import {
         <input aria-label="Search" type="search" />
         <span id="probe-widths">Column widths</span>
         <div aria-labelledby="probe-widths" role="group"></div>
+        <div role="table">
+            <div role="row">
+                <span role="cell">Ada</span>
+                <span role="cell">Admin</span>
+            </div>
+            <div role="row">
+                <span role="cell">Linus</span>
+                <span role="cell">Editor</span>
+            </div>
+        </div>
     `
 })
 class DomProbeComponent {
@@ -111,5 +123,18 @@ describe('testing/dom', () => {
 
         expect(visibleText(queryAll(fixture, 'p')[0])).toBe('Ada Lovelace');
         expect(visibleText(queryAll(fixture, 'ul')[0])).toBe('Draft Final');
+    });
+
+    it('finds the row holding a text and reads the texts of its cells', async () => {
+        const fixture = await renderComponent(DomProbeComponent);
+
+        expect(rowWith(fixture, 'Linus').textContent).toContain('Editor');
+        expect(cellsOf(fixture, 'Ada')).toEqual(['Ada', 'Admin']);
+    });
+
+    it('throws when no row holds the text', async () => {
+        const fixture = await renderComponent(DomProbeComponent);
+
+        expect(() => rowWith(fixture, 'Grace')).toThrow('No row with Grace');
     });
 });

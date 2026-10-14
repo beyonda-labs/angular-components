@@ -60,7 +60,7 @@ describe('UsersTableService', () => {
     it('lets the table translate the status but not the roles, which arrive translated', () => {
         const cells = service.loadRow(buildUser(), options);
 
-        expect([cells[2].translate, cells[3].translate]).toEqual([false, true]);
+        expect([cells[2].isTranslationKey, cells[3].isTranslationKey]).toEqual([false, true]);
     });
 
     it('opens the edit form from the name of a user the caller may edit', () => {
@@ -77,7 +77,7 @@ describe('UsersTableService', () => {
 
         expect(name).toBeInstanceOf(TextTableCell);
         expect(name.content).toBe('demo.users.table.no-name');
-        expect(name.translate).toBe(true);
+        expect(name.isTranslationKey).toBe(true);
     });
 
     it('shows the organization of the user after the email while the page shows organizations', () => {
@@ -93,6 +93,6 @@ describe('UsersTableService', () => {
         const organization = service.loadRow(superadmin, { ...options, isOrganizationShown: true })[2];
 
         expect(organization.content).toBe('demo.users.table.system');
-        expect(organization.translate).toBe(true);
+        expect(organization.isTranslationKey).toBe(true);
     });
 });

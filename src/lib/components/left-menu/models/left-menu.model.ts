@@ -1,11 +1,10 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
-import { avatarInitials } from '../../cards/avatar/functions/avatar-initials';
 import { NotificationsConfig } from '../../notifications/models/notifications.model';
 
 export class LeftMenuAction {
-    active: boolean;
-    disabled: boolean;
+    isActive: boolean;
+    isDisabled: boolean;
     key: string;
     label: string;
     subActions: LeftMenuAction[];
@@ -16,31 +15,31 @@ export class LeftMenuAction {
     route?: string;
 
     constructor({
-        key,
         action,
-        active = false,
-        disabled = false,
         icon,
+        isActive = false,
+        isDisabled = false,
+        key,
         label = `${key}.label`,
         route,
         subActions = [],
         tooltip = `${key}.tooltip`
     }: LeftMenuActionParameters) {
         this.action = action;
-        this.active = active;
-        this.disabled = disabled;
         this.icon = icon;
+        this.isActive = isActive;
+        this.isDisabled = isDisabled;
+        this.key = key;
         this.label = label;
         this.route = route;
         this.subActions = subActions;
-        this.key = key;
         this.tooltip = tooltip;
     }
 }
 
 export class LeftMenuConfig {
     bottomActions: LeftMenuAction[];
-    expanded: boolean;
+    isExpanded: boolean;
     prefix: string;
     title: LeftMenuTitle;
     topActions: LeftMenuAction[];
@@ -54,14 +53,14 @@ export class LeftMenuConfig {
         title,
         topActions = [],
         bottomActions = [],
-        expanded = true,
+        isExpanded = true,
         notifications,
         onExpandedChange,
         userInfo
     }: LeftMenuConfigParameters) {
         this.onExpandedChange = onExpandedChange;
         this.bottomActions = bottomActions;
-        this.expanded = expanded;
+        this.isExpanded = isExpanded;
         this.notifications = notifications;
         this.prefix = prefix;
         this.title = title;
@@ -82,15 +81,15 @@ export class LeftMenuTitle {
 
 export class LeftMenuUserInfo {
     email: string;
-    initials: string;
     name: string;
     surname: string;
 
+    initials?: string;
     route?: string;
 
-    constructor({ email = '', initials = '', name, route, surname = '' }: LeftMenuUserInfoParameters) {
+    constructor({ email = '', initials, name, route, surname = '' }: LeftMenuUserInfoParameters) {
         this.email = email;
-        this.initials = initials || avatarInitials(name, surname);
+        this.initials = initials;
         this.name = name;
         this.route = route;
         this.surname = surname;
@@ -101,9 +100,9 @@ export interface LeftMenuActionParameters {
     key: string;
 
     action?: () => void;
-    active?: boolean;
-    disabled?: boolean;
     icon?: IconDefinition;
+    isActive?: boolean;
+    isDisabled?: boolean;
     label?: string;
     route?: string;
     subActions?: LeftMenuAction[];
@@ -115,7 +114,7 @@ export interface LeftMenuConfigParameters {
     title: LeftMenuTitle;
 
     bottomActions?: LeftMenuAction[];
-    expanded?: boolean;
+    isExpanded?: boolean;
     notifications?: NotificationsConfig;
     onExpandedChange?: (expanded: boolean) => void;
     topActions?: LeftMenuAction[];

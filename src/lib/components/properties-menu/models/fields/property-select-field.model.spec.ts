@@ -22,12 +22,7 @@ describe('PropertySelectField', () => {
     });
 
     it('is not searchable unless asked', () => {
-        expect(new PropertySelectField({ id: 'font' }).searchable).toBe(false);
-        expect(new PropertySelectField({ id: 'font', searchable: true }).searchable).toBe(true);
-    });
-
-    it('tells a variable reference apart from an option value', () => {
-        expect(new PropertySelectField({ id: 'font', value: '{{ font }}' }).holdsVariable).toBe(true);
-        expect(new PropertySelectField({ id: 'font', value: 'Inter' }).holdsVariable).toBe(false);
+        expect(new PropertySelectField({ id: 'font' }).isSearchable).toBe(false);
+        expect(new PropertySelectField({ id: 'font', isSearchable: true }).isSearchable).toBe(true);
     });
 });

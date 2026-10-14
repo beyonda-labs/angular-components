@@ -1,12 +1,11 @@
 import { TestBed } from '@angular/core/testing';
+import { fieldsOf } from '@testing/form-fields';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { firstValueFrom, of } from 'rxjs';
 
-import { ModalFormConfig } from '../../../form/components/modal/models/modal-form.model';
 import { FormAutocompleteField } from '../../../form/models/fields/form-autocomplete-field.model';
 import { FormInfoField } from '../../../form/models/fields/form-info-field.model';
 import { FormListField } from '../../../form/models/fields/form-list-field.model';
-import { FormField } from '../../../form/models/form-field.model';
 import { UserRow, UserStatus } from '../models/users.model';
 import { UserContentFormService } from './user-content-form.service';
 
@@ -21,10 +20,6 @@ describe('UserContentFormService', () => {
         roles: [],
         status: UserStatus.Invited
     };
-
-    function fieldsOf(form: Pick<ModalFormConfig, 'sections'>): FormField[] {
-        return form.sections.flatMap(section => section.rows.flatMap(row => row.fields));
-    }
 
     beforeEach(() => {
         TestBed.configureTestingModule({

@@ -13,8 +13,8 @@ const OTHER_FOLDER: Row = { ...FOLDER, id: 'g' };
 const REPORT: Row = { actions: ['archive', 'duplicate', PageStandardAction.Edit], id: 1, type: PageItemType.Item };
 const SUMMARY: Row = { ...REPORT, id: 2 };
 
-function buildAction(key: string, scope: PageActionScope, handler?: (items: PageItem[]) => void): PageAction {
-    return new PageAction({ handler, key, scope, zone: PageActionZone.Menu });
+function buildAction(key: string, scope: PageActionScope, action?: (items: PageItem[]) => void): PageAction {
+    return new PageAction({ action, key, scope, zone: PageActionZone.Menu });
 }
 
 describe('page rows', () => {

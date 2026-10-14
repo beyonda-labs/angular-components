@@ -18,7 +18,7 @@ export class AuditHttpService {
 
     exportEvents(baseUrl: string, search: PageSearch): Observable<Blob> {
         return this.httpService.getBlob(this.url(baseUrl, AUDIT_EXPORT_PATH), {
-            loading: true,
+            isLoading: true,
             queryParams: this.pageSearchService.buildQueryParameters(search, true)
         });
     }

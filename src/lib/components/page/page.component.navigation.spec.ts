@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { buttonByName } from '@testing/dom';
+import { decodePageSearch } from '@testing/page-search';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
@@ -49,14 +50,18 @@ class PeopleComponent {
         prefix: 'demo',
         tableConfig: new PageTableConfig<Person>({
             categoriesConfig: new PageCategoriesConfig({}),
-            columns: [new TableColumn({ isSortable: true, key: 'name' })],
+            columns: [
+                new TableColumn({ isSortable: true, key: 'name' }),
+                new TableColumn({ isSortable: true, key: 'createdAt' })
+            ],
             isSharedEnabled: true,
-            loadRow: person => [new TextTableCell({ content: person.name })],
+            loadRow: person => [new TextTableCell({ content: person.name }), new TextTableCell({ content: '' })],
             search: new PageTableSearchConfig({
                 fields: [new SearchField({ key: 'name', type: SearchFieldType.Text })],
                 isOwnerFilterEnabled: true,
                 mainField: 'name'
-            })
+            }),
+            storageKey: 'people'
         })
     });
 }
@@ -90,7 +95,7 @@ describe('PageComponent — coming back from another route', () => {
     }
 
     function lastSearch(): PageSearch {
-        return JSON.parse(atob(String(lastQuery()['search']))) as PageSearch;
+        return decodePageSearch(String(lastQuery()['search']));
     }
 
     async function openStaffAndSearch(term: string): Promise<void> {
@@ -156,6 +161,8 @@ describe('PageComponent — coming back from another route', () => {
         harness = await RouterTestingHarness.create('/people');
     });
 
+    afterEach(() => localStorage.clear());
+
     it('comes back from a route under the page in the folder and with the search it was left with', async () => {
         await openStaffAndSearch('ada');
 
@@ -195,6 +202,18 @@ describe('PageComponent — coming back from another route', () => {
 
         expect(element().querySelector('[aria-sort]')?.getAttribute('aria-sort')).toBe('ascending');
         expect(lastSearch().sort).toEqual({ direction: 'asc', field: 'name' });
+    });
+
+    it('comes back in the default order when the column it was sorted by is hidden meanwhile', async () => {
+        buttonByName(element(), 'demo.table.columns.created-at').click();
+        harness.detectChanges();
+
+        await harness.navigateByUrl('/people/1');
+        localStorage.setItem('bey-table-columns.people', JSON.stringify({ createdAt: false }));
+        await harness.navigateByUrl('/people');
+
+        expect(element().querySelector('[aria-sort="ascending"]')).toBeNull();
+        expect(lastSearch().sort).toBeUndefined();
     });
 
     it('comes back filtering by owner and asks for the owners at once, so the panel shows that filter', async () => {

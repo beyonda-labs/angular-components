@@ -47,7 +47,7 @@ describe('FormChipsFieldComponent', () => {
     });
 
     it('accepts duplicates and stops at the limit when the field says so', async () => {
-        await render(new FormChipsField({ key: 'tags', allowDuplicates: true, maxItems: 2 }));
+        await render(new FormChipsField({ key: 'tags', canAddDuplicates: true, maxItems: 2 }));
 
         await typeChip('a');
         await typeChip('a');

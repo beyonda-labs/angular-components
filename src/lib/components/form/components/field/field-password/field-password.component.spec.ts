@@ -58,7 +58,7 @@ describe('FormPasswordFieldComponent', () => {
     });
 
     it('offers no toggle when the field opts out', async () => {
-        await render(new FormPasswordField({ key: 'password', showToggle: false }));
+        await render(new FormPasswordField({ key: 'password', isToggleShown: false }));
 
         expect(fixture.nativeElement.querySelector('button')).toBeNull();
     });

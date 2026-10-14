@@ -12,7 +12,7 @@
         }
 
         <div class="bey-app-layout-body d-flex flex-column">
-            <div class="bey-app-layout-body-content flex-fill" [class.has-padding]="config().useBodyPadding">
+            <div class="bey-app-layout-body-content flex-fill" [class.has-padding]="config().hasBodyPadding">
                 <ng-content></ng-content>
             </div>
             <bey-footer class="flex-shrink-0" [config]="config().footerConfig" />

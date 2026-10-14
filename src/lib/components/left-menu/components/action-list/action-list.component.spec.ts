@@ -15,8 +15,8 @@ describe('ActionListComponent', () => {
         return new LeftMenuAction({ key, label: key, ...overrides });
     }
 
-    async function render(actions: LeftMenuAction[], expanded = true): Promise<void> {
-        fixture = await renderComponent(ActionListComponent, { actions, expanded, prefix: 'demo' });
+    async function render(actions: LeftMenuAction[], isExpanded = true): Promise<void> {
+        fixture = await renderComponent(ActionListComponent, { actions, isExpanded, prefix: 'demo' });
     }
 
     function buttons(): HTMLButtonElement[] {
@@ -77,7 +77,7 @@ describe('ActionListComponent', () => {
 
     it('ignores a disabled action', async () => {
         const run = jest.fn();
-        await render([action('home', { action: run, disabled: true })]);
+        await render([action('home', { action: run, isDisabled: true })]);
 
         buttonOf('home').click();
 
@@ -130,13 +130,13 @@ describe('ActionListComponent', () => {
         });
 
         it('opens the branch that holds the active action', async () => {
-            await render([action('reports', { subActions: [action('daily', { active: true })] })]);
+            await render([action('reports', { subActions: [action('daily', { isActive: true })] })]);
 
             expect(labels()).toEqual(['reports', 'daily']);
         });
 
         it('lets an open branch be closed even while a descendant is active', async () => {
-            await render([action('reports', { subActions: [action('daily', { active: true })] })]);
+            await render([action('reports', { subActions: [action('daily', { isActive: true })] })]);
 
             buttonOf('reports').click();
             fixture.detectChanges();

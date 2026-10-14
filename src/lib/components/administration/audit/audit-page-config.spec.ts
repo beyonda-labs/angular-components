@@ -71,7 +71,13 @@ describe('buildAuditPageConfig', () => {
         expect(config.headerConfig?.title).toBe('my-app.logs.title');
         expect(config.tableConfig?.order).toEqual({ direction: 'desc', field: 'occurredAt' });
         expect(config.tableConfig?.storageKey).toBe('logs');
-        expect(config.tableConfig?.height).toBe('calc(100vh - 220px)');
+        expect(config.tableConfig?.height).toBeUndefined();
+    });
+
+    it('gives the table the height of the config, when it has one', () => {
+        const config = build({ config: new AuditConfig({ height: '24rem' }) });
+
+        expect(config.tableConfig?.height).toBe('24rem');
     });
 
     it('declares the time, the user, the action, the row and the IP, sortable as the server sorts them', () => {
@@ -118,7 +124,7 @@ describe('buildAuditPageConfig', () => {
         const onView = jest.fn();
         const [view] = build({ onView }).headerConfig?.actions ?? [];
 
-        view.handler?.([event]);
+        view.action?.([event]);
 
         expect(view.key).toBe('view');
         expect(view.scope).toBe(PageActionScope.Single);
@@ -131,7 +137,7 @@ describe('buildAuditPageConfig', () => {
         const actions = build({ onExport }).headerConfig?.actions ?? [];
         const exporting = actions[1];
 
-        exporting.handler?.([]);
+        exporting.action?.([]);
 
         expect(actions.map(({ key }) => key)).toEqual(['view', 'export']);
         expect(exporting).toMatchObject({

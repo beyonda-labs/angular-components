@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateService } from '@ngx-translate/core';
 import { buttonByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
@@ -63,6 +64,17 @@ describe('EditLockNoticeStyleGuideComponent', () => {
         expect(TestBed.inject(FakeToastService).successes()).toEqual([{ message: `${PREFIX}.toast.copy-saved` }]);
     });
 
+    it('names as unknown a colleague the server sends no name for', async () => {
+        const held = { earlier: '{{name}} edits it.', today: '{{name}} edits it.' };
+        TestBed.inject(TranslateService).setTranslation('en', {
+            'angular-components': { 'edit-lock-notice': { messages: { held } }, 'user-name': { unknown: 'Unknown' } }
+        });
+
+        await pick('unknown');
+
+        expect(notice()).toBe('Unknown edits it.');
+    });
+
     describe('at noon', () => {
         beforeEach(() => {
             jest.useFakeTimers({
@@ -79,6 +91,7 @@ describe('EditLockNoticeStyleGuideComponent', () => {
             ['colleague', 'held.today'],
             ['earlier', 'held.earlier'],
             ['released', 'lost.released'],
+            ['moved', 'lost.other-window'],
             ['free', 'free'],
             ['unavailable', 'unavailable']
         ])('shows the %s state with its message', async (scenario, message) => {

@@ -17,8 +17,15 @@ import { toKeySegment } from '../../utilities/key-segment';
 import { TableColumnsMenuComponent } from './components/columns-menu/columns-menu.component';
 import { TableRowComponent } from './components/row/row.component';
 import { buildColumnsMenuEntries, resolveVisibleColumns, toggleColumnChoice } from './functions/table-columns';
-import { nextTableSort, toTableSortState } from './functions/table-sort';
-import { TableColumn, TableConfig, TableRow, TableSort, VisibleTableColumn } from './models/table.model';
+import { isTableSortShown, nextTableSort, toTableSortState } from './functions/table-sort';
+import {
+    TableColumn,
+    TableColumnChoices,
+    TableConfig,
+    TableRow,
+    TableSort,
+    VisibleTableColumn
+} from './models/table.model';
 import { TableCell, TextTableCell } from './models/table-cell.model';
 import { TableColumnsStorageService } from './services/table-columns-storage.service';
 
@@ -26,7 +33,7 @@ const COLUMNS_MENU_WIDTH = '2.75rem';
 const SELECTION_COLUMN_WIDTH = '3.25rem';
 
 interface RowDragState {
-    acceptsDrop: boolean;
+    canAcceptDrop: boolean;
     isDraggable: boolean;
     isDragged: boolean;
     isDropTarget: boolean;
@@ -61,7 +68,7 @@ export class TableComponent<T> {
         const dataColumns = this.visibleColumns().map(({ column }) => toGridTrack(column));
 
         return [
-            ...(this.config().selectable ? [SELECTION_COLUMN_WIDTH] : []),
+            ...(this.config().isSelectable ? [SELECTION_COLUMN_WIDTH] : []),
             ...dataColumns,
             ...(this.columnsMenuEntries().length > 0 ? [COLUMNS_MENU_WIDTH] : [])
         ].join(' ');
@@ -74,6 +81,7 @@ export class TableComponent<T> {
                 isSelected: this.allSelected()
             })
     );
+    readonly isFilled = computed(() => !this.config().height);
     readonly rowDragStates = computed<RowDragState[]>(() => {
         const config = this.config();
         const dragged = this.dragged();
@@ -83,7 +91,7 @@ export class TableComponent<T> {
             const isDragged = dragged.includes(row.content);
 
             return {
-                acceptsDrop:
+                canAcceptDrop:
                     dragged.length > 0 && !isDragged && (config.isDropAllowed?.(row.content, dragged) ?? false),
                 isDraggable: Boolean(config.onRowDrop) && (config.isRowDraggable?.(row.content) ?? false),
                 isDragged,
@@ -139,7 +147,7 @@ export class TableComponent<T> {
     }
 
     onColumnsReset(): void {
-        this.columnChoices.set({});
+        this.applyColumnChoices({});
         this.tableColumnsStorageService.remove(this.config().storageKey);
     }
 
@@ -147,7 +155,7 @@ export class TableComponent<T> {
         const { columns, storageKey } = this.config();
         const choices = toggleColumnChoice(columns, this.columnChoices(), key);
 
-        this.columnChoices.set(choices);
+        this.applyColumnChoices(choices);
         this.tableColumnsStorageService.save(choices, storageKey);
     }
 
@@ -174,7 +182,7 @@ export class TableComponent<T> {
     }
 
     onRowDrop(index: number): void {
-        const isAccepted = this.rowDragStates()[index]?.acceptsDrop ?? false;
+        const isAccepted = this.rowDragStates()[index]?.canAcceptDrop ?? false;
         const items = this.dragged();
         const target = this.rows()[index].content;
 
@@ -203,21 +211,36 @@ export class TableComponent<T> {
         this.config().onSortChange?.(sort);
     }
 
+    private applyColumnChoices(choices: TableColumnChoices): void {
+        const wasSortShown = isTableSortShown(this.sort(), this.shownColumns());
+
+        this.columnChoices.set(choices);
+
+        if (wasSortShown && !isTableSortShown(this.sort(), this.shownColumns())) {
+            this.sort.set(null);
+            this.config().onSortChange?.(null);
+        }
+    }
+
     private buildHeaderCell(column: TableColumn): TextTableCell {
         return new TextTableCell({
             content: column.label ?? `${this.config().prefix}.columns.${toKeySegment(column.key)}`,
             tooltip: column.tooltip,
-            translate: true
+            isTranslationKey: true
         });
     }
 
     private reportSelection(): void {
         const indexes = this.rows().flatMap((row, index) => (row.isSelected ? [index] : []));
 
-        this.config().selectedItemsChange?.(
+        this.config().onSelectionChange?.(
             indexes.map(index => this.rows()[index].content),
             indexes
         );
+    }
+
+    private shownColumns(): TableColumn[] {
+        return this.visibleColumns().map(({ column }) => column);
     }
 }
 

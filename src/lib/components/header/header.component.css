@@ -1,5 +1,6 @@
 :host {
     --bey-header-fg: var(--bey-text-primary);
+    --bey-header-title-max-width: 31.25rem;
 
     display: block;
     width: 100%;
@@ -29,7 +30,7 @@
     letter-spacing: var(--bey-letter-spacing-tight);
     line-height: var(--bey-line-height-tight);
     margin: 0;
-    max-width: 500px;
+    max-width: var(--bey-header-title-max-width);
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -63,7 +64,7 @@
 .bey-header-menu {
     display: inline-flex;
     position: relative;
-    width: 25px;
+    width: 1.5625rem;
 }
 
 .bey-header-action-menu {

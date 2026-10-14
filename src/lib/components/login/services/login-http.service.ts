@@ -23,13 +23,13 @@ export class LoginHttpService {
 
     acceptInvitation(request: AcceptInvitationRequest): Observable<LoginResponse> {
         return this.httpService.post<LoginResponse>(`${this.baseUrl}/invitation`, request, {
-            loading: true,
-            withCredentials: true
+            isLoading: true,
+            hasCredentials: true
         });
     }
 
     forgotPassword(email: string): Observable<void> {
-        return this.httpService.post<void>(`${this.baseUrl}/password/forgot`, { email }, { loading: true });
+        return this.httpService.post<void>(`${this.baseUrl}/password/forgot`, { email }, { isLoading: true });
     }
 
     getInvitation(token: string): Observable<Invitation> {
@@ -50,26 +50,26 @@ export class LoginHttpService {
 
     login(credentials: LoginCredentials): Observable<LoginResponse> {
         return this.httpService.post<LoginResponse>(`${this.baseUrl}/login`, credentials, {
-            loading: true,
-            withCredentials: true
+            isLoading: true,
+            hasCredentials: true
         });
     }
 
     register(values: Record<string, unknown>): Observable<RegisterResponse> {
         return this.httpService.post<RegisterResponse>(`${this.baseUrl}/register`, values, {
-            loading: true,
-            withCredentials: true
+            isLoading: true,
+            hasCredentials: true
         });
     }
 
     resendVerification(email: string): Observable<void> {
-        return this.httpService.post<void>(`${this.baseUrl}/verification/resend`, { email }, { loading: true });
+        return this.httpService.post<void>(`${this.baseUrl}/verification/resend`, { email }, { isLoading: true });
     }
 
     resetPassword(request: ResetPasswordRequest): Observable<LoginResponse> {
         return this.httpService.post<LoginResponse>(`${this.baseUrl}/password/reset`, request, {
-            loading: true,
-            withCredentials: true
+            isLoading: true,
+            hasCredentials: true
         });
     }
 
@@ -77,7 +77,7 @@ export class LoginHttpService {
         return this.httpService.post<LoginResponse>(
             `${this.baseUrl}/verification`,
             { token },
-            { withCredentials: true }
+            { hasCredentials: true }
         );
     }
 }

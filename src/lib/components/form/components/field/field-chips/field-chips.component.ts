@@ -33,7 +33,7 @@ export class FormChipsFieldComponent {
 
         this.inputValue.set('');
 
-        if (!value || this.isMaxItemsReached() || (!this.field().allowDuplicates && chips.includes(value))) {
+        if (!value || this.isMaxItemsReached() || (!this.field().canAddDuplicates && chips.includes(value))) {
             return;
         }
 

@@ -14,12 +14,25 @@ describe('organization folders', () => {
 
     it('reads a folder from the entryType of its row, so a row with a type of its own stays a row', () => {
         const loadRow = jest.fn(() => [new TextTableCell({ content: 'Acme' })]);
-        const config = buildOrganizationFoldersConfig(loadRow);
+        const config = buildOrganizationFoldersConfig(loadRow, 'demo.users');
 
         expect(config.typeField).toBe('entryType');
         expect(config.formConfig).toBeUndefined();
         expect(config.loadRow?.(acme, PageViewMode.Table)).toEqual([new TextTableCell({ content: 'Acme' })]);
         expect(loadRow).toHaveBeenCalledWith(acme, PageViewMode.Table);
+    });
+
+    it('counts the folders as organizations and the rows by the texts under the prefix of the page', () => {
+        const config = buildOrganizationFoldersConfig(() => [], 'demo.users');
+
+        expect(config.countLabels).toEqual({
+            one: 'demo.users.count.categories.one',
+            other: 'demo.users.count.categories.other'
+        });
+        expect(config.itemCountLabels).toEqual({
+            one: 'demo.users.count.items.one',
+            other: 'demo.users.count.items.other'
+        });
     });
 
     it('tells a folder from a row', () => {

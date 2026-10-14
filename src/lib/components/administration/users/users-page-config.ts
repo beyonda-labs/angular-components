@@ -61,18 +61,18 @@ export function buildUsersPageConfig({
                 pageStandardAction<UserRow>(PageStandardAction.Create),
                 pageStandardAction<UserRow>(PageStandardAction.Edit),
                 new PageAction<UserRow>({
-                    handler: ([user]) => onResendInvitation(user),
+                    action: ([user]) => onResendInvitation(user),
                     key: USERS_RESEND_INVITATION_ACTION,
                     scope: PageActionScope.Single,
                     zone: PageActionZone.Menu
                 }),
                 new PageAction<UserRow>({
-                    handler: ([user]) => onTransfer(user),
+                    action: ([user]) => onTransfer(user),
                     key: USERS_TRANSFER_ACTION,
                     scope: PageActionScope.Single,
                     zone: PageActionZone.Menu
                 }),
-                pageStandardAction<UserRow>(PageStandardAction.Delete, { handler: users => onDelete(users) })
+                pageStandardAction<UserRow>(PageStandardAction.Delete, { action: users => onDelete(users) })
             ],
             title: `${prefix}.title`
         }),
@@ -81,7 +81,7 @@ export function buildUsersPageConfig({
         tableConfig: new PageTableConfig<UserRow, OrganizationFolder>({
             categoriesConfig,
             columns: [...LEADING_COLUMNS, ...(isOrganizationShown ? [ORGANIZATION_COLUMN] : []), ...TRAILING_COLUMNS],
-            height: categoriesConfig ? foldersHeight : height,
+            height: categoriesConfig ? (foldersHeight ?? height) : height,
             isColumnShown: categoriesConfig ? isColumnShownInFolders : undefined,
             loadRow,
             order: ORDER,

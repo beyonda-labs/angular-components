@@ -53,6 +53,10 @@ export function buttonByName(scope: QueryScope, name: string): HTMLButtonElement
     return found;
 }
 
+export function cellsOf(scope: QueryScope, rowText: string): string[] {
+    return textsOf(queryAll(rowWith(scope, rowText), '[role="cell"]'));
+}
+
 export function controlByName<E extends HTMLElement = HTMLInputElement>(scope: QueryScope, name: string): E {
     const found = queryControl<E>(scope, name);
 
@@ -96,6 +100,16 @@ export async function renderComponent<T>(
     await settle(fixture);
 
     return fixture;
+}
+
+export function rowWith(scope: QueryScope, text: string): HTMLElement {
+    const row = queryAll(scope, '[role="row"]').find(candidate => candidate.textContent?.includes(text));
+
+    if (!row) {
+        throw new Error(`No row with ${text}`);
+    }
+
+    return row;
 }
 
 export async function settle(fixture: ComponentFixture<unknown>): Promise<void> {

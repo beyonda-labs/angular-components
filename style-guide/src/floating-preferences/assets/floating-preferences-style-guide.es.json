@@ -3,7 +3,7 @@
         "floating-preferences": {
             "example": "Selectores de idioma y tema autogestionados, que cambian ambos a través de BeyPreferencesService: el navegador los recuerda y lo que elige un usuario con la sesión iniciada se guarda en su cuenta — no requiere callbacks.",
             "examples": {
-                "no-pill": "Sin la píldora (usePill = false), para embeberlo en otro contenedor",
+                "no-pill": "Sin la píldora (hasPill = false), para embeberlo en otro contenedor",
                 "pill": "Por defecto (píldora flotante)"
             }
         }

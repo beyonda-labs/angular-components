@@ -90,7 +90,7 @@ export class LoginRegisterFormComponent {
 }
 
 function buildField(field: RegisterField, policy: FormPasswordPolicy): FormField {
-    const base = { key: field.name, isRequired: field.required };
+    const base = { key: field.name, isRequired: field.isRequired };
 
     switch (field.type) {
         case 'email':

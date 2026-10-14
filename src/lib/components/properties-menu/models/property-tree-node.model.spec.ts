@@ -4,17 +4,17 @@ describe('PropertyTreeNode', () => {
     it('applies the defaults', () => {
         const node = new PropertyTreeNode({ id: 'page-1', label: 'Página 1' });
 
-        expect(node.active).toBe(false);
-        expect(node.disabled).toBe(false);
-        expect(node.expanded).toBe(true);
-        expect(node.hidden).toBe(false);
+        expect(node.isActive).toBe(false);
+        expect(node.isDisabled).toBe(false);
+        expect(node.isExpanded).toBe(true);
+        expect(node.isHidden).toBe(false);
         expect(node.children).toEqual([]);
     });
 
     it('can be marked active', () => {
-        const node = new PropertyTreeNode({ id: 'page-1', active: true });
+        const node = new PropertyTreeNode({ id: 'page-1', isActive: true });
 
-        expect(node.active).toBe(true);
+        expect(node.isActive).toBe(true);
     });
 
     it('defaults the label to the key sentinel of its id', () => {

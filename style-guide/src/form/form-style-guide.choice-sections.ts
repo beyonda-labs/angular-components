@@ -11,10 +11,12 @@ import {
     BeyFormTextareaField
 } from '@beyonda-labs/angular-components';
 
+import { buildAutocompleteOptionsSection } from './form-style-guide.autocomplete-sections';
+
 const AUTOCOMPLETE_OPTION_COUNT = 4;
 const LONG_AUTOCOMPLETE_OPTION_COUNT = 30;
 
-export function buildChoiceSections(): BeyFormSection[] {
+export function buildChoiceSections(onAutocompletePick: () => void): BeyFormSection[] {
     return [
         new BeyFormSection({
             key: 'section-select',
@@ -110,6 +112,7 @@ export function buildChoiceSections(): BeyFormSection[] {
                 })
             ]
         }),
+        buildAutocompleteOptionsSection(onAutocompletePick),
         new BeyFormSection({
             key: 'section-radio',
             isTooltipVisible: true,

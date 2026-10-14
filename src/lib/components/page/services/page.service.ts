@@ -1,9 +1,9 @@
 import { computed, DestroyRef, effect, inject, Injectable, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BsModalRef } from 'ngx-bootstrap/modal';
-import { catchError, EMPTY, finalize, Observable, Subject, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, Observable, Subject, switchMap, tap } from 'rxjs';
 
-import { BreadcrumbConfig, BreadcrumbItem } from '../../breadcrumb/models/breadcrumb.model';
+import { BreadcrumbConfig } from '../../breadcrumb/models/breadcrumb.model';
 import { ModalFormDialogComponent } from '../../form/components/modal/internal/modal-form-dialog.component';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { HeaderConfig } from '../../header/models/header.model';
@@ -11,31 +11,38 @@ import { PaginationConfig } from '../../pagination/models/pagination.model';
 import { SearchConfig } from '../../search/models/search.model';
 import { SearchFilter } from '../../search/models/search-filter.model';
 import { TableConfig, TableSort } from '../../table/models/table.model';
+import { TableColumnsStorageService } from '../../table/services/table-columns-storage.service';
 import { TabsConfig } from '../../tabs/models/tabs.model';
-import { buildCategoryPath, buildPageBreadcrumbItems, fromSharedRoot } from '../functions/page-breadcrumb';
-import { buildColumnContext, withColumnTooltips, withShownColumns } from '../functions/page-columns';
+import {
+    buildCategoryPath,
+    buildFlatViewBreadcrumbItems,
+    buildPageBreadcrumbItems
+} from '../functions/page-breadcrumb';
+import { withColumnTooltips, withShownColumns } from '../functions/page-columns';
+import { withoutFolderActions } from '../functions/page-flat-view';
 import { withFolderCount } from '../functions/page-folder-count';
-import { keepListedRows } from '../functions/page-row';
-import { findStandardMoveAction, isMoveDragAllowed, isMoveDropAllowed } from '../functions/page-row-drop';
+import { buildRowDropOptions } from '../functions/page-row-drop';
 import { buildPageSearchConfig } from '../functions/page-search-config';
-import { withSearchText } from '../functions/page-search-text';
-import { hasSortableColumn, toSearchSort } from '../functions/page-sort';
-import { buildPageTabs, readViewFilters } from '../functions/page-tabs';
+import { withoutSharedRootMove } from '../functions/page-shared-root';
+import { isPageSortShown } from '../functions/page-sort';
+import { buildPageTabs } from '../functions/page-tabs';
 import { PageActionsContext, PageBackendResponse, PageConfig, PageHandle } from '../models/page.model';
 import { PageAction, PageActionZone } from '../models/page-action.model';
 import { PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
-import { PAGE_INITIAL_SEARCH, PageSearch } from '../models/page-search.model';
-import { PageCategoryPathEntry, PageState } from '../models/page-state.model';
+import { PageSearch } from '../models/page-search.model';
+import { PageState } from '../models/page-state.model';
 import { PageColumnContext } from '../models/page-table.model';
 import { PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
 import { PageLinkService } from './page-link.service';
+import { PageListService } from './page-list.service';
 import { PageOrganizationsService } from './page-organizations.service';
 import { PageOwnersService } from './page-owners.service';
-import { PageSearchService } from './page-search.service';
+import { PageSelectionService } from './page-selection.service';
 import { PageStateService } from './page-state.service';
 import { PageTableService } from './page-table.service';
+import { PageViewService } from './page-view.service';
 
 interface PageLoad {
     config: PageConfig;
@@ -48,50 +55,70 @@ export class PageService {
     private readonly pageActionsService = inject(PageActionsService);
     private readonly pageHttpService = inject(PageHttpService);
     private readonly pageLinkService = inject(PageLinkService);
+    private readonly pageListService = inject(PageListService);
     private readonly pageOrganizationsService = inject(PageOrganizationsService);
     private readonly pageOwnersService = inject(PageOwnersService);
-    private readonly pageSearchService = inject(PageSearchService);
+    private readonly pageSelectionService = inject(PageSelectionService);
     private readonly pageStateService = inject(PageStateService);
     private readonly pageTableService = inject(PageTableService);
+    private readonly pageViewService = inject(PageViewService);
+    private readonly tableColumnsStorageService = inject(TableColumnsStorageService);
 
-    private readonly columnContext = signal<PageColumnContext>({ isSearching: false });
-    private readonly config = signal<PageConfig | null>(null);
-    private readonly countedLocation = signal<string | null>(null);
+    private readonly _config = signal<PageConfig | null>(null);
     private formModalReference?: BsModalRef<ModalFormDialogComponent>;
-    private readonly globalActions = signal<string[] | null>(null);
     private readonly loads = new Subject<PageLoad>();
-    private readonly location = computed(() => `${this.activeTab()}:${this.currentCategoryId() ?? ''}`);
-    private readonly sentSearch = signal<PageSearch>(PAGE_INITIAL_SEARCH);
-    private readonly statePath = this.pageStateService.currentPath();
-    private readonly tableSort = signal<TableSort | null>(null);
+    private readonly offeredActions = computed<PageAction[]>(() => {
+        const actions = this._config()?.headerConfig?.actions ?? [];
 
-    readonly activeTab = computed(() => this.activeView() ?? this.viewMode());
-    readonly activeView = signal<string | null>(null);
-    readonly categoryBreadcrumbConfig = computed<BreadcrumbConfig | null>(() => {
-        const config = this.config();
-        const viewMode = this.viewMode();
+        if (this.pageViewService.flatView()) {
+            return withoutFolderActions(actions);
+        }
 
-        return config?.tableConfig?.categoriesConfig
-            ? new BreadcrumbConfig({
-                  items: this.withCount(buildPageBreadcrumbItems(config.prefix, viewMode, this.categoryPath())),
-                  onItemClick: viewMode === PageViewMode.Trash ? undefined : id => this.navigateBreadcrumb(id),
-                  translate: false
-              })
-            : null;
+        return this.pageViewService.isAtSharedRoot() ? withoutSharedRootMove(actions) : actions;
     });
-    readonly categoryPath = signal<PageCategoryPathEntry[]>([]);
-    readonly currentCategoryId = signal<string | number | null>(null);
+    private readonly statePath = this.pageStateService.currentPath();
+    private readonly visibleActions = computed<PageAction[]>(() =>
+        this.pageActionsService.filterVisibleActions(
+            this.offeredActions(),
+            this.pageListService.globalActions(),
+            this.pageSelectionService.selected(),
+            this._config()?.tableConfig?.categoriesConfig
+        )
+    );
+
+    readonly categoryBreadcrumbConfig = computed<BreadcrumbConfig | null>(() => {
+        const config = this._config();
+        const categoriesConfig = config?.tableConfig?.categoriesConfig;
+        const flatView = this.pageViewService.flatView();
+        const folderCount = this.pageListService.folderCount();
+        const viewMode = this.pageViewService.viewMode();
+
+        if (!config || !categoriesConfig) {
+            return null;
+        }
+
+        const items = flatView
+            ? buildFlatViewBreadcrumbItems(config.prefix, flatView)
+            : buildPageBreadcrumbItems(config.prefix, viewMode, this.pageViewService.categoryPath());
+
+        return new BreadcrumbConfig({
+            items: folderCount ? withFolderCount(items, folderCount, categoriesConfig) : items,
+            onItemClick: flatView || viewMode === PageViewMode.Trash ? undefined : id => this.navigateBreadcrumb(id),
+            isTranslationKey: false
+        });
+    });
+    readonly currentCategoryId = this.pageViewService.currentCategoryId;
     readonly handle: PageHandle = {
         openCategory: item => this.openCategory(item),
         openEdit: row => this.openEdit(row),
         openForm: (config, submit) => this.openForm(config, submit),
         refresh: () => this.refresh(),
-        search: () => this.sentSearch(),
-        selected: () => this.selected(),
-        viewMode: () => this.viewMode()
+        search: () => this.pageListService.sentSearch(),
+        selected: () => this.pageSelectionService.selected(),
+        viewMode: () => this.pageViewService.viewMode()
     };
     readonly headerConfig = computed<HeaderConfig | null>(() => {
-        const config = this.config();
+        const config = this._config();
 
         if (!config?.headerConfig) {
             return null;
@@ -109,32 +136,33 @@ export class PageService {
             title: config.headerConfig.title
         });
     });
-    readonly items = signal<PageItem[]>([]);
-    readonly loading = signal(false);
-    readonly pageSearch = signal<PageSearch>(PAGE_INITIAL_SEARCH);
+    readonly items = this.pageListService.items;
+    readonly loading = this.pageListService.loading;
+    readonly pageSearch = this.pageListService.search;
     readonly paginationConfig = computed<PaginationConfig | null>(() => {
-        const config = this.config();
+        const config = this._config();
+        const totalItems = this.pageListService.totalItems();
 
-        if (!config?.tableConfig?.showPagination || this.totalItems() === 0) {
+        if (!config?.tableConfig?.isPaginationShown || totalItems === 0) {
             return null;
         }
 
-        const search = this.pageSearch();
+        const search = this.pageListService.search();
 
         return new PaginationConfig({
-            onPageChange: page => this.pageSearch.update(current => ({ ...current, page })),
-            onPageSizeChange: size => this.pageSearch.update(current => ({ ...current, page: 1, size })),
+            onPageChange: page => this.pageListService.setPage(page),
+            onPageSizeChange: size => this.pageListService.setPageSize(size),
             page: search.page,
             pageSize: search.size,
-            totalItems: this.totalItems()
+            totalItems
         });
     });
     readonly searchConfig = computed<SearchConfig | null>(() => {
-        const config = this.config();
+        const config = this._config();
 
         return config
             ? buildPageSearchConfig(config, {
-                  filters: untracked(() => this.pageSearch().filters),
+                  filters: untracked(() => this.pageListService.search().filters),
                   onFiltersChange: filters => this.setFilters(filters),
                   onPanelOpen: () => {
                       this.pageOrganizationsService.load(config);
@@ -145,9 +173,9 @@ export class PageService {
               })
             : null;
     });
-    readonly selected = signal<PageItem[]>([]);
+    readonly selected = this.pageSelectionService.selected;
     readonly tableConfig = computed<TableConfig<PageItem> | null>(() => {
-        const config = this.config();
+        const config = this._config();
         const pageTable = config?.tableConfig;
 
         if (!config || !pageTable) {
@@ -155,61 +183,42 @@ export class PageService {
         }
 
         const tablePrefix = `${config.prefix}.table`;
-        const { categoriesConfig, isColumnShown } = pageTable;
-        const moveAction = findStandardMoveAction(config.headerConfig?.actions ?? []);
-        const canMoveByDrop = Boolean(config.baseUrl) && this.viewMode() !== PageViewMode.Trash;
-        const dropMove = moveAction && categoriesConfig && canMoveByDrop ? { categoriesConfig, moveAction } : null;
+        const { isColumnShown } = pageTable;
         const columns = this.pageOrganizationsService.withoutHidden(config, pageTable.columns);
-        const columnContext = this.columnContext();
+        const columnContext = this.pageListService.columnContext();
         const shown = <T>(entries: T[]): T[] => withShownColumns(entries, columns, columnContext, isColumnShown);
 
         return new TableConfig<PageItem>({
             columns: withColumnTooltips(shown(columns), tablePrefix),
+            ...buildRowDropOptions(config, this.offeredActions(), this.pageViewService.viewMode(), (target, items) =>
+                this.pageActionsService.moveItems(this.buildActionsContext(config), items, target.id)
+            ),
             height: pageTable.height,
-            isDropAllowed: dropMove
-                ? (target, items) => isMoveDropAllowed(dropMove.moveAction, target, items, dropMove.categoriesConfig)
-                : undefined,
-            isRowDraggable: dropMove
-                ? item => isMoveDragAllowed(dropMove.moveAction, item, dropMove.categoriesConfig)
-                : undefined,
-            isRowSelected: item => this.selected().some(selected => selected.id === item.id),
-            items: this.items(),
+            isRowSelected: item => this.pageSelectionService.isSelected(item),
+            items: this.pageListService.items(),
             loadRow: item =>
                 shown(
                     this.pageOrganizationsService.withoutHidden(
                         config,
-                        this.pageTableService.loadRow(config, item, this.viewMode(), category =>
+                        this.pageTableService.loadRow(config, item, this.pageViewService.viewMode(), category =>
                             this.openCategory(category)
                         )
                     )
                 ),
-            onRowDrop: dropMove
-                ? (target, items) =>
-                      this.pageActionsService.moveItems(this.buildActionsContext(config), items, target.id)
-                : undefined,
             onSortChange: sort => this.setSort(sort),
             prefix: tablePrefix,
-            selectable: pageTable.allowSelection,
-            selectedItemsChange: items => this.setSelected(items),
-            sort: this.tableSort() ?? undefined,
+            isSelectable: pageTable.canSelect,
+            onSelectionChange: items => this.setSelected(items),
+            sort: this.pageListService.sort() ?? undefined,
             storageKey: pageTable.storageKey
         });
     });
-    readonly totalItems = signal(0);
-    readonly viewMode = signal<PageViewMode>(PageViewMode.Table);
+    readonly totalItems = this.pageListService.totalItems;
     readonly viewToggleConfig = computed<TabsConfig | null>(() => {
-        const config = this.config();
+        const config = this._config();
 
-        return config ? buildPageTabs(config, this.activeTab(), key => this.selectTab(key)) : null;
+        return config ? buildPageTabs(config, this.pageViewService.activeTab(), key => this.selectTab(key)) : null;
     });
-    readonly visibleActions = computed<PageAction[]>(() =>
-        this.pageActionsService.filterVisibleActions(
-            this.config()?.headerConfig?.actions ?? [],
-            this.globalActions(),
-            this.selected(),
-            this.config()?.tableConfig?.categoriesConfig
-        )
-    );
 
     constructor() {
         this.loads
@@ -219,11 +228,11 @@ export class PageService {
             )
             .subscribe();
 
-        this.pageLinkService.watch(() => this.config()).subscribe(state => this.restoreState(state));
+        this.pageLinkService.watch(() => this._config()).subscribe(state => this.restoreState(state));
 
         effect(() => {
-            const config = this.config();
-            const search = this.pageSearch();
+            const config = this._config();
+            const search = this.pageListService.search();
 
             if (config && !this.pageLinkService.isPending()) {
                 untracked(() => this.loads.next({ config, search }));
@@ -235,36 +244,32 @@ export class PageService {
     }
 
     navigateBreadcrumb(id: number): void {
-        const path = id <= 0 ? [] : this.categoryPath().slice(0, id);
-
-        this.categoryPath.set(path);
-        this.currentCategoryId.set(path[path.length - 1]?.id ?? null);
-        this.selected.set([]);
-        this.refresh();
+        this.pageViewService.goUpTo(id);
+        this.clearAndRefresh();
     }
 
     openCategory(item: PageItem): void {
-        const config = this.config();
+        const config = this._config();
         const categoriesConfig = config?.tableConfig?.categoriesConfig;
 
-        if (!config?.baseUrl || !categoriesConfig) {
+        if (!config?.baseUrl || !categoriesConfig || this.pageViewService.flatView()) {
             return;
         }
 
-        const sharedRootId = this.viewMode() === PageViewMode.Shared ? (this.categoryPath()[0]?.id ?? item.id) : null;
+        const sharedRootId = this.pageViewService.sharedRootIdFor(item);
 
         this.pageHttpService.loadCategoryPath(config.baseUrl, item.id).subscribe(path => {
-            const entries = buildCategoryPath(path, categoriesConfig.nameField);
-
-            this.categoryPath.set(sharedRootId === null ? entries : fromSharedRoot(entries, sharedRootId));
-            this.currentCategoryId.set(item.id);
-            this.selected.set([]);
-            this.refresh();
+            this.pageViewService.enterCategory(
+                buildCategoryPath(path, categoriesConfig.nameField),
+                item.id,
+                sharedRootId
+            );
+            this.clearAndRefresh();
         });
     }
 
     openEdit(row: PageItem): void {
-        const config = this.config();
+        const config = this._config();
 
         if (config) {
             this.pageActionsService.openEditForm(this.buildActionsContext(config), row);
@@ -276,28 +281,26 @@ export class PageService {
     }
 
     refresh(): void {
-        this.pageSearch.update(search => ({ ...search, page: 1 }));
+        this.pageListService.refresh();
     }
 
     selectTab(key: string): void {
-        const view = this.config()?.views.find(current => current.key === key);
+        const view = this._config()?.views.find(current => current.key === key);
 
-        this.activeView.set(view?.key ?? null);
-        this.setViewMode(view ? PageViewMode.Table : (key as PageViewMode));
+        this.pageViewService.selectView(view ?? null, view ? PageViewMode.Table : (key as PageViewMode));
+        this.clearAndRefresh();
     }
 
     setConfig<TValue, TItem extends PageItem, TCategory extends PageItem, TCategoryValue>(
         typedConfig: PageConfig<TValue, TItem, TCategory, TCategoryValue>
     ): void {
         const config = typedConfig as unknown as PageConfig;
-        const isFirstConfig = this.config() === null;
+        const isFirstConfig = this._config() === null;
 
-        this.config.set(config);
+        this._config.set(config);
 
         if (config.tableConfig?.order) {
-            const { order } = config.tableConfig;
-
-            this.pageSearch.update(search => ({ ...search, sort: order }));
+            this.pageListService.setOrder(config.tableConfig.order);
         }
 
         if (isFirstConfig) {
@@ -305,52 +308,39 @@ export class PageService {
             this.pageLinkService.follow(config);
         }
 
-        this.pageOrganizationsService.loadForPage(config, this.pageSearch().filters);
+        this.pageOrganizationsService.loadForPage(config, this.pageListService.search().filters);
         config.onReady?.(this.handle);
     }
 
     setFilters(filters: SearchFilter[]): void {
-        this.pageSearch.update(search => ({ ...search, filters, page: 1 }));
+        this.pageListService.setFilters(filters);
     }
 
     setSelected(items: PageItem[]): void {
-        this.selected.set(items);
-        this.config()?.tableConfig?.onSelectionChange?.(items);
+        this.pageSelectionService.select(items);
+        this._config()?.tableConfig?.onSelectionChange?.(items);
     }
 
     setSort(sort: TableSort | null): void {
-        const order = this.config()?.tableConfig?.order;
-
-        this.tableSort.set(sort);
-        this.pageSearch.update(search => ({ ...search, page: 1, sort: sort ? toSearchSort(sort) : order }));
+        this.pageListService.setSort(sort, this._config()?.tableConfig?.order);
     }
 
     setViewMode(mode: PageViewMode): void {
-        if ((this.viewMode() === PageViewMode.Shared) !== (mode === PageViewMode.Shared)) {
-            this.categoryPath.set([]);
-            this.currentCategoryId.set(null);
-        }
-
-        this.viewMode.set(mode);
-        this.selected.set([]);
-        this.refresh();
+        this.pageViewService.setViewMode(mode);
+        this.clearAndRefresh();
     }
 
     private buildActionsContext(config: PageConfig): PageActionsContext {
-        const clearAndRefresh = (): void => {
-            this.selected.set([]);
-            this.refresh();
-        };
-
+        const clearAndRefresh = (): void => this.clearAndRefresh();
         const keepModal = (reference: BsModalRef<ModalFormDialogComponent>): void => {
             this.formModalReference = reference;
         };
 
         return {
             config,
-            getCurrentCategory: () => this.currentCategory(),
-            getCurrentCategoryId: () => this.currentCategoryId(),
-            getSharedRoot: () => (this.viewMode() === PageViewMode.Shared ? (this.categoryPath()[0] ?? null) : null),
+            getCurrentCategory: () => this.pageViewService.currentCategory(),
+            getCurrentCategoryId: () => this.pageViewService.currentCategoryId(),
+            getSharedRoot: () => this.pageViewService.sharedRoot(),
             onCategoryDeleted: clearAndRefresh,
             onCategoryFormModalOpened: keepModal,
             onCategorySaved: () => this.refresh(),
@@ -359,109 +349,57 @@ export class PageService {
             onMoved: clearAndRefresh,
             onSaved: () => this.refresh(),
             onTrashItemDeleted: clearAndRefresh,
-            selectedItems: () => this.selected()
+            selectedItems: () => this.pageSelectionService.selected()
         };
     }
 
-    private currentCategory(): PageCategoryPathEntry | null {
-        const path = this.categoryPath();
-
-        return this.currentCategoryId() === null ? null : (path[path.length - 1] ?? null);
+    private clearAndRefresh(): void {
+        this.pageSelectionService.clear();
+        this.refresh();
     }
 
-    private isAtSharedRoot(): boolean {
-        return this.viewMode() === PageViewMode.Shared && this.currentCategoryId() === null;
+    private dropHiddenSort({ tableConfig }: PageConfig, columnContext: PageColumnContext): void {
+        const choices = this.tableColumnsStorageService.load(tableConfig?.storageKey);
+
+        if (tableConfig && !isPageSortShown(this.pageListService.sort(), tableConfig, columnContext, choices)) {
+            this.setSort(null);
+        }
     }
 
     private load(config: PageConfig, search: PageSearch): Observable<PageBackendResponse> {
-        const { baseUrl } = config;
-
-        if (!baseUrl) {
-            return EMPTY;
-        }
-
-        const categoriesConfig = config.tableConfig?.categoriesConfig;
-        const viewingTrash = this.viewMode() === PageViewMode.Trash;
-        const location = this.location();
-        const viewFilters = viewingTrash ? [] : readViewFilters(config, this.activeView());
-        const sentSearch = { ...search, filters: [...viewFilters, ...search.filters] };
-        const textField = config.tableConfig?.search?.textField;
-        const queryParameters = this.pageSearchService.buildQueryParameters(
-            sentSearch,
-            Boolean(config.tableConfig?.search) || viewFilters.length > 0 || hasSortableColumn(config),
-            textField
-        );
-        const columnContext = buildColumnContext(sentSearch, textField, viewingTrash ? null : this.currentCategory());
-
-        if (categoriesConfig && !viewingTrash && !this.isAtSharedRoot()) {
-            queryParameters[categoriesConfig.parentField] = this.currentCategoryId() ?? 'null';
-        }
-
-        this.sentSearch.set(withSearchText(sentSearch, textField));
-        this.loading.set(true);
-
-        return this.requestList(baseUrl, queryParameters).pipe(
+        return this.pageListService.load(config, search).pipe(
             tap(response => {
-                this.columnContext.set(columnContext);
-                this.items.set(response.results);
-                this.totalItems.set(response.search?.total ?? response.results.length);
-                this.countedLocation.set(location);
-                this.globalActions.set(response.globalActions ?? []);
-                this.setSelected(keepListedRows(this.selected(), this.items()));
+                this.setSelected(this.pageSelectionService.keepListed(response.results));
                 config.onDataLoaded?.(response);
+                this.dropHiddenSort(config, this.pageListService.columnContext());
             }),
-            catchError(() => EMPTY),
-            finalize(() => this.loading.set(false))
+            catchError(() => EMPTY)
         );
-    }
-
-    private requestList(
-        baseUrl: string,
-        queryParameters: Record<string, string | number>
-    ): Observable<PageBackendResponse> {
-        if (this.viewMode() === PageViewMode.Trash) {
-            return this.pageHttpService.loadTrash(baseUrl, queryParameters);
-        }
-
-        return this.isAtSharedRoot()
-            ? this.pageHttpService.loadShared(baseUrl, queryParameters)
-            : this.pageHttpService.load(baseUrl, queryParameters);
     }
 
     private restoreState(state: PageState | undefined): void {
-        const config = this.config();
+        const config = this._config();
 
         if (!config || !state) {
             return;
         }
 
-        this.activeView.set(config.views.some(view => view.key === state.view) ? state.view : null);
-        this.categoryPath.set(state.categoryPath);
-        this.currentCategoryId.set(state.currentCategoryId);
-        this.pageSearch.set(state.search);
+        this.pageViewService.restore(state, config.views);
+        this.pageListService.restore(state.search, state.sort);
         this.pageOwnersService.loadWhenFiltered(config, state.search.filters);
-        this.selected.set(state.selected);
-        this.tableSort.set(state.sort);
-        this.viewMode.set(state.viewMode);
+        this.pageSelectionService.select(state.selected);
     }
 
     private saveState(): void {
-        const config = this.config();
+        const config = this._config();
 
         if (config) {
             this.pageStateService.leave(this.statePath, config.prefix, {
-                categoryPath: this.categoryPath(),
-                currentCategoryId: this.currentCategoryId(),
-                search: this.pageSearch(),
-                selected: this.selected(),
-                sort: this.tableSort(),
-                view: this.activeView(),
-                viewMode: this.viewMode()
+                ...this.pageViewService.toState(),
+                search: this.pageListService.search(),
+                selected: this.pageSelectionService.selected(),
+                sort: this.pageListService.sort()
             });
         }
-    }
-
-    private withCount(items: BreadcrumbItem[]): BreadcrumbItem[] {
-        return this.countedLocation() === this.location() ? withFolderCount(items, this.totalItems()) : items;
     }
 }

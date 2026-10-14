@@ -18,8 +18,8 @@ import { LeftMenuAction } from '../../models/left-menu.model';
 })
 export class ActionListComponent {
     readonly actions = input.required<LeftMenuAction[]>();
-    readonly expanded = input.required<boolean>();
     readonly groupKey = input('group');
+    readonly isExpanded = input.required<boolean>();
     readonly prefix = input.required<string>();
 
     readonly actionTriggered = output<void>();
@@ -28,7 +28,7 @@ export class ActionListComponent {
     readonly chevronDownIcon = faChevronDown;
     readonly chevronRightIcon = faChevronRight;
     readonly openPaths = linkedSignal<Set<string>>(() => {
-        const activePath = this.expanded() ? this.findFirstActivePath(this.actions(), this.groupKey()) : null;
+        const activePath = this.isExpanded() ? this.findFirstActivePath(this.actions(), this.groupKey()) : null;
 
         return new Set(activePath ? this.getPathHierarchy(activePath) : []);
     });
@@ -38,7 +38,7 @@ export class ActionListComponent {
     }
 
     getActionTooltip(action: LeftMenuAction, forceExpanded = false): string {
-        return this.expanded() || forceExpanded
+        return this.isExpanded() || forceExpanded
             ? this.resolveActionText(action, 'tooltip')
             : this.resolveActionText(action, 'label');
     }
@@ -64,7 +64,7 @@ export class ActionListComponent {
     }
 
     hasActiveDescendant(action: LeftMenuAction): boolean {
-        return action.subActions.some(subAction => subAction.active || this.hasActiveDescendant(subAction));
+        return action.subActions.some(subAction => subAction.isActive || this.hasActiveDescendant(subAction));
     }
 
     hasSubActions(action: LeftMenuAction): boolean {
@@ -72,7 +72,7 @@ export class ActionListComponent {
     }
 
     hasSubmenuSelection(action: LeftMenuAction): boolean {
-        return !action.active && this.hasActiveDescendant(action);
+        return !action.isActive && this.hasActiveDescendant(action);
     }
 
     hasSubmenuToggle(action: LeftMenuAction, forceExpanded = false): boolean {
@@ -80,15 +80,15 @@ export class ActionListComponent {
     }
 
     isActionActive(action: LeftMenuAction): boolean {
-        return action.active;
+        return action.isActive;
     }
 
     isInlineExpanded(forceExpanded = false): boolean {
-        return this.expanded() || forceExpanded;
+        return this.isExpanded() || forceExpanded;
     }
 
     isSubmenuOpen(path: string, forceExpanded = false): boolean {
-        if (forceExpanded || this.expanded()) {
+        if (forceExpanded || this.isExpanded()) {
             return this.openPaths().has(path);
         }
 
@@ -101,7 +101,7 @@ export class ActionListComponent {
         forceExpanded = false,
         event: MouseEvent | undefined = undefined
     ): void {
-        if (action.disabled) {
+        if (action.isDisabled) {
             return;
         }
 
@@ -121,7 +121,7 @@ export class ActionListComponent {
     }
 
     onItemMouseEnter(action: LeftMenuAction, path: string, forceExpanded = false): void {
-        if (this.expanded() || forceExpanded || !this.hasSubActions(action) || action.disabled) {
+        if (this.isExpanded() || forceExpanded || !this.hasSubActions(action) || action.isDisabled) {
             return;
         }
 
@@ -129,7 +129,7 @@ export class ActionListComponent {
     }
 
     onItemMouseLeave(path: string, forceExpanded = false): void {
-        if (!this.expanded() && !forceExpanded && this.activeFlyoutPath() === path) {
+        if (!this.isExpanded() && !forceExpanded && this.activeFlyoutPath() === path) {
             this.activeFlyoutPath.set(null);
         }
     }
@@ -150,7 +150,7 @@ export class ActionListComponent {
         for (const action of actions) {
             const actionPath = this.buildPath(parentPath, action.key);
 
-            if (action.active) {
+            if (action.isActive) {
                 return actionPath;
             }
 
@@ -188,7 +188,7 @@ export class ActionListComponent {
     }
 
     private toggleSubmenu(path: string, forceExpanded = false): void {
-        if (!this.expanded() && !forceExpanded) {
+        if (!this.isExpanded() && !forceExpanded) {
             this.activeFlyoutPath.update(current => (current === path ? null : path));
 
             return;

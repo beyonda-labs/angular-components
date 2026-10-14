@@ -27,7 +27,7 @@ export class PropertyFileFieldComponent {
     readonly clearIcon = faXmark;
     readonly hasValue = computed(() => Boolean(this.field().value));
     readonly selectedFileName = signal<string | null>(null);
-    readonly showsClear = computed(() => this.hasValue() && !this.field().disabled);
+    readonly showsClear = computed(() => this.hasValue() && !this.field().isDisabled);
     readonly sizeErrorMaxSizeMB = signal<number | null>(null);
 
     private isDestroyed = false;

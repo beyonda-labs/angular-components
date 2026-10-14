@@ -4,14 +4,10 @@ import { PageActionScope, PageStandardAction } from '../../page/models/page-acti
 import { PageHeaderConfig } from '../../page/models/page-header.model';
 import { SearchSort, SearchSortDirection } from '../../page/models/page-search.model';
 import { PageTableConfig, PageTableSearchConfig } from '../../page/models/page-table.model';
-import { SearchField, SearchFieldOption, SearchFieldType } from '../../search/models/search.model';
+import { SearchField, SearchFieldType } from '../../search/models/search.model';
 import { TableColumn } from '../../table/models/table.model';
-import {
-    OrganizationFormValue,
-    OrganizationRow,
-    OrganizationsPageConfigOptions,
-    OrganizationStatus
-} from './models/organizations.model';
+import { organizationStatusOptions } from './functions/organization-status';
+import { OrganizationFormValue, OrganizationRow, OrganizationsPageConfigOptions } from './models/organizations.model';
 
 const COLUMNS = [
     new TableColumn({ isHideable: false, isSortable: true, key: 'name', width: 5 }),
@@ -39,10 +35,10 @@ export function buildOrganizationsPageConfig({
             actions: [
                 pageStandardAction<OrganizationRow>(PageStandardAction.Create),
                 pageStandardAction<OrganizationRow>(PageStandardAction.Edit, {
-                    handler: ([organization]) => onEdit(organization)
+                    action: ([organization]) => onEdit(organization)
                 }),
                 pageStandardAction<OrganizationRow>(PageStandardAction.Delete, {
-                    handler: ([organization]) => onDelete(organization),
+                    action: ([organization]) => onDelete(organization),
                     scope: PageActionScope.Single
                 })
             ],
@@ -58,7 +54,11 @@ export function buildOrganizationsPageConfig({
             search: new PageTableSearchConfig({
                 fields: [
                     new SearchField({ key: TEXT_FIELD, type: SearchFieldType.Text }),
-                    new SearchField({ key: 'status', options: statusOptions(prefix), type: SearchFieldType.Select })
+                    new SearchField({
+                        key: 'status',
+                        options: organizationStatusOptions(prefix),
+                        type: SearchFieldType.Select
+                    })
                 ],
                 mainField: TEXT_FIELD,
                 textField: TEXT_FIELD
@@ -66,8 +66,4 @@ export function buildOrganizationsPageConfig({
             storageKey
         })
     });
-}
-
-function statusOptions(prefix: string): SearchFieldOption[] {
-    return Object.values(OrganizationStatus).map(status => ({ label: `${prefix}.status.${status}`, value: status }));
 }

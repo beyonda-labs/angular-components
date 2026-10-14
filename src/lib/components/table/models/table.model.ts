@@ -66,18 +66,18 @@ export class TableColumn {
 
 export class TableConfig<T> {
     columns: TableColumn[];
-    height: string;
+    isSelectable: boolean;
     items: T[];
     loadRow: (item: T) => TableCell[];
     prefix: string;
-    selectable: boolean;
 
+    height?: string;
     isDropAllowed?: (target: T, items: T[]) => boolean;
     isRowDraggable?: (item: T) => boolean;
     isRowSelected?: (item: T) => boolean;
     onRowDrop?: (target: T, items: T[]) => void;
+    onSelectionChange?: (items: T[], indexes: number[]) => void;
     onSortChange?: (sort: TableSort | null) => void;
-    selectedItemsChange?: (items: T[], indexes: number[]) => void;
     sort?: TableSort;
     storageKey?: string;
 
@@ -85,15 +85,15 @@ export class TableConfig<T> {
         columns,
         loadRow,
         prefix,
-        height = '60vh',
+        height,
         isDropAllowed,
         isRowDraggable,
         isRowSelected,
+        isSelectable = true,
         items = [],
         onRowDrop,
+        onSelectionChange,
         onSortChange,
-        selectable = true,
-        selectedItemsChange,
         sort,
         storageKey
     }: TableConfigParameters<T>) {
@@ -102,13 +102,13 @@ export class TableConfig<T> {
         this.isDropAllowed = isDropAllowed;
         this.isRowDraggable = isRowDraggable;
         this.isRowSelected = isRowSelected;
+        this.isSelectable = isSelectable;
         this.items = items;
         this.loadRow = loadRow;
         this.onRowDrop = onRowDrop;
+        this.onSelectionChange = onSelectionChange;
         this.onSortChange = onSortChange;
         this.prefix = prefix;
-        this.selectable = selectable;
-        this.selectedItemsChange = selectedItemsChange;
         this.sort = sort;
         this.storageKey = storageKey;
     }
@@ -147,11 +147,11 @@ export interface TableConfigParameters<T> {
     isDropAllowed?: (target: T, items: T[]) => boolean;
     isRowDraggable?: (item: T) => boolean;
     isRowSelected?: (item: T) => boolean;
+    isSelectable?: boolean;
     items?: T[];
     onRowDrop?: (target: T, items: T[]) => void;
+    onSelectionChange?: (items: T[], indexes: number[]) => void;
     onSortChange?: (sort: TableSort | null) => void;
-    selectable?: boolean;
-    selectedItemsChange?: (items: T[], indexes: number[]) => void;
     sort?: TableSort;
     storageKey?: string;
 }

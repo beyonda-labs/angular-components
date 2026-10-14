@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { renderComponent, visibleText } from '@testing/dom';
+import { fieldsOf } from '@testing/form-fields';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import formEn from '../../../form/assets/form.en.json';
 import { FormComponent } from '../../../form/form.component';
 import { FormInfoField } from '../../../form/models/fields/form-info-field.model';
-import { FormSection } from '../../../form/models/form.model';
 import auditEn from '../assets/audit.en.json';
 import { auditTime } from '../functions/audit-labels';
 import { AuditEventRow, AuditViewOptions } from '../models/audit.model';
@@ -41,13 +41,12 @@ describe('AuditFormService', () => {
         return { actionLabels: {}, entityLabels: {}, event: buildEvent(overrides), prefix: PREFIX };
     }
 
-    function fieldsOf(sections: FormSection[]): FormInfoField[] {
-        return sections.flatMap(section => section.rows.flatMap(row => row.fields)) as FormInfoField[];
-    }
-
     function itemsByKey(overrides: Partial<AuditEventRow> = {}): Record<string, unknown[]> {
         return Object.fromEntries(
-            fieldsOf(service.buildViewConfig(buildOptions(overrides)).sections).map(({ items, key }) => [key, items])
+            fieldsOf<FormInfoField>(service.buildViewConfig(buildOptions(overrides)).sections).map(({ items, key }) => [
+                key,
+                items
+            ])
         );
     }
 

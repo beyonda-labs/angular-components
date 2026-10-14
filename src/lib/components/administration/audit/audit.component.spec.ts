@@ -1,7 +1,9 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
+import { buttonByName, cellsOf, queryAll, queryButton, renderComponent, rowWith, settle, textsOf } from '@testing/dom';
+import { fieldsOf } from '@testing/form-fields';
+import { searchOf } from '@testing/page-search';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 
@@ -69,24 +71,8 @@ describe('AuditComponent', () => {
         return request;
     }
 
-    function rowWith(text: string): HTMLElement {
-        const row = queryAll(fixture, '[role="row"]').find(candidate => candidate.textContent?.includes(text));
-
-        if (!row) {
-            throw new Error(`No row with ${text}`);
-        }
-
-        return row;
-    }
-
-    function cellsOf(rowText: string): string[] {
-        return textsOf(queryAll(rowWith(rowText), '[role="cell"]'));
-    }
-
     function viewFields(): FormInfoField[] {
-        const view = TestBed.inject(FakeModalFormService).forms().at(-1);
-
-        return (view?.sections.flatMap(section => section.rows.flatMap(row => row.fields)) ?? []) as FormInfoField[];
+        return fieldsOf<FormInfoField>(TestBed.inject(FakeModalFormService).forms().at(-1));
     }
 
     async function click(element: HTMLElement): Promise<void> {
@@ -133,10 +119,10 @@ describe('AuditComponent', () => {
             })
         ]);
 
-        expect(JSON.parse(atob(listRequest.request.params.get('search') ?? ''))).toEqual(
+        expect(searchOf(listRequest)).toEqual(
             expect.objectContaining({ sort: { direction: 'desc', field: 'occurredAt' } })
         );
-        expect(cellsOf('Invoice')).toEqual(
+        expect(cellsOf(fixture, 'Invoice')).toEqual(
             expect.arrayContaining([
                 auditTime(Date.UTC(2026, 0, 15, 12, 0, 0), 'en'),
                 'Ada Lovelace (ada@example.test)',
@@ -145,7 +131,7 @@ describe('AuditComponent', () => {
                 '10.0.0.1'
             ])
         );
-        expect(cellsOf('grace@example.test')).toEqual(
+        expect(cellsOf(fixture, 'grace@example.test')).toEqual(
             expect.arrayContaining([
                 'grace@example.test',
                 'angular-components.audit.entities.auth · angular-components.audit.verbs.sign-in'
@@ -195,7 +181,7 @@ describe('AuditComponent', () => {
     it('opens the selected event from the view action of the header', async () => {
         await render();
 
-        await click(rowWith('Invoice'));
+        await click(rowWith(fixture, 'Invoice'));
         await click(buttonByName(fixture, 'angular-components.page.actions.view.label'));
         await answerView();
 

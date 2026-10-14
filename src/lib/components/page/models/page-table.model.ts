@@ -17,15 +17,15 @@ export class PageTableConfig<
     TCategory extends PageItem = TItem,
     TCategoryValue = unknown
 > {
-    allowSelection: boolean;
+    canSelect: boolean;
     columns: TableColumn[];
-    height: string;
+    isPaginationShown: boolean;
     isSharedEnabled: boolean;
     isTrashEnabled: boolean;
     loadRow: (item: TItem, viewMode: PageViewMode) => TableCell[];
-    showPagination: boolean;
 
     categoriesConfig?: PageCategoriesConfig<TCategory, TCategoryValue>;
+    height?: string;
     isColumnShown?: (column: TableColumn, context: PageColumnContext) => boolean;
     onSelectionChange?: (items: (TItem | TCategory)[]) => void;
     order?: SearchSort;
@@ -33,32 +33,32 @@ export class PageTableConfig<
     storageKey?: string;
 
     constructor({
-        allowSelection = true,
+        canSelect = true,
         categoriesConfig,
         columns,
-        height = '60vh',
+        height,
         isColumnShown,
+        isPaginationShown = true,
         isSharedEnabled = false,
         isTrashEnabled = false,
         loadRow,
         onSelectionChange,
         order,
         search,
-        showPagination = true,
         storageKey
     }: PageTableConfigParameters<TItem, TCategory, TCategoryValue>) {
-        this.allowSelection = allowSelection;
+        this.canSelect = canSelect;
         this.categoriesConfig = categoriesConfig;
         this.columns = columns;
         this.height = height;
         this.isColumnShown = isColumnShown;
+        this.isPaginationShown = isPaginationShown;
         this.isSharedEnabled = isSharedEnabled;
         this.isTrashEnabled = isTrashEnabled;
         this.loadRow = loadRow;
         this.onSelectionChange = onSelectionChange;
         this.order = order;
         this.search = search;
-        this.showPagination = showPagination;
         this.storageKey = storageKey;
     }
 }
@@ -94,16 +94,16 @@ export interface PageTableConfigParameters<
     columns: TableColumn[];
     loadRow: (item: TItem, viewMode: PageViewMode) => TableCell[];
 
-    allowSelection?: boolean;
+    canSelect?: boolean;
     categoriesConfig?: PageCategoriesConfig<TCategory, TCategoryValue>;
     height?: string;
     isColumnShown?: (column: TableColumn, context: PageColumnContext) => boolean;
+    isPaginationShown?: boolean;
     isSharedEnabled?: boolean;
     isTrashEnabled?: boolean;
     onSelectionChange?: (items: (TItem | TCategory)[]) => void;
     order?: SearchSort;
     search?: PageTableSearchConfig;
-    showPagination?: boolean;
     storageKey?: string;
 }
 

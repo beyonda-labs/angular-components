@@ -56,7 +56,7 @@ export class UsersTableService {
                         variant: USER_STATUS_BADGE_VARIANTS[user.status] ?? BadgeVariant.Neutral
                     })
                 ],
-                translate: true
+                isTranslationKey: true
             }),
             new DateTableCell({ format: LAST_LOGIN_FORMAT, value: user.lastLoginAt }),
             new DateTableCell({ format: CREATED_FORMAT, value: user.createdAt })
@@ -68,15 +68,15 @@ function buildNameCell(user: UserRow, prefix: string, onEdit: (user: UserRow) =>
     const name = userFullName(user);
     const content = name || `${prefix}.table.no-name`;
     const tooltip = name || undefined;
-    const translate = !name;
+    const isTranslationKey = !name;
 
     return user.actions.includes(PageStandardAction.Edit)
-        ? new LinkTableCell({ action: () => onEdit(user), content, tooltip, translate })
-        : new TextTableCell({ content, tooltip, translate });
+        ? new LinkTableCell({ action: () => onEdit(user), content, tooltip, isTranslationKey })
+        : new TextTableCell({ content, tooltip, isTranslationKey });
 }
 
 function buildOrganizationCell(user: UserRow, prefix: string): TableCell {
     return user.organizationId === null
-        ? new TextTableCell({ content: `${prefix}.table.system`, translate: true })
+        ? new TextTableCell({ content: `${prefix}.table.system`, isTranslationKey: true })
         : pageOrganizationCell(user);
 }

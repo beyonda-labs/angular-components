@@ -1,8 +1,10 @@
 import { TestBed } from '@angular/core/testing';
+import { fieldsOf } from '@testing/form-fields';
+import { FakeFormHandle } from '@testing/handles/fake-form-handle';
 
 import { AccountProfile } from '../../../services/account/models/account.model';
 import { FormInfoField } from '../../form/models/fields/form-info-field.model';
-import { FormConfig, FormFooter, FormHandle } from '../../form/models/form.model';
+import { FormConfig, FormFooter } from '../../form/models/form.model';
 import { AccountDataConfig, AccountDataFormValue } from '../models/account-data.model';
 import { AccountDataField, AccountDataFieldKey } from '../models/account-data-field.model';
 import { AccountDataFormService } from './account-data-form.service';
@@ -18,7 +20,7 @@ describe('AccountDataFormService', () => {
     }
 
     function hintsOf(form: FormConfig<AccountDataFormValue>): (string | undefined)[] {
-        return form.sections[0].rows.flatMap(row => row.fields).map(field => field.hint);
+        return fieldsOf(form).map(field => field.hint);
     }
 
     function layoutOf(form: FormConfig<AccountDataFormValue>): string[][] {
@@ -69,11 +71,7 @@ describe('AccountDataFormService', () => {
             new AccountDataField({ key: AccountDataFieldKey.Surname })
         ]);
 
-        expect(form.sections[0].rows.flatMap(row => row.fields).map(field => field.isRequired)).toEqual([
-            false,
-            true,
-            false
-        ]);
+        expect(fieldsOf(form).map(field => field.isRequired)).toEqual([false, true, false]);
     });
 
     it('submits only the editable fields of the config, trimmed', () => {
@@ -86,7 +84,10 @@ describe('AccountDataFormService', () => {
             onSubmit
         );
 
-        form.onSubmit?.({ profile: { name: ' Augusta ', surname: 'Byron' } }, {} as FormHandle<AccountDataFormValue>);
+        form.onSubmit?.(
+            { profile: { name: ' Augusta ', surname: 'Byron' } },
+            new FakeFormHandle<AccountDataFormValue>()
+        );
 
         expect(form.initialValue).toEqual({ profile: { name: 'Ada' } });
         expect(onSubmit).toHaveBeenCalledWith({ name: 'Augusta' });

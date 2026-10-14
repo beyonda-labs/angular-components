@@ -69,9 +69,9 @@ export interface ModalFormConfigParameters<TValue = unknown> {
     prefix: string;
     sections: FormSection[];
 
-    allowSubmitWithoutChanges?: boolean;
     buttonLayout?: FormButtonLayout;
     cancelLabel?: string;
+    canSubmitWithoutChanges?: boolean;
     footer?: FormFooter;
     initialValue?: TValue;
     isSubmitDanger?: boolean;

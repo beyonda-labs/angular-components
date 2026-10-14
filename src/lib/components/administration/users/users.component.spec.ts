@@ -2,7 +2,10 @@ import { HttpTestingController, TestRequest } from '@angular/common/http/testing
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { buttonByName, controlByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
+import { buttonByName, controlByName, queryAll, queryButton, renderComponent, rowWith, settle } from '@testing/dom';
+import { fieldsOf } from '@testing/form-fields';
+import { FakeFormHandle } from '@testing/handles/fake-form-handle';
+import { searchOf } from '@testing/page-search';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
@@ -17,9 +20,7 @@ import { FormInfoField } from '../../form/models/fields/form-info-field.model';
 import { FormListField } from '../../form/models/fields/form-list-field.model';
 import { FormNoticeField } from '../../form/models/fields/form-notice-field.model';
 import { FormSelectField } from '../../form/models/fields/form-select-field.model';
-import { FormHandle } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
-import { PageSearch } from '../../page/models/page-search.model';
 import usersEn from './assets/users.en.json';
 import { UserEditableField, UserRolesResponse, UserRow, UsersConfig, UserStatus } from './models/users.model';
 import { UsersComponent } from './users.component';
@@ -48,18 +49,6 @@ describe('UsersComponent', () => {
         };
     }
 
-    function buildHandle(): FormHandle<unknown> {
-        return {
-            close: jest.fn(),
-            goToStep: jest.fn(),
-            isDirty: jest.fn(() => true),
-            patchValue: jest.fn(),
-            requestClose: jest.fn(),
-            reset: jest.fn(),
-            value: jest.fn()
-        };
-    }
-
     async function render(
         users: UserRow[] = [buildUser()],
         globalActions: string[] = ['create'],
@@ -75,22 +64,8 @@ describe('UsersComponent', () => {
         await settle(fixture);
     }
 
-    function rowWith(text: string): HTMLElement {
-        const row = queryAll(fixture, '[role="row"]').find(candidate => candidate.textContent?.includes(text));
-
-        if (!row) {
-            throw new Error(`No row with ${text}`);
-        }
-
-        return row;
-    }
-
-    function fieldsOf(form: ModalFormConfig | undefined): FormField[] {
-        return form?.sections.flatMap(section => section.rows.flatMap(row => row.fields)) ?? [];
-    }
-
     async function openMenu(rowText: string): Promise<void> {
-        rowWith(rowText).click();
+        rowWith(fixture, rowText).click();
         await settle(fixture);
         buttonByName(fixture, 'angular-components.header.menu').click();
         await settle(fixture);
@@ -137,11 +112,11 @@ describe('UsersComponent', () => {
             })
         ]);
 
-        expect(rowWith('ada@example.test').textContent).toContain('Ada Lovelace');
-        expect(rowWith('ada@example.test').textContent).toContain('editor');
-        expect(rowWith('ada@example.test').textContent).toContain(`${PREFIX}.status.active`);
-        expect(rowWith('grace@example.test').textContent).toContain(`${PREFIX}.table.no-name`);
-        expect(rowWith('grace@example.test').textContent).toContain(`${PREFIX}.status.invited`);
+        expect(rowWith(fixture, 'ada@example.test').textContent).toContain('Ada Lovelace');
+        expect(rowWith(fixture, 'ada@example.test').textContent).toContain('editor');
+        expect(rowWith(fixture, 'ada@example.test').textContent).toContain(`${PREFIX}.status.active`);
+        expect(rowWith(fixture, 'grace@example.test').textContent).toContain(`${PREFIX}.table.no-name`);
+        expect(rowWith(fixture, 'grace@example.test').textContent).toContain(`${PREFIX}.status.invited`);
     });
 
     it('labels the roles from the translations of the app, falling back to the name of the role', async () => {
@@ -151,8 +126,8 @@ describe('UsersComponent', () => {
             new UsersConfig({ rolePrefix: 'my-app.roles' })
         );
 
-        expect(rowWith('ada@example.test').textContent).toContain('Editor');
-        expect(rowWith('ada@example.test').textContent).toContain('auditor');
+        expect(rowWith(fixture, 'ada@example.test').textContent).toContain('Editor');
+        expect(rowWith(fixture, 'ada@example.test').textContent).toContain('auditor');
     });
 
     it('sends the text of the search box as the text of the search, matching names and emails at once', async () => {
@@ -168,9 +143,7 @@ describe('UsersComponent', () => {
         const request = reload();
         request.flush({ globalActions: [], results: [] });
 
-        expect(JSON.parse(atob(request.request.params.get('search') ?? ''))).toEqual(
-            expect.objectContaining({ filters: [], text: 'ada' })
-        );
+        expect(searchOf(request)).toEqual(expect.objectContaining({ filters: [], text: 'ada' }));
     });
 
     it('invites a user with the roles picked and the language of the invitation', async () => {
@@ -181,7 +154,7 @@ describe('UsersComponent', () => {
         const form = modalForms.forms().at(-1);
         form?.onSubmit?.(
             { main: { email: ' grace@example.test ', language: 'es', name: 'Grace', roles: ['admin'], surname: '' } },
-            buildHandle()
+            new FakeFormHandle()
         );
         const request = httpTesting.expectOne(USERS_URL);
         request.flush(buildUser({ email: 'grace@example.test', id: 'u2' }));
@@ -210,7 +183,7 @@ describe('UsersComponent', () => {
         buttonByName(fixture, 'Ada Lovelace').click();
         await settle(fixture);
         const form = modalForms.forms().at(-1);
-        form?.onSubmit?.({ main: { name: 'Ada', roles: ['admin', 'editor'], surname: 'Byron' } }, buildHandle());
+        form?.onSubmit?.({ main: { name: 'Ada', roles: ['admin', 'editor'], surname: 'Byron' } }, new FakeFormHandle());
         const request = httpTesting.expectOne(`${USERS_URL}/u1`);
         request.flush(buildUser());
         await settle(fixture);
@@ -231,7 +204,7 @@ describe('UsersComponent', () => {
         const form = modalForms.forms().at(-1);
         form?.onSubmit?.(
             { main: { name: 'Ada', roles: ['admin'], status: 'inactive', surname: 'Lovelace' } },
-            buildHandle()
+            new FakeFormHandle()
         );
         const request = httpTesting.expectOne(`${USERS_URL}/u1`);
         request.flush(buildUser({ status: UserStatus.Inactive }));
@@ -277,7 +250,7 @@ describe('UsersComponent', () => {
     it('offers only the actions the backend lists', async () => {
         await render([buildUser({ actions: [] })], []);
 
-        rowWith('ada@example.test').click();
+        rowWith(fixture, 'ada@example.test').click();
         await settle(fixture);
 
         expect(queryButton(fixture, `${PREFIX}.actions.create.label`)).toBeNull();
@@ -312,8 +285,8 @@ describe('UsersComponent', () => {
         });
 
         it('shows the extra roles of a user after its roles', () => {
-            expect(rowWith('ada@example.test').textContent).toContain('editor');
-            expect(rowWith('ada@example.test').textContent).toContain('Reviewers');
+            expect(rowWith(fixture, 'ada@example.test').textContent).toContain('editor');
+            expect(rowWith(fixture, 'ada@example.test').textContent).toContain('Reviewers');
         });
 
         it('invites a user with the extra roles picked among those of the organization', async () => {
@@ -321,7 +294,7 @@ describe('UsersComponent', () => {
             const form = modalForms.forms().at(-1);
             form?.onSubmit?.(
                 { main: { email: 'grace@example.test', extraRoleIds: ['r1'], roles: ['editor'] } },
-                buildHandle()
+                new FakeFormHandle()
             );
             const request = httpTesting.expectOne(current => current.url === USERS_URL && current.method === 'POST');
             request.flush(buildUser({ email: 'grace@example.test', id: 'u2' }));
@@ -339,7 +312,7 @@ describe('UsersComponent', () => {
         it('edits the extra roles of a user, checked with those it holds', async () => {
             await click(buttonByName(fixture, 'Ada Lovelace'));
             const form = modalForms.forms().at(-1);
-            form?.onSubmit?.({ main: { extraRoleIds: [], name: 'Ada', roles: ['editor'] } }, buildHandle());
+            form?.onSubmit?.({ main: { extraRoleIds: [], name: 'Ada', roles: ['editor'] } }, new FakeFormHandle());
             const request = httpTesting.expectOne(`${USERS_URL}/u1`);
             request.flush(buildUser());
             await settle(fixture);
@@ -356,7 +329,7 @@ describe('UsersComponent', () => {
             modalForms
                 .forms()
                 .at(-1)
-                ?.onSubmit?.({ main: { extraRoleIds: ['r9'], name: 'Ada', roles: ['editor'] } }, buildHandle());
+                ?.onSubmit?.({ main: { extraRoleIds: ['r9'], name: 'Ada', roles: ['editor'] } }, new FakeFormHandle());
             httpTesting
                 .expectOne(`${USERS_URL}/u1`)
                 .flush(
@@ -378,7 +351,7 @@ describe('UsersComponent', () => {
             await choose(selects()[0], 'role');
             await choose(selects()[2], 'r1');
             await click(buttonByName(fixture, 'angular-components.search.apply'));
-            const search = JSON.parse(atob(reload().request.params.get('search') ?? '')) as PageSearch;
+            const search = searchOf(reload());
 
             expect(search.filters).toEqual([{ field: 'role', operator: 'equals', value: 'r1' }]);
         });
@@ -393,7 +366,7 @@ describe('UsersComponent', () => {
             .flush({ globalActions: [], results: [buildUser()] });
         await settle(fixture);
 
-        expect(rowWith('ada@example.test')).toBeTruthy();
+        expect(rowWith(fixture, 'ada@example.test')).toBeTruthy();
     });
 
     describe('the content of a user', () => {
@@ -442,7 +415,7 @@ describe('UsersComponent', () => {
                 .subscribe(result => (suggestions = result as FormAutocompleteSearchResult));
             const search = httpTesting.expectOne(request => request.url === `${USERS_URL}/u1/transfer-targets`);
             search.flush({ options: [{ email: 'grace@example.test', id: 'u2', name: 'Grace', surname: 'Hopper' }] });
-            form?.onSubmit?.({ main: { targetUserId: 'u2' } }, buildHandle());
+            form?.onSubmit?.({ main: { targetUserId: 'u2' } }, new FakeFormHandle());
             const request = httpTesting.expectOne(`${USERS_URL}/u1/transfer`);
             request.flush({ transferred: { documents: 2 } });
             await settle(fixture);
@@ -493,7 +466,7 @@ describe('UsersComponent', () => {
             httpTesting.expectOne(`${USERS_URL}/u2/content`).flush({ counts: { documents: 1 }, usedByOthers: {} });
             await settle(fixture);
             const form = modalForms.forms().at(-1);
-            form?.onSubmit?.({}, buildHandle());
+            form?.onSubmit?.({}, new FakeFormHandle());
             const first = httpTesting.expectOne(`${USERS_URL}/u1`);
             first.flush(null, { status: 204, statusText: 'No Content' });
             const second = httpTesting.expectOne(`${USERS_URL}/u2`);
@@ -560,7 +533,7 @@ describe('UsersComponent', () => {
             httpTesting.expectOne(`${USERS_URL}/u1/content`).flush({ counts: {} });
             httpTesting.expectOne(`${USERS_URL}/u2/content`).flush({ counts: {} });
             await settle(fixture);
-            modalForms.forms().at(-1)?.onSubmit?.({}, buildHandle());
+            modalForms.forms().at(-1)?.onSubmit?.({}, new FakeFormHandle());
             httpTesting.expectOne(`${USERS_URL}/u1`).flush(null, { status: 204, statusText: 'No Content' });
             httpTesting
                 .expectOne(`${USERS_URL}/u2`)

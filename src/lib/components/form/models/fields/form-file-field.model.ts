@@ -19,5 +19,3 @@ export interface FormFileFieldParameters extends FormFieldBaseParameters {
     maxSizeBytes?: number;
     validators?: FormFieldCustomValidator[];
 }
-
-export { matchesAcceptPattern } from '../../../../internal/file/accept-pattern';

@@ -4,9 +4,11 @@ export class PageView {
     filters: SearchFilter[];
     key: string;
 
+    baseUrl?: string;
     label?: string;
 
-    constructor({ filters, key, label }: PageViewParameters) {
+    constructor({ baseUrl, filters, key, label }: PageViewParameters) {
+        this.baseUrl = baseUrl;
         this.filters = filters;
         this.key = key;
         this.label = label;
@@ -17,5 +19,6 @@ export interface PageViewParameters {
     filters: SearchFilter[];
     key: string;
 
+    baseUrl?: string;
     label?: string;
 }

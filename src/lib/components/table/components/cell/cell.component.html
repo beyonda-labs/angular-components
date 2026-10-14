@@ -10,15 +10,17 @@
 >
     @if (sortState()) {
         <button class="bey-table-cell-sort" type="button" [class.is-sorted]="isSorted()" (click)="onSortClick($event)">
-            <span class="bey-table-cell-content">{{ cell().translate ? (content() | translate) : content() }}</span>
+            <span class="bey-table-cell-content">
+                {{ cell().isTranslationKey ? (content() | translate) : content() }}
+            </span>
             <fa-icon class="bey-table-cell-sort-icon" [icon]="sortIcon()"></fa-icon>
         </button>
     } @else if (isLink()) {
         <button class="bey-table-cell-link" type="button" (click)="onLinkClick($event)">
-            @if (icon(); as icon) {
-                <fa-icon class="bey-table-cell-icon" [icon]="icon"></fa-icon>
-            }
-            <span class="bey-table-cell-content">{{ cell().translate ? (content() | translate) : content() }}</span>
+            <ng-container [ngTemplateOutlet]="cellIcon"></ng-container>
+            <span class="bey-table-cell-content">
+                {{ cell().isTranslationKey ? (content() | translate) : content() }}
+            </span>
         </button>
     } @else if (isBadge()) {
         <span class="bey-table-cell-content bey-table-cell-badges">
@@ -27,12 +29,25 @@
             }
         </span>
     } @else {
-        @if (icon(); as icon) {
-            <fa-icon class="bey-table-cell-icon" [icon]="icon"></fa-icon>
-        }
-        <span class="bey-table-cell-content">{{ cell().translate ? (content() | translate) : content() }}</span>
+        <ng-container [ngTemplateOutlet]="cellIcon"></ng-container>
+        <span class="bey-table-cell-content">{{ cell().isTranslationKey ? (content() | translate) : content() }}</span>
     }
 </div>
+
+<ng-template #cellIcon>
+    @if (icon(); as icon) {
+        @let label = iconLabel() | translate;
+        <span
+            class="bey-table-cell-icon"
+            [attr.aria-hidden]="label ? null : 'true'"
+            [attr.aria-label]="label || null"
+            [attr.role]="label ? 'img' : null"
+            [attr.title]="label || null"
+        >
+            <fa-icon [icon]="icon"></fa-icon>
+        </span>
+    }
+</ng-template>
 
 <ng-template #tooltipList>
     <bey-tooltip-list [items]="tooltipItems()" [title]="tooltip()"></bey-tooltip-list>

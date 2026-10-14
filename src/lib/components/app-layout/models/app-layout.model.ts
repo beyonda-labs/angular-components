@@ -21,6 +21,7 @@ export class AppLayoutConfig {
     bottomActions: AppLayoutBottomAction[];
     breadcrumb: AppLayoutBreadcrumbItem[];
     footerConfig: FooterConfig;
+    hasBodyPadding: boolean;
     iconSrc: string;
     isRouteBreadcrumbEnabled: boolean;
     orgName: string;
@@ -28,7 +29,6 @@ export class AppLayoutConfig {
     productName: string;
     title: LeftMenuTitle;
     topActions: AppLayoutTopAction[];
-    useBodyPadding: boolean;
 
     notifications?: NotificationsConfig;
     onBreadcrumbClick?: (id: number) => void;
@@ -42,6 +42,7 @@ export class AppLayoutConfig {
     constructor({
         bottomActions = [],
         breadcrumb = [],
+        hasBodyPadding = true,
         iconSrc,
         isRouteBreadcrumbEnabled = true,
         notifications,
@@ -56,12 +57,12 @@ export class AppLayoutConfig {
         termsUrl,
         title,
         topActions = [],
-        useBodyPadding = true,
         userInfo
     }: AppLayoutConfigParameters) {
         this.bottomActions = bottomActions;
         this.breadcrumb = breadcrumb;
         this.footerConfig = new FooterConfig({ iconSrc, orgName, privacyUrl, productName, termsUrl });
+        this.hasBodyPadding = hasBodyPadding;
         this.iconSrc = iconSrc;
         this.isRouteBreadcrumbEnabled = isRouteBreadcrumbEnabled;
         this.notifications = notifications;
@@ -76,7 +77,6 @@ export class AppLayoutConfig {
         this.termsUrl = termsUrl;
         this.title = title;
         this.topActions = topActions;
-        this.useBodyPadding = useBodyPadding;
         this.userInfo = userInfo;
     }
 }
@@ -84,14 +84,14 @@ export class AppLayoutConfig {
 export class AppLayoutTopAction extends LeftMenuAction {
     constructor({
         action,
-        active = false,
-        disabled = false,
         icon,
+        isActive = false,
+        isDisabled = false,
         key,
         route,
         subActions = []
     }: AppLayoutTopActionParameters) {
-        super({ action, active, disabled, icon, key, route, subActions });
+        super({ action, isActive, isDisabled, icon, key, route, subActions });
     }
 }
 
@@ -117,6 +117,7 @@ export interface AppLayoutConfigParameters {
 
     bottomActions?: AppLayoutBottomAction[];
     breadcrumb?: AppLayoutBreadcrumbItem[];
+    hasBodyPadding?: boolean;
     isRouteBreadcrumbEnabled?: boolean;
     notifications?: NotificationsConfig;
     onBreadcrumbClick?: (id: number) => void;
@@ -128,7 +129,6 @@ export interface AppLayoutConfigParameters {
     privacyUrl?: string;
     termsUrl?: string;
     topActions?: AppLayoutTopAction[];
-    useBodyPadding?: boolean;
     userInfo?: LeftMenuUserInfo;
 }
 
@@ -136,9 +136,9 @@ export interface AppLayoutTopActionParameters {
     key: string;
 
     action?: () => void;
-    active?: boolean;
-    disabled?: boolean;
     icon?: IconDefinition;
+    isActive?: boolean;
+    isDisabled?: boolean;
     route?: string;
     subActions?: AppLayoutTopAction[];
 }

@@ -10,10 +10,10 @@
             [attr.aria-controls]="controlsId()"
             [attr.aria-expanded]="isOpen()"
             [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
-            [disabled]="current.disabled"
+            [disabled]="current.isDisabled"
             [id]="labelling().controlId"
             [placeholder]="'angular-components.properties-menu.attachment-field.search' | translate"
-            [readonly]="current.holdsVariable"
+            [readonly]="holdsVariable()"
             [value]="inputValue()"
             (blur)="close()"
             (focus)="onFocus()"
@@ -35,7 +35,7 @@
                         role="option"
                         type="button"
                         [attr.aria-selected]="option.id === current.value"
-                        [disabled]="option.disabled"
+                        [disabled]="option.isDisabled"
                         (mousedown)="onOptionPicked(option, $event)"
                     >
                         <span class="bey-property-attachment-field-option-label">{{ option.label }}</span>
@@ -73,7 +73,7 @@
                 [attr.aria-expanded]="pickerOpen()"
                 [attr.aria-label]="'angular-components.properties-menu.attachment-field.use-variable' | translate"
                 [class.is-active]="pickerOpen()"
-                [disabled]="current.disabled"
+                [disabled]="current.isDisabled"
                 [tooltip]="'angular-components.properties-menu.attachment-field.use-variable' | translate"
                 (click)="toggleVariablePicker()"
             >
@@ -85,7 +85,7 @@
             <label
                 class="bey-property-field-action bey-property-attachment-field-upload"
                 container="body"
-                [class.is-disabled]="current.disabled"
+                [class.is-disabled]="current.isDisabled"
                 [tooltip]="'angular-components.properties-menu.attachment-field.upload' | translate"
             >
                 <fa-icon [icon]="uploadIcon"></fa-icon>
@@ -94,7 +94,7 @@
                     type="file"
                     [accept]="current.accept ?? '*/*'"
                     [attr.aria-label]="'angular-components.properties-menu.attachment-field.upload' | translate"
-                    [disabled]="current.disabled"
+                    [disabled]="current.isDisabled"
                     (change)="onFileSelected($event)"
                 />
             </label>
@@ -106,7 +106,7 @@
                 container="body"
                 type="button"
                 [attr.aria-label]="'angular-components.properties-menu.attachment-field.clear' | translate"
-                [disabled]="current.disabled"
+                [disabled]="current.isDisabled"
                 [tooltip]="'angular-components.properties-menu.attachment-field.clear' | translate"
                 (click)="onClear()"
             >

@@ -1,10 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
+import { pickInTreeDialog } from '@testing/tree-dialog';
 import { of } from 'rxjs';
 
-import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
-import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
 import { pageStandardAction } from '../functions/page-standard-actions';
 import { PageActionsContext, PageConfig } from '../models/page.model';
 import { PageStandardAction } from '../models/page-action.model';
@@ -25,7 +24,6 @@ describe('PageActionsService — an entry type field of its own', () => {
     const deleteTrashItems = jest.fn();
     const loadCategoryTree = jest.fn();
     const moveItems = jest.fn();
-    const openTree = jest.fn();
     const restoreTrashItems = jest.fn();
     let service: PageActionsService;
 
@@ -54,12 +52,10 @@ describe('PageActionsService — an entry type field of its own', () => {
         deleteTrashItems.mockReturnValue(of(null));
         loadCategoryTree.mockReturnValue(of([]));
         moveItems.mockReturnValue(of(null));
-        openTree.mockReturnValue({ hide: jest.fn() });
         restoreTrashItems.mockReturnValue(of([]));
         TestBed.configureTestingModule({
             providers: [
                 provideBeyTesting(),
-                { provide: ModalTreeService, useValue: { open: openTree } },
                 {
                     provide: PageHttpService,
                     useValue: { deleteTrashItems, loadCategoryTree, moveItems, restoreTrashItems }
@@ -73,7 +69,7 @@ describe('PageActionsService — an entry type field of its own', () => {
         const context = buildContext([VARIABLE, FOLDER], new PageCategoriesConfig({ typeField: 'entryType' }));
 
         service.executeAction(pageStandardAction(PageStandardAction.Move), context);
-        (openTree.mock.calls[0][0] as ModalTreeConfig).onConfirm?.(undefined);
+        pickInTreeDialog('demo.categories.root');
 
         expect(moveItems).toHaveBeenCalledWith('/variables', ENTRIES, null, 'demo.toast.move-success');
     });

@@ -58,6 +58,7 @@
 
 .bey-table-cell-icon {
     color: var(--bey-table-text-muted);
+    display: inline-flex;
     flex: 0 0 auto;
     font-size: var(--bey-font-size-sm);
 }

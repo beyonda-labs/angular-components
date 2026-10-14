@@ -36,7 +36,7 @@ describe('OrganizationsTableService', () => {
         expect((status as BadgeTableCell).badges).toEqual([
             expect.objectContaining({ label: 'demo.tenants.status.active', variant: BadgeVariant.Success })
         ]);
-        expect(status.translate).toBe(true);
+        expect(status.isTranslationKey).toBe(true);
         expect(userCount.content).toBe('4');
         expect((created as DateTableCell).value).toBe(1_000);
     });

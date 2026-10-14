@@ -6,7 +6,7 @@
         class="bey-property-file-field-choose"
         type="button"
         [attr.aria-label]="'angular-components.properties-menu.file-field.choose-for' | translate: { label: label }"
-        [disabled]="current.disabled"
+        [disabled]="current.isDisabled"
         [id]="labelling().controlId"
         (click)="fileInput.click()"
     >
@@ -19,7 +19,7 @@
         hidden
         type="file"
         [accept]="current.accept ?? ''"
-        [disabled]="current.disabled"
+        [disabled]="current.isDisabled"
         (change)="onFileSelected($event)"
     />
 

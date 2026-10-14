@@ -51,9 +51,11 @@ export class EditLockNoticeStyleGuideComponent {
         this.scenario('colleague', () => this.held({})),
         this.scenario('manager', () => this.held({ canRelease: true })),
         this.scenario('earlier', () => this.held({ acquiredAt: Date.now() - DAY_MS })),
+        this.scenario('unknown', () => this.held({ holderName: null })),
         this.scenario('other-window', () => this.held({ isSameUser: true })),
         this.scenario('taken', () => ({ lock: this.lock({}), status: 'lost' })),
         this.scenario('released', () => ({ lock: null, status: 'lost' })),
+        this.scenario('moved', () => ({ lock: this.lock({ isSameUser: true }), status: 'lost' })),
         this.scenario('free', () => ({ lock: null, status: 'free' })),
         this.scenario('unavailable', () => ({ lock: null, status: 'unavailable' }))
     ];

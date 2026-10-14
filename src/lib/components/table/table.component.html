@@ -1,13 +1,13 @@
-<div class="bey-table">
+<div class="bey-table" [class.bey-table--fill]="isFilled()">
     <div #scrollContainer class="bey-table-scroll" role="table" [style.height]="config().height">
         <div class="bey-table-header" role="rowgroup">
             <bey-table-row
                 selectionLabel="angular-components.table.select-all"
                 [gridTemplateColumns]="gridTemplateColumns()"
                 [isHeader]="true"
+                [isSelectable]="config().isSelectable"
+                [isSelectionIndeterminate]="someSelected()"
                 [row]="headerRow()"
-                [selectable]="config().selectable"
-                [selectionIndeterminate]="someSelected()"
                 [sortStates]="sortStates()"
                 (selectionChange)="onAllSelectionChange($event)"
                 (sortToggle)="onSortToggle($event)"
@@ -26,13 +26,13 @@
             @for (row of rows(); track $index) {
                 @let drag = rowDragStates()[$index];
                 <bey-table-row
-                    [acceptsDrop]="drag.acceptsDrop"
+                    [canAcceptDrop]="drag.canAcceptDrop"
                     [gridTemplateColumns]="gridTemplateColumns()"
                     [isDraggable]="drag.isDraggable"
                     [isDragged]="drag.isDragged"
                     [isDropTarget]="drag.isDropTarget"
+                    [isSelectable]="config().isSelectable"
                     [row]="row"
-                    [selectable]="config().selectable"
                     (dragEnded)="onRowDragEnd()"
                     (dragStarted)="onRowDragStart($index)"
                     (dropped)="onRowDrop($index)"

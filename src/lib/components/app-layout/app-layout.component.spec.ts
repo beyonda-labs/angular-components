@@ -257,7 +257,7 @@ describe('AppLayoutComponent', () => {
             await settle(fixture);
 
             expect(action.action).toBe(run);
-            expect(action.active).toBe(false);
+            expect(action.isActive).toBe(false);
         });
     });
 
@@ -266,7 +266,7 @@ describe('AppLayoutComponent', () => {
             await render(
                 buildConfig({
                     topActions: [
-                        new AppLayoutTopAction({ active: true, icon: faHome, key: 'home' }),
+                        new AppLayoutTopAction({ isActive: true, icon: faHome, key: 'home' }),
                         new AppLayoutTopAction({ icon: faGear, key: 'other' })
                     ]
                 })

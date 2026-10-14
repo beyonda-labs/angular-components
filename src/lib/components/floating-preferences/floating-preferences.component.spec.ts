@@ -12,8 +12,8 @@ import { FloatingPreferencesComponent } from './floating-preferences.component';
 describe('FloatingPreferencesComponent', () => {
     let fixture: ComponentFixture<FloatingPreferencesComponent>;
 
-    async function render(usePill?: boolean): Promise<void> {
-        fixture = await renderComponent(FloatingPreferencesComponent, usePill === undefined ? {} : { usePill });
+    async function render(hasPill?: boolean): Promise<void> {
+        fixture = await renderComponent(FloatingPreferencesComponent, hasPill === undefined ? {} : { hasPill });
     }
 
     function selects(): HTMLSelectElement[] {

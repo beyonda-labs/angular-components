@@ -14,7 +14,7 @@ export function isDropAllowed(
     dragNodeId: string,
     targetNodeId: string,
     position: PropertyTreeDropPosition,
-    acceptsRootDrop: boolean
+    canAcceptRootDrop: boolean
 ): boolean {
     if (dragNodeId === targetNodeId) {
         return false;
@@ -23,7 +23,7 @@ export function isDropAllowed(
     const dragged = lookupTreeNode(nodes, dragNodeId);
     const target = lookupTreeNode(nodes, targetNodeId);
 
-    if (!dragged || !target || target.node.dropDisabled) {
+    if (!dragged || !target || target.node.isDropDisabled) {
         return false;
     }
 
@@ -33,7 +33,7 @@ export function isDropAllowed(
         return false;
     }
 
-    return container === null ? acceptsRootDrop : container.acceptsDrop && !container.dropDisabled;
+    return container === null ? canAcceptRootDrop : container.canAcceptDrop && !container.isDropDisabled;
 }
 
 function isDescendantNode(ancestor: PropertyTreeNode, node: PropertyTreeNode): boolean {

@@ -129,7 +129,7 @@ describe('buildRolesPageConfig', () => {
         const role: RoleRow = { actions: ['view'], id: 'adminuser', isBase: true, name: 'adminuser', permissions: [] };
         const view = build({ onView }).headerConfig?.actions.find(({ key }) => key === 'view');
 
-        view?.handler?.([role]);
+        view?.action?.([role]);
 
         expect(view?.zone).toBe(PageActionZone.Left);
         expect(view?.tooltip).toBe('demo.roles.actions.view.tooltip');
@@ -148,27 +148,38 @@ describe('buildRolesPageConfig', () => {
         };
         const duplicate = build({ onDuplicate }).headerConfig?.actions.find(({ key }) => key === 'duplicate');
 
-        duplicate?.handler?.([role]);
+        duplicate?.action?.([role]);
 
         expect(duplicate?.zone).toBe(PageActionZone.Menu);
         expect(onDuplicate).toHaveBeenCalledWith(role);
     });
 
     it('browses the folders it is given, with no folder action, and is flat without them', () => {
-        const categoriesConfig = buildOrganizationFoldersConfig(() => []);
+        const categoriesConfig = buildOrganizationFoldersConfig(() => [], 'demo');
         const config = build({ categoriesConfig });
         const keys = config.headerConfig?.actions.map(({ key }) => key) ?? [];
 
         expect(config.tableConfig?.categoriesConfig).toBe(categoriesConfig);
         expect(keys.filter(key => FOLDER_ACTIONS.has(key))).toEqual([]);
         expect(build().tableConfig?.categoriesConfig).toBeUndefined();
-        expect(config.tableConfig?.height).toBe('calc(100vh - 255px)');
-        expect(build().tableConfig?.height).toBe('calc(100vh - 220px)');
+    });
+
+    it('leaves the table to fill the page unless the config gives it the folders height or the plain one', () => {
+        const categoriesConfig = buildOrganizationFoldersConfig(() => [], 'demo');
+        const sized = new RolesConfig({ foldersHeight: '20rem', height: '24rem' });
+
+        expect(build().tableConfig?.height).toBeUndefined();
+        expect(build({ categoriesConfig }).tableConfig?.height).toBeUndefined();
+        expect(build({ categoriesConfig, config: sized }).tableConfig?.height).toBe('20rem');
+        expect(build({ config: sized }).tableConfig?.height).toBe('24rem');
+        expect(build({ categoriesConfig, config: new RolesConfig({ height: '24rem' }) }).tableConfig?.height).toBe(
+            '24rem'
+        );
     });
 
     it('shows the organization among the folders only in a search at the root, and always on a flat page', () => {
         const folders = build({
-            categoriesConfig: buildOrganizationFoldersConfig(() => []),
+            categoriesConfig: buildOrganizationFoldersConfig(() => [], 'demo'),
             isOrganizationShown: true
         });
         const flat = build({ isOrganizationShown: true });

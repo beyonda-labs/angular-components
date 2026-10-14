@@ -1,28 +1,28 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
 export class BreadcrumbConfig {
+    isTranslationKey: boolean;
     itemMaxWidth: string;
     items: BreadcrumbItem[];
     prefix: string;
     separator: string;
-    translate: boolean;
 
     onItemClick?: (id: number) => void;
 
     constructor({
+        isTranslationKey = true,
         items,
         itemMaxWidth = '12rem',
         prefix = '',
         separator = '/',
-        translate = true,
         onItemClick
     }: BreadcrumbConfigParameters) {
+        this.isTranslationKey = isTranslationKey;
         this.items = items;
         this.itemMaxWidth = itemMaxWidth;
         this.onItemClick = onItemClick;
         this.prefix = prefix;
         this.separator = separator;
-        this.translate = translate;
     }
 }
 
@@ -55,14 +55,25 @@ export class BreadcrumbItem {
     }
 }
 
+export class BreadcrumbText {
+    key: string;
+
+    parameters?: Record<string, unknown>;
+
+    constructor({ key, parameters }: BreadcrumbTextParameters) {
+        this.key = key;
+        this.parameters = parameters;
+    }
+}
+
 export interface BreadcrumbConfigParameters {
     items: BreadcrumbItem[];
 
+    isTranslationKey?: boolean;
     itemMaxWidth?: string;
     onItemClick?: (id: number) => void;
     prefix?: string;
     separator?: string;
-    translate?: boolean;
 }
 
 export interface BreadcrumbItemParameters {
@@ -74,4 +85,10 @@ export interface BreadcrumbItemParameters {
     icon?: IconDefinition;
     isDisabled?: boolean;
     isTranslationKey?: boolean;
+}
+
+export interface BreadcrumbTextParameters {
+    key: string;
+
+    parameters?: Record<string, unknown>;
 }

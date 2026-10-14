@@ -1,13 +1,8 @@
+import { decodePageSearch } from '@testing/page-search';
+
 import { SearchFilterOperator } from '../../search/models/search-filter.model';
 import { PageSearch, SearchSortDirection } from '../models/page-search.model';
 import { PageSearchService } from './page-search.service';
-
-function decodeBase64(base64: string): unknown {
-    const binary = atob(base64);
-    const bytes = Uint8Array.from(binary, char => char.charCodeAt(0));
-
-    return JSON.parse(new TextDecoder().decode(bytes)) as unknown;
-}
 
 describe('PageSearchService', () => {
     let service: PageSearchService;
@@ -28,7 +23,7 @@ describe('PageSearchService', () => {
         const parameters = service.buildQueryParameters(search, true);
 
         expect(Object.keys(parameters)).toEqual(['search']);
-        expect(decodeBase64(parameters['search'] as string)).toEqual(search);
+        expect(decodePageSearch(String(parameters['search']))).toEqual(search);
     });
 
     it('keeps the filters and the sort through the encoding', () => {
@@ -41,7 +36,7 @@ describe('PageSearchService', () => {
 
         const parameters = service.buildQueryParameters(search, true);
 
-        expect(decodeBase64(parameters['search'] as string)).toEqual(search);
+        expect(decodePageSearch(String(parameters['search']))).toEqual(search);
     });
 
     it('sends the filter of the text field it is given as the text of the search', () => {
@@ -53,7 +48,7 @@ describe('PageSearchService', () => {
 
         const parameters = service.buildQueryParameters(search, true, 'text');
 
-        expect(decodeBase64(parameters['search'] as string)).toEqual({ filters: [], page: 1, size: 25, text: 'ada' });
+        expect(decodePageSearch(String(parameters['search']))).toEqual({ filters: [], page: 1, size: 25, text: 'ada' });
     });
 
     it('encodes free text outside Latin-1 without throwing', () => {
@@ -63,6 +58,6 @@ describe('PageSearchService', () => {
 
         const parameters = service.buildQueryParameters(search, true);
 
-        expect(decodeBase64(parameters['search'] as string)).toEqual(search);
+        expect(decodePageSearch(String(parameters['search']))).toEqual(search);
     });
 });

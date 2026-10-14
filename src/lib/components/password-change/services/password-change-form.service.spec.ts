@@ -1,11 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@angular/forms';
+import { fieldsOf } from '@testing/form-fields';
+import { FakeFormHandle } from '@testing/handles/fake-form-handle';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { PasswordPolicyService } from '../../../services/password-policy/password-policy.service';
 import { FormPasswordField } from '../../form/models/fields/form-password-field.model';
-import { FormFooter, FormHandle } from '../../form/models/form.model';
-import { FormField } from '../../form/models/form-field.model';
+import { FormFooter } from '../../form/models/form.model';
 import { FormFieldCustomValidator } from '../../form/models/form-field-validator.model';
 import { PasswordChangeFormValue } from '../models/password-change.model';
 import { PasswordChangeFormService } from './password-change-form.service';
@@ -14,10 +15,6 @@ const PREFIX = 'demo.password-change';
 
 describe('PasswordChangeFormService', () => {
     let service: PasswordChangeFormService;
-
-    function fieldsOf(sections: { rows: { fields: FormField[] }[] }[]): FormField[] {
-        return sections.flatMap(section => section.rows.flatMap(row => row.fields));
-    }
 
     beforeEach(() => {
         TestBed.configureTestingModule({ providers: [provideBeyTesting()] });
@@ -61,7 +58,7 @@ describe('PasswordChangeFormService', () => {
         const onSubmit = jest.fn();
         const form = service.buildForm(PREFIX, onSubmit);
         const value = { password: { currentPassword: 'old', password: 'new-secret', password2: 'new-secret' } };
-        const handle = {} as FormHandle<PasswordChangeFormValue>;
+        const handle = new FakeFormHandle<PasswordChangeFormValue>();
 
         form.onSubmit?.(value, handle);
 

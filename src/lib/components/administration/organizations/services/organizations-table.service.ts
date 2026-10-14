@@ -9,6 +9,7 @@ import {
     TableCell,
     TextTableCell
 } from '../../../table/models/table-cell.model';
+import { organizationStatusLabel } from '../functions/organization-status';
 import {
     ORGANIZATION_STATUS_BADGE_VARIANTS,
     OrganizationRow,
@@ -31,11 +32,11 @@ export class OrganizationsTableService {
             new BadgeTableCell({
                 badges: [
                     new BadgeConfig({
-                        label: `${prefix}.status.${organization.status}`,
+                        label: organizationStatusLabel(prefix, organization.status),
                         variant: ORGANIZATION_STATUS_BADGE_VARIANTS[organization.status] ?? BadgeVariant.Neutral
                     })
                 ],
-                translate: true
+                isTranslationKey: true
             }),
             new TextTableCell({ content: String(organization.userCount) }),
             new DateTableCell({ format: CREATED_FORMAT, value: organization.createdAt })

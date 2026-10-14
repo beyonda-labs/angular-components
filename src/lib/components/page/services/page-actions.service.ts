@@ -23,7 +23,7 @@ import { PageShareActionsService } from './page-share-actions.service';
 import { PageUsagesService } from './page-usages.service';
 
 interface BulkActionOptions<T> {
-    confirm: boolean;
+    hasConfirmation: boolean;
     key: string;
     mapPayload: (items: PageItem[]) => T;
     onComplete: () => void;
@@ -77,8 +77,8 @@ export class PageActionsService {
     }
 
     executeAction(action: PageAction, context: PageActionsContext): void {
-        if (action.handler) {
-            action.handler(
+        if (action.action) {
+            action.action(
                 toHandlerItems(action, context.selectedItems(), context.config.tableConfig?.categoriesConfig)
             );
 
@@ -174,7 +174,7 @@ export class PageActionsService {
                 .subscribe(() => options.onComplete());
         };
 
-        if (!options.confirm) {
+        if (!options.hasConfirmation) {
             run();
 
             return;
@@ -219,7 +219,7 @@ export class PageActionsService {
         this.executeBulkAction(
             context,
             {
-                confirm: true,
+                hasConfirmation: true,
                 key: 'delete',
                 mapPayload: items => items.map(item => item.id),
                 onComplete: () => context.onDeleted(),
@@ -233,7 +233,7 @@ export class PageActionsService {
         this.executeBulkAction(
             context,
             {
-                confirm: true,
+                hasConfirmation: true,
                 key: 'delete-category',
                 mapPayload: items => items.map(item => item.id),
                 onComplete: () => context.onCategoryDeleted(),
@@ -248,7 +248,7 @@ export class PageActionsService {
         this.executeBulkAction(
             context,
             {
-                confirm: true,
+                hasConfirmation: true,
                 key: 'delete-trash-item',
                 mapPayload: items => toTrashItems(items, context.config.tableConfig?.categoriesConfig),
                 onComplete: () => context.onTrashItemDeleted(),
@@ -306,7 +306,7 @@ export class PageActionsService {
 
     private executeRestoreTrashItem(context: PageActionsContext): void {
         this.executeBulkAction(context, {
-            confirm: false,
+            hasConfirmation: false,
             key: 'restore-trash-item',
             mapPayload: items => toTrashItems(items, context.config.tableConfig?.categoriesConfig),
             onComplete: () => context.onSaved(),

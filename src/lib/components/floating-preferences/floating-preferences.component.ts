@@ -22,7 +22,7 @@ export class FloatingPreferencesComponent {
     private readonly themeService = inject(ThemeService);
     private readonly translateService = inject(TranslateService);
 
-    readonly usePill = input(true);
+    readonly hasPill = input(true);
 
     readonly chevronIcon = faChevronDown;
     readonly language = toSignal(this.translateService.onLangChange.pipe(map(event => event.lang)), {

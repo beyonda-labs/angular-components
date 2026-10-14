@@ -11,14 +11,14 @@ export interface PropertyFieldActionButton {
 }
 
 export abstract class PropertyField<T = unknown> {
-    acceptsVariable: boolean;
+    canAcceptVariable: boolean;
     description: string;
-    disabled: boolean;
-    hidden: boolean;
     id: string;
+    isDisabled: boolean;
+    isHidden: boolean;
+    isRequired: boolean;
     label: string;
     metadata: Record<string, unknown>;
-    required: boolean;
     span: PropertyFieldSpan;
     type: PropertyFieldType;
     value: T | undefined;
@@ -29,40 +29,31 @@ export abstract class PropertyField<T = unknown> {
     constructor({
         id,
         type,
-
-        acceptsVariable = false,
         actionButton,
+        canAcceptVariable = false,
         defaultValue,
         description = '',
-        disabled = false,
-        hidden = false,
+        isDisabled = false,
+        isHidden = false,
+        isRequired = false,
         label = `${id}.label`,
         metadata = {},
-        required = false,
         span = 'full',
         value
     }: PropertyFieldParameters<T>) {
-        this.acceptsVariable = acceptsVariable;
         this.actionButton = actionButton ? { icon: actionButton.icon, key: actionButton.key ?? id } : undefined;
+        this.canAcceptVariable = canAcceptVariable;
         this.defaultValue = defaultValue;
         this.description = description;
-        this.disabled = disabled;
-        this.hidden = hidden;
         this.id = id;
+        this.isDisabled = isDisabled;
+        this.isHidden = isHidden;
+        this.isRequired = isRequired;
         this.label = label;
         this.metadata = metadata;
-        this.required = required;
         this.span = span;
         this.type = type;
         this.value = value ?? defaultValue;
-    }
-
-    withDisabled(disabled = true): this {
-        return Object.assign(Object.create(Object.getPrototypeOf(this)), this, { disabled });
-    }
-
-    withValue(value: T | undefined): this {
-        return Object.assign(Object.create(Object.getPrototypeOf(this)), this, { value });
     }
 }
 
@@ -70,15 +61,15 @@ export interface PropertyFieldParameters<T = unknown> {
     id: string;
     type: PropertyFieldType;
 
-    acceptsVariable?: boolean;
     actionButton?: PropertyFieldActionButton;
+    canAcceptVariable?: boolean;
     defaultValue?: T;
     description?: string;
-    disabled?: boolean;
-    hidden?: boolean;
+    isDisabled?: boolean;
+    isHidden?: boolean;
+    isRequired?: boolean;
     label?: string;
     metadata?: Record<string, unknown>;
-    required?: boolean;
     span?: PropertyFieldSpan;
     value?: T;
 }

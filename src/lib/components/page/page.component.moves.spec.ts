@@ -1,6 +1,6 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { buttonByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryAll, queryButton, renderComponent, rowWith, settle } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { TableColumn } from '../table/models/table.model';
@@ -53,18 +53,14 @@ describe('PageComponent — moves between the folders of an owner', () => {
         });
     }
 
-    function rowOf(name: string): HTMLElement | undefined {
-        return queryAll(fixture, '[role="row"]').find(row => row.textContent?.includes(name));
-    }
-
     function dispatchOnRow(name: string, type: string): void {
-        rowOf(name)?.dispatchEvent(new Event(type, { bubbles: true, cancelable: true }));
+        rowWith(fixture, name).dispatchEvent(new Event(type, { bubbles: true, cancelable: true }));
     }
 
     async function select(...names: string[]): Promise<void> {
         for (const name of names) {
             queryAll<HTMLInputElement>(
-                rowOf(name) as HTMLElement,
+                rowWith(fixture, name),
                 '[aria-label="angular-components.table.select-row"]'
             )[0].click();
         }

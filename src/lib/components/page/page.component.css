@@ -1,13 +1,21 @@
 :host {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     width: 100%;
 }
 
 .bey-page {
     display: flex;
+    flex: 1 0 auto;
     flex-direction: column;
     gap: var(--bey-space-lg);
     width: 100%;
+}
+
+.bey-page--fill {
+    flex: 1 1 0;
+    min-height: 0;
 }
 
 .bey-page-header {
@@ -42,4 +50,14 @@
     overflow: hidden;
     position: relative;
     width: 100%;
+}
+
+.bey-page--fill .bey-page-body {
+    flex: 1 1 0;
+    min-height: 15rem;
+}
+
+.bey-page--fill .bey-page-table {
+    flex: 1 1 0;
+    min-height: 0;
 }

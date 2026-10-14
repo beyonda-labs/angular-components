@@ -8,9 +8,13 @@ import { FormTextareaField } from '../../../form/models/fields/form-textarea-fie
 import { FormRow, FormSection } from '../../../form/models/form.model';
 import { FormFieldOption } from '../../../form/models/form-field.model';
 import { FormFieldLengthValidator, FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
-import { PageFormConfig } from '../../../page/models/page-form.model';
+import { PAGE_FORM_CANCEL_LABEL, PageFormConfig } from '../../../page/models/page-form.model';
 import { PageOrganization } from '../../../page/models/page-organization.model';
-import { buildDisabledOrganizationField, initialOrganizationId } from '../../functions/organization-fields';
+import {
+    buildDisabledOrganizationField,
+    initialOrganizationId,
+    toOrganizationOptions
+} from '../../functions/organization-fields';
 import { roleLabel } from '../../functions/role-labels';
 import { groupRolePermissions, heldPermissionKeys } from '../../functions/role-permissions';
 import {
@@ -29,8 +33,6 @@ import {
     RolesDuplicateFormOptions,
     RolesFormOptions
 } from '../models/roles.model';
-
-const CANCEL_LABEL_KEY = 'angular-components.page.form.cancel';
 
 @Injectable({
     providedIn: 'root'
@@ -51,8 +53,8 @@ export class RolesFormService {
         const organizationOptions = isOrganizationAsked ? toOrganizationOptions(organizations) : null;
 
         return new ModalFormConfig<RoleFormValue>({
-            allowSubmitWithoutChanges: true,
-            cancelLabel: CANCEL_LABEL_KEY,
+            canSubmitWithoutChanges: true,
+            cancelLabel: PAGE_FORM_CANCEL_LABEL,
             initialValue: toRoleValue(
                 { ...role, name },
                 groupRolePermissions(permissions, { actionOrder, groupOrder }),
@@ -156,10 +158,6 @@ function toCreateValue(organizationId: string | undefined): RoleFormValue | unde
               [ROLES_PERMISSIONS_SECTION]: { [ROLES_PERMISSIONS_FIELD]: [] }
           }
         : undefined;
-}
-
-function toOrganizationOptions(organizations: PageOrganization[]): FormFieldOption[] {
-    return organizations.map(({ id, name }) => ({ label: name, value: id }));
 }
 
 function toRoleValue(

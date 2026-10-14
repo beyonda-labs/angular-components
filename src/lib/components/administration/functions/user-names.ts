@@ -1,9 +1,14 @@
+import { FormFieldOption } from '../../form/models/form-field.model';
 import { NamedUser } from '../models/user-names.model';
 
 export function userContactLabel(user: NamedUser): string {
     const fullName = userFullName(user);
 
     return fullName && fullName !== user.email ? `${fullName} (${user.email})` : user.email;
+}
+
+export function userContactOption(user: NamedUser & { id: string }): FormFieldOption {
+    return { label: userContactLabel(user), value: user.id };
 }
 
 export function userDisplayName(user: NamedUser): string {

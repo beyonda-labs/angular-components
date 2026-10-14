@@ -1,5 +1,6 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { searchOf } from '@testing/page-search';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { PageSearch } from '../../../page/models/page-search.model';
@@ -64,7 +65,7 @@ describe('AuditHttpService', () => {
         request.flush(content);
 
         expect(request.request.responseType).toBe('blob');
-        expect(JSON.parse(atob(request.request.params.get('search') ?? ''))).toEqual(search);
+        expect(searchOf(request)).toEqual(search);
         expect(answers).toEqual([content]);
     });
 

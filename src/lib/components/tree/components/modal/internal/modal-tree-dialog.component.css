@@ -33,9 +33,9 @@
     display: inline-flex;
     flex: 0 0 auto;
     font-size: var(--bey-font-size-xl);
-    height: 3rem;
+    height: var(--bey-dialog-icon-size);
     justify-content: center;
-    width: 3rem;
+    width: var(--bey-dialog-icon-size);
 }
 
 .bey-modal-tree-title {
@@ -59,7 +59,7 @@
 }
 
 .bey-modal-tree-close:hover {
-    background-color: var(--bey-close-hover-bg, var(--bey-bg-hover));
+    background-color: var(--bey-modal-tree-close-hover-bg, var(--bey-bg-hover));
     color: var(--bey-modal-tree-fg, var(--bey-text-primary));
     transform: translateY(-1px);
 }

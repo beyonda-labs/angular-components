@@ -25,7 +25,7 @@ describe('PdfViewerConfig', () => {
     });
 
     it('reuses a provided PdfViewerToolbarButtons instance instead of rebuilding it', () => {
-        const toolbarButtons = new PdfViewerToolbarButtons({ printButton: false });
+        const toolbarButtons = new PdfViewerToolbarButtons({ hasPrintButton: false });
         const config = new PdfViewerConfig({ src: 'invoice.pdf', toolbarButtons });
 
         expect(config.toolbarButtons).toBe(toolbarButtons);

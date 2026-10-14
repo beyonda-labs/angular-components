@@ -83,6 +83,16 @@ describe('readPageLink', () => {
         expect(readPageLink({ folder: '7' }, buildConfig({}, { baseUrl: undefined }))?.folderId).toBeNull();
     });
 
+    it('opens a view with a list URL of its own without the folder the link names', () => {
+        const queue = new PageView({ baseUrl: '/templates/review-queue', filters: [], key: 'queue' });
+
+        expect(readPageLink({ folder: '7', view: 'queue' }, buildConfig({}, { views: [BLOCKS, queue] }))).toEqual({
+            folderId: null,
+            view: 'queue',
+            viewMode: PageViewMode.Table
+        });
+    });
+
     it('reads the first value of a repeated parameter and ignores an empty one', () => {
         expect(readPageLink({ folder: ['7', '8'], view: '' }, buildConfig())).toEqual({
             folderId: '7',

@@ -22,7 +22,7 @@ export class AccountHttpService {
     ): Observable<AccountSession> {
         return this.httpService.put<AccountSession>(this.url(baseUrl, PASSWORD_PATH), value, {
             ...options,
-            withCredentials: true
+            hasCredentials: true
         });
     }
 

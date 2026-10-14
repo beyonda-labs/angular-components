@@ -1,7 +1,51 @@
 {
     "angular-components-style-guide": {
         "roles": {
-            "example": "The roles and permissions page of a manager or the superadmin: the base roles of the application with their permissions to see, from their name or from View in the header, and the additional roles of the organization to create, edit, duplicate and delete, their permissions chosen in foldable sections by resource, each permission with its description, as far as the backend allows each row; a base role can be duplicated too, as the start of a new additional role. A superadmin sees one folder per organization next to the base roles, a search at the root spans all of them and is the only list with the organization column, and a role created inside a folder comes with its organization chosen. The demo backend serves no roles, so the list stays empty."
+            "base": {
+                "admin": "Administrator",
+                "editor": "Editor"
+            },
+            "example": "The roles and permissions page of a manager or the superadmin: the base roles of the application with their permissions to see, from their name or from View in the header, and the additional roles of the organization to create, edit, duplicate and delete, their permissions chosen in foldable sections by resource, each permission with its description, as far as the backend allows each row; a base role can be duplicated too, as the start of a new additional role. The sections show the icon the app gives each resource, templates and documents here, and come in the order the app sets, templates first, then documents and the resources of the library; inside each section the permissions follow the order of actions the app sets: read, create, edit, publish, download and delete. A superadmin sees one folder per organization next to the base roles, a search at the root spans all of them and is the only list with the organization column, and a role created inside a folder comes with its organization chosen. The demo answers from fixed data, so a change is confirmed but the list stays as it was.",
+            "permissions": {
+                "documents": {
+                    "create": {
+                        "description": "Can fill in a template to create a document.",
+                        "label": "Create documents"
+                    },
+                    "download": {
+                        "description": "Can download the PDF of a document.",
+                        "label": "Download documents"
+                    },
+                    "label": "Documents",
+                    "read": {
+                        "description": "Can open the documents of the organization.",
+                        "label": "See documents"
+                    }
+                },
+                "templates": {
+                    "create": {
+                        "description": "Can start a new template.",
+                        "label": "Create templates"
+                    },
+                    "delete": {
+                        "description": "Can send templates to the trash.",
+                        "label": "Delete templates"
+                    },
+                    "edit": {
+                        "description": "Can change the content of a template.",
+                        "label": "Edit templates"
+                    },
+                    "label": "Templates",
+                    "publish": {
+                        "description": "Can make a template available to fill in.",
+                        "label": "Publish templates"
+                    },
+                    "read": {
+                        "description": "Can open the templates of the organization.",
+                        "label": "See templates"
+                    }
+                }
+            }
         }
     }
 }

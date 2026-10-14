@@ -6,13 +6,13 @@ import { PropertySummaryRow } from './property-summary-row.model';
 export class PropertyListItem {
     actions: PropertyListItemAction[];
     badges: BadgeConfig[];
-    disabled: boolean;
-    expanded: boolean;
-    hidden: boolean;
     id: string;
+    isDisabled: boolean;
+    isExpanded: boolean;
+    isHidden: boolean;
+    isRemovable: boolean;
     label: string;
     metadata: Record<string, unknown>;
-    removable: boolean;
 
     body?: PropertySummaryRow[];
     copyValue?: string;
@@ -27,32 +27,32 @@ export class PropertyListItem {
         body,
         copyValue,
         description,
-        disabled = false,
-        expanded = false,
-        hidden = false,
         icon,
         iconClasses,
         id,
+        isDisabled = false,
+        isExpanded = false,
+        isHidden = false,
+        isRemovable = false,
         label = `${id}.label`,
         labelParameters,
-        metadata = {},
-        removable = false
+        metadata = {}
     }: PropertyListItemParameters) {
         this.actions = actions;
         this.badges = badges;
         this.body = body;
         this.copyValue = copyValue;
         this.description = description;
-        this.disabled = disabled;
-        this.expanded = expanded;
-        this.hidden = hidden;
         this.icon = icon;
         this.iconClasses = iconClasses;
         this.id = id;
+        this.isDisabled = isDisabled;
+        this.isExpanded = isExpanded;
+        this.isHidden = isHidden;
+        this.isRemovable = isRemovable;
         this.label = label;
         this.labelParameters = labelParameters;
         this.metadata = metadata;
-        this.removable = removable;
     }
 
     get isExpandable(): boolean {
@@ -88,13 +88,13 @@ export interface PropertyListItemParameters {
     body?: PropertySummaryRow[];
     copyValue?: string;
     description?: string;
-    disabled?: boolean;
-    expanded?: boolean;
-    hidden?: boolean;
     icon?: IconDefinition;
     iconClasses?: string;
+    isDisabled?: boolean;
+    isExpanded?: boolean;
+    isHidden?: boolean;
+    isRemovable?: boolean;
     label?: string;
     labelParameters?: Record<string, unknown>;
     metadata?: Record<string, unknown>;
-    removable?: boolean;
 }

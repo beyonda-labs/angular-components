@@ -62,16 +62,17 @@ export class AuditConfig {
     actionLabels: Readonly<Record<string, string>>;
     baseUrl: string;
     entityLabels: Readonly<Record<string, string>>;
-    height: string;
     prefix: string;
     storageKey: string;
     usersUrl: string;
+
+    height?: string;
 
     constructor({
         actionLabels = {},
         baseUrl = '/audit',
         entityLabels = {},
-        height = 'calc(100vh - 220px)',
+        height,
         prefix = 'angular-components.audit',
         storageKey = 'audit',
         usersUrl = '/users'

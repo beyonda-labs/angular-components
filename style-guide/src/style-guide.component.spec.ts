@@ -167,6 +167,9 @@ describe('StyleGuideComponent', () => {
             httpTesting
                 .expectOne(request => request.url === 'https://api.test/api/product-categories')
                 .flush({ globalActions: [], results: [] });
+            httpTesting
+                .expectOne(request => request.url === 'https://api.test/api/style-guide/documents')
+                .flush({ globalActions: [], results: [] });
             httpTesting.expectOne('https://api.test/api/style-guide/account').flush({
                 email: 'ada@example.test',
                 hasPassword: true,

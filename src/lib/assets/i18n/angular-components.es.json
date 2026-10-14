@@ -277,6 +277,16 @@
             "categories": {
                 "root": "Grupos"
             },
+            "count": {
+                "categories": {
+                    "one": "{{count}} organización",
+                    "other": "{{count}} organizaciones"
+                },
+                "items": {
+                    "one": "{{count}} grupo",
+                    "other": "{{count}} grupos"
+                }
+            },
             "form": {
                 "create": {
                     "title": "Nuevo grupo"
@@ -973,8 +983,16 @@
                 }
             },
             "count": {
-                "many": "({{count}} elementos)",
-                "one": "({{count}} elemento)"
+                "categories": {
+                    "one": "{{count}} carpeta",
+                    "other": "{{count}} carpetas"
+                },
+                "items": {
+                    "one": "{{count}} elemento",
+                    "other": "{{count}} elementos"
+                },
+                "items-only": "({{items}})",
+                "mixed": "({{categories}} · {{items}})"
             },
             "form": {
                 "cancel": "Cancelar",
@@ -1022,6 +1040,7 @@
                 "title": "Compartir \"{{name}}\""
             },
             "shared": {
+                "folder": "Carpeta compartida",
                 "label": "Compartido conmigo"
             },
             "table": {
@@ -1172,6 +1191,16 @@
             },
             "categories": {
                 "root": "Roles"
+            },
+            "count": {
+                "categories": {
+                    "one": "{{count}} organización",
+                    "other": "{{count}} organizaciones"
+                },
+                "items": {
+                    "one": "{{count}} rol",
+                    "other": "{{count}} roles"
+                }
             },
             "duplicate": {
                 "buttons": {
@@ -1438,6 +1467,16 @@
                 "empty": "No posee nada.",
                 "label": "Contenido",
                 "used-by": "{{entity}} «{{name}}»: {{users}}"
+            },
+            "count": {
+                "categories": {
+                    "one": "{{count}} organización",
+                    "other": "{{count}} organizaciones"
+                },
+                "items": {
+                    "one": "{{count}} usuario",
+                    "other": "{{count}} usuarios"
+                }
             },
             "delete": {
                 "invitation": {

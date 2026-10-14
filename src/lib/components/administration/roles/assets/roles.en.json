@@ -43,6 +43,16 @@
             "categories": {
                 "root": "Roles"
             },
+            "count": {
+                "categories": {
+                    "one": "{{count}} organization",
+                    "other": "{{count}} organizations"
+                },
+                "items": {
+                    "one": "{{count}} role",
+                    "other": "{{count}} roles"
+                }
+            },
             "duplicate": {
                 "buttons": {
                     "submit": "Duplicate"

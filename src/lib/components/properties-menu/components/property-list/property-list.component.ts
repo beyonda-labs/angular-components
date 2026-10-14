@@ -40,7 +40,7 @@ export class PropertyListComponent {
         () =>
             new ListConfig<unknown>({
                 getItemKey: item => this.asItem(item).id,
-                items: this.items().filter(item => !item.hidden),
+                items: this.items().filter(item => !item.isHidden),
                 onItemClick: item => this.onItemClick(this.asItem(item)),
                 prefix: 'angular-components.properties-menu.list'
             })
@@ -107,13 +107,13 @@ export class PropertyListComponent {
     }
 
     toggleLabelKey(item: PropertyListItem): string {
-        return item.expanded
+        return item.isExpanded
             ? 'angular-components.properties-menu.list.collapse'
             : 'angular-components.properties-menu.list.expand';
     }
 
     private onItemClick(item: PropertyListItem): void {
-        if (item.disabled || item.isExpandable) {
+        if (item.isDisabled || item.isExpandable) {
             return;
         }
 

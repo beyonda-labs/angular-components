@@ -9,14 +9,14 @@ describe('PropertiesMenuConfig', () => {
         expect(config.subtitle).toBe('');
         expect(config.tabs).toEqual([]);
         expect(config.activeTabId).toBe('');
-        expect(config.embedded).toBe(false);
+        expect(config.isEmbedded).toBe(false);
     });
 
     it('opens the first visible tab by default', () => {
         const config = new PropertiesMenuConfig({
             prefix: 'app.properties-menu',
             tabs: [
-                new PropertyTab({ id: 'hidden', label: 'Hidden', hidden: true }),
+                new PropertyTab({ id: 'hidden', label: 'Hidden', isHidden: true }),
                 new PropertyTab({ id: 'properties', label: 'Propiedades' }),
                 new PropertyTab({ id: 'page', label: 'Página' })
             ]

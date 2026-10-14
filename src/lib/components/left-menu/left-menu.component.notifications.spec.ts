@@ -51,7 +51,7 @@ describe('LeftMenuComponent with notifications', () => {
     });
 
     it('shows the bell at the foot of the menu with no user, collapsed as well', async () => {
-        await render(buildConfig({ expanded: false }));
+        await render(buildConfig({ isExpanded: false }));
 
         expect(queryButton(fixture, BELL)).not.toBeNull();
     });

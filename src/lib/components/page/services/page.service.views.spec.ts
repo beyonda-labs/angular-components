@@ -1,23 +1,29 @@
 import { TestBed } from '@angular/core/testing';
 import { provideTranslateService, TranslateService } from '@ngx-translate/core';
+import { decodePageSearch } from '@testing/page-search';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of, Subject } from 'rxjs';
 
+import { BreadcrumbText } from '../../breadcrumb/models/breadcrumb.model';
 import { SearchField, SearchFieldType } from '../../search/models/search.model';
 import { SearchFilterOperator, StringFilter } from '../../search/models/search-filter.model';
+import { TableColumn, TableSortDirection } from '../../table/models/table.model';
 import { TextTableCell } from '../../table/models/table-cell.model';
 import { PageBackendResponse, PageConfig, PageConfigParameters } from '../models/page.model';
 import { PageCategoriesConfig, PageItemType, PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
-import { PageSearch } from '../models/page-search.model';
+import { PageSearch, SearchSortDirection } from '../models/page-search.model';
 import { PageTableConfig, PageTableSearchConfig } from '../models/page-table.model';
 import { PageView } from '../models/page-view.model';
 import { PageService } from './page.service';
 import { PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
 import { PageLinkService } from './page-link.service';
+import { PageListService } from './page-list.service';
 import { PageOrganizationsService } from './page-organizations.service';
 import { PageOwnersService } from './page-owners.service';
+import { PageSelectionService } from './page-selection.service';
+import { PageViewService } from './page-view.service';
 
 interface Template extends PageItem {
     name: string;
@@ -39,11 +45,7 @@ function buildResponse(results: Template[] = [OFFER], total = results.length): P
     return { globalActions: [], results, search: { filters: [], page: 1, size: 25, total } };
 }
 
-function decodeSearch(query: Record<string, string | number>): PageSearch {
-    return JSON.parse(atob(String(query['search']))) as PageSearch;
-}
-
-describe('PageService — views, counts and origins', () => {
+describe('PageService — views, counts, origins and hidden sorts', () => {
     let service: PageService;
     let pageHttpService: MockProxy<PageHttpService>;
 
@@ -69,7 +71,7 @@ describe('PageService — views, counts and origins', () => {
     }
 
     function lastListSearch(): PageSearch {
-        return decodeSearch(pageHttpService.load.mock.calls.at(-1)?.[1] ?? {});
+        return decodePageSearch(String(pageHttpService.load.mock.calls.at(-1)?.[1]['search']));
     }
 
     function lastBreadcrumbItem(): { detail?: string; detailParameters?: Record<string, unknown>; label: string } {
@@ -93,9 +95,12 @@ describe('PageService — views, counts and origins', () => {
         TestBed.configureTestingModule({
             providers: [
                 PageLinkService,
+                PageListService,
                 PageOrganizationsService,
                 PageOwnersService,
+                PageSelectionService,
                 PageService,
+                PageViewService,
                 provideTranslateService(),
                 { provide: PageActionsService, useValue: pageActionsService },
                 { provide: PageHttpService, useValue: pageHttpService }
@@ -146,7 +151,9 @@ describe('PageService — views, counts and origins', () => {
 
             service.viewToggleConfig()?.onTabChange?.(PageViewMode.Trash);
             flush();
-            expect(decodeSearch(pageHttpService.loadTrash.mock.calls.at(-1)?.[1] ?? {}).filters).toEqual([NAME_FILTER]);
+            expect(
+                decodePageSearch(String(pageHttpService.loadTrash.mock.calls.at(-1)?.[1]['search'])).filters
+            ).toEqual([NAME_FILTER]);
 
             service.viewToggleConfig()?.onTabChange?.(PageViewMode.Table);
             flush();
@@ -168,6 +175,10 @@ describe('PageService — views, counts and origins', () => {
     });
 
     describe('folder count', () => {
+        function counted(key: string, count: number): BreadcrumbText {
+            return new BreadcrumbText({ key: `angular-components.page.count.${key}`, parameters: { count } });
+        }
+
         it('counts the rows of the folder on the last node of the breadcrumb, once the folder has answered', () => {
             const folder = new Subject<PageBackendResponse>();
             pageHttpService.load.mockReturnValueOnce(of(buildResponse([OFFER], 12))).mockReturnValueOnce(folder);
@@ -177,8 +188,8 @@ describe('PageService — views, counts and origins', () => {
 
             expect(lastBreadcrumbItem()).toEqual(
                 expect.objectContaining({
-                    detail: 'angular-components.page.count.many',
-                    detailParameters: { count: 12 },
+                    detail: 'angular-components.page.count.items-only',
+                    detailParameters: { items: counted('items.other', 12) },
                     label: 'demo.categories.root'
                 })
             );
@@ -192,7 +203,38 @@ describe('PageService — views, counts and origins', () => {
             folder.complete();
 
             expect(lastBreadcrumbItem()).toEqual(
-                expect.objectContaining({ detail: 'angular-components.page.count.one', detailParameters: { count: 1 } })
+                expect.objectContaining({ detailParameters: { items: counted('items.one', 1) } })
+            );
+        });
+
+        it('counts the folders apart from the items, by the categoryTotal of the answer and the labels of the page', () => {
+            pageHttpService.load.mockReturnValue(
+                of({
+                    ...buildResponse([OFFER], 6),
+                    search: { filters: [], page: 1, size: 25, total: 6, categoryTotal: 2 }
+                })
+            );
+            service.setConfig(
+                buildConfig({
+                    tableConfig: new PageTableConfig<Template>({
+                        categoriesConfig: new PageCategoriesConfig({
+                            itemCountLabels: { one: 'demo.count.one', other: 'demo.count.other' }
+                        }),
+                        columns: [],
+                        loadRow: () => []
+                    })
+                })
+            );
+            flush();
+
+            expect(lastBreadcrumbItem()).toEqual(
+                expect.objectContaining({
+                    detail: 'angular-components.page.count.mixed',
+                    detailParameters: {
+                        categories: counted('categories.other', 2),
+                        items: new BreadcrumbText({ key: 'demo.count.other', parameters: { count: 4 } })
+                    }
+                })
             );
         });
 
@@ -205,8 +247,45 @@ describe('PageService — views, counts and origins', () => {
             flush();
 
             expect(lastBreadcrumbItem()).toEqual(
-                expect.objectContaining({ detailParameters: { count: 3 }, label: 'demo.tabs.trash.label' })
+                expect.objectContaining({
+                    detailParameters: { items: counted('items.other', 3) },
+                    label: 'demo.tabs.trash.label'
+                })
             );
+        });
+    });
+
+    describe('sort on a hidden column', () => {
+        const ORDER = { direction: SearchSortDirection.Asc, field: 'name' };
+
+        it('goes back to the configured order once the list no longer shows the column it sorts by', () => {
+            service.setConfig(
+                buildConfig({
+                    tableConfig: new PageTableConfig<Template>({
+                        columns: [
+                            new TableColumn({ isSortable: true, key: 'name' }),
+                            new TableColumn({ isSortable: true, key: 'organization' })
+                        ],
+                        isColumnShown: ({ key }, { isSearching }) => key !== 'organization' || isSearching,
+                        loadRow: () => [],
+                        order: ORDER,
+                        search: new PageTableSearchConfig({ fields: [], textField: 'text' })
+                    })
+                })
+            );
+            service.setFilters([new StringFilter({ field: 'text', value: 'ada' })]);
+            flush();
+            service.tableConfig()?.onSortChange?.({ direction: TableSortDirection.Desc, field: 'organization' });
+            flush();
+            const whileSearching = lastListSearch().sort;
+
+            service.setFilters([]);
+            flush();
+            flush();
+
+            expect(whileSearching).toEqual({ direction: SearchSortDirection.Desc, field: 'organization' });
+            expect(lastListSearch().sort).toEqual(ORDER);
+            expect(service.tableConfig()?.sort).toBeUndefined();
         });
     });
 

@@ -30,11 +30,11 @@ export function buildPropertiesTab(): BeyPropertyTab {
         label: 'Properties',
         groups: [
             new BeyPropertyGroup({
-                expanded: true,
+                isExpanded: true,
                 content: new BeyPropertyFieldsContent({
                     fields: [
                         new BeyPropertyTextField({
-                            acceptsVariable: true,
+                            canAcceptVariable: true,
                             id: 'text',
                             label: 'Text',
                             value: 'INVOICE'
@@ -67,7 +67,7 @@ export function buildPropertiesTab(): BeyPropertyTab {
                 label: 'Content'
             }),
             new BeyPropertyGroup({
-                expanded: true,
+                isExpanded: true,
                 content: new BeyPropertyFieldsContent({
                     fields: [
                         new BeyPropertySelectField({
@@ -172,7 +172,7 @@ export function buildPropertiesTab(): BeyPropertyTab {
                         })
                     ]
                 }),
-                expanded: true,
+                isExpanded: true,
                 id: 'borders',
                 label: 'Borders',
                 variant: BeyPropertyGroupVariant.SECONDARY
@@ -201,7 +201,7 @@ export function buildPropertiesTab(): BeyPropertyTab {
                         new BeyPropertySelectField({
                             id: 'templateId',
                             label: 'Template',
-                            searchable: true,
+                            isSearchable: true,
                             value: 'invoice',
                             options: [
                                 new BeyPropertyOption({ label: 'Factura', value: 'invoice' }),
@@ -230,7 +230,7 @@ export function buildPropertiesTab(): BeyPropertyTab {
                         })
                     ]
                 }),
-                expanded: true,
+                isExpanded: true,
                 id: 'advanced',
                 label: 'Advanced',
                 variant: BeyPropertyGroupVariant.SECONDARY

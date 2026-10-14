@@ -11,7 +11,7 @@ describe('TableRowComponent', () => {
     let changes: boolean[];
 
     async function render(
-        overrides: { isHeader?: boolean; isSelected?: boolean; selectable?: boolean } = {}
+        overrides: { isHeader?: boolean; isSelected?: boolean; isSelectable?: boolean } = {}
     ): Promise<void> {
         fixture = TestBed.createComponent(TableRowComponent);
         fixture.componentRef.setInput('gridTemplateColumns', '3.25rem minmax(0, 1fr)');
@@ -24,7 +24,7 @@ describe('TableRowComponent', () => {
                 isSelected: overrides.isSelected ?? false
             })
         );
-        fixture.componentRef.setInput('selectable', overrides.selectable ?? true);
+        fixture.componentRef.setInput('isSelectable', overrides.isSelectable ?? true);
         changes = [];
         fixture.componentInstance.selectionChange.subscribe(value => changes.push(value));
         await settle(fixture);
@@ -61,7 +61,7 @@ describe('TableRowComponent', () => {
         (fixture.nativeElement.querySelector('[role="row"]') as HTMLElement).click();
         expect(changes).toEqual([]);
 
-        await render({ selectable: false });
+        await render({ isSelectable: false });
         (fixture.nativeElement.querySelector('[role="row"]') as HTMLElement).click();
         expect(changes).toEqual([]);
         expect(checkbox()).toBeNull();

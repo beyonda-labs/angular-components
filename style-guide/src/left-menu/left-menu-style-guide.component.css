@@ -1,6 +1,6 @@
 :host {
-    --bey-left-menu-style-guide-offset-top: 1rem;
-    --bey-left-menu-style-guide-offset-bottom: 1rem;
+    --bey-left-menu-style-guide-offset-top: var(--bey-space-lg);
+    --bey-left-menu-style-guide-offset-bottom: var(--bey-space-lg);
     display: block;
 }
 

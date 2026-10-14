@@ -5,11 +5,14 @@ import {
     BeyFormComponent,
     BeyFormConfig,
     BeyFormFooter,
+    BeyFormNoticeField,
     BeyFormRow,
     BeyFormSection,
     BeyFormTextField,
     BeyModalFormConfig,
-    BeyModalFormService
+    BeyModalFormService,
+    BeyModalFormSize,
+    BeyNoticeVariant
 } from '@beyonda-labs/angular-components';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -30,6 +33,7 @@ const PREFIX = 'angular-components-style-guide.form';
 export class FormStyleGuideComponent {
     private readonly modalFormService = inject(BeyModalFormService);
 
+    readonly lastEvent = signal('');
     readonly regions = signal<StyleGuideRegion[]>([]);
     readonly config = new BeyFormConfig({
         buttons: [
@@ -68,9 +72,15 @@ export class FormStyleGuideComponent {
         onSubmit: () => this.lastEvent.set(`${PREFIX}.submitted`),
         onValueChange: () => this.lastEvent.set(`${PREFIX}.changed`),
         prefix: PREFIX,
-        sections: buildStyleGuideSections(this.regions)
+        sections: buildStyleGuideSections(this.regions, () =>
+            this.lastEvent.set(`${PREFIX}.section-autocomplete-options.picked`)
+        )
     });
-    readonly lastEvent = signal('');
+    readonly dangerModalButton: StyleGuideButton = {
+        action: () => this.openDangerModal(),
+        isPrimary: false,
+        label: `${PREFIX}.danger-modal.open`
+    };
     readonly loadRegionsButton: StyleGuideButton = {
         action: () => this.regions.set(STYLE_GUIDE_REGIONS),
         isPrimary: false,
@@ -81,6 +91,39 @@ export class FormStyleGuideComponent {
         isPrimary: true,
         label: `${PREFIX}.modal.open`
     };
+
+    openDangerModal(): void {
+        this.modalFormService.open(
+            new BeyModalFormConfig({
+                canSubmitWithoutChanges: true,
+                isSubmitDanger: true,
+                onSubmit: (_value, handle) => {
+                    this.lastEvent.set(`${PREFIX}.danger-modal.submitted`);
+                    handle.close();
+                },
+                prefix: `${PREFIX}.danger-modal`,
+                sections: [
+                    new BeyFormSection({
+                        isTitleVisible: false,
+                        key: 'confirmation',
+                        rows: [
+                            new BeyFormRow({
+                                fields: [
+                                    new BeyFormNoticeField({
+                                        key: 'warning',
+                                        message: `${PREFIX}.danger-modal.confirmation.warning.message`,
+                                        messageParameters: { name: 'Q3 report' },
+                                        variant: BeyNoticeVariant.Danger
+                                    })
+                                ]
+                            })
+                        ]
+                    })
+                ],
+                size: BeyModalFormSize.Medium
+            })
+        );
+    }
 
     openModalForm(): void {
         this.modalFormService.open(
