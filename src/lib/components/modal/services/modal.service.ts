@@ -22,7 +22,7 @@ export class ModalService {
 
     openConfirmation(config: ConfirmationModalConfig): Observable<boolean> {
         const modalReference = this.open({
-            closeOnBackdrop: config.closeOnBackdrop,
+            canCloseOnBackdrop: config.canCloseOnBackdrop,
             message: config.message,
             messageParameters: config.messageParameters,
             primaryActionLabel: config.confirmLabel ?? ModalService.CONFIRM_LABEL,
@@ -59,9 +59,9 @@ export class ModalService {
         const modalOptions: ModalOptions<ModalDialogComponent> = {
             animated: true,
             class: 'modal-dialog-centered',
-            ignoreBackdropClick: config.closeOnBackdrop === false,
+            ignoreBackdropClick: config.canCloseOnBackdrop === false,
             initialState: { config },
-            keyboard: config.closeOnBackdrop !== false
+            keyboard: config.canCloseOnBackdrop !== false
         };
 
         return this.bsModalService.show(ModalDialogComponent, modalOptions);
@@ -69,7 +69,7 @@ export class ModalService {
 
     private openNotification(config: NotificationModalConfig, type: ModalType): BsModalRef<ModalDialogComponent> {
         return this.open({
-            closeOnBackdrop: config.closeOnBackdrop,
+            canCloseOnBackdrop: config.canCloseOnBackdrop,
             message: config.message,
             messageParameters: config.messageParameters,
             primaryActionLabel: config.closeLabel ?? ModalService.CLOSE_LABEL,

@@ -13,9 +13,10 @@ import {
     FormFieldLengthValidator,
     FormFieldValidatorType
 } from '../../../form/models/form-field-validator.model';
-import { PageFormConfig } from '../../../page/models/page-form.model';
+import { PAGE_FORM_CANCEL_LABEL, PAGE_FORM_SUBMIT_LABEL, PageFormConfig } from '../../../page/models/page-form.model';
 import { contentCountLines } from '../../functions/content-counts';
 import { buildGroupMemberListRows } from '../../functions/group-member-lists';
+import { organizationStatusOptions } from '../functions/organization-status';
 import {
     ORGANIZATION_NAME_MAX_LENGTH,
     OrganizationDeleteFormOptions,
@@ -28,12 +29,8 @@ import {
     ORGANIZATIONS_FORM_SECTION,
     ORGANIZATIONS_GROUPS_SECTION,
     ORGANIZATIONS_LIBRARY_CONTENT,
-    ORGANIZATIONS_UNGROUPED_KEY,
-    OrganizationStatus
+    ORGANIZATIONS_UNGROUPED_KEY
 } from '../models/organizations.model';
-
-const CANCEL_LABEL_KEY = 'angular-components.page.form.cancel';
-const SUBMIT_LABEL_KEY = 'angular-components.page.form.submit';
 
 @Injectable({
     providedIn: 'root'
@@ -56,7 +53,7 @@ export class OrganizationsFormService {
         };
 
         return new ModalFormConfig<OrganizationDeleteFormValue>({
-            cancelLabel: CANCEL_LABEL_KEY,
+            cancelLabel: PAGE_FORM_CANCEL_LABEL,
             initialValue: { [ORGANIZATIONS_FORM_SECTION]: { name: '' } },
             isSubmitDanger: true,
             prefix: `${prefix}.delete`,
@@ -113,7 +110,7 @@ export class OrganizationsFormService {
 
     buildEditFormConfig(prefix: string, organization: OrganizationDetail): ModalFormConfig<OrganizationEditFormValue> {
         return new ModalFormConfig<OrganizationEditFormValue>({
-            cancelLabel: CANCEL_LABEL_KEY,
+            cancelLabel: PAGE_FORM_CANCEL_LABEL,
             initialValue: { [ORGANIZATIONS_FORM_SECTION]: { name: organization.name, status: organization.status } },
             prefix: `${prefix}.form`,
             sections: [
@@ -127,10 +124,7 @@ export class OrganizationsFormService {
                                 new FormSelectField({
                                     isRequired: true,
                                     key: 'status',
-                                    options: Object.values(OrganizationStatus).map(status => ({
-                                        label: `${prefix}.status.${status}`,
-                                        value: status
-                                    }))
+                                    options: organizationStatusOptions(prefix)
                                 })
                             ]
                         })
@@ -147,7 +141,7 @@ export class OrganizationsFormService {
                 })
             ],
             size: ModalFormSize.Medium,
-            submitLabel: SUBMIT_LABEL_KEY,
+            submitLabel: PAGE_FORM_SUBMIT_LABEL,
             title: `${prefix}.form.edit.title`
         });
     }

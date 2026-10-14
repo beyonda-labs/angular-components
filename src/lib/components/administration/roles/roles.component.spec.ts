@@ -2,17 +2,16 @@ import { HttpTestingController, TestRequest } from '@angular/common/http/testing
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { buttonByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryButton, renderComponent, rowWith, settle } from '@testing/dom';
+import { fieldsOf } from '@testing/form-fields';
+import { FakeFormHandle } from '@testing/handles/fake-form-handle';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 import { FakeToastService } from '@testing/services/fake-toast.service';
 
 import { SessionUser } from '../../../services/session/models/session.model';
-import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { FormCheckboxSectionsField } from '../../form/models/fields/form-checkbox-sections-field.model';
-import { FormHandle } from '../../form/models/form.model';
-import { FormField } from '../../form/models/form-field.model';
 import { RolePermissionEntry } from '../models/role-permissions.model';
 import rolesEn from './assets/roles.en.json';
 import { RoleFormValue, RoleRow, RolesConfig, RoleSourceType } from './models/roles.model';
@@ -65,18 +64,6 @@ describe('RolesComponent', () => {
         };
     }
 
-    function buildHandle(): FormHandle<unknown> {
-        return {
-            close: jest.fn(),
-            goToStep: jest.fn(),
-            isDirty: jest.fn(() => true),
-            patchValue: jest.fn(),
-            requestClose: jest.fn(),
-            reset: jest.fn(),
-            value: jest.fn()
-        };
-    }
-
     async function render(
         roles: RoleRow[] = [buildBase(), buildRole()],
         globalActions: string[] = ['create'],
@@ -97,24 +84,6 @@ describe('RolesComponent', () => {
         return httpTesting.expectOne(request => request.url === url && request.method === 'GET');
     }
 
-    function rowWith(text: string): HTMLElement {
-        const row = queryAll(fixture, '[role="row"]').find(candidate => candidate.textContent?.includes(text));
-
-        if (!row) {
-            throw new Error(`No row with ${text}`);
-        }
-
-        return row;
-    }
-
-    function fieldsOf(form: ModalFormConfig | undefined, section: string): FormField[] {
-        return (
-            form?.sections
-                .filter(({ key }) => key === section)
-                .flatMap(({ rows }) => rows.flatMap(row => row.fields)) ?? []
-        );
-    }
-
     function permissionsOffered(): [string, string[]][] {
         const [checklist] = fieldsOf(modalForms.forms().at(-1), 'permissions') as FormCheckboxSectionsField[];
 
@@ -127,14 +96,14 @@ describe('RolesComponent', () => {
     }
 
     async function useMenuAction(rowText: string, action: string): Promise<void> {
-        await click(rowWith(rowText));
+        await click(rowWith(fixture, rowText));
         await click(buttonByName(fixture, 'angular-components.header.menu'));
         await click(buttonByName(fixture, `${PREFIX}.actions.${action}.label`));
     }
 
     async function editReviewers(main: Record<string, unknown>, permissions: string[]): Promise<TestRequest> {
         await click(buttonByName(fixture, 'Reviewers'));
-        modalForms.forms().at(-1)?.onSubmit?.({ main, permissions: { permissions } }, buildHandle());
+        modalForms.forms().at(-1)?.onSubmit?.({ main, permissions: { permissions } }, new FakeFormHandle());
 
         return httpTesting.expectOne(`${ROLES_URL}/r1`);
     }
@@ -156,12 +125,12 @@ describe('RolesComponent', () => {
     it('lists the base roles and the extra roles, with their type, permission, member and group counts', async () => {
         await render();
 
-        expect(rowWith('normaluser').textContent).toContain(`${PREFIX}.type.base`);
-        expect(rowWith('normaluser').textContent).toContain('5');
-        expect(rowWith('Reviewers').textContent).toContain(`${PREFIX}.type.extra`);
-        expect(rowWith('Reviewers').textContent).toContain('Review the templates');
-        expect(rowWith('Reviewers').textContent).toContain('2');
-        expect(rowWith('Reviewers').textContent).toContain('3');
+        expect(rowWith(fixture, 'normaluser').textContent).toContain(`${PREFIX}.type.base`);
+        expect(rowWith(fixture, 'normaluser').textContent).toContain('5');
+        expect(rowWith(fixture, 'Reviewers').textContent).toContain(`${PREFIX}.type.extra`);
+        expect(rowWith(fixture, 'Reviewers').textContent).toContain('Review the templates');
+        expect(rowWith(fixture, 'Reviewers').textContent).toContain('2');
+        expect(rowWith(fixture, 'Reviewers').textContent).toContain('3');
         expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.group-count`);
     });
 
@@ -170,7 +139,7 @@ describe('RolesComponent', () => {
 
         await render(undefined, undefined, new RolesConfig({ rolePrefix: 'my-app.roles' }));
 
-        expect(rowWith('User').textContent).toContain(`${PREFIX}.type.base`);
+        expect(rowWith(fixture, 'User').textContent).toContain(`${PREFIX}.type.base`);
     });
 
     it('creates a role with its name, description and the permissions checked, in the organization of the manager', async () => {
@@ -183,7 +152,7 @@ describe('RolesComponent', () => {
                 main: { description: ' Read only ', name: ' Readers ' },
                 permissions: { permissions: ['documents.read'] }
             },
-            buildHandle()
+            new FakeFormHandle()
         );
         const request = httpTesting.expectOne(current => current.url === ROLES_URL && current.method === 'POST');
         request.flush(buildRole({ id: 'r2', name: 'Readers' }));
@@ -308,7 +277,7 @@ describe('RolesComponent', () => {
     it('does not offer to duplicate a role whose actions leave it out', async () => {
         await render([buildRole({ actions: ['delete'] })]);
 
-        await click(rowWith('Reviewers'));
+        await click(rowWith(fixture, 'Reviewers'));
         await click(buttonByName(fixture, 'angular-components.header.menu'));
 
         expect(queryButton(fixture, `${PREFIX}.actions.delete.label`)).not.toBeNull();
@@ -322,7 +291,7 @@ describe('RolesComponent', () => {
             true
         );
         await render([buildBase(), buildRole({ actions: ['edit', 'duplicate', 'delete'] })]);
-        const handle = buildHandle();
+        const handle = new FakeFormHandle();
 
         await useMenuAction('Reviewers', 'duplicate');
         const form = modalForms.forms().at(-1);
@@ -348,7 +317,7 @@ describe('RolesComponent', () => {
             description: 'Review',
             permissions: ['templates.edit']
         });
-        expect(handle.close).toHaveBeenCalled();
+        expect(handle.closes()).toBe(1);
         expect(TestBed.inject(FakeToastService).successes()).toEqual([
             { message: `${PREFIX}.toast.duplicate-success` }
         ]);
@@ -356,7 +325,7 @@ describe('RolesComponent', () => {
 
     it('keeps the duplicate form open, with the reason of the server, when the name is taken', async () => {
         await render([buildRole({ actions: ['duplicate'] })]);
-        const handle = buildHandle();
+        const handle = new FakeFormHandle();
 
         await useMenuAction('Reviewers', 'duplicate');
         modalForms
@@ -368,7 +337,7 @@ describe('RolesComponent', () => {
             .flush({ errorCode: 'error', messageKey: 'roles.existing-name' }, { status: 409, statusText: '' });
         await settle(fixture);
 
-        expect(handle.close).not.toHaveBeenCalled();
+        expect(handle.closes()).toBe(0);
         expect(TestBed.inject(FakeModalService).errors()).toEqual([
             expect.objectContaining({ message: 'angular-components.http.error.roles.existing-name' })
         ]);
@@ -378,7 +347,7 @@ describe('RolesComponent', () => {
     it('offers nothing to change on a base role, as the backend lists no action for it', async () => {
         await render();
 
-        await click(rowWith('normaluser'));
+        await click(rowWith(fixture, 'normaluser'));
 
         expect(queryButton(fixture, `${PREFIX}.actions.edit.label`)).toBeNull();
         expect(queryButton(fixture, 'angular-components.header.menu')).toBeNull();
@@ -387,7 +356,7 @@ describe('RolesComponent', () => {
     it('shows the permissions of the selected base role from the view action of the header, out of the menu', async () => {
         await render([buildBase({ actions: ['view', 'duplicate'] }), buildRole()]);
 
-        await click(rowWith('normaluser'));
+        await click(rowWith(fixture, 'normaluser'));
 
         expect(queryButton(fixture, `${PREFIX}.actions.edit.label`)).toBeNull();
 
@@ -402,7 +371,7 @@ describe('RolesComponent', () => {
     it('offers no view on a role the caller edits, whose actions leave it out', async () => {
         await render([buildRole()]);
 
-        await click(rowWith('Reviewers'));
+        await click(rowWith(fixture, 'Reviewers'));
 
         expect(queryButton(fixture, `${PREFIX}.actions.edit.label`)).not.toBeNull();
         expect(queryButton(fixture, 'angular-components.page.actions.view.label')).toBeNull();
@@ -470,8 +439,8 @@ describe('RolesComponent', () => {
             expect(text).toContain(`${PREFIX}.table.columns.sources`);
             expect(text).not.toContain(`${PREFIX}.table.columns.member-count`);
             expect(text).not.toContain(`${PREFIX}.table.columns.group-count`);
-            expect(rowWith('normaluser').textContent).toContain(`${PREFIX}.sources.direct`);
-            expect(rowWith('Reviewers').textContent).toContain(`${PREFIX}.sources.group`);
+            expect(rowWith(fixture, 'normaluser').textContent).toContain(`${PREFIX}.sources.direct`);
+            expect(rowWith(fixture, 'Reviewers').textContent).toContain(`${PREFIX}.sources.group`);
         });
 
         it('opens the permissions of a role from its name', async () => {
@@ -484,7 +453,7 @@ describe('RolesComponent', () => {
         });
 
         it('opens the permissions of the selected role from the view action of the header', async () => {
-            await click(rowWith('Reviewers'));
+            await click(rowWith(fixture, 'Reviewers'));
             await click(buttonByName(fixture, 'angular-components.page.actions.view.label'));
 
             expect(modalForms.forms().at(-1)?.title).toBe(`${PREFIX}.view.title`);

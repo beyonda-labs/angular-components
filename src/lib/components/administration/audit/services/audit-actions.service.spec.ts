@@ -1,5 +1,7 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { fieldsOf } from '@testing/form-fields';
+import { searchOf } from '@testing/page-search';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 
@@ -72,7 +74,7 @@ describe('AuditActionsService', () => {
         const request = httpTesting.expectOne(current => current.url === `${LOG_URL}/export`);
         request.flush(new Blob(['id\n'], { type: 'text/csv' }));
 
-        expect(JSON.parse(atob(request.request.params.get('search') ?? ''))).toEqual(search);
+        expect(searchOf(request)).toEqual(search);
         expect(saved).toEqual([{ download: expect.stringMatching(/^audit-\d{8}\.csv$/u), href: 'blob:audit' }]);
     });
 
@@ -92,7 +94,7 @@ describe('AuditActionsService', () => {
 
         httpTesting.expectOne(`${LOG_URL}/e1`).flush({ ...event, entityName: 'Invoice 2026' });
         const [view] = modalForms.forms();
-        const fields = view.sections.flatMap(section => section.rows.flatMap(row => row.fields)) as FormInfoField[];
+        const fields = fieldsOf<FormInfoField>(view);
 
         expect(view.title).toBe('my-app.logs.view.title');
         expect(view.isSubmitHidden).toBe(true);

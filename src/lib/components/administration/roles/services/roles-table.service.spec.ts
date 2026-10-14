@@ -120,7 +120,7 @@ describe('RolesTableService', () => {
         expect(service.loadRow(buildRole(), shown)[6].content).toBe('Globex');
         expect(service.loadRow(buildBase(), shown)[6]).toMatchObject({
             content: 'demo.roles.table.every-organization',
-            translate: true
+            isTranslationKey: true
         });
     });
 

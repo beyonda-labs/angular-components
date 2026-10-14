@@ -23,7 +23,7 @@ import { PropertyTab } from './property-tab.model';
 
 export class PropertiesMenuConfig {
     activeTabId: string;
-    embedded: boolean;
+    isEmbedded: boolean;
     prefix: string;
     subtitle: string;
     tabs: PropertyTab[];
@@ -52,22 +52,22 @@ export class PropertiesMenuConfig {
 
     constructor({
         activeTabId,
-        embedded = false,
         icon,
         prefix,
         subtitle = '',
         tabs = [],
         title = 'title',
+        isEmbedded = false,
         ...callbacks
     }: PropertiesMenuConfigParameters) {
         Object.assign(this, callbacks);
-        this.embedded = embedded;
         this.icon = icon;
         this.prefix = prefix;
         this.subtitle = subtitle;
         this.tabs = tabs;
         this.title = title;
-        this.activeTabId = activeTabId ?? this.tabs.find(tab => !tab.hidden)?.id ?? '';
+        this.activeTabId = activeTabId ?? this.tabs.find(tab => !tab.isHidden)?.id ?? '';
+        this.isEmbedded = isEmbedded;
     }
 }
 
@@ -75,8 +75,8 @@ export interface PropertiesMenuConfigParameters {
     prefix: string;
 
     activeTabId?: string;
-    embedded?: boolean;
     icon?: IconDefinition;
+    isEmbedded?: boolean;
     onActiveTabChange?: (tabId: string) => void;
     onAttachmentUpload?: (upload: PropertyAttachmentUpload) => void;
     onClose?: () => void;

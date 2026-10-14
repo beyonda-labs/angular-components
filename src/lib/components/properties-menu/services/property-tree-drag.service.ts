@@ -4,9 +4,9 @@ import { PropertyTreeDropPosition, PropertyTreeNode } from '../models/property-t
 import { PropertiesMenuService } from './properties-menu.service';
 
 interface DropTarget {
+    isValid: boolean;
     nodeId: string;
     position: PropertyTreeDropPosition;
-    valid: boolean;
 }
 
 @Injectable()
@@ -34,7 +34,7 @@ export class PropertyTreeDragService {
         const nodeId = this.dragNodeId();
         const target = this.dropTarget();
 
-        if (nodeId && target?.valid) {
+        if (nodeId && target?.isValid) {
             this.propertiesMenuService
                 .config()
                 .onTreeDrop?.({ groupId, nodeId, position: target.position, tabId, targetNodeId: target.nodeId });
@@ -46,13 +46,13 @@ export class PropertyTreeDragService {
     dropPositionFor(nodeId: string): PropertyTreeDropPosition | null {
         const target = this.dropTarget();
 
-        return target && target.nodeId === nodeId && target.valid ? target.position : null;
+        return target && target.nodeId === nodeId && target.isValid ? target.position : null;
     }
 
     isInvalidTarget(nodeId: string): boolean {
         const target = this.dropTarget();
 
-        return target !== null && target.nodeId === nodeId && !target.valid;
+        return target !== null && target.nodeId === nodeId && !target.isValid;
     }
 
     setDropTarget(target: DropTarget | null): void {

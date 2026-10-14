@@ -38,15 +38,15 @@ export class PropertyTreeComponent {
     private readonly propertiesMenuService = inject(PropertiesMenuService);
     private readonly propertyTreeDragService = inject(PropertyTreeDragService);
 
-    readonly acceptsRootDrop = input(false);
     readonly addBlockLabel = input<string>();
+    readonly canAcceptRootDrop = input(false);
     readonly groupId = input.required<string>();
     readonly nodes = input.required<PropertyTreeNode[]>();
     readonly tabId = input.required<string>();
 
     readonly addIcon = faPlus;
     readonly chevronIcon = faChevronDown;
-    readonly visibleNodes = computed(() => this.nodes().filter(node => !node.hidden));
+    readonly visibleNodes = computed(() => this.nodes().filter(node => !node.isHidden));
 
     private autoExpandNodeId: string | null = null;
     private autoExpandTimer?: ReturnType<typeof setTimeout>;
@@ -122,7 +122,7 @@ export class PropertyTreeComponent {
     }
 
     onNodeClick(node: PropertyTreeNode): void {
-        if (node.disabled || this.ignoresClickEndingDrag) {
+        if (node.isDisabled || this.ignoresClickEndingDrag) {
             return;
         }
 
@@ -137,8 +137,8 @@ export class PropertyTreeComponent {
             return;
         }
 
-        const opens = event.key === 'ArrowRight' && !node.expanded;
-        const closes = event.key === 'ArrowLeft' && node.expanded;
+        const opens = event.key === 'ArrowRight' && !node.isExpanded;
+        const closes = event.key === 'ArrowLeft' && node.isExpanded;
 
         if (!this.hasVisibleChildren(node) || (!opens && !closes)) {
             return;
@@ -149,7 +149,7 @@ export class PropertyTreeComponent {
     }
 
     onRowPointerDown(event: PointerEvent, node: PropertyTreeNode): void {
-        if (event.button !== 0 || event.pointerType === 'touch' || !node.draggable || node.disabled) {
+        if (event.button !== 0 || event.pointerType === 'touch' || !node.isDraggable || node.isDisabled) {
             return;
         }
 
@@ -168,13 +168,13 @@ export class PropertyTreeComponent {
     }
 
     toggleLabelKey(node: PropertyTreeNode): string {
-        return node.expanded
+        return node.isExpanded
             ? 'angular-components.properties-menu.tree.collapse'
             : 'angular-components.properties-menu.tree.expand';
     }
 
     visibleChildren(node: PropertyTreeNode): PropertyTreeNode[] {
-        return node.children.filter(child => !child.hidden);
+        return node.children.filter(child => !child.isHidden);
     }
 
     private autoScroll(clientY: number): void {
@@ -238,7 +238,7 @@ export class PropertyTreeComponent {
         this.autoExpandTimer = setTimeout(() => {
             const node = findTreeNode(this.nodes(), nodeId);
 
-            if (node && !node.expanded && this.hasVisibleChildren(node)) {
+            if (node && !node.isExpanded && this.hasVisibleChildren(node)) {
                 this.propertiesMenuService.toggleTreeNode(this.tabId(), this.groupId(), nodeId);
             }
         }, AUTO_EXPAND_DELAY_MS);
@@ -270,9 +270,9 @@ export class PropertyTreeComponent {
         }
 
         const position = this.resolvePosition(row.getBoundingClientRect(), event.clientY);
-        const valid = isDropAllowed(this.nodes(), dragged.id, nodeId, position, this.acceptsRootDrop());
+        const isValid = isDropAllowed(this.nodes(), dragged.id, nodeId, position, this.canAcceptRootDrop());
 
-        this.propertyTreeDragService.setDropTarget({ nodeId, position, valid });
-        this.scheduleAutoExpand(position === 'inside' && valid ? nodeId : null);
+        this.propertyTreeDragService.setDropTarget({ nodeId, position, isValid });
+        this.scheduleAutoExpand(position === 'inside' && isValid ? nodeId : null);
     }
 }

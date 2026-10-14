@@ -34,15 +34,15 @@ this.modal
 `openInfo`, `openWarning` and `openError` take a `BeyNotificationModalConfig`, `openConfirmation` a
 `BeyConfirmationModalConfig`:
 
-| Field               | Required | Default                                    | Meaning                                        |
-| ------------------- | -------- | ------------------------------------------ | ---------------------------------------------- |
-| `title`             | yes      |                                            | i18n key or literal                            |
-| `message`           | yes      |                                            | i18n key or literal                            |
-| `messageParameters` | no       |                                            | Interpolation parameters for the message       |
-| `closeOnBackdrop`   | no       | `true`                                     | Whether the backdrop and Escape close it       |
-| `closeLabel`        | no       | `angular-components.modal.actions.close`   | Notification only, the label of its one button |
-| `confirmLabel`      | no       | `angular-components.modal.actions.confirm` | Confirmation only                              |
-| `cancelLabel`       | no       | `angular-components.modal.actions.cancel`  | Confirmation only                              |
+| Field                | Required | Default                                    | Meaning                                        |
+| -------------------- | -------- | ------------------------------------------ | ---------------------------------------------- |
+| `title`              | yes      |                                            | i18n key or literal                            |
+| `message`            | yes      |                                            | i18n key or literal                            |
+| `messageParameters`  | no       |                                            | Interpolation parameters for the message       |
+| `canCloseOnBackdrop` | no       | `true`                                     | Whether the backdrop and Escape close it       |
+| `closeLabel`         | no       | `angular-components.modal.actions.close`   | Notification only, the label of its one button |
+| `confirmLabel`       | no       | `angular-components.modal.actions.confirm` | Confirmation only                              |
+| `cancelLabel`        | no       | `angular-components.modal.actions.cancel`  | Confirmation only                              |
 
 A confirmation resolves to `false` when it is dismissed with the close button, the backdrop or Escape, so the
 caller never has to handle those cases separately.
@@ -101,4 +101,5 @@ nowhere takes its default.
 
 Each kind sets its own `--bey-modal-accent` and a soft variant of it, `--bey-modal-accent-soft`, for the icon
 background: `--bey-primary-soft` for an info or a confirmation, `--bey-warning-soft` for a warning and
-`--bey-danger-soft` for an error.
+`--bey-danger-soft` for an error. The icon sits in a square of `--bey-dialog-icon-size`, the token the tree dialog
+reads too, and the dialog takes the width of the Bootstrap modal it opens in.

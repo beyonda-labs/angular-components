@@ -19,8 +19,12 @@ export function readPageLink(queryParameters: Params, config: PageLinkSource): P
 
     const target = resolveView(view, config);
     const hasFolders = Boolean(config.baseUrl && config.tableConfig?.categoriesConfig);
+    const isFlatView = config.views.some(current => current.key === target.view && current.baseUrl);
 
-    return { ...target, folderId: hasFolders && target.viewMode !== PageViewMode.Trash ? folderId : null };
+    return {
+        ...target,
+        folderId: hasFolders && !isFlatView && target.viewMode !== PageViewMode.Trash ? folderId : null
+    };
 }
 
 export function withoutPageLink(queryParameters: Params): Params {

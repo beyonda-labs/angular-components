@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { buttonByName, controlByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
+import { fieldsOf } from '@testing/form-fields';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { of } from 'rxjs';
 
@@ -9,7 +10,6 @@ import { ModalFormConfig, ModalFormSize } from '../../../form/components/modal/m
 import { FormComponent } from '../../../form/form.component';
 import { FormAutocompleteSearchResult } from '../../../form/models/fields/form-autocomplete-field.model';
 import { FormListField } from '../../../form/models/fields/form-list-field.model';
-import { FormSection } from '../../../form/models/form.model';
 import { FormField } from '../../../form/models/form-field.model';
 import { FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
 import groupsEn from '../assets/groups.en.json';
@@ -43,10 +43,6 @@ describe('GroupsFormService', () => {
         { id: 'o1', name: 'Acme' },
         { id: 'o2', name: 'Globex' }
     ];
-
-    function fieldsOf(sections: FormSection[]): FormField[] {
-        return sections.flatMap(section => section.rows.flatMap(row => row.fields));
-    }
 
     function buildOptions(overrides: Partial<GroupsFormOptions> = {}): GroupsFormOptions {
         return { isOrganizationAsked: false, organizations: [], prefix: 'demo.teams', ...overrides };

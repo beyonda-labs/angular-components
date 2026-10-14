@@ -38,7 +38,7 @@ export class RolesTableService {
                   }),
             new BadgeTableCell({
                 badges: [new BadgeConfig({ label: `${prefix}.type.${type}`, variant: ROLE_TYPE_VARIANTS[type] })],
-                translate: true
+                isTranslationKey: true
             }),
             new TextTableCell({ content: String(role.permissions.length) }),
             new TextTableCell({ content: String(role.memberCount ?? 0) }),
@@ -71,6 +71,6 @@ export class RolesTableService {
 
 function buildOrganizationCell(role: RoleRow, prefix: string): TableCell {
     return role.isBase
-        ? new TextTableCell({ content: `${prefix}.table.every-organization`, translate: true })
+        ? new TextTableCell({ content: `${prefix}.table.every-organization`, isTranslationKey: true })
         : pageOrganizationCell(role);
 }

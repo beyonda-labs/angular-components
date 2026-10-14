@@ -15,7 +15,7 @@
             [attr.aria-label]="option.label | translate"
             [attr.title]="option.icon ? (option.label | translate) : null"
             [class.is-active]="isActive(option)"
-            [disabled]="option.disabled || current.disabled"
+            [disabled]="option.isDisabled || current.isDisabled"
             [tabindex]="isActive(option) ? 0 : -1"
             (click)="selectOption(option)"
             (keydown)="onKeydown($event)"

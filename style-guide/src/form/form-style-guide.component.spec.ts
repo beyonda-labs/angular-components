@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { BeyFormNoticeField, BeyNoticeVariant } from '@beyonda-labs/angular-components';
 import {
     accessibleDescription,
     accessibleName,
@@ -11,12 +12,19 @@ import {
     settle,
     textsOf
 } from '@testing/dom';
+import { FakeFormHandle } from '@testing/handles/fake-form-handle';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 
 import { FormStyleGuideComponent } from './form-style-guide.component';
 
 const PREFIX = 'angular-components-style-guide.form';
-const TEXTS = { 'angular-components': { form: { 'list-field': { remove: 'Remove {{label}}' } } } };
+const TEXTS = {
+    'angular-components': { form: { 'list-field': { remove: 'Remove {{label}}' } } },
+    'angular-components-style-guide': {
+        form: { 'section-notice': { notice1: { message: 'This form holds {{count}} sections.' } } }
+    }
+};
 
 describe('FormStyleGuideComponent', () => {
     let fixture: ComponentFixture<FormStyleGuideComponent>;
@@ -108,6 +116,54 @@ describe('FormStyleGuideComponent', () => {
         expect(document.body.querySelector('[role="listbox"]')?.textContent).toContain(
             'angular-components.form.autocomplete-field.more'
         );
+    });
+
+    it('shows an info and a warning notice across their rows, the first with its parameters', () => {
+        expect(fixture.nativeElement.textContent).toContain('This form holds 12 sections.');
+        expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.section-notice.notice2.message`);
+    });
+
+    it('opens a deletion confirmation whose submit button is a danger, explained by a danger notice', async () => {
+        buttonByName(fixture, `${PREFIX}.danger-modal.open`).click();
+
+        const [config] = TestBed.inject(FakeModalFormService).forms();
+        const [notice] = config.sections[0].rows[0].fields;
+        const handle = new FakeFormHandle();
+
+        expect(config.isSubmitDanger).toBe(true);
+        expect(notice).toBeInstanceOf(BeyFormNoticeField);
+        expect((notice as BeyFormNoticeField).variant).toBe(BeyNoticeVariant.Danger);
+
+        config.onSubmit?.({}, handle);
+        await settle(fixture);
+
+        expect(handle.closes()).toBe(1);
+        expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.danger-modal.submitted`);
+    });
+
+    it('suggests what the server search answers, less the city it leaves out', async () => {
+        controlByName(fixture, `${PREFIX}.section-autocomplete-options.server.label`).dispatchEvent(new Event('focus'));
+        await settle(fixture);
+
+        expect(textsOf(queryAll(document.body, '[role="listbox"] [role="option"]'))).toEqual([
+            'Barcelona',
+            'Bilbao',
+            'Málaga',
+            'Sevilla',
+            'Valencia'
+        ]);
+    });
+
+    it('reports a pick of the field that only picks, which empties itself', async () => {
+        const picker = controlByName(fixture, `${PREFIX}.section-autocomplete-options.picker.label`);
+
+        picker.dispatchEvent(new Event('focus'));
+        await settle(fixture);
+        queryAll(document.body, '[role="listbox"] [role="option"]')[1].dispatchEvent(new MouseEvent('mousedown'));
+        await settle(fixture);
+
+        expect(picker.value).toBe('');
+        expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.section-autocomplete-options.picked`);
     });
 
     it('lists every rule of a password policy under the field that has one', () => {

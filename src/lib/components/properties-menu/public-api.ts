@@ -24,6 +24,10 @@ export type {
     PropertyTreeContentParameters as BeyPropertyTreeContentParameters
 } from './models/property-group-content.model';
 export { PropertyField as BeyPropertyField } from './models/property-field.model';
+export {
+    propertyFieldWithDisabled as beyPropertyFieldWithDisabled,
+    propertyFieldWithValue as beyPropertyFieldWithValue
+} from './functions/property-field-copies';
 export type {
     PropertyFieldActionButton as BeyPropertyFieldActionButton,
     PropertyFieldParameters as BeyPropertyFieldParameters

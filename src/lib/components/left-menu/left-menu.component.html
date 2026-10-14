@@ -1,19 +1,19 @@
-<aside class="bey-left-menu" [class.is-collapsed]="!expanded()">
+<aside class="bey-left-menu" [class.is-collapsed]="!isExpanded()">
     <div class="bey-left-menu-shell">
         <div class="bey-left-menu-header">
-            <div class="bey-left-menu-brand" [class.is-collapsed]="!expanded()">
+            <div class="bey-left-menu-brand" [class.is-collapsed]="!isExpanded()">
                 <div
                     class="bey-left-menu-brand-icon"
                     boundariesElement="viewport"
                     container="body"
-                    [tooltip]="!expanded() ? (titleText() | translate) : ''"
+                    [tooltip]="!isExpanded() ? (titleText() | translate) : ''"
                 >
                     @if (config().title.icon) {
                         <img alt="" aria-hidden="true" [src]="config().title.icon" />
                     }
                 </div>
 
-                @if (expanded()) {
+                @if (isExpanded()) {
                     <div class="bey-left-menu-brand-copy">
                         <div class="bey-left-menu-brand-title">
                             {{ titleText() | translate }}
@@ -27,12 +27,12 @@
                 boundariesElement="viewport"
                 container="body"
                 type="button"
-                [attr.aria-expanded]="expanded()"
+                [attr.aria-expanded]="isExpanded()"
                 [attr.aria-label]="toggleTooltip() | translate"
                 [tooltip]="toggleTooltip() | translate"
                 (click)="toggleExpanded()"
             >
-                <fa-icon [icon]="expanded() ? collapseIcon : expandIcon"></fa-icon>
+                <fa-icon [icon]="isExpanded() ? collapseIcon : expandIcon"></fa-icon>
                 <span class="visually-hidden">{{ toggleTooltip() | translate }}</span>
             </button>
         </div>
@@ -40,7 +40,7 @@
         <div class="bey-left-menu-body">
             @if (topActions().length) {
                 <section class="bey-left-menu-section bey-left-menu-section-primary">
-                    @if (expanded()) {
+                    @if (isExpanded()) {
                         <div class="bey-left-menu-section-title">
                             {{ 'angular-components.left-menu.sections.main' | translate }}
                         </div>
@@ -50,7 +50,7 @@
                         <bey-left-menu-action-list
                             groupKey="top"
                             [actions]="topActions()"
-                            [expanded]="expanded()"
+                            [isExpanded]="isExpanded()"
                             [prefix]="config().prefix"
                         ></bey-left-menu-action-list>
                     </div>
@@ -59,7 +59,7 @@
 
             @if (bottomActions().length) {
                 <section class="bey-left-menu-section bey-left-menu-section-secondary">
-                    @if (expanded()) {
+                    @if (isExpanded()) {
                         <div class="bey-left-menu-section-title">
                             {{ 'angular-components.left-menu.sections.others' | translate }}
                         </div>
@@ -68,7 +68,7 @@
                     <bey-left-menu-action-list
                         groupKey="bottom"
                         [actions]="bottomActions()"
-                        [expanded]="expanded()"
+                        [isExpanded]="isExpanded()"
                         [prefix]="config().prefix"
                     ></bey-left-menu-action-list>
                 </section>
@@ -89,7 +89,7 @@
                             [attr.aria-label]="'angular-components.left-menu.open-account' | translate"
                             [class.is-active]="accountLink.isActive"
                             [routerLink]="userInfo.route"
-                            [tooltip]="!expanded() ? userTooltip() : ''"
+                            [tooltip]="!isExpanded() ? userTooltip() : ''"
                         >
                             <ng-container
                                 [ngTemplateOutlet]="userContent"
@@ -101,7 +101,7 @@
                             class="bey-left-menu-user"
                             boundariesElement="viewport"
                             container="body"
-                            [tooltip]="!expanded() ? userTooltip() : ''"
+                            [tooltip]="!isExpanded() ? userTooltip() : ''"
                         >
                             <ng-container
                                 [ngTemplateOutlet]="userContent"
@@ -124,7 +124,7 @@
         <bey-avatar class="bey-left-menu-user-avatar" [config]="avatar"></bey-avatar>
     }
 
-    @if (expanded()) {
+    @if (isExpanded()) {
         <div class="bey-left-menu-user-copy">
             <div class="bey-left-menu-user-name">{{ userFullName() }}</div>
             <div class="bey-left-menu-user-email">{{ userInfo.email }}</div>

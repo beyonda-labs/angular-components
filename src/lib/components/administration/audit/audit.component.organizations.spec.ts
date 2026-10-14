@@ -1,12 +1,12 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { buttonByName, queryAll, renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryAll, renderComponent, rowWith, settle } from '@testing/dom';
+import { searchOf } from '@testing/page-search';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { SessionUser } from '../../../services/session/models/session.model';
 import { PageOrganization } from '../../page/models/page-organization.model';
-import { PageSearch } from '../../page/models/page-search.model';
 import { AuditComponent } from './audit.component';
 import { AuditConfig, AuditEventRow } from './models/audit.model';
 
@@ -64,16 +64,6 @@ describe('AuditComponent — organizations', () => {
         return request;
     }
 
-    function rowWith(text: string): HTMLElement {
-        const row = queryAll(fixture, '[role="row"]').find(candidate => candidate.textContent?.includes(text));
-
-        if (!row) {
-            throw new Error(`No row with ${text}`);
-        }
-
-        return row;
-    }
-
     function filterSelects(): HTMLSelectElement[] {
         return queryAll<HTMLSelectElement>(queryAll(fixture, '[role="group"]')[0], 'select');
     }
@@ -119,8 +109,8 @@ describe('AuditComponent — organizations', () => {
             ]);
 
             expect(fixture.nativeElement.textContent).toContain(ORGANIZATION_COLUMN);
-            expect(rowWith('Sales').textContent).toContain('Globex');
-            expect(rowWith('Support').textContent).toContain('Acme');
+            expect(rowWith(fixture, 'Sales').textContent).toContain('Globex');
+            expect(rowWith(fixture, 'Support').textContent).toContain('Acme');
         });
 
         it('counts the events without an organization as one more organization', async () => {
@@ -136,7 +126,7 @@ describe('AuditComponent — organizations', () => {
             await render(ORGANIZATIONS, [buildEvent(), buildEvent({ entityName: 'Support', id: 'e2' })]);
 
             expect(fixture.nativeElement.textContent).not.toContain(ORGANIZATION_COLUMN);
-            expect(rowWith('Sales').textContent).not.toContain('Globex');
+            expect(rowWith(fixture, 'Sales').textContent).not.toContain('Globex');
 
             await openFilters();
             await choose(filterSelects()[0], 'organizationId');
@@ -158,7 +148,7 @@ describe('AuditComponent — organizations', () => {
             await choose(filterSelects()[0], 'organizationId');
             await choose(filterSelects()[2], 'o1');
             await click(buttonByName(fixture, 'angular-components.search.apply'));
-            const search = JSON.parse(atob(answerList().request.params.get('search') ?? '')) as PageSearch;
+            const search = searchOf(answerList());
 
             expect(search.filters).toEqual([{ field: 'organizationId', operator: 'equals', value: 'o1' }]);
         });
@@ -186,6 +176,6 @@ describe('AuditComponent — organizations', () => {
 
         httpTesting.expectNone(ORGANIZATIONS_URL);
         expect(fixture.nativeElement.textContent).not.toContain(ORGANIZATION_COLUMN);
-        expect(rowWith('Support').textContent).not.toContain('Acme');
+        expect(rowWith(fixture, 'Support').textContent).not.toContain('Acme');
     });
 });

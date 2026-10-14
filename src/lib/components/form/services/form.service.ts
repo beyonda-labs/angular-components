@@ -1,15 +1,18 @@
 import { inject, Injectable } from '@angular/core';
-import { FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 
+import { matchesAcceptPattern } from '../../../internal/file/accept-pattern';
+import { haveSameOptions } from '../functions/field-options';
 import { holdsListValue } from '../functions/list-value';
 import { passwordPolicyValidator } from '../functions/password-rules';
 import { FormChipsField } from '../models/fields/form-chips-field.model';
 import { FormDateField } from '../models/fields/form-date-field.model';
-import { FormFileField, matchesAcceptPattern } from '../models/fields/form-file-field.model';
+import { FormFileField } from '../models/fields/form-file-field.model';
 import { FormNumberField } from '../models/fields/form-number-field.model';
 import { FormPasswordField } from '../models/fields/form-password-field.model';
 import { FormConfig } from '../models/form.model';
 import { FormField, FormFieldType, FormValue } from '../models/form-field.model';
+import { FormFieldState } from '../models/form-field-state.model';
 import { DateFormatService } from './date-format.service';
 import { FormValidatorService } from './form-validator.service';
 
@@ -60,6 +63,20 @@ export class FormService {
         return formGroup;
     }
 
+    dropUnlistedIds(control: AbstractControl, state: FormFieldState, previous: FormFieldState | undefined): void {
+        const ids: unknown = control.value;
+
+        if (!previous || !Array.isArray(ids) || haveSameOptions(previous.options, state.options)) {
+            return;
+        }
+
+        const listed = ids.filter(id => state.options.some(option => option.value === id));
+
+        if (listed.length !== ids.length) {
+            control.setValue(listed);
+        }
+    }
+
     emptyValue(type: FormFieldType): unknown {
         return EMPTY_VALUES[type];
     }
@@ -81,6 +98,48 @@ export class FormService {
         }
 
         return this.buildControl<unknown>(field, initialValue ?? EMPTY_VALUES[field.type]);
+    }
+
+    syncDisabled(control: AbstractControl, state: Pick<FormFieldState, 'isDisabled' | 'isHidden'>): void {
+        const shouldDisable = state.isDisabled || state.isHidden;
+
+        if (control.disabled === shouldDisable) {
+            return;
+        }
+
+        if (shouldDisable) {
+            control.disable();
+        } else {
+            control.enable();
+        }
+    }
+
+    syncRequired(control: AbstractControl, isRequired: boolean): void {
+        if (control.hasValidator(Validators.required) === isRequired) {
+            return;
+        }
+
+        if (isRequired) {
+            control.addValidators(Validators.required);
+        } else {
+            control.removeValidators(Validators.required);
+        }
+
+        control.updateValueAndValidity();
+    }
+
+    syncValidatorErrors(
+        control: AbstractControl,
+        errors: ValidationErrors | null,
+        previous: ValidationErrors | null
+    ): void {
+        const current = Object.keys(errors ?? {});
+        const cleared = Object.keys(previous ?? {}).filter(key => !current.includes(key));
+        const isApplied = current.every(key => control.hasError(key)) && cleared.every(key => !control.hasError(key));
+
+        if (control.enabled && !isApplied) {
+            control.updateValueAndValidity();
+        }
     }
 
     private buildControl<T>(field: FormField, value: T): FormControl<T> {

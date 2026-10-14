@@ -10,10 +10,13 @@ import { FormTextField } from '../../../form/models/fields/form-text-field.model
 import { FormRow, FormSection } from '../../../form/models/form.model';
 import { FormFieldOption } from '../../../form/models/form-field.model';
 import { FormFieldLengthValidator, FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
-import { PageFormConfig } from '../../../page/models/page-form.model';
-import { PageOrganization } from '../../../page/models/page-organization.model';
-import { buildDisabledOrganizationField, initialOrganizationId } from '../../functions/organization-fields';
-import { userContactLabel } from '../../functions/user-names';
+import { PAGE_FORM_CANCEL_LABEL, PAGE_FORM_SUBMIT_LABEL, PageFormConfig } from '../../../page/models/page-form.model';
+import {
+    buildDisabledOrganizationField,
+    initialOrganizationId,
+    toOrganizationOptions
+} from '../../functions/organization-fields';
+import { userContactLabel, userContactOption } from '../../functions/user-names';
 import {
     GROUP_NAME_MAX_LENGTH,
     GroupEditFormValue,
@@ -21,7 +24,6 @@ import {
     GroupExtraRole,
     GroupFields,
     GroupFormValue,
-    GroupMember,
     GroupRow,
     GROUPS_EXTRA_ROLES_FIELD,
     GROUPS_FORM_SECTION,
@@ -30,9 +32,6 @@ import {
     GroupsFormOptions,
     GroupViewOptions
 } from '../models/groups.model';
-
-const CANCEL_LABEL_KEY = 'angular-components.page.form.cancel';
-const SUBMIT_LABEL_KEY = 'angular-components.page.form.submit';
 
 @Injectable({
     providedIn: 'root'
@@ -48,7 +47,7 @@ export class GroupsFormService {
         const organizationField = isOrganizationShown ? buildDisabledOrganizationField(detail) : null;
 
         return new ModalFormConfig<GroupEditFormValue>({
-            cancelLabel: CANCEL_LABEL_KEY,
+            cancelLabel: PAGE_FORM_CANCEL_LABEL,
             initialValue: {
                 [GROUPS_FORM_SECTION]: {
                     extraRoleIds: detail.extraRoles.map(({ id }) => id),
@@ -71,10 +70,10 @@ export class GroupsFormService {
                                     emptyKey: `${prefix}.form.main.user-ids.empty`,
                                     isRemovable: true,
                                     key: 'userIds',
-                                    options: detail.members.map(toMemberOption),
+                                    options: detail.members.map(userContactOption),
                                     picker: {
                                         search: (text, chosenIds) =>
-                                            searchUnchosen(searchMembers, text, chosenIds, toMemberOption)
+                                            searchUnchosen(searchMembers, text, chosenIds, userContactOption)
                                     }
                                 })
                             ]
@@ -97,7 +96,7 @@ export class GroupsFormService {
                 })
             ],
             size: ModalFormSize.Medium,
-            submitLabel: SUBMIT_LABEL_KEY,
+            submitLabel: PAGE_FORM_SUBMIT_LABEL,
             title: `${prefix}.form.edit.title`
         });
     }
@@ -223,12 +222,4 @@ function toExtraRoleOption({ id, name }: GroupExtraRole): FormFieldOption {
 
 function toGroupRequest({ name, organizationId }: GroupFields): GroupFields {
     return { name: name.trim(), ...(organizationId ? { organizationId } : {}) };
-}
-
-function toMemberOption({ email, id, name }: GroupMember): FormFieldOption {
-    return { label: name && name !== email ? `${name} (${email})` : email, value: id };
-}
-
-function toOrganizationOptions(organizations: PageOrganization[]): FormFieldOption[] {
-    return organizations.map(({ id, name }) => ({ label: name, value: id }));
 }

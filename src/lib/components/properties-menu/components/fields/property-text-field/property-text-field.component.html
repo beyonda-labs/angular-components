@@ -2,17 +2,17 @@
 
 <div class="bey-property-field-control">
     <div #pickerAnchor class="bey-property-field-anchor">
-        @if (current.multiline) {
+        @if (current.isMultiline) {
             <textarea
                 class="bey-property-field-input"
                 rows="3"
                 [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
-                [class.bey-property-field-input--with-actions]="current.acceptsVariable && current.actionButton"
-                [disabled]="current.disabled"
+                [class.bey-property-field-input--with-actions]="current.canAcceptVariable && current.actionButton"
+                [disabled]="current.isDisabled"
                 [id]="labelling().controlId"
                 [placeholder]="current.placeholder"
-                [readonly]="current.readonly"
-                [required]="current.required"
+                [readonly]="current.isReadonly"
+                [required]="current.isRequired"
                 [value]="current.value ?? ''"
                 (blur)="trackSelection($event)"
                 (input)="onInput($event)"
@@ -25,11 +25,11 @@
                 class="bey-property-field-input"
                 type="text"
                 [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
-                [disabled]="current.disabled"
+                [disabled]="current.isDisabled"
                 [id]="labelling().controlId"
                 [placeholder]="current.placeholder"
-                [readOnly]="current.readonly"
-                [required]="current.required"
+                [readOnly]="current.isReadonly"
+                [required]="current.isRequired"
                 [value]="current.value ?? ''"
                 (blur)="trackSelection($event)"
                 (input)="onInput($event)"
@@ -51,7 +51,7 @@
 
     @if (showsActions()) {
         <div class="bey-property-field-actions">
-            @if (current.acceptsVariable) {
+            @if (current.canAcceptVariable) {
                 <button
                     class="bey-property-field-action"
                     container="body"
@@ -59,7 +59,7 @@
                     [attr.aria-expanded]="pickerOpen()"
                     [attr.aria-label]="insertLabel | translate"
                     [class.is-active]="pickerOpen()"
-                    [disabled]="current.disabled"
+                    [disabled]="current.isDisabled"
                     [tooltip]="insertLabel | translate"
                     (click)="togglePicker()"
                 >
@@ -73,7 +73,7 @@
                     container="body"
                     type="button"
                     [attr.aria-label]="actionButtonTooltipKey() | translate"
-                    [disabled]="current.disabled"
+                    [disabled]="current.isDisabled"
                     [tooltip]="actionButtonTooltipKey() | translate"
                     (click)="onActionButtonClick()"
                 >

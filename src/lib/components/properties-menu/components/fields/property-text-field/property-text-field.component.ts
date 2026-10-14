@@ -41,7 +41,7 @@ export class PropertyTextFieldComponent {
     );
     readonly insertLabel = 'angular-components.properties-menu.text-field.insert-variable';
     readonly pickerOpen = signal(false);
-    readonly showsActions = computed(() => this.field().acceptsVariable || Boolean(this.field().actionButton));
+    readonly showsActions = computed(() => this.field().canAcceptVariable || Boolean(this.field().actionButton));
     readonly variableIcon = PROPERTY_VARIABLE_ICON;
     readonly variableOptions = computed(() => toVariableOptions(this.propertiesMenuService.variables()));
 

@@ -37,8 +37,8 @@ export class OptionPickerComponent {
     private readonly renderer = inject(Renderer2);
 
     readonly anchor = input.required<HTMLElement>();
+    readonly isSearchable = input(true);
     readonly options = input.required<OptionPickerOption[]>();
-    readonly searchable = input(true);
 
     readonly closed = output<void>();
     readonly selected = output<OptionPickerOption>();

@@ -13,6 +13,7 @@ export interface PageSearch {
     page: number;
     size: number;
 
+    categoryTotal?: number;
     sort?: SearchSort;
     text?: string;
     total?: number;

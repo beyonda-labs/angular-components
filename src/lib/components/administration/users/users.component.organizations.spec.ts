@@ -1,17 +1,18 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { buttonByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryAll, queryButton, renderComponent, rowWith, settle } from '@testing/dom';
+import { fieldsOf } from '@testing/form-fields';
+import { FakeFormHandle } from '@testing/handles/fake-form-handle';
+import { searchOf } from '@testing/page-search';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 
 import { SessionUser } from '../../../services/session/models/session.model';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
-import { FormHandle } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
 import { PageItemType } from '../../page/models/page-categories.model';
 import { PageOrganization } from '../../page/models/page-organization.model';
-import { PageSearch } from '../../page/models/page-search.model';
 import { OrganizationFolder } from '../models/organization-folders.model';
 import { UserEditableField, UserRow, UsersConfig, UserStatus } from './models/users.model';
 import { UsersComponent } from './users.component';
@@ -65,18 +66,6 @@ describe('UsersComponent — organizations', () => {
         });
     }
 
-    function buildHandle(): FormHandle<unknown> {
-        return {
-            close: jest.fn(),
-            goToStep: jest.fn(),
-            isDirty: jest.fn(() => true),
-            patchValue: jest.fn(),
-            requestClose: jest.fn(),
-            reset: jest.fn(),
-            value: jest.fn()
-        };
-    }
-
     async function configure(roles: string[], organizationId?: string): Promise<void> {
         const user: SessionUser = {
             allowedPaths: ['/users'],
@@ -128,22 +117,8 @@ describe('UsersComponent — organizations', () => {
         return queryAll(fixture, 'nav[aria-label="angular-components.breadcrumb.label"]')[0]?.textContent ?? '';
     }
 
-    function fieldsOf(form: ModalFormConfig | undefined): FormField[] {
-        return form?.sections.flatMap(section => section.rows.flatMap(row => row.fields)) ?? [];
-    }
-
     function filterSelects(): HTMLSelectElement[] {
         return queryAll<HTMLSelectElement>(queryAll(fixture, '[role="group"]')[0], 'select');
-    }
-
-    function rowWith(text: string): HTMLElement {
-        const row = queryAll(fixture, '[role="row"]').find(candidate => candidate.textContent?.includes(text));
-
-        if (!row) {
-            throw new Error(`No row with ${text}`);
-        }
-
-        return row;
     }
 
     async function choose(select: HTMLSelectElement, value: string): Promise<void> {
@@ -171,7 +146,7 @@ describe('UsersComponent — organizations', () => {
 
     async function invite(main: Record<string, unknown>): Promise<TestRequest> {
         await click(buttonByName(fixture, `${PREFIX}.actions.create.label`));
-        TestBed.inject(FakeModalFormService).forms().at(-1)?.onSubmit?.({ main }, buildHandle());
+        TestBed.inject(FakeModalFormService).forms().at(-1)?.onSubmit?.({ main }, new FakeFormHandle());
 
         return httpTesting.expectOne(current => current.url === USERS_URL && current.method === 'POST');
     }
@@ -223,9 +198,9 @@ describe('UsersComponent — organizations', () => {
             ]);
 
             expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.organization`);
-            expect(rowWith('ada@example.test').textContent).toContain('Globex');
-            expect(rowWith('root@example.test').textContent).toContain(`${PREFIX}.table.system`);
-            expect(rowWith('initech@example.test').textContent).toContain('Initech');
+            expect(rowWith(fixture, 'ada@example.test').textContent).toContain('Globex');
+            expect(rowWith(fixture, 'root@example.test').textContent).toContain(`${PREFIX}.table.system`);
+            expect(rowWith(fixture, 'initech@example.test').textContent).toContain('Initech');
         });
 
         it('filters the users by the organization chosen, with equals', async () => {
@@ -234,7 +209,7 @@ describe('UsersComponent — organizations', () => {
             await choose(filterSelects()[0], 'organizationId');
             await choose(filterSelects()[2], 'o1');
             await click(buttonByName(fixture, 'angular-components.search.apply'));
-            const search = JSON.parse(atob(answerList().request.params.get('search') ?? '')) as PageSearch;
+            const search = searchOf(answerList());
 
             expect(search.filters).toEqual([{ field: 'organizationId', operator: 'equals', value: 'o1' }]);
         });
@@ -274,7 +249,7 @@ describe('UsersComponent — organizations', () => {
             expect(rootRequest.request.params.get('parentId')).toBe('null');
             expect(buttonByName(fixture, 'Acme')).toBeTruthy();
             expect(buttonByName(fixture, 'Globex')).toBeTruthy();
-            expect(rowWith('root@example.test').textContent).not.toContain(`${PREFIX}.table.system`);
+            expect(rowWith(fixture, 'root@example.test').textContent).not.toContain(`${PREFIX}.table.system`);
             expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.table.columns.organization`);
             expect(breadcrumb()).toContain(`${PREFIX}.categories.root`);
         });
@@ -283,7 +258,7 @@ describe('UsersComponent — organizations', () => {
             const request = await openAcme();
 
             expect(request.request.params.get('parentId')).toBe('o1');
-            expect(rowWith('ada@example.test').textContent).not.toContain('Acme');
+            expect(rowWith(fixture, 'ada@example.test').textContent).not.toContain('Acme');
             expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.table.columns.organization`);
             expect(breadcrumb()).toContain('Acme');
         });
@@ -293,14 +268,16 @@ describe('UsersComponent — organizations', () => {
             const request = await searchFor('ada', [buildUser({ organizationId: 'o1', organizationName: 'Acme' })]);
 
             expect(request.request.params.get('parentId')).toBe('o1');
-            expect(rowWith('ada@example.test').textContent).not.toContain('Acme');
+            expect(rowWith(fixture, 'ada@example.test').textContent).not.toContain('Acme');
             expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.table.columns.organization`);
         });
 
         it('offers nothing to do on a folder', async () => {
-            await click(rowWith('Acme'));
+            await click(rowWith(fixture, 'Acme'));
 
-            expect(queryAll<HTMLInputElement>(rowWith('Acme'), 'input[type="checkbox"]')[0].checked).toBe(true);
+            expect(queryAll<HTMLInputElement>(rowWith(fixture, 'Acme'), 'input[type="checkbox"]')[0].checked).toBe(
+                true
+            );
             expect(queryButton(fixture, `${PREFIX}.actions.edit.label`)).toBeNull();
             expect(queryButton(fixture, 'angular-components.header.menu')).toBeNull();
         });
@@ -333,12 +310,12 @@ describe('UsersComponent — organizations', () => {
                 buildUser({ email: 'grace@example.test', id: 'u2' })
             ]);
             await settle(fixture);
-            const search = JSON.parse(atob(request.request.params.get('search') ?? '')) as PageSearch;
+            const search = searchOf(request);
 
             expect(request.request.params.get('parentId')).toBe('null');
             expect(search.filters).toEqual([{ field: 'status', operator: 'equals', value: 'active' }]);
-            expect(rowWith('ada@example.test').textContent).toContain('Acme');
-            expect(rowWith('grace@example.test').textContent).toContain('Globex');
+            expect(rowWith(fixture, 'ada@example.test').textContent).toContain('Acme');
+            expect(rowWith(fixture, 'grace@example.test').textContent).toContain('Globex');
         });
     });
 
@@ -365,7 +342,7 @@ describe('UsersComponent — organizations', () => {
         const form = lastForm();
         form?.onSubmit?.(
             { main: { name: 'Renamed', roles: ['superadmin'], status: 'inactive', surname: '' } },
-            buildHandle()
+            new FakeFormHandle()
         );
         const request = httpTesting.expectOne(`${USERS_URL}/root-2`);
         request.flush(buildSuperadmin({ id: 'root-2', status: UserStatus.Inactive }));
@@ -393,7 +370,7 @@ describe('UsersComponent — organizations', () => {
             await searchFor('example', [buildUser(), buildSuperadmin()]);
 
             expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.organization`);
-            expect(rowWith('root@example.test').textContent).toContain(`${PREFIX}.table.system`);
+            expect(rowWith(fixture, 'root@example.test').textContent).toContain(`${PREFIX}.table.system`);
         });
 
         it('still asks for the organization when inviting, chosen already, and sends it', async () => {
@@ -420,7 +397,7 @@ describe('UsersComponent — organizations', () => {
         await configure(['superadmin']);
         await render([], [buildSuperadmin()], []);
 
-        expect(rowWith('root@example.test')).toBeTruthy();
+        expect(rowWith(fixture, 'root@example.test')).toBeTruthy();
         expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.table.columns.organization`);
         expect(queryButton(fixture, `${PREFIX}.actions.create.label`)).toBeNull();
     });

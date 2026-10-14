@@ -13,8 +13,9 @@ import { FormListField } from '../../../form/models/fields/form-list-field.model
 import { FormNoticeField } from '../../../form/models/fields/form-notice-field.model';
 import { FormFooter, FormRow, FormSection } from '../../../form/models/form.model';
 import { NoticeVariant } from '../../../notice/models/notice.model';
+import { PAGE_FORM_CANCEL_LABEL } from '../../../page/models/page-form.model';
 import { contentCountLines, sumContentCounts } from '../../functions/content-counts';
-import { userContactLabel, userDisplayName } from '../../functions/user-names';
+import { userContactOption, userDisplayName } from '../../functions/user-names';
 import { ContentTranslate } from '../../models/content-counts.model';
 import { usedByOthersLines } from '../functions/user-content';
 import {
@@ -28,7 +29,6 @@ import {
     UserTransferTarget
 } from '../models/users.model';
 
-const CANCEL_LABEL_KEY = 'angular-components.page.form.cancel';
 const SEVERAL = 'other';
 const SINGLE = 'one';
 
@@ -46,8 +46,8 @@ export class UserContentFormService {
         const parameters = { count: users.length, name: users.length === 1 ? userDisplayName(users[0]) : '' };
 
         return new ModalFormConfig({
-            allowSubmitWithoutChanges: true,
-            cancelLabel: CANCEL_LABEL_KEY,
+            canSubmitWithoutChanges: true,
+            cancelLabel: PAGE_FORM_CANCEL_LABEL,
             isSubmitDanger: true,
             prefix: `${prefix}.delete`,
             sections: [
@@ -107,7 +107,7 @@ export class UserContentFormService {
         const name = userDisplayName(user);
 
         return new ModalFormConfig<UserTransferFormValue>({
-            cancelLabel: CANCEL_LABEL_KEY,
+            cancelLabel: PAGE_FORM_CANCEL_LABEL,
             footer: new FormFooter({ note: translate(`${prefix}.transfer.note`, { name }) }),
             initialValue: { [USERS_FORM_SECTION]: { targetUserId: '' } },
             prefix: `${prefix}.transfer`,
@@ -172,7 +172,7 @@ function searchTargetOptions(
     return searchTargets(text, USERS_TRANSFER_TARGETS_LIMIT).pipe(
         map(targets => ({
             hasMore: targets.length >= USERS_TRANSFER_TARGETS_LIMIT,
-            options: targets.map(target => ({ label: userContactLabel(target), value: target.id }))
+            options: targets.map(userContactOption)
         }))
     );
 }

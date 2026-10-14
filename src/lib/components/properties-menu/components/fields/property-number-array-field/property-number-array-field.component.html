@@ -19,7 +19,7 @@
                 [attr.max]="current.max"
                 [attr.min]="current.min"
                 [attr.step]="current.step ?? 'any'"
-                [disabled]="current.disabled"
+                [disabled]="current.isDisabled"
                 [value]="entry"
                 (input)="onEntryChange($index, $event)"
             />
@@ -32,7 +32,7 @@
                         'angular-components.properties-menu.number-array-field.remove-entry'
                             | translate: { label: label, position: $index + 1 }
                     "
-                    [disabled]="current.disabled"
+                    [disabled]="current.isDisabled"
                     (click)="onRemove($index)"
                 >
                     <fa-icon [icon]="removeIcon"></fa-icon>
@@ -45,7 +45,7 @@
         <button
             class="bey-property-field-action bey-property-number-array-field-add"
             type="button"
-            [disabled]="current.disabled"
+            [disabled]="current.isDisabled"
             (click)="onAdd()"
         >
             <fa-icon [icon]="addIcon"></fa-icon>

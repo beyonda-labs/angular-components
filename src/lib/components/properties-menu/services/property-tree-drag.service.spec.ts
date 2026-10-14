@@ -17,7 +17,7 @@ describe('PropertyTreeDragService', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({ providers: [PropertiesMenuService, PropertyTreeDragService] });
         service = TestBed.inject(PropertyTreeDragService);
-        node = new PropertyTreeNode({ draggable: true, id: 'image' });
+        node = new PropertyTreeNode({ isDraggable: true, id: 'image' });
     });
 
     it('reports the drag as active once started', () => {
@@ -43,7 +43,7 @@ describe('PropertyTreeDragService', () => {
 
         configure({ onTreeDrop: event => drops.push(event) });
         service.start('structure', 'tree', node);
-        service.setDropTarget({ nodeId: 'list', position: 'inside', valid: true });
+        service.setDropTarget({ nodeId: 'list', position: 'inside', isValid: true });
         service.drop('structure', 'tree');
 
         expect(drops).toEqual([
@@ -56,7 +56,7 @@ describe('PropertyTreeDragService', () => {
 
         configure({ onTreeDrop });
         service.start('structure', 'tree', node);
-        service.setDropTarget({ nodeId: 'list', position: 'inside', valid: false });
+        service.setDropTarget({ nodeId: 'list', position: 'inside', isValid: false });
         service.drop('structure', 'tree');
 
         expect(onTreeDrop).not.toHaveBeenCalled();
@@ -84,7 +84,7 @@ describe('PropertyTreeDragService', () => {
 
     it('exposes the drop position for the valid target row only', () => {
         service.start('structure', 'tree', node);
-        service.setDropTarget({ nodeId: 'list', position: 'after', valid: true });
+        service.setDropTarget({ nodeId: 'list', position: 'after', isValid: true });
 
         expect(service.dropPositionFor('list')).toBe('after');
         expect(service.dropPositionFor('other')).toBeNull();
@@ -93,7 +93,7 @@ describe('PropertyTreeDragService', () => {
 
     it('exposes the invalid target row', () => {
         service.start('structure', 'tree', node);
-        service.setDropTarget({ nodeId: 'list', position: 'inside', valid: false });
+        service.setDropTarget({ nodeId: 'list', position: 'inside', isValid: false });
 
         expect(service.dropPositionFor('list')).toBeNull();
         expect(service.isInvalidTarget('list')).toBe(true);

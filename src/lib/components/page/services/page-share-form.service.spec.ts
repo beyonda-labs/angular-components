@@ -219,6 +219,6 @@ describe('PageShareFormService', () => {
     });
 
     it('needs a change in the lists before it can be saved', () => {
-        expect(build({ shares: [OPS_VIEWS] }).allowSubmitWithoutChanges).toBe(false);
+        expect(build({ shares: [OPS_VIEWS] }).canSubmitWithoutChanges).toBe(false);
     });
 });

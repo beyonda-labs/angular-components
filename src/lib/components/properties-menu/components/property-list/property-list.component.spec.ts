@@ -65,7 +65,7 @@ describe('PropertyListComponent', () => {
             groupId: 'simple-blocks',
             items: [
                 new PropertyListItem({ id: 'block-heading', label: 'Encabezado' }),
-                new PropertyListItem({ disabled: true, id: 'block-locked', label: 'Bloqueado' })
+                new PropertyListItem({ isDisabled: true, id: 'block-locked', label: 'Bloqueado' })
             ]
         });
     });
@@ -167,7 +167,7 @@ describe('PropertyListComponent with expandable items', () => {
 
         expect(fixture.nativeElement.textContent).not.toContain('Valor por defecto');
 
-        setUp([buildItem({ expanded: true })]);
+        setUp([buildItem({ isExpanded: true })]);
 
         expect(fixture.nativeElement.textContent).toContain('Valor por defecto');
         expect(rowField(fixture, 'Valor').value).toBe('x');
@@ -186,7 +186,7 @@ describe('PropertyListComponent with expandable items', () => {
     });
 
     it('does not collapse the card when a field in its body is clicked', () => {
-        setUp([buildItem({ expanded: true })]);
+        setUp([buildItem({ isExpanded: true })]);
 
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
         rowField(fixture, 'Valor').click();
@@ -195,7 +195,7 @@ describe('PropertyListComponent with expandable items', () => {
     });
 
     it('does not collapse the card when the body itself is clicked', () => {
-        setUp([buildItem({ expanded: true })]);
+        setUp([buildItem({ isExpanded: true })]);
 
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
 
@@ -229,7 +229,7 @@ describe('PropertyListComponent with expandable items', () => {
     });
 
     it('renders a remove button only on removable items and does not toggle when it is used', () => {
-        setUp([buildItem({ removable: true })]);
+        setUp([buildItem({ isRemovable: true })]);
 
         const removeSpy = jest.spyOn(propertiesMenuService, 'removeListItem');
         const toggleSpy = jest.spyOn(propertiesMenuService, 'toggleListItem');
@@ -246,7 +246,7 @@ describe('PropertyListComponent with expandable items', () => {
     });
 
     it('renders a real field for an editable row and a dash for an empty one', () => {
-        setUp([buildItem({ expanded: true })]);
+        setUp([buildItem({ isExpanded: true })]);
 
         expect(rowField(fixture, 'Valor').value).toBe('x');
         expect(fixture.nativeElement.textContent).toContain('—');
@@ -275,7 +275,7 @@ describe('PropertyListComponent body labels', () => {
         fixture.componentRef.setInput('items', [
             new PropertyListItem({
                 id: 'v1',
-                expanded: true,
+                isExpanded: true,
                 body: [
                     new PropertySummaryRow({
                         label: 'Valor',

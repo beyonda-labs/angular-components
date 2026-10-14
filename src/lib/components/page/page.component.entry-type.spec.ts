@@ -1,6 +1,6 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { buttonByName, queryAll, renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryAll, renderComponent, rowWith, settle } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { TableColumn } from '../table/models/table.model';
@@ -72,18 +72,14 @@ describe('PageComponent — an entry type field of its own', () => {
             .flush({ globalActions: [], results, search: { filters: [], page: 1, size: 25, total: results.length } });
     }
 
-    function rowOf(name: string): HTMLElement | undefined {
-        return queryAll(fixture, '[role="row"]').find(row => row.textContent?.includes(name));
-    }
-
     function dispatchOnRow(name: string, type: string): void {
-        rowOf(name)?.dispatchEvent(new Event(type, { bubbles: true, cancelable: true }));
+        rowWith(fixture, name).dispatchEvent(new Event(type, { bubbles: true, cancelable: true }));
     }
 
     async function select(...names: string[]): Promise<void> {
         for (const name of names) {
             queryAll<HTMLInputElement>(
-                rowOf(name) as HTMLElement,
+                rowWith(fixture, name),
                 '[aria-label="angular-components.table.select-row"]'
             )[0].click();
         }
@@ -110,7 +106,7 @@ describe('PageComponent — an entry type field of its own', () => {
     it('tells the folders apart by the entry type field, and leaves the type field to the rows', () => {
         buttonByName(fixture, 'Shared').click();
 
-        expect(rowOf('Customer')?.textContent).toContain('string');
+        expect(rowWith(fixture, 'Customer').textContent).toContain('string');
         expect(httpTesting.expectOne(`${LIST_URL}/categories/f1/path`).request.method).toBe('GET');
     });
 

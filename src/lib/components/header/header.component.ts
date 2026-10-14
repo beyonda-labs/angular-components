@@ -100,7 +100,7 @@ export class HeaderComponent {
             ariaLabel: isIconOnly ? label : undefined,
             customClass: isIconOnly ? 'bey-header-action-icon' : undefined,
             icon: action.icon,
-            isDisabled: action.disabled,
+            isDisabled: action.isDisabled,
             label: isIconOnly ? '' : label,
             tooltip: this.resolveActionText(action, 'tooltip'),
             tooltipPlacement: options.tooltipPlacement,

@@ -3,15 +3,15 @@ import { PropertyFieldType } from '../property-field-type.model';
 import { PropertySpacingValue } from '../property-value.model';
 
 export class PropertySpacingField extends PropertyField<PropertySpacingValue> {
-    readonly: boolean;
+    isReadonly: boolean;
 
-    constructor({ readonly = false, ...base }: PropertySpacingFieldParameters) {
+    constructor({ isReadonly = false, ...base }: PropertySpacingFieldParameters) {
         super({ ...base, type: PropertyFieldType.Spacing });
 
-        this.readonly = readonly;
+        this.isReadonly = isReadonly;
     }
 }
 
 export interface PropertySpacingFieldParameters extends Omit<PropertyFieldParameters<PropertySpacingValue>, 'type'> {
-    readonly?: boolean;
+    isReadonly?: boolean;
 }

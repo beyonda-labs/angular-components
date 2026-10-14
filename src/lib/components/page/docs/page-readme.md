@@ -46,19 +46,19 @@ readonly config = new BeyPageConfig<UserFormValue, User>({
 
 ## BeyPageConfig
 
-| Field               | Required | Meaning                                                                                                                                                                                                                                      |
-| ------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `prefix`            | yes      | i18n prefix every text of the page resolves from                                                                                                                                                                                             |
-| `baseUrl`           | no       | Path of the resource, resolved against the environment's `baseUrl` and `webApiPath`; without it nothing is loaded                                                                                                                            |
-| `headerConfig`      | no       | `title` and the `actions` catalogue                                                                                                                                                                                                          |
-| `tableConfig`       | no       | Columns, `loadRow`, `height` (`60vh`), `order`, `search`, `allowSelection` and `showPagination` (both `true`), `categoriesConfig`, `isTrashEnabled` and `isSharedEnabled` (both `false`), `isColumnShown`, `onSelectionChange`, `storageKey` |
-| `formConfig`        | no       | How the create and edit modal forms are built, see below                                                                                                                                                                                     |
-| `statusConfig`      | no       | `BeyPageStatusConfig`: the status field (`field`, `status` by default) and its `transitions`, for `change-status`                                                                                                                            |
-| `duplicationConfig` | no       | `BeyPageDuplicationConfig`: the field that names a row (`nameField`, `name` by default), the validators of the name of a copy (`nameValidators`) and what joins the copy suffix to it (`copySeparator`, a space by default), for `duplicate` |
-| `onDataLoaded`      | no       | Run with the backend response after every load                                                                                                                                                                                               |
-| `onReady`           | no       | Run with the page handle once the page exists                                                                                                                                                                                                |
-| `views`             | no       | `BeyPageView`s shown as tabs after the main one, see [Views](#views)                                                                                                                                                                         |
-| `usagesConfig`      | no       | `BeyPageUsagesConfig`: warns before deleting a row other rows use, see [Usages](#usages)                                                                                                                                                     |
+| Field               | Required | Meaning                                                                                                                                                                                                                                                         |
+| ------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `prefix`            | yes      | i18n prefix every text of the page resolves from                                                                                                                                                                                                                |
+| `baseUrl`           | no       | Path of the resource, resolved against the environment's `baseUrl` and `webApiPath`; without it nothing is loaded                                                                                                                                               |
+| `headerConfig`      | no       | `title` and the `actions` catalogue                                                                                                                                                                                                                             |
+| `tableConfig`       | no       | Columns, `loadRow`, `height` (none, see [Height](#height)), `order`, `search`, `canSelect` and `isPaginationShown` (both `true`), `categoriesConfig`, `isTrashEnabled` and `isSharedEnabled` (both `false`), `isColumnShown`, `onSelectionChange`, `storageKey` |
+| `formConfig`        | no       | How the create and edit modal forms are built, see below                                                                                                                                                                                                        |
+| `statusConfig`      | no       | `BeyPageStatusConfig`: the status field (`field`, `status` by default) and its `transitions`, for `change-status`                                                                                                                                               |
+| `duplicationConfig` | no       | `BeyPageDuplicationConfig`: the field that names a row (`nameField`, `name` by default), the validators of the name of a copy (`nameValidators`) and what joins the copy suffix to it (`copySeparator`, a space by default), for `duplicate`                    |
+| `onDataLoaded`      | no       | Run with the backend response after every load                                                                                                                                                                                                                  |
+| `onReady`           | no       | Run with the page handle once the page exists                                                                                                                                                                                                                   |
+| `views`             | no       | `BeyPageView`s shown as tabs after the main one, see [Views](#views)                                                                                                                                                                                            |
+| `usagesConfig`      | no       | `BeyPageUsagesConfig`: warns before deleting a row other rows use, see [Usages](#usages)                                                                                                                                                                        |
 
 The config is never written to. What the consumer needs to do to the live page goes through the
 `BeyPageHandle` that `onReady` delivers: `refresh()` reloads the current page, `openCategory(category)` drills
@@ -68,11 +68,22 @@ as the page sends it (the filters of the [view](#views) first and the [`textFiel
 `BeyModalFormConfig` for an action of the page: its submit sends `submit(value)`, and the modal closes and the page
 reloads once that request answers, or stays open when it fails. The config's own `onSubmit` is replaced.
 
+## Height
+
+The page fills the height of its container, `height: 100%`: inside `bey-app-layout`, the content area between the
+breadcrumb bar and the footer, where it should be the only content. The header, the toolbar, the breadcrumb of the
+folders and the pagination take their natural height, and the table takes the rest, scrolling its rows inside under a
+header that stays in place. A window too short to leave the table and its pagination `15rem` scrolls the content area
+instead. In a container of no set height the page grows with its rows.
+
+`tableConfig.height`, any CSS length, overrides it: the table keeps that height and the pagination follows it, as in
+a demo or a page that shares the area with other content.
+
 ## Row types
 
 `BeyPageConfig<TValue, TItem, TCategory, TCategoryValue>` is generic over the form value, the rows, the
 category rows and the categories form value. Every callback that sees a row or a form value sees its type:
-`loadRow`, `onSelectionChange`, the action `handler` and `confirmation`, `buildSections`, `toFormValue`, `toItem`,
+`loadRow`, `onSelectionChange`, the `action` and `confirmation` of an action, `buildSections`, `toFormValue`, `toItem`,
 `afterCreate`, `confirmSave`, `onDataLoaded` and the handle, so a typed page needs no cast. `TItem` and
 `TCategory` extend `BeyPageItem`, `TCategory` defaults to `TItem`, the rows default to `BeyPageItem` and both form
 values to `unknown`. The rows are typed, not checked: the page trusts the backend to answer with them. A nested config
@@ -86,7 +97,7 @@ infer it from that form, to `BeyPageConfig<UserFormValue, User, Folder, FolderFo
 
 | Operation     | Request                                                                                                                                       |
 | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| List          | `GET {baseUrl}?search=<base64 json>` when `tableConfig.search` is set, plain `GET` otherwise                                                  |
+| List          | `GET {baseUrl}?search=<base64 json>` when `tableConfig.search` is set, plain `GET` otherwise; a view may list elsewhere, see [Views](#views)  |
 | Create        | `POST {baseUrl}` with the form value mapped through `toItem`, plus with categories the `parentField` of the open category, `null` at the root |
 | Edit          | `PUT {baseUrl}/{id}`                                                                                                                          |
 | Delete        | `DELETE {baseUrl}` with `{ ids }`                                                                                                             |
@@ -98,8 +109,10 @@ infer it from that form, to `BeyPageConfig<UserFormValue, User, Folder, FolderFo
 
 The list answers with `{ globalActions, results, search? }`: `globalActions` names the global actions the
 user may see, each result may carry its own `actions`, and `search.total` feeds the paginator and the count of the
-breadcrumb, so it counts every row the list shows across its pages, categories included. The `search` query is
-`{ filters, page, size, sort?, text? }`, with the filters of the search module.
+breadcrumb, so it counts every row the list shows across its pages, categories included. With categories,
+`search.categoryTotal` says how many of those `total` rows are categories, so the count tells folders from items; an
+answer without it counts every row as an item. A category row may carry `isShared: true`, see [Sharing](#sharing). The
+`search` query is `{ filters, page, size, sort?, text? }`, with the filters of the search module.
 
 With `categoriesConfig` the resource also serves, under `{baseUrl}`: `/categories/{id}/path`,
 `/categories/tree` (`?ownerId=` narrows it to one owner, see [Owners](#owners)), `POST /categories`,
@@ -113,9 +126,9 @@ replaces a newer list.
 ## Header actions
 
 An action has a `key`, a `scope`, a `zone` and optionally an `icon`, a `label`, a `tooltip`, a `type` (text in
-`Left` and `Menu`, a secondary button in `Right` by default), a `handler`, a `confirmation` and `subActions`.
+`Left` and `Menu`, a secondary button in `Right` by default), an `action`, a `confirmation` and `subActions`.
 
-| Scope    | Shown when                                                                  | `handler` receives           |
+| Scope    | Shown when                                                                  | `action` receives            |
 | -------- | --------------------------------------------------------------------------- | ---------------------------- |
 | `Global` | The backend listed its key in `globalActions`                               | `[]`                         |
 | `Group`  | Any of its `subActions` is shown; the group itself is never checked         | `[]`                         |
@@ -124,12 +137,12 @@ An action has a `key`, a `scope`, a `zone` and optionally an `icon`, a `label`, 
 
 Zones are `Left` next to the title, `Right` for the main buttons and `Menu` for the kebab. A standard key
 (`create`, `edit`, `delete`, `duplicate`, `change-status`, `move`, `create-category`, `edit-category`,
-`delete-category`, `restore-trash-item`, `delete-trash-item`, `empty-trash`, `share`) needs no `handler`; `edit`, `edit-category` and `view` need exactly one row
-whatever their scope, `move` rows of a single owner, see [Owners](#owners), and `share` a folder, see [Sharing](#sharing). A `handler` always receives an array, so a single-row action reads `([user]) => …`; given
+`delete-category`, `restore-trash-item`, `delete-trash-item`, `empty-trash`, `share`) needs no `action`; `edit`, `edit-category` and `view` need exactly one row
+whatever their scope, `move` rows of a single owner, see [Owners](#owners), and `share` a folder, see [Sharing](#sharing). An `action` always receives an array, so a single-row action reads `([user]) => …`; given
 to a standard key it replaces the standard behaviour. The page does no permission logic of its own.
 
 `view` is the one standard key with no behaviour of its own, since only the page knows how to show a row read-only: it
-needs a `handler`, which opens what the name of the row opens, so that a row whose name opens something always offers
+needs an `action`, which opens what the name of the row opens, so that a row whose name opens something always offers
 the same from the header. It sits next to `edit`, where it shows directly rather than in the menu, and carries texts of
 the page module, "View" (`angular-components.page.actions.view.label`) with a tooltip (`.tooltip`), so it needs no
 key under the `prefix` of the page; a `label` or `tooltip` override replaces them.
@@ -138,7 +151,7 @@ key under the `prefix` of the page; a `label` or `tooltip` override replaces the
 `<prefix>.modal.<key>.title` and `.message` and a `count` parameter (none for `empty-trash`). A `confirmation(items, confirmation)` on the
 action returns the confirmation to show instead, built from the rows and that default one, or an observable of it
 when the message needs a request first. The request, its toast and the reload stay the standard ones; an action
-with a `handler` never asks. A row other rows use needs no `confirmation` of its own: the page warns about it with
+with an `action` never asks. A row other rows use needs no `confirmation` of its own: the page warns about it with
 its [usages](#usages), and hands that warning to the `confirmation` of the action when there is one.
 
 ```ts
@@ -152,7 +165,7 @@ beyPageStandardAction<Product>(BeyPageStandardAction.Delete, {
 
 `beyPageStandardAction(key, overrides?)` builds a standard action already placed, and `beyPageAddAction(overrides?)`
 the `add-group` button (`Group`, `Right`, primary, `faPlus`) whose entries are `create` and `create-category` as
-text. Any field but the key can be overridden, such as a `handler` or other `subActions` for the group; the
+text. Any field but the key can be overridden, such as an `action` or other `subActions` for the group; the
 actions of the page are still listed in the order they should render, standard or not.
 
 | Key                                                      | Scope    | Zone    | Type and icon                |
@@ -242,6 +255,19 @@ views: [
 Filters on fields the categories do not have leave the categories alone on a backend like express-components'
 base-entity, so a view inside a folder still shows its sub-folders.
 
+A view with a `baseUrl` of its own, resolved as the page's, is a list the resource serves elsewhere, such as a review
+queue: while it is open, the list, its search and its count are asked from `GET {view.baseUrl}`, with the same `search`
+query and answer as the page's list and the filters of the view first. It is flat: the list goes without the
+`parentField`, the breadcrumb names only the view, rows cannot be dragged, a category row does not open, and the header
+leaves out `create-category`, `edit-category`, `delete-category`, `move` and `share`. Every other action still comes
+from the `globalActions` and the `actions` of what the view lists, and sends its request to the page's `baseUrl`, as
+anywhere else. Leaving the view gives back the page's list and the folder the user was in, and a [link](#links) opens
+it with `?view=<key>`.
+
+```ts
+new BeyPageView({ baseUrl: '/templates/review-queue', filters: [], key: 'review-queue' });
+```
+
 ## Coming back to a page
 
 A page the user leaves for a route under its own URL (from `/templates` to `/templates/definition/7`) comes back as
@@ -268,7 +294,8 @@ A URL can name the tab and the folder the page opens with, as a notice that link
     a reload or the back button behaves as usual. A link to the page already in view is followed the same way.
 -   **Old links.** A view the page does not have, such as `shared` without `isSharedEnabled`, opens the main tab, and a
     folder whose path the backend refuses, or answers ending elsewhere, opens the root of the view, with no error
-    modal. The trash, a page without categories and a page without `baseUrl` ignore `folder`.
+    modal. The trash, a view with a `baseUrl` of its own, a page without categories and a page without `baseUrl`
+    ignore `folder`.
 
 ## Sort and columns
 
@@ -282,6 +309,11 @@ should say `isSortable`; a page with a sortable column always sends the `search`
 `tableConfig.storageKey` offers the columns menu of the table, where the user hides and shows the columns that are
 `isHideable`, starting from the ones `isVisible`; the choice is remembered in `localStorage` under that key, so
 every page gives its own.
+
+The list is never sorted by a column it does not show. Hiding the sorted column from the columns menu goes back to
+`order` at once, and so does a list that answers without it, once `isColumnShown` (below) leaves it out for that list
+or the choice of the user hides it, as when the page comes back with a sort kept on a column hidden since. The page then asks the list again in `order`. The organization column, which the page leaves out on its own
+until it knows of two organizations, does not count as hidden for this.
 
 ```ts
 tableConfig: new BeyPageTableConfig({
@@ -361,7 +393,7 @@ trashed rows of every owner to those of one. On base-entity it narrows the folde
 only rows of its own owner, inside a folder it keeps all of them or none.
 
 A row only sits in a folder of its own owner, so a move never leaves that owner's folders. `move` shows only while
-every selected row has the same `ownerId`, with or without a `handler`: like any action the selection cannot take, it
+every selected row has the same `ownerId`, with or without an `action`: like any action the selection cannot take, it
 is hidden rather than disabled. Its tree picker asks `GET {baseUrl}/categories/tree?ownerId=<id>`, the folders of that
 owner, under the root, which takes the rows of any owner. A dragged row drops only onto a folder with the `ownerId` of
 every dragged row; any other folder is no drop target. A row nobody owns sends no `ownerId`, and base-entity lists no `move` on
@@ -405,8 +437,16 @@ with an organization filter in force asks at once. The page asks once per visit 
 ## Categories and trash
 
 `tableConfig.categoriesConfig` turns the table into a drill-down browser, and a breadcrumb starting at
-`<prefix>.categories.root` shows where the user is. Its last node counts what the folder holds, the `search.total`
-of the list (`angular-components.page.count.one` or `.many`, with `{{count}}`), once the folder has answered.
+`<prefix>.categories.root` shows where the user is. Its last node counts what the folder holds across its pages, once
+the folder has answered: "(2 folders · 4 items)", the folders being the `search.categoryTotal` of the list and the
+items the rest of its `search.total`, or "(4 items)" alone when it holds no folder or the answer gives no
+`categoryTotal`. `categoriesConfig.countLabels` and `itemCountLabels`, `{ one, other }`, are the keys of each part,
+translated with `{{count}}` and picked by whether it is 1: a page of templates gives
+`{ one: 'myApp.templates.count.one', other: 'myApp.templates.count.other' }` for "1 template" and "4 templates". They
+default to `BEY_PAGE_CATEGORY_COUNT_LABELS`, `angular-components.page.count.categories.*` (folders), and
+`BEY_PAGE_ITEM_COUNT_LABELS`, `angular-components.page.count.items.*` (items), both typed `BeyPageCountLabels`;
+the parentheses and the separator are `angular-components.page.count.mixed` and `.items-only`. The count reads the
+same in a search, a filter, the trash and the shared view.
 `nameField`, `parentField`, `parentPathField` and `typeField` name the fields the page reads, `name`, `parentId`,
 `parentPath` and `type` by default. A row whose `typeField` says `category` is drawn by
 `categoriesConfig.loadRow(category, viewMode)` instead of the table's `loadRow`; without one it shows its name as a
@@ -426,18 +466,19 @@ place of the tooltip that cell had. `move` opens
 the tree picker with every category, or every category of the owner of the rows when they have one, disabling the
 selected ones and their descendants.
 
-When the header lists the standard `move` action, with no `handler` of its own, the rows of the table can also be
+When the header lists the standard `move` action, with no `action` of its own, the rows of the table can also be
 dragged onto a category row to move them there. A row can be dragged while it lists `move` in its `actions`, and
 dragging a selected row drags the whole selection. A category row takes the drop, highlighted while the pointer is
 over it, when every dragged row lists `move`, the category is not one of them nor inside one of them, the rows
 are not in it already and, with owners, it has the owner of every dragged row. The breadcrumb takes no drop. The drop sends the same `PUT {baseUrl}/move`, shows `<prefix>.toast.move-success`, clears the
-selection and reloads, as the action does. There is no drag in the trash, and `move` stays the way to do it from the
+selection and reloads, as the action does. There is no drag in the trash, nor at the root of the
+[shared tab](#sharing), where `move` does not show either; anywhere else `move` stays the way to do it from the
 keyboard.
 
-On a page with categories an action `handler` receives only the selected rows that are not categories, since
-categories are handled by the standard category actions, and an action with a `handler` is hidden while every
-selected row is a category. `share` is the other way round: its `handler` receives only the folders, and hides while
-none is selected. Standard actions without a `handler` work on the whole selection.
+On a page with categories the `action` of an action receives only the selected rows that are not categories, since
+categories are handled by the standard category actions, and an action with an `action` is hidden while every
+selected row is a category. `share` is the other way round: its `action` receives only the folders, and hides while
+none is selected. Standard actions without an `action` work on the whole selection.
 
 Every list of the main tab and of a view sends the `parentField` of the open category, `null` at the root, together
 with the search, so what a search answers is up to the backend, and the page shows whatever rows come back. base-entity
@@ -504,10 +545,13 @@ it, so the page needs categories.
 -   **The tab** keeps the folders of each side apart: going from the shared view to the main tab or a view, or back,
     starts at the root of that side. The tab, the folder and the search are kept when the user comes back to the
     page, as for any other tab. `loadRow` and `categoriesConfig.loadRow` receive `BeyPageViewMode.Shared`.
--   **The rows** carry their owner, so `beyPageOwnerColumn` names whose they are. A shared folder shows no badge: every
-    row of the view is shared, and the tab and the breadcrumb already say so.
+-   **The rows** carry their owner, so `beyPageOwnerColumn` names whose they are. Every folder of the view shows the
+    shared folder icon, as below.
 -   **Moves.** Inside a shared folder rows drag onto its folders as in the main tab, and `move` picks only among the
-    shared folder and the folders below it that `GET {baseUrl}/categories/tree?ownerId=` answers.
+    shared folder and the folders below it that `GET {baseUrl}/categories/tree?ownerId=` answers. At the root of the
+    tab the rows are the shared folders themselves, which stay where their owner keeps them: there the page offers no
+    `move`, with or without an `action`, and no drag, whatever the rows list, so the picker never opens the folders of
+    the owner. base-entity lists no `move` on the shared root of a grantee either.
 
 The standard `share` action (`Single`, `Menu`) shows on a folder that lists `share` in its `actions`, which base-entity
 grants to its owner, the managers of its organization and the superadmin. It asks
@@ -542,13 +586,33 @@ tableConfig: new BeyPageTableConfig({ categoriesConfig, columns, loadRow, isShar
 ```
 
 `BeyPageShare`, `BeyPageInheritedShare`, `BeyPageShareTarget`, `BeyPageShareAccess` and `BeyPageShareGranteeType` type
-those answers for a `handler` of its own.
+those answers for an `action` of its own.
+
+A folder of the user's own tree that the backend answers with `isShared: true`, because it or a folder above it has a
+share, and every folder of the shared view, shows the shared folder icon in its first cell: by default
+`BEY_SHARED_FOLDER_ICON`, a folder of one colour with a person cut out of its middle, named "Shared folder"
+(`angular-components.page.shared.folder`) for screen readers and as its tooltip. The page sets it on the first cell
+whichever draws it, `categoriesConfig.loadRow` or the page, as long as it is a `BeyTextTableCell` or a
+`BeyLinkTableCell`, in place of the icon it had. A folder without `isShared` keeps its cell as it is.
+
+`categoriesConfig.sharedIcon`, a `BeyPageCategoryIcon` `{ icon, label }`, is how an app draws its own: `icon` is any
+FontAwesome `IconDefinition` and `label` a translation key. `BEY_PAGE_SHARED_CATEGORY_ICON` is the default, and
+`BEY_SHARED_FOLDER_ICON` can be drawn on its own wherever an icon is accepted, such as the nodes of a tree.
+
+```ts
+import { faFolderTree } from '@fortawesome/free-solid-svg-icons';
+
+const categoriesConfig = new BeyPageCategoriesConfig({
+    formConfig: folderFormConfig,
+    sharedIcon: { icon: faFolderTree, label: 'my-app.documents.shared-folder' }
+});
+```
 
 ## Forms
 
 `BeyPageFormConfig<TValue, TItem>` takes `prefix`, `buildSections(item?, category?)`, and optionally `toFormValue(item?, category?)`,
 `toItem(value, item?)`, `onReady(handle)`, `onValueChange(value, handle)`, `onCreate(value, handle)`,
-`onEdit(value, handle)`, `afterCreate(created)`, `confirmSave(value, item?)`, `allowSubmitWithoutChanges` (`false` by
+`onEdit(value, handle)`, `afterCreate(created)`, `confirmSave(value, item?)`, `canSubmitWithoutChanges` (`false` by
 default) and `size` (a `BeyModalFormSize`, `Large` by default). `toFormValue` defaults to the row as it is and `toItem`
 to the form value as it is. `toItem` builds the body of the request and receives the row an edit started from, so it
 can send only what that row lets the user change. `onValueChange` runs on every
@@ -590,13 +654,15 @@ renaming something other records name.
 | `<prefix>.toast.<key>-success`                                                                              | Success toast of every standard action                                                          |
 | `<prefix>.categories.root`, `<prefix>.tabs.table.label`, `<prefix>.tabs.trash.label`, `<prefix>.move.title` | Categories and trash                                                                            |
 | `<prefix>.tabs.<view>.label`                                                                                | The tab of a view                                                                               |
-| `angular-components.page.count.one` / `.many`                                                               | The count of the breadcrumb, with `{{count}}`                                                   |
+| `angular-components.page.count.mixed` / `.items-only`                                                       | The count of the breadcrumb, with `{{categories}}` and `{{items}}`                              |
+| `angular-components.page.count.categories.*` / `.items.*`                                                   | Its folders and items by default, `.one` and `.other`, with `{{count}}`                         |
 | `angular-components.page.table.columns.owner-name` / `.tooltips.owner-name`                                 | The owner column, see [Owners](#owners)                                                         |
 | `angular-components.page.search.fields.owner-id`                                                            | The owner filter                                                                                |
 | `angular-components.page.table.columns.organization-name` / `.tooltips.organization-name`                   | The organization column, see [Organizations](#organizations)                                    |
 | `angular-components.page.search.fields.organization-id`                                                     | The organization filter                                                                         |
 | `angular-components.page.search.fields.from` / `.to`                                                        | The date range of `beyPageDateRangeFields`, see [Search](#search)                               |
 | `angular-components.page.shared.label`                                                                      | The shared tab and the root of its breadcrumb, see [Sharing](#sharing)                          |
+| `angular-components.page.shared.folder`                                                                     | The name of the shared folder icon, see [Sharing](#sharing)                                     |
 | `angular-components.page.share.*`                                                                           | The form of `share`: its title, intro, two lists, grantee labels and inherited access           |
 | `angular-components.page.actions.view.label` / `.tooltip`                                                   | The standard `view` action, see [Header actions](#header-actions)                               |
 | `angular-components.page.form.cancel` / `.submit`                                                           | The buttons of the create, edit and share forms                                                 |

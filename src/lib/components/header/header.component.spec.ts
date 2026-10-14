@@ -149,7 +149,7 @@ describe('HeaderComponent', () => {
     });
 
     it('disables an action that says it is disabled', async () => {
-        await render(buildConfig({ leftActions: [buildAction({ key: 'save', label: 'Save', disabled: true })] }));
+        await render(buildConfig({ leftActions: [buildAction({ key: 'save', label: 'Save', isDisabled: true })] }));
 
         expect(buttons()[0].disabled).toBe(true);
     });

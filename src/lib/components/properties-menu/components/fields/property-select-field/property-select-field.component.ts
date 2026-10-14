@@ -81,7 +81,7 @@ export class PropertySelectFieldComponent {
         if (event.key === 'Enter') {
             event.preventDefault();
 
-            const first = this.filteredOptions().find(option => !option.disabled);
+            const first = this.filteredOptions().find(option => !option.isDisabled);
 
             if (first) {
                 this.close();
@@ -93,7 +93,7 @@ export class PropertySelectFieldComponent {
     onOptionPicked(option: PropertyOption, event: Event): void {
         event.preventDefault();
 
-        if (option.disabled) {
+        if (option.isDisabled) {
             return;
         }
 

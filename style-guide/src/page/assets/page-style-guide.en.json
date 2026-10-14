@@ -26,7 +26,11 @@
                 "categories": {
                     "root": "All products"
                 },
-                "example": "With categories the page browses folders, and the last node of the breadcrumb counts what the folder holds, folders and products across every page. Leaving for a route under the page and coming back keeps the folder, the search, the page and the selection. Drag a product, or the selected rows, onto a folder to move them there; the Move to... action does the same from the keyboard. Where rows have owners, both offer only the folders of the owner of the rows, and a selection of several owners cannot move. The headers sort the list on the backend.",
+                "count": {
+                    "one": "{{count}} product",
+                    "other": "{{count}} products"
+                },
+                "example": "With categories the page browses folders, and the last node of the breadcrumb counts what the folder holds, folders apart from products, across every page. A folder shared with someone, or inside one that is, shows the shared folder icon. Leaving for a route under the page and coming back keeps the folder, the search, the page and the selection. Drag a product, or the selected rows, onto a folder to move them there; the Move to... action does the same from the keyboard. Where rows have owners, both offer only the folders of the owner of the rows, and a selection of several owners cannot move. The headers sort the list on the backend.",
                 "heading": "Folders",
                 "move": {
                     "title": "Move to"
@@ -81,6 +85,41 @@
                     "category": "Category",
                     "name": "Name",
                     "price": "Price"
+                }
+            },
+            "sharing": {
+                "actions": {
+                    "share": {
+                        "label": "Share",
+                        "tooltip": "Share the selected folder with people or groups"
+                    }
+                },
+                "categories": {
+                    "root": "My documents"
+                },
+                "example": "With isSharedEnabled the page adds a Shared with me tab, after the main tab and its views, listing the folders others shared with you; the breadcrumb starts at the shared folder, so the folders of its owner above it never show. Select one of your folders and open the menu to share it: the form lists who can view it and who can edit it, and searches the people and groups of the organization. A document offers View next to its name, a standard action with an action of its own that opens what the name opens. This example answers from a backend of its own.",
+                "heading": "Sharing",
+                "table": {
+                    "columns": {
+                        "name": "Name"
+                    },
+                    "empty": "Nothing here yet",
+                    "tooltips": {
+                        "name": "Documents and folders by name"
+                    }
+                },
+                "tabs": {
+                    "table": {
+                        "label": "Mine"
+                    }
+                },
+                "title": "Documents",
+                "toast": {
+                    "share-success": "Sharing saved"
+                },
+                "view": {
+                    "message": "{{name}} would open here, read-only.",
+                    "title": "View document"
                 }
             },
             "table": {

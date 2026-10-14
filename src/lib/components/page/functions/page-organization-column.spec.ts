@@ -39,7 +39,7 @@ describe('pageOrganizationCell', () => {
         expect(pageOrganizationCell({ organizationName: 'Acme' })).toMatchObject({
             content: 'Acme',
             tooltip: 'Acme',
-            translate: false
+            isTranslationKey: false
         });
     });
 

@@ -7,10 +7,12 @@
                 "earlier": "Since yesterday",
                 "free": "Free again",
                 "manager": "Seen by a manager",
+                "moved": "Moved to another window of yours",
                 "other-window": "Another window of yours",
                 "released": "Your editing released",
                 "taken": "Taken over by a colleague",
-                "unavailable": "No longer available"
+                "unavailable": "No longer available",
+                "unknown": "A colleague with no name"
             },
             "statuses": {
                 "free": "Status: free",

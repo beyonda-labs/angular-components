@@ -7,6 +7,21 @@
             },
             "canceled": "The form has been reset",
             "changed": "Form value changed: ",
+            "danger-modal": {
+                "buttons": {
+                    "cancel": "Cancel",
+                    "submit": "Delete"
+                },
+                "confirmation": {
+                    "warning": {
+                        "message": "\"{{name}}\" and every version of it will be deleted for good."
+                    }
+                },
+                "example": "A confirmation that deletes for good paints its submit button as a danger and explains itself with a notice.",
+                "open": "Open a deletion confirmation",
+                "submitted": "The deletion has been confirmed",
+                "title": "Delete the report"
+            },
             "example": "Model-driven, configuration-based form with validation, conditional fields, hints under the fields, a note next to the buttons and responsive layout.",
             "footer": {
                 "note": "Submitting only reports the value below; nothing is saved."
@@ -101,6 +116,28 @@
                 },
                 "label": "Searchable fields",
                 "tooltip": "Typeahead variants with basic, required and disabled behaviour, and one with thirty options to scroll"
+            },
+            "section-autocomplete-options": {
+                "free-text": {
+                    "label": "Free text",
+                    "placeholder": "Type any city, or pick one"
+                },
+                "label": "Typeahead options",
+                "picked": "A city was picked and the field emptied itself",
+                "picker": {
+                    "label": "Picks and clears",
+                    "placeholder": "Pick a city"
+                },
+                "server": {
+                    "empty": "No city matches",
+                    "label": "Searched on a server",
+                    "placeholder": "Search a city; Madrid is left out"
+                },
+                "starts-with": {
+                    "label": "Matched from the start",
+                    "placeholder": "Type the first letters"
+                },
+                "tooltip": "Free text kept as typed, a match of its own, suggestions from a server that leaves values out and says when nothing matches, and a field that only picks"
             },
             "section-checkbox": {
                 "checkbox1": {
@@ -242,6 +279,16 @@
                     "placeholder": "Nothing to list yet"
                 },
                 "tooltip": "Read-only icon/label pairs and scrollable lists — no input styling, no FormControl"
+            },
+            "section-notice": {
+                "label": "Notice Fields",
+                "notice1": {
+                    "message": "This form holds {{count}} sections; nothing is saved until you submit it."
+                },
+                "notice2": {
+                    "message": "The disabled fields show values you cannot change here."
+                },
+                "tooltip": "A notice across the row, in the info and the warning variants, with no control of its own"
             },
             "section-number": {
                 "label": "Number Fields",

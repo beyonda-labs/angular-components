@@ -46,10 +46,10 @@ export function buildRolesPageConfig({
                 pageStandardAction<RoleRow>(PageStandardAction.Create),
                 pageStandardAction<RoleRow>(PageStandardAction.Edit),
                 pageStandardAction<RoleRow>(PageStandardAction.View, {
-                    handler: ([role]) => onView(role),
+                    action: ([role]) => onView(role),
                     tooltip: `${prefix}.actions.view.tooltip`
                 }),
-                pageStandardAction<RoleRow>(PageStandardAction.Duplicate, { handler: ([role]) => onDuplicate(role) }),
+                pageStandardAction<RoleRow>(PageStandardAction.Duplicate, { action: ([role]) => onDuplicate(role) }),
                 pageStandardAction<RoleRow>(PageStandardAction.Delete)
             ],
             title: `${prefix}.title`
@@ -67,7 +67,7 @@ export function buildRolesPageConfig({
                 ...(isOrganizationShown ? [ORGANIZATION_COLUMN] : []),
                 DESCRIPTION_COLUMN
             ],
-            height: categoriesConfig ? foldersHeight : height,
+            height: categoriesConfig ? (foldersHeight ?? height) : height,
             isColumnShown: (column, context) =>
                 isColumnShownInMode(column, mode()) && (!categoriesConfig || isColumnShownInFolders(column, context)),
             loadRow,

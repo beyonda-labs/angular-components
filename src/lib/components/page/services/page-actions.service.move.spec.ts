@@ -1,9 +1,10 @@
+import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { textsOf } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { pickInTreeDialog, treeDialogItems } from '@testing/tree-dialog';
 import { of } from 'rxjs';
 
-import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
-import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
 import { pageStandardAction } from '../functions/page-standard-actions';
 import { PageActionsContext, PageConfig } from '../models/page.model';
 import { PageStandardAction } from '../models/page-action.model';
@@ -17,7 +18,6 @@ import { PageHttpService } from './page-http.service';
 describe('PageActionsService — move to a category', () => {
     const loadCategoryTree = jest.fn();
     const moveItems = jest.fn();
-    const openTree = jest.fn();
     let service: PageActionsService;
 
     function buildContext(
@@ -51,15 +51,15 @@ describe('PageActionsService — move to a category', () => {
         });
     }
 
+    function render(): void {
+        TestBed.inject(ApplicationRef).tick();
+    }
+
     beforeEach(() => {
         jest.clearAllMocks();
         moveItems.mockReturnValue(of(null));
         TestBed.configureTestingModule({
-            providers: [
-                provideBeyTesting(),
-                { provide: ModalTreeService, useValue: { open: openTree } },
-                { provide: PageHttpService, useValue: { loadCategoryTree, moveItems } }
-            ]
+            providers: [provideBeyTesting(), { provide: PageHttpService, useValue: { loadCategoryTree, moveItems } }]
         });
         service = TestBed.inject(PageActionsService);
     });
@@ -83,7 +83,6 @@ describe('PageActionsService — move to a category', () => {
             'cat-1',
             'testPage.toast.move-success'
         );
-        expect(openTree).not.toHaveBeenCalled();
         expect(onMoved).toHaveBeenCalled();
         expect(context.onMoved).toHaveBeenCalled();
     });
@@ -95,6 +94,45 @@ describe('PageActionsService — move to a category', () => {
         expect(moveItems).not.toHaveBeenCalled();
     });
 
+    it('opens no picker on a page without categories', () => {
+        service.executeAction(pageStandardAction(PageStandardAction.Move), buildContext(undefined, [{ id: 1 }]));
+
+        expect(loadCategoryTree).not.toHaveBeenCalled();
+    });
+
+    it('moves the selected rows to the picked category, the selected folders and those below them disabled, and closes the picker', () => {
+        jest.useFakeTimers();
+        const rows: PageItem[] = [{ actions: ['move'], id: 'cat-3', type: PageItemType.Category } as PageItem];
+        const context = buildContext(buildFoldersConfig(), rows);
+        loadCategoryTree.mockReturnValue(
+            of([
+                { id: 'cat-1', name: 'Electronics', parentId: null },
+                { id: 'cat-2', name: 'Phones', parentId: 'cat-1' },
+                { id: 'cat-3', name: 'Books', parentId: null },
+                { id: 'cat-4', name: 'Novels', parentId: 'cat-3' }
+            ])
+        );
+
+        service.executeAction(pageStandardAction(PageStandardAction.Move), context);
+        render();
+        const disabled = textsOf(treeDialogItems().filter(item => item.getAttribute('aria-disabled') === 'true'));
+        pickInTreeDialog('Phones');
+        jest.runAllTimers();
+        render();
+        jest.useRealTimers();
+
+        expect(loadCategoryTree).toHaveBeenCalledWith('/items', undefined);
+        expect(disabled).toEqual(['Books', 'Novels']);
+        expect(moveItems).toHaveBeenCalledWith(
+            '/items',
+            [{ id: 'cat-3', type: PageItemType.Category }],
+            'cat-2',
+            'testPage.toast.move-success'
+        );
+        expect(treeDialogItems()).toEqual([]);
+        expect(context.onMoved).toHaveBeenCalled();
+    });
+
     it('picks among the folders of the owner of the moved rows, the root among them', () => {
         const ada = { ownerId: 'ada', ownerName: 'Ada Lovelace' };
         const rows: (PageOwnedItem & { type: PageItemType })[] = [
@@ -102,15 +140,14 @@ describe('PageActionsService — move to a category', () => {
             { ...ada, id: 'cat-3', type: PageItemType.Category }
         ];
         loadCategoryTree.mockReturnValue(of([{ id: 'cat-1', name: 'Invoices', ownerId: 'ada', parentId: null }]));
-        openTree.mockReturnValue({ hide: jest.fn() });
 
         service.executeAction(pageStandardAction(PageStandardAction.Move), buildContext(buildFoldersConfig(), rows));
-        const treeConfig = openTree.mock.calls[0][0] as ModalTreeConfig;
-        const [root] = treeConfig.treeConfig.nodes;
-        treeConfig.onConfirm?.(root);
+        render();
+        const offered = textsOf(treeDialogItems());
+        pickInTreeDialog('testPage.categories.root');
 
         expect(loadCategoryTree).toHaveBeenCalledWith('/items', 'ada');
-        expect(root.children.map(node => node.key)).toEqual(['cat-1']);
+        expect(offered).toEqual(['testPage.categories.root', 'Invoices']);
         expect(moveItems).toHaveBeenCalledWith(
             '/items',
             [
@@ -133,14 +170,21 @@ describe('PageActionsService — move to a category', () => {
                 { id: 'acme', name: 'Acme', ownerId: 'ada', parentId: 'clients' }
             ])
         );
-        openTree.mockReturnValue({ hide: jest.fn() });
 
         service.executeAction(pageStandardAction(PageStandardAction.Move), {
             ...buildContext(buildFoldersConfig(), rows),
             getSharedRoot: () => ({ id: 'clients', label: 'Clients' })
         });
-        const [root] = (openTree.mock.calls[0][0] as ModalTreeConfig).treeConfig.nodes;
+        render();
+        const offered = textsOf(treeDialogItems());
+        pickInTreeDialog('Acme');
 
-        expect([root.key, root.label, root.children.map(node => node.key)]).toEqual(['clients', 'Clients', ['acme']]);
+        expect(offered).toEqual(['Clients', 'Acme']);
+        expect(moveItems).toHaveBeenCalledWith(
+            '/items',
+            [{ id: 'item-1', type: PageItemType.Item }],
+            'acme',
+            'testPage.toast.move-success'
+        );
     });
 });

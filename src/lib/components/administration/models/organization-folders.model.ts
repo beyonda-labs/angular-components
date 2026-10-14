@@ -14,6 +14,11 @@ export interface OrganizationFolderRowOptions {
     onOpen: (folder: OrganizationFolder) => void;
 }
 
+export interface OrganizationFoldersOptions extends OrganizationFolderRowOptions {
+    isShown: boolean;
+    prefix: string;
+}
+
 export const ORGANIZATION_COLUMN_KEY = 'organization';
 
 export const ORGANIZATION_FOLDER_TYPE_FIELD = 'entryType';

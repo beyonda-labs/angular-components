@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { buttonByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryButton, renderComponent, rowWith, settle } from '@testing/dom';
+import { decodePageSearch } from '@testing/page-search';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of, Subject } from 'rxjs';
 
@@ -89,9 +90,7 @@ describe('PageComponent', () => {
     }
 
     function dispatchOnRow(name: string, type: string): void {
-        queryAll(fixture, '[role="row"]')
-            .find(row => row.textContent?.includes(name))
-            ?.dispatchEvent(new Event(type, { bubbles: true, cancelable: true }));
+        rowWith(fixture, name).dispatchEvent(new Event(type, { bubbles: true, cancelable: true }));
     }
 
     beforeEach(async () => {
@@ -251,7 +250,7 @@ describe('PageComponent', () => {
         await settle(fixture);
         const [, query] = pageHttpService.load.mock.calls[pageHttpService.load.mock.calls.length - 1];
 
-        expect(JSON.parse(atob(String(query['search'])))).toMatchObject({
+        expect(decodePageSearch(String(query['search']))).toMatchObject({
             page: 1,
             sort: { direction: 'asc', field: 'name' }
         });

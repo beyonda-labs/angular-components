@@ -277,6 +277,16 @@
             "categories": {
                 "root": "Groups"
             },
+            "count": {
+                "categories": {
+                    "one": "{{count}} organization",
+                    "other": "{{count}} organizations"
+                },
+                "items": {
+                    "one": "{{count}} group",
+                    "other": "{{count}} groups"
+                }
+            },
             "form": {
                 "create": {
                     "title": "New group"
@@ -973,8 +983,16 @@
                 }
             },
             "count": {
-                "many": "({{count}} items)",
-                "one": "({{count}} item)"
+                "categories": {
+                    "one": "{{count}} folder",
+                    "other": "{{count}} folders"
+                },
+                "items": {
+                    "one": "{{count}} item",
+                    "other": "{{count}} items"
+                },
+                "items-only": "({{items}})",
+                "mixed": "({{categories}} · {{items}})"
             },
             "form": {
                 "cancel": "Cancel",
@@ -1022,6 +1040,7 @@
                 "title": "Share \"{{name}}\""
             },
             "shared": {
+                "folder": "Shared folder",
                 "label": "Shared with me"
             },
             "table": {
@@ -1172,6 +1191,16 @@
             },
             "categories": {
                 "root": "Roles"
+            },
+            "count": {
+                "categories": {
+                    "one": "{{count}} organization",
+                    "other": "{{count}} organizations"
+                },
+                "items": {
+                    "one": "{{count}} role",
+                    "other": "{{count}} roles"
+                }
             },
             "duplicate": {
                 "buttons": {
@@ -1438,6 +1467,16 @@
                 "empty": "Owns nothing.",
                 "label": "Content",
                 "used-by": "{{entity}} «{{name}}»: {{users}}"
+            },
+            "count": {
+                "categories": {
+                    "one": "{{count}} organization",
+                    "other": "{{count}} organizations"
+                },
+                "items": {
+                    "one": "{{count}} user",
+                    "other": "{{count}} users"
+                }
             },
             "delete": {
                 "invitation": {

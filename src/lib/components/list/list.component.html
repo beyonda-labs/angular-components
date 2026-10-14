@@ -5,7 +5,7 @@
                 class="bey-list-item"
                 [attr.role]="isClickable() ? 'button' : 'listitem'"
                 [attr.tabindex]="isClickable() ? 0 : null"
-                [class.is-bare]="config().bare"
+                [class.is-bare]="config().isBare"
                 [class.is-clickable]="isClickable()"
                 (click)="onItemClick(item, $index)"
                 (keydown.enter)="onItemKeydown($event, item, $index)"

@@ -10,15 +10,15 @@ import { PropertySelectFieldComponent } from './property-select-field.component'
 
 const LABELLING: PropertyFieldLabelling = { controlId: 'template', labelId: null, labelKey: 'Template' };
 
-function buildField(searchable: boolean, disabledValue?: string): PropertySelectField {
+function buildField(isSearchable: boolean, disabledValue?: string): PropertySelectField {
     return new PropertySelectField({
         id: 'templateId',
         options: [
-            new PropertyOption({ disabled: disabledValue === 'a', label: 'app.templates.invoice', value: 'a' }),
+            new PropertyOption({ isDisabled: disabledValue === 'a', label: 'app.templates.invoice', value: 'a' }),
             new PropertyOption({ label: 'app.templates.letterhead', value: 'b' }),
             new PropertyOption({ label: 'app.templates.report', value: 'c' })
         ],
-        searchable,
+        isSearchable,
         value: 'b'
     });
 }

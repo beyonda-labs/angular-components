@@ -49,9 +49,9 @@ export function buildGroupsPageConfig({
         headerConfig: new PageHeaderConfig<GroupRow>({
             actions: [
                 pageStandardAction<GroupRow>(PageStandardAction.Create),
-                pageStandardAction<GroupRow>(PageStandardAction.Edit, { handler: ([group]) => onEdit(group) }),
+                pageStandardAction<GroupRow>(PageStandardAction.Edit, { action: ([group]) => onEdit(group) }),
                 pageStandardAction<GroupRow>(PageStandardAction.View, {
-                    handler: ([group]) => onView(group),
+                    action: ([group]) => onView(group),
                     tooltip: `${prefix}.actions.view.tooltip`
                 }),
                 pageStandardAction<GroupRow>(PageStandardAction.Delete)
@@ -70,7 +70,7 @@ export function buildGroupsPageConfig({
                 ROLE_COUNT_COLUMN,
                 CREATED_AT_COLUMN
             ],
-            height: categoriesConfig ? foldersHeight : height,
+            height: categoriesConfig ? (foldersHeight ?? height) : height,
             isColumnShown: (column, context) =>
                 isColumnShownInMode(column, mode()) && (!categoriesConfig || isColumnShownInFolders(column, context)),
             loadRow,

@@ -14,8 +14,8 @@ export type PageSaveConfirmation<TValue = unknown, TItem extends PageItem = Page
 export type PageSaveMode = 'create' | 'edit';
 
 export class PageFormConfig<TValue = unknown, TItem extends PageItem = PageItem> {
-    allowSubmitWithoutChanges: boolean;
     buildSections: (item?: TItem, category?: PageCategoryPathEntry) => FormSection[];
+    canSubmitWithoutChanges: boolean;
     prefix: string;
     size: ModalFormSize;
     toFormValue: (item?: TItem, category?: PageCategoryPathEntry) => TValue | undefined;
@@ -30,8 +30,8 @@ export class PageFormConfig<TValue = unknown, TItem extends PageItem = PageItem>
 
     constructor({
         afterCreate,
-        allowSubmitWithoutChanges = false,
         buildSections,
+        canSubmitWithoutChanges = false,
         confirmSave,
         onCreate,
         onEdit,
@@ -43,8 +43,8 @@ export class PageFormConfig<TValue = unknown, TItem extends PageItem = PageItem>
         toItem = (value: TValue) => value
     }: PageFormConfigParameters<TValue, TItem>) {
         this.afterCreate = afterCreate;
-        this.allowSubmitWithoutChanges = allowSubmitWithoutChanges;
         this.buildSections = buildSections;
+        this.canSubmitWithoutChanges = canSubmitWithoutChanges;
         this.confirmSave = confirmSave;
         this.onCreate = onCreate;
         this.onEdit = onEdit;
@@ -62,7 +62,7 @@ export interface PageFormConfigParameters<TValue = unknown, TItem extends PageIt
     prefix: string;
 
     afterCreate?: (created: TItem) => Observable<unknown> | undefined;
-    allowSubmitWithoutChanges?: boolean;
+    canSubmitWithoutChanges?: boolean;
     confirmSave?: PageSaveConfirmation<TValue, TItem>;
     onCreate?: (value: TValue, handle: FormHandle<TValue>) => void;
     onEdit?: (value: TValue, handle: FormHandle<TValue>) => void;

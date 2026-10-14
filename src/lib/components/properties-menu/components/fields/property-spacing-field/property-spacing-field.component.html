@@ -15,8 +15,8 @@
                 class="bey-property-field-input"
                 step="any"
                 type="number"
-                [disabled]="current.disabled"
-                [readOnly]="current.readonly"
+                [disabled]="current.isDisabled"
+                [readOnly]="current.isReadonly"
                 [value]="spacing()[side]"
                 (input)="onSideChange(side, $event)"
             />

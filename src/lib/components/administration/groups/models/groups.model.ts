@@ -140,17 +140,18 @@ export interface GroupViewRole {
 
 export class GroupsConfig {
     baseUrl: string;
-    foldersHeight: string;
-    height: string;
     prefix: string;
     rolesConfig: RoleViewSettings;
     storageKey: string;
     usersUrl: string;
 
+    foldersHeight?: string;
+    height?: string;
+
     constructor({
         baseUrl = '/groups',
-        foldersHeight = 'calc(100vh - 255px)',
-        height = 'calc(100vh - 220px)',
+        foldersHeight,
+        height,
         prefix = 'angular-components.groups',
         rolesConfig = ROLE_VIEW_DEFAULTS,
         storageKey = 'groups',

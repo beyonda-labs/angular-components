@@ -45,7 +45,7 @@ export function buildPropertiesMenuConfig(
                 groups: [
                     new BeyPropertyGroup({
                         id: 'structure-tree',
-                        showHeader: false,
+                        isHeaderShown: false,
                         content: new BeyPropertyTreeContent({
                             tree: new BeyPropertyTreeConfig({
                                 addBlockLabel: 'Añadir bloque',
@@ -57,7 +57,7 @@ export function buildPropertiesMenuConfig(
                                         labelParameters: { number: 1 },
                                         children: [
                                             new BeyPropertyTreeNode({
-                                                expanded: false,
+                                                isExpanded: false,
                                                 icon: faLayerGroup,
                                                 id: 'header',
                                                 label: 'Heading',
@@ -75,7 +75,7 @@ export function buildPropertiesMenuConfig(
                                                 ]
                                             }),
                                             new BeyPropertyTreeNode({
-                                                expanded: false,
+                                                isExpanded: false,
                                                 icon: faLayerGroup,
                                                 id: 'invoice-section',
                                                 label: 'Section',
@@ -98,13 +98,13 @@ export function buildPropertiesMenuConfig(
                                                 ]
                                             }),
                                             new BeyPropertyTreeNode({
-                                                expanded: false,
+                                                isExpanded: false,
                                                 icon: faLayerGroup,
                                                 id: 'totals-section',
                                                 label: 'Section',
                                                 children: [
                                                     new BeyPropertyTreeNode({
-                                                        active: true,
+                                                        isActive: true,
                                                         icon: faCalculator,
                                                         id: 'totals',
                                                         label: 'Totals'
@@ -112,7 +112,7 @@ export function buildPropertiesMenuConfig(
                                                 ]
                                             }),
                                             new BeyPropertyTreeNode({
-                                                expanded: false,
+                                                isExpanded: false,
                                                 icon: faFileLines,
                                                 id: 'footer',
                                                 label: 'Footer',
@@ -138,7 +138,7 @@ export function buildPropertiesMenuConfig(
                 groups: [
                     new BeyPropertyGroup({
                         id: 'simple-blocks',
-                        showHeader: false,
+                        isHeaderShown: false,
                         content: new BeyPropertyListContent({
                             list: [
                                 new BeyPropertyListItem({

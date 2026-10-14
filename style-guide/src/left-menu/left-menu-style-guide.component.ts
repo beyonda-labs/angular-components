@@ -36,7 +36,7 @@ export class LeftMenuStyleGuideComponent {
     expandedConfig = this.buildConfig(true);
     lastDocumentsClick: 'label' | null = null;
 
-    private buildConfig(expanded: boolean): BeyLeftMenuConfig {
+    private buildConfig(isExpanded: boolean): BeyLeftMenuConfig {
         return new BeyLeftMenuConfig({
             bottomActions: [
                 new BeyLeftMenuAction({
@@ -48,7 +48,7 @@ export class LeftMenuStyleGuideComponent {
                     key: 'support'
                 })
             ],
-            expanded,
+            isExpanded,
             prefix: 'angular-components-style-guide.left-menu',
             title: new BeyLeftMenuTitle({
                 icon: BRAND_ICON,
@@ -69,7 +69,7 @@ export class LeftMenuStyleGuideComponent {
                     key: 'documents',
                     subActions: [
                         new BeyLeftMenuAction({
-                            active: true,
+                            isActive: true,
                             icon: faInbox,
                             key: 'inbox'
                         }),

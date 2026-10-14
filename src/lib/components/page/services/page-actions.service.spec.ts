@@ -1,12 +1,11 @@
 import { TestBed } from '@angular/core/testing';
+import { FakeFormHandle } from '@testing/handles/fake-form-handle';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 import { of, Subject } from 'rxjs';
 
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { FormHandle, FormSection } from '../../form/models/form.model';
-import { ModalTreeConfig } from '../../tree/components/modal/models/modal-tree.model';
-import { ModalTreeService } from '../../tree/components/modal/services/modal-tree.service';
 import { PageActionsContext, PageConfig } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageItemType, PageTrashItem } from '../models/page-categories.model';
@@ -23,7 +22,6 @@ describe('PageActionsService', () => {
 
     const openForm = jest.fn();
     const openWithRequest = jest.fn();
-    const openTree = jest.fn();
     const create = jest.fn();
     const createCategory = jest.fn();
     const deleteCategories = jest.fn();
@@ -31,13 +29,10 @@ describe('PageActionsService', () => {
     const deleteTrashItems = jest.fn();
     const edit = jest.fn();
     const editCategory = jest.fn();
-    const loadCategoryTree = jest.fn();
-    const moveItems = jest.fn();
     const restoreTrashItems = jest.fn();
 
     beforeEach(() => {
         openForm.mockReset();
-        openTree.mockReset();
         create.mockReset();
         createCategory.mockReset();
         deleteCategories.mockReset();
@@ -45,8 +40,6 @@ describe('PageActionsService', () => {
         deleteTrashItems.mockReset();
         edit.mockReset();
         editCategory.mockReset();
-        loadCategoryTree.mockReset();
-        moveItems.mockReset();
         restoreTrashItems.mockReset();
 
         openForm.mockReturnValue({});
@@ -55,7 +48,6 @@ describe('PageActionsService', () => {
             providers: [
                 provideBeyTesting(),
                 PageActionsService,
-                { provide: ModalTreeService, useValue: { open: openTree } },
                 { provide: PageFormService, useValue: { open: openForm, openWithRequest } },
                 {
                     provide: PageHttpService,
@@ -67,8 +59,6 @@ describe('PageActionsService', () => {
                         deleteTrashItems,
                         edit,
                         editCategory,
-                        loadCategoryTree,
-                        moveItems,
                         restoreTrashItems
                     }
                 }
@@ -179,13 +169,13 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.Create, PageActionScope.Global), context);
 
-            const close = jest.fn();
+            const handle = new FakeFormHandle();
             const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'New' }, { close } as unknown as FormHandle);
+            onSave({ name: 'New' }, handle);
 
             expect(create).toHaveBeenCalledWith('/items', { name: 'New' }, 'testPage.toast.create-success');
-            expect(close).toHaveBeenCalled();
+            expect(handle.closes()).toBe(1);
             expect(context.onSaved).toHaveBeenCalled();
         });
 
@@ -198,7 +188,7 @@ describe('PageActionsService', () => {
 
             const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'Edited' }, { close: jest.fn() } as unknown as FormHandle);
+            onSave({ name: 'Edited' }, new FakeFormHandle());
 
             expect(edit).toHaveBeenCalledWith('/items', 7, { name: 'Edited' }, 'testPage.toast.edit-success');
         });
@@ -211,7 +201,7 @@ describe('PageActionsService', () => {
 
             const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'New' }, { close: jest.fn() } as unknown as FormHandle);
+            onSave({ name: 'New' }, new FakeFormHandle());
 
             expect(create).toHaveBeenCalledWith(
                 '/items',
@@ -229,7 +219,7 @@ describe('PageActionsService', () => {
 
             const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'Edited' }, { close: jest.fn() } as unknown as FormHandle);
+            onSave({ name: 'Edited' }, new FakeFormHandle());
 
             expect(edit).toHaveBeenCalledWith('/items', 7, { name: 'Edited' }, 'testPage.toast.edit-success');
         });
@@ -347,17 +337,17 @@ describe('PageActionsService', () => {
 
             service.executeAction(buildAction(PageStandardAction.CreateCategory, PageActionScope.Global), context);
 
-            const close = jest.fn();
+            const handle = new FakeFormHandle();
             const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'New category' }, { close } as unknown as FormHandle);
+            onSave({ name: 'New category' }, handle);
 
             expect(createCategory).toHaveBeenCalledWith(
                 '/items',
                 { name: 'New category', parentId: 'category-1' },
                 'testPage.toast.create-category-success'
             );
-            expect(close).toHaveBeenCalled();
+            expect(handle.closes()).toBe(1);
             expect(context.onCategorySaved).toHaveBeenCalled();
         });
 
@@ -369,7 +359,7 @@ describe('PageActionsService', () => {
 
             const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'Root category' }, { close: jest.fn() } as unknown as FormHandle);
+            onSave({ name: 'Root category' }, new FakeFormHandle());
 
             expect(createCategory).toHaveBeenCalledWith(
                 '/items',
@@ -387,7 +377,7 @@ describe('PageActionsService', () => {
 
             const onSave = openForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-            onSave({ name: 'Edited category' }, { close: jest.fn() } as unknown as FormHandle);
+            onSave({ name: 'Edited category' }, new FakeFormHandle());
 
             expect(editCategory).toHaveBeenCalledWith(
                 '/items',
@@ -472,57 +462,6 @@ describe('PageActionsService', () => {
             service.executeAction(buildAction(PageStandardAction.DeleteCategory, PageActionScope.Item), context);
 
             expect(deleteCategories).not.toHaveBeenCalled();
-        });
-    });
-
-    describe('move', () => {
-        it('does nothing when the table has no categoriesConfig', () => {
-            const context = buildContext({ selectedItems: () => [{ id: 1 }] });
-
-            service.executeAction(buildAction(PageStandardAction.Move, PageActionScope.Item), context);
-
-            expect(loadCategoryTree).not.toHaveBeenCalled();
-        });
-
-        it('moves the selected items to the confirmed category, closes the picker and refreshes', () => {
-            const hide = jest.fn();
-            loadCategoryTree.mockReturnValue(of(buildCategories()));
-            moveItems.mockReturnValue(of(null));
-            openTree.mockReturnValue({ hide });
-            const context = buildCategoryContext({ selectedItems: () => [{ id: 'item-1', type: PageItemType.Item }] });
-
-            service.executeAction(buildAction(PageStandardAction.Move, PageActionScope.Item), context);
-
-            const treeConfig = openTree.mock.calls[0][0] as ModalTreeConfig;
-            const target = treeConfig.treeConfig.nodes[0].children[0];
-
-            treeConfig.onConfirm?.(target);
-
-            expect(loadCategoryTree).toHaveBeenCalledWith('/items', undefined);
-            expect(moveItems).toHaveBeenCalledWith(
-                '/items',
-                [{ id: 'item-1', type: PageItemType.Item }],
-                'cat-1',
-                'testPage.toast.move-success'
-            );
-            expect(hide).toHaveBeenCalled();
-            expect(context.onMoved).toHaveBeenCalled();
-        });
-
-        it('moves to the root when the root node is confirmed', () => {
-            loadCategoryTree.mockReturnValue(of(buildCategories()));
-            moveItems.mockReturnValue(of(null));
-            openTree.mockReturnValue({ hide: jest.fn() });
-            const context = buildCategoryContext({ selectedItems: () => [{ id: 'item-1', type: PageItemType.Item }] });
-
-            service.executeAction(buildAction(PageStandardAction.Move, PageActionScope.Item), context);
-
-            const treeConfig = openTree.mock.calls[0][0] as ModalTreeConfig;
-            const root = treeConfig.treeConfig.nodes[0];
-
-            treeConfig.onConfirm?.(root);
-
-            expect(moveItems).toHaveBeenCalledWith('/items', expect.anything(), null, 'testPage.toast.move-success');
         });
     });
 
@@ -686,8 +625,8 @@ describe('PageActionsService', () => {
     });
 });
 
-function buildAction(key: string, scope: PageActionScope, handler?: (items: PageItem[]) => void): PageAction {
-    return new PageAction({ handler, key, scope, zone: PageActionZone.Left });
+function buildAction(key: string, scope: PageActionScope, action?: (items: PageItem[]) => void): PageAction {
+    return new PageAction({ action, key, scope, zone: PageActionZone.Left });
 }
 
 function buildGroupAction(): PageAction {
@@ -749,14 +688,6 @@ function buildCategoryContext(overrides?: Partial<PageActionsContext>): PageActi
         getCurrentCategoryId: () => 'category-1',
         ...overrides
     });
-}
-
-function buildCategories(): PageItem[] {
-    return [
-        { id: 'cat-1', name: 'Electronics', parentId: null },
-        { id: 'cat-2', name: 'Phones', parentId: 'cat-1' },
-        { id: 'cat-3', name: 'Books', parentId: null }
-    ] as unknown as PageItem[];
 }
 
 function formArguments(formConfig: PageFormConfig | undefined, item: PageItem | undefined, prefix: string): unknown[] {

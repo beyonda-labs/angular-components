@@ -92,12 +92,12 @@ describe('page standard actions', () => {
     it('keeps its key and takes whatever else the caller overrides, handler included', () => {
         const onDelete = jest.fn();
         const action = pageStandardAction<Template>(PageStandardAction.Delete, {
-            handler: templates => onDelete(templates.map(template => template.name)),
+            action: templates => onDelete(templates.map(template => template.name)),
             icon: faTrash,
             zone: PageActionZone.Right
         });
 
-        action.handler?.([{ id: 1, name: 'Invoice' }]);
+        action.action?.([{ id: 1, name: 'Invoice' }]);
 
         expect(placement(action)).toEqual({
             key: 'delete',

@@ -4,8 +4,8 @@
 
         <div
             class="bey-property-list-item"
-            [class.is-disabled]="listItem.disabled"
-            [class.is-expandable]="listItem.isExpandable && !listItem.disabled"
+            [class.is-disabled]="listItem.isDisabled"
+            [class.is-expandable]="listItem.isExpandable && !listItem.isDisabled"
             (click)="onHeaderClick(listItem)"
         >
             @if (listItem.icon) {
@@ -44,7 +44,7 @@
                     container="body"
                     type="button"
                     [attr.aria-label]="copyLabelKey(listItem) | translate"
-                    [disabled]="listItem.disabled"
+                    [disabled]="listItem.isDisabled"
                     [tooltip]="copyLabelKey(listItem) | translate"
                     (click)="onCopy($event, listItem)"
                 >
@@ -58,7 +58,7 @@
                     container="body"
                     type="button"
                     [attr.aria-label]="action.label ?? '' | translate"
-                    [disabled]="listItem.disabled"
+                    [disabled]="listItem.isDisabled"
                     [tooltip]="action.label ?? '' | translate"
                     (click)="onAction($event, listItem, action.key)"
                 >
@@ -66,7 +66,7 @@
                 </button>
             }
 
-            @if (listItem.removable) {
+            @if (listItem.isRemovable) {
                 <span
                     class="bey-property-list-item-remove"
                     container="body"
@@ -83,10 +83,10 @@
                 <button
                     class="bey-property-list-item-chevron"
                     type="button"
-                    [attr.aria-expanded]="listItem.expanded"
+                    [attr.aria-expanded]="listItem.isExpanded"
                     [attr.aria-label]="toggleLabelKey(listItem) | translate"
-                    [class.is-expanded]="listItem.expanded"
-                    [disabled]="listItem.disabled"
+                    [class.is-expanded]="listItem.isExpanded"
+                    [disabled]="listItem.isDisabled"
                     (click)="onToggle($event, listItem)"
                 >
                     <fa-icon [icon]="chevronIcon"></fa-icon>
@@ -94,7 +94,7 @@
             }
         </div>
 
-        @if (listItem.isExpandable && listItem.expanded) {
+        @if (listItem.isExpandable && listItem.isExpanded) {
             <div class="bey-property-list-item-body">
                 @for (row of listItem.body; track row.label) {
                     <div class="bey-property-summary-row">

@@ -27,7 +27,7 @@ export function isActionVisible(
         return false;
     }
 
-    if (action.handler && toHandlerItems(action, selectedItems, categoriesConfig).length === 0) {
+    if (action.action && toHandlerItems(action, selectedItems, categoriesConfig).length === 0) {
         return false;
     }
 

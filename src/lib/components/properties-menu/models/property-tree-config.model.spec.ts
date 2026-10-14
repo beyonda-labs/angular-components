@@ -7,7 +7,7 @@ describe('PropertyTreeConfig', () => {
 
         expect(config.nodes).toEqual([]);
         expect(config.addBlockLabel).toBeUndefined();
-        expect(config.showEmptyStateAddBlock).toBe(false);
+        expect(config.isEmptyStateAddBlockShown).toBe(false);
     });
 
     it('turns node configs into PropertyTreeNode instances', () => {
@@ -24,9 +24,9 @@ describe('PropertyTreeConfig', () => {
     });
 
     it('takes addBlockLabel and showEmptyStateAddBlock', () => {
-        const config = new PropertyTreeConfig({ addBlockLabel: 'add.label', showEmptyStateAddBlock: true });
+        const config = new PropertyTreeConfig({ addBlockLabel: 'add.label', isEmptyStateAddBlockShown: true });
 
         expect(config.addBlockLabel).toBe('add.label');
-        expect(config.showEmptyStateAddBlock).toBe(true);
+        expect(config.isEmptyStateAddBlockShown).toBe(true);
     });
 });

@@ -71,7 +71,7 @@ export interface RegisterField {
     name: string;
     type: RegisterFieldType;
 
-    required?: boolean;
+    isRequired?: boolean;
     step?: number;
 }
 
@@ -84,7 +84,7 @@ export interface ResetPasswordRequest extends NewPassword {
 }
 
 export interface VerificationRequiredResponse {
-    verificationRequired: true;
+    isVerificationRequired: true;
 }
 
 export class LoginConfig {

@@ -20,8 +20,16 @@
                 }
             },
             "count": {
-                "many": "({{count}} elementos)",
-                "one": "({{count}} elemento)"
+                "categories": {
+                    "one": "{{count}} carpeta",
+                    "other": "{{count}} carpetas"
+                },
+                "items": {
+                    "one": "{{count}} elemento",
+                    "other": "{{count}} elementos"
+                },
+                "items-only": "({{items}})",
+                "mixed": "({{categories}} · {{items}})"
             },
             "form": {
                 "cancel": "Cancelar",
@@ -69,6 +77,7 @@
                 "title": "Compartir \"{{name}}\""
             },
             "shared": {
+                "folder": "Carpeta compartida",
                 "label": "Compartido conmigo"
             },
             "table": {

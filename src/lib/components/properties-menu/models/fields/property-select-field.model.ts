@@ -4,24 +4,20 @@ import { PropertyOption } from '../property-option.model';
 import { PropertyVariable } from '../property-variable.model';
 
 export class PropertySelectField<T = unknown> extends PropertyField<T> {
+    isSearchable: boolean;
     options: PropertyOption<T>[];
-    searchable: boolean;
     variables: PropertyVariable[];
 
-    constructor({ options = [], searchable = false, variables = [], ...base }: PropertySelectFieldParameters<T>) {
+    constructor({ options = [], variables = [], isSearchable = false, ...base }: PropertySelectFieldParameters<T>) {
         super({ ...base, type: PropertyFieldType.Select });
+        this.isSearchable = isSearchable;
         this.options = options;
-        this.searchable = searchable;
         this.variables = variables;
-    }
-
-    get holdsVariable(): boolean {
-        return typeof this.value === 'string' && this.value.trim().startsWith('{{');
     }
 }
 
 export interface PropertySelectFieldParameters<T = unknown> extends Omit<PropertyFieldParameters<T>, 'type'> {
+    isSearchable?: boolean;
     options?: PropertyOption<T>[];
-    searchable?: boolean;
     variables?: PropertyVariable[];
 }

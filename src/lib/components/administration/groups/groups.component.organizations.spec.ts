@@ -1,18 +1,19 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { buttonByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryAll, queryButton, renderComponent, rowWith, settle } from '@testing/dom';
+import { fieldsOf } from '@testing/form-fields';
+import { FakeFormHandle } from '@testing/handles/fake-form-handle';
+import { searchOf } from '@testing/page-search';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 
 import { SessionUser } from '../../../services/session/models/session.model';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
-import { FormHandle } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
 import { PageItemType } from '../../page/models/page-categories.model';
 import { PageOrganization } from '../../page/models/page-organization.model';
-import { PageSearch } from '../../page/models/page-search.model';
 import { OrganizationFolder } from '../models/organization-folders.model';
 import { GroupsComponent } from './groups.component';
 import { GroupRow, GroupsConfig } from './models/groups.model';
@@ -48,18 +49,6 @@ describe('GroupsComponent — organizations and callers', () => {
             organizationId: 'o2',
             organizationName: 'Globex',
             ...overrides
-        };
-    }
-
-    function buildHandle(): FormHandle<unknown> {
-        return {
-            close: jest.fn(),
-            goToStep: jest.fn(),
-            isDirty: jest.fn(() => true),
-            patchValue: jest.fn(),
-            requestClose: jest.fn(),
-            reset: jest.fn(),
-            value: jest.fn()
         };
     }
 
@@ -115,22 +104,8 @@ describe('GroupsComponent — organizations and callers', () => {
         return queryAll(fixture, 'nav[aria-label="angular-components.breadcrumb.label"]')[0]?.textContent ?? '';
     }
 
-    function fieldsOf(form: ModalFormConfig | undefined): FormField[] {
-        return form?.sections.flatMap(section => section.rows.flatMap(row => row.fields)) ?? [];
-    }
-
     function filterSelects(): HTMLSelectElement[] {
         return queryAll<HTMLSelectElement>(queryAll(fixture, '[role="group"]')[0], 'select');
-    }
-
-    function rowWith(text: string): HTMLElement {
-        const row = queryAll(fixture, '[role="row"]').find(candidate => candidate.textContent?.includes(text));
-
-        if (!row) {
-            throw new Error(`No row with ${text}`);
-        }
-
-        return row;
     }
 
     async function choose(select: HTMLSelectElement, value: string): Promise<void> {
@@ -146,7 +121,7 @@ describe('GroupsComponent — organizations and callers', () => {
 
     async function create(main: Record<string, unknown>): Promise<TestRequest> {
         await click(buttonByName(fixture, `${PREFIX}.actions.create.label`));
-        lastForm()?.onSubmit?.({ main }, buildHandle());
+        lastForm()?.onSubmit?.({ main }, new FakeFormHandle());
 
         return httpTesting.expectOne(current => current.url === GROUPS_URL && current.method === 'POST');
     }
@@ -208,8 +183,8 @@ describe('GroupsComponent — organizations and callers', () => {
 
             expect(before).not.toContain(`${PREFIX}.table.columns.organization`);
             expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.organization`);
-            expect(rowWith('Sales').textContent).toContain('Globex');
-            expect(rowWith('Support').textContent).toContain('Acme');
+            expect(rowWith(fixture, 'Sales').textContent).toContain('Globex');
+            expect(rowWith(fixture, 'Support').textContent).toContain('Acme');
         });
 
         it('filters the groups by the organization chosen, with equals', async () => {
@@ -218,7 +193,7 @@ describe('GroupsComponent — organizations and callers', () => {
             await choose(filterSelects()[0], 'organizationId');
             await choose(filterSelects()[2], 'o1');
             await click(buttonByName(fixture, 'angular-components.search.apply'));
-            const search = JSON.parse(atob(answerList().request.params.get('search') ?? '')) as PageSearch;
+            const search = searchOf(answerList());
 
             expect(search.filters).toEqual([{ field: 'organizationId', operator: 'equals', value: 'o1' }]);
         });
@@ -246,7 +221,7 @@ describe('GroupsComponent — organizations and callers', () => {
             await settle(fixture);
             lastForm()?.onSubmit?.(
                 { main: { extraRoleIds: [], name: 'Sales', organizationId: 'o2', userIds: [] } },
-                buildHandle()
+                new FakeFormHandle()
             );
             const request = httpTesting.expectOne(
                 current => current.url === `${GROUPS_URL}/g1` && current.method === 'PUT'
@@ -288,7 +263,7 @@ describe('GroupsComponent — organizations and callers', () => {
             const request = await openAcme();
 
             expect(request.request.params.get('parentId')).toBe('o1');
-            expect(rowWith('Support').textContent).not.toContain('Acme');
+            expect(rowWith(fixture, 'Support').textContent).not.toContain('Acme');
             expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.table.columns.organization`);
             expect(breadcrumb()).toContain('Acme');
         });
@@ -333,7 +308,7 @@ describe('GroupsComponent — organizations and callers', () => {
             await click(buttonByName(fixture, 'angular-components.search.add'));
 
             expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.organization`);
-            expect(rowWith('Sales').textContent).toContain('Globex');
+            expect(rowWith(fixture, 'Sales').textContent).toContain('Globex');
             expect(queryAll<HTMLOptionElement>(filterSelects()[0], 'option').map(({ value }) => value)).not.toContain(
                 'organizationId'
             );
@@ -358,7 +333,7 @@ describe('GroupsComponent — organizations and callers', () => {
         await configure(buildUser(['superadmin']));
         await render([], [buildGroup({ organizationId: 'o9', organizationName: 'Initech' })], []);
 
-        expect(rowWith('Sales')).toBeTruthy();
+        expect(rowWith(fixture, 'Sales')).toBeTruthy();
         expect(queryButton(fixture, `${PREFIX}.actions.create.label`)).toBeNull();
     });
 
@@ -370,7 +345,7 @@ describe('GroupsComponent — organizations and callers', () => {
         answerList();
         await settle(fixture);
 
-        expect(rowWith('Sales')).toBeTruthy();
+        expect(rowWith(fixture, 'Sales')).toBeTruthy();
         expect(TestBed.inject(FakeModalService).errors()).toEqual([]);
     });
 

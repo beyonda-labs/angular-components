@@ -52,11 +52,11 @@ export function buildAuditPageConfig({
         headerConfig: new PageHeaderConfig<AuditEventRow>({
             actions: [
                 pageStandardAction<AuditEventRow>(PageStandardAction.View, {
-                    handler: ([event]) => onView(event),
+                    action: ([event]) => onView(event),
                     tooltip: `${prefix}.actions.view.tooltip`
                 }),
                 new PageAction<AuditEventRow>({
-                    handler: () => onExport(),
+                    action: () => onExport(),
                     icon: faDownload,
                     key: AUDIT_EXPORT_ACTION,
                     scope: PageActionScope.Global,

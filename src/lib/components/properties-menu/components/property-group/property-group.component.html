@@ -3,22 +3,22 @@
 <section
     class="bey-property-group"
     [class.bey-property-group--secondary]="isSecondary()"
-    [class.is-disabled]="current.disabled"
+    [class.is-disabled]="current.isDisabled"
 >
-    @if (current.showHeader) {
+    @if (current.isHeaderShown) {
         <button
             class="bey-property-group-header"
             type="button"
             [attr.aria-controls]="controlsId()"
-            [attr.aria-expanded]="current.expanded"
-            [disabled]="current.disabled"
+            [attr.aria-expanded]="current.isExpanded"
+            [disabled]="current.isDisabled"
             (click)="toggle()"
         >
             <span class="bey-property-group-label" [title]="labelKey() | translate: current.labelParameters">
                 {{ labelKey() | translate: current.labelParameters }}
             </span>
 
-            @if (current.removable) {
+            @if (current.isRemovable) {
                 <span
                     class="bey-property-group-remove"
                     role="button"
@@ -31,13 +31,13 @@
 
             <fa-icon
                 class="bey-property-group-chevron"
-                [class.is-expanded]="current.expanded"
+                [class.is-expanded]="current.isExpanded"
                 [icon]="chevronIcon"
             ></fa-icon>
         </button>
     }
 
-    @if (current.expanded) {
+    @if (current.isExpanded) {
         <div class="bey-property-group-body" [id]="bodyId">
             @if (fieldsContent()) {
                 @for (field of visibleFields(); track field.id) {
@@ -57,7 +57,7 @@
                             type="button"
                             [attr.aria-selected]="tab.id === content.activeTabId"
                             [class.is-active]="tab.id === content.activeTabId"
-                            [disabled]="current.disabled"
+                            [disabled]="current.isDisabled"
                             (click)="selectContentTab(tab.id)"
                         >
                             @if (tab.icon) {
@@ -91,13 +91,13 @@
             @if (treeContent(); as content) {
                 @if (content.tree.nodes.length > 0) {
                     <bey-property-tree
-                        [acceptsRootDrop]="content.tree.acceptsRootDrop"
                         [addBlockLabel]="content.tree.addBlockLabel"
+                        [canAcceptRootDrop]="content.tree.canAcceptRootDrop"
                         [groupId]="current.id"
                         [nodes]="content.tree.nodes"
                         [tabId]="tabId()"
                     ></bey-property-tree>
-                } @else if (content.tree.showEmptyStateAddBlock && content.tree.addBlockLabel) {
+                } @else if (content.tree.isEmptyStateAddBlockShown && content.tree.addBlockLabel) {
                     <div class="bey-property-group-empty">
                         <button class="bey-property-group-empty-add" type="button" (click)="onEmptyAddBlockClick()">
                             <fa-icon [icon]="addIcon"></fa-icon>

@@ -131,19 +131,19 @@ describe('TableComponent', () => {
     });
 
     it('offers no checkboxes when the table is not selectable', async () => {
-        await render(buildConfig({ selectable: false }));
+        await render(buildConfig({ isSelectable: false }));
 
         expect(checkboxes()).toHaveLength(0);
     });
 
     it('reports the selected items and their indexes as rows are ticked', async () => {
-        const selectedItemsChange = jest.fn();
-        await render(buildConfig({ selectedItemsChange }));
+        const onSelectionChange = jest.fn();
+        await render(buildConfig({ onSelectionChange }));
 
         rowOf('Linus').querySelector('input')?.click();
         await settle(fixture);
 
-        expect(selectedItemsChange).toHaveBeenLastCalledWith([LINUS], [1]);
+        expect(onSelectionChange).toHaveBeenLastCalledWith([LINUS], [1]);
         expect(rowOf('Linus').querySelector('input')?.checked).toBe(true);
     });
 
@@ -162,20 +162,20 @@ describe('TableComponent', () => {
     });
 
     it('selects a row by clicking anywhere on it', async () => {
-        const selectedItemsChange = jest.fn();
-        await render(buildConfig({ selectedItemsChange }));
+        const onSelectionChange = jest.fn();
+        await render(buildConfig({ onSelectionChange }));
 
         rowOf('Ada')
             .querySelector('[role="cell"]')
             ?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
         await settle(fixture);
 
-        expect(selectedItemsChange).toHaveBeenLastCalledWith([ADA], [0]);
+        expect(onSelectionChange).toHaveBeenLastCalledWith([ADA], [0]);
     });
 
     it('selects and clears every row from the header, which is indeterminate in between', async () => {
-        const selectedItemsChange = jest.fn();
-        await render(buildConfig({ selectedItemsChange }));
+        const onSelectionChange = jest.fn();
+        await render(buildConfig({ onSelectionChange }));
         const [header] = checkboxes();
 
         rowOf('Ada').querySelector('input')?.click();
@@ -184,12 +184,12 @@ describe('TableComponent', () => {
 
         header.click();
         await settle(fixture);
-        expect(selectedItemsChange).toHaveBeenLastCalledWith([ADA, LINUS], [0, 1]);
+        expect(onSelectionChange).toHaveBeenLastCalledWith([ADA, LINUS], [0, 1]);
         expect(header.checked).toBe(true);
 
         header.click();
         await settle(fixture);
-        expect(selectedItemsChange).toHaveBeenLastCalledWith([], []);
+        expect(onSelectionChange).toHaveBeenLastCalledWith([], []);
     });
 
     it('starts with the rows the config marks as selected', async () => {
@@ -201,18 +201,18 @@ describe('TableComponent', () => {
 
     it('runs the action of a link cell without selecting the row', async () => {
         const action = jest.fn();
-        const selectedItemsChange = jest.fn();
+        const onSelectionChange = jest.fn();
         await render(
             buildConfig({
                 loadRow: item => [new LinkTableCell({ action, content: item.name })],
-                selectedItemsChange
+                onSelectionChange
             })
         );
 
         (fixture.nativeElement.querySelector('button') as HTMLButtonElement).click();
 
         expect(action).toHaveBeenCalled();
-        expect(selectedItemsChange).not.toHaveBeenCalled();
+        expect(onSelectionChange).not.toHaveBeenCalled();
     });
 
     it('renders every badge of a badge cell', async () => {
@@ -376,6 +376,41 @@ describe('TableComponent', () => {
             await settle(fixture);
 
             expect(controlByName(fixture, 'demo.table.columns.name').disabled).toBe(true);
+        });
+
+        it('drops the sort once the column it sorts by is hidden, from the menu or by a reset', async () => {
+            const onSortChange = jest.fn();
+            const sortedConfig = (): TableConfig<Person> =>
+                buildColumnsConfig({
+                    columns: [
+                        new TableColumn({ isHideable: false, key: 'name' }),
+                        new TableColumn({ isSortable: true, key: 'role' }),
+                        new TableColumn({ isSortable: true, isVisible: false, key: 'id' })
+                    ],
+                    onSortChange
+                });
+            await render(sortedConfig());
+            await toggleColumn('demo.table.columns.id');
+            buttonByName(fixture, 'demo.table.columns.role').click();
+            await settle(fixture);
+
+            await toggleColumn('demo.table.columns.id');
+            expect(onSortChange.mock.calls).toEqual([[{ direction: TableSortDirection.Asc, field: 'role' }]]);
+
+            await toggleColumn('demo.table.columns.role');
+            expect(onSortChange.mock.calls.at(-1)).toEqual([null]);
+
+            await toggleColumn('demo.table.columns.role');
+            await toggleColumn('demo.table.columns.id');
+            buttonByName(fixture, 'demo.table.columns.id').click();
+            await settle(fixture);
+            buttonByName(fixture, COLUMNS_TOGGLE).click();
+            await settle(fixture);
+            buttonByName(fixture, 'angular-components.table.columns.reset').click();
+            await settle(fixture);
+
+            expect(onSortChange.mock.calls.at(-1)).toEqual([null]);
+            expect(header('demo.table.columns.role').getAttribute('aria-sort')).toBe('none');
         });
 
         it('starts from the defaults when the storage cannot be read', async () => {

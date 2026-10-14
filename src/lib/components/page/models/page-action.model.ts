@@ -52,16 +52,16 @@ export class PageAction<TItem extends PageItem = PageItem> {
     type: HeaderActionType;
     zone: PageActionZone;
 
+    action?: (items: TItem[]) => void;
     confirmation?: PageActionConfirmation<TItem>;
-    handler?: (items: TItem[]) => void;
     icon?: IconDefinition;
     label?: string;
     subActions?: PageAction<TItem>[];
     tooltip?: string;
 
     constructor({
+        action,
         confirmation,
-        handler,
         icon,
         key,
         label,
@@ -71,8 +71,8 @@ export class PageAction<TItem extends PageItem = PageItem> {
         type,
         zone
     }: PageActionParameters<TItem>) {
+        this.action = action;
         this.confirmation = confirmation;
-        this.handler = handler;
         this.icon = icon;
         this.key = key;
         this.label = label;
@@ -89,8 +89,8 @@ export interface PageActionParameters<TItem extends PageItem = PageItem> {
     scope: PageActionScope;
     zone: PageActionZone;
 
+    action?: (items: TItem[]) => void;
     confirmation?: PageActionConfirmation<TItem>;
-    handler?: (items: TItem[]) => void;
     icon?: IconDefinition;
     label?: string;
     subActions?: PageAction<TItem>[];

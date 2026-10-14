@@ -1,6 +1,11 @@
 import { PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
-import { buildCategoryPath, buildPageBreadcrumbItems, fromSharedRoot } from './page-breadcrumb';
+import {
+    buildCategoryPath,
+    buildFlatViewBreadcrumbItems,
+    buildPageBreadcrumbItems,
+    fromSharedRoot
+} from './page-breadcrumb';
 
 interface Folder extends PageItem {
     title?: string | number;
@@ -45,6 +50,18 @@ describe('buildCategoryPath', () => {
             { id: 'clients', label: 'Clients' },
             { id: 2026, label: '2026' },
             { id: 'untitled', label: '' }
+        ]);
+    });
+});
+
+describe('buildFlatViewBreadcrumbItems', () => {
+    it('names only the view, by its label or by the key of its tab', () => {
+        expect([
+            buildFlatViewBreadcrumbItems('demo', { key: 'reviewQueue' }),
+            buildFlatViewBreadcrumbItems('demo', { key: 'queue', label: 'demo.queue.title' })
+        ]).toEqual([
+            [expect.objectContaining({ id: 0, isTranslationKey: true, label: 'demo.tabs.review-queue.label' })],
+            [expect.objectContaining({ id: 0, isTranslationKey: true, label: 'demo.queue.title' })]
         ]);
     });
 });

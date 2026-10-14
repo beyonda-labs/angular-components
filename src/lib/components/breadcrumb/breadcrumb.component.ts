@@ -17,7 +17,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
-import { BreadcrumbConfig, BreadcrumbItem } from './models/breadcrumb.model';
+import { BreadcrumbConfig, BreadcrumbItem, BreadcrumbText } from './models/breadcrumb.model';
 
 const ELLIPSIS_ESTIMATED_WIDTH = 40;
 const SEPARATOR_ESTIMATED_WIDTH = 20;
@@ -189,19 +189,33 @@ export class BreadcrumbComponent implements AfterViewInit {
     }
 
     private resolveDetail({ detail, detailParameters }: BreadcrumbItem): string {
-        return detail ? this.translateService.instant(detail, detailParameters) : '';
+        if (!detail) {
+            return '';
+        }
+
+        const parameters = detailParameters
+            ? Object.fromEntries(
+                  Object.entries(detailParameters).map(([name, value]) => [name, this.resolveParameter(value)])
+              )
+            : undefined;
+
+        return this.translateService.instant(detail, parameters);
     }
 
     private resolveLabel(item: BreadcrumbItem): string {
-        const { prefix, translate } = this.config();
+        const { prefix, isTranslationKey } = this.config();
 
         if (item.isTranslationKey) {
             return this.translateService.instant(item.label);
         }
 
-        const label = translate && prefix ? `${prefix}.${item.label}` : item.label;
+        const label = isTranslationKey && prefix ? `${prefix}.${item.label}` : item.label;
 
-        return translate ? this.translateService.instant(label) : label;
+        return isTranslationKey ? this.translateService.instant(label) : label;
+    }
+
+    private resolveParameter(value: unknown): unknown {
+        return value instanceof BreadcrumbText ? this.translateService.instant(value.key, value.parameters) : value;
     }
 
     private scheduleRecalculate(): void {

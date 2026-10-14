@@ -122,7 +122,7 @@ describe('buildUsersPageConfig', () => {
         );
         expect(config.statusConfig).toBeUndefined();
 
-        actions[2].handler?.([user]);
+        actions[2].action?.([user]);
 
         expect(onResendInvitation).toHaveBeenCalledWith(user);
     });
@@ -136,28 +136,39 @@ describe('buildUsersPageConfig', () => {
         expect(transfer).toEqual(expect.objectContaining({ scope: PageActionScope.Single, zone: PageActionZone.Menu }));
         expect(remove).toEqual(expect.objectContaining({ scope: PageActionScope.Item, zone: PageActionZone.Menu }));
 
-        transfer.handler?.([user]);
-        remove.handler?.([user, { ...user, id: 'u2' }]);
+        transfer.action?.([user]);
+        remove.action?.([user, { ...user, id: 'u2' }]);
 
         expect(onTransfer).toHaveBeenCalledWith(user);
         expect(onDelete).toHaveBeenCalledWith([user, { ...user, id: 'u2' }]);
     });
 
     it('browses the folders it is given, with no folder action, and is flat without them', () => {
-        const categoriesConfig = buildOrganizationFoldersConfig(() => []);
+        const categoriesConfig = buildOrganizationFoldersConfig(() => [], 'demo');
         const config = build({ categoriesConfig });
         const keys = config.headerConfig?.actions.map(({ key }) => key) ?? [];
 
         expect(config.tableConfig?.categoriesConfig).toBe(categoriesConfig);
         expect(keys.filter(key => FOLDER_ACTIONS.has(key))).toEqual([]);
         expect(build().tableConfig?.categoriesConfig).toBeUndefined();
-        expect(config.tableConfig?.height).toBe('calc(100vh - 255px)');
-        expect(build().tableConfig?.height).toBe('calc(100vh - 220px)');
+    });
+
+    it('leaves the table to fill the page unless the config gives it the folders height or the plain one', () => {
+        const categoriesConfig = buildOrganizationFoldersConfig(() => [], 'demo');
+        const sized = new UsersConfig({ foldersHeight: '20rem', height: '24rem' });
+
+        expect(build().tableConfig?.height).toBeUndefined();
+        expect(build({ categoriesConfig }).tableConfig?.height).toBeUndefined();
+        expect(build({ categoriesConfig, config: sized }).tableConfig?.height).toBe('20rem');
+        expect(build({ config: sized }).tableConfig?.height).toBe('24rem');
+        expect(build({ categoriesConfig, config: new UsersConfig({ height: '24rem' }) }).tableConfig?.height).toBe(
+            '24rem'
+        );
     });
 
     it('shows the organization among the folders only in a search at the root, and always on a flat page', () => {
         const folders = build({
-            categoriesConfig: buildOrganizationFoldersConfig(() => []),
+            categoriesConfig: buildOrganizationFoldersConfig(() => [], 'demo'),
             isOrganizationShown: true
         });
         const flat = build({ isOrganizationShown: true });

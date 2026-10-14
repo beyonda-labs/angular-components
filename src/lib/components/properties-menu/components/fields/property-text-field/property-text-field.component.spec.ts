@@ -37,13 +37,13 @@ describe('PropertyTextFieldComponent', () => {
     }
 
     it('hides the variable trigger without acceptsVariable', async () => {
-        await render(new PropertyTextField({ id: 'title', acceptsVariable: false }));
+        await render(new PropertyTextField({ id: 'title', canAcceptVariable: false }));
 
         expect(queryButton(fixture, 'Insert variable')).toBeNull();
     });
 
     it('shows the variable trigger with acceptsVariable', async () => {
-        await render(new PropertyTextField({ id: 'title', acceptsVariable: true }));
+        await render(new PropertyTextField({ id: 'title', canAcceptVariable: true }));
 
         expect(queryButton(fixture, 'Insert variable')).not.toBeNull();
     });
@@ -64,7 +64,7 @@ describe('PropertyTextFieldComponent', () => {
         const inserted: unknown[] = [];
 
         TestBed.inject(PropertiesMenuService).setVariables([variable]);
-        await render(new PropertyTextField({ id: 'title', acceptsVariable: true, value: 'INVOICE' }));
+        await render(new PropertyTextField({ id: 'title', canAcceptVariable: true, value: 'INVOICE' }));
         fixture.componentInstance.variableInserted.subscribe(insertion => inserted.push(insertion));
 
         buttonByName(fixture, 'Insert variable').click();

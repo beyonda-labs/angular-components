@@ -10,7 +10,7 @@ export interface ConfirmationModalConfig {
     title: string;
 
     cancelLabel?: string;
-    closeOnBackdrop?: boolean;
+    canCloseOnBackdrop?: boolean;
     confirmLabel?: string;
     messageParameters?: Record<string, unknown>;
 }
@@ -21,7 +21,7 @@ export interface InternalModalConfig {
     title: string;
     type: ModalType;
 
-    closeOnBackdrop?: boolean;
+    canCloseOnBackdrop?: boolean;
     messageParameters?: Record<string, unknown>;
     secondaryActionLabel?: string;
 }
@@ -30,7 +30,7 @@ export interface NotificationModalConfig {
     message: string;
     title: string;
 
+    canCloseOnBackdrop?: boolean;
     closeLabel?: string;
-    closeOnBackdrop?: boolean;
     messageParameters?: Record<string, unknown>;
 }

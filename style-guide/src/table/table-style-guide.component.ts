@@ -137,7 +137,7 @@ export class TableStyleGuideComponent {
             loadRow: item => this.loadRow(item),
             onSortChange: sort => this.sort.set(sort),
             prefix: PREFIX,
-            selectedItemsChange: selected => this.selected.set(selected.map(item => item.name)),
+            onSelectionChange: selected => this.selected.set(selected.map(item => item.name)),
             sort: sort ?? undefined,
             storageKey
         });
@@ -155,7 +155,7 @@ export class TableStyleGuideComponent {
                     })
                 ],
                 tooltip: `${PREFIX}.status.${status}`,
-                translate: true
+                isTranslationKey: true
             }),
             new BeyDateTableCell({ value: joinedAt }),
             new BeyTagsTableCell({ tags: skills }),
@@ -164,7 +164,7 @@ export class TableStyleGuideComponent {
                 content: `${PREFIX}.actions.open`,
                 icon: faEye,
                 tooltip: `${PREFIX}.actions.open`,
-                translate: true
+                isTranslationKey: true
             })
         ];
     }

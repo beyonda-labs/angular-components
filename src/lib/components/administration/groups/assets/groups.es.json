@@ -21,6 +21,16 @@
             "categories": {
                 "root": "Grupos"
             },
+            "count": {
+                "categories": {
+                    "one": "{{count}} organización",
+                    "other": "{{count}} organizaciones"
+                },
+                "items": {
+                    "one": "{{count}} grupo",
+                    "other": "{{count}} grupos"
+                }
+            },
             "form": {
                 "create": {
                     "title": "Nuevo grupo"

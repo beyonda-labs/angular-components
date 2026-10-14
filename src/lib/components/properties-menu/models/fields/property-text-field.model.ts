@@ -14,21 +14,21 @@ export interface PropertyTextFieldVariableInsertion {
 }
 
 export class PropertyTextField extends PropertyField<string> {
-    multiline: boolean;
+    isMultiline: boolean;
+    isReadonly: boolean;
     placeholder: string;
-    readonly: boolean;
 
-    constructor({ multiline = false, placeholder = '', readonly = false, ...base }: PropertyTextFieldParameters) {
-        super({ ...base, type: multiline ? PropertyFieldType.Textarea : PropertyFieldType.Text });
+    constructor({ placeholder = '', isMultiline = false, isReadonly = false, ...base }: PropertyTextFieldParameters) {
+        super({ ...base, type: isMultiline ? PropertyFieldType.Textarea : PropertyFieldType.Text });
 
-        this.multiline = multiline;
+        this.isMultiline = isMultiline;
+        this.isReadonly = isReadonly;
         this.placeholder = placeholder;
-        this.readonly = readonly;
     }
 }
 
 export interface PropertyTextFieldParameters extends Omit<PropertyFieldParameters<string>, 'type'> {
-    multiline?: boolean;
+    isMultiline?: boolean;
+    isReadonly?: boolean;
     placeholder?: string;
-    readonly?: boolean;
 }

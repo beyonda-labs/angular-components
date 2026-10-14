@@ -44,5 +44,5 @@ export * from './lib/services/preferences/public-api';
 export * from './lib/services/session/public-api';
 export * from './lib/services/theme/public-api';
 
-/* utilities — plain functions a consumer shares with the library */
+/* utilities — plain functions and icons a consumer shares with the library */
 export * from './lib/utilities/public-api';

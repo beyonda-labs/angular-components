@@ -26,8 +26,8 @@ export interface PropertyGroupRemove {
 }
 
 export interface PropertyGroupToggle {
-    expanded: boolean;
     groupId: string;
+    isExpanded: boolean;
     tabId: string;
 }
 
@@ -52,8 +52,8 @@ export interface PropertyListItemSelect {
 }
 
 export interface PropertyListItemToggle {
-    expanded: boolean;
     groupId: string;
+    isExpanded: boolean;
     itemId: string;
     tabId: string;
 }
@@ -95,8 +95,8 @@ export interface PropertyTreeNodeSelect {
 }
 
 export interface PropertyTreeNodeToggle {
-    expanded: boolean;
     groupId: string;
+    isExpanded: boolean;
     nodeId: string;
     tabId: string;
 }

@@ -1,5 +1,9 @@
 import { TableColumn, TableSort, TableSortDirection, TableSortState } from '../models/table.model';
 
+export function isTableSortShown(sort: TableSort | null, columns: TableColumn[]): boolean {
+    return sort !== null && columns.some(column => column.isSortable && column.sortField === sort.field);
+}
+
 export function nextTableSort(sort: TableSort | null, column: TableColumn): TableSort | null {
     if (sort?.field !== column.sortField) {
         return { direction: TableSortDirection.Asc, field: column.sortField };

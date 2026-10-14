@@ -1,7 +1,7 @@
 {
     "angular-components-style-guide": {
         "organization-summary": {
-            "example": "El resumen de la organización del miembro que ha iniciado sesión, de solo lectura, hecho con el módulo de tarjetas: su nombre, su estado y su alta, una franja con sus miembros activos, sus grupos y sus roles adicionales, con los miembros por estado para quien pueda ver los usuarios; sus administradores; cada grupo plegado con su número de miembros, que despliega sus miembros activos en su sitio, y al final los que no están en ningún grupo; y cada rol adicional, que abre sus permisos a quien ya pueda verlos. El backend de demostración no sirve ninguna organización, así que no se muestra nada: la sección de tarjetas enseña las mismas piezas."
+            "example": "El resumen de la organización del miembro que ha iniciado sesión, de solo lectura, hecho con el módulo de tarjetas: su nombre, su estado y su alta, una franja con sus miembros activos, sus grupos y sus roles adicionales, con los miembros por estado para quien pueda ver los usuarios; sus administradores; cada grupo plegado con su número de miembros, que despliega sus miembros activos en su sitio, y al final los que no están en ningún grupo; y cada rol adicional, que abre sus permisos a quien ya pueda verlos, con las secciones, los iconos y el orden de la demostración de roles. La demostración responde con una organización fija."
         }
     }
 }

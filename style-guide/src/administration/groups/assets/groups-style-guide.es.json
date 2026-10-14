@@ -1,7 +1,7 @@
 {
     "angular-components-style-guide": {
         "groups": {
-            "example": "La página de grupos de un administrador o del superadministrador: busca por nombre, crea un grupo, edita en un solo formulario su nombre, sus miembros y sus roles adicionales, y elimina grupos, en la medida en que el backend lo permita en cada fila. El superadministrador ve una carpeta por organización, una búsqueda en la raíz las abarca todas y es la única lista con la columna de organización, y un grupo creado dentro de una carpeta llega con su organización elegida. El backend de demostración no sirve grupos, así que la lista se queda vacía."
+            "example": "La página de grupos de un administrador o del superadministrador: busca por nombre, crea un grupo, edita en un solo formulario su nombre, sus miembros y sus roles adicionales, buscando entre los usuarios y los roles adicionales de la organización, y elimina grupos, en la medida en que el backend lo permita en cada fila. El superadministrador ve una carpeta por organización, una búsqueda en la raíz las abarca todas y es la única lista con la columna de organización, y un grupo creado dentro de una carpeta llega con su organización elegida. La demostración responde con datos fijos, así que un cambio se confirma pero la lista sigue como estaba."
         }
     }
 }

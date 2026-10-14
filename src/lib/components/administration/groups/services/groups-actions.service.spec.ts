@@ -2,6 +2,7 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { faFileLines } from '@fortawesome/free-regular-svg-icons';
+import { fieldsOf } from '@testing/form-fields';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
@@ -53,10 +54,6 @@ describe('GroupsActionsService', () => {
 
     function fieldOf(key: string): FormField | undefined {
         return fieldsOf(opened[0].config).find(current => current.key === key);
-    }
-
-    function fieldsOf({ sections }: Pick<ModalFormConfig, 'sections'>): FormField[] {
-        return sections.flatMap(section => section.rows.flatMap(row => row.fields));
     }
 
     function listField(key: string): FormListField {

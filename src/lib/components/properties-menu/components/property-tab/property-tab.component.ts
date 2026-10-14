@@ -21,7 +21,7 @@ export class PropertyTabComponent {
     readonly tab = input.required<PropertyTab>();
 
     readonly addIcon = faPlus;
-    readonly visibleGroups = computed(() => this.tab().groups.filter(group => !group.hidden));
+    readonly visibleGroups = computed(() => this.tab().groups.filter(group => !group.isHidden));
 
     onTabAddClick(): void {
         this.propertiesMenuService.triggerTabAdd(this.tab().id);

@@ -1,10 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { FormGroup } from '@angular/forms';
+import { fieldsOf } from '@testing/form-fields';
+import { FakeFormHandle } from '@testing/handles/fake-form-handle';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { PasswordPolicyService } from '../../../services/password-policy/password-policy.service';
 import { FormPasswordField, FormPasswordPolicy } from '../../form/models/fields/form-password-field.model';
-import { FormConfig, FormHandle } from '../../form/models/form.model';
+import { FormConfig } from '../../form/models/form.model';
 import { FormService } from '../../form/services/form.service';
 import { LoginAccountFormService } from './login-account-form.service';
 
@@ -14,22 +16,14 @@ describe('LoginAccountFormService', () => {
     let service: LoginAccountFormService;
 
     function autofillHints<T>(config: FormConfig<T>): Record<string, string | undefined> {
-        return Object.fromEntries(
-            config.sections.flatMap(section =>
-                section.rows.flatMap(row => row.fields.map(field => [field.key, field.autocomplete]))
-            )
-        );
+        return Object.fromEntries(fieldsOf(config).map(field => [field.key, field.autocomplete]));
     }
 
     function policies<T>(config: FormConfig<T>): Record<string, FormPasswordPolicy | undefined> {
         return Object.fromEntries(
-            config.sections.flatMap(section =>
-                section.rows.flatMap(row =>
-                    row.fields
-                        .filter(field => field instanceof FormPasswordField)
-                        .map(field => [field.key, field.policy])
-                )
-            )
+            fieldsOf(config)
+                .filter(field => field instanceof FormPasswordField)
+                .map(field => [field.key, field.policy])
         );
     }
 
@@ -38,7 +32,7 @@ describe('LoginAccountFormService', () => {
     }
 
     function submit<T>(config: FormConfig<T>, group: FormGroup): void {
-        config.onSubmit?.(group.getRawValue() as T, {} as FormHandle<T>);
+        config.onSubmit?.(group.getRawValue() as T, new FakeFormHandle<T>());
     }
 
     beforeEach(() => {

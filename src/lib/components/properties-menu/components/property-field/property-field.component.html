@@ -1,7 +1,7 @@
 @let current = field();
 
-@if (!current.hidden) {
-    <div class="bey-property-field" [class.is-disabled]="current.disabled">
+@if (!current.isHidden) {
+    <div class="bey-property-field" [class.is-disabled]="current.isDisabled">
         @if (showsLabel()) {
             <label class="bey-property-field-label" [attr.for]="labelFor()" [id]="labelId">
                 {{ labelKey() | translate }}

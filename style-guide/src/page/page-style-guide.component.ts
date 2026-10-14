@@ -1,14 +1,17 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
     BeyBooleanFilter,
     BeyFormNumberField,
     BeyFormRow,
     BeyFormSection,
     BeyFormTextField,
+    BeyLinkTableCell,
+    BeyModalService,
     BeyPageCategoriesConfig,
     BeyPageComponent,
     BeyPageConfig,
     BeyPageFormConfig,
+    BeyPageHandle,
     BeyPageHeaderConfig,
     beyPageOrganizationCell,
     beyPageOrganizationColumn,
@@ -29,8 +32,11 @@ import {
 } from '@beyonda-labs/angular-components';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { STYLE_GUIDE_DOCUMENTS_URL, StyleGuideDocument } from './models/page-backend.model';
+
 const PREFIX = 'angular-components-style-guide.page';
 const FOLDERS_PREFIX = `${PREFIX}.folders`;
+const SHARING_PREFIX = `${PREFIX}.sharing`;
 
 interface Product extends BeyPageOrganizationItem, BeyPageOwnedItem {
     category: string;
@@ -51,6 +57,8 @@ interface ProductFormValue {
     templateUrl: './page-style-guide.component.html'
 })
 export class PageStyleGuideComponent {
+    private readonly modalService = inject(BeyModalService);
+
     readonly config = new BeyPageConfig<ProductFormValue, Product>({
         baseUrl: '/products',
         formConfig: new BeyPageFormConfig<ProductFormValue, Product>({
@@ -122,7 +130,9 @@ export class PageStyleGuideComponent {
         }),
         prefix: FOLDERS_PREFIX,
         tableConfig: new BeyPageTableConfig({
-            categoriesConfig: new BeyPageCategoriesConfig({}),
+            categoriesConfig: new BeyPageCategoriesConfig({
+                itemCountLabels: { one: `${FOLDERS_PREFIX}.count.one`, other: `${FOLDERS_PREFIX}.count.other` }
+            }),
             columns: [
                 new BeyTableColumn({ isSortable: true, key: 'name', width: 4 }),
                 new BeyTableColumn({ isSortable: true, key: 'price', width: 2 })
@@ -132,6 +142,40 @@ export class PageStyleGuideComponent {
             order: { direction: BeySearchSortDirection.Asc, field: 'name' }
         })
     });
+    readonly sharingConfig = new BeyPageConfig<unknown, StyleGuideDocument>({
+        baseUrl: STYLE_GUIDE_DOCUMENTS_URL,
+        headerConfig: new BeyPageHeaderConfig<StyleGuideDocument>({
+            actions: [
+                beyPageStandardAction<StyleGuideDocument>(BeyPageStandardAction.View, {
+                    action: ([document]) => this.view(document)
+                }),
+                beyPageStandardAction(BeyPageStandardAction.Share)
+            ],
+            title: `${SHARING_PREFIX}.title`
+        }),
+        onReady: handle => (this.sharingPage = handle),
+        prefix: SHARING_PREFIX,
+        tableConfig: new BeyPageTableConfig<StyleGuideDocument>({
+            categoriesConfig: new BeyPageCategoriesConfig<StyleGuideDocument>({
+                loadRow: folder => [
+                    new BeyLinkTableCell({
+                        action: () => this.sharingPage?.openCategory(folder),
+                        content: folder.name
+                    }),
+                    beyPageOwnerCell(folder)
+                ]
+            }),
+            columns: [new BeyTableColumn({ isHideable: false, key: 'name', width: 4 }), beyPageOwnerColumn()],
+            height: '20rem',
+            isSharedEnabled: true,
+            loadRow: document => [
+                new BeyLinkTableCell({ action: () => this.view(document), content: document.name }),
+                beyPageOwnerCell(document)
+            ]
+        })
+    });
+
+    private sharingPage?: BeyPageHandle<StyleGuideDocument>;
 
     private loadFolderRow({ name, price }: Product): BeyTextTableCell[] {
         return [
@@ -150,6 +194,14 @@ export class PageStyleGuideComponent {
             beyPageOwnerCell(product),
             beyPageOrganizationCell(product)
         ];
+    }
+
+    private view({ name }: StyleGuideDocument): void {
+        this.modalService.openInfo({
+            message: `${SHARING_PREFIX}.view.message`,
+            messageParameters: { name },
+            title: `${SHARING_PREFIX}.view.title`
+        });
     }
 }
 

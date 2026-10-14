@@ -5,11 +5,13 @@ import {
     BeyFormFieldValidatorType,
     BeyFormInfoField,
     BeyFormListField,
+    BeyFormNoticeField,
     BeyFormNumberField,
     BeyFormPasswordField,
     BeyFormRow,
     BeyFormSection,
     BeyFormTextField,
+    BeyNoticeVariant,
     BeyPasswordPolicy
 } from '@beyonda-labs/angular-components';
 import { faCalendarDays, faUser } from '@fortawesome/free-solid-svg-icons';
@@ -96,7 +98,7 @@ export function buildInputSections(): BeyFormSection[] {
                         new BeyFormPasswordField({
                             key: 'password4',
                             columns: 6,
-                            showToggle: false
+                            isToggleShown: false
                         })
                     ]
                 }),
@@ -173,6 +175,30 @@ export function buildInputSections(): BeyFormSection[] {
                             items: Array.from({ length: 12 }, (_, index) => `Template ${index + 1}`)
                         }),
                         new BeyFormListField({ key: 'list2', columns: 6 })
+                    ]
+                })
+            ]
+        }),
+        new BeyFormSection({
+            key: 'section-notice',
+            isTooltipVisible: true,
+            rows: [
+                new BeyFormRow({
+                    fields: [
+                        new BeyFormNoticeField({
+                            key: 'notice1',
+                            message: `${PREFIX}.section-notice.notice1.message`,
+                            messageParameters: { count: 12 }
+                        })
+                    ]
+                }),
+                new BeyFormRow({
+                    fields: [
+                        new BeyFormNoticeField({
+                            key: 'notice2',
+                            message: `${PREFIX}.section-notice.notice2.message`,
+                            variant: BeyNoticeVariant.Warning
+                        })
                     ]
                 })
             ]

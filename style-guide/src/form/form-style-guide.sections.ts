@@ -8,10 +8,13 @@ import { buildInputSections } from './form-style-guide.input-sections';
 import { buildListSections } from './form-style-guide.list-sections';
 import { StyleGuideRegion } from './models/form-style-guide.model';
 
-export function buildStyleGuideSections(regions: Signal<StyleGuideRegion[]>): BeyFormSection[] {
+export function buildStyleGuideSections(
+    regions: Signal<StyleGuideRegion[]>,
+    onAutocompletePick: () => void
+): BeyFormSection[] {
     return [
         ...buildInputSections(),
-        ...buildChoiceSections(),
+        ...buildChoiceSections(onAutocompletePick),
         ...buildListSections(),
         buildCheckboxSectionsSection(),
         ...buildDependentSections(regions)

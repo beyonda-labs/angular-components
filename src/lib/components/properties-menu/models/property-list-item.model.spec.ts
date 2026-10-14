@@ -4,8 +4,8 @@ describe('PropertyListItem', () => {
     it('applies the defaults', () => {
         const item = new PropertyListItem({ id: 'block-heading', label: 'Encabezado' });
 
-        expect(item.disabled).toBe(false);
-        expect(item.hidden).toBe(false);
+        expect(item.isDisabled).toBe(false);
+        expect(item.isHidden).toBe(false);
         expect(item.metadata).toEqual({});
         expect(item.description).toBeUndefined();
         expect(item.icon).toBeUndefined();

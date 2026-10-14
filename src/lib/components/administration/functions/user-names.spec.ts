@@ -1,4 +1,4 @@
-import { userContactLabel, userDisplayName, userFullName } from './user-names';
+import { userContactLabel, userContactOption, userDisplayName, userFullName } from './user-names';
 
 describe('user names', () => {
     describe('userFullName', () => {
@@ -19,6 +19,21 @@ describe('user names', () => {
         it('names a user without a name, or named by the email, by the email alone', () => {
             expect(userContactLabel({ email: 'ada@example.test', name: null })).toBe('ada@example.test');
             expect(userContactLabel({ email: 'ada@example.test', name: 'ada@example.test' })).toBe('ada@example.test');
+        });
+    });
+
+    describe('userContactOption', () => {
+        it('offers a user by its contact label, valued by its id', () => {
+            expect(
+                userContactOption({ email: 'ada@example.test', id: 'u1', name: 'Ada', surname: 'Lovelace' })
+            ).toEqual({
+                label: 'Ada Lovelace (ada@example.test)',
+                value: 'u1'
+            });
+            expect(userContactOption({ email: 'ada@example.test', id: 'u1', name: '' })).toEqual({
+                label: 'ada@example.test',
+                value: 'u1'
+            });
         });
     });
 

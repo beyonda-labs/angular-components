@@ -9,7 +9,7 @@ describe('PropertyInfoField', () => {
     });
 
     it('is always disabled, even when built as enabled', () => {
-        expect(new PropertyInfoField({ id: 'scope', disabled: false }).disabled).toBe(true);
+        expect(new PropertyInfoField({ id: 'scope', isDisabled: false }).isDisabled).toBe(true);
     });
 
     it('defaults to an empty item list', () => {

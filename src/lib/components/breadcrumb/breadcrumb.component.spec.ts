@@ -3,14 +3,19 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 
 import { BreadcrumbComponent } from './breadcrumb.component';
-import { BreadcrumbConfig, BreadcrumbConfigParameters, BreadcrumbItem } from './models/breadcrumb.model';
+import {
+    BreadcrumbConfig,
+    BreadcrumbConfigParameters,
+    BreadcrumbItem,
+    BreadcrumbText
+} from './models/breadcrumb.model';
 
 describe('BreadcrumbComponent', () => {
     let fixture: ComponentFixture<BreadcrumbComponent>;
 
     function buildConfig(overrides: Partial<BreadcrumbConfigParameters> = {}): BreadcrumbConfig {
         return new BreadcrumbConfig({
-            translate: false,
+            isTranslationKey: false,
             items: [
                 new BreadcrumbItem({ id: 1, label: 'Home' }),
                 new BreadcrumbItem({ id: 2, label: 'Templates' }),
@@ -103,7 +108,11 @@ describe('BreadcrumbComponent', () => {
         TestBed.inject(TranslateService).use('en');
 
         await render(
-            buildConfig({ translate: true, prefix: 'nav', items: [new BreadcrumbItem({ id: 1, label: 'home' })] })
+            buildConfig({
+                isTranslationKey: true,
+                prefix: 'nav',
+                items: [new BreadcrumbItem({ id: 1, label: 'home' })]
+            })
         );
 
         expect(labels()).toEqual(['Inicio']);
@@ -115,7 +124,7 @@ describe('BreadcrumbComponent', () => {
 
         await render(
             buildConfig({
-                translate: true,
+                isTranslationKey: true,
                 prefix: 'nav',
                 items: [new BreadcrumbItem({ id: 1, label: 'shared.back', isTranslationKey: true })]
             })
@@ -140,6 +149,33 @@ describe('BreadcrumbComponent', () => {
         expect(labels()).toEqual(['Home', 'Invoices (4 items)']);
     });
 
+    it('translates a parameter of the detail that is a text of its own, again on a language change', async () => {
+        const translate = TestBed.inject(TranslateService);
+        translate.setTranslation('en', { count: '({{folders}})', folders: '{{count}} folders' });
+        translate.setTranslation('es', { count: '({{folders}})', folders: '{{count}} carpetas' });
+        translate.use('en');
+
+        await render(
+            buildConfig({
+                items: [
+                    new BreadcrumbItem({
+                        detail: 'count',
+                        detailParameters: { folders: new BreadcrumbText({ key: 'folders', parameters: { count: 2 } }) },
+                        id: 1,
+                        label: 'Invoices'
+                    })
+                ]
+            })
+        );
+
+        expect(labels()).toEqual(['Invoices (2 folders)']);
+
+        translate.use('es');
+        fixture.detectChanges();
+
+        expect(labels()).toEqual(['Invoices (2 carpetas)']);
+    });
+
     it('follows a language change', async () => {
         const translate = TestBed.inject(TranslateService);
         translate.setTranslation('en', { nav: { home: 'Home' } });
@@ -147,7 +183,11 @@ describe('BreadcrumbComponent', () => {
         translate.use('en');
 
         await render(
-            buildConfig({ translate: true, prefix: 'nav', items: [new BreadcrumbItem({ id: 1, label: 'home' })] })
+            buildConfig({
+                isTranslationKey: true,
+                prefix: 'nav',
+                items: [new BreadcrumbItem({ id: 1, label: 'home' })]
+            })
         );
 
         expect(labels()).toEqual(['Home']);

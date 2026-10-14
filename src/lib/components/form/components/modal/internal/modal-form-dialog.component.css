@@ -72,7 +72,7 @@
 }
 
 .bey-modal-form-close:hover {
-    background-color: var(--bey-modal-form-close-bg-hover, var(--bey-bg-active));
+    background-color: var(--bey-modal-form-close-hover-bg, var(--bey-bg-active));
     color: var(--bey-modal-form-fg, var(--bey-text-primary));
 }
 
