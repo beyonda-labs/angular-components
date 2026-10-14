@@ -44,10 +44,10 @@ readonly config = new BeyPropertiesMenuConfig({
 | `title`       | no       | Header title key, defaults to `<prefix>.title`                                                                        |
 | `subtitle`    | no       | Header subtitle key                                                                                                   |
 | `icon`        | no       | Header icon                                                                                                           |
-| `embedded`    | no       | Drops the header and the card chrome, for a panel that already sits in a sidebar                                      |
+| `isEmbedded`  | no       | Drops the header and the card chrome, for a panel that already sits in a sidebar                                      |
 | `on…`         | no       | The callbacks below                                                                                                   |
 
-`[variables]` is the catalogue of `BeyPropertyVariable` the text fields offer when `acceptsVariable` is set.
+`[variables]` is the catalogue of `BeyPropertyVariable` the text fields offer when `canAcceptVariable` is set.
 The select and attachment fields carry their own `variables`, since which variable fits them is domain knowledge.
 
 ### Callbacks
@@ -71,14 +71,14 @@ The select and attachment fields carry their own `variables`, since which variab
 The menu applies what the user does at once on its own copy of the config and keeps it when a new `[config]`
 arrives. What it keeps, and how each piece is matched:
 
-| State                                      | Read from                              | Matched by                   |
-| ------------------------------------------ | -------------------------------------- | ---------------------------- |
-| An open or closed group                    | `expanded` of the group                | tab id and group id          |
-| The open tab of a `BeyPropertyTabsContent` | `activeTabId` of the content           | tab id and group id          |
-| An open or closed list card                | `expanded` of the item                 | tab id, group id and item id |
-| An open or closed tree node                | `expanded` of the node                 | tab id, group id and node id |
-| The open tab of the menu                   | `activeTabId` of the config            | tab id                       |
-| The selected tree node                     | the first node with `active` in a tree | node id                      |
+| State                                      | Read from                                | Matched by                   |
+| ------------------------------------------ | ---------------------------------------- | ---------------------------- |
+| An open or closed group                    | `isExpanded` of the group                | tab id and group id          |
+| The open tab of a `BeyPropertyTabsContent` | `activeTabId` of the content             | tab id and group id          |
+| An open or closed list card                | `isExpanded` of the item                 | tab id, group id and item id |
+| An open or closed tree node                | `isExpanded` of the node                 | tab id, group id and node id |
+| The open tab of the menu                   | `activeTabId` of the config              | tab id                       |
+| The selected tree node                     | the first node with `isActive` in a tree | node id                      |
 
 For each piece the new config wins only where its value differs from the one the previous config gave for the
 same id; where both configs agree, what the user did stays. An id the previous config did not have takes the
@@ -90,7 +90,7 @@ again after the user left that tab), keep the value in step through the matching
 
 What was kept gives way to the new config once it is gone: an open tab that was removed or hidden, a group tab
 the content no longer lists, a selected node that is in no tree. Whenever the selected node changes, because the
-config marks another node `active` or because the kept one disappeared, every ancestor of the new one opens so
+config marks another node `isActive` or because the kept one disappeared, every ancestor of the new one opens so
 it is visible, without calling `onTreeNodeToggle`; from then on those ancestors are kept like any other node.
 
 Field values and labels are not kept: the consumer owns the model, and every new config replaces them, so a
@@ -111,8 +111,8 @@ change on its own, so the consumer never translates a label itself.
 
 ## Groups
 
-A `BeyPropertyGroup` has `label` with `labelParameters`, `expanded`, `disabled`, `hidden`, `removable`,
-`order`, a `variant` (`PRIMARY` or `SECONDARY`, muted) and `showHeader`. Without a header the group has no
+A `BeyPropertyGroup` has `label` with `labelParameters`, `isExpanded`, `isDisabled`, `isHidden`, `isRemovable`,
+`order`, a `variant` (`PRIMARY` or `SECONDARY`, muted) and `isHeaderShown`. Without a header the group has no
 chevron and is always expanded, for a structure tree that should never fold. Its `content` decides what it
 renders:
 
@@ -125,28 +125,30 @@ renders:
 
 ## Fields
 
-Each field extends `BeyPropertyField` (`id`, `label`, `description`, `value`, `defaultValue`, `disabled`,
-`hidden`, `required`, `acceptsVariable`, `actionButton`, `span`, `metadata`) and adds what it needs. `withValue(value)`
-and `withDisabled(disabled?)` return a copy of the same field with that value or disabled, which is how a menu is shown
-read-only: `disabled` blocks the input, the variable picker and the action button, while `readonly` leaves them.
+Each field extends `BeyPropertyField` (`id`, `label`, `description`, `value`, `defaultValue`, `isDisabled`,
+`isHidden`, `isRequired`, `canAcceptVariable`, `actionButton`, `span`, `metadata`) and adds what it needs.
+`beyPropertyFieldWithValue(field, value)` and `beyPropertyFieldWithDisabled(field, isDisabled?)` (`true` by default)
+return a copy of the same field, of the same class, with that value or disabled, leaving the field they are given as it
+was; the second is how a menu is shown read-only: `isDisabled` blocks the input, the variable picker and the action
+button, while `isReadonly` leaves them.
 
 | Field                          | Extra                                                                                                                         |
 | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| `BeyPropertyTextField`         | `placeholder`, `readonly`, `multiline`                                                                                        |
-| `BeyPropertyNumberField`       | `placeholder`, `readonly`, `min`, `max`, `step`, `unit`                                                                       |
+| `BeyPropertyTextField`         | `placeholder`, `isReadonly`, `isMultiline`                                                                                    |
+| `BeyPropertyNumberField`       | `placeholder`, `isReadonly`, `min`, `max`, `step`, `unit`                                                                     |
 | `BeyPropertyNumberArrayField`  | `entryDefaultValue`, `minLength`, `maxLength`, `min`, `max`, `step`                                                           |
-| `BeyPropertySelectField<T>`    | `options: BeyPropertyOption<T>[]`, `searchable`, `variables`                                                                  |
+| `BeyPropertySelectField<T>`    | `options: BeyPropertyOption<T>[]`, `isSearchable`, `variables`                                                                |
 | `BeyPropertySegmentedField<T>` | `options: BeyPropertyOption<T>[]`                                                                                             |
 | `BeyPropertyToggleField`       |                                                                                                                               |
-| `BeyPropertyColorField`        | `readonly`                                                                                                                    |
-| `BeyPropertySpacingField`      | `readonly`, value is `{ top, right, bottom, left }`                                                                           |
+| `BeyPropertyColorField`        | `isReadonly`                                                                                                                  |
+| `BeyPropertySpacingField`      | `isReadonly`, value is `{ top, right, bottom, left }`                                                                         |
 | `BeyPropertyInfoField`         | `items: { label, icon? }[]`, read-only text                                                                                   |
 | `BeyPropertyFileField`         | `accept`, `maxSizeBytes`; value is the file as base64                                                                         |
 | `BeyPropertyAttachmentField`   | `options: BeyPropertyAttachmentOption[]`, `variables`, `accept`, `maxSizeBytes`, `isUploadEnabled`; value is an attachment id |
 
-`span: 'half'` puts two consecutive fields on one row. A text field with `acceptsVariable` inserts the picked
+`span: 'half'` puts two consecutive fields on one row. A text field with `canAcceptVariable` inserts the picked
 variable as `{{ path }}` at the cursor; with an `actionButton` it shows that button while text is selected and
-reports the selection through `onFieldAction`. A `searchable` select filters its options by their translated
+reports the selection through `onFieldAction`. A `isSearchable` select filters its options by their translated
 label as the user types, and `Enter` picks the first enabled match. A file field shows the name of a file picked
 in the session; a value it was given shows as _File selected_. The attachment field filters `options` as the
 user types and checks the file type and size before `onAttachmentUpload`; storing the file and adding it to
@@ -166,7 +168,7 @@ the entries of a number array, `Choose file for <label>` for a file field.
 
 A `BeyPropertyListItem` renders as a card with `icon` (and `iconClasses` to colour it), `label` with
 `labelParameters`, `description`, `badges` (`BeyBadgeConfig[]`), `actions` (one button per `{ key, icon, label? }`), `copyValue` (a
-copy button that writes that text to the clipboard) and `removable`. A plain card reports `onListItemSelect`. A
+copy button that writes that text to the clipboard) and `isRemovable`. A plain card reports `onListItemSelect`. A
 card with a `body` of `BeyPropertySummaryRow` (`label` plus a `field`, a `badge` or a `value`) becomes
 expandable instead: its header and chevron toggle it, its body never does, and a row's field is a normal field
 whose value travels through `onFieldValueChange`. That field shows no label of its own: the row's `label` names
@@ -174,21 +176,21 @@ its controls.
 
 ## Trees
 
-A `BeyPropertyTreeNode` has `label` with `labelParameters`, `icon`, `children`, `expanded`, `disabled`,
-`hidden`, `active` (the selected node, see Replacing the config) and the drag flags. `addBlockLabel` shows the
-add-block button under the nodes; with `showEmptyStateAddBlock` an empty tree shows it as a centred call to
+A `BeyPropertyTreeNode` has `label` with `labelParameters`, `icon`, `children`, `isExpanded`, `isDisabled`,
+`isHidden`, `isActive` (the selected node, see Replacing the config) and the drag flags. `addBlockLabel` shows the
+add-block button under the nodes; with `isEmptyStateAddBlockShown` an empty tree shows it as a centred call to
 action instead.
 
-A node with `draggable` can be moved with the mouse or a pen (touch is left to scrolling): a press becomes a drag
+A node with `isDraggable` can be moved with the mouse or a pen (touch is left to scrolling): a press becomes a drag
 once the pointer moves a few pixels, and the scrollable container of the tree scrolls while the pointer is near
 its top or bottom edge. The library holds no nesting rules: a node never drops onto itself or its descendants,
 and everything else travels in the config:
 
-| Flag              | On          | Meaning                                                                       |
-| ----------------- | ----------- | ----------------------------------------------------------------------------- |
-| `acceptsDrop`     | node        | Admits what is being dragged right now inside it                              |
-| `dropDisabled`    | node        | Takes no part: neither admits anything nor serves as a before/after reference |
-| `acceptsRootDrop` | tree config | The root admits what is being dragged right now                               |
+| Flag                | On          | Meaning                                                                       |
+| ------------------- | ----------- | ----------------------------------------------------------------------------- |
+| `canAcceptDrop`     | node        | Admits what is being dragged right now inside it                              |
+| `isDropDisabled`    | node        | Takes no part: neither admits anything nor serves as a before/after reference |
+| `canAcceptRootDrop` | tree config | The root admits what is being dragged right now                               |
 
 On `onTreeDragStart` the consumer sets those flags against the dragged node and rebuilds the config; while the
 pointer moves the tree only reads them. The row under the pointer splits into `before`, `inside` and `after`

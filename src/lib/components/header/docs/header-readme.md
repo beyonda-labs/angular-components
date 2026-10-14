@@ -44,7 +44,7 @@ const header = new BeyHeaderConfig({
 | `label`      | no       | `<key>.label`   | Resolved against `<prefix>.actions` unless it is a literal |
 | `tooltip`    | no       | `<key>.tooltip` | Same resolution as the label                               |
 | `icon`       | no       | none            | FontAwesome icon; an `Icon` action shows only this         |
-| `disabled`   | no       | `false`         | Rendered disabled                                          |
+| `isDisabled` | no       | `false`         | Rendered disabled                                          |
 | `action`     | no       |                 | Run when the button is used                                |
 | `subActions` | no       | none            | Opens a panel instead of running `action`                  |
 
@@ -65,6 +65,9 @@ The config is read as the initial state and never written to. Change the title o
 
 ## Theming
 
-| Variable          | Default              |
-| ----------------- | -------------------- |
-| `--bey-header-fg` | `--bey-text-primary` |
+| Variable                       | Default              |
+| ------------------------------ | -------------------- |
+| `--bey-header-fg`              | `--bey-text-primary` |
+| `--bey-header-title-max-width` | `31.25rem`           |
+
+A title wider than `--bey-header-title-max-width` is cut with an ellipsis.

@@ -62,6 +62,9 @@ page sends them no `parentId`. The page knows a superadmin by the roles of the s
     the type the roles show; the rows answered to the superadmin may carry `entryType: 'item'`.
 -   **Inside a folder** the list shows the rows of that organization, under a breadcrumb "Users › Acme Legal" that
     starts at `categories.root` and counts what the folder holds.
+-   **The count** names the folders organizations and the rows by the page, "(2 organizations · 1 user)", from
+    `count.categories.one` and `.other` and `count.items.one` and `.other` under the `prefix` of each page, with
+    `{{count}}`.
 -   **The folders are fixed**: they list no action, and the header offers none of the category actions, so none is
     created, renamed, moved, shared or deleted.
 -   **A create inside a folder**, an invitation, a group or a role, comes with the organization of the folder chosen in

@@ -34,15 +34,15 @@ labels it "See the audit", in an "Audit" section.
 
 ## BeyAuditConfig
 
-| Field          | Default                      | Meaning                                                                                                       |
-| -------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `baseUrl`      | `'/audit'`                   | Path of the audit, resolved against the environment's `baseUrl` and `webApiPath`                              |
-| `usersUrl`     | `'/users'`                   | Path of the users, where a superadmin reads the organizations from                                            |
-| `entityLabels` | `{}`                         | The translation key that labels each entity of the app, by the name the server records, see [Labels](#labels) |
-| `actionLabels` | `{}`                         | The translation key that labels each verb of the app the library does not know, see [Labels](#labels)         |
-| `prefix`       | `'angular-components.audit'` | i18n prefix of the page, as `bey-page` reads it                                                               |
-| `storageKey`   | `'audit'`                    | Key under which the table remembers the columns the user hid                                                  |
-| `height`       | `'calc(100vh - 220px)'`      | Height of the table                                                                                           |
+| Field          | Default                      | Meaning                                                                                                                        |
+| -------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `baseUrl`      | `'/audit'`                   | Path of the audit, resolved against the environment's `baseUrl` and `webApiPath`                                               |
+| `usersUrl`     | `'/users'`                   | Path of the users, where a superadmin reads the organizations from                                                             |
+| `entityLabels` | `{}`                         | The translation key that labels each entity of the app, by the name the server records, see [Labels](#labels)                  |
+| `actionLabels` | `{}`                         | The translation key that labels each verb of the app the library does not know, see [Labels](#labels)                          |
+| `prefix`       | `'angular-components.audit'` | i18n prefix of the page, as `bey-page` reads it                                                                                |
+| `storageKey`   | `'audit'`                    | Key under which the table remembers the columns the user hid                                                                   |
+| `height`       | none                         | Height of the table, any CSS length; without it the page fills the content area of the app layout and the table scrolls inside |
 
 `baseUrl` follows the `path` of the audit module of express-components, and `usersUrl` the `path` of its users module,
 as the [groups page](../../groups/docs/groups-readme.md) does.

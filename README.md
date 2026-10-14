@@ -109,6 +109,11 @@ then; "Expand all" and "Collapse all" at the top open or close every one, the se
 `sessionStorage` for the session, and a hash naming a module (`#tabs`, `#administration`) opens its section and
 scrolls to it, on arrival or when a link changes it.
 
+The administration and sharing demos answer their own requests: register `beyAdministrationStyleGuideInterceptor`
+and `beyPageStyleGuideInterceptor`, from the same entry point, among the HTTP interceptors of the app that renders
+the style guide, as `provideBeyApp({ interceptors: [...] })` takes them. They answer only the
+`/style-guide/` requests they know, fixed data and writes echoed back, and pass everything else on.
+
 The specs of a consuming app take their helpers from `@beyonda-labs/angular-components/testing`, a second
 secondary entry point that only specs import: `provideBeyTesting(config?)`, the test counterpart of
 `provideBeyApp` (`HttpTestingController`, in-memory session, translations without a loader), the fakes that stand
@@ -117,7 +122,8 @@ and the DOM helpers the library's own specs use (`beyRenderComponent`, `beySettl
 sources live in `testing/src/`; see the [testing README](testing/docs/testing-readme.md).
 
 Two plain functions are public so an app builds the same texts and keys as the library: `beyFormatBytes` and
-`beyToKeySegment`.
+`beyToKeySegment`. So is the library's own icon, `BEY_SHARED_FOLDER_ICON`, a FontAwesome `IconDefinition` of a
+folder with a person cut out of it that `fa-icon` draws wherever an icon is accepted.
 
 Component documentation:
 

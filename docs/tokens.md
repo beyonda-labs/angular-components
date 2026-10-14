@@ -192,12 +192,18 @@ not `p-4`.
 | ----------------------------- | --------------------------------------------- | ------------------------------------------------ |
 | `--bey-dialog-margin`         | `--bey-space-2xl`                             | Space a dialog keeps above and below it          |
 | `--bey-dialog-max-height`     | `calc(100dvh - 2 * var(--bey-dialog-margin))` | Tallest a dialog grows; its body scrolls past it |
+| `--bey-dialog-icon-size`      | `3rem`                                        | Side of the icon box of a message or tree dialog |
 | `--bey-grid-column-min-width` | `10rem`                                       | Narrowest column of a grid that fits its width   |
 | `--bey-control-height`        | the height of a text button                   | Least height of a row that may hold buttons      |
 
 Every dialog of the library, a form or not, stops at `--bey-dialog-max-height`: its header and its buttons stay
 in place and its body scrolls. The height reads the dynamic viewport, so the toolbars of a phone browser never hide
 its buttons.
+
+`--bey-dialog-icon-size` is the square the icon of a message dialog (`BeyModalService`) and of a tree dialog
+(`BeyModalTreeService`) sits in, so both dialogs open with the same mark. The form dialog and the file preview keep a
+smaller icon in line with their title. The width of every dialog is the width of its Bootstrap modal, set by the size
+the dialog is opened with.
 
 `--bey-control-height` is the height of a text button (its text, its padding and its border). The header of a page
 keeps it as its least height, so its title stays in place whether actions show or not.

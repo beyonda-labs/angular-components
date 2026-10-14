@@ -42,8 +42,8 @@ permissions; anyone else gets `404` from `/groups`.
 | `rolesConfig`   | the defaults of `BeyRolesConfig` | The settings of the roles page the permissions of a role follow in [Members](#members): `actionOrder`, `groupIcons`, `groupOrder`, `permissionPrefix`, `prefix` and `rolePrefix` (`BeyRoleViewSettings`); a `BeyRolesConfig` fits |
 | `prefix`        | `'angular-components.groups'`    | i18n prefix of the page, as `bey-page` reads it                                                                                                                                                                                   |
 | `storageKey`    | `'groups'`                       | Key under which the table remembers the columns the user hid                                                                                                                                                                      |
-| `foldersHeight` | `'calc(100vh - 255px)'`          | Height of the table while it shows the folders of the superadmin, under their breadcrumb                                                                                                                                          |
-| `height`        | `'calc(100vh - 220px)'`          | Height of the table                                                                                                                                                                                                               |
+| `foldersHeight` | none                             | Height of the table while it shows the folders of the superadmin, `height` when not given                                                                                                                                         |
+| `height`        | none                             | Height of the table, any CSS length; without it the page fills the content area of the app layout and the table scrolls inside                                                                                                    |
 
 `baseUrl` follows the `path` of the groups module of express-components, and `usersUrl` the `path` of its users
 module, as `baseUrl` of [`bey-users`](../../users/docs/users-readme.md) does.
@@ -166,7 +166,8 @@ users page invites into, so a group is created in the same organizations a user 
 
 Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
 `.tooltip` (only the tooltip for `view`, whose label is the page module's), `table.columns.<key>`,
-`table.tooltips.<key>`, `table.empty`, `categories.root` (the root of its breadcrumb), `search.fields.<key>`,
+`table.tooltips.<key>`, `table.empty`, `categories.root` (the root of its breadcrumb), `count.categories.one` and
+`.other` and `count.items.one` and `.other` (its count), `search.fields.<key>`,
 `form.create.title`,
 `form.edit.title`, `form.main.<field>.label` and `.placeholder`, the placeholder of a search, `form.main.user-ids.empty`
 and `form.main.extra-role-ids.empty`, `modal.delete.title` and `.message`, `table.view-group`, `view.title`,

@@ -40,8 +40,8 @@ permissions.
 | `rolePrefix`    | `<prefix>.roles`             | i18n prefix the labels of the roles are read from, see [Roles](#roles)                                                                                       |
 | `contentLabels` | `{}`                         | The translation key that labels each kind of content a user owns, by the key the server counts it under, see [Transfer and deletion](#transfer-and-deletion) |
 | `storageKey`    | `'users'`                    | Key under which the table remembers the columns the user hid                                                                                                 |
-| `foldersHeight` | `'calc(100vh - 255px)'`      | Height of the table while it shows the folders of the superadmin, under their breadcrumb                                                                     |
-| `height`        | `'calc(100vh - 220px)'`      | Height of the table                                                                                                                                          |
+| `foldersHeight` | none                         | Height of the table while it shows the folders of the superadmin, `height` when not given                                                                    |
+| `height`        | none                         | Height of the table, any CSS length; without it the page fills the content area of the app layout and the table scrolls inside                               |
 
 `baseUrl` follows the `path` of the users module of express-components.
 
@@ -227,6 +227,7 @@ roles of a user reaches them at the next refresh of their session, within the li
 Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`, `actions.<key>.label` and
 `.tooltip`, `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.no-name` (the name of a user who has
 none), `table.system` (the organization of a superadmin), `categories.root` (the root of its breadcrumb),
+`count.categories.one` and `.other` and `count.items.one` and `.other` (its count),
 `search.fields.<key>`, `status.<status>`, `form.create.title`, `form.edit.title`, `form.main.<field>.label` and
 `.placeholder`, `form.main.roles.empty` and `form.main.extra-role-ids.empty`, `content.label`, `.count`, `.empty` and
 `.used-by`, `transfer.title`, `.note`, `.submit`, `.no-targets` and `.main.target-user-id.label` and `.placeholder`,

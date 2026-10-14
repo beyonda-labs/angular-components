@@ -47,7 +47,7 @@ readonly config = new BeyAppLayoutConfig({
 | `bottomActions`            | no       | `[]`             | Secondary group, pinned below                             |
 | `breadcrumb`               | no       | `[]`             | Items the breadcrumb starts with                          |
 | `isRouteBreadcrumbEnabled` | no       | `true`           | Builds the breadcrumb from the route, see Routes          |
-| `useBodyPadding`           | no       | `true`           | Pads the projected content                                |
+| `hasBodyPadding`           | no       | `true`           | Pads the projected content                                |
 | `userInfo`                 | no       | none             | Shows the signed-in user at the foot, a link with `route` |
 | `notifications`            | no       | none             | Turns on the notifications centre, see below              |
 | `orgName`                  | no       | `'Beyonda Labs'` | Organisation name in the footer                           |
@@ -58,7 +58,7 @@ readonly config = new BeyAppLayoutConfig({
 | `onBreadcrumbClick`        | no       |                  | Run with the id of a breadcrumb item that is clicked      |
 | `onRouteActivated`         | no       |                  | Run with the key of the action a route activated          |
 
-`BeyAppLayoutTopAction` takes `key`, and optionally `action`, `active`, `disabled`, `icon`, `route` and
+`BeyAppLayoutTopAction` takes `key`, and optionally `action`, `icon`, `isActive`, `isDisabled`, `route` and
 `subActions`. `BeyAppLayoutBottomAction` takes `key`, and optionally `action`, `icon` and `route`. An action
 without `icon` keeps the place of one, so its label lines up with the rest. Both are `BeyLeftMenuAction`s, so
 their texts resolve as `<prefix>.actions.<key>.label` and `.tooltip`, with the key as a kebab-case segment:
@@ -74,16 +74,27 @@ Every field the constructor takes stays on the config, and `footerConfig` is bui
 copy, and whatever the copy overrides wins, footer fields included:
 
 ```ts
-const editorConfig = new BeyAppLayoutConfig({ ...config, useBodyPadding: false });
+const editorConfig = new BeyAppLayoutConfig({ ...config, hasBodyPadding: false });
 ```
 
 `footerConfig` is not a parameter: change the footer through its fields.
+
+## Content area
+
+The page never scrolls as a whole. The content area takes the height left between the breadcrumb bar and the
+footer and scrolls inside, both ways as needed, so the footer stays at the bottom of the window however tall the
+page is. `hasBodyPadding` pads the content inside that area.
+
+What you project takes its natural height and scrolls with the area when it is taller. A child that should fill the
+area instead takes `height: 100%` and scrolls inside itself, as `bey-page`, the administration pages and a
+full-height workspace such as an editor with its own panels do; it should then be the only child, since anything
+next to it adds to that height and makes the area scroll.
 
 ## The actions are yours
 
 The layout never writes into the actions it receives. It builds the menu from copies, wrapping each one so
 that using it runs its `action` or follows its `route`, and then reports the key through the service and
-`onMenuActionClick`. It marks as active whichever action the service names; the `active` flag of the config
+`onMenuActionClick`. It marks as active whichever action the service names; the `isActive` flag of the config
 is only honoured until the service names one.
 
 ## Routes

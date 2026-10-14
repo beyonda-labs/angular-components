@@ -11,12 +11,12 @@ and what a signed-in user picks is saved to their account as well.
 ```html
 <bey-floating-preferences></bey-floating-preferences>
 
-<bey-floating-preferences [usePill]="false"></bey-floating-preferences>
+<bey-floating-preferences [hasPill]="false"></bey-floating-preferences>
 ```
 
 | Input     | Default | Meaning                                                                                |
 | --------- | ------- | -------------------------------------------------------------------------------------- |
-| `usePill` | `true`  | Wrap the selectors in the floating pill. Turn it off to embed them, as the footer does |
+| `hasPill` | `true`  | Wrap the selectors in the floating pill. Turn it off to embed them, as the footer does |
 
 ## Theme
 

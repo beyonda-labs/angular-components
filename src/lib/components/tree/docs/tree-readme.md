@@ -98,6 +98,7 @@ one set nowhere takes its default:
 | `--bey-modal-tree-fg-muted`              | `--bey-text-muted`     |
 | `--bey-modal-tree-scrollbar-thumb`       | `--bey-border-default` |
 | `--bey-modal-tree-scrollbar-thumb-hover` | `--bey-border-strong`  |
-| `--bey-close-hover-bg`                   | `--bey-bg-hover`       |
+| `--bey-modal-tree-close-hover-bg`        | `--bey-bg-hover`       |
 
-The dialog stops at `--bey-modal-tree-max-height`, read the same way; set nowhere, at `--bey-dialog-max-height`.
+The dialog stops at `--bey-modal-tree-max-height`, read the same way; set nowhere, at `--bey-dialog-max-height`. Its
+icon sits in a square of `--bey-dialog-icon-size`, the token the message dialogs read too.

@@ -100,6 +100,23 @@ A `BeyQueryScope` is a fixture or an element.
 | `beyTextsOf(elements)`                   | Their trimmed texts                                                                                                   |
 | `beyVisibleText(scope)`                  | Its text as a reader sees it: the text of every text node, its spaces collapsed and trimmed, one space apart          |
 | `beyHostOf(scope)`                       | The element of a fixture, or the element itself                                                                       |
+| `beyRowWith(scope, text)`                | The first `role="row"` whose text holds `text`; throws                                                                |
+| `beyCellsOf(scope, rowText)`             | The trimmed texts of the `role="cell"` of that row                                                                    |
+
+## Form, search and tree-dialog helpers
+
+| Function                                    | Returns                                                                                             |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `beyFieldsOf(source, sectionKey?)`          | The fields of every section, or of the one keyed `sectionKey`, from a form config or its `sections` |
+| `beyDecodePageSearch(encoded)`              | The `BeyPageSearch` a page sends in its `search` parameter, decoded from its base64 UTF-8           |
+| `beySearchOf(request)`                      | The same, read from a `TestRequest` of `HttpTestingController`; throws when it sends no search      |
+| `beyTreeDialogItems()`                      | The `role="treeitem"` of the tree dialog open in `document.body`, once the app has rendered it      |
+| `beyPickInTreeDialog(label, confirmLabel?)` | Clicks the item named `label` and the confirm button (the library's key by default); throws         |
+
+`BeyFakeFormHandle<TValue>` stands for the `BeyFormHandle` a form passes to its callbacks, so a spec that calls
+`onSubmit`, `onValueChange` or a button `action` of a recorded form needs no `jest.fn()` handle. It takes
+`{ isDirty?, value? }` (dirty by default), answers `value()` with that value and whatever `patchValue` merged in,
+and records `closes()`, `closeRequests()`, `resets()`, `patches()` and `steps()`, the keys `goToStep` was sent to.
 
 ## Usage
 
