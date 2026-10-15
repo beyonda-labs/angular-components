@@ -125,6 +125,7 @@ export const AUDIT_LIBRARY_ACTIONS: readonly string[] = [
     'empty-trash',
     'share',
     'unshare',
+    'transfer',
     'create-category',
     'edit-category',
     'delete-category',
@@ -140,7 +141,8 @@ export const AUDIT_LIBRARY_ACTIONS: readonly string[] = [
     'reset-password',
     'invite',
     'resend-invitation',
-    'transfer-content'
+    'transfer-content',
+    'scan-refused'
 ];
 
 export const AUDIT_LIBRARY_ENTITIES: readonly string[] = [

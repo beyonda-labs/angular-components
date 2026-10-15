@@ -25,7 +25,7 @@ export const STYLE_GUIDE_DOCUMENTS_URL = '/style-guide/documents';
 
 export const STYLE_GUIDE_DOCUMENTS: readonly StyleGuideDocument[] = [
     {
-        actions: ['share'],
+        actions: ['share', 'transfer'],
         id: 'contracts',
         isShared: true,
         name: 'Contracts',
@@ -35,7 +35,7 @@ export const STYLE_GUIDE_DOCUMENTS: readonly StyleGuideDocument[] = [
         type: BeyPageItemType.Category
     },
     {
-        actions: ['share'],
+        actions: ['share', 'transfer'],
         id: 'drafts',
         name: 'Drafts',
         ownerId: 'u1',
@@ -44,7 +44,7 @@ export const STYLE_GUIDE_DOCUMENTS: readonly StyleGuideDocument[] = [
         type: BeyPageItemType.Category
     },
     {
-        actions: ['view'],
+        actions: ['transfer', 'view'],
         id: 'offer',
         name: 'Offer 2026',
         ownerId: 'u1',
@@ -53,7 +53,7 @@ export const STYLE_GUIDE_DOCUMENTS: readonly StyleGuideDocument[] = [
         type: BeyPageItemType.Item
     },
     {
-        actions: ['view'],
+        actions: ['transfer', 'view'],
         id: 'nda',
         name: 'Non-disclosure agreement',
         ownerId: 'u1',

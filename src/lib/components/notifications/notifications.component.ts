@@ -76,7 +76,7 @@ export class NotificationsComponent {
     readonly isLoading = this.notificationsService.isLoading;
     readonly isOpen = signal(false);
     readonly items = computed(() => {
-        const { entityLabels, labels } = this.config();
+        const { entityLabels, entityNouns, labels } = this.config();
         const language = this.language();
         const now = this.now();
         const translate = (key: string, parameters?: Record<string, unknown>): string =>
@@ -86,7 +86,7 @@ export class NotificationsComponent {
             (notification): NotificationItem => ({
                 isUnread: notification.readAt === null,
                 notification,
-                text: notificationText(notification, { entityLabels, labels }, translate),
+                text: notificationText(notification, { entityLabels, entityNouns, labels }, translate),
                 time: notificationTime(notification.createdAt, now, language, translate)
             })
         );

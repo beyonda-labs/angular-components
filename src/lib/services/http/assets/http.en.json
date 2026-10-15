@@ -9,15 +9,19 @@
                     "content-too-large": "The file is larger than the maximum size allowed.",
                     "duplicate-content": "This file is already uploaded as \"{{name}}\".",
                     "empty-content": "The file is empty.",
+                    "infected": "The file carries a virus ({{signature}}) and was not saved.",
+                    "invalid-type": "This type of file is not allowed. Allowed types: {{allowed}}.",
                     "replace-type-mismatch": "Replace the file with another {{fileType}}.",
-                    "unsupported-type": "Files of type \"{{mimeType}}\" are not supported."
+                    "scan-unavailable": "The file could not be checked by the antivirus. Please try again later."
                 },
                 "bad-gateway": "The server received an invalid response. Please try again later.",
                 "bad-request": "The request could not be processed. Please check the submitted data.",
                 "conflict": "A conflict occurred with the current state of the resource.",
                 "duplicate-field": "An item with field \"{{fieldName}}\" and value \"{{value}}\" already exists.",
                 "entities": {
-                    "owner-required": "This item needs a user to own it: create it inside the folder of a user."
+                    "invalid-transfer-target": "The new owner must be an active user of the same organization.",
+                    "owner-required": "This item needs a user to own it: create it inside the folder of a user.",
+                    "transfer-mixed-organizations": "The rows chosen belong to different organizations: change the owner of each organization separately."
                 },
                 "forbidden": "You do not have permission to perform this action.",
                 "internal-server-error": "An internal server error occurred. Please try again later.",
@@ -55,8 +59,10 @@
                     "content-too-large": "File too large",
                     "duplicate-content": "Duplicate file",
                     "empty-content": "Empty file",
+                    "infected": "Virus found",
+                    "invalid-type": "File type not allowed",
                     "replace-type-mismatch": "Wrong type of file",
-                    "unsupported-type": "Unsupported file"
+                    "scan-unavailable": "Antivirus unavailable"
                 },
                 "bad-gateway": "Connection error",
                 "bad-request": "Invalid request",
@@ -64,7 +70,9 @@
                 "default": "Error",
                 "duplicate-field": "Duplicate value",
                 "entities": {
-                    "owner-required": "Owner required"
+                    "invalid-transfer-target": "New owner not valid",
+                    "owner-required": "Owner required",
+                    "transfer-mixed-organizations": "Several organizations"
                 },
                 "forbidden": "Access denied",
                 "internal-server-error": "Server error",

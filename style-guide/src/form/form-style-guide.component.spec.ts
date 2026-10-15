@@ -166,6 +166,31 @@ describe('FormStyleGuideComponent', () => {
         expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.section-autocomplete-options.picked`);
     });
 
+    it('suggests nothing in the typeahead until a city is typed, and keeps only a picked one', async () => {
+        const typeahead = controlByName(fixture, `${PREFIX}.section-autocomplete-options.typeahead.label`);
+
+        typeahead.dispatchEvent(new Event('focus'));
+        await settle(fixture);
+
+        expect(document.body.querySelector('[role="listbox"]')).toBeNull();
+
+        typeahead.value = 'bil';
+        typeahead.dispatchEvent(new Event('input'));
+        await settle(fixture);
+        queryAll(document.body, '[role="listbox"] [role="option"]')[0].dispatchEvent(new MouseEvent('mousedown'));
+        await settle(fixture);
+
+        expect(typeahead.value).toBe('Bilbao');
+
+        typeahead.value = 'Bilbaoo';
+        typeahead.dispatchEvent(new Event('input'));
+        typeahead.dispatchEvent(new Event('blur'));
+        await settle(fixture);
+
+        expect(typeahead.value).toBe('');
+        expect(typeahead.getAttribute('aria-invalid')).toBe('true');
+    });
+
     it('lists every rule of a password policy under the field that has one', () => {
         const description = accessibleDescription(controlByName(fixture, `${PREFIX}.section-password.password5.label`));
 

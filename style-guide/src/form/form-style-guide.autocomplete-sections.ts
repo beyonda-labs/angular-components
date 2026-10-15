@@ -56,6 +56,18 @@ export function buildAutocompleteOptionsSection(onPick: () => void): BeyFormSect
                         options: CITIES
                     })
                 ]
+            }),
+            new BeyFormRow({
+                fields: [
+                    new BeyFormAutocompleteField({
+                        key: 'typeahead',
+                        columns: 6,
+                        emptyKey: `${PREFIX}.server.empty`,
+                        isRequired: true,
+                        isTypeahead: true,
+                        search: searchCities
+                    })
+                ]
             })
         ]
     });

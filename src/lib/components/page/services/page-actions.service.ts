@@ -20,6 +20,7 @@ import { PageFormService } from './page-form.service';
 import { PageHttpService } from './page-http.service';
 import { PageLifecycleActionsService } from './page-lifecycle-actions.service';
 import { PageShareActionsService } from './page-share-actions.service';
+import { PageTransferActionsService } from './page-transfer-actions.service';
 import { PageUsagesService } from './page-usages.service';
 
 interface BulkActionOptions<T> {
@@ -49,6 +50,7 @@ export class PageActionsService {
     private readonly pageHttpService = inject(PageHttpService);
     private readonly pageLifecycleActionsService = inject(PageLifecycleActionsService);
     private readonly pageShareActionsService = inject(PageShareActionsService);
+    private readonly pageTransferActionsService = inject(PageTransferActionsService);
     private readonly pageUsagesService = inject(PageUsagesService);
 
     private readonly actionHandlers: Record<string, (context: PageActionsContext, action: PageAction) => void> = {
@@ -65,7 +67,9 @@ export class PageActionsService {
             this.pageLifecycleActionsService.emptyTrash(context.config, action, () => context.onTrashItemDeleted()),
         [PageStandardAction.Move]: context => this.executeMove(context),
         [PageStandardAction.RestoreTrashItem]: context => this.executeRestoreTrashItem(context),
-        [PageStandardAction.Share]: context => this.executeShare(context)
+        [PageStandardAction.Share]: context => this.executeShare(context),
+        [PageStandardAction.Transfer]: context =>
+            this.pageTransferActionsService.transfer(context.config, context.selectedItems(), () => context.onMoved())
     };
 
     buildHeaderActions(

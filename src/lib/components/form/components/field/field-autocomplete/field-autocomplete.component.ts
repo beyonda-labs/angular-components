@@ -86,9 +86,9 @@ export class FormAutocompleteFieldComponent {
     readonly isDisabled = computed(() => this.controlState.isDisabled());
     readonly isOpen = signal(false);
     readonly isPanelVisible = computed(() => {
-        const { isFreeTextAllowed, search } = this.field();
+        const { isFreeTextAllowed, isTypeahead, search } = this.field();
 
-        if (!this.isOpen()) {
+        if (!this.isOpen() || (isTypeahead && !this.query().trim())) {
             return false;
         }
 
@@ -142,7 +142,9 @@ export class FormAutocompleteFieldComponent {
     }
 
     displayValue(): string {
-        if (this.isOpen() && (this.hasTyped() || !this.field().isFreeTextAllowed)) {
+        const { isFreeTextAllowed, isTypeahead } = this.field();
+
+        if (this.isOpen() && (this.hasTyped() || !(isFreeTextAllowed || isTypeahead))) {
             return this.query();
         }
 
@@ -171,7 +173,9 @@ export class FormAutocompleteFieldComponent {
     }
 
     onFocus(): void {
-        this.open();
+        if (!this.field().isTypeahead) {
+            this.open();
+        }
     }
 
     onKeydown(event: KeyboardEvent): void {
@@ -231,6 +235,8 @@ export class FormAutocompleteFieldComponent {
 
         if (this.field().isFreeTextAllowed) {
             this.select(value);
+        } else if (this.field().isTypeahead) {
+            this.dropValue();
         }
     }
 
@@ -255,12 +261,21 @@ export class FormAutocompleteFieldComponent {
         this.searchRequests.next(null);
     }
 
+    private dropValue(): void {
+        const control = this.control();
+
+        if (control.value) {
+            control.setValue('');
+            control.markAsDirty();
+        }
+    }
+
     private moveActive(step: number): void {
         if (!this.isOpen()) {
             this.open();
         }
 
-        const total = this.filteredOptions().length;
+        const total = this.isPanelVisible() ? this.filteredOptions().length : 0;
 
         if (total === 0) {
             this.activeIndex.set(-1);
@@ -327,8 +342,10 @@ export class FormAutocompleteFieldComponent {
     }
 
     private requestSearch(text: string, delay: number): void {
-        if (this.field().search) {
-            this.searchRequests.next({ delay, text });
+        const { isTypeahead, search } = this.field();
+
+        if (search) {
+            this.searchRequests.next(text || !isTypeahead ? { delay, text } : null);
         }
     }
 

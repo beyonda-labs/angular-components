@@ -3,12 +3,16 @@ import {
     Notification,
     NOTIFICATION_LIBRARY_TYPES,
     NotificationLabels,
-    NOTIFICATIONS_PREFIX
+    NOTIFICATIONS_PREFIX,
+    NotificationType
 } from '../models/notifications.model';
 
 const ACCESS_PARAMETER = 'access';
 const ACCESS_VALUES: ReadonlySet<string> = new Set(['read', 'write']);
+const CATEGORY_KIND = 'category';
 const ENTITY_PARAMETER = 'entity';
+const ITEM_KIND = 'item';
+const ROWS_TRANSFERRED_KEY = `${NOTIFICATIONS_PREFIX}.types.${NotificationType.RowsTransferred}`;
 const TYPE_PREFIX = `${NOTIFICATIONS_PREFIX}.types`;
 const UNKNOWN_TYPE_KEY = `${NOTIFICATIONS_PREFIX}.unknown-type`;
 
@@ -31,10 +35,13 @@ export function notificationText(
     labels: NotificationLabels,
     translate: (key: string, parameters?: Record<string, string>) => string
 ): string {
-    return translate(
-        notificationLabelKey(notification.type, labels),
-        notificationParameters(notification, labels, key => translate(key))
-    );
+    const parameters = notificationParameters(notification, labels, key => translate(key));
+
+    if (notification.type === NotificationType.RowsTransferred && !labels.labels[notification.type]) {
+        return rowsTransferredText(notification, labels, parameters, translate);
+    }
+
+    return translate(notificationLabelKey(notification.type, labels), parameters);
 }
 
 function parameterText(
@@ -56,4 +63,47 @@ function parameterText(
     }
 
     return userNameOrUnknown(value, translate);
+}
+
+function rowsTransferredText(
+    { parameters }: Pick<Notification, 'parameters'>,
+    { entityNouns }: Pick<NotificationLabels, 'entityNouns'>,
+    texts: Record<string, string>,
+    translate: (key: string, parameters?: Record<string, string>) => string
+): string {
+    const { count, entity, kind, name } = parameters;
+    const isOne = Number(count) === 1;
+    const noun = kind === ITEM_KIND && typeof entity === 'string' ? entityNouns[entity] : undefined;
+    const hasName = typeof name === 'string' && name.trim() !== '';
+    const variant = rowsTransferredVariant(isOne, kind, hasName, noun !== undefined);
+
+    return translate(
+        `${ROWS_TRANSFERRED_KEY}.${variant}`,
+        noun ? { ...texts, noun: translate(isOne ? noun.one : noun.other) } : texts
+    );
+}
+
+function rowsTransferredVariant(
+    isOne: boolean,
+    kind: string | number | null | undefined,
+    hasName: boolean,
+    hasNoun: boolean
+): string {
+    if (isOne) {
+        if (!hasName) {
+            return 'unnamed';
+        }
+
+        if (kind === CATEGORY_KIND) {
+            return 'folder';
+        }
+
+        return hasNoun ? 'item' : 'row';
+    }
+
+    if (kind === CATEGORY_KIND) {
+        return 'folders';
+    }
+
+    return hasNoun ? 'items' : 'rows';
 }

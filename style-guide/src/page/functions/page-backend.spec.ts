@@ -18,7 +18,7 @@ describe('pageStyleGuideInterceptor', () => {
     async function answer(
         url: string,
         parameters: Record<string, string> = {},
-        method: 'GET' | 'PUT' = 'GET',
+        method: 'GET' | 'POST' | 'PUT' = 'GET',
         body: unknown = null
     ): Promise<unknown> {
         const request = new HttpRequest(method, url, body, { params: new HttpParams({ fromObject: parameters }) });
@@ -59,6 +59,21 @@ describe('pageStyleGuideInterceptor', () => {
             users: [{ email: 'grace@example.test', id: 'u2', name: 'Grace Hopper' }]
         });
         expect(await answer(`${API_URL}/categories/drafts/shares`, {}, 'PUT', shares)).toEqual(shares);
+    });
+
+    it('answers the users a selection can go to, and how many rows a transfer changed', async () => {
+        const items = [
+            { id: 'drafts', type: 'category' },
+            { id: 'offer', type: 'item' }
+        ];
+
+        expect(await answer(`${API_URL}/transfer-targets`, { ids: 'offer', search: 'ala' })).toEqual({
+            hasMore: false,
+            options: [{ description: 'alan@example.test', label: 'Alan Turing', value: 'u3' }]
+        });
+        expect(await answer(`${API_URL}/transfer`, {}, 'POST', { items, targetUserId: 'u3' })).toEqual({
+            transferred: 2
+        });
     });
 
     it('leaves every other request to the backend', async () => {

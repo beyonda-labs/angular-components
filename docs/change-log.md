@@ -35,6 +35,9 @@
 -   App layout module: `notifications` on `BeyAppLayoutConfig` turns the notifications centre on, as a bell in the menu.
 -   Left menu module: `notifications` on `BeyLeftMenuConfig`, the bell at the foot of the menu, next to the user or
     alone.
+-   Form module: `isTypeahead` on `BeyFormAutocompleteField`, a text input with no toggle whose suggestions show only
+    once something is typed, so `search` is never asked for `''`; without free text, typing over a picked option empties
+    the value and leaving with text that was not picked clears it.
 -   Form module: `excludedValues` on `BeyFormListField`, ids its picker never suggests besides those the list holds,
     a value or a rule, so two lists can keep each other's ids out.
 -   Page module: a folder whose row carries `isShared`, and every folder of the shared view, shows the shared folder
@@ -65,9 +68,34 @@
     `/style-guide/` requests of the administration and sharing demos from fixed data; the app registers them.
 -   Style guide: demos of the roles `groupIcons`, `groupOrder` and `actionOrder`, of page sharing (`isSharedEnabled`,
     Share, View), of the form notice, typeahead and `isSubmitDanger`, and of an edit lock held by nobody known or lost.
+-   Page module: `BeyPageStandardAction.Transfer`, "Change owner" in the menu while every selected row lists it, hands
+    the selected rows and folders to a user of their organization picked from `GET {baseUrl}/transfer-targets`.
+-   Page module: the new owner of "Change owner" is a typeahead that asks `transfer-targets` for the typed text and
+    takes only a user picked from its suggestions; its default notice reads "The chosen person becomes the owner of the
+    selected items.".
+-   Page module: `transferConfig` on `BeyPageConfig`, `BeyPageTransferConfig` and its `notice`, and the answers of the
+    transfer routes, `BeyPageTransferTarget`, `BeyPageTransferTargets` and `BeyPageTransferResponse`.
+-   Style guide: the sharing demo of the page changes the owner of the user's folders and documents.
+-   HTTP service: the texts and titles of `attachments.invalid-type` (with `{{allowed}}`), `attachments.infected`
+    (with `{{signature}}`) and `attachments.scan-unavailable`.
+-   Audit page: the label of `scan-refused`, "Refused by the antivirus".
+-   HTTP service: the texts and titles of `entities.transfer-mixed-organizations` and `entities.invalid-transfer-target`,
+    the refusals of a change of owner.
+-   Notifications module: `BeyNotificationType.RowsTransferred` (`entities.rows-transferred`), the notice of the new
+    owner of rows, with `byName`, `count`, `entity`, `kind` and `name`, which reads as a sentence: "Grace gave you the
+    template “Contract”", "… the folder “Clients” of Templates", "… 3 templates" or "… 4 items of Templates", and a
+    generic text for a notice stored with `byName`, `count` and `entity` alone.
+-   Notifications module: `entityNouns` on `BeyNotificationsConfig`, `entity → BeyNotificationNoun` `{ one, other }`,
+    the keys that name one row of an entity with its article and several without one.
+-   Audit page: the label of `transfer`, "Change owner".
 
 ### Changed
 
+-   Styles: an invalid `.form-control` or `.form-select` (`.is-invalid`) shows no Bootstrap validation icon and keeps
+    the padding it has when valid; the red border and the error message stay. The autocomplete, chips and file fields
+    lose the icon they showed.
+-   Edit-lock service: the text of `edit-locks.held` says that nothing was changed, so it reads for a delete or a change
+    of owner as well as for a save.
 -   Page module: the share form shows two lists, "Can view" and "Can edit", each with a search of users and groups
     above its removable rows, in place of a select per grantee; the inherited access comes under them.
 -   Page module: the share search asks `share-targets?search=&limit=` as the user types, a group named with its
@@ -148,6 +176,11 @@
 -   Page module: at the root of "Shared with me", a shared folder offers neither `move` nor drag, so moving never opens
     the whole tree of its owner.
 -   Form module: a radio option with `isDisabled` is disabled, through the form API as the other fields do.
+
+### Removed
+
+-   HTTP service: the texts of `attachments.unsupported-type`, which express-components answers as
+    `attachments.invalid-type` now.
 
 ## [1.5.0] - 2026-10-13
 

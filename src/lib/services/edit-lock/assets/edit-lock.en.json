@@ -3,7 +3,7 @@
         "http": {
             "error": {
                 "edit-locks": {
-                    "held": "{{holderName}} is editing it: your changes were not saved.",
+                    "held": "{{holderName}} is editing it: nothing was changed.",
                     "release-forbidden": "Only whoever is editing it, an admin of its organization or a superadmin can release the editing.",
                     "released": "Your editing was released, so your changes were not saved here. Save them as a copy, or reload it to edit it again."
                 }

@@ -156,6 +156,30 @@ body.dark .btn-link.btn-link-secondary {
     border-color: var(--bey-danger);
 }
 
+/* No validation icon: an invalid control keeps its border and its message, and the padding it has when valid. */
+.form-control.is-invalid,
+textarea.form-control.is-invalid {
+    background-image: none;
+    padding-right: var(--bey-space-md);
+}
+
+.form-control-sm.is-invalid,
+textarea.form-control-sm.is-invalid {
+    padding-right: var(--bey-space-sm);
+}
+
+.form-control-lg.is-invalid,
+textarea.form-control-lg.is-invalid {
+    padding-right: var(--bey-space-lg);
+}
+
+.form-select.is-invalid:not([multiple]):not([size]),
+.form-select.is-invalid:not([multiple])[size='1'] {
+    --bs-form-select-bg-icon: initial;
+
+    padding-right: calc(var(--bey-space-xl) + var(--bey-space-md));
+}
+
 input[type='radio'].form-check-input:checked {
     background-color: var(--bey-primary);
     border-color: var(--bey-primary);

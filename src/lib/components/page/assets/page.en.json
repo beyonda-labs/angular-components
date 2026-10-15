@@ -14,6 +14,10 @@
         },
         "page": {
             "actions": {
+                "transfer": {
+                    "label": "Change owner",
+                    "tooltip": "Give the selected items to another user of the organization"
+                },
                 "view": {
                     "label": "View",
                     "tooltip": "See the selected item without changing it"
@@ -91,7 +95,30 @@
                 }
             },
             "toast": {
-                "restored-renamed": "Restored with a new name, since another item already has the old one: {{names}}"
+                "restored-renamed": "Restored with a new name, since another item already has the old one: {{names}}",
+                "transferred": {
+                    "one": "{{count}} item changed owner",
+                    "other": "{{count}} items changed owner"
+                }
+            },
+            "transfer": {
+                "main": {
+                    "owner": {
+                        "label": "Current owner"
+                    },
+                    "target-user-id": {
+                        "label": "New owner",
+                        "placeholder": "Search a person by name or email"
+                    }
+                },
+                "no-targets": "No active user matches",
+                "notice": "The chosen person becomes the owner of the selected items.",
+                "several-owners": "Several owners",
+                "submit": "Change owner",
+                "title": {
+                    "one": "Change the owner of the selected item",
+                    "other": "Change the owner of {{count}} selected items"
+                }
             }
         }
     }

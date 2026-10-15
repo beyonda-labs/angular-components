@@ -39,7 +39,7 @@ describe('EditLockHttpService', () => {
     });
 
     it.each([
-        ['edit-locks.held', 'Being edited', 'Grace Hopper is editing it: your changes were not saved.'],
+        ['edit-locks.held', 'Being edited', 'Grace Hopper is editing it: nothing was changed.'],
         [
             'edit-locks.released',
             'Editing released',

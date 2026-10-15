@@ -5,6 +5,7 @@ export {
 } from './models/notifications.model';
 export type {
     Notification as BeyNotification,
+    NotificationNoun as BeyNotificationNoun,
     NotificationsConfigParameters as BeyNotificationsConfigParameters,
     NotificationsPage as BeyNotificationsPage,
     NotificationTarget as BeyNotificationTarget

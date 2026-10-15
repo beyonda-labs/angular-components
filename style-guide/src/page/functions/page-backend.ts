@@ -1,5 +1,10 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest, HttpResponse } from '@angular/common/http';
-import { BeyPageBackendResponse, BeyPageShareTarget } from '@beyonda-labs/angular-components';
+import {
+    BeyPageBackendResponse,
+    BeyPageShareTarget,
+    BeyPageTransferResponse,
+    BeyPageTransferTargets
+} from '@beyonda-labs/angular-components';
 import { Observable, of } from 'rxjs';
 
 import {
@@ -18,12 +23,15 @@ const GET = 'GET';
 const NO_SHARES = { inherited: [], shares: [] };
 const PARENT_PARAMETER = 'parentId';
 const PATH = 'path';
+const POST = 'POST';
 const PUT = 'PUT';
 const ROOT_PARENT = 'null';
 const SEARCH_PARAMETER = 'search';
 const SHARE_TARGETS = 'share-targets';
 const SHARED = 'shared';
 const SHARES = 'shares';
+const TRANSFER = 'transfer';
+const TRANSFER_TARGETS = 'transfer-targets';
 
 export function pageStyleGuideInterceptor(
     request: HttpRequest<unknown>,
@@ -62,12 +70,20 @@ function answerOf(request: HttpRequest<unknown>, segments: string[]): unknown {
         return answerCategory(request, id, detail);
     }
 
+    if (request.method === POST) {
+        return first === TRANSFER ? transferredOf(request) : undefined;
+    }
+
     if (request.method !== GET) {
         return undefined;
     }
 
     if (first === SHARED) {
         return listOf(STYLE_GUIDE_DOCUMENTS.filter(row => STYLE_GUIDE_SHARED_FOLDER_IDS.includes(String(row.id))));
+    }
+
+    if (first === TRANSFER_TARGETS) {
+        return transferTargetsOf(request);
     }
 
     return first ? undefined : listOf(childrenOf(request.params.get(PARENT_PARAMETER) ?? ROOT_PARENT));
@@ -93,6 +109,10 @@ function pathOf(id: string): StyleGuideDocument[] {
     return folder ? [...(folder.parentId === null ? [] : pathOf(folder.parentId)), folder] : [];
 }
 
+function searchTextOf(request: HttpRequest<unknown>): string {
+    return request.params.get(SEARCH_PARAMETER)?.trim().toLowerCase() ?? '';
+}
+
 function segmentsOf(url: string): string[] | null {
     const start = url.indexOf(STYLE_GUIDE_DOCUMENTS_URL);
 
@@ -105,11 +125,28 @@ function segmentsOf(url: string): string[] | null {
 }
 
 function targetsOf(request: HttpRequest<unknown>): unknown {
-    const text = request.params.get(SEARCH_PARAMETER)?.trim().toLowerCase() ?? '';
+    const text = searchTextOf(request);
 
     return {
         groups: matching(STYLE_GUIDE_SHARE_GROUPS, text),
         hasMore: false,
         users: matching(STYLE_GUIDE_SHARE_USERS, text)
+    };
+}
+
+function transferredOf(request: HttpRequest<unknown>): BeyPageTransferResponse {
+    const { items = [] } = (request.body ?? {}) as { items?: unknown[] };
+
+    return { transferred: items.length };
+}
+
+function transferTargetsOf(request: HttpRequest<unknown>): BeyPageTransferTargets {
+    return {
+        hasMore: false,
+        options: matching(STYLE_GUIDE_SHARE_USERS, searchTextOf(request)).map(({ email, id, name }) => ({
+            description: email,
+            label: name,
+            value: id
+        }))
     };
 }

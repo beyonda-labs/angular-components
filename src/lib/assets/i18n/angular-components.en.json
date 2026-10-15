@@ -92,10 +92,12 @@
                 "resend-invitation": "Resend invitation",
                 "reset-password": "Reset password",
                 "restore": "Restore",
+                "scan-refused": "Refused by the antivirus",
                 "share": "Share",
                 "sign-in": "Sign in",
                 "sign-in-failed": "Failed sign-in",
                 "sign-out": "Sign out",
+                "transfer": "Change owner",
                 "transfer-content": "Transfer content",
                 "unshare": "Stop sharing",
                 "verify-email": "Verify email"
@@ -390,20 +392,24 @@
                     "content-too-large": "The file is larger than the maximum size allowed.",
                     "duplicate-content": "This file is already uploaded as \"{{name}}\".",
                     "empty-content": "The file is empty.",
+                    "infected": "The file carries a virus ({{signature}}) and was not saved.",
+                    "invalid-type": "This type of file is not allowed. Allowed types: {{allowed}}.",
                     "replace-type-mismatch": "Replace the file with another {{fileType}}.",
-                    "unsupported-type": "Files of type \"{{mimeType}}\" are not supported."
+                    "scan-unavailable": "The file could not be checked by the antivirus. Please try again later."
                 },
                 "bad-gateway": "The server received an invalid response. Please try again later.",
                 "bad-request": "The request could not be processed. Please check the submitted data.",
                 "conflict": "A conflict occurred with the current state of the resource.",
                 "duplicate-field": "An item with field \"{{fieldName}}\" and value \"{{value}}\" already exists.",
                 "edit-locks": {
-                    "held": "{{holderName}} is editing it: your changes were not saved.",
+                    "held": "{{holderName}} is editing it: nothing was changed.",
                     "release-forbidden": "Only whoever is editing it, an admin of its organization or a superadmin can release the editing.",
                     "released": "Your editing was released, so your changes were not saved here. Save them as a copy, or reload it to edit it again."
                 },
                 "entities": {
-                    "owner-required": "This item needs a user to own it: create it inside the folder of a user."
+                    "invalid-transfer-target": "The new owner must be an active user of the same organization.",
+                    "owner-required": "This item needs a user to own it: create it inside the folder of a user.",
+                    "transfer-mixed-organizations": "The rows chosen belong to different organizations: change the owner of each organization separately."
                 },
                 "forbidden": "You do not have permission to perform this action.",
                 "groups": {
@@ -520,8 +526,10 @@
                     "content-too-large": "File too large",
                     "duplicate-content": "Duplicate file",
                     "empty-content": "Empty file",
+                    "infected": "Virus found",
+                    "invalid-type": "File type not allowed",
                     "replace-type-mismatch": "Wrong type of file",
-                    "unsupported-type": "Unsupported file"
+                    "scan-unavailable": "Antivirus unavailable"
                 },
                 "bad-gateway": "Connection error",
                 "bad-request": "Invalid request",
@@ -534,7 +542,9 @@
                     "released": "Editing released"
                 },
                 "entities": {
-                    "owner-required": "Owner required"
+                    "invalid-transfer-target": "New owner not valid",
+                    "owner-required": "Owner required",
+                    "transfer-mixed-organizations": "Several organizations"
                 },
                 "forbidden": "Access denied",
                 "groups": {
@@ -809,6 +819,17 @@
                 "edit-locks": {
                     "released": "{{byName}} released your editing of “{{rowName}}” ({{entity}})"
                 },
+                "entities": {
+                    "rows-transferred": {
+                        "folder": "{{byName}} gave you the folder “{{name}}” of {{entity}}",
+                        "folders": "{{byName}} gave you {{count}} folders of {{entity}}",
+                        "item": "{{byName}} gave you {{noun}} “{{name}}”",
+                        "items": "{{byName}} gave you {{count}} {{noun}}",
+                        "row": "{{byName}} gave you “{{name}}” of {{entity}}",
+                        "rows": "{{byName}} gave you {{count}} items of {{entity}}",
+                        "unnamed": "{{byName}} gave you an item of {{entity}}"
+                    }
+                },
                 "sharing": {
                     "folder-shared": "{{byName}} shared the folder “{{folderName}}” of {{entity}} with you, {{access}}"
                 },
@@ -977,6 +998,10 @@
         },
         "page": {
             "actions": {
+                "transfer": {
+                    "label": "Change owner",
+                    "tooltip": "Give the selected items to another user of the organization"
+                },
                 "view": {
                     "label": "View",
                     "tooltip": "See the selected item without changing it"
@@ -1054,7 +1079,30 @@
                 }
             },
             "toast": {
-                "restored-renamed": "Restored with a new name, since another item already has the old one: {{names}}"
+                "restored-renamed": "Restored with a new name, since another item already has the old one: {{names}}",
+                "transferred": {
+                    "one": "{{count}} item changed owner",
+                    "other": "{{count}} items changed owner"
+                }
+            },
+            "transfer": {
+                "main": {
+                    "owner": {
+                        "label": "Current owner"
+                    },
+                    "target-user-id": {
+                        "label": "New owner",
+                        "placeholder": "Search a person by name or email"
+                    }
+                },
+                "no-targets": "No active user matches",
+                "notice": "The chosen person becomes the owner of the selected items.",
+                "several-owners": "Several owners",
+                "submit": "Change owner",
+                "title": {
+                    "one": "Change the owner of the selected item",
+                    "other": "Change the owner of {{count}} selected items"
+                }
             }
         },
         "pagination": {

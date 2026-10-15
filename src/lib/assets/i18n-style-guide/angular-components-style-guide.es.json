@@ -373,7 +373,11 @@
                     "label": "Coincidencia desde el principio",
                     "placeholder": "Escribe las primeras letras"
                 },
-                "tooltip": "Texto libre que se guarda tal cual, una coincidencia propia, sugerencias de un servidor que deja valores fuera y avisa cuando nada coincide, y un campo que solo elige"
+                "tooltip": "Texto libre que se guarda tal cual, una coincidencia propia, sugerencias de un servidor que deja valores fuera y avisa cuando nada coincide, un campo que solo elige y una búsqueda al escribir que solo sugiere cuando se ha escrito algo y solo guarda una ciudad elegida",
+                "typeahead": {
+                    "label": "Búsqueda al escribir",
+                    "placeholder": "Escribe una ciudad y elígela"
+                }
             },
             "section-checkbox": {
                 "checkbox1": {
@@ -973,6 +977,12 @@
                 "templates": "Plantillas"
             },
             "example": "La campana del centro de notificaciones con avisos de ejemplo: el distintivo cuenta los no leídos y la campana abre el panel. Abrir un aviso lo marca como leído; un producto además seguiría el enlace que le dé. Elige un conjunto de avisos para ver otro caso.",
+            "nouns": {
+                "templates": {
+                    "one": "la plantilla",
+                    "other": "plantillas"
+                }
+            },
             "scenarios": {
                 "empty": "Sin avisos",
                 "mixed": "Leídos y sin leer",
@@ -1086,8 +1096,8 @@
                 "categories": {
                     "root": "Mis documentos"
                 },
-                "example": "Con isSharedEnabled la página añade una pestaña Compartido conmigo, tras la principal y sus vistas, con las carpetas que otros compartieron contigo; la ruta empieza en la carpeta compartida, así que las carpetas de su propietario por encima de ella nunca se ven. Selecciona una de tus carpetas y abre el menú para compartirla: el formulario lista quién puede verla y quién puede editarla, y busca entre las personas y los grupos de la organización. Un documento ofrece Ver junto a su nombre, una acción estándar con una acción propia que abre lo mismo que su nombre. Este ejemplo responde desde un backend propio.",
-                "heading": "Compartir",
+                "example": "Con isSharedEnabled la página añade una pestaña Compartido conmigo, tras la principal y sus vistas, con las carpetas que otros compartieron contigo; la ruta empieza en la carpeta compartida, así que las carpetas de su propietario por encima de ella nunca se ven. Selecciona una de tus carpetas y abre el menú para compartirla: el formulario lista quién puede verla y quién puede editarla, y busca entre las personas y los grupos de la organización. Un documento ofrece Ver junto a su nombre, una acción estándar con una acción propia que abre lo mismo que su nombre. Selecciona tus carpetas y documentos y abre el menú para cambiar su propietario: el formulario nombra al propietario actual y busca entre los usuarios activos de la organización, y BeyPageTransferConfig fija la línea que explica qué recibe el nuevo propietario. Este ejemplo responde desde un backend propio.",
+                "heading": "Compartir y propietarios",
                 "table": {
                     "columns": {
                         "name": "Nombre"
@@ -1105,6 +1115,9 @@
                 "title": "Documentos",
                 "toast": {
                     "share-success": "Compartición guardada"
+                },
+                "transfer": {
+                    "notice": "Los documentos pasan tal cual: no se copia nada con ellos, y todo lo que hay dentro de una carpeta va con ella."
                 },
                 "view": {
                     "message": "{{name}} se abriría aquí, en solo lectura.",

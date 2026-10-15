@@ -137,7 +137,11 @@
                     "label": "Coincidencia desde el principio",
                     "placeholder": "Escribe las primeras letras"
                 },
-                "tooltip": "Texto libre que se guarda tal cual, una coincidencia propia, sugerencias de un servidor que deja valores fuera y avisa cuando nada coincide, y un campo que solo elige"
+                "tooltip": "Texto libre que se guarda tal cual, una coincidencia propia, sugerencias de un servidor que deja valores fuera y avisa cuando nada coincide, un campo que solo elige y una búsqueda al escribir que solo sugiere cuando se ha escrito algo y solo guarda una ciudad elegida",
+                "typeahead": {
+                    "label": "Búsqueda al escribir",
+                    "placeholder": "Escribe una ciudad y elígela"
+                }
             },
             "section-checkbox": {
                 "checkbox1": {

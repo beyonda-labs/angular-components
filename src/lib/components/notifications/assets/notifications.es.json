@@ -39,6 +39,17 @@
                 "edit-locks": {
                     "released": "{{byName}} ha liberado tu edición de «{{rowName}}» ({{entity}})"
                 },
+                "entities": {
+                    "rows-transferred": {
+                        "folder": "{{byName}} te ha cedido la carpeta «{{name}}» de {{entity}}",
+                        "folders": "{{byName}} te ha cedido {{count}} carpetas de {{entity}}",
+                        "item": "{{byName}} te ha cedido {{noun}} «{{name}}»",
+                        "items": "{{byName}} te ha cedido {{count}} {{noun}}",
+                        "row": "{{byName}} te ha cedido «{{name}}» de {{entity}}",
+                        "rows": "{{byName}} te ha cedido {{count}} elementos de {{entity}}",
+                        "unnamed": "{{byName}} te ha cedido un elemento de {{entity}}"
+                    }
+                },
                 "sharing": {
                     "folder-shared": "{{byName}} ha compartido contigo la carpeta «{{folderName}}» de {{entity}}, {{access}}"
                 },

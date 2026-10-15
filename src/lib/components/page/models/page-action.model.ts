@@ -1,5 +1,5 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPeopleArrows, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
 
 import { HeaderActionType } from '../../header/models/header.model';
@@ -33,6 +33,7 @@ export enum PageStandardAction {
     Move = 'move',
     RestoreTrashItem = 'restore-trash-item',
     Share = 'share',
+    Transfer = 'transfer',
     View = 'view'
 }
 
@@ -131,6 +132,13 @@ export const PAGE_STANDARD_ACTION_DEFAULTS: Record<PageStandardAction, PageStand
     [PageStandardAction.Move]: { scope: PageActionScope.Item, zone: PageActionZone.Menu },
     [PageStandardAction.RestoreTrashItem]: { scope: PageActionScope.Item, zone: PageActionZone.Left },
     [PageStandardAction.Share]: { scope: PageActionScope.Single, zone: PageActionZone.Menu },
+    [PageStandardAction.Transfer]: {
+        icon: faPeopleArrows,
+        label: 'angular-components.page.actions.transfer.label',
+        scope: PageActionScope.Item,
+        tooltip: 'angular-components.page.actions.transfer.tooltip',
+        zone: PageActionZone.Menu
+    },
     [PageStandardAction.View]: {
         label: 'angular-components.page.actions.view.label',
         scope: PageActionScope.Single,

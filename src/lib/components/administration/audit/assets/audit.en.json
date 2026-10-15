@@ -67,10 +67,12 @@
                 "resend-invitation": "Resend invitation",
                 "reset-password": "Reset password",
                 "restore": "Restore",
+                "scan-refused": "Refused by the antivirus",
                 "share": "Share",
                 "sign-in": "Sign in",
                 "sign-in-failed": "Failed sign-in",
                 "sign-out": "Sign out",
+                "transfer": "Change owner",
                 "transfer-content": "Transfer content",
                 "unshare": "Stop sharing",
                 "verify-email": "Verify email"

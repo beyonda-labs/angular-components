@@ -67,10 +67,12 @@
                 "resend-invitation": "Reenviar invitación",
                 "reset-password": "Restablecer contraseña",
                 "restore": "Restaurar",
+                "scan-refused": "Rechazado por el antivirus",
                 "share": "Compartir",
                 "sign-in": "Iniciar sesión",
                 "sign-in-failed": "Inicio de sesión fallido",
                 "sign-out": "Cerrar sesión",
+                "transfer": "Cambiar propietario",
                 "transfer-content": "Transferir contenido",
                 "unshare": "Dejar de compartir",
                 "verify-email": "Verificar el correo"

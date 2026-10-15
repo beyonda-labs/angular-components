@@ -11,6 +11,7 @@ import { PageDuplicationConfig, PageStatusConfig } from './page-lifecycle.model'
 import { PageSearch } from './page-search.model';
 import { PageCategoryPathEntry } from './page-state.model';
 import { PageTableConfig } from './page-table.model';
+import { PageTransferConfig } from './page-transfer.model';
 import { PageUsagesConfig } from './page-usages.model';
 import { PageView } from './page-view.model';
 
@@ -65,6 +66,7 @@ export class PageConfig<
     onReady?: (handle: PageHandle<TItem, TCategory>) => void;
     statusConfig?: PageStatusConfig;
     tableConfig?: PageTableConfig<TItem, TCategory, TCategoryValue>;
+    transferConfig?: PageTransferConfig;
     usagesConfig?: PageUsagesConfig;
 
     constructor({
@@ -77,6 +79,7 @@ export class PageConfig<
         prefix,
         statusConfig,
         tableConfig,
+        transferConfig,
         usagesConfig,
         views = []
     }: PageConfigParameters<TValue, TItem, TCategory, TCategoryValue>) {
@@ -89,6 +92,7 @@ export class PageConfig<
         this.prefix = prefix;
         this.statusConfig = statusConfig;
         this.tableConfig = tableConfig;
+        this.transferConfig = transferConfig;
         this.usagesConfig = usagesConfig;
         this.views = views;
     }
@@ -110,6 +114,7 @@ export interface PageConfigParameters<
     onReady?: (handle: PageHandle<TItem, TCategory>) => void;
     statusConfig?: PageStatusConfig;
     tableConfig?: PageTableConfig<TItem, TCategory, TCategoryValue>;
+    transferConfig?: PageTransferConfig;
     usagesConfig?: PageUsagesConfig;
     views?: PageView[];
 }

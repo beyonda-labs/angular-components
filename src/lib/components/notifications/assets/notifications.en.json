@@ -39,6 +39,17 @@
                 "edit-locks": {
                     "released": "{{byName}} released your editing of “{{rowName}}” ({{entity}})"
                 },
+                "entities": {
+                    "rows-transferred": {
+                        "folder": "{{byName}} gave you the folder “{{name}}” of {{entity}}",
+                        "folders": "{{byName}} gave you {{count}} folders of {{entity}}",
+                        "item": "{{byName}} gave you {{noun}} “{{name}}”",
+                        "items": "{{byName}} gave you {{count}} {{noun}}",
+                        "row": "{{byName}} gave you “{{name}}” of {{entity}}",
+                        "rows": "{{byName}} gave you {{count}} items of {{entity}}",
+                        "unnamed": "{{byName}} gave you an item of {{entity}}"
+                    }
+                },
                 "sharing": {
                     "folder-shared": "{{byName}} shared the folder “{{folderName}}” of {{entity}} with you, {{access}}"
                 },

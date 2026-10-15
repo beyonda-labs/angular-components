@@ -5,6 +5,12 @@
                 "templates": "Plantillas"
             },
             "example": "La campana del centro de notificaciones con avisos de ejemplo: el distintivo cuenta los no leídos y la campana abre el panel. Abrir un aviso lo marca como leído; un producto además seguiría el enlace que le dé. Elige un conjunto de avisos para ver otro caso.",
+            "nouns": {
+                "templates": {
+                    "one": "la plantilla",
+                    "other": "plantillas"
+                }
+            },
             "scenarios": {
                 "empty": "Sin avisos",
                 "mixed": "Leídos y sin leer",

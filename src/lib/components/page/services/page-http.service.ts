@@ -3,7 +3,7 @@ import { map, Observable } from 'rxjs';
 
 import { HttpService } from '../../../services/http/http.service';
 import { PageBackendResponse } from '../models/page.model';
-import { PageRestoredRename, PageTrashItem } from '../models/page-categories.model';
+import { PageItemType, PageRestoredRename, PageTrashItem } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
 import {
     PAGE_ORGANIZATIONS_PATH,
@@ -12,6 +12,14 @@ import {
 } from '../models/page-organization.model';
 import { PAGE_OWNER_FIELD, PAGE_OWNERS_PATH, PageOwner, PageOwnersResponse } from '../models/page-owner.model';
 import { PAGE_SHARED_PATH, PageShareEntry, PageShares, PageShareTargets } from '../models/page-sharing.model';
+import {
+    PAGE_TRANSFER_CATEGORY_IDS_PARAMETER,
+    PAGE_TRANSFER_IDS_PARAMETER,
+    PAGE_TRANSFER_PATH,
+    PAGE_TRANSFER_TARGETS_PATH,
+    PageTransferResponse,
+    PageTransferTargets
+} from '../models/page-transfer.model';
 import { PAGE_USAGES_IDS_SEPARATOR, PageUsages, PageUsagesResponse } from '../models/page-usages.model';
 import { PageUrlService } from './page-url.service';
 
@@ -181,6 +189,24 @@ export class PageHttpService {
         });
     }
 
+    searchTransferTargets(
+        relativeUrl: string,
+        items: PageTrashItem[],
+        search: string,
+        limit: number
+    ): Observable<PageTransferTargets> {
+        return this.httpService.get<PageTransferTargets>(this.url(relativeUrl, PAGE_TRANSFER_TARGETS_PATH), {
+            queryParams: { ...toTransferSelection(items), search, limit }
+        });
+    }
+
+    transfer(relativeUrl: string, items: PageTrashItem[], targetUserId: string): Observable<PageTransferResponse> {
+        return this.httpService.post<PageTransferResponse>(this.url(relativeUrl, PAGE_TRANSFER_PATH), {
+            items,
+            targetUserId
+        });
+    }
+
     private requestUsages(url: string, ids: (string | number)[]): Observable<PageUsages[]> {
         return this.httpService
             .get<PageUsagesResponse>(url, { queryParams: { ids: ids.join(PAGE_USAGES_IDS_SEPARATOR) } })
@@ -193,3 +219,20 @@ export class PageHttpService {
 }
 
 function ignoreError(): void {}
+
+function joinIds(items: PageTrashItem[], type: PageItemType): string {
+    return items
+        .filter(item => item.type === type)
+        .map(({ id }) => id)
+        .join(PAGE_USAGES_IDS_SEPARATOR);
+}
+
+function toTransferSelection(items: PageTrashItem[]): QueryParameters {
+    const ids = joinIds(items, PageItemType.Item);
+    const categoryIds = joinIds(items, PageItemType.Category);
+
+    return {
+        ...(ids ? { [PAGE_TRANSFER_IDS_PARAMETER]: ids } : {}),
+        ...(categoryIds ? { [PAGE_TRANSFER_CATEGORY_IDS_PARAMETER]: categoryIds } : {})
+    };
+}

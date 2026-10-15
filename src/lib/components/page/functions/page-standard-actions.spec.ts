@@ -1,4 +1,4 @@
-import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPeopleArrows, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import { HeaderActionType } from '../../header/models/header.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
@@ -71,6 +71,7 @@ describe('page standard actions', () => {
                 zone: PageActionZone.Left
             },
             { key: 'share', scope: PageActionScope.Single, type: HeaderActionType.Text, zone: PageActionZone.Menu },
+            { key: 'transfer', scope: PageActionScope.Item, type: HeaderActionType.Text, zone: PageActionZone.Menu },
             { key: 'view', scope: PageActionScope.Single, type: HeaderActionType.Text, zone: PageActionZone.Left }
         ]);
         expect(pageStandardAction(PageStandardAction.Create).icon).toBe(faPlus);
@@ -87,6 +88,16 @@ describe('page standard actions', () => {
             'demo.actions.view.tooltip'
         );
         expect(pageStandardAction(PageStandardAction.Edit).label).toBeUndefined();
+    });
+
+    it('gives transfer an icon and the texts of the page module', () => {
+        const transfer = pageStandardAction(PageStandardAction.Transfer);
+
+        expect([transfer.icon, transfer.label, transfer.tooltip]).toEqual([
+            faPeopleArrows,
+            'angular-components.page.actions.transfer.label',
+            'angular-components.page.actions.transfer.tooltip'
+        ]);
     });
 
     it('keeps its key and takes whatever else the caller overrides, handler included', () => {

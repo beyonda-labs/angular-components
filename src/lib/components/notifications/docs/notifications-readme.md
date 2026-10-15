@@ -12,6 +12,7 @@ readonly layout = new BeyAppLayoutConfig({
     // ...
     notifications: new BeyNotificationsConfig({
         entityLabels: { templates: 'my-app.entities.templates' },
+        entityNouns: { templates: { one: 'my-app.nouns.templates.one', other: 'my-app.nouns.templates.other' } },
         labels: { 'templates.review-requested': 'my-app.notifications.review-requested' },
         link: ({ target }) => (target?.entity === 'templates' && target.id ? `/templates/${target.id}` : null)
     })
@@ -26,45 +27,63 @@ readonly layout = new BeyAppLayoutConfig({
 
 ## BeyNotificationsConfig
 
-| Field            | Default            | Meaning                                                                            |
-| ---------------- | ------------------ | ---------------------------------------------------------------------------------- |
-| `baseUrl`        | `'/notifications'` | Path of the routes, after the `baseUrl` and `webApiPath` of the environment        |
-| `pollIntervalMs` | `60000`            | How often the unread count is asked while a session is open                        |
-| `pageSize`       | `20`               | How many notices each page of the panel asks for, 50 at most on the server         |
-| `labels`         | `{}`               | The i18n key of the text of each type of the app, `type → key`                     |
-| `entityLabels`   | `{}`               | The i18n key of each entity named in the parameters, `entity → key`                |
-| `link`           | none               | The route a notice opens, or `null` to only mark it read                           |
+| Field            | Default            | Meaning                                                                                   |
+| ---------------- | ------------------ | ----------------------------------------------------------------------------------------- |
+| `baseUrl`        | `'/notifications'` | Path of the routes, after the `baseUrl` and `webApiPath` of the environment               |
+| `pollIntervalMs` | `60000`            | How often the unread count is asked while a session is open                               |
+| `pageSize`       | `20`               | How many notices each page of the panel asks for, 50 at most on the server                |
+| `labels`         | `{}`               | The i18n key of the text of each type of the app, `type → key`                            |
+| `entityLabels`   | `{}`               | The i18n key of each entity named in the parameters, `entity → key`                       |
+| `entityNouns`    | `{}`               | The nouns of the rows of each entity, `entity → BeyNotificationNoun`, see [Texts](#texts) |
+| `link`           | none               | The route a notice opens, or `null` to only mark it read                                  |
 
 ## BeyNotification
 
 What the server answers for each notice: `id`, `type`, `createdAt` and `readAt` (epoch milliseconds, `readAt` `null`
 while unread), `parameters` for its text, and `target` (`{ entity, id }` or `null`), what it is about, which `link`
 turns into a route. `BeyNotificationTarget` and `BeyNotificationsPage` are typed as well, and `BeyNotificationType`
-names the three types of the library:
+names the four types of the library:
 
 | `BeyNotificationType` | `type`                      | `parameters`                                |
 | --------------------- | --------------------------- | ------------------------------------------- |
 | `FolderShared`        | `sharing.folder-shared`     | `entity`, `folderName`, `access`, `byName`  |
 | `EditLockReleased`    | `edit-locks.released`       | `entity`, `rowName`, `byName`               |
 | `ContentTransferred`  | `users.content-transferred` | `fromName`, `byName`, `count`               |
+| `RowsTransferred`     | `entities.rows-transferred` | `entity`, `byName`, `count`, `kind`, `name` |
+
+`RowsTransferred` tells the new owner of rows that a manager handed them, with the change-owner action of base-entity.
+`count` is how many of the selected rows changed owner, what lies inside the selected folders left out; `kind` is
+`item` when all of them are items, `category` when all of them are folders, or `mixed`; `name` is the name of the row
+when `count` is 1. With one row its `target` is `{ entity, id }` of that row, which `link` turns into a route as for
+any notice; with several it is `{ entity, id: null }`, the entity and no row, so a `link` can open the root of the
+entity's page. A notice stored before `kind` and `name` existed has only `entity`, `byName` and `count`.
+
+## BeyNotificationNoun
+
+How the rows of an entity are named in a text, as two i18n keys:
+
+| Field   | Meaning                                                                               |
+| ------- | ------------------------------------------------------------------------------------- |
+| `one`   | One row, with its article where the language puts one: "the template", "la plantilla" |
+| `other` | Several rows, without an article: "templates", "plantillas"                           |
 
 ## BeyNotificationsService
 
 A root singleton, which `bey-notifications` starts with its config and stops when it is destroyed. A page may read it
 or call it as well.
 
-| Member          | Meaning                                                                                    |
-| --------------- | ------------------------------------------------------------------------------------------ |
-| `unreadCount`   | Signal with the unread count, `0` while stopped or signed out                              |
-| `notifications` | Signal with the notices loaded, newest first                                               |
-| `hasMore`       | Signal, `true` while older notices are left to load                                        |
-| `isLoading`     | Signal, `true` while a page is on its way                                                  |
-| `refresh()`     | Asks the unread count at once                                                              |
-| `load(isMore)`  | Loads the newest page, or with `true` the page older than the last notice loaded           |
-| `markRead(id)`  | Marks one notice read, once, and counts one less                                           |
-| `markAllRead()` | Marks every notice of the user read                                                        |
-| `start(config)` | Starts asking with that config; `bey-notifications` calls it                               |
-| `stop()`        | Stops asking and forgets what it held                                                      |
+| Member          | Meaning                                                                          |
+| --------------- | -------------------------------------------------------------------------------- |
+| `unreadCount`   | Signal with the unread count, `0` while stopped or signed out                    |
+| `notifications` | Signal with the notices loaded, newest first                                     |
+| `hasMore`       | Signal, `true` while older notices are left to load                              |
+| `isLoading`     | Signal, `true` while a page is on its way                                        |
+| `refresh()`     | Asks the unread count at once                                                    |
+| `load(isMore)`  | Loads the newest page, or with `true` the page older than the last notice loaded |
+| `markRead(id)`  | Marks one notice read, once, and counts one less                                 |
+| `markAllRead()` | Marks every notice of the user read                                              |
+| `start(config)` | Starts asking with that config; `bey-notifications` calls it                     |
+| `stop()`        | Stops asking and forgets what it held                                            |
 
 ## When it asks
 
@@ -97,34 +116,48 @@ The text of a notice is the key of its type translated with its parameters, reso
     and any other type the generic `angular-components.notifications.unknown-type`, "You have a new notification";
 -   an `entity` in `entityLabels` is translated with that key, and any other shows its raw name;
 -   an `access` of `read` or `write` reads "read only" or "read and write";
+-   `RowsTransferred`, unless `labels` gives a key for it, reads the key of its case under
+    `angular-components.notifications.types.entities.rows-transferred`, with `noun`, the `one` or the `other` key of
+    the `entityNouns` of its `entity` translated:
+
+    | Case                                                     | Key       | Shown as                                           |
+    | -------------------------------------------------------- | --------- | -------------------------------------------------- |
+    | One item, with a noun                                    | `item`    | "Grace gave you the template “Contract”"           |
+    | One folder                                               | `folder`  | "Grace gave you the folder “Clients” of Templates" |
+    | One row without a noun for its entity                    | `row`     | "Grace gave you “Contract” of Templates"           |
+    | Several items, with a noun                               | `items`   | "Grace gave you 3 templates"                       |
+    | Several folders                                          | `folders` | "Grace gave you 2 folders of Templates"            |
+    | Several rows of both kinds, without a noun, or no `kind` | `rows`    | "Grace gave you 4 items of Templates"              |
+    | One row the notice does not name, such as an old notice  | `unnamed` | "Grace gave you an item of Templates"              |
+
 -   a `null` parameter, a name nobody kept, reads "Unknown" (`angular-components.user-name.unknown`), and a number reads
     as it is.
 
-| Key                                               | Shown as                                                   |
-| ------------------------------------------------- | ---------------------------------------------------------- |
-| `angular-components.notifications.types.<type>`   | The text of each type of the library, with its parameters  |
-| `angular-components.notifications.unknown-type`   | The text of a type nobody labels                           |
-| `angular-components.notifications.access.<value>` | `read` and `write`                                         |
-| `angular-components.notifications.bell.label`     | The name of the bell, and `.unread` with `{{count}}`       |
-| `angular-components.notifications.time.<unit>`    | `now`, and `minutes`, `hours` and `days` with `{{count}}`  |
-| `angular-components.notifications.actions.<key>`  | `refresh`, `mark-all-read` and `show-more`                 |
-| `angular-components.notifications.title`          | The title of the panel                                     |
-| `angular-components.notifications.empty`          | The panel without notices                                  |
-| `angular-components.notifications.loading`        | The panel while its first page loads                       |
-| `angular-components.notifications.unread`         | What an unread notice is read out with                     |
+| Key                                               | Shown as                                                  |
+| ------------------------------------------------- | --------------------------------------------------------- |
+| `angular-components.notifications.types.<type>`   | The text of each type of the library, with its parameters |
+| `angular-components.notifications.unknown-type`   | The text of a type nobody labels                          |
+| `angular-components.notifications.access.<value>` | `read` and `write`                                        |
+| `angular-components.notifications.bell.label`     | The name of the bell, and `.unread` with `{{count}}`      |
+| `angular-components.notifications.time.<unit>`    | `now`, and `minutes`, `hours` and `days` with `{{count}}` |
+| `angular-components.notifications.actions.<key>`  | `refresh`, `mark-all-read` and `show-more`                |
+| `angular-components.notifications.title`          | The title of the panel                                    |
+| `angular-components.notifications.empty`          | The panel without notices                                 |
+| `angular-components.notifications.loading`        | The panel while its first page loads                      |
+| `angular-components.notifications.unread`         | What an unread notice is read out with                    |
 
 The module also writes the text of the `notifications.not-found` error of the server, a notice opened after it was
 purged.
 
 ## Theming
 
-| Variable                          | Default              |
-| --------------------------------- | -------------------- |
-| `--bey-notifications-accent`      | `--bey-primary`      |
-| `--bey-notifications-badge-bg`    | `--bey-danger`       |
-| `--bey-notifications-badge-fg`    | `--bey-danger-fg`    |
-| `--bey-notifications-border`      | `--bey-border-subtle`|
-| `--bey-notifications-surface`     | `--bey-bg-surface`   |
-| `--bey-notifications-text`        | `--bey-text-primary` |
-| `--bey-notifications-text-muted`  | `--bey-text-muted`   |
-| `--bey-notifications-unread-bg`   | `--bey-primary-soft` |
+| Variable                         | Default               |
+| -------------------------------- | --------------------- |
+| `--bey-notifications-accent`     | `--bey-primary`       |
+| `--bey-notifications-badge-bg`   | `--bey-danger`        |
+| `--bey-notifications-badge-fg`   | `--bey-danger-fg`     |
+| `--bey-notifications-border`     | `--bey-border-subtle` |
+| `--bey-notifications-surface`    | `--bey-bg-surface`    |
+| `--bey-notifications-text`       | `--bey-text-primary`  |
+| `--bey-notifications-text-muted` | `--bey-text-muted`    |
+| `--bey-notifications-unread-bg`  | `--bey-primary-soft`  |
