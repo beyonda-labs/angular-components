@@ -23,6 +23,7 @@ const TEXTS = {
         ...notificationsEn['angular-components'],
         ...userNameEn['angular-components'],
         'review-requested': '{{byName}} asks you to review “{{rowName}}”',
+        template: { one: 'the template', other: 'templates' },
         templates: 'Templates'
     }
 };
@@ -149,6 +150,33 @@ describe('NotificationsComponent', () => {
         expect(notices()).toEqual([
             'Ada asks you to review “Offer” Just now Unread',
             'You have a new notification Just now Unread'
+        ]);
+    });
+
+    it('tells the new owner what was handed over, with the noun the app gives for the entity', async () => {
+        await render(
+            buildConfig({
+                entityNouns: {
+                    templates: { one: 'angular-components.template.one', other: 'angular-components.template.other' }
+                }
+            })
+        );
+        await open([
+            buildNotification('n2', 0, {
+                parameters: { byName: 'Tester', count: 1, entity: 'templates', kind: 'item', name: 'Contract' },
+                target: { entity: 'templates', id: 't1' },
+                type: NotificationType.RowsTransferred
+            }),
+            buildNotification('n1', 0, {
+                parameters: { byName: 'Tester', count: 4, entity: 'templates', kind: 'mixed' },
+                target: { entity: 'templates', id: null },
+                type: NotificationType.RowsTransferred
+            })
+        ]);
+
+        expect(notices()).toEqual([
+            'Tester gave you the template “Contract” Just now Unread',
+            'Tester gave you 4 items of Templates Just now Unread'
         ]);
     });
 

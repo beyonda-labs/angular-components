@@ -1,7 +1,7 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { buttonByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
+import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 import { of, throwError } from 'rxjs';
 
 import {
@@ -278,6 +278,65 @@ describe('FormAutocompleteFieldComponent', () => {
         });
     });
 
+    describe('as a typeahead', () => {
+        beforeEach(async () => {
+            fixture.destroy();
+            control = new FormControl<string | null>('');
+            fixture = await renderComponent(FormAutocompleteFieldComponent, {
+                control,
+                field: new FormAutocompleteField({ isTypeahead: true, key: 'member' }),
+                options: PEOPLE,
+                prefix: 'demo.group.member'
+            });
+        });
+
+        async function type(text: string): Promise<void> {
+            input().value = text;
+            input().dispatchEvent(new Event('input'));
+            await settle(fixture);
+        }
+
+        it('offers no toggle and suggests nothing until something is typed', async () => {
+            input().dispatchEvent(new Event('focus'));
+            input().dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+            input().dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+            await settle(fixture);
+
+            expect(queryButton(fixture, 'angular-components.form.autocomplete-field.toggle')).toBeNull();
+            expect(document.body.querySelector('[role="listbox"]')).toBeNull();
+            expect(control.value).toBe('');
+
+            await type('nora');
+
+            expect(textsOf(panelOptions())).toEqual(['Nora Lectora (nora@empresa.com)']);
+
+            await type(' ');
+
+            expect(document.body.querySelector('[role="listbox"]')).toBeNull();
+        });
+
+        it('takes only a picked option: typing over it empties the value, and leaving drops the typed text', async () => {
+            input().dispatchEvent(new Event('focus'));
+            await type('ada');
+            panelOptions()[0].dispatchEvent(new MouseEvent('mousedown'));
+            await settle(fixture);
+
+            expect(control.value).toBe('u3');
+            expect(input().value).toBe('Ada Lovelace (ada@empresa.com)');
+
+            await type('Ada Lovelace');
+
+            expect(control.value).toBe('');
+
+            input().dispatchEvent(new Event('blur'));
+            await settle(fixture);
+
+            expect(input().value).toBe('');
+            expect(control.value).toBe('');
+            expect(control.touched).toBe(true);
+        });
+    });
+
     it('moves the panel to the body while open and takes it away on close', async () => {
         input().dispatchEvent(new Event('focus'));
         await settle(fixture);
@@ -346,5 +405,38 @@ describe('FormAutocompleteFieldComponent with a server search', () => {
             'Nora Lectora (nora@empresa.com)',
             'Ada Lovelace (ada@empresa.com)'
         ]);
+    }));
+
+    it('asks a typeahead search for the typed text once typing settles, and never for an empty one', fakeAsync(() => {
+        const search = jest.fn(() => of({ hasMore: true, options: [PEOPLE[0]] }));
+        fixture = TestBed.createComponent(FormAutocompleteFieldComponent);
+        fixture.componentRef.setInput('control', new FormControl<string | null>(''));
+        fixture.componentRef.setInput('field', new FormAutocompleteField({ isTypeahead: true, key: 'member', search }));
+        fixture.componentRef.setInput('prefix', 'demo.group.member');
+        fixture.detectChanges();
+
+        input().dispatchEvent(new Event('focus'));
+        tick(300);
+
+        expect(search).not.toHaveBeenCalled();
+
+        input().value = 'nora';
+        input().dispatchEvent(new Event('input'));
+        tick(300);
+        fixture.detectChanges();
+
+        expect(search).toHaveBeenCalledWith('nora', []);
+        expect(textsOf(queryAll(document.body, '[role="option"]'))).toEqual(['Nora Lectora (nora@empresa.com)']);
+        expect(document.body.querySelector('[role="listbox"]')?.textContent).toContain(
+            'angular-components.form.autocomplete-field.more'
+        );
+
+        input().value = '';
+        input().dispatchEvent(new Event('input'));
+        tick(300);
+        fixture.detectChanges();
+
+        expect(search).toHaveBeenCalledTimes(1);
+        expect(document.body.querySelector('[role="listbox"]')).toBeNull();
     }));
 });

@@ -92,10 +92,12 @@
                 "resend-invitation": "Reenviar invitación",
                 "reset-password": "Restablecer contraseña",
                 "restore": "Restaurar",
+                "scan-refused": "Rechazado por el antivirus",
                 "share": "Compartir",
                 "sign-in": "Iniciar sesión",
                 "sign-in-failed": "Inicio de sesión fallido",
                 "sign-out": "Cerrar sesión",
+                "transfer": "Cambiar propietario",
                 "transfer-content": "Transferir contenido",
                 "unshare": "Dejar de compartir",
                 "verify-email": "Verificar el correo"
@@ -390,20 +392,24 @@
                     "content-too-large": "El archivo supera el tamaño máximo permitido.",
                     "duplicate-content": "Este archivo ya está subido como \"{{name}}\".",
                     "empty-content": "El archivo está vacío.",
+                    "infected": "El archivo contiene un virus ({{signature}}) y no se ha guardado.",
+                    "invalid-type": "El tipo de archivo no está permitido. Tipos permitidos: {{allowed}}.",
                     "replace-type-mismatch": "Reemplaza el archivo por otro del mismo tipo ({{fileType}}).",
-                    "unsupported-type": "Los archivos de tipo \"{{mimeType}}\" no están admitidos."
+                    "scan-unavailable": "No se ha podido comprobar el archivo con el antivirus. Inténtalo más tarde."
                 },
                 "bad-gateway": "El servidor recibió una respuesta no válida. Por favor, inténtelo de nuevo más tarde.",
                 "bad-request": "La solicitud no pudo ser procesada. Por favor, revise los datos enviados.",
                 "conflict": "Se produjo un conflicto con el estado actual del recurso.",
                 "duplicate-field": "Ya existe un elemento con el campo \"{{fieldName}}\" con el valor \"{{value}}\".",
                 "edit-locks": {
-                    "held": "{{holderName}} lo está editando: tus cambios no se han guardado.",
+                    "held": "{{holderName}} lo está editando: no se ha cambiado nada.",
                     "release-forbidden": "Solo pueden liberar la edición quien lo está editando, un administrador de su organización o un superadministrador.",
                     "released": "Se ha liberado tu edición, así que tus cambios no se han guardado aquí. Guárdalos como copia o recárgalo para volver a editarlo."
                 },
                 "entities": {
-                    "owner-required": "Este elemento necesita un usuario propietario: créalo dentro de la carpeta de un usuario."
+                    "invalid-transfer-target": "El nuevo propietario debe ser un usuario activo de la misma organización.",
+                    "owner-required": "Este elemento necesita un usuario propietario: créalo dentro de la carpeta de un usuario.",
+                    "transfer-mixed-organizations": "Las filas elegidas son de organizaciones distintas: cambia el propietario de cada organización por separado."
                 },
                 "forbidden": "No tiene permisos para realizar esta acción.",
                 "groups": {
@@ -520,8 +526,10 @@
                     "content-too-large": "Archivo demasiado grande",
                     "duplicate-content": "Archivo duplicado",
                     "empty-content": "Archivo vacío",
+                    "infected": "Virus detectado",
+                    "invalid-type": "Tipo de archivo no permitido",
                     "replace-type-mismatch": "Tipo de archivo distinto",
-                    "unsupported-type": "Archivo no admitido"
+                    "scan-unavailable": "Antivirus no disponible"
                 },
                 "bad-gateway": "Error de conexión",
                 "bad-request": "Solicitud inválida",
@@ -534,7 +542,9 @@
                     "released": "Edición liberada"
                 },
                 "entities": {
-                    "owner-required": "Falta el propietario"
+                    "invalid-transfer-target": "Nuevo propietario no válido",
+                    "owner-required": "Falta el propietario",
+                    "transfer-mixed-organizations": "Varias organizaciones"
                 },
                 "forbidden": "Acceso denegado",
                 "groups": {
@@ -809,6 +819,17 @@
                 "edit-locks": {
                     "released": "{{byName}} ha liberado tu edición de «{{rowName}}» ({{entity}})"
                 },
+                "entities": {
+                    "rows-transferred": {
+                        "folder": "{{byName}} te ha cedido la carpeta «{{name}}» de {{entity}}",
+                        "folders": "{{byName}} te ha cedido {{count}} carpetas de {{entity}}",
+                        "item": "{{byName}} te ha cedido {{noun}} «{{name}}»",
+                        "items": "{{byName}} te ha cedido {{count}} {{noun}}",
+                        "row": "{{byName}} te ha cedido «{{name}}» de {{entity}}",
+                        "rows": "{{byName}} te ha cedido {{count}} elementos de {{entity}}",
+                        "unnamed": "{{byName}} te ha cedido un elemento de {{entity}}"
+                    }
+                },
                 "sharing": {
                     "folder-shared": "{{byName}} ha compartido contigo la carpeta «{{folderName}}» de {{entity}}, {{access}}"
                 },
@@ -977,6 +998,10 @@
         },
         "page": {
             "actions": {
+                "transfer": {
+                    "label": "Cambiar propietario",
+                    "tooltip": "Entrega los elementos seleccionados a otro usuario de la organización"
+                },
                 "view": {
                     "label": "Ver",
                     "tooltip": "Muestra el elemento seleccionado sin cambiarlo"
@@ -1054,7 +1079,30 @@
                 }
             },
             "toast": {
-                "restored-renamed": "Restaurado con otro nombre, porque otro elemento ya tiene el anterior: {{names}}"
+                "restored-renamed": "Restaurado con otro nombre, porque otro elemento ya tiene el anterior: {{names}}",
+                "transferred": {
+                    "one": "{{count}} elemento ha cambiado de propietario",
+                    "other": "{{count}} elementos han cambiado de propietario"
+                }
+            },
+            "transfer": {
+                "main": {
+                    "owner": {
+                        "label": "Propietario actual"
+                    },
+                    "target-user-id": {
+                        "label": "Nuevo propietario",
+                        "placeholder": "Busca a una persona por nombre o correo"
+                    }
+                },
+                "no-targets": "Ningún usuario activo coincide",
+                "notice": "La persona indicada pasa a ser la propietaria de los elementos seleccionados.",
+                "several-owners": "Varios propietarios",
+                "submit": "Cambiar propietario",
+                "title": {
+                    "one": "Cambiar el propietario del elemento seleccionado",
+                    "other": "Cambiar el propietario de {{count}} elementos seleccionados"
+                }
             }
         },
         "pagination": {

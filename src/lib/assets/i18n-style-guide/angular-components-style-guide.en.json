@@ -373,7 +373,11 @@
                     "label": "Matched from the start",
                     "placeholder": "Type the first letters"
                 },
-                "tooltip": "Free text kept as typed, a match of its own, suggestions from a server that leaves values out and says when nothing matches, and a field that only picks"
+                "tooltip": "Free text kept as typed, a match of its own, suggestions from a server that leaves values out and says when nothing matches, a field that only picks, and a typeahead that suggests only once something is typed and keeps only a picked city",
+                "typeahead": {
+                    "label": "Typeahead",
+                    "placeholder": "Type a city and pick it"
+                }
             },
             "section-checkbox": {
                 "checkbox1": {
@@ -973,6 +977,12 @@
                 "templates": "Templates"
             },
             "example": "The bell of the notifications centre with sample notices: the badge counts the unread ones, and the bell opens the panel. Opening a notice marks it read; a product would also follow the link it gives. Pick a set of notices to see another case.",
+            "nouns": {
+                "templates": {
+                    "one": "the template",
+                    "other": "templates"
+                }
+            },
             "scenarios": {
                 "empty": "No notices",
                 "mixed": "Unread and read",
@@ -1086,8 +1096,8 @@
                 "categories": {
                     "root": "My documents"
                 },
-                "example": "With isSharedEnabled the page adds a Shared with me tab, after the main tab and its views, listing the folders others shared with you; the breadcrumb starts at the shared folder, so the folders of its owner above it never show. Select one of your folders and open the menu to share it: the form lists who can view it and who can edit it, and searches the people and groups of the organization. A document offers View next to its name, a standard action with an action of its own that opens what the name opens. This example answers from a backend of its own.",
-                "heading": "Sharing",
+                "example": "With isSharedEnabled the page adds a Shared with me tab, after the main tab and its views, listing the folders others shared with you; the breadcrumb starts at the shared folder, so the folders of its owner above it never show. Select one of your folders and open the menu to share it: the form lists who can view it and who can edit it, and searches the people and groups of the organization. A document offers View next to its name, a standard action with an action of its own that opens what the name opens. Select your folders and documents and open the menu to change their owner: the form names the current owner and searches the active users of the organization, and BeyPageTransferConfig sets the line that explains what the new owner gets. This example answers from a backend of its own.",
+                "heading": "Sharing and owners",
                 "table": {
                     "columns": {
                         "name": "Name"
@@ -1105,6 +1115,9 @@
                 "title": "Documents",
                 "toast": {
                     "share-success": "Sharing saved"
+                },
+                "transfer": {
+                    "notice": "Documents move as they are: nothing is copied along, and everything inside a folder goes with it."
                 },
                 "view": {
                     "message": "{{name}} would open here, read-only.",

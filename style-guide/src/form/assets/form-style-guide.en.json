@@ -137,7 +137,11 @@
                     "label": "Matched from the start",
                     "placeholder": "Type the first letters"
                 },
-                "tooltip": "Free text kept as typed, a match of its own, suggestions from a server that leaves values out and says when nothing matches, and a field that only picks"
+                "tooltip": "Free text kept as typed, a match of its own, suggestions from a server that leaves values out and says when nothing matches, a field that only picks, and a typeahead that suggests only once something is typed and keeps only a picked city",
+                "typeahead": {
+                    "label": "Typeahead",
+                    "placeholder": "Type a city and pick it"
+                }
             },
             "section-checkbox": {
                 "checkbox1": {

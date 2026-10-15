@@ -17,6 +17,7 @@ export class FormAutocompleteField extends FormField {
     excludedValues: FormRule<string[]>;
     isClearedOnSelect: boolean;
     isFreeTextAllowed: boolean;
+    isTypeahead: boolean;
     options: FormRule<FormFieldOption[]>;
 
     emptyKey?: string;
@@ -30,6 +31,7 @@ export class FormAutocompleteField extends FormField {
         filter,
         isClearedOnSelect = false,
         isFreeTextAllowed = false,
+        isTypeahead = false,
         onSelect,
         options = [],
         search,
@@ -42,6 +44,7 @@ export class FormAutocompleteField extends FormField {
         this.filter = filter;
         this.isClearedOnSelect = isClearedOnSelect;
         this.isFreeTextAllowed = isFreeTextAllowed;
+        this.isTypeahead = isTypeahead;
         this.onSelect = onSelect;
         this.options = options;
         this.search = search;
@@ -54,6 +57,7 @@ export interface FormAutocompleteFieldParameters extends FormFieldBaseParameters
     filter?: (option: FormFieldOption, text: string) => boolean;
     isClearedOnSelect?: boolean;
     isFreeTextAllowed?: boolean;
+    isTypeahead?: boolean;
     onSelect?: (option: FormFieldOption) => void;
     options?: FormRule<FormFieldOption[]>;
     search?: FormAutocompleteSearch;

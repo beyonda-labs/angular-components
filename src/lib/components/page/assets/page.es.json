@@ -14,6 +14,10 @@
         },
         "page": {
             "actions": {
+                "transfer": {
+                    "label": "Cambiar propietario",
+                    "tooltip": "Entrega los elementos seleccionados a otro usuario de la organización"
+                },
                 "view": {
                     "label": "Ver",
                     "tooltip": "Muestra el elemento seleccionado sin cambiarlo"
@@ -91,7 +95,30 @@
                 }
             },
             "toast": {
-                "restored-renamed": "Restaurado con otro nombre, porque otro elemento ya tiene el anterior: {{names}}"
+                "restored-renamed": "Restaurado con otro nombre, porque otro elemento ya tiene el anterior: {{names}}",
+                "transferred": {
+                    "one": "{{count}} elemento ha cambiado de propietario",
+                    "other": "{{count}} elementos han cambiado de propietario"
+                }
+            },
+            "transfer": {
+                "main": {
+                    "owner": {
+                        "label": "Propietario actual"
+                    },
+                    "target-user-id": {
+                        "label": "Nuevo propietario",
+                        "placeholder": "Busca a una persona por nombre o correo"
+                    }
+                },
+                "no-targets": "Ningún usuario activo coincide",
+                "notice": "La persona indicada pasa a ser la propietaria de los elementos seleccionados.",
+                "several-owners": "Varios propietarios",
+                "submit": "Cambiar propietario",
+                "title": {
+                    "one": "Cambiar el propietario del elemento seleccionado",
+                    "other": "Cambiar el propietario de {{count}} elementos seleccionados"
+                }
             }
         }
     }

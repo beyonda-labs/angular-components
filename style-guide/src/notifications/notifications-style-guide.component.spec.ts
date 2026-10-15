@@ -38,8 +38,9 @@ describe('NotificationsStyleGuideComponent', () => {
 
         await click(bell());
 
-        expect(notices()).toHaveLength(5);
-        expect(notices()[3].textContent).toContain(`${PREFIX}.types.review-requested`);
+        expect(notices()).toHaveLength(8);
+        expect(notices()[2].textContent).toContain(`${NOTIFICATIONS}.types.entities.rows-transferred.item`);
+        expect(notices()[6].textContent).toContain(`${PREFIX}.types.review-requested`);
     });
 
     it('marks the notices read, one by opening it and then all of them', async () => {
@@ -59,7 +60,7 @@ describe('NotificationsStyleGuideComponent', () => {
         await click(buttonByName(fixture, `${NOTIFICATIONS}.actions.show-more`));
         await click(buttonByName(fixture, `${NOTIFICATIONS}.actions.show-more`));
 
-        expect(notices()).toHaveLength(5);
+        expect(notices()).toHaveLength(8);
         expect(queryButton(fixture, `${NOTIFICATIONS}.actions.show-more`)).toBeNull();
 
         await click(buttonByName(fixture, `${PREFIX}.scenarios.empty`));

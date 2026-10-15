@@ -78,6 +78,13 @@ export type {
     PageTableConfigParameters as BeyPageTableConfigParameters,
     PageTableSearchConfigParameters as BeyPageTableSearchConfigParameters
 } from './models/page-table.model';
+export { PageTransferConfig as BeyPageTransferConfig } from './models/page-transfer.model';
+export type {
+    PageTransferConfigParameters as BeyPageTransferConfigParameters,
+    PageTransferResponse as BeyPageTransferResponse,
+    PageTransferTarget as BeyPageTransferTarget,
+    PageTransferTargets as BeyPageTransferTargets
+} from './models/page-transfer.model';
 export { PageUsagesConfig as BeyPageUsagesConfig } from './models/page-usages.model';
 export type {
     PageUsages as BeyPageUsages,

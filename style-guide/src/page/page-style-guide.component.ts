@@ -23,6 +23,7 @@ import {
     beyPageStandardAction,
     BeyPageTableConfig,
     BeyPageTableSearchConfig,
+    BeyPageTransferConfig,
     BeyPageView,
     BeySearchField,
     BeySearchFieldType,
@@ -149,7 +150,8 @@ export class PageStyleGuideComponent {
                 beyPageStandardAction<StyleGuideDocument>(BeyPageStandardAction.View, {
                     action: ([document]) => this.view(document)
                 }),
-                beyPageStandardAction(BeyPageStandardAction.Share)
+                beyPageStandardAction(BeyPageStandardAction.Share),
+                beyPageStandardAction(BeyPageStandardAction.Transfer)
             ],
             title: `${SHARING_PREFIX}.title`
         }),
@@ -172,7 +174,8 @@ export class PageStyleGuideComponent {
                 new BeyLinkTableCell({ action: () => this.view(document), content: document.name }),
                 beyPageOwnerCell(document)
             ]
-        })
+        }),
+        transferConfig: new BeyPageTransferConfig({ notice: `${SHARING_PREFIX}.transfer.notice` })
     });
 
     private sharingPage?: BeyPageHandle<StyleGuideDocument>;

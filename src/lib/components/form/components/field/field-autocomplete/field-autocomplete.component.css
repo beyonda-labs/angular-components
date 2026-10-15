@@ -17,6 +17,10 @@
     border-color: var(--bey-danger);
 }
 
+.bey-form-autocomplete--typeahead .bey-form-autocomplete-input {
+    padding-right: var(--bey-space-xl);
+}
+
 .bey-form-autocomplete-action {
     bottom: var(--bey-border-width);
     font-size: var(--bey-font-size-2xs);
@@ -31,6 +35,11 @@
 
 .bey-form-autocomplete-clear {
     right: var(--bey-space-xl);
+}
+
+.bey-form-autocomplete--typeahead .bey-form-autocomplete-clear {
+    border-radius: 0 var(--bey-radius-sm) var(--bey-radius-sm) 0;
+    right: var(--bey-border-width);
 }
 
 .bey-form-autocomplete-toggle {

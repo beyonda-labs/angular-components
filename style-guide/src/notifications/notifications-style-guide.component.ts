@@ -33,6 +33,7 @@ export class NotificationsStyleGuideComponent {
 
     readonly config = new BeyNotificationsConfig({
         entityLabels: { templates: `${PREFIX}.entities.templates` },
+        entityNouns: { templates: { one: `${PREFIX}.nouns.templates.one`, other: `${PREFIX}.nouns.templates.other` } },
         labels: { [REVIEW_REQUESTED]: `${PREFIX}.types.review-requested` }
     });
     readonly scenarios: StyleGuideButton[] = [
@@ -75,12 +76,36 @@ function buildNotices(): BeyNotification[] {
             type: BeyNotificationType.EditLockReleased
         },
         {
+            createdAt: now - DAY_MS,
+            id: 'row-transferred',
+            parameters: { byName: 'Grace Hopper', count: 1, entity: 'templates', kind: 'item', name: 'Contract' },
+            readAt: null,
+            target: { entity: 'templates', id: 'template-3' },
+            type: BeyNotificationType.RowsTransferred
+        },
+        {
             createdAt: now - 3 * DAY_MS,
             id: 'transferred',
             parameters: { byName: null, count: 12, fromName: 'Alan Turing' },
             readAt: now - 2 * DAY_MS,
             target: null,
             type: BeyNotificationType.ContentTransferred
+        },
+        {
+            createdAt: now - 4 * DAY_MS,
+            id: 'folder-transferred',
+            parameters: { byName: 'Grace Hopper', count: 1, entity: 'templates', kind: 'category', name: 'Clients' },
+            readAt: now - 3 * DAY_MS,
+            target: { entity: 'templates', id: 'folder-2' },
+            type: BeyNotificationType.RowsTransferred
+        },
+        {
+            createdAt: now - 5 * DAY_MS,
+            id: 'rows-transferred',
+            parameters: { byName: 'Ada Lovelace', count: 3, entity: 'templates', kind: 'item' },
+            readAt: now - 4 * DAY_MS,
+            target: { entity: 'templates', id: null },
+            type: BeyNotificationType.RowsTransferred
         },
         {
             createdAt: now - 14 * DAY_MS,

@@ -1,4 +1,4 @@
-<div class="bey-form-autocomplete">
+<div class="bey-form-autocomplete" [class.bey-form-autocomplete--typeahead]="field().isTypeahead">
     <div class="bey-form-autocomplete-control">
         <input
             #queryInput
@@ -33,17 +33,19 @@
             </button>
         }
 
-        <button
-            class="bey-form-field-action bey-form-autocomplete-action bey-form-autocomplete-toggle"
-            tabindex="-1"
-            type="button"
-            [attr.aria-label]="'angular-components.form.autocomplete-field.toggle' | translate"
-            [class.is-open]="isOpen()"
-            [disabled]="isDisabled()"
-            (mousedown)="onToggle()"
-        >
-            <fa-icon aria-hidden="true" [icon]="toggleIcon"></fa-icon>
-        </button>
+        @if (!field().isTypeahead) {
+            <button
+                class="bey-form-field-action bey-form-autocomplete-action bey-form-autocomplete-toggle"
+                tabindex="-1"
+                type="button"
+                [attr.aria-label]="'angular-components.form.autocomplete-field.toggle' | translate"
+                [class.is-open]="isOpen()"
+                [disabled]="isDisabled()"
+                (mousedown)="onToggle()"
+            >
+                <fa-icon aria-hidden="true" [icon]="toggleIcon"></fa-icon>
+            </button>
+        }
     </div>
 
     @if (isPanelVisible()) {

@@ -91,6 +91,16 @@ describe('page rows', () => {
         );
     });
 
+    it('hands a transfer handler every selected row, folders included, and shows it while every row lists it', () => {
+        const transfer = buildAction(PageStandardAction.Transfer, PageActionScope.Item, jest.fn());
+        const folder: Row = { ...FOLDER, actions: [PageStandardAction.Transfer] };
+        const report: Row = { ...REPORT, actions: [PageStandardAction.Transfer] };
+
+        expect(toHandlerItems(transfer, [folder, report], CATEGORIES)).toEqual([folder, report]);
+        expect(isActionVisible(transfer, [], [folder, report], CATEGORIES)).toBe(true);
+        expect(isActionVisible(transfer, [], [folder, REPORT], CATEGORIES)).toBe(false);
+    });
+
     it('tells a category apart by the type field the categories config names', () => {
         const kind = new PageCategoriesConfig({ typeField: 'kind' });
         const folder: PageItem & { kind: PageItemType } = { id: 'k', kind: PageItemType.Category };

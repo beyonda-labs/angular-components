@@ -144,6 +144,21 @@ describe('PageStyleGuideComponent', () => {
         ]);
     });
 
+    it('changes the owner of a folder and a document of the sharing example, confirming how many rows changed', async () => {
+        await select('Drafts');
+        await select('Offer 2026');
+        await click(buttonByName(sharingPage(), 'angular-components.header.menu'));
+        await click(buttonByName(sharingPage(), 'angular-components.page.actions.transfer.label'));
+        const [form] = TestBed.inject(FakeModalFormService).forms();
+
+        form.onSubmit?.({ main: { targetUserId: 'u3' } }, new FakeFormHandle());
+        await settle(fixture);
+
+        expect(TestBed.inject(FakeToastService).successes()).toEqual([
+            { message: 'angular-components.page.toast.transferred.other' }
+        ]);
+    });
+
     it('views a document of the sharing example from the View action next to its name', async () => {
         await select('Offer 2026');
         await click(buttonByName(sharingPage(), 'angular-components.page.actions.view.label'));

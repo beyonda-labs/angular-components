@@ -3,8 +3,10 @@ import { notificationLabelKey, notificationParameters, notificationText } from '
 
 const LABELS: NotificationLabels = {
     entityLabels: { templates: 'app.entities.templates' },
+    entityNouns: { templates: { one: 'app.nouns.template.one', other: 'app.nouns.template.other' } },
     labels: { 'templates.review-requested': 'app.notifications.review-requested' }
 };
+const ROWS_TRANSFERRED = 'angular-components.notifications.types.entities.rows-transferred';
 
 function translate(key: string, parameters?: Record<string, string>): string {
     return parameters ? `${key} ${JSON.stringify(parameters)}` : `[${key}]`;
@@ -27,7 +29,8 @@ describe('notificationLabelKey', () => {
         expect(Object.values(NotificationType).map(type => notificationLabelKey(type, LABELS))).toEqual([
             'angular-components.notifications.types.users.content-transferred',
             'angular-components.notifications.types.edit-locks.released',
-            'angular-components.notifications.types.sharing.folder-shared'
+            'angular-components.notifications.types.sharing.folder-shared',
+            'angular-components.notifications.types.entities.rows-transferred'
         ]);
     });
 
@@ -91,5 +94,54 @@ describe('notificationText', () => {
         ).toBe(
             'angular-components.notifications.types.edit-locks.released {"byName":"Grace","entity":"[app.entities.templates]","rowName":"Offer"}'
         );
+    });
+
+    describe('of rows handed to a new owner', () => {
+        function textOf(parameters: Notification['parameters'], labels: NotificationLabels = LABELS): string {
+            return notificationText(
+                buildNotification({ parameters, type: NotificationType.RowsTransferred }),
+                labels,
+                (key, values) => (values ? `${key} ${values['noun'] ?? ''}`.trim() : `[${key}]`)
+            );
+        }
+
+        it.each([
+            [
+                'one item, with its singular noun',
+                { count: 1, kind: 'item', name: 'Contract' },
+                'item [app.nouns.template.one]'
+            ],
+            ['one folder', { count: 1, kind: 'category', name: 'Clients' }, 'folder'],
+            ['several items, with their plural noun', { count: 3, kind: 'item' }, 'items [app.nouns.template.other]'],
+            ['several folders', { count: 2, kind: 'category' }, 'folders'],
+            ['several rows of both kinds', { count: 4, kind: 'mixed' }, 'rows']
+        ])('reads %s', (_, parameters, text) => {
+            expect(textOf({ byName: 'Tester', entity: 'templates', ...parameters })).toBe(
+                `${ROWS_TRANSFERRED}.${text}`
+            );
+        });
+
+        it('names one row, or counts several, without a noun when the app gives none for the entity', () => {
+            expect(textOf({ byName: 'Tester', count: 1, entity: 'reports', kind: 'item', name: 'Q3' })).toBe(
+                `${ROWS_TRANSFERRED}.row`
+            );
+            expect(textOf({ byName: 'Tester', count: 3, entity: 'reports', kind: 'item' })).toBe(
+                `${ROWS_TRANSFERRED}.rows`
+            );
+        });
+
+        it('falls back to a generic text for a notice stored before it carried the kind and the name', () => {
+            expect(textOf({ byName: 'Tester', count: 1, entity: 'templates' })).toBe(`${ROWS_TRANSFERRED}.unnamed`);
+            expect(textOf({ byName: 'Tester', count: 12, entity: 'templates' })).toBe(`${ROWS_TRANSFERRED}.rows`);
+        });
+
+        it('takes the key the app gives for the type instead', () => {
+            expect(
+                textOf(
+                    { byName: 'Tester', count: 1, entity: 'templates', kind: 'item', name: 'Contract' },
+                    { ...LABELS, labels: { [NotificationType.RowsTransferred]: 'app.transferred' } }
+                )
+            ).toBe('app.transferred');
+        });
     });
 });

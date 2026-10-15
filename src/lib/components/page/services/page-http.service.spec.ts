@@ -70,6 +70,38 @@ describe('PageHttpService', () => {
         expect(toast.successes()).toEqual([{ message: 'shared' }]);
     });
 
+    it('searches the transfer targets of a selection, its items in ids and its folders in categoryIds', () => {
+        const selection = [
+            { id: 1, type: PageItemType.Item },
+            { id: 'clients', type: PageItemType.Category },
+            { id: 2, type: PageItemType.Item }
+        ];
+
+        service.searchTransferTargets('/items', selection, 'gra', 20).subscribe();
+        service.searchTransferTargets('/items', trashItems, '', 20).subscribe();
+
+        const [mixed, itemsOnly] = httpTesting.match(
+            current => current.url === 'https://api.test/api/items/transfer-targets'
+        );
+        mixed.flush({ options: [] });
+        itemsOnly.flush({ options: [] });
+
+        expect(mixed.request.params.toString()).toBe('ids=1,2&categoryIds=clients&search=gra&limit=20');
+        expect(itemsOnly.request.params.toString()).toBe('ids=1&search=&limit=20');
+    });
+
+    it('transfers the typed rows of a selection to the user chosen and answers how many rows changed', () => {
+        let transferred: number | undefined;
+
+        service.transfer('/items', trashItems, 'u2').subscribe(response => (transferred = response.transferred));
+        const request = httpTesting.expectOne('https://api.test/api/items/transfer');
+        request.flush({ transferred: 3 });
+
+        expect(request.request.method).toBe('POST');
+        expect(request.request.body).toEqual({ items: trashItems, targetUserId: 'u2' });
+        expect(transferred).toBe(3);
+    });
+
     it('narrows the category tree to the folders of one owner', () => {
         service.loadCategoryTree('/items', 'ada').subscribe();
 

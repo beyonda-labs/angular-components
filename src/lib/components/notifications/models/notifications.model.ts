@@ -1,7 +1,8 @@
 export enum NotificationType {
     ContentTransferred = 'users.content-transferred',
     EditLockReleased = 'edit-locks.released',
-    FolderShared = 'sharing.folder-shared'
+    FolderShared = 'sharing.folder-shared',
+    RowsTransferred = 'entities.rows-transferred'
 }
 
 export interface Notification {
@@ -15,7 +16,13 @@ export interface Notification {
 
 export interface NotificationLabels {
     entityLabels: Readonly<Record<string, string>>;
+    entityNouns: Readonly<Record<string, NotificationNoun>>;
     labels: Readonly<Record<string, string>>;
+}
+
+export interface NotificationNoun {
+    one: string;
+    other: string;
 }
 
 export interface NotificationsMarkAllReadResponse {
@@ -40,6 +47,7 @@ export interface NotificationTarget {
 export class NotificationsConfig {
     baseUrl: string;
     entityLabels: Readonly<Record<string, string>>;
+    entityNouns: Readonly<Record<string, NotificationNoun>>;
     labels: Readonly<Record<string, string>>;
     pageSize: number;
     pollIntervalMs: number;
@@ -49,6 +57,7 @@ export class NotificationsConfig {
     constructor({
         baseUrl = '/notifications',
         entityLabels = {},
+        entityNouns = {},
         labels = {},
         link,
         pageSize = 20,
@@ -56,6 +65,7 @@ export class NotificationsConfig {
     }: NotificationsConfigParameters = {}) {
         this.baseUrl = baseUrl;
         this.entityLabels = entityLabels;
+        this.entityNouns = entityNouns;
         this.labels = labels;
         this.link = link;
         this.pageSize = pageSize;
@@ -66,6 +76,7 @@ export class NotificationsConfig {
 export interface NotificationsConfigParameters {
     baseUrl?: string;
     entityLabels?: Readonly<Record<string, string>>;
+    entityNouns?: Readonly<Record<string, NotificationNoun>>;
     labels?: Readonly<Record<string, string>>;
     link?: (notification: Notification) => string | null;
     pageSize?: number;

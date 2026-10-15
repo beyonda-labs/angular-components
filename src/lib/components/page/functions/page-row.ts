@@ -4,6 +4,7 @@ import { PageItem } from '../models/page-item.model';
 import { hasOneOwner } from './page-move-owner';
 
 const CATEGORY_HANDLER_KEYS = new Set<string>([PageStandardAction.Share]);
+const EVERY_ROW_HANDLER_KEYS = new Set<string>([PageStandardAction.Transfer]);
 const ROWLESS_SCOPES = new Set([PageActionScope.Global, PageActionScope.Group]);
 const SINGLE_ROW_KEYS = new Set<string>([
     PageStandardAction.Edit,
@@ -59,6 +60,10 @@ export function toHandlerItems(
 ): PageItem[] {
     if (ROWLESS_SCOPES.has(action.scope)) {
         return [];
+    }
+
+    if (EVERY_ROW_HANDLER_KEYS.has(action.key)) {
+        return selectedItems;
     }
 
     const takesCategories = CATEGORY_HANDLER_KEYS.has(action.key);
