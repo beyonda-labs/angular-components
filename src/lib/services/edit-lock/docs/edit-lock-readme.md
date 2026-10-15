@@ -126,10 +126,10 @@ so the guard lets it through without acquiring the lock of the copy for a window
 
 ## Texts
 
-| Key                                                          | Shown as                                         |
-| ------------------------------------------------------------ | ------------------------------------------------ |
-| `angular-components.http.error.edit-locks.held`              | A save refused while somebody else edits the row |
-| `angular-components.http.error.edit-locks.released`          | A save sent after the lock was released          |
-| `angular-components.http.error.edit-locks.release-forbidden` | A release the user may not do                    |
+| Key                                                          | Shown as                                                                        |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| `angular-components.http.error.edit-locks.held`              | A save, a delete or a change of owner refused while somebody else edits the row |
+| `angular-components.http.error.edit-locks.released`          | A save sent after the lock was released                                         |
+| `angular-components.http.error.edit-locks.release-forbidden` | A release the user may not do                                                   |
 
 Each has its title under `angular-components.http.title.edit-locks.*`.

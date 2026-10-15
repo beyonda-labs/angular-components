@@ -59,6 +59,7 @@ readonly config = new BeyPageConfig<UserFormValue, User>({
 | `onReady`           | no       | Run with the page handle once the page exists                                                                                                                                                                                                                   |
 | `views`             | no       | `BeyPageView`s shown as tabs after the main one, see [Views](#views)                                                                                                                                                                                            |
 | `usagesConfig`      | no       | `BeyPageUsagesConfig`: warns before deleting a row other rows use, see [Usages](#usages)                                                                                                                                                                        |
+| `transferConfig`    | no       | `BeyPageTransferConfig`: the `notice` of the form of `transfer`, see [Change owner](#change-owner)                                                                                                                                                              |
 
 The config is never written to. What the consumer needs to do to the live page goes through the
 `BeyPageHandle` that `onReady` delivers: `refresh()` reloads the current page, `openCategory(category)` drills
@@ -106,6 +107,7 @@ infer it from that form, to `BeyPageConfig<UserFormValue, User, Folder, FolderFo
 | Owners        | `GET {baseUrl}/owners` for the owner filter, see [Owners](#owners)                                                                            |
 | Organizations | `GET {baseUrl}/organizations` for the organization column and filter, see [Organizations](#organizations)                                     |
 | Shared        | `GET {baseUrl}/shared` and the shares of a folder, see [Sharing](#sharing)                                                                    |
+| Change owner  | `GET {baseUrl}/transfer-targets` and `POST {baseUrl}/transfer`, see [Change owner](#change-owner)                                             |
 
 The list answers with `{ globalActions, results, search? }`: `globalActions` names the global actions the
 user may see, each result may carry its own `actions`, and `search.total` feeds the paginator and the count of the
@@ -137,7 +139,7 @@ An action has a `key`, a `scope`, a `zone` and optionally an `icon`, a `label`, 
 
 Zones are `Left` next to the title, `Right` for the main buttons and `Menu` for the kebab. A standard key
 (`create`, `edit`, `delete`, `duplicate`, `change-status`, `move`, `create-category`, `edit-category`,
-`delete-category`, `restore-trash-item`, `delete-trash-item`, `empty-trash`, `share`) needs no `action`; `edit`, `edit-category` and `view` need exactly one row
+`delete-category`, `restore-trash-item`, `delete-trash-item`, `empty-trash`, `share`, `transfer`) needs no `action`; `edit`, `edit-category` and `view` need exactly one row
 whatever their scope, `move` rows of a single owner, see [Owners](#owners), and `share` a folder, see [Sharing](#sharing). An `action` always receives an array, so a single-row action reads `([user]) => …`; given
 to a standard key it replaces the standard behaviour. The page does no permission logic of its own.
 
@@ -145,7 +147,9 @@ to a standard key it replaces the standard behaviour. The page does no permissio
 needs an `action`, which opens what the name of the row opens, so that a row whose name opens something always offers
 the same from the header. It sits next to `edit`, where it shows directly rather than in the menu, and carries texts of
 the page module, "View" (`angular-components.page.actions.view.label`) with a tooltip (`.tooltip`), so it needs no
-key under the `prefix` of the page; a `label` or `tooltip` override replaces them.
+key under the `prefix` of the page; a `label` or `tooltip` override replaces them. `transfer` carries texts of the
+page module too, "Change owner" (`angular-components.page.actions.transfer.label`) with a tooltip, and the
+`faPeopleArrows` icon, see [Change owner](#change-owner).
 
 `delete`, `delete-category`, `delete-trash-item` and `empty-trash` ask before sending their request, with
 `<prefix>.modal.<key>.title` and `.message` and a `count` parameter (none for `empty-trash`). A `confirmation(items, confirmation)` on the
@@ -176,6 +180,7 @@ actions of the page are still listed in the order they should render, standard o
 | `duplicate`, `change-status`, `share`                    | `Single` | `Menu`  | text                         |
 | `restore-trash-item`                                     | `Item`   | `Left`  | text                         |
 | `move`, `delete`, `delete-category`, `delete-trash-item` | `Item`   | `Menu`  | text                         |
+| `transfer`                                               | `Item`   | `Menu`  | text with `faPeopleArrows`   |
 
 ## Duplicate and change status
 
@@ -478,7 +483,8 @@ keyboard.
 On a page with categories the `action` of an action receives only the selected rows that are not categories, since
 categories are handled by the standard category actions, and an action with an `action` is hidden while every
 selected row is a category. `share` is the other way round: its `action` receives only the folders, and hides while
-none is selected. Standard actions without an `action` work on the whole selection.
+none is selected. `transfer` takes both: its `action` receives every selected row, folders included. Standard actions
+without an `action` work on the whole selection.
 
 Every list of the main tab and of a view sends the `parentField` of the open category, `null` at the root, together
 with the search, so what a search answers is up to the backend, and the page shows whatever rows come back. base-entity
@@ -608,6 +614,56 @@ const categoriesConfig = new BeyPageCategoriesConfig({
 });
 ```
 
+## Change owner
+
+On a backend whose rows have owners, as base-entity of express-components does with `ownership`, the standard
+`transfer` action ("Change owner", `Item`, `Menu`) hands the selected rows to another user of their organization, who
+becomes their owner; a folder goes with everything below it. Listing it in the header actions is all it takes: it
+shows while every selected row, item or folder, lists `transfer` in its `actions`, which base-entity grants to the
+managers of the organization of the row and to the superadmin, and never in the trash nor in the [shared
+view](#sharing).
+
+It opens a form titled after how many rows change owner (`angular-components.page.transfer.title.one` / `.other`, with
+`{{count}}`):
+
+-   **A notice** of what the new owner gets: by default (`angular-components.page.transfer.notice`) "The chosen person
+    becomes the owner of the selected items.". `transferConfig: new BeyPageTransferConfig({ notice })` gives the
+    translation key of a text of the app, for a product that says what it copies.
+-   **The current owner** ("Current owner", `transfer.main.owner.label`): the `ownerName` of the selected rows,
+    "Unknown" for an owner the server no longer resolves, or "Several owners" (`transfer.several-owners`) when the
+    selection has more than one. Rows without `ownerId` leave the line out.
+-   **The new owner** ("New owner", `transfer.main.target-user-id.label` and `.placeholder`), required: a
+    typeahead (`isTypeahead` of the [form](../../form/docs/form-fields-readme.md#searching-and-picking)) that suggests
+    nothing until something is typed, then asks, once typing settles,
+    `GET {baseUrl}/transfer-targets?ids=<items>&categoryIds=<folders>&search=<text>&limit=20`, the selected items and folders by id, each list joined by commas and left out when empty. It answers
+    `{ options: [{ value, label, description }], hasMore }` (`BeyPageTransferTargets`), the active users of the
+    organization of the rows, `value` their id and `description` their email: a user reads "Grace Hopper
+    (grace@test.com)", or the label alone when it is the email, and the hint of more matches shows while `hasMore`.
+    Nobody matching reads `transfer.no-targets`. Only a user picked from the suggestions is a value: typing over the
+    chosen one empties the field, and leaving it with text that was not picked clears the text, so the field shows
+    its required error and "Change owner" stays disabled.
+
+"Change owner" (`transfer.submit`) sends `POST {baseUrl}/transfer` with
+`{ items: [{ id, type }], targetUserId }`, the `type` read from `typeField` as for a move, which answers
+`{ transferred }` (`BeyPageTransferResponse`), the rows that changed owner, those inside the folders included. The page
+confirms it with `angular-components.page.toast.transferred.one` / `.other` and `{{count}}`, clears the selection and
+reloads; a refusal opens the error modal and leaves the form open. The [http service](../../../services/http/docs/http-readme.md)
+ships the texts of the refusals of base-entity, under `angular-components.http.error.entities`: `transfer-mixed-organizations`, a selection of rows of
+two organizations, and `invalid-transfer-target`, a new owner who is not an active user of their organization. A row
+somebody is editing refuses with `edit-locks.held`, whose text the [edit-lock service](../../../services/edit-lock/docs/edit-lock-readme.md)
+ships; the refusals a product adds, such as a row other rows still use, are the app's, under
+`angular-components.http.error.<resource>`. The new owner gets the `RowsTransferred` notice of the
+[notifications](../../notifications/docs/notifications-readme.md) module.
+
+```ts
+headerConfig: new BeyPageHeaderConfig({
+    actions: [beyPageAddAction(), beyPageStandardAction(BeyPageStandardAction.Move), beyPageStandardAction(BeyPageStandardAction.Transfer)]
+}),
+transferConfig: new BeyPageTransferConfig({ notice: 'myApp.templates.transfer.notice' })
+```
+
+`BeyPageTransferTarget` types an option of the answer for an `action` of its own.
+
 ## Forms
 
 `BeyPageFormConfig<TValue, TItem>` takes `prefix`, `buildSections(item?, category?)`, and optionally `toFormValue(item?, category?)`,
@@ -665,9 +721,13 @@ renaming something other records name.
 | `angular-components.page.shared.folder`                                                                     | The name of the shared folder icon, see [Sharing](#sharing)                                     |
 | `angular-components.page.share.*`                                                                           | The form of `share`: its title, intro, two lists, grantee labels and inherited access           |
 | `angular-components.page.actions.view.label` / `.tooltip`                                                   | The standard `view` action, see [Header actions](#header-actions)                               |
+| `angular-components.page.actions.transfer.label` / `.tooltip`                                               | The standard `transfer` action, see [Change owner](#change-owner)                               |
+| `angular-components.page.transfer.*`                                                                        | The form of `transfer`: its title, notice, current owner, new owner and submit button           |
+| `angular-components.page.toast.transferred.one` / `.other`                                                  | The rows a transfer changed, with `{{count}}`                                                   |
 | `angular-components.page.form.cancel` / `.submit`                                                           | The buttons of the create, edit and share forms                                                 |
 | `angular-components.page.toast.restored-renamed`                                                            | The rows a restore renamed, with `{{names}}`, see [Categories and trash](#categories-and-trash) |
 | `angular-components.http.error.sharing.invalid-grantees` and its `http.title`                               | A share save refusing a grantee, see [Sharing](#sharing)                                        |
+| `angular-components.http.error.entities.transfer-mixed-organizations` / `.invalid-transfer-target`          | A change of owner refused, with their `http.title`, see [Change owner](#change-owner)           |
 
 Every `<key>` is the action, column or field key as a kebab-case segment: a column `createdAt` reads
 `<prefix>.table.columns.created-at`. A column with a `label` or a `tooltip` of its own reads those keys instead, as the

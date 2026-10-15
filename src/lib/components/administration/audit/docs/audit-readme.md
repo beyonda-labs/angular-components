@@ -119,10 +119,10 @@ only when the event has any. A value the server did not record reads "Not record
 The library labels its own entities under `angular-components.audit.entities.<entity>` and every verb the audit
 module of express-components records under `angular-components.audit.verbs.<verb>`: those of base-entity (`create`,
 `edit`, `delete`, `duplicate`, `change-status`, `move`, `restore`, `delete-trash-item`, `empty-trash`, `share`,
-`unshare`, `create-category`, `edit-category`, `delete-category`, `import`), those of the sessions (`sign-in`,
+`unshare`, `transfer`, `create-category`, `edit-category`, `delete-category`, `import`), those of the sessions (`sign-in`,
 `sign-in-failed`, `sign-out`, `locked`), those of the account (`register`, `accept-invitation`, `verify-email`,
-`change-password`, `reset-password`) and those of the users (`invite`, `resend-invitation`, `transfer-content`). The
-entities of the app are the app's: `entityLabels` gives each one its translation key, by the `name` of its entity
+`change-password`, `reset-password`) and those of the users (`invite`, `resend-invitation`, `transfer-content`) and that of the attachments
+(`scan-refused`). The entities of the app are the app's: `entityLabels` gives each one its translation key, by the `name` of its entity
 config on the server, and `actionLabels` does the same for a verb of the app the library does not know; a key given
 there replaces the library's for that name. An entity or a verb nobody labels shows its raw name.
 
