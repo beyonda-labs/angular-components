@@ -5,20 +5,20 @@ function buildTree(): PropertyTreeNode[] {
     return [
         new PropertyTreeNode({
             id: 'section-1',
-            acceptsDrop: true,
-            draggable: true,
+            canAcceptDrop: true,
+            isDraggable: true,
             children: [
-                new PropertyTreeNode({ id: 'band', dropDisabled: true }),
+                new PropertyTreeNode({ id: 'band', isDropDisabled: true }),
                 new PropertyTreeNode({
                     id: 'list',
-                    acceptsDrop: true,
-                    draggable: true,
-                    children: [new PropertyTreeNode({ id: 'nested', draggable: true })]
+                    canAcceptDrop: true,
+                    isDraggable: true,
+                    children: [new PropertyTreeNode({ id: 'nested', isDraggable: true })]
                 }),
-                new PropertyTreeNode({ id: 'image', draggable: true })
+                new PropertyTreeNode({ id: 'image', isDraggable: true })
             ]
         }),
-        new PropertyTreeNode({ id: 'section-2', acceptsDrop: true, draggable: true })
+        new PropertyTreeNode({ id: 'section-2', canAcceptDrop: true, isDraggable: true })
     ];
 }
 

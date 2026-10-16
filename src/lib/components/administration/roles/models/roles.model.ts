@@ -109,23 +109,24 @@ export interface RolesRowOptions {
 export class RolesConfig {
     actionOrder: string[];
     baseUrl: string;
-    foldersHeight: string;
     groupIcons: Record<string, IconDefinition>;
     groupOrder: string[];
-    height: string;
     permissionPrefix: string;
     prefix: string;
     rolePrefix: string;
     storageKey: string;
     usersUrl: string;
 
+    foldersHeight?: string;
+    height?: string;
+
     constructor({
         actionOrder = [...ROLES_DEFAULT_ACTION_ORDER],
         baseUrl = '/roles',
-        foldersHeight = 'calc(100vh - 255px)',
+        foldersHeight,
         groupIcons = {},
         groupOrder = [],
-        height = 'calc(100vh - 220px)',
+        height,
         permissionPrefix = ROLES_LIBRARY_PERMISSION_PREFIX,
         prefix = ROLES_DEFAULT_PREFIX,
         rolePrefix = ROLES_DEFAULT_ROLE_PREFIX,

@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { LinkTableCell, TableCell, TextTableCell } from '../../table/models/table-cell.model';
 import { isCategoryRow, readRowField } from '../functions/page-row';
+import { isSharedCategory, withCategoryIcon } from '../functions/page-shared-category';
 import { readItemName, readParentPath, withOriginTooltip } from '../functions/page-trash-origin';
 import { PageConfig } from '../models/page.model';
 import { PageCategoriesConfig, PageViewMode } from '../models/page-categories.model';
@@ -60,10 +61,19 @@ function loadCategoryRow(
     viewMode: PageViewMode,
     onOpenCategory: (category: PageItem) => void
 ): TableCell[] {
-    if (categoriesConfig.loadRow) {
-        return categoriesConfig.loadRow(category, viewMode);
-    }
+    const cells = categoriesConfig.loadRow
+        ? categoriesConfig.loadRow(category, viewMode)
+        : loadDefaultCategoryRow(category, categoriesConfig, viewMode, onOpenCategory);
 
+    return isSharedCategory(category, viewMode) ? withCategoryIcon(cells, categoriesConfig.sharedIcon) : cells;
+}
+
+function loadDefaultCategoryRow(
+    category: PageItem,
+    categoriesConfig: PageCategoriesConfig,
+    viewMode: PageViewMode,
+    onOpenCategory: (category: PageItem) => void
+): TableCell[] {
     const name = String(readRowField(category, categoriesConfig.nameField) ?? '');
 
     return [

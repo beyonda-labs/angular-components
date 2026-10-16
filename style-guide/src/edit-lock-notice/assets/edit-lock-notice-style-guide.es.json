@@ -7,10 +7,12 @@
                 "earlier": "Desde ayer",
                 "free": "Libre de nuevo",
                 "manager": "Visto por un responsable",
+                "moved": "Pasado a otra ventana tuya",
                 "other-window": "Otra ventana tuya",
                 "released": "Tu edición liberada",
                 "taken": "Tomado por un compañero",
-                "unavailable": "Ya no disponible"
+                "unavailable": "Ya no disponible",
+                "unknown": "Un compañero sin nombre"
             },
             "statuses": {
                 "free": "Estado: libre",

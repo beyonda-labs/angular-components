@@ -13,7 +13,7 @@ export class PropertyInfoField extends PropertyField<string> {
     items: PropertyInfoItem[];
 
     constructor({ items = [], ...base }: PropertyInfoFieldParameters) {
-        super({ ...base, disabled: true, type: PropertyFieldType.Info });
+        super({ ...base, isDisabled: true, type: PropertyFieldType.Info });
 
         this.items = items;
     }

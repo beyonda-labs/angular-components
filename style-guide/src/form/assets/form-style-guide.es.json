@@ -7,6 +7,21 @@
             },
             "canceled": "El formulario se ha reiniciado",
             "changed": "Valor del formulario cambiado: ",
+            "danger-modal": {
+                "buttons": {
+                    "cancel": "Cancelar",
+                    "submit": "Eliminar"
+                },
+                "confirmation": {
+                    "warning": {
+                        "message": "«{{name}}» y todas sus versiones se eliminarán para siempre."
+                    }
+                },
+                "example": "Una confirmación que elimina para siempre pinta su botón de envío como peligroso y se explica con un aviso.",
+                "open": "Abrir una confirmación de borrado",
+                "submitted": "Se ha confirmado el borrado",
+                "title": "Eliminar el informe"
+            },
             "example": "Formulario model-driven basado en configuración con validación, campos condicionales, pistas bajo los campos, una nota junto a los botones y layout responsive.",
             "footer": {
                 "note": "Enviar solo informa del valor debajo; no se guarda nada."
@@ -101,6 +116,32 @@
                 },
                 "label": "Campos con búsqueda",
                 "tooltip": "Variantes de typeahead con comportamiento básico, obligatorio y deshabilitado, y una con treinta opciones para desplazarse"
+            },
+            "section-autocomplete-options": {
+                "free-text": {
+                    "label": "Texto libre",
+                    "placeholder": "Escribe cualquier ciudad o elige una"
+                },
+                "label": "Opciones del autocompletado",
+                "picked": "Se ha elegido una ciudad y el campo se ha vaciado solo",
+                "picker": {
+                    "label": "Elige y se vacía",
+                    "placeholder": "Elige una ciudad"
+                },
+                "server": {
+                    "empty": "Ninguna ciudad coincide",
+                    "label": "Búsqueda en un servidor",
+                    "placeholder": "Busca una ciudad; Madrid queda fuera"
+                },
+                "starts-with": {
+                    "label": "Coincidencia desde el principio",
+                    "placeholder": "Escribe las primeras letras"
+                },
+                "tooltip": "Texto libre que se guarda tal cual, una coincidencia propia, sugerencias de un servidor que deja valores fuera y avisa cuando nada coincide, un campo que solo elige y una búsqueda al escribir que solo sugiere cuando se ha escrito algo y solo guarda una ciudad elegida",
+                "typeahead": {
+                    "label": "Búsqueda al escribir",
+                    "placeholder": "Escribe una ciudad y elígela"
+                }
             },
             "section-checkbox": {
                 "checkbox1": {
@@ -242,6 +283,16 @@
                     "placeholder": "Nada que listar todavía"
                 },
                 "tooltip": "Pares de icono/etiqueta y listas con scroll de solo lectura — sin estilo de input, sin FormControl"
+            },
+            "section-notice": {
+                "label": "Campos de aviso",
+                "notice1": {
+                    "message": "Este formulario tiene {{count}} secciones; no se guarda nada hasta que lo envíes."
+                },
+                "notice2": {
+                    "message": "Los campos deshabilitados muestran valores que aquí no puedes cambiar."
+                },
+                "tooltip": "Un aviso a lo ancho de la fila, en las variantes de información y de advertencia, sin control propio"
             },
             "section-number": {
                 "label": "Campos numéricos",

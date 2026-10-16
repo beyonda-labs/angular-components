@@ -24,12 +24,12 @@ export class PropertyTabsComponent {
             onTabChange: tabId => this.propertiesMenuService.setActiveTab(tabId),
             prefix: 'angular-components.properties-menu.tabs',
             tabs: config.tabs
-                .filter(tab => !tab.hidden)
+                .filter(tab => !tab.isHidden)
                 .map(
                     tab =>
                         new Tab({
                             icon: tab.icon,
-                            isDisabled: tab.disabled,
+                            isDisabled: tab.isDisabled,
                             key: tab.id,
                             label: resolvePropertyLabelKey(config.prefix, 'tabs', tab.id, tab.label),
                             labelParameters: tab.labelParameters

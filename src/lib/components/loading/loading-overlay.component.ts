@@ -12,6 +12,6 @@ import { LoadingSize } from './models/loading.model';
     templateUrl: './loading-overlay.component.html'
 })
 export class LoadingOverlayComponent {
-    readonly fullscreen = input(false);
+    readonly isFullscreen = input(false);
     readonly size = input<LoadingSize | string>(LoadingSize.Lg);
 }

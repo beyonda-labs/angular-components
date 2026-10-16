@@ -1,7 +1,7 @@
 <section
     class="bey-properties-menu"
     [attr.aria-label]="titleKey() | translate"
-    [class.bey-properties-menu--embedded]="config().embedded"
+    [class.bey-properties-menu--embedded]="config().isEmbedded"
 >
     @if (visibleTabs().length > 1) {
         <bey-property-tabs></bey-property-tabs>
@@ -9,7 +9,7 @@
 
     <ng-content></ng-content>
 
-    @if (!config().embedded) {
+    @if (!config().isEmbedded) {
         <bey-properties-menu-header [config]="headerConfig()"></bey-properties-menu-header>
     }
 

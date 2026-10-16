@@ -381,7 +381,7 @@ describe('HttpService', () => {
         it.each([...METHOD_CASES, ...DOWNLOAD_CASES])(
             'sends a $name with the credentials only when asked',
             ({ method, send }) => {
-                const sent = [{}, { withCredentials: true }].map(options => {
+                const sent = [{}, { hasCredentials: true }].map(options => {
                     const subscription = send(service, options).subscribe();
                     const { withCredentials } = expectRequest(method).request;
 
@@ -397,7 +397,7 @@ describe('HttpService', () => {
 
     describe('subscription', () => {
         it('sends nothing, and shows no loading, until something subscribes', () => {
-            const items$ = service.get(URL, { loading: true });
+            const items$ = service.get(URL, { isLoading: true });
 
             httpTesting.expectNone(URL);
             expect(loading.isLoading()).toBe(false);
@@ -435,7 +435,7 @@ describe('HttpService', () => {
             const show = jest.spyOn(loading, 'show');
             const hide = jest.spyOn(loading, 'hide');
 
-            service.get(URL, { loading: true }).subscribe();
+            service.get(URL, { isLoading: true }).subscribe();
 
             expect(loading.isLoading()).toBe(true);
 
@@ -446,7 +446,7 @@ describe('HttpService', () => {
         });
 
         it('hides the loading after an error', () => {
-            service.get(URL, { loading: true }).subscribe({ error: ignore });
+            service.get(URL, { isLoading: true }).subscribe({ error: ignore });
 
             expect(loading.isLoading()).toBe(true);
 
@@ -456,7 +456,7 @@ describe('HttpService', () => {
         });
 
         it('hides the loading when the request is cancelled', () => {
-            const subscription = service.get(URL, { loading: true }).subscribe();
+            const subscription = service.get(URL, { isLoading: true }).subscribe();
             expectRequest('GET');
 
             subscription.unsubscribe();
@@ -464,7 +464,7 @@ describe('HttpService', () => {
             expect(loading.isLoading()).toBe(false);
         });
 
-        it.each([{}, { loading: false }])('shows no loading with the options %j', options => {
+        it.each([{}, { isLoading: false }])('shows no loading with the options %j', options => {
             const show = jest.spyOn(loading, 'show');
 
             service.get(URL, options).subscribe();
@@ -528,7 +528,7 @@ describe('HttpService', () => {
         });
 
         it.each(DOWNLOAD_CASES)('reads the reason of a failed $name from its Blob body', async download => {
-            const failed = downloadFailure(download, { loading: true });
+            const failed = downloadFailure(download, { isLoading: true });
 
             failWith(
                 404,
@@ -578,7 +578,7 @@ describe('HttpService', () => {
                 .post(
                     URL,
                     {},
-                    { handleError: error => handled.push(error), loading: true, successToast: 'items.created' }
+                    { handleError: error => handled.push(error), isLoading: true, successToast: 'items.created' }
                 )
                 .subscribe({ error: (error: HttpErrorResponse) => received.push(error) });
             failWith(403, { errorCode: 'forbidden' })(expectRequest('POST'));

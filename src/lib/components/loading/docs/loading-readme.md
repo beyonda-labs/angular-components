@@ -27,7 +27,7 @@ this.loading.hide();
 | ---------------------- | ------------ | ------- | ------------------------------------------------------------- |
 | `bey-loading`          | `size`       | `md`    | `xs`, `sm`, `md`, `lg`, or any css length                      |
 | `bey-loading-overlay`  | `size`       | `lg`    | Size of the spinner inside the overlay                         |
-| `bey-loading-overlay`  | `fullscreen` | `false` | Cover the viewport instead of the nearest positioned ancestor  |
+| `bey-loading-overlay`  | `isFullscreen` | `false` | Cover the viewport instead of the nearest positioned ancestor  |
 
 `bey-loading-container` takes no input: it renders a fullscreen overlay while `BeyLoadingService` reports work
 in progress.

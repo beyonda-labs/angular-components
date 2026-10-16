@@ -23,6 +23,7 @@ import { LoadingStyleGuideComponent } from './loading/loading-style-guide.compon
 import { LoginStyleGuideComponent } from './login/login-style-guide.component';
 import { ModalStyleGuideComponent } from './modal/modal-style-guide.component';
 import { NoticeStyleGuideComponent } from './notice/notice-style-guide.component';
+import { NotificationsStyleGuideComponent } from './notifications/notifications-style-guide.component';
 import { PageStyleGuideComponent } from './page/page-style-guide.component';
 import { PaginationStyleGuideComponent } from './pagination/pagination-style-guide.component';
 import { PasswordChangeStyleGuideComponent } from './password-change/password-change-style-guide.component';
@@ -54,6 +55,7 @@ import { TreeStyleGuideComponent } from './tree/tree-style-guide.component';
         HeaderStyleGuideComponent,
         ModalStyleGuideComponent,
         NoticeStyleGuideComponent,
+        NotificationsStyleGuideComponent,
         LeftMenuStyleGuideComponent,
         ListStyleGuideComponent,
         FormStyleGuideComponent,

@@ -43,6 +43,16 @@
             "categories": {
                 "root": "Roles"
             },
+            "count": {
+                "categories": {
+                    "one": "{{count}} organización",
+                    "other": "{{count}} organizaciones"
+                },
+                "items": {
+                    "one": "{{count}} rol",
+                    "other": "{{count}} roles"
+                }
+            },
             "duplicate": {
                 "buttons": {
                     "submit": "Duplicar"
@@ -83,6 +93,13 @@
                 }
             },
             "permissions": {
+                "audit": {
+                    "label": "Auditoría",
+                    "read": {
+                        "description": "Puede ver quién hizo qué, cuándo y desde dónde en su organización, y exportarlo.",
+                        "label": "Ver la auditoría"
+                    }
+                },
                 "organization": {
                     "label": "Organización",
                     "manage": {

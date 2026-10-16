@@ -12,17 +12,17 @@ export enum CellType {
 
 export abstract class TableCell {
     content: unknown;
-    translate: boolean;
+    isTranslationKey: boolean;
     type: CellType;
 
     tooltip?: string;
     tooltipItems?: string[];
 
-    constructor({ content, type, translate = false, tooltip, tooltipItems }: TableCellParameters) {
+    constructor({ content, isTranslationKey = false, type, tooltip, tooltipItems }: TableCellParameters) {
         this.content = content;
+        this.isTranslationKey = isTranslationKey;
         this.tooltip = tooltip;
         this.tooltipItems = tooltipItems;
-        this.translate = translate;
         this.type = type;
     }
 }
@@ -30,8 +30,8 @@ export abstract class TableCell {
 export class BadgeTableCell extends TableCell {
     badges: BadgeConfig[];
 
-    constructor({ badges, translate, tooltip, tooltipItems }: BadgeTableCellParameters) {
-        super({ content: badges, type: CellType.Badge, translate, tooltip, tooltipItems });
+    constructor({ badges, isTranslationKey, tooltip, tooltipItems }: BadgeTableCellParameters) {
+        super({ content: badges, type: CellType.Badge, isTranslationKey, tooltip, tooltipItems });
         this.badges = badges;
     }
 }
@@ -52,11 +52,21 @@ export class LinkTableCell extends TableCell {
     action: () => void;
 
     icon?: IconDefinition;
+    iconLabel?: string;
 
-    constructor({ action, content, icon, translate, tooltip, tooltipItems }: LinkTableCellParameters) {
-        super({ content, type: CellType.Link, translate, tooltip, tooltipItems });
+    constructor({
+        action,
+        content,
+        icon,
+        iconLabel,
+        isTranslationKey,
+        tooltip,
+        tooltipItems
+    }: LinkTableCellParameters) {
+        super({ content, type: CellType.Link, isTranslationKey, tooltip, tooltipItems });
         this.action = action;
         this.icon = icon;
+        this.iconLabel = iconLabel;
     }
 }
 
@@ -71,19 +81,21 @@ export class TagsTableCell extends TableCell {
 
 export class TextTableCell extends TableCell {
     icon?: IconDefinition;
+    iconLabel?: string;
 
-    constructor({ content, icon, translate, tooltip, tooltipItems }: TextTableCellParameters) {
-        super({ content, type: CellType.Text, translate, tooltip, tooltipItems });
+    constructor({ content, icon, iconLabel, isTranslationKey, tooltip, tooltipItems }: TextTableCellParameters) {
+        super({ content, type: CellType.Text, isTranslationKey, tooltip, tooltipItems });
         this.icon = icon;
+        this.iconLabel = iconLabel;
     }
 }
 
 export interface BadgeTableCellParameters {
     badges: BadgeConfig[];
 
+    isTranslationKey?: boolean;
     tooltip?: string;
     tooltipItems?: string[];
-    translate?: boolean;
 }
 
 export interface DateTableCellParameters {
@@ -98,18 +110,19 @@ export interface LinkTableCellParameters {
     content: string;
 
     icon?: IconDefinition;
+    iconLabel?: string;
+    isTranslationKey?: boolean;
     tooltip?: string;
     tooltipItems?: string[];
-    translate?: boolean;
 }
 
 export interface TableCellParameters {
     content: unknown;
     type: CellType;
 
+    isTranslationKey?: boolean;
     tooltip?: string;
     tooltipItems?: string[];
-    translate?: boolean;
 }
 
 export interface TagsTableCellParameters {
@@ -123,7 +136,8 @@ export interface TextTableCellParameters {
     content: string;
 
     icon?: IconDefinition;
+    iconLabel?: string;
+    isTranslationKey?: boolean;
     tooltip?: string;
     tooltipItems?: string[];
-    translate?: boolean;
 }

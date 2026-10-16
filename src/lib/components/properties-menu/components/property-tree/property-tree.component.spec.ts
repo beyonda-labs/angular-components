@@ -66,7 +66,7 @@ describe('PropertyTreeComponent', () => {
             new PropertyTreeNode({
                 id: 'page-1',
                 label: 'Page 1',
-                expanded: false,
+                isExpanded: false,
                 children: [new PropertyTreeNode({ id: 'header', label: 'Header' })]
             }),
             new PropertyTreeNode({ id: 'footer', label: 'Footer' })
@@ -94,7 +94,7 @@ describe('PropertyTreeComponent', () => {
             new PropertyTreeNode({
                 id: 'page-1',
                 label: 'Page 1',
-                disabled: true,
+                isDisabled: true,
                 children: [new PropertyTreeNode({ id: 'header', label: 'Header' })]
             })
         ]);
@@ -124,7 +124,7 @@ describe('PropertyTreeComponent', () => {
             new PropertyTreeNode({
                 id: 'page-1',
                 label: 'Page 1',
-                expanded: false,
+                isExpanded: false,
                 children: [new PropertyTreeNode({ id: 'header', label: 'Header' })]
             })
         ]);

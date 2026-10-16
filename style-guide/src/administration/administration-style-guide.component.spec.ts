@@ -5,6 +5,7 @@ import { hostOf, renderComponent, settle } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { AdministrationStyleGuideComponent } from './administration-style-guide.component';
+import { administrationStyleGuideInterceptor } from './functions/administration-backend';
 
 const API_URL = 'https://api.test/api/style-guide';
 
@@ -17,10 +18,12 @@ describe('AdministrationStyleGuideComponent', () => {
             providers: [
                 provideRouter([]),
                 provideBeyTesting({
+                    interceptors: [administrationStyleGuideInterceptor],
                     translations: {
                         en: {
                             'angular-components-style-guide': {
                                 administration: {
+                                    audit: 'Audit',
                                     groups: 'Groups',
                                     'organization-summary': 'Organization summary',
                                     organizations: 'Organizations',
@@ -41,21 +44,9 @@ describe('AdministrationStyleGuideComponent', () => {
         httpTesting.verify();
     });
 
-    it('renders the pages of the module and the summary of the organization, each under its heading', async () => {
+    it('renders every page of the module under its heading, with the groups, the roles and the organization the demo fakes', async () => {
         const fixture = await renderComponent(AdministrationStyleGuideComponent);
         httpTesting.expectOne(`${API_URL}/users/roles`).flush({ roles: [] });
-        httpTesting.expectOne(`${API_URL}/roles/permissions`).flush({ permissions: [] });
-        httpTesting.expectOne(`${API_URL}/organizations/current`).flush({
-            administrators: [{ email: 'ada@example.test', id: 'u1', name: 'Ada', surname: 'Lovelace' }],
-            counts: { extraRoles: 0, groups: 1, members: 3 },
-            createdAt: 0,
-            extraRoles: [],
-            groups: [{ id: 'g1', memberCount: 0, members: [], name: 'Sales' }],
-            id: 'o1',
-            name: 'Acme',
-            status: 'active',
-            ungroupedMembers: []
-        });
         await settle(fixture);
         httpTesting
             .expectOne(request => request.url === `${API_URL}/users`)
@@ -66,31 +57,32 @@ describe('AdministrationStyleGuideComponent', () => {
                 ]
             });
         httpTesting
-            .expectOne(request => request.url === `${API_URL}/groups`)
+            .expectOne(request => request.url === `${API_URL}/organizations`)
             .flush({
                 globalActions: [],
-                results: [{ actions: ['edit'], createdAt: 0, id: 'g1', memberCount: 3, name: 'Sales' }]
+                results: [{ actions: [], createdAt: 0, id: 'o2', name: 'Globex', status: 'active', userCount: 3 }]
             });
         httpTesting
-            .expectOne(request => request.url === `${API_URL}/roles`)
+            .expectOne(request => request.url === `${API_URL}/audit`)
             .flush({
                 globalActions: [],
                 results: [
                     {
-                        actions: ['view', 'duplicate'],
-                        id: 'auditor',
-                        isBase: true,
-                        memberCount: 1,
-                        name: 'auditor',
-                        permissions: []
+                        action: 'create',
+                        actions: ['view'],
+                        entity: 'templates',
+                        entityId: 't1',
+                        entityName: 'Invoice',
+                        id: 'e1',
+                        ip: '203.0.113.7',
+                        occurredAt: 0,
+                        organizationId: 'o1',
+                        requestId: 'req-1',
+                        userEmail: 'grace@example.test',
+                        userId: 'u2',
+                        userName: 'Grace Hopper'
                     }
                 ]
-            });
-        httpTesting
-            .expectOne(request => request.url === `${API_URL}/organizations`)
-            .flush({
-                globalActions: [],
-                results: [{ actions: [], createdAt: 0, id: 'o1', name: 'Acme', status: 'active', userCount: 3 }]
             });
         await settle(fixture);
 
@@ -101,9 +93,12 @@ describe('AdministrationStyleGuideComponent', () => {
         expect(text).toContain('Groups');
         expect(text).toContain('Sales');
         expect(text).toContain('Roles and permissions');
-        expect(text).toContain('auditor');
+        expect(text).toContain('Reviewers');
         expect(text).toContain('Organizations');
+        expect(text).toContain('Globex');
         expect(text).toContain('Acme');
+        expect(text).toContain('Audit');
+        expect(text).toContain('Invoice');
         expect(text).toContain('Organization summary');
         expect(text).toContain('Ada Lovelace');
     });

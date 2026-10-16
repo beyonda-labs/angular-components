@@ -22,6 +22,7 @@ export * from './lib/components/header/public-api';
 export * from './lib/components/left-menu/public-api';
 export * from './lib/components/login/public-api';
 export * from './lib/components/modal/public-api';
+export * from './lib/components/notifications/public-api';
 export * from './lib/components/password-change/public-api';
 export * from './lib/components/table/public-api';
 export * from './lib/components/toast/public-api';
@@ -43,5 +44,5 @@ export * from './lib/services/preferences/public-api';
 export * from './lib/services/session/public-api';
 export * from './lib/services/theme/public-api';
 
-/* utilities — plain functions a consumer shares with the library */
+/* utilities — plain functions and icons a consumer shares with the library */
 export * from './lib/utilities/public-api';

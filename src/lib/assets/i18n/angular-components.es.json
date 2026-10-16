@@ -25,6 +25,117 @@
         "app-layout": {
             "main-content": "Contenido principal"
         },
+        "audit": {
+            "actions": {
+                "export": {
+                    "label": "Exportar",
+                    "tooltip": "Descarga en un fichero CSV los eventos que seleccionan la búsqueda y los filtros"
+                },
+                "view": {
+                    "tooltip": "Ver todos los datos del evento seleccionado"
+                }
+            },
+            "entities": {
+                "account": "Cuenta",
+                "auth": "Sesión",
+                "groups": "Grupos",
+                "organizations": "Organizaciones",
+                "roles": "Roles",
+                "users": "Usuarios"
+            },
+            "search": {
+                "fields": {
+                    "action": "Acción",
+                    "entity": "Entidad",
+                    "text": "Texto",
+                    "user-id": "Usuario"
+                }
+            },
+            "table": {
+                "columns": {
+                    "action": "Acción",
+                    "entity-name": "Registro",
+                    "ip": "IP",
+                    "occurred-at": "Fecha y hora",
+                    "organization": "Organización",
+                    "user": "Usuario"
+                },
+                "empty": "Ningún evento coincide con la búsqueda",
+                "tooltips": {
+                    "action": "Qué se hizo, y sobre qué",
+                    "entity-name": "El nombre del registro, tal como era entonces",
+                    "ip": "Desde dónde llegó la petición",
+                    "occurred-at": "Cuándo ocurrió",
+                    "organization": "La organización a la que pertenece el evento",
+                    "user": "Quién lo hizo, con el nombre que tenía entonces"
+                }
+            },
+            "title": "Auditoría",
+            "verbs": {
+                "accept-invitation": "Aceptar invitación",
+                "change-password": "Cambiar contraseña",
+                "change-status": "Cambiar estado",
+                "create": "Crear",
+                "create-category": "Crear carpeta",
+                "delete": "Eliminar",
+                "delete-category": "Eliminar carpeta",
+                "delete-trash-item": "Eliminar de la papelera",
+                "duplicate": "Duplicar",
+                "edit": "Editar",
+                "edit-category": "Editar carpeta",
+                "empty-trash": "Vaciar la papelera",
+                "import": "Importar",
+                "invite": "Invitar",
+                "locked": "Bloqueo",
+                "move": "Mover",
+                "register": "Registrarse",
+                "resend-invitation": "Reenviar invitación",
+                "reset-password": "Restablecer contraseña",
+                "restore": "Restaurar",
+                "scan-refused": "Rechazado por el antivirus",
+                "share": "Compartir",
+                "sign-in": "Iniciar sesión",
+                "sign-in-failed": "Inicio de sesión fallido",
+                "sign-out": "Cerrar sesión",
+                "transfer": "Cambiar propietario",
+                "transfer-content": "Transferir contenido",
+                "unshare": "Dejar de compartir",
+                "verify-email": "Verificar el correo"
+            },
+            "view": {
+                "buttons": {
+                    "close": "Cerrar"
+                },
+                "main": {
+                    "action": {
+                        "label": "Acción"
+                    },
+                    "details": {
+                        "label": "Detalles"
+                    },
+                    "entity": {
+                        "label": "Registro"
+                    },
+                    "ip": {
+                        "label": "IP"
+                    },
+                    "occurred-at": {
+                        "label": "Fecha y hora"
+                    },
+                    "organization": {
+                        "label": "Organización"
+                    },
+                    "request-id": {
+                        "label": "Id de la petición"
+                    },
+                    "user": {
+                        "label": "Usuario"
+                    }
+                },
+                "none": "No registrado",
+                "title": "Evento de auditoría"
+            }
+        },
         "breadcrumb": {
             "label": "Migas de pan"
         },
@@ -168,6 +279,16 @@
             "categories": {
                 "root": "Grupos"
             },
+            "count": {
+                "categories": {
+                    "one": "{{count}} organización",
+                    "other": "{{count}} organizaciones"
+                },
+                "items": {
+                    "one": "{{count}} grupo",
+                    "other": "{{count}} grupos"
+                }
+            },
             "form": {
                 "create": {
                     "title": "Nuevo grupo"
@@ -271,20 +392,27 @@
                     "content-too-large": "El archivo supera el tamaño máximo permitido.",
                     "duplicate-content": "Este archivo ya está subido como \"{{name}}\".",
                     "empty-content": "El archivo está vacío.",
+                    "infected": "El archivo contiene un virus ({{signature}}) y no se ha guardado.",
+                    "invalid-type": "El tipo de archivo no está permitido. Tipos permitidos: {{allowed}}.",
                     "replace-type-mismatch": "Reemplaza el archivo por otro del mismo tipo ({{fileType}}).",
-                    "unsupported-type": "Los archivos de tipo \"{{mimeType}}\" no están admitidos."
+                    "scan-unavailable": "No se ha podido comprobar el archivo con el antivirus. Inténtalo más tarde."
                 },
                 "bad-gateway": "El servidor recibió una respuesta no válida. Por favor, inténtelo de nuevo más tarde.",
                 "bad-request": "La solicitud no pudo ser procesada. Por favor, revise los datos enviados.",
                 "conflict": "Se produjo un conflicto con el estado actual del recurso.",
+                "database": {
+                    "busy": "La base de datos está ocupada con otra operación: inténtalo de nuevo en unos segundos."
+                },
                 "duplicate-field": "Ya existe un elemento con el campo \"{{fieldName}}\" con el valor \"{{value}}\".",
                 "edit-locks": {
-                    "held": "{{holderName}} lo está editando: tus cambios no se han guardado.",
+                    "held": "{{holderName}} lo está editando: no se ha cambiado nada.",
                     "release-forbidden": "Solo pueden liberar la edición quien lo está editando, un administrador de su organización o un superadministrador.",
                     "released": "Se ha liberado tu edición, así que tus cambios no se han guardado aquí. Guárdalos como copia o recárgalo para volver a editarlo."
                 },
                 "entities": {
-                    "owner-required": "Este elemento necesita un usuario propietario: créalo dentro de la carpeta de un usuario."
+                    "invalid-transfer-target": "El nuevo propietario debe ser un usuario activo de la misma organización.",
+                    "owner-required": "Este elemento necesita un usuario propietario: créalo dentro de la carpeta de un usuario.",
+                    "transfer-mixed-organizations": "Las filas elegidas son de organizaciones distintas: cambia el propietario de cada organización por separado."
                 },
                 "forbidden": "No tiene permisos para realizar esta acción.",
                 "groups": {
@@ -326,6 +454,9 @@
                 },
                 "move-target-unchanged": "El elemento ya se encuentra en esta categoría.",
                 "not-found": "El recurso solicitado no fue encontrado.",
+                "notifications": {
+                    "not-found": "Esta notificación ya no existe."
+                },
                 "organizations": {
                     "active": "Solo se puede eliminar una organización desactivada. Desactívala primero.",
                     "existing-name": "Ya hay una organización llamada {{name}}.",
@@ -398,12 +529,17 @@
                     "content-too-large": "Archivo demasiado grande",
                     "duplicate-content": "Archivo duplicado",
                     "empty-content": "Archivo vacío",
+                    "infected": "Virus detectado",
+                    "invalid-type": "Tipo de archivo no permitido",
                     "replace-type-mismatch": "Tipo de archivo distinto",
-                    "unsupported-type": "Archivo no admitido"
+                    "scan-unavailable": "Antivirus no disponible"
                 },
                 "bad-gateway": "Error de conexión",
                 "bad-request": "Solicitud inválida",
                 "conflict": "Conflicto",
+                "database": {
+                    "busy": "Base de datos ocupada"
+                },
                 "default": "Error",
                 "duplicate-field": "Valor duplicado",
                 "edit-locks": {
@@ -412,7 +548,9 @@
                     "released": "Edición liberada"
                 },
                 "entities": {
-                    "owner-required": "Falta el propietario"
+                    "invalid-transfer-target": "Nuevo propietario no válido",
+                    "owner-required": "Falta el propietario",
+                    "transfer-mixed-organizations": "Varias organizaciones"
                 },
                 "forbidden": "Acceso denegado",
                 "groups": {
@@ -450,6 +588,9 @@
                 },
                 "move-target-unchanged": "Sin cambios",
                 "not-found": "No encontrado",
+                "notifications": {
+                    "not-found": "Notificación no encontrada"
+                },
                 "organizations": {
                     "active": "Organización todavía activa",
                     "existing-name": "Nombre ya en uso",
@@ -657,6 +798,54 @@
                 "title": "Cambios sin guardar"
             }
         },
+        "notifications": {
+            "access": {
+                "read": "solo lectura",
+                "write": "lectura y escritura"
+            },
+            "actions": {
+                "mark-all-read": "Marcar todas como leídas",
+                "refresh": "Actualizar",
+                "show-more": "Ver más"
+            },
+            "bell": {
+                "label": "Notificaciones",
+                "unread": "Notificaciones, {{count}} sin leer"
+            },
+            "empty": "No tienes notificaciones",
+            "loading": "Cargando notificaciones…",
+            "time": {
+                "days": "hace {{count}} d",
+                "hours": "hace {{count}} h",
+                "minutes": "hace {{count}} min",
+                "now": "Ahora mismo"
+            },
+            "title": "Notificaciones",
+            "types": {
+                "edit-locks": {
+                    "released": "{{byName}} ha liberado tu edición de «{{rowName}}» ({{entity}})"
+                },
+                "entities": {
+                    "rows-transferred": {
+                        "folder": "{{byName}} te ha cedido la carpeta «{{name}}» de {{entity}}",
+                        "folders": "{{byName}} te ha cedido {{count}} carpetas de {{entity}}",
+                        "item": "{{byName}} te ha cedido {{noun}} «{{name}}»",
+                        "items": "{{byName}} te ha cedido {{count}} {{noun}}",
+                        "row": "{{byName}} te ha cedido «{{name}}» de {{entity}}",
+                        "rows": "{{byName}} te ha cedido {{count}} elementos de {{entity}}",
+                        "unnamed": "{{byName}} te ha cedido un elemento de {{entity}}"
+                    }
+                },
+                "sharing": {
+                    "folder-shared": "{{byName}} ha compartido contigo la carpeta «{{folderName}}» de {{entity}}, {{access}}"
+                },
+                "users": {
+                    "content-transferred": "{{byName}} te ha transferido el contenido de {{fromName}}. Elementos transferidos: {{count}}"
+                }
+            },
+            "unknown-type": "Tienes una notificación nueva",
+            "unread": "Sin leer"
+        },
         "option-picker": {
             "close": "Cerrar",
             "empty": "No se han encontrado opciones",
@@ -815,14 +1004,26 @@
         },
         "page": {
             "actions": {
+                "transfer": {
+                    "label": "Cambiar propietario",
+                    "tooltip": "Entrega los elementos seleccionados a otro usuario de la organización"
+                },
                 "view": {
                     "label": "Ver",
                     "tooltip": "Muestra el elemento seleccionado sin cambiarlo"
                 }
             },
             "count": {
-                "many": "({{count}} elementos)",
-                "one": "({{count}} elemento)"
+                "categories": {
+                    "one": "{{count}} carpeta",
+                    "other": "{{count}} carpetas"
+                },
+                "items": {
+                    "one": "{{count}} elemento",
+                    "other": "{{count}} elementos"
+                },
+                "items-only": "({{items}})",
+                "mixed": "({{categories}} · {{items}})"
             },
             "form": {
                 "cancel": "Cancelar",
@@ -830,20 +1031,36 @@
             },
             "search": {
                 "fields": {
+                    "from": "Desde",
                     "organization-id": "Organización",
-                    "owner-id": "Propietario"
+                    "owner-id": "Propietario",
+                    "to": "Hasta"
                 }
             },
             "share": {
                 "access": {
-                    "inherited": "{{access}} (heredado de {{folder}})",
-                    "none": "Sin acceso",
                     "read": "Ver",
                     "write": "Editar"
                 },
-                "empty": "No hay nadie más en la organización con quien compartirla.",
-                "groups": {
-                    "label": "Grupos"
+                "grantee": {
+                    "group": "{{name}} (grupo)",
+                    "members": {
+                        "one": "{{name}} ({{count}} miembro)",
+                        "other": "{{name}} ({{count}} miembros)"
+                    }
+                },
+                "grantees": {
+                    "no-match": "Ningún usuario ni grupo coincide.",
+                    "read": {
+                        "empty": "Nadie añadido todavía.",
+                        "label": "Pueden ver",
+                        "placeholder": "Añade un usuario o un grupo"
+                    },
+                    "write": {
+                        "empty": "Nadie añadido todavía.",
+                        "label": "Pueden editar",
+                        "placeholder": "Añade un usuario o un grupo"
+                    }
                 },
                 "inherited": {
                     "group": "{{name}} (grupo): {{access}}, desde {{folder}}",
@@ -851,15 +1068,10 @@
                     "user": "{{name}}: {{access}}, desde {{folder}}"
                 },
                 "intro": "Compartir decide dónde puede trabajar cada persona; lo que puede hacer ahí sigue dependiendo de sus permisos.",
-                "targets": {
-                    "label": "Compartir con"
-                },
-                "title": "Compartir \"{{name}}\"",
-                "users": {
-                    "label": "Usuarios"
-                }
+                "title": "Compartir \"{{name}}\""
             },
             "shared": {
+                "folder": "Carpeta compartida",
                 "label": "Compartido conmigo"
             },
             "table": {
@@ -873,7 +1085,30 @@
                 }
             },
             "toast": {
-                "restored-renamed": "Restaurado con otro nombre, porque otro elemento ya tiene el anterior: {{names}}"
+                "restored-renamed": "Restaurado con otro nombre, porque otro elemento ya tiene el anterior: {{names}}",
+                "transferred": {
+                    "one": "{{count}} elemento ha cambiado de propietario",
+                    "other": "{{count}} elementos han cambiado de propietario"
+                }
+            },
+            "transfer": {
+                "main": {
+                    "owner": {
+                        "label": "Propietario actual"
+                    },
+                    "target-user-id": {
+                        "label": "Nuevo propietario",
+                        "placeholder": "Busca a una persona por nombre o correo"
+                    }
+                },
+                "no-targets": "Ningún usuario activo coincide",
+                "notice": "La persona indicada pasa a ser la propietaria de los elementos seleccionados.",
+                "several-owners": "Varios propietarios",
+                "submit": "Cambiar propietario",
+                "title": {
+                    "one": "Cambiar el propietario del elemento seleccionado",
+                    "other": "Cambiar el propietario de {{count}} elementos seleccionados"
+                }
             }
         },
         "pagination": {
@@ -1011,6 +1246,16 @@
             "categories": {
                 "root": "Roles"
             },
+            "count": {
+                "categories": {
+                    "one": "{{count}} organización",
+                    "other": "{{count}} organizaciones"
+                },
+                "items": {
+                    "one": "{{count}} rol",
+                    "other": "{{count}} roles"
+                }
+            },
             "duplicate": {
                 "buttons": {
                     "submit": "Duplicar"
@@ -1051,6 +1296,13 @@
                 }
             },
             "permissions": {
+                "audit": {
+                    "label": "Auditoría",
+                    "read": {
+                        "description": "Puede ver quién hizo qué, cuándo y desde dónde en su organización, y exportarlo.",
+                        "label": "Ver la auditoría"
+                    }
+                },
                 "organization": {
                     "label": "Organización",
                     "manage": {
@@ -1173,6 +1425,11 @@
             "add": "Añadir filtro",
             "apply": "Aplicar filtros",
             "clear": "Limpiar todo",
+            "date-operators": {
+                "between": "Entre",
+                "greater-than-or-equals": "Desde el",
+                "less-than-or-equals": "Hasta el"
+            },
             "empty": {
                 "description": "Añade filtros para acotar los resultados.",
                 "title": "Sin filtros aplicados"
@@ -1180,6 +1437,8 @@
             "field-placeholder": "Selecciona un filtro",
             "filters": "Filtros",
             "from-placeholder": "Desde",
+            "more-matches": "Hay más coincidencias: escribe más para afinar.",
+            "no-matches": "No se han encontrado coincidencias",
             "operators": {
                 "between": "Entre",
                 "contains": "Contiene",
@@ -1193,6 +1452,7 @@
                 "not-equals": "Distinto de",
                 "starts-with": "Empieza por"
             },
+            "option-placeholder": "Escribe para buscar",
             "placeholder": "Buscar",
             "remove": "Eliminar filtro",
             "row": "Filtro",
@@ -1261,6 +1521,16 @@
                 "empty": "No posee nada.",
                 "label": "Contenido",
                 "used-by": "{{entity}} «{{name}}»: {{users}}"
+            },
+            "count": {
+                "categories": {
+                    "one": "{{count}} organización",
+                    "other": "{{count}} organizaciones"
+                },
+                "items": {
+                    "one": "{{count}} usuario",
+                    "other": "{{count}} usuarios"
+                }
             },
             "delete": {
                 "invitation": {

@@ -27,7 +27,7 @@ function buildConfig(): PropertiesMenuConfig {
                     new PropertyGroup({
                         id: 'content',
                         label: 'Contenido',
-                        expanded: true,
+                        isExpanded: true,
                         content: new PropertyFieldsContent({
                             fields: [new PropertyTextField({ id: 'text', value: 'FACTURA' })]
                         })
@@ -41,7 +41,7 @@ function buildConfig(): PropertiesMenuConfig {
                 groups: [
                     new PropertyGroup({
                         id: 'structure-tree',
-                        showHeader: false,
+                        isHeaderShown: false,
                         content: new PropertyTreeContent({
                             tree: new PropertyTreeConfig({
                                 nodes: [
@@ -62,11 +62,11 @@ function buildConfig(): PropertiesMenuConfig {
                 groups: [
                     new PropertyGroup({
                         id: 'simple-blocks',
-                        showHeader: false,
+                        isHeaderShown: false,
                         content: new PropertyListContent({
                             list: [
                                 new PropertyListItem({ id: 'block-heading', label: 'Encabezado' }),
-                                new PropertyListItem({ disabled: true, id: 'block-locked', label: 'Bloqueado' })
+                                new PropertyListItem({ isDisabled: true, id: 'block-locked', label: 'Bloqueado' })
                             ]
                         })
                     })
@@ -110,13 +110,13 @@ describe('PropertiesMenuService', () => {
                         groups: [
                             new PropertyGroup({
                                 id: 'structure-tree',
-                                showHeader: false,
+                                isHeaderShown: false,
                                 content: new PropertyTreeContent({
                                     tree: new PropertyTreeConfig({
                                         nodes: [
                                             new PropertyTreeNode({
                                                 id: 'page-1',
-                                                children: [new PropertyTreeNode({ id: 'header', active: true })]
+                                                children: [new PropertyTreeNode({ id: 'header', isActive: true })]
                                             })
                                         ]
                                     })
@@ -164,8 +164,8 @@ describe('PropertiesMenuService', () => {
 
             const tab = service.config().tabs[0];
 
-            expect(tab.groups[0].expanded).toBe(false);
-            expect(onGroupToggle).toHaveBeenCalledWith({ expanded: false, groupId: 'content', tabId: 'properties' });
+            expect(tab.groups[0].isExpanded).toBe(false);
+            expect(onGroupToggle).toHaveBeenCalledWith({ isExpanded: false, groupId: 'content', tabId: 'properties' });
         });
 
         it('ignores a group without a header', () => {
@@ -268,7 +268,7 @@ describe('PropertiesMenuService', () => {
             service.toggleTreeNode('structure', 'structure-tree', 'header');
 
             expect(service.config()).not.toBe(previousConfig);
-            expect(service.getTreeNode('structure', 'structure-tree', 'header')?.expanded).toBe(false);
+            expect(service.getTreeNode('structure', 'structure-tree', 'header')?.isExpanded).toBe(false);
         });
 
         it('calls the hook with the resulting expanded state', () => {
@@ -280,7 +280,7 @@ describe('PropertiesMenuService', () => {
             service.toggleTreeNode('structure', 'structure-tree', 'header');
 
             expect(onTreeNodeToggle).toHaveBeenCalledWith({
-                expanded: false,
+                isExpanded: false,
                 groupId: 'structure-tree',
                 nodeId: 'header',
                 tabId: 'structure'
@@ -385,7 +385,7 @@ describe('PropertiesMenuService · expandable list items', () => {
                         groups: [
                             new PropertyGroup({
                                 id: 'variables-list',
-                                showHeader: false,
+                                isHeaderShown: false,
                                 content: new PropertyListContent({ list: items })
                             })
                         ]
@@ -404,14 +404,14 @@ describe('PropertiesMenuService · expandable list items', () => {
 
         const toggles: boolean[] = [];
         service.setConfig(
-            new PropertiesMenuConfig({ ...service.config(), onListItemToggle: event => toggles.push(event.expanded) })
+            new PropertiesMenuConfig({ ...service.config(), onListItemToggle: event => toggles.push(event.isExpanded) })
         );
 
         service.toggleListItem('variables', 'variables-list', 'total_pages');
-        expect(service.getListItem('variables', 'variables-list', 'total_pages')?.expanded).toBe(true);
+        expect(service.getListItem('variables', 'variables-list', 'total_pages')?.isExpanded).toBe(true);
 
         service.toggleListItem('variables', 'variables-list', 'total_pages');
-        expect(service.getListItem('variables', 'variables-list', 'total_pages')?.expanded).toBe(false);
+        expect(service.getListItem('variables', 'variables-list', 'total_pages')?.isExpanded).toBe(false);
 
         expect(toggles).toEqual([true, false]);
     });
@@ -428,7 +428,7 @@ describe('PropertiesMenuService · expandable list items', () => {
     });
 
     it('ignores a toggle on a disabled item', () => {
-        setUpList([new PropertyListItem({ ...EXPANDABLE_ITEM, disabled: true })]);
+        setUpList([new PropertyListItem({ ...EXPANDABLE_ITEM, isDisabled: true })]);
 
         const toggleSpy = jest.fn();
         service.setConfig(new PropertiesMenuConfig({ ...service.config(), onListItemToggle: toggleSpy }));
@@ -439,7 +439,7 @@ describe('PropertiesMenuService · expandable list items', () => {
     });
 
     it('reports a removal only for a removable item', () => {
-        setUpList([new PropertyListItem({ ...EXPANDABLE_ITEM, removable: true })]);
+        setUpList([new PropertyListItem({ ...EXPANDABLE_ITEM, isRemovable: true })]);
 
         const removeSpy = jest.fn();
         service.setConfig(new PropertiesMenuConfig({ ...service.config(), onListItemRemove: removeSpy }));
@@ -469,7 +469,7 @@ describe('PropertiesMenuService · expandable list items', () => {
 
         service.toggleListItem('variables', 'variables-list', 'total_pages');
 
-        expect(service.getListItem('variables', 'variables-list', 'other')?.expanded).toBe(false);
+        expect(service.getListItem('variables', 'variables-list', 'other')?.isExpanded).toBe(false);
     });
 });
 
@@ -488,10 +488,10 @@ describe('PropertiesMenuService · replacing the config', () => {
         return [
             new PropertyTreeNode({
                 children: [
-                    new PropertyTreeNode({ active: activeNodeId === 'header', expanded: false, id: 'header' }),
-                    new PropertyTreeNode({ active: activeNodeId === 'footer', expanded: false, id: 'footer' })
+                    new PropertyTreeNode({ isActive: activeNodeId === 'header', isExpanded: false, id: 'header' }),
+                    new PropertyTreeNode({ isActive: activeNodeId === 'footer', isExpanded: false, id: 'footer' })
                 ],
-                expanded: false,
+                isExpanded: false,
                 id: 'page-1'
             })
         ];
@@ -510,7 +510,7 @@ describe('PropertiesMenuService · replacing the config', () => {
             prefix: 'app.properties-menu',
             tabs: [
                 new PropertyTab({
-                    groups: [new PropertyGroup({ expanded: true, id: 'content' }), ...extraGroups],
+                    groups: [new PropertyGroup({ isExpanded: true, id: 'content' }), ...extraGroups],
                     id: 'properties'
                 }),
                 new PropertyTab({
@@ -518,7 +518,7 @@ describe('PropertiesMenuService · replacing the config', () => {
                         new PropertyGroup({
                             content: new PropertyTreeContent({ tree: new PropertyTreeConfig({ nodes: treeNodes }) }),
                             id: 'structure-tree',
-                            showHeader: false
+                            isHeaderShown: false
                         })
                     ],
                     id: 'structure'
@@ -535,10 +535,10 @@ describe('PropertiesMenuService · replacing the config', () => {
         service.setConfig(buildReplacement());
         service.toggleGroup('properties', 'content');
 
-        service.setConfig(buildReplacement({ extraGroups: [new PropertyGroup({ expanded: true, id: 'spacing' })] }));
+        service.setConfig(buildReplacement({ extraGroups: [new PropertyGroup({ isExpanded: true, id: 'spacing' })] }));
 
-        expect(service.getGroup('properties', 'content')?.expanded).toBe(false);
-        expect(service.getGroup('properties', 'spacing')?.expanded).toBe(true);
+        expect(service.getGroup('properties', 'content')?.isExpanded).toBe(false);
+        expect(service.getGroup('properties', 'spacing')?.isExpanded).toBe(true);
     });
 
     it('falls back to the tab of the config when the tab the user opened is gone', () => {
@@ -559,7 +559,7 @@ describe('PropertiesMenuService · replacing the config', () => {
         service.setConfig(buildReplacement({ activeNodeId: 'header' }));
         service.selectTreeNode('structure', 'structure-tree', 'footer');
 
-        service.setConfig(buildReplacement({ treeNodes: [new PropertyTreeNode({ active: true, id: 'header' })] }));
+        service.setConfig(buildReplacement({ treeNodes: [new PropertyTreeNode({ isActive: true, id: 'header' })] }));
 
         expect(service.selectedTreeNodeId()).toBe('header');
     });
@@ -578,8 +578,8 @@ describe('PropertiesMenuService · replacing the config', () => {
 
         service.setConfig(buildReplacement({ activeNodeId: 'footer', onTreeNodeToggle }));
 
-        expect(service.getTreeNode('structure', 'structure-tree', 'page-1')?.expanded).toBe(true);
-        expect(service.getTreeNode('structure', 'structure-tree', 'footer')?.expanded).toBe(false);
+        expect(service.getTreeNode('structure', 'structure-tree', 'page-1')?.isExpanded).toBe(true);
+        expect(service.getTreeNode('structure', 'structure-tree', 'footer')?.isExpanded).toBe(false);
         expect(onTreeNodeToggle).not.toHaveBeenCalled();
     });
 
@@ -589,6 +589,6 @@ describe('PropertiesMenuService · replacing the config', () => {
 
         service.setConfig(buildReplacement({ activeNodeId: 'footer' }));
 
-        expect(service.getTreeNode('structure', 'structure-tree', 'page-1')?.expanded).toBe(false);
+        expect(service.getTreeNode('structure', 'structure-tree', 'page-1')?.isExpanded).toBe(false);
     });
 });

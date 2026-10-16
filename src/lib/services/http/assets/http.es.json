@@ -9,15 +9,22 @@
                     "content-too-large": "El archivo supera el tamaño máximo permitido.",
                     "duplicate-content": "Este archivo ya está subido como \"{{name}}\".",
                     "empty-content": "El archivo está vacío.",
+                    "infected": "El archivo contiene un virus ({{signature}}) y no se ha guardado.",
+                    "invalid-type": "El tipo de archivo no está permitido. Tipos permitidos: {{allowed}}.",
                     "replace-type-mismatch": "Reemplaza el archivo por otro del mismo tipo ({{fileType}}).",
-                    "unsupported-type": "Los archivos de tipo \"{{mimeType}}\" no están admitidos."
+                    "scan-unavailable": "No se ha podido comprobar el archivo con el antivirus. Inténtalo más tarde."
                 },
                 "bad-gateway": "El servidor recibió una respuesta no válida. Por favor, inténtelo de nuevo más tarde.",
                 "bad-request": "La solicitud no pudo ser procesada. Por favor, revise los datos enviados.",
                 "conflict": "Se produjo un conflicto con el estado actual del recurso.",
+                "database": {
+                    "busy": "La base de datos está ocupada con otra operación: inténtalo de nuevo en unos segundos."
+                },
                 "duplicate-field": "Ya existe un elemento con el campo \"{{fieldName}}\" con el valor \"{{value}}\".",
                 "entities": {
-                    "owner-required": "Este elemento necesita un usuario propietario: créalo dentro de la carpeta de un usuario."
+                    "invalid-transfer-target": "El nuevo propietario debe ser un usuario activo de la misma organización.",
+                    "owner-required": "Este elemento necesita un usuario propietario: créalo dentro de la carpeta de un usuario.",
+                    "transfer-mixed-organizations": "Las filas elegidas son de organizaciones distintas: cambia el propietario de cada organización por separado."
                 },
                 "forbidden": "No tiene permisos para realizar esta acción.",
                 "internal-server-error": "Se produjo un error interno en el servidor. Por favor, inténtelo de nuevo más tarde.",
@@ -55,16 +62,23 @@
                     "content-too-large": "Archivo demasiado grande",
                     "duplicate-content": "Archivo duplicado",
                     "empty-content": "Archivo vacío",
+                    "infected": "Virus detectado",
+                    "invalid-type": "Tipo de archivo no permitido",
                     "replace-type-mismatch": "Tipo de archivo distinto",
-                    "unsupported-type": "Archivo no admitido"
+                    "scan-unavailable": "Antivirus no disponible"
                 },
                 "bad-gateway": "Error de conexión",
                 "bad-request": "Solicitud inválida",
                 "conflict": "Conflicto",
+                "database": {
+                    "busy": "Base de datos ocupada"
+                },
                 "default": "Error",
                 "duplicate-field": "Valor duplicado",
                 "entities": {
-                    "owner-required": "Falta el propietario"
+                    "invalid-transfer-target": "Nuevo propietario no válido",
+                    "owner-required": "Falta el propietario",
+                    "transfer-mixed-organizations": "Varias organizaciones"
                 },
                 "forbidden": "Acceso denegado",
                 "internal-server-error": "Error del servidor",

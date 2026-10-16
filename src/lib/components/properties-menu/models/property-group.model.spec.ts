@@ -6,11 +6,11 @@ describe('PropertyGroup', () => {
     it('defaults to collapsed and to the primary variant', () => {
         const group = new PropertyGroup({ id: 'spacing', label: 'Espaciado' });
 
-        expect(group.expanded).toBe(false);
+        expect(group.isExpanded).toBe(false);
         expect(group.variant).toBe(PropertyGroupVariant.PRIMARY);
-        expect(group.disabled).toBe(false);
-        expect(group.hidden).toBe(false);
-        expect(group.showHeader).toBe(true);
+        expect(group.isDisabled).toBe(false);
+        expect(group.isHidden).toBe(false);
+        expect(group.isHeaderShown).toBe(true);
         expect(group.content).toBeInstanceOf(PropertyFieldsContent);
     });
 
@@ -35,14 +35,14 @@ describe('PropertyGroup', () => {
     });
 
     it('is always expanded when showHeader is false, whatever expanded says', () => {
-        const group = new PropertyGroup({ id: 'structure', showHeader: false, expanded: false });
+        const group = new PropertyGroup({ id: 'structure', isHeaderShown: false, isExpanded: false });
 
-        expect(group.expanded).toBe(true);
+        expect(group.isExpanded).toBe(true);
     });
 
     it('follows expanded when showHeader is true', () => {
-        const group = new PropertyGroup({ id: 'content', showHeader: true, expanded: true });
+        const group = new PropertyGroup({ id: 'content', isHeaderShown: true, isExpanded: true });
 
-        expect(group.expanded).toBe(true);
+        expect(group.isExpanded).toBe(true);
     });
 });

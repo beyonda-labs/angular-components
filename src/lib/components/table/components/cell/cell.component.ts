@@ -1,4 +1,4 @@
-import { formatDate } from '@angular/common';
+import { formatDate, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, LOCALE_ID, output } from '@angular/core';
 import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawesome';
 import { faArrowDown, faArrowsUpDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
@@ -28,7 +28,14 @@ const SORT_ICONS: Record<TableSortState, IconDefinition> = {
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [BadgeComponent, FontAwesomeModule, TooltipListComponent, TooltipModule, TranslateModule],
+    imports: [
+        BadgeComponent,
+        FontAwesomeModule,
+        NgTemplateOutlet,
+        TooltipListComponent,
+        TooltipModule,
+        TranslateModule
+    ],
     selector: 'bey-table-cell',
     standalone: true,
     styleUrls: ['./cell.component.css'],
@@ -53,7 +60,7 @@ export class TableCellComponent {
         }
 
         return cell instanceof BadgeTableCell
-            ? cell.badges.map(badge => new BadgeConfig({ ...badge, isTranslated: cell.translate }))
+            ? cell.badges.map(badge => new BadgeConfig({ ...badge, isTranslated: cell.isTranslationKey }))
             : [];
     });
     readonly content = computed(() => {
@@ -65,11 +72,8 @@ export class TableCellComponent {
 
         return cell.content === null || cell.content === undefined ? '' : String(cell.content);
     });
-    readonly icon = computed(() => {
-        const cell = this.cell();
-
-        return cell instanceof LinkTableCell || cell instanceof TextTableCell ? cell.icon : undefined;
-    });
+    readonly icon = computed(() => this.iconCell()?.icon);
+    readonly iconLabel = computed(() => this.iconCell()?.iconLabel ?? '');
     readonly isBadge = computed(() => BADGE_CELL_TYPES.has(this.cell().type));
     readonly isLink = computed(() => this.cell().type === CellType.Link);
     readonly isSorted = computed(() => {
@@ -80,6 +84,12 @@ export class TableCellComponent {
     readonly sortIcon = computed(() => SORT_ICONS[this.sortState() ?? TableSortState.None]);
     readonly tooltip = computed(() => this.cell().tooltip ?? '');
     readonly tooltipItems = computed(() => this.cell().tooltipItems ?? []);
+
+    private readonly iconCell = computed(() => {
+        const cell = this.cell();
+
+        return cell instanceof LinkTableCell || cell instanceof TextTableCell ? cell : undefined;
+    });
 
     onLinkClick(event: MouseEvent): void {
         event.preventDefault();

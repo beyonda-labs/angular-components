@@ -34,7 +34,7 @@
 .bey-left-menu-shell {
     background: var(--bey-left-menu-surface);
     border: var(--bey-border-width) solid var(--bey-left-menu-border);
-    border-width: 0 1px 0 0;
+    border-width: 0 var(--bey-border-width) 0 0;
     display: flex;
     flex-direction: column;
     gap: var(--bey-space-lg);
@@ -190,16 +190,35 @@
 }
 
 .bey-left-menu-footer {
+    align-items: center;
     border-top: var(--bey-border-width) solid var(--bey-left-menu-border);
+    display: flex;
+    gap: var(--bey-space-sm);
+    justify-content: flex-end;
     padding-top: var(--bey-space-lg);
     width: 100%;
+}
+
+.bey-left-menu.is-collapsed .bey-left-menu-footer {
+    flex-direction: column;
+    justify-content: center;
 }
 
 .bey-left-menu-user {
     align-items: center;
     display: flex;
+    flex: 1 1 auto;
     gap: var(--bey-space-md);
     min-width: 0;
+}
+
+.bey-left-menu.is-collapsed .bey-left-menu-user {
+    flex: 0 0 auto;
+    justify-content: center;
+}
+
+.bey-left-menu-notifications {
+    flex: 0 0 auto;
 }
 
 .bey-left-menu-user--link {
@@ -232,10 +251,6 @@
     background: var(--bey-left-menu-accent);
     border-color: var(--bey-left-menu-accent);
     color: var(--bey-left-menu-surface);
-}
-
-.bey-left-menu.is-collapsed .bey-left-menu-user {
-    justify-content: center;
 }
 
 .bey-left-menu-user-avatar {

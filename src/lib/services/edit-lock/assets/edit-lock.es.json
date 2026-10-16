@@ -3,7 +3,7 @@
         "http": {
             "error": {
                 "edit-locks": {
-                    "held": "{{holderName}} lo está editando: tus cambios no se han guardado.",
+                    "held": "{{holderName}} lo está editando: no se ha cambiado nada.",
                     "release-forbidden": "Solo pueden liberar la edición quien lo está editando, un administrador de su organización o un superadministrador.",
                     "released": "Se ha liberado tu edición, así que tus cambios no se han guardado aquí. Guárdalos como copia o recárgalo para volver a editarlo."
                 }

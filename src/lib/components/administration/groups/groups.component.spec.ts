@@ -1,7 +1,10 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
+import { buttonByName, cellsOf, queryButton, renderComponent, rowWith, settle } from '@testing/dom';
+import { fieldsOf } from '@testing/form-fields';
+import { FakeFormHandle } from '@testing/handles/fake-form-handle';
+import { searchOf } from '@testing/page-search';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
@@ -10,8 +13,6 @@ import { FakeToastService } from '@testing/services/fake-toast.service';
 import { SessionUser } from '../../../services/session/models/session.model';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
 import { FormListField } from '../../form/models/fields/form-list-field.model';
-import { FormHandle } from '../../form/models/form.model';
-import { FormField } from '../../form/models/form-field.model';
 import { GroupsComponent } from './groups.component';
 import { GroupRow, GroupsConfig } from './models/groups.model';
 
@@ -42,18 +43,6 @@ describe('GroupsComponent', () => {
         };
     }
 
-    function buildHandle(): FormHandle<unknown> {
-        return {
-            close: jest.fn(),
-            goToStep: jest.fn(),
-            isDirty: jest.fn(() => true),
-            patchValue: jest.fn(),
-            requestClose: jest.fn(),
-            reset: jest.fn(),
-            value: jest.fn()
-        };
-    }
-
     async function render(
         groups: GroupRow[] = [buildGroup()],
         globalActions: string[] = ['create'],
@@ -72,22 +61,8 @@ describe('GroupsComponent', () => {
         return httpTesting.expectOne(request => request.url === url && request.method === 'GET');
     }
 
-    function rowWith(text: string): HTMLElement {
-        const row = queryAll(fixture, '[role="row"]').find(candidate => candidate.textContent?.includes(text));
-
-        if (!row) {
-            throw new Error(`No row with ${text}`);
-        }
-
-        return row;
-    }
-
-    function fieldsOf(form: ModalFormConfig | undefined): FormField[] {
-        return form?.sections.flatMap(section => section.rows.flatMap(row => row.fields)) ?? [];
-    }
-
     async function openMenu(rowText: string): Promise<void> {
-        rowWith(rowText).click();
+        rowWith(fixture, rowText).click();
         await settle(fixture);
         buttonByName(fixture, 'angular-components.header.menu').click();
         await settle(fixture);
@@ -100,10 +75,6 @@ describe('GroupsComponent', () => {
             members: [{ email: 'ada@example.test', id: 'u1', name: 'Ada Lovelace' }]
         });
         await settle(fixture);
-    }
-
-    function cellsOf(rowText: string): string[] {
-        return textsOf(queryAll(rowWith(rowText), '[role="cell"]'));
     }
 
     async function editFromName(): Promise<ModalFormConfig | undefined> {
@@ -137,8 +108,8 @@ describe('GroupsComponent', () => {
     it('lists the groups by name, with how many members and extra roles they have', async () => {
         await render([buildGroup(), buildGroup({ extraRoleCount: 1, id: 'g2', memberCount: 0, name: 'Support' })]);
 
-        expect(cellsOf('Sales')).toEqual(expect.arrayContaining(['Sales', '3', '2']));
-        expect(cellsOf('Support')).toEqual(expect.arrayContaining(['Support', '0', '1']));
+        expect(cellsOf(fixture, 'Sales')).toEqual(expect.arrayContaining(['Sales', '3', '2']));
+        expect(cellsOf(fixture, 'Support')).toEqual(expect.arrayContaining(['Support', '0', '1']));
         expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.extra-role-count`);
     });
 
@@ -148,9 +119,7 @@ describe('GroupsComponent', () => {
         request.flush({ globalActions: [], results: [] });
         await settle(fixture);
 
-        expect(JSON.parse(atob(request.request.params.get('search') ?? ''))).toEqual(
-            expect.objectContaining({ sort: { direction: 'asc', field: 'name' } })
-        );
+        expect(searchOf(request)).toEqual(expect.objectContaining({ sort: { direction: 'asc', field: 'name' } }));
     });
 
     it('creates a group with the name typed, trimmed, in the organization of the manager', async () => {
@@ -159,7 +128,7 @@ describe('GroupsComponent', () => {
         buttonByName(fixture, `${PREFIX}.actions.create.label`).click();
         await settle(fixture);
         const form = modalForms.forms().at(-1);
-        form?.onSubmit?.({ main: { name: '  Support ' } }, buildHandle());
+        form?.onSubmit?.({ main: { name: '  Support ' } }, new FakeFormHandle());
         const request = httpTesting.expectOne(current => current.url === GROUPS_URL && current.method === 'POST');
         request.flush(buildGroup({ id: 'g2', name: 'Support' }));
         await settle(fixture);
@@ -175,7 +144,7 @@ describe('GroupsComponent', () => {
         await render();
 
         const form = await editFromName();
-        form?.onSubmit?.({ main: { extraRoleIds: ['r2'], name: 'Sales team', userIds: ['u2'] } }, buildHandle());
+        form?.onSubmit?.({ main: { extraRoleIds: ['r2'], name: 'Sales team', userIds: ['u2'] } }, new FakeFormHandle());
         const request = httpTesting.expectOne(`${GROUPS_URL}/g1`);
         request.flush(buildGroup({ name: 'Sales team' }));
         await settle(fixture);
@@ -211,7 +180,7 @@ describe('GroupsComponent', () => {
         await render();
 
         const form = await editFromName();
-        form?.onSubmit?.({ main: { extraRoleIds: [], name: 'Support', userIds: [] } }, buildHandle());
+        form?.onSubmit?.({ main: { extraRoleIds: [], name: 'Support', userIds: [] } }, new FakeFormHandle());
         httpTesting
             .expectOne(`${GROUPS_URL}/g1`)
             .flush(
@@ -263,7 +232,7 @@ describe('GroupsComponent', () => {
         await render();
 
         const form = await editFromName();
-        form?.onSubmit?.({ main: { extraRoleIds: [], name: 'Sales', userIds: ['u9'] } }, buildHandle());
+        form?.onSubmit?.({ main: { extraRoleIds: [], name: 'Sales', userIds: ['u9'] } }, new FakeFormHandle());
         httpTesting
             .expectOne(current => current.url === `${GROUPS_URL}/g1` && current.method === 'PUT')
             .flush(
@@ -321,7 +290,7 @@ describe('GroupsComponent', () => {
 
             expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.table.columns.extra-role-count`);
 
-            rowWith('Sales').click();
+            rowWith(fixture, 'Sales').click();
             await settle(fixture);
 
             expect(queryButton(fixture, `${PREFIX}.actions.edit.label`)).toBeNull();

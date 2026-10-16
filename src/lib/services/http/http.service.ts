@@ -108,8 +108,8 @@ export class HttpService {
             result.params = parameters;
         }
 
-        if (options?.withCredentials !== undefined) {
-            result.withCredentials = options.withCredentials;
+        if (options?.hasCredentials !== undefined) {
+            result.withCredentials = options.hasCredentials;
         }
 
         return result;
@@ -117,7 +117,7 @@ export class HttpService {
 
     private request<T>(source$: Observable<T>, options?: HttpRequestOptions): Observable<T> {
         return defer(() => {
-            if (options?.loading) {
+            if (options?.isLoading) {
                 this.loadingService.show();
             }
 
@@ -133,7 +133,7 @@ export class HttpService {
                     return throwError(() => markAsShown(error));
                 }),
                 finalize(() => {
-                    if (options?.loading) {
+                    if (options?.isLoading) {
                         this.loadingService.hide();
                     }
                 })

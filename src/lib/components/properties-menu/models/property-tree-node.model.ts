@@ -3,15 +3,15 @@ import { IconDefinition } from '@fortawesome/angular-fontawesome';
 export type PropertyTreeDropPosition = 'after' | 'before' | 'inside';
 
 export class PropertyTreeNode {
-    acceptsDrop: boolean;
-    active: boolean;
+    canAcceptDrop: boolean;
     children: PropertyTreeNode[];
-    disabled: boolean;
-    draggable: boolean;
-    dropDisabled: boolean;
-    expanded: boolean;
-    hidden: boolean;
     id: string;
+    isActive: boolean;
+    isDisabled: boolean;
+    isDraggable: boolean;
+    isDropDisabled: boolean;
+    isExpanded: boolean;
+    isHidden: boolean;
     label: string;
     metadata: Record<string, unknown>;
 
@@ -19,30 +19,30 @@ export class PropertyTreeNode {
     labelParameters?: Record<string, unknown>;
 
     constructor({
-        acceptsDrop = false,
-        active = false,
+        canAcceptDrop = false,
         children = [],
-        disabled = false,
-        draggable = false,
-        dropDisabled = false,
-        expanded = true,
-        hidden = false,
         icon,
         id,
+        isActive = false,
+        isDisabled = false,
+        isDraggable = false,
+        isDropDisabled = false,
+        isExpanded = true,
+        isHidden = false,
         label = `${id}.label`,
         labelParameters,
         metadata = {}
     }: PropertyTreeNodeParameters) {
-        this.acceptsDrop = acceptsDrop;
-        this.active = active;
+        this.canAcceptDrop = canAcceptDrop;
         this.children = children;
-        this.disabled = disabled;
-        this.draggable = draggable;
-        this.dropDisabled = dropDisabled;
-        this.expanded = expanded;
-        this.hidden = hidden;
         this.icon = icon;
         this.id = id;
+        this.isActive = isActive;
+        this.isDisabled = isDisabled;
+        this.isDraggable = isDraggable;
+        this.isDropDisabled = isDropDisabled;
+        this.isExpanded = isExpanded;
+        this.isHidden = isHidden;
         this.label = label;
         this.labelParameters = labelParameters;
         this.metadata = metadata;
@@ -52,15 +52,15 @@ export class PropertyTreeNode {
 export interface PropertyTreeNodeParameters {
     id: string;
 
-    acceptsDrop?: boolean;
-    active?: boolean;
+    canAcceptDrop?: boolean;
     children?: PropertyTreeNode[];
-    disabled?: boolean;
-    draggable?: boolean;
-    dropDisabled?: boolean;
-    expanded?: boolean;
-    hidden?: boolean;
     icon?: IconDefinition;
+    isActive?: boolean;
+    isDisabled?: boolean;
+    isDraggable?: boolean;
+    isDropDisabled?: boolean;
+    isExpanded?: boolean;
+    isHidden?: boolean;
     label?: string;
     labelParameters?: Record<string, unknown>;
     metadata?: Record<string, unknown>;

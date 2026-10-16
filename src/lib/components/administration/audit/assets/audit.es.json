@@ -1,0 +1,115 @@
+{
+    "angular-components": {
+        "audit": {
+            "actions": {
+                "export": {
+                    "label": "Exportar",
+                    "tooltip": "Descarga en un fichero CSV los eventos que seleccionan la búsqueda y los filtros"
+                },
+                "view": {
+                    "tooltip": "Ver todos los datos del evento seleccionado"
+                }
+            },
+            "entities": {
+                "account": "Cuenta",
+                "auth": "Sesión",
+                "groups": "Grupos",
+                "organizations": "Organizaciones",
+                "roles": "Roles",
+                "users": "Usuarios"
+            },
+            "search": {
+                "fields": {
+                    "action": "Acción",
+                    "entity": "Entidad",
+                    "text": "Texto",
+                    "user-id": "Usuario"
+                }
+            },
+            "table": {
+                "columns": {
+                    "action": "Acción",
+                    "entity-name": "Registro",
+                    "ip": "IP",
+                    "occurred-at": "Fecha y hora",
+                    "organization": "Organización",
+                    "user": "Usuario"
+                },
+                "empty": "Ningún evento coincide con la búsqueda",
+                "tooltips": {
+                    "action": "Qué se hizo, y sobre qué",
+                    "entity-name": "El nombre del registro, tal como era entonces",
+                    "ip": "Desde dónde llegó la petición",
+                    "occurred-at": "Cuándo ocurrió",
+                    "organization": "La organización a la que pertenece el evento",
+                    "user": "Quién lo hizo, con el nombre que tenía entonces"
+                }
+            },
+            "title": "Auditoría",
+            "verbs": {
+                "accept-invitation": "Aceptar invitación",
+                "change-password": "Cambiar contraseña",
+                "change-status": "Cambiar estado",
+                "create": "Crear",
+                "create-category": "Crear carpeta",
+                "delete": "Eliminar",
+                "delete-category": "Eliminar carpeta",
+                "delete-trash-item": "Eliminar de la papelera",
+                "duplicate": "Duplicar",
+                "edit": "Editar",
+                "edit-category": "Editar carpeta",
+                "empty-trash": "Vaciar la papelera",
+                "import": "Importar",
+                "invite": "Invitar",
+                "locked": "Bloqueo",
+                "move": "Mover",
+                "register": "Registrarse",
+                "resend-invitation": "Reenviar invitación",
+                "reset-password": "Restablecer contraseña",
+                "restore": "Restaurar",
+                "scan-refused": "Rechazado por el antivirus",
+                "share": "Compartir",
+                "sign-in": "Iniciar sesión",
+                "sign-in-failed": "Inicio de sesión fallido",
+                "sign-out": "Cerrar sesión",
+                "transfer": "Cambiar propietario",
+                "transfer-content": "Transferir contenido",
+                "unshare": "Dejar de compartir",
+                "verify-email": "Verificar el correo"
+            },
+            "view": {
+                "buttons": {
+                    "close": "Cerrar"
+                },
+                "main": {
+                    "action": {
+                        "label": "Acción"
+                    },
+                    "details": {
+                        "label": "Detalles"
+                    },
+                    "entity": {
+                        "label": "Registro"
+                    },
+                    "ip": {
+                        "label": "IP"
+                    },
+                    "occurred-at": {
+                        "label": "Fecha y hora"
+                    },
+                    "organization": {
+                        "label": "Organización"
+                    },
+                    "request-id": {
+                        "label": "Id de la petición"
+                    },
+                    "user": {
+                        "label": "Usuario"
+                    }
+                },
+                "none": "No registrado",
+                "title": "Evento de auditoría"
+            }
+        }
+    }
+}

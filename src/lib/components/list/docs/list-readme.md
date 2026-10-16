@@ -30,7 +30,7 @@ const list = new BeyListConfig<Employee>({
 | `items`       | yes      |                  | What to render, in order                                      |
 | `prefix`      | yes      |                  | i18n prefix the default empty label is built from             |
 | `gap`         | no       | `0.75rem`        | Space between cards                                           |
-| `bare`        | no       | `false`          | Drop the card frame and let the template draw everything      |
+| `isBare`      | no       | `false`          | Drop the card frame and let the template draw everything      |
 | `emptyLabel`  | no       | `<prefix>.empty` | Key shown when there are no items                             |
 | `getItemKey`  | no       | the index        | Identifies an item so it survives a reorder                   |
 | `onItemClick` | no       |                  | Called with the item and its index; makes the cards focusable |

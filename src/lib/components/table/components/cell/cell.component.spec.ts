@@ -26,7 +26,7 @@ describe('TableCellComponent', () => {
     async function render(cell: TableCell): Promise<void> {
         const translateService = TestBed.inject(TranslateService);
 
-        translateService.setTranslation('en', { demo: { open: 'Open', active: 'Active' } });
+        translateService.setTranslation('en', { demo: { open: 'Open', active: 'Active', shared: 'Shared folder' } });
         translateService.use('en');
         fixture = await renderComponent(TableCellComponent, { cell });
     }
@@ -45,7 +45,7 @@ describe('TableCellComponent', () => {
         await render(new TextTableCell({ content: 'demo.open' }));
         expect(text()).toBe('demo.open');
 
-        await render(new TextTableCell({ content: 'demo.open', translate: true }));
+        await render(new TextTableCell({ content: 'demo.open', isTranslationKey: true }));
         expect(text()).toBe('Open');
     });
 
@@ -57,7 +57,7 @@ describe('TableCellComponent', () => {
 
     it('runs the action of a link cell', async () => {
         const action = jest.fn();
-        await render(new LinkTableCell({ action, content: 'demo.open', translate: true }));
+        await render(new LinkTableCell({ action, content: 'demo.open', isTranslationKey: true }));
         const button = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
 
         button.click();
@@ -67,15 +67,41 @@ describe('TableCellComponent', () => {
     });
 
     it('keeps the text and the action of a cell that shows an icon, hiding the icon from screen readers', async () => {
-        await render(new TextTableCell({ content: 'demo.open', icon: faFolder, translate: true }));
+        await render(new TextTableCell({ content: 'demo.open', icon: faFolder, isTranslationKey: true }));
         expect(text()).toBe('Open');
         expect(fixture.nativeElement.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
 
         const action = jest.fn();
-        await render(new LinkTableCell({ action, content: 'demo.open', icon: faFolder, translate: true }));
+        await render(new LinkTableCell({ action, content: 'demo.open', icon: faFolder, isTranslationKey: true }));
         buttonByName(fixture, 'Open').click();
 
         expect(action).toHaveBeenCalled();
+    });
+
+    it('names an icon with a label, keeping the text and the action of the cell', async () => {
+        const action = jest.fn();
+        await render(
+            new LinkTableCell({
+                action,
+                content: 'Clients',
+                icon: faFolder,
+                iconLabel: 'demo.shared'
+            })
+        );
+
+        const icon = fixture.nativeElement.querySelector('[role="img"]:not([aria-hidden="true"])') as HTMLElement;
+        buttonByName(fixture, 'Clients').click();
+
+        expect(icon.getAttribute('aria-label')).toBe('Shared folder');
+        expect(icon.getAttribute('title')).toBe('Shared folder');
+        expect(action).toHaveBeenCalled();
+
+        await render(new TextTableCell({ content: 'Clients', icon: faFolder, iconLabel: 'demo.shared' }));
+
+        expect(
+            fixture.nativeElement.querySelector('[role="img"]:not([aria-hidden="true"])')?.getAttribute('aria-label')
+        ).toBe('Shared folder');
+        expect(text()).toBe('Clients');
     });
 
     it('shows every badge of a badge cell', async () => {
@@ -85,7 +111,7 @@ describe('TableCellComponent', () => {
                     new BadgeConfig({ label: 'demo.active', variant: BadgeVariant.Success }),
                     new BadgeConfig({ label: 'demo.open', variant: BadgeVariant.Info })
                 ],
-                translate: true
+                isTranslationKey: true
             })
         );
 
@@ -124,7 +150,7 @@ describe('TableCellComponent', () => {
 
     it('turns a sortable header into a button that reports the click, with its sort as aria-sort', async () => {
         const toggles: number[] = [];
-        await render(new TextTableCell({ content: 'demo.open', translate: true }));
+        await render(new TextTableCell({ content: 'demo.open', isTranslationKey: true }));
         fixture.componentRef.setInput('isHeader', true);
         fixture.componentRef.setInput('sortState', TableSortState.Descending);
         fixture.componentInstance.sortToggle.subscribe(() => toggles.push(1));

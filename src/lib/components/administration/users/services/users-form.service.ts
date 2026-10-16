@@ -12,7 +12,11 @@ import { FormFieldEmailValidator } from '../../../form/models/form-field-validat
 import { hasOrganizationChoice } from '../../../page/functions/page-organization-filter';
 import { PageFormConfig } from '../../../page/models/page-form.model';
 import { PageOrganization } from '../../../page/models/page-organization.model';
-import { buildDisabledOrganizationField, initialOrganizationId } from '../../functions/organization-fields';
+import {
+    buildDisabledOrganizationField,
+    initialOrganizationId,
+    toOrganizationOptions
+} from '../../functions/organization-fields';
 import { userRoleLabel } from '../../functions/user-role-labels';
 import {
     USER_STATUS_CHOICES,
@@ -48,7 +52,7 @@ export class UsersFormService {
         rolePrefix,
         roles
     }: UsersFormOptions): PageFormConfig<UserFormValue, UserRow> {
-        const organizationOptions = isOrganizationAsked ? toOptions(organizations) : null;
+        const organizationOptions = isOrganizationAsked ? toOrganizationOptions(organizations) : null;
 
         return new PageFormConfig<UserFormValue, UserRow>({
             buildSections: user => [
@@ -291,10 +295,6 @@ function toExtraRoleOptions(roles: UserExtraRole[]): FormFieldOption[] {
 
 function toInviteValue(organizationId: string | undefined): UserFormValue | undefined {
     return organizationId ? { [USERS_FORM_SECTION]: { organizationId, roles: [] } } : undefined;
-}
-
-function toOptions(organizations: PageOrganization[]): FormFieldOption[] {
-    return organizations.map(({ id, name }) => ({ label: name, value: id }));
 }
 
 function toStatusOptions(status: UserStatus, prefix: string): FormFieldOption[] {

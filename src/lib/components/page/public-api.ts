@@ -14,14 +14,20 @@ export {
     pageStandardAction as beyPageStandardAction
 } from './functions/page-standard-actions';
 export {
+    PAGE_CATEGORY_COUNT_LABELS as BEY_PAGE_CATEGORY_COUNT_LABELS,
+    PAGE_ITEM_COUNT_LABELS as BEY_PAGE_ITEM_COUNT_LABELS,
+    PAGE_SHARED_CATEGORY_ICON as BEY_PAGE_SHARED_CATEGORY_ICON,
     PageCategoriesConfig as BeyPageCategoriesConfig,
     PageItemType as BeyPageItemType,
     PageViewMode as BeyPageViewMode
 } from './models/page-categories.model';
 export type {
     PageCategoriesConfigParameters as BeyPageCategoriesConfigParameters,
+    PageCategoryIcon as BeyPageCategoryIcon,
+    PageCountLabels as BeyPageCountLabels,
     PageTrashItem as BeyPageTrashItem
 } from './models/page-categories.model';
+export { pageDateRangeFields as beyPageDateRangeFields } from './functions/page-date-range-filter';
 export { PageFormConfig as BeyPageFormConfig } from './models/page-form.model';
 export type {
     PageFormConfigParameters as BeyPageFormConfigParameters,
@@ -72,6 +78,13 @@ export type {
     PageTableConfigParameters as BeyPageTableConfigParameters,
     PageTableSearchConfigParameters as BeyPageTableSearchConfigParameters
 } from './models/page-table.model';
+export { PageTransferConfig as BeyPageTransferConfig } from './models/page-transfer.model';
+export type {
+    PageTransferConfigParameters as BeyPageTransferConfigParameters,
+    PageTransferResponse as BeyPageTransferResponse,
+    PageTransferTarget as BeyPageTransferTarget,
+    PageTransferTargets as BeyPageTransferTargets
+} from './models/page-transfer.model';
 export { PageUsagesConfig as BeyPageUsagesConfig } from './models/page-usages.model';
 export type {
     PageUsages as BeyPageUsages,

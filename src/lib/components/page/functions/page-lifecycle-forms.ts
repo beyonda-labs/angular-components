@@ -41,10 +41,10 @@ function buildSingleFieldForm(
     prefix: string,
     initialValue: PageLifecycleFormValue,
     field: FormField,
-    allowSubmitWithoutChanges = false
+    canSubmitWithoutChanges = false
 ): ModalFormConfig<PageLifecycleFormValue> {
     return new ModalFormConfig<PageLifecycleFormValue>({
-        allowSubmitWithoutChanges,
+        canSubmitWithoutChanges,
         initialValue,
         prefix,
         sections: [

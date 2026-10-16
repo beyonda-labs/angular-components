@@ -10,7 +10,8 @@
         },
         "account-data-section": "Account data",
         "administration": {
-            "example": "The management pages of an app, one module: users, groups, roles and permissions, and organizations, each on bey-page over the matching module of express-components and each reading what it may do from the backend, and the read-only summary of the organization of a member.",
+            "audit": "Audit",
+            "example": "The management pages of an app, one module: users, groups, roles and permissions, organizations and the audit log, each on bey-page over the matching module of express-components and each reading what it may do from the backend, and the read-only summary of the organization of a member.",
             "groups": "Groups",
             "organization-summary": "Organization summary",
             "organizations": "Organizations",
@@ -56,6 +57,16 @@
             "title": "Demo App"
         },
         "app-layout-section": "App Layouts",
+        "audit": {
+            "entities": {
+                "documents": "Documents",
+                "templates": "Templates"
+            },
+            "example": "The audit page on the demo backend: the read-only list of who did what, when and from where, newest first. Search by user, row name or IP, filter by a date range from one day to another, by user, typed with suggestions from the backend, by entity and by action and, signed in as a superadmin, by organization. Export downloads as a CSV file the events the current search and filters select, and the row name or the View action opens a read-only view of every field of the event with its details. The entities and the extra verbs of the app read its labels, here documents, templates and publish, and the organization column shows only to a superadmin while the list spans several organizations.",
+            "verbs": {
+                "publish": "Publish"
+            }
+        },
         "badge": {
             "example": "Every variant of the badge, greyscale emphasis first and the semantic hues after."
         },
@@ -166,10 +177,12 @@
                 "earlier": "Since yesterday",
                 "free": "Free again",
                 "manager": "Seen by a manager",
+                "moved": "Moved to another window of yours",
                 "other-window": "Another window of yours",
                 "released": "Your editing released",
                 "taken": "Taken over by a colleague",
-                "unavailable": "No longer available"
+                "unavailable": "No longer available",
+                "unknown": "A colleague with no name"
             },
             "statuses": {
                 "free": "Status: free",
@@ -203,7 +216,7 @@
         "floating-preferences": {
             "example": "Self-contained language and theme selectors, which change both through BeyPreferencesService: the browser remembers them, and what a signed-in user picks is saved to their account — no callbacks required.",
             "examples": {
-                "no-pill": "Without the pill (usePill = false), for embedding in another container",
+                "no-pill": "Without the pill (hasPill = false), for embedding in another container",
                 "pill": "Default (floating pill)"
             }
         },
@@ -230,6 +243,21 @@
             },
             "canceled": "The form has been reset",
             "changed": "Form value changed: ",
+            "danger-modal": {
+                "buttons": {
+                    "cancel": "Cancel",
+                    "submit": "Delete"
+                },
+                "confirmation": {
+                    "warning": {
+                        "message": "\"{{name}}\" and every version of it will be deleted for good."
+                    }
+                },
+                "example": "A confirmation that deletes for good paints its submit button as a danger and explains itself with a notice.",
+                "open": "Open a deletion confirmation",
+                "submitted": "The deletion has been confirmed",
+                "title": "Delete the report"
+            },
             "example": "Model-driven, configuration-based form with validation, conditional fields, hints under the fields, a note next to the buttons and responsive layout.",
             "footer": {
                 "note": "Submitting only reports the value below; nothing is saved."
@@ -324,6 +352,32 @@
                 },
                 "label": "Searchable fields",
                 "tooltip": "Typeahead variants with basic, required and disabled behaviour, and one with thirty options to scroll"
+            },
+            "section-autocomplete-options": {
+                "free-text": {
+                    "label": "Free text",
+                    "placeholder": "Type any city, or pick one"
+                },
+                "label": "Typeahead options",
+                "picked": "A city was picked and the field emptied itself",
+                "picker": {
+                    "label": "Picks and clears",
+                    "placeholder": "Pick a city"
+                },
+                "server": {
+                    "empty": "No city matches",
+                    "label": "Searched on a server",
+                    "placeholder": "Search a city; Madrid is left out"
+                },
+                "starts-with": {
+                    "label": "Matched from the start",
+                    "placeholder": "Type the first letters"
+                },
+                "tooltip": "Free text kept as typed, a match of its own, suggestions from a server that leaves values out and says when nothing matches, a field that only picks, and a typeahead that suggests only once something is typed and keeps only a picked city",
+                "typeahead": {
+                    "label": "Typeahead",
+                    "placeholder": "Type a city and pick it"
+                }
             },
             "section-checkbox": {
                 "checkbox1": {
@@ -465,6 +519,16 @@
                     "placeholder": "Nothing to list yet"
                 },
                 "tooltip": "Read-only icon/label pairs and scrollable lists — no input styling, no FormControl"
+            },
+            "section-notice": {
+                "label": "Notice Fields",
+                "notice1": {
+                    "message": "This form holds {{count}} sections; nothing is saved until you submit it."
+                },
+                "notice2": {
+                    "message": "The disabled fields show values you cannot change here."
+                },
+                "tooltip": "A notice across the row, in the info and the warning variants, with no control of its own"
             },
             "section-number": {
                 "label": "Number Fields",
@@ -619,7 +683,7 @@
         },
         "forms": "Forms",
         "groups": {
-            "example": "The groups page of a manager or the superadmin: search by name, create a group, edit its name, its members and its additional roles in one form, and delete groups, as far as the backend allows each row. A superadmin sees one folder per organization, a search at the root spans all of them and is the only list with the organization column, and a group created inside a folder comes with its organization chosen. The demo backend serves no groups, so the list stays empty."
+            "example": "The groups page of a manager or the superadmin: search by name, create a group, edit its name, its members and its additional roles in one form, searching the users and the additional roles of the organization, and delete groups, as far as the backend allows each row. A superadmin sees one folder per organization, a search at the root spans all of them and is the only list with the organization column, and a group created inside a folder comes with its organization chosen. The demo answers from fixed data, so a change is confirmed but the list stays as it was."
         },
         "header": {
             "actions": {
@@ -908,8 +972,29 @@
             }
         },
         "notice-section": "Notices",
+        "notifications": {
+            "entities": {
+                "templates": "Templates"
+            },
+            "example": "The bell of the notifications centre with sample notices: the badge counts the unread ones, and the bell opens the panel. Opening a notice marks it read; a product would also follow the link it gives. Pick a set of notices to see another case.",
+            "nouns": {
+                "templates": {
+                    "one": "the template",
+                    "other": "templates"
+                }
+            },
+            "scenarios": {
+                "empty": "No notices",
+                "mixed": "Unread and read",
+                "pages": "Several pages"
+            },
+            "types": {
+                "review-requested": "{{byName}} asks you to review “{{rowName}}”"
+            }
+        },
+        "notifications-section": "Notifications",
         "organization-summary": {
-            "example": "The summary of the organization of the signed-in member, read-only, built with the cards module: its name, status and creation, a strip with its active members, groups and additional roles, with the members by status for whoever may see the users; its administrators; every group folded with its count, unfolding its active members in place, and those in no group last; and every additional role, opening its permissions for whoever may already see them. The demo backend serves no organization, so nothing shows: the cards section shows the same pieces."
+            "example": "The summary of the organization of the signed-in member, read-only, built with the cards module: its name, status and creation, a strip with its active members, groups and additional roles, with the members by status for whoever may see the users; its administrators; every group folded with its count, unfolding its active members in place, and those in no group last; and every additional role, opening its permissions for whoever may already see them, in the sections, icons and order of the roles demo. The demo answers with a fixed organization."
         },
         "organizations": {
             "example": "The organizations page of a superadmin: search by name, filter by status, create an organization and edit one, its name and its status, with its active administrators, its groups and their members, and its members in no group to read, as far as the backend allows each row. The demo backend serves no organizations, so the list stays empty."
@@ -940,7 +1025,11 @@
                 "categories": {
                     "root": "All products"
                 },
-                "example": "With categories the page browses folders, and the last node of the breadcrumb counts what the folder holds, folders and products across every page. Leaving for a route under the page and coming back keeps the folder, the search, the page and the selection. Drag a product, or the selected rows, onto a folder to move them there; the Move to... action does the same from the keyboard. Where rows have owners, both offer only the folders of the owner of the rows, and a selection of several owners cannot move. The headers sort the list on the backend.",
+                "count": {
+                    "one": "{{count}} product",
+                    "other": "{{count}} products"
+                },
+                "example": "With categories the page browses folders, and the last node of the breadcrumb counts what the folder holds, folders apart from products, across every page. A folder shared with someone, or inside one that is, shows the shared folder icon. Leaving for a route under the page and coming back keeps the folder, the search, the page and the selection. Drag a product, or the selected rows, onto a folder to move them there; the Move to... action does the same from the keyboard. Where rows have owners, both offer only the folders of the owner of the rows, and a selection of several owners cannot move. The headers sort the list on the backend.",
                 "heading": "Folders",
                 "move": {
                     "title": "Move to"
@@ -995,6 +1084,44 @@
                     "category": "Category",
                     "name": "Name",
                     "price": "Price"
+                }
+            },
+            "sharing": {
+                "actions": {
+                    "share": {
+                        "label": "Share",
+                        "tooltip": "Share the selected folder with people or groups"
+                    }
+                },
+                "categories": {
+                    "root": "My documents"
+                },
+                "example": "With isSharedEnabled the page adds a Shared with me tab, after the main tab and its views, listing the folders others shared with you; the breadcrumb starts at the shared folder, so the folders of its owner above it never show. Select one of your folders and open the menu to share it: the form lists who can view it and who can edit it, and searches the people and groups of the organization. A document offers View next to its name, a standard action with an action of its own that opens what the name opens. Select your folders and documents and open the menu to change their owner: the form names the current owner and searches the active users of the organization, and BeyPageTransferConfig sets the line that explains what the new owner gets. This example answers from a backend of its own.",
+                "heading": "Sharing and owners",
+                "table": {
+                    "columns": {
+                        "name": "Name"
+                    },
+                    "empty": "Nothing here yet",
+                    "tooltips": {
+                        "name": "Documents and folders by name"
+                    }
+                },
+                "tabs": {
+                    "table": {
+                        "label": "Mine"
+                    }
+                },
+                "title": "Documents",
+                "toast": {
+                    "share-success": "Sharing saved"
+                },
+                "transfer": {
+                    "notice": "Documents move as they are: nothing is copied along, and everything inside a folder goes with it."
+                },
+                "view": {
+                    "message": "{{name}} would open here, read-only.",
+                    "title": "View document"
                 }
             },
             "table": {
@@ -1054,7 +1181,51 @@
         },
         "properties-menu-section": "Properties Menu",
         "roles": {
-            "example": "The roles and permissions page of a manager or the superadmin: the base roles of the application with their permissions to see, from their name or from View in the header, and the additional roles of the organization to create, edit, duplicate and delete, their permissions chosen in foldable sections by resource, each permission with its description, as far as the backend allows each row; a base role can be duplicated too, as the start of a new additional role. A superadmin sees one folder per organization next to the base roles, a search at the root spans all of them and is the only list with the organization column, and a role created inside a folder comes with its organization chosen. The demo backend serves no roles, so the list stays empty."
+            "base": {
+                "admin": "Administrator",
+                "editor": "Editor"
+            },
+            "example": "The roles and permissions page of a manager or the superadmin: the base roles of the application with their permissions to see, from their name or from View in the header, and the additional roles of the organization to create, edit, duplicate and delete, their permissions chosen in foldable sections by resource, each permission with its description, as far as the backend allows each row; a base role can be duplicated too, as the start of a new additional role. The sections show the icon the app gives each resource, templates and documents here, and come in the order the app sets, templates first, then documents and the resources of the library; inside each section the permissions follow the order of actions the app sets: read, create, edit, publish, download and delete. A superadmin sees one folder per organization next to the base roles, a search at the root spans all of them and is the only list with the organization column, and a role created inside a folder comes with its organization chosen. The demo answers from fixed data, so a change is confirmed but the list stays as it was.",
+            "permissions": {
+                "documents": {
+                    "create": {
+                        "description": "Can fill in a template to create a document.",
+                        "label": "Create documents"
+                    },
+                    "download": {
+                        "description": "Can download the PDF of a document.",
+                        "label": "Download documents"
+                    },
+                    "label": "Documents",
+                    "read": {
+                        "description": "Can open the documents of the organization.",
+                        "label": "See documents"
+                    }
+                },
+                "templates": {
+                    "create": {
+                        "description": "Can start a new template.",
+                        "label": "Create templates"
+                    },
+                    "delete": {
+                        "description": "Can send templates to the trash.",
+                        "label": "Delete templates"
+                    },
+                    "edit": {
+                        "description": "Can change the content of a template.",
+                        "label": "Edit templates"
+                    },
+                    "label": "Templates",
+                    "publish": {
+                        "description": "Can make a template available to fill in.",
+                        "label": "Publish templates"
+                    },
+                    "read": {
+                        "description": "Can open the templates of the organization.",
+                        "label": "See templates"
+                    }
+                }
+            }
         },
         "search": {
             "applied": "Applied filters",

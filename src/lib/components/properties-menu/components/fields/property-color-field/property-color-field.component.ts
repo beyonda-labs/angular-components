@@ -29,7 +29,7 @@ export class PropertyColorFieldComponent {
     readonly showsClear = computed(() => {
         const field = this.field();
 
-        return this.hasValue() && !field.disabled && !field.readonly;
+        return this.hasValue() && !field.isDisabled && !field.isReadonly;
     });
 
     onClear(): void {

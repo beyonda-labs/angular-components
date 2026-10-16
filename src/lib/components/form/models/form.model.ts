@@ -38,9 +38,9 @@ export class FormButton {
 }
 
 export class FormConfig<TValue = unknown> {
-    allowSubmitWithoutChanges: boolean;
     buttonLayout: FormButtonLayout;
     buttons: FormButton[];
+    canSubmitWithoutChanges: boolean;
     prefix: string;
     sections: FormSection[];
     steps: FormStep[];
@@ -54,9 +54,9 @@ export class FormConfig<TValue = unknown> {
     onValueChange?: (value: TValue, handle: FormHandle<TValue>) => void;
 
     constructor({
-        allowSubmitWithoutChanges = false,
         buttonLayout = 'end',
         buttons = [],
+        canSubmitWithoutChanges = false,
         footer,
         initialValue,
         onCancel,
@@ -68,9 +68,9 @@ export class FormConfig<TValue = unknown> {
         sections,
         steps = []
     }: FormConfigParameters<TValue>) {
-        this.allowSubmitWithoutChanges = allowSubmitWithoutChanges;
         this.buttonLayout = buttonLayout;
         this.buttons = buttons;
+        this.canSubmitWithoutChanges = canSubmitWithoutChanges;
         this.footer = footer;
         this.initialValue = initialValue;
         this.onCancel = onCancel;
@@ -158,9 +158,9 @@ export interface FormConfigParameters<TValue = unknown> {
     prefix: string;
     sections: FormSection[];
 
-    allowSubmitWithoutChanges?: boolean;
     buttonLayout?: FormButtonLayout;
     buttons?: FormButton[];
+    canSubmitWithoutChanges?: boolean;
     footer?: FormFooter;
     initialValue?: TValue;
     onCancel?: () => void;

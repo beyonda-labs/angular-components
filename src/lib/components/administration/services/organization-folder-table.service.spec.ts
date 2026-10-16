@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { faFolder } from '@fortawesome/free-solid-svg-icons';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
-import { PageItemType } from '../../page/models/page-categories.model';
+import { PageItemType, PageViewMode } from '../../page/models/page-categories.model';
 import { LinkTableCell } from '../../table/models/table-cell.model';
 import { OrganizationFolder } from '../models/organization-folders.model';
 import { OrganizationFolderTableService } from './organization-folder-table.service';
@@ -31,11 +31,31 @@ describe('OrganizationFolderTableService', () => {
 
         cell.action();
 
-        expect(cell).toMatchObject({ content: 'Acme', icon: faFolder, translate: false });
+        expect(cell).toMatchObject({ content: 'Acme', icon: faFolder, isTranslationKey: false });
         expect(onOpen).toHaveBeenCalledWith(folder);
     });
 
     it('gives the folder no tooltip, as the folders of the other pages, since its breadcrumb counts its rows', () => {
         expect(nameCell(buildFolder({ itemCount: 12 })).tooltip).toBeUndefined();
+    });
+
+    it('builds the organization folders only for the page that shows them', () => {
+        expect(service.buildFoldersConfig({ isShown: false, onOpen: jest.fn(), prefix: 'demo.users' })).toBeUndefined();
+        expect(service.buildFoldersConfig({ isShown: true, onOpen: jest.fn(), prefix: 'demo.users' })).toMatchObject({
+            countLabels: { one: 'demo.users.count.categories.one', other: 'demo.users.count.categories.other' },
+            typeField: 'entryType'
+        });
+    });
+
+    it('opens a folder from the name cell its folders config builds', () => {
+        const onOpen = jest.fn();
+        const folder = buildFolder();
+        const config = service.buildFoldersConfig({ isShown: true, onOpen, prefix: 'demo.users' });
+        const [cell] = (config?.loadRow?.(folder, PageViewMode.Table) ?? []) as LinkTableCell[];
+
+        cell.action();
+
+        expect(cell.content).toBe('Acme');
+        expect(onOpen).toHaveBeenCalledWith(folder);
     });
 });

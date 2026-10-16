@@ -99,14 +99,15 @@ export interface OrganizationsRowOptions {
 export class OrganizationsConfig {
     baseUrl: string;
     contentLabels: Readonly<Record<string, string>>;
-    height: string;
     prefix: string;
     storageKey: string;
+
+    height?: string;
 
     constructor({
         baseUrl = '/organizations',
         contentLabels = {},
-        height = 'calc(100vh - 220px)',
+        height,
         prefix = 'angular-components.organizations',
         storageKey = 'organizations'
     }: OrganizationsConfigParameters = {}) {

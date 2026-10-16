@@ -106,7 +106,7 @@ describe('PropertyFieldComponent', () => {
     });
 
     it('names a multiline text field after the translated label it shows', async () => {
-        await renderField(new PropertyTextField({ id: 'notes', multiline: true, value: 'Paid' }));
+        await renderField(new PropertyTextField({ id: 'notes', isMultiline: true, value: 'Paid' }));
 
         expect(controlByName<HTMLTextAreaElement>(fixture, 'Notes').value).toBe('Paid');
     });
@@ -125,7 +125,7 @@ describe('PropertyFieldComponent', () => {
 
     it('names a searchable select and the option list it opens after the translated label', async () => {
         await renderField(
-            new PropertySelectField({ id: 'font', options: FONT_OPTIONS, searchable: true, value: 'lora' })
+            new PropertySelectField({ id: 'font', options: FONT_OPTIONS, isSearchable: true, value: 'lora' })
         );
         const combobox = controlByName(fixture, 'Font');
 
@@ -229,7 +229,7 @@ describe('PropertyFieldComponent', () => {
     });
 
     it('renders nothing for a hidden field', async () => {
-        await renderField(new PropertyTextField({ id: 'title', hidden: true }));
+        await renderField(new PropertyTextField({ id: 'title', isHidden: true }));
 
         expect(queryControl(fixture, 'Title')).toBeNull();
         expect(fixture.nativeElement.textContent?.trim()).toBe('');

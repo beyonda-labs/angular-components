@@ -1,0 +1,64 @@
+{
+    "angular-components": {
+        "http": {
+            "error": {
+                "notifications": {
+                    "not-found": "Esta notificación ya no existe."
+                }
+            },
+            "title": {
+                "notifications": {
+                    "not-found": "Notificación no encontrada"
+                }
+            }
+        },
+        "notifications": {
+            "access": {
+                "read": "solo lectura",
+                "write": "lectura y escritura"
+            },
+            "actions": {
+                "mark-all-read": "Marcar todas como leídas",
+                "refresh": "Actualizar",
+                "show-more": "Ver más"
+            },
+            "bell": {
+                "label": "Notificaciones",
+                "unread": "Notificaciones, {{count}} sin leer"
+            },
+            "empty": "No tienes notificaciones",
+            "loading": "Cargando notificaciones…",
+            "time": {
+                "days": "hace {{count}} d",
+                "hours": "hace {{count}} h",
+                "minutes": "hace {{count}} min",
+                "now": "Ahora mismo"
+            },
+            "title": "Notificaciones",
+            "types": {
+                "edit-locks": {
+                    "released": "{{byName}} ha liberado tu edición de «{{rowName}}» ({{entity}})"
+                },
+                "entities": {
+                    "rows-transferred": {
+                        "folder": "{{byName}} te ha cedido la carpeta «{{name}}» de {{entity}}",
+                        "folders": "{{byName}} te ha cedido {{count}} carpetas de {{entity}}",
+                        "item": "{{byName}} te ha cedido {{noun}} «{{name}}»",
+                        "items": "{{byName}} te ha cedido {{count}} {{noun}}",
+                        "row": "{{byName}} te ha cedido «{{name}}» de {{entity}}",
+                        "rows": "{{byName}} te ha cedido {{count}} elementos de {{entity}}",
+                        "unnamed": "{{byName}} te ha cedido un elemento de {{entity}}"
+                    }
+                },
+                "sharing": {
+                    "folder-shared": "{{byName}} ha compartido contigo la carpeta «{{folderName}}» de {{entity}}, {{access}}"
+                },
+                "users": {
+                    "content-transferred": "{{byName}} te ha transferido el contenido de {{fromName}}. Elementos transferidos: {{count}}"
+                }
+            },
+            "unknown-type": "Tienes una notificación nueva",
+            "unread": "Sin leer"
+        }
+    }
+}

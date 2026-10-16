@@ -1,4 +1,4 @@
-<div class="bey-page">
+<div class="bey-page" [class.bey-page--fill]="isFilled()">
     @if (service.headerConfig(); as headerConfig) {
         <bey-header class="bey-page-header" [config]="headerConfig"></bey-header>
     }
@@ -21,11 +21,11 @@
 
     @if (service.tableConfig(); as tableConfig) {
         <div class="bey-page-body">
-            @if (service.loading()) {
+            @if (isLoading()) {
                 <bey-loading-overlay></bey-loading-overlay>
             }
 
-            <bey-table [config]="tableConfig"></bey-table>
+            <bey-table class="bey-page-table" [config]="tableConfig"></bey-table>
 
             @if (service.paginationConfig(); as paginationConfig) {
                 <bey-pagination [config]="paginationConfig"></bey-pagination>

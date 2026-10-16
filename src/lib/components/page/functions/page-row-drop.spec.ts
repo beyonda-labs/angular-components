@@ -1,8 +1,10 @@
+import { PageConfig } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
-import { PageCategoriesConfig, PageItemType } from '../models/page-categories.model';
+import { PageCategoriesConfig, PageItemType, PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
 import { PageOwnedItem } from '../models/page-owner.model';
-import { findStandardMoveAction, isMoveDragAllowed, isMoveDropAllowed } from './page-row-drop';
+import { PageTableConfig } from '../models/page-table.model';
+import { buildRowDropOptions, findStandardMoveAction, isMoveDragAllowed, isMoveDropAllowed } from './page-row-drop';
 import { pageStandardAction } from './page-standard-actions';
 
 interface Row extends PageItem {
@@ -20,6 +22,34 @@ const NESTED: Row = { actions: ['move'], id: 'nested', parentId: 'invoices', typ
 const OFFER: Row = { actions: ['move'], id: 'offer', parentId: null, type: PageItemType.Item };
 const LOCKED: Row = { actions: [], id: 'locked', parentId: null, type: PageItemType.Item };
 
+describe('buildRowDropOptions', () => {
+    function buildConfig(baseUrl?: string): PageConfig {
+        return new PageConfig({
+            baseUrl,
+            prefix: 'demo',
+            tableConfig: new PageTableConfig({ categoriesConfig: CATEGORIES, columns: [], loadRow: () => [] })
+        });
+    }
+
+    it('lets the rows the move allows be dropped onto a folder, through the drop it is given', () => {
+        const onRowDrop = jest.fn();
+        const options = buildRowDropOptions(buildConfig('/files'), [MOVE], PageViewMode.Table, onRowDrop);
+
+        options.onRowDrop?.(INVOICES, [OFFER]);
+
+        expect(options.isRowDraggable?.(OFFER)).toBe(true);
+        expect(options.isRowDraggable?.(LOCKED)).toBe(false);
+        expect(options.isDropAllowed?.(INVOICES, [OFFER])).toBe(true);
+        expect(onRowDrop).toHaveBeenCalledWith(INVOICES, [OFFER]);
+    });
+
+    it('offers no drag without the standard move, without a base URL, or in the trash', () => {
+        expect(buildRowDropOptions(buildConfig('/files'), [], PageViewMode.Table, jest.fn())).toEqual({});
+        expect(buildRowDropOptions(buildConfig(), [MOVE], PageViewMode.Table, jest.fn())).toEqual({});
+        expect(buildRowDropOptions(buildConfig('/files'), [MOVE], PageViewMode.Trash, jest.fn())).toEqual({});
+    });
+});
+
 describe('findStandardMoveAction', () => {
     it('finds the standard move action, inside a group too, and none with a handler of its own', () => {
         const group = new PageAction({
@@ -30,7 +60,7 @@ describe('findStandardMoveAction', () => {
         });
 
         expect(findStandardMoveAction([pageStandardAction(PageStandardAction.Delete), group])).toBe(MOVE);
-        expect(findStandardMoveAction([pageStandardAction(PageStandardAction.Move, { handler: () => {} })])).toBe(
+        expect(findStandardMoveAction([pageStandardAction(PageStandardAction.Move, { action: () => {} })])).toBe(
             undefined
         );
     });

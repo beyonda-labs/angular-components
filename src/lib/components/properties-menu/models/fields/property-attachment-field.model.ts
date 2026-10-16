@@ -25,27 +25,19 @@ export class PropertyAttachmentField extends PropertyField<string> {
         this.options = options;
         this.variables = variables;
     }
-
-    get holdsVariable(): boolean {
-        return (this.value ?? '').trim().startsWith('{{');
-    }
-
-    get selectedOption(): PropertyAttachmentOption | undefined {
-        return this.options.find(option => option.id === this.value);
-    }
 }
 
 export class PropertyAttachmentOption {
-    disabled: boolean;
     id: string;
+    isDisabled: boolean;
     label: string;
 
     description?: string;
 
-    constructor({ description, disabled = false, id, label }: PropertyAttachmentOptionParameters) {
+    constructor({ description, id, isDisabled = false, label }: PropertyAttachmentOptionParameters) {
         this.description = description;
-        this.disabled = disabled;
         this.id = id;
+        this.isDisabled = isDisabled;
         this.label = label;
     }
 }
@@ -63,5 +55,5 @@ export interface PropertyAttachmentOptionParameters {
     label: string;
 
     description?: string;
-    disabled?: boolean;
+    isDisabled?: boolean;
 }

@@ -49,14 +49,16 @@ describe('PageHttpService', () => {
         expect(answer('GET', '/items/categories/tree').request.params.keys()).toEqual([]);
     });
 
-    it('reads the folders shared with the user, and the shares and share targets of a folder', () => {
+    it('reads the folders shared with the user, the shares of a folder and the targets that match a search', () => {
         service.loadShared('/items', { search: 'z' }).subscribe();
         service.findShares('/items', 'clients').subscribe();
-        service.findShareTargets('/items', 'clients').subscribe();
+        service.searchShareTargets('/items', 'clients', 'gra', 20).subscribe();
 
         expect(answer('GET', '/items/shared').request.params.toString()).toBe('search=z');
         answer('GET', '/items/categories/clients/shares');
-        answer('GET', '/items/categories/clients/share-targets');
+        expect(answer('GET', '/items/categories/clients/share-targets').request.params.toString()).toBe(
+            'search=gra&limit=20'
+        );
     });
 
     it('replaces the shares of a folder with the success toast', () => {
@@ -66,6 +68,38 @@ describe('PageHttpService', () => {
 
         expect(answer('PUT', '/items/categories/clients/shares').request.body).toEqual({ shares });
         expect(toast.successes()).toEqual([{ message: 'shared' }]);
+    });
+
+    it('searches the transfer targets of a selection, its items in ids and its folders in categoryIds', () => {
+        const selection = [
+            { id: 1, type: PageItemType.Item },
+            { id: 'clients', type: PageItemType.Category },
+            { id: 2, type: PageItemType.Item }
+        ];
+
+        service.searchTransferTargets('/items', selection, 'gra', 20).subscribe();
+        service.searchTransferTargets('/items', trashItems, '', 20).subscribe();
+
+        const [mixed, itemsOnly] = httpTesting.match(
+            current => current.url === 'https://api.test/api/items/transfer-targets'
+        );
+        mixed.flush({ options: [] });
+        itemsOnly.flush({ options: [] });
+
+        expect(mixed.request.params.toString()).toBe('ids=1,2&categoryIds=clients&search=gra&limit=20');
+        expect(itemsOnly.request.params.toString()).toBe('ids=1&search=&limit=20');
+    });
+
+    it('transfers the typed rows of a selection to the user chosen and answers how many rows changed', () => {
+        let transferred: number | undefined;
+
+        service.transfer('/items', trashItems, 'u2').subscribe(response => (transferred = response.transferred));
+        const request = httpTesting.expectOne('https://api.test/api/items/transfer');
+        request.flush({ transferred: 3 });
+
+        expect(request.request.method).toBe('POST');
+        expect(request.request.body).toEqual({ items: trashItems, targetUserId: 'u2' });
+        expect(transferred).toBe(3);
     });
 
     it('narrows the category tree to the folders of one owner', () => {
@@ -188,6 +222,19 @@ describe('PageHttpService', () => {
         httpTesting.expectOne(url).flush(null, { status: 404, statusText: 'Not Found' });
 
         expect(answers).toEqual([[{ id: 'o1', name: 'Acme' }], 'failed']);
+        expect(TestBed.inject(FakeModalService).errors()).toEqual([]);
+    });
+
+    it('asks quietly for the path of a folder a link names, escaping its id', () => {
+        const answers: unknown[] = [];
+        const url = 'https://api.test/api/items/categories/a%2Fb/path';
+
+        service.loadCategoryPathQuietly('/items', 'a/b').subscribe(path => answers.push(path));
+        httpTesting.expectOne(url).flush([{ id: 'a/b', name: 'Clients' }]);
+        service.loadCategoryPathQuietly('/items', 'a/b').subscribe({ error: () => answers.push('failed') });
+        httpTesting.expectOne(url).flush(null, { status: 404, statusText: 'Not Found' });
+
+        expect(answers).toEqual([[{ id: 'a/b', name: 'Clients' }], 'failed']);
         expect(TestBed.inject(FakeModalService).errors()).toEqual([]);
     });
 

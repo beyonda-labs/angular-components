@@ -137,7 +137,7 @@ describe('FormComponent', () => {
 
     it('lets a valid form be submitted without changes when the config allows it', async () => {
         await render(
-            buildConfig({ allowSubmitWithoutChanges: true, initialValue: { contact: { email: '', name: 'Ada' } } })
+            buildConfig({ canSubmitWithoutChanges: true, initialValue: { contact: { email: '', name: 'Ada' } } })
         );
 
         expect(button('demo.submit').disabled).toBe(false);

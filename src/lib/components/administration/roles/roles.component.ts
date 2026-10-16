@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, effect, inject, input, si
 
 import { PageHandle } from '../../page/models/page.model';
 import { PageComponent } from '../../page/page.component';
-import { buildOrganizationFoldersConfig } from '../functions/organization-folders';
 import { OrganizationFolder } from '../models/organization-folders.model';
 import { OrganizationFolderTableService } from '../services/organization-folder-table.service';
 import { UserOrganizationsService } from '../services/user-organizations.service';
@@ -61,13 +60,11 @@ export class RolesComponent {
             );
 
         return buildRolesPageConfig({
-            categoriesConfig: isSuperadmin
-                ? buildOrganizationFoldersConfig(folder =>
-                      this.organizationFolderTableService.loadRow(folder, {
-                          onOpen: opened => this.page?.openCategory(opened)
-                      })
-                  )
-                : undefined,
+            categoriesConfig: this.organizationFolderTableService.buildFoldersConfig({
+                isShown: isSuperadmin,
+                onOpen: folder => this.page?.openCategory(folder),
+                prefix
+            }),
             config,
             formConfig: this.rolesFormService.buildFormConfig(formOptions),
             isOrganizationShown: isSuperadmin,

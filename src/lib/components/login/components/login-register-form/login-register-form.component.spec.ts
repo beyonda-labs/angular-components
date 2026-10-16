@@ -11,10 +11,10 @@ import { LoginSessionService } from '../../services/login-session.service';
 import { LoginRegisterFormComponent } from './login-register-form.component';
 
 const FIELDS: RegisterField[] = [
-    { name: 'name', type: 'text', required: true, step: 1 },
-    { name: 'email', type: 'email', required: true, step: 2 },
-    { name: 'password', type: 'password', required: true, step: 2 },
-    { name: 'password2', type: 'password', required: true, step: 2 }
+    { name: 'name', type: 'text', isRequired: true, step: 1 },
+    { name: 'email', type: 'email', isRequired: true, step: 2 },
+    { name: 'password', type: 'password', isRequired: true, step: 2 },
+    { name: 'password2', type: 'password', isRequired: true, step: 2 }
 ];
 const NEXT = 'angular-components.form.steps.next';
 const POLICY_URL = 'https://api.test/auth/password-policy';
@@ -115,7 +115,7 @@ describe('LoginRegisterFormComponent', () => {
 
     it('reports a registration that waits for a verified email instead of opening a session', async () => {
         const verificationRequired = jest.fn();
-        loginHttpService.register.mockReturnValue(of({ verificationRequired: true }));
+        loginHttpService.register.mockReturnValue(of({ isVerificationRequired: true }));
         await render();
         fixture.componentInstance.verificationRequired.subscribe(verificationRequired);
 

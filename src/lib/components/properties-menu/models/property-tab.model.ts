@@ -3,10 +3,10 @@ import { IconDefinition } from '@fortawesome/angular-fontawesome';
 import { PropertyGroup } from './property-group.model';
 
 export class PropertyTab {
-    disabled: boolean;
     groups: PropertyGroup[];
-    hidden: boolean;
     id: string;
+    isDisabled: boolean;
+    isHidden: boolean;
     label: string;
 
     addLabel?: string;
@@ -15,20 +15,20 @@ export class PropertyTab {
 
     constructor({
         addLabel,
-        disabled = false,
         groups = [],
-        hidden = false,
         icon,
         id,
+        isDisabled = false,
+        isHidden = false,
         label = `${id}.label`,
         labelParameters
     }: PropertyTabParameters) {
         this.addLabel = addLabel;
-        this.disabled = disabled;
         this.groups = groups.sort((first, second) => first.order - second.order);
-        this.hidden = hidden;
         this.icon = icon;
         this.id = id;
+        this.isDisabled = isDisabled;
+        this.isHidden = isHidden;
         this.label = label;
         this.labelParameters = labelParameters;
     }
@@ -38,10 +38,10 @@ export interface PropertyTabParameters {
     id: string;
 
     addLabel?: string;
-    disabled?: boolean;
     groups?: PropertyGroup[];
-    hidden?: boolean;
     icon?: IconDefinition;
+    isDisabled?: boolean;
+    isHidden?: boolean;
     label?: string;
     labelParameters?: Record<string, unknown>;
 }

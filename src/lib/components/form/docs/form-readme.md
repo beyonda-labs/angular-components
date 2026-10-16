@@ -44,7 +44,7 @@ readonly form = new BeyFormConfig<ContactValue>({
 | `buttonLayout`              | no       | `end`   | `end` lines them up to the right, `stretch` shares the whole width       |
 | `footer`                    | no       |         | A `BeyFormFooter`: a divider and a note with the buttons, see below      |
 | `initialValue`              | no       |         | Value the form starts from and cancel goes back to                       |
-| `allowSubmitWithoutChanges` | no       | `false` | Lets a valid but untouched form be submitted                             |
+| `canSubmitWithoutChanges`   | no       | `false` | Lets a valid but untouched form be submitted                             |
 | `steps`                     | no       | `[]`    | Turns the form into a stepper, see below                                 |
 | `onReady`                   | no       |         | Run with the handle once the controls exist                              |
 | `onValueChange`             | no       |         | Run with the whole value and the handle after every change               |
@@ -273,6 +273,6 @@ one set nowhere takes its default:
 | `--bey-modal-form-accent-soft`    | `--bey-primary-soft`  |
 | `--bey-modal-form-border`         | `--bey-border-subtle` |
 | `--bey-modal-form-surface`        | `--bey-bg-surface`    |
-| `--bey-modal-form-close-bg-hover` | `--bey-bg-active`     |
+| `--bey-modal-form-close-hover-bg` | `--bey-bg-active`     |
 
 The dialog stops at `--bey-modal-form-max-height`, read the same way; set nowhere, at `--bey-dialog-max-height`.

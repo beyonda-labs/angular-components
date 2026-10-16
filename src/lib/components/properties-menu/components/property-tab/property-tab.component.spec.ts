@@ -31,7 +31,7 @@ describe('PropertyTabComponent', () => {
                 id: 'properties',
                 groups: [
                     new PropertyGroup({ id: 'content', label: 'Contenido' }),
-                    new PropertyGroup({ hidden: true, id: 'hidden', label: 'Oculto' })
+                    new PropertyGroup({ isHidden: true, id: 'hidden', label: 'Oculto' })
                 ]
             })
         );

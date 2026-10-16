@@ -12,7 +12,7 @@ private readonly http = inject(BeyHttpService);
 
 save(contact: Contact): void {
     this.http
-        .post<Contact>('/api/contacts', contact, { loading: true, successToast: 'myApp.contacts.saved' })
+        .post<Contact>('/api/contacts', contact, { isLoading: true, successToast: 'myApp.contacts.saved' })
         .subscribe(saved => this.contacts.update(contacts => [...contacts, saved]));
 }
 ```
@@ -36,14 +36,14 @@ save(contact: Contact): void {
 | ----------------- | ------- | ---------------------------------------------------------------------- |
 | `headers`         | none    | Headers sent with the request                                          |
 | `queryParams`     | none    | The query string; an array repeats the parameter once per value        |
-| `loading`         | `false` | Shows the loading overlay from the subscription until the request ends |
+| `isLoading`       | `false` | Shows the loading overlay from the subscription until the request ends |
 | `successToast`    | none    | i18n key of a success toast shown when the request succeeds            |
 | `handleError`     |         | Called with the `HttpErrorResponse` instead of opening the error modal |
-| `withCredentials` | `false` | Sends the cookies with a request to another origin, and keeps its own  |
+| `hasCredentials`  | `false` | Sends the cookies with a request to another origin, and keeps its own  |
 
 `BeyUploadRequestOptions` adds `onProgress`, called with the fraction sent so far, from `0` to `1`.
 
-`withCredentials` reaches `HttpClient` from every method. A request to the origin the app is served from carries its
+`hasCredentials` reaches `HttpClient`, as its `withCredentials`, from every method. A request to the origin the app is served from carries its
 cookies anyway; the option is for an api on another origin, which then has to allow the app's origin with
 credentials. The sign-in, the registration and the session send it, so the refresh cookie travels in both setups.
 

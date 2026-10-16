@@ -26,20 +26,20 @@ Every field extends `BeyFormField` and takes the same base parameters; each type
 | ------------------------------ | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `BeyFormTextField`             | `string`            |                                                                                                                                                                                                        |
 | `BeyFormTextareaField`         | `string`            | `rows` (`3`), `maxHeight`                                                                                                                                                                              |
-| `BeyFormPasswordField`         | `string`            | `showToggle` (`true`); `policy`, a `BeyPasswordPolicy` or a signal of one, see below                                                                                                                   |
+| `BeyFormPasswordField`         | `string`            | `isToggleShown` (`true`); `policy`, a `BeyPasswordPolicy` or a signal of one, see below                                                                                                                |
 | `BeyFormNumberField`           | `number`            | `min`, `max`, both validated and honoured by the spinners                                                                                                                                              |
 | `BeyFormDateField`             | `string`            | `format` (`YYYY-MM-DD`), `minDate`, `maxDate` in that format                                                                                                                                           |
 | `BeyFormSelectField`           | `string`            | `options`, a value or a rule                                                                                                                                                                           |
 | `BeyFormRadioField`            | `string`            | `options`, a value or a rule                                                                                                                                                                           |
-| `BeyFormAutocompleteField`     | `string`            | `options`, a value or a rule; `emptyKey`; `isFreeTextAllowed` (`false`); `filter`, `search`, `onSelect`, `isClearedOnSelect` (`false`) and `excludedValues`, see below                                 |
+| `BeyFormAutocompleteField`     | `string`            | `options`, a value or a rule; `emptyKey`; `isFreeTextAllowed` (`false`); `filter`, `search`, `onSelect`, `isClearedOnSelect` (`false`), `isTypeahead` (`false`) and `excludedValues`, see below        |
 | `BeyFormCheckboxField`         | `boolean`           | `isSwitch` (`false`)                                                                                                                                                                                   |
 | `BeyFormCheckboxGroupField`    | `string[]`          | `options`, a value or a rule; one checkbox per option, the value lists the checked ones in the order they were checked                                                                                 |
 | `BeyFormCheckboxSectionsField` | `string[]`          | `sections`, a `BeyFormCheckboxSection[]`; one foldable card of checkboxes per section, the value lists every checked one, see below                                                                    |
-| `BeyFormChipsField`            | `string[]`          | `maxItems`, `allowDuplicates` (`false`)                                                                                                                                                                |
+| `BeyFormChipsField`            | `string[]`          | `maxItems`, `canAddDuplicates` (`false`)                                                                                                                                                               |
 | `BeyFormFileField`             | `File`              | `accept` (`[]`), `maxSizeBytes`, both validated                                                                                                                                                        |
 | `BeyFormTextVariableField`     | `string`            | `options`, a value or a rule, inserted as `{{ value }}`                                                                                                                                                |
 | `BeyFormInfoField`             | none                | `items: { label, icon?, tooltip?, tooltipItems? }[]`, shows text without a control, with a tooltip that lists `tooltipItems` under `tooltip`                                                           |
-| `BeyFormListField`             | none, or `string[]` | `items`, a list of texts or a signal of one, and `onItemClick`; or `options`, `picker`, `isRemovable` (`false`) and `emptyKey` to hold ids, see below                                                  |
+| `BeyFormListField`             | none, or `string[]` | `items`, a list of texts or a signal of one, and `onItemClick`; or `options`, `picker`, `isRemovable` (`false`), `emptyKey` and `excludedValues` to hold ids, see below                                |
 | `BeyFormNoticeField`           | none                | `message`, a translation key, its `messageParameters` and a `variant` of `BeyNoticeVariant` (`Info`): a [`bey-notice`](../../notice/docs/notice-readme.md) across the row, its label hidden by default |
 
 An option is `{ label, value, badge?, isDisabled? }`; `label` and `badge` are translation keys. When the options
@@ -82,6 +82,7 @@ the spaces collapsed.
 | `excludedValues`    | `[]`    | Values never suggested, such as those already chosen; a value or a rule                                                                                                     |
 | `onSelect`          |         | Run with the option picked, after the field took it                                                                                                                         |
 | `isClearedOnSelect` | `false` | A pick leaves the value and the input empty, so the field only picks; `onSelect` receives the option                                                                        |
+| `isTypeahead`       | `false` | A text input with no toggle that suggests nothing until something is typed, see below                                                                                       |
 
 -   **`search`** is asked for `''` as soon as the panel opens, and for the typed text, trimmed, once typing settles for
     300 ms; a newer text cancels the answer of an older one. Its answer is shown as it comes, less `excludedValues`:
@@ -96,6 +97,13 @@ the spaces collapsed.
     that answers a page of a server sets it when the server filled the page. An array, or `hasMore` false, shows no
     such line; a field without `search` never shows it.
 -   **`excludedValues`** applies to `options` and to `search` alike.
+-   **`isTypeahead`** drops the chevron and the list on focus: the panel opens only with what is typed, trimmed, not
+    empty, and closes again when the text is emptied, so `search` is never asked for `''`, only for the typed text
+    once typing settles. Without `isFreeTextAllowed` the value is only ever an option picked from the panel: typing
+    over a picked one empties the value at once, and leaving the field, or Escape, with text that was not picked
+    clears the text, as every autocomplete without free text does, so a required one shows its error and holds the
+    form back. The clear button stays while there is a value. With `isFreeTextAllowed`, the typed text is the value as
+    usual.
 
 ## Lists that hold ids
 
@@ -114,17 +122,20 @@ new BeyFormListField({
 });
 ```
 
-| Parameter     | Default | Meaning                                                                                                           |
-| ------------- | ------- | ----------------------------------------------------------------------------------------------------------------- |
-| `options`     |         | The labels of the ids, a value or a rule; without `search`, also what the picker suggests                         |
-| `picker`      |         | A `BeyFormListPicker`, `{ search?, filter?, onSelect?, placeholder?, emptyKey? }`: an autocomplete above the rows |
-| `isRemovable` | `false` | A remove button at the end of every row                                                                           |
-| `emptyKey`    |         | The text shown while it holds no id; without it, the placeholder                                                  |
+| Parameter        | Default | Meaning                                                                                                           |
+| ---------------- | ------- | ----------------------------------------------------------------------------------------------------------------- |
+| `options`        |         | The labels of the ids, a value or a rule; without `search`, also what the picker suggests                         |
+| `picker`         |         | A `BeyFormListPicker`, `{ search?, filter?, onSelect?, placeholder?, emptyKey? }`: an autocomplete above the rows |
+| `isRemovable`    | `false` | A remove button at the end of every row                                                                           |
+| `emptyKey`       |         | The text shown while it holds no id; without it, the placeholder                                                  |
+| `excludedValues` | `[]`    | Ids the picker never suggests besides the ones the list holds, a value or a rule                                  |
 
 -   **The picker** is a `BeyFormAutocompleteField` with `isClearedOnSelect`: one input above the rows, named by the
     label of the field and with its `id`, whose placeholder is `picker.placeholder` or `<prefix>.<key>.placeholder`.
-    It never suggests the ids the list holds. A pick adds a row with the label of the option and empties the input,
-    then runs `picker.onSelect`; the label of an option that came from `search` stays with its row.
+    It never suggests the ids the list holds, nor those of `excludedValues`, which its `search` receives with them, so
+    two lists that exclude each other's value never hold the same id. A pick adds a row with the label of the option
+    and empties the input, then runs `picker.onSelect`; the label of an option that came from `search` stays with its
+    row.
 -   **Removing.** With `isRemovable`, each row ends with a button named `angular-components.form.list-field.remove`
     with the label of the row, "Remove Nora Lectora (nora@empresa.com)", that takes its id out of the value.
 -   **A pick and a removal** change the form, so cancel and submit wake up as they would after typing.
@@ -256,7 +267,8 @@ The checks a field brings with it (`min` and `max`, `minDate` and `maxDate`, `ma
 notice fields and a list that only shows `items` have no control, so they have nothing to validate.
 
 Every field flags itself once touched while any of them fails: `aria-invalid` on the control and the invalid
-border. The file field writes a message for its own `accept` and `maxSizeBytes` checks.
+border, with no Bootstrap validation icon and the padding the control has while valid. The file field writes a
+message for its own `accept` and `maxSizeBytes` checks.
 
 ## Error messages
 

@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { FormControl } from '@angular/forms';
+import { FormControl, ValidationErrors } from '@angular/forms';
 
 import { PasswordPolicy } from '../../../services/password-policy/models/password-policy.model';
 import { FormCheckboxField } from '../models/fields/form-checkbox-field.model';
@@ -11,6 +11,7 @@ import { FormNumberField } from '../models/fields/form-number-field.model';
 import { FormPasswordField } from '../models/fields/form-password-field.model';
 import { FormTextField } from '../models/fields/form-text-field.model';
 import { FormConfig, FormRow, FormSection } from '../models/form.model';
+import { FormFieldState } from '../models/form-field-state.model';
 import { FormFieldCustomValidator } from '../models/form-field-validator.model';
 import { FormService } from './form.service';
 
@@ -183,5 +184,104 @@ describe('FormService', () => {
 
         control.setValue(new File(['pdf'], 'final.pdf', { type: 'application/pdf' }));
         expect(control.valid).toBe(true);
+    });
+
+    describe('control sync', () => {
+        function buildState(overrides: Partial<FormFieldState> = {}): FormFieldState {
+            return {
+                excludedValues: [],
+                isDisabled: false,
+                isHidden: false,
+                isRequired: false,
+                isValid: true,
+                options: [],
+                ...overrides
+            };
+        }
+
+        describe('dropUnlistedIds', () => {
+            const before = buildState({
+                options: [
+                    { label: 'Ada', value: 'p1' },
+                    { label: 'Grace', value: 'p2' }
+                ]
+            });
+            const after = buildState({ options: [{ label: 'Ada', value: 'p1' }] });
+
+            it('drops the ids the new options no longer list', () => {
+                const control = new FormControl(['p1', 'p2']);
+
+                service.dropUnlistedIds(control, after, before);
+
+                expect(control.value).toEqual(['p1']);
+            });
+
+            it('keeps every id on the first pass and while the options stay the same', () => {
+                const control = new FormControl(['p1', 'p2']);
+
+                service.dropUnlistedIds(control, after, undefined);
+                service.dropUnlistedIds(control, after, buildState({ options: after.options }));
+
+                expect(control.value).toEqual(['p1', 'p2']);
+            });
+        });
+
+        describe('syncDisabled', () => {
+            it('disables a control whose field is disabled or hidden, and enables it again after', () => {
+                const control = new FormControl('');
+
+                service.syncDisabled(control, { isDisabled: true, isHidden: false });
+                expect(control.disabled).toBe(true);
+
+                service.syncDisabled(control, { isDisabled: false, isHidden: false });
+                expect(control.enabled).toBe(true);
+
+                service.syncDisabled(control, { isDisabled: false, isHidden: true });
+                expect(control.disabled).toBe(true);
+            });
+        });
+
+        describe('syncRequired', () => {
+            it('adds and removes the required validator and checks the control again', () => {
+                const control = new FormControl('');
+
+                service.syncRequired(control, true);
+                expect(control.hasError('required')).toBe(true);
+
+                service.syncRequired(control, false);
+                expect(control.valid).toBe(true);
+            });
+        });
+
+        describe('syncValidatorErrors', () => {
+            let errors: ValidationErrors | null;
+            let control: FormControl<string | null>;
+
+            beforeEach(() => {
+                errors = null;
+                control = new FormControl('', () => errors);
+            });
+
+            it('checks the control again when its errors are not the ones its validator now answers', () => {
+                errors = { taken: true };
+
+                service.syncValidatorErrors(control, errors, null);
+                expect(control.hasError('taken')).toBe(true);
+
+                errors = null;
+
+                service.syncValidatorErrors(control, null, { taken: true });
+                expect(control.valid).toBe(true);
+            });
+
+            it('leaves a disabled control as it is', () => {
+                control.disable();
+                errors = { taken: true };
+
+                service.syncValidatorErrors(control, errors, null);
+
+                expect(control.hasError('taken')).toBe(false);
+            });
+        });
     });
 });

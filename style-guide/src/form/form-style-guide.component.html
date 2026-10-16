@@ -31,3 +31,17 @@
 >
     {{ modalFormButton.label | translate }}
 </button>
+
+<p class="bey-style-guide-description text-muted mt-4 mb-3">
+    {{ 'angular-components-style-guide.form.danger-modal.example' | translate }}
+</p>
+
+<button
+    class="btn btn-sm"
+    type="button"
+    [class.btn-dark]="dangerModalButton.isPrimary"
+    [class.btn-outline-dark]="!dangerModalButton.isPrimary"
+    (click)="dangerModalButton.action()"
+>
+    {{ dangerModalButton.label | translate }}
+</button>

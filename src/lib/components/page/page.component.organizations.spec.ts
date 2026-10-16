@@ -1,6 +1,7 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { buttonByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
+import { buttonByName, queryAll, renderComponent, rowWith, settle, textsOf } from '@testing/dom';
+import { searchOf } from '@testing/page-search';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 
@@ -9,7 +10,6 @@ import { TextTableCell } from '../table/models/table-cell.model';
 import { pageOrganizationCell, pageOrganizationColumn } from './functions/page-organization-column';
 import { PageConfig } from './models/page.model';
 import { PageOrganization, PageOrganizationItem } from './models/page-organization.model';
-import { PageSearch } from './models/page-search.model';
 import { PageTableConfig, PageTableSearchConfig } from './models/page-table.model';
 import { PageComponent } from './page.component';
 
@@ -82,20 +82,6 @@ describe('PageComponent — organizations', () => {
         await settle(fixture);
     }
 
-    function searchOf(request: TestRequest): PageSearch {
-        return JSON.parse(atob(request.request.params.get('search') ?? '')) as PageSearch;
-    }
-
-    function rowWith(text: string): HTMLElement {
-        const row = queryAll(fixture, '[role="row"]').find(candidate => candidate.textContent?.includes(text));
-
-        if (!row) {
-            throw new Error(`No row with ${text}`);
-        }
-
-        return row;
-    }
-
     function filtersToggle(): HTMLButtonElement {
         return queryAll<HTMLButtonElement>(fixture, 'bey-search [aria-expanded]')[0];
     }
@@ -150,9 +136,9 @@ describe('PageComponent — organizations', () => {
         await render();
 
         expect(fixture.nativeElement.textContent).toContain('Organization');
-        expect(rowWith('Offer').textContent).toContain('Acme');
-        expect(rowWith('Invoice').textContent).toContain('Globex');
-        expect(rowWith('Terms').textContent).toContain('status of Terms');
+        expect(rowWith(fixture, 'Offer').textContent).toContain('Acme');
+        expect(rowWith(fixture, 'Invoice').textContent).toContain('Globex');
+        expect(rowWith(fixture, 'Terms').textContent).toContain('status of Terms');
     });
 
     it('asks for the organizations once, when the page opens, and not again when the filters panel opens', async () => {
@@ -187,7 +173,7 @@ describe('PageComponent — organizations', () => {
         await openFilter();
 
         expect(fixture.nativeElement.textContent).not.toContain('Organization');
-        expect(rowWith('Offer').textContent).toContain('status of Offer');
+        expect(rowWith(fixture, 'Offer').textContent).toContain('status of Offer');
     });
 
     it('shows a superadmin of a single organization neither the column nor the filter', async () => {

@@ -4,6 +4,7 @@ import { PageItem } from '../models/page-item.model';
 import { hasOneOwner } from './page-move-owner';
 
 const CATEGORY_HANDLER_KEYS = new Set<string>([PageStandardAction.Share]);
+const EVERY_ROW_HANDLER_KEYS = new Set<string>([PageStandardAction.Transfer]);
 const ROWLESS_SCOPES = new Set([PageActionScope.Global, PageActionScope.Group]);
 const SINGLE_ROW_KEYS = new Set<string>([
     PageStandardAction.Edit,
@@ -27,7 +28,7 @@ export function isActionVisible(
         return false;
     }
 
-    if (action.handler && toHandlerItems(action, selectedItems, categoriesConfig).length === 0) {
+    if (action.action && toHandlerItems(action, selectedItems, categoriesConfig).length === 0) {
         return false;
     }
 
@@ -42,6 +43,12 @@ export function isCategoryRow(item: PageItem, categoriesConfig?: PageCategoriesC
     return categoriesConfig !== undefined && readRowField(item, categoriesConfig.typeField) === PageItemType.Category;
 }
 
+export function keepListedRows(selected: PageItem[], items: PageItem[]): PageItem[] {
+    const ids = new Set(selected.map(item => item.id));
+
+    return items.filter(item => ids.has(item.id));
+}
+
 export function readRowField(item: PageItem, field: string): unknown {
     return (item as unknown as Record<string, unknown>)[field];
 }
@@ -53,6 +60,10 @@ export function toHandlerItems(
 ): PageItem[] {
     if (ROWLESS_SCOPES.has(action.scope)) {
         return [];
+    }
+
+    if (EVERY_ROW_HANDLER_KEYS.has(action.key)) {
+        return selectedItems;
     }
 
     const takesCategories = CATEGORY_HANDLER_KEYS.has(action.key);

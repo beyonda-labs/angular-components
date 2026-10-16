@@ -28,7 +28,7 @@ describe('pageOwnerCell', () => {
         expect(pageOwnerCell({ ownerName: 'Ada Lovelace' })).toMatchObject({
             content: 'Ada Lovelace',
             tooltip: 'Ada Lovelace',
-            translate: false
+            isTranslationKey: false
         });
     });
 
@@ -40,7 +40,7 @@ describe('pageOwnerCell', () => {
     it('names as unknown an owner whose name resolves to nothing', () => {
         expect(pageOwnerCell({ ownerId: 'u1', ownerName: null })).toMatchObject({
             content: 'angular-components.user-name.unknown',
-            translate: true
+            isTranslationKey: true
         });
     });
 });

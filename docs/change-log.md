@@ -1,5 +1,177 @@
 # Change Log
 
+## [1.6.0] - 2026-10-16
+
+### Added
+
+-   App layout module: `notifications` on `BeyAppLayoutConfig` turns the notifications centre on, as a bell at the foot
+    of the menu.
+-   Audit page: `bey-audit` (`BeyAuditComponent`, `BeyAuditConfig`), the read-only audit trail over `/audit` on
+    `bey-page`: who did what, when and from where, newest first, searched by user, row name or IP.
+-   Audit page: filters by date range, by user (typed, over `{baseUrl}/user-options`), by entity and by action, and for
+    the superadmin by organization, with an organization column only while the list spans several organizations.
+-   Audit page: "Export", while the server lists `export` in `globalActions`, saves the CSV of the search and the
+    filters in force, `GET {baseUrl}/export` through the HTTP service, as `audit-<yyyymmdd>.csv`.
+-   Audit page: the row name and "View" open every field of an event read-only, from `GET {baseUrl}/{id}`, its details
+    as "key: value" lines.
+-   Audit page: the labels of the library's entities and of every verb the audit records, `transfer` and `scan-refused`
+    included; `entityLabels` and `actionLabels` label those of the app, and an unlabelled one shows its raw name.
+-   Audit page: `BeyAuditEventRow`, the row the server answers, and `BEY_AUDIT_READ_PERMISSION`, `audit.read`.
+-   Breadcrumb module: `BeyBreadcrumbText`, a `detailParameters` value translated with its own parameters before the
+    detail, so a detail joins texts with plurals of their own.
+-   Form module: `isTypeahead` on `BeyFormAutocompleteField`, a text input with no toggle that suggests only once
+    something is typed, so `search` is never asked for `''`; without free text, only a picked option is its value.
+-   Form module: `excludedValues` on `BeyFormListField`, ids its picker never suggests besides those the list holds,
+    a value or a rule, so two lists can keep each other's ids out.
+-   Header module: `--bey-header-title-max-width`, `31.25rem`, the width the title stops at.
+-   HTTP service: the texts and titles of `database.busy`, the 503 express-components answers when MySQL meets a
+    conflict between two operations.
+-   HTTP service: the texts and titles of `attachments.invalid-type` (with `{{allowed}}`), `attachments.infected` (with
+    `{{signature}}`) and `attachments.scan-unavailable`.
+-   Left menu module: `notifications` on `BeyLeftMenuConfig`, the bell at the foot of the menu, next to the user or
+    alone.
+-   Notifications module: `bey-notifications` (`BeyNotificationsComponent`, `BeyNotificationsConfig`), the bell of the
+    notifications centre with the unread count as a badge, which opens a panel with the notices, newest first.
+-   Notifications module: opening a notice marks it read and follows the route `link` gives; the panel refreshes at
+    once, marks all as read, shows more while `hasMore`, and says when there is nothing.
+-   Notifications module: `BeyNotificationsService` asks `GET {baseUrl}/unread-count` every `pollIntervalMs` (60 s) and
+    after a navigation while a session is open, with no error modal, and stops on sign-out.
+-   Notifications module: `BeyNotification`, `BeyNotificationTarget`, `BeyNotificationsPage`, `BeyNotificationType` and
+    the texts of its four types; `labels` and `entityLabels` label the types and entities of the app.
+-   Notifications module: `BeyNotificationType.RowsTransferred` (`entities.rows-transferred`), a sentence for the new
+    owner of rows, such as "Grace gave you the template “Contract”" or "… 3 templates", from its `kind` and `count`.
+-   Notifications module: `entityNouns` on `BeyNotificationsConfig`, `entity → BeyNotificationNoun` `{ one, other }`,
+    the keys that name one row of an entity with its article and several without one.
+-   Page module: `search()` on `BeyPageHandle`, the search the list in view was asked with, as the page sends it.
+-   Page module: `beyPageDateRangeFields(fromKey?, toKey?)`, a "From" and a "To" date filter, `from` and `to` by
+    default.
+-   Page module: links, `?view=` (`table`, `shared`, `trash` or a view key) and `?folder=` open that tab and folder in
+    place of the kept state, then leave the URL with `replaceUrl`; an unknown view or folder falls back quietly.
+-   Page module: a folder whose row carries `isShared`, and every folder of the shared view, shows the shared folder
+    icon, named "Shared folder"; `sharedIcon` on `BeyPageCategoriesConfig` changes it.
+-   Page module: `BeyPageCategoryIcon` `{ icon, label }` and `BEY_PAGE_SHARED_CATEGORY_ICON`, the shape and the default
+    of `sharedIcon`.
+-   Page module: `countLabels` and `itemCountLabels` on `BeyPageCategoriesConfig` (`BeyPageCountLabels`), the keys the
+    count names folders and items with; `BEY_PAGE_CATEGORY_COUNT_LABELS` and `BEY_PAGE_ITEM_COUNT_LABELS`.
+-   Page module: `baseUrl` on `BeyPageView`, a flat view listed, searched and counted at its own URL, with no folders,
+    drag nor folder actions; its row actions still go to the page's `baseUrl`, and leaving it gives the folder back.
+-   Page module: `BeyPageStandardAction.Transfer`, "Change owner", while every selected row lists it: a typeahead over
+    `GET {baseUrl}/transfer-targets` picks a user of their organization, and `POST {baseUrl}/transfer` hands them over.
+-   Page module: `transferConfig` on `BeyPageConfig` (`BeyPageTransferConfig` and its `notice`), the answers
+    `BeyPageTransferTarget`, `BeyPageTransferTargets` and `BeyPageTransferResponse`, and the texts of its refusals.
+-   Roles page: the label and the description of `audit.read`, in an "Audit" section with its own icon.
+-   Search module: `BeySearchFieldType.Date`, a day or a range of days sent as epoch milliseconds, each bound including
+    its whole day in the time zone of the browser.
+-   Search module: `BeySearchFieldType.Autocomplete` and `searchOptions` on `BeySearchField`, the options asked for the
+    typed text, `BeySearchFieldOptionsResult` `{ options, hasMore? }`; the value of the option picked is the filter.
+-   Table module: `iconLabel` on `BeyTextTableCell` and `BeyLinkTableCell`, the name of the icon for screen readers and
+    its tooltip.
+-   Testing entry point: `beyRowWith` and `beyCellsOf`, a table row by its text and the texts of its cells;
+    `beyFieldsOf` (`BeyFormFieldsSource`), the fields of a form config or of its sections, all or one section's.
+-   Testing entry point: `beyDecodePageSearch` and `beySearchOf` (`BeySearchRequest`), the `BeyPageSearch` a page sends,
+    and `beyTreeDialogItems` and `beyPickInTreeDialog`, which drive the tree dialog `provideBeyTesting` opens.
+-   Testing entry point: `BeyFakeFormHandle` (`BeyFakeFormHandleParameters`), a Jest-free `BeyFormHandle` for the
+    callbacks of a recorded form, which answers its `value` and records its closes, resets, patches and steps.
+-   Tokens: `--bey-dialog-icon-size`, the icon box of the modal and tree dialogs.
+-   Users, groups and roles pages: the count of the superadmin folders names organizations and users, groups or roles,
+    from `count.categories.*` and `count.items.*` under their `prefix`.
+-   Utilities: `BEY_SHARED_FOLDER_ICON`, a one-colour FontAwesome `IconDefinition` of a folder with a person cut out of
+    it, which `fa-icon` draws wherever an icon is accepted, such as a tree.
+-   Style guide: `beyAdministrationStyleGuideInterceptor` and `beyPageStyleGuideInterceptor`, which answer the
+    `/style-guide/` requests of the administration and sharing demos from fixed data; the app registers them.
+-   Style guide: demos of the roles `groupIcons`, `groupOrder` and `actionOrder`, of page sharing and change of owner,
+    of the form notice, typeahead and `isSubmitDanger`, and of an edit lock held by nobody known or lost.
+
+### Changed
+
+-   App layout module (breaking): the content area between the breadcrumb bar and the footer scrolls inside, both ways,
+    in place of the whole body, so the footer stays at the bottom; a child that fills the area takes `height: 100%`.
+-   App layout module (breaking): `useBodyPadding` of `BeyAppLayoutConfig` is `hasBodyPadding`, and `active` and
+    `disabled` of the app-layout actions are `isActive` and `isDisabled`.
+-   Breadcrumb module (breaking): `translate` of `BeyBreadcrumbConfig` is `isTranslationKey`.
+-   Cards module: the initials of `bey-avatar` and of the left menu drop their accents, "Ana Álvarez" reads "AA".
+-   Edit-lock service: the text of `edit-locks.held` says that nothing was changed, so it reads for a delete or a change
+    of owner as well as for a save.
+-   Floating preferences module (breaking): the `usePill` input of `bey-floating-preferences` is `hasPill`.
+-   Form module (breaking): `allowSubmitWithoutChanges` of `BeyFormConfig` and `BeyModalFormConfig` is
+    `canSubmitWithoutChanges`.
+-   Form module (breaking): `BeyFormChipsField.allowDuplicates` is `canAddDuplicates` and
+    `BeyFormPasswordField.showToggle` is `isToggleShown`.
+-   Form module (breaking): `--bey-modal-form-close-bg-hover` is `--bey-modal-form-close-hover-bg`.
+-   Header module (breaking): `disabled` of `BeyHeaderAction` is `isDisabled`.
+-   HTTP service (breaking): `loading` and `withCredentials` of `BeyHttpRequestOptions` are `isLoading` and
+    `hasCredentials`; the latter still reaches `HttpClient` as its `withCredentials`.
+-   Left menu module (breaking): `active` and `disabled` of `BeyLeftMenuAction` are `isActive` and `isDisabled`, and
+    `expanded` of `BeyLeftMenuConfig` is `isExpanded`.
+-   Left menu module (breaking): `BeyLeftMenuUserInfo.initials` holds only what the consumer gives; the avatar still
+    shows the initials of the name and surname without it.
+-   List module (breaking): `bare` of `BeyListConfig` is `isBare`.
+-   Loading module (breaking): the `fullscreen` input of `bey-loading-overlay` is `isFullscreen`.
+-   Login module (breaking): the register fields are read with `isRequired` and the registration answer with
+    `isVerificationRequired`, as express-components 1.4.0 sends them.
+-   Modal module (breaking): `closeOnBackdrop` of `BeyConfirmationModalConfig` and `BeyNotificationModalConfig` is
+    `canCloseOnBackdrop`.
+-   Modal module (breaking): the variant classes of the dialog are `bey-modal--<type>` (`bey-modal--confirmation`,
+    `--error`, `--info`, `--warning`), in place of `bey-modal-<type>`.
+-   Modal module: the icon reads `--bey-dialog-icon-size`, as the tree dialog does, and the dialog fills the width of
+    its Bootstrap modal; the `32rem` cap never applied under its `500px`.
+-   Page module (breaking): `BeyPageAction.handler` is `action`, in `BeyPageActionParameters` and in the overrides of
+    `beyPageStandardAction`.
+-   Page module (breaking): `allowSubmitWithoutChanges` of `BeyPageFormConfig` is `canSubmitWithoutChanges`, and
+    `allowSelection` and `showPagination` of `BeyPageTableConfig` are `canSelect` and `isPaginationShown`.
+-   Page module (breaking): `tableConfig.height` is optional with no default, `60vh` before: without it the page fills
+    its container and the table takes the height left by the header, the toolbar and the pagination, scrolling inside.
+-   Page module: the share form shows two lists, "Can view" and "Can edit", each with a search of users and groups
+    above its removable rows, in place of a select per grantee; the inherited access comes under them.
+-   Page module: the share search asks `share-targets?search=&limit=` as the user types, a group named with its
+    `memberCount`, now on `BeyPageShareTarget`, and a user with their email; nobody is offered in both lists.
+-   Page module: the count of the breadcrumb tells folders from items, "(2 folders · 4 items)", by the new
+    `search.categoryTotal` of the answer, or "(4 items)" without folders; `count.one` and `.many` are gone.
+-   Page module: a sort on a column the list no longer shows, left out by `isColumnShown` or hidden by the user, also
+    one kept from an earlier visit, goes back to `order` once the list answers.
+-   PDF viewer module (breaking): the thirteen flags of `BeyPdfViewerToolbarButtons` take `has`: `downloadButton` is
+    `hasDownloadButton`, `zoomDropdown` is `hasZoomDropdown`, and so on.
+-   Properties menu module (breaking): `disabled`, `expanded`, `hidden`, `removable` and `active` of the tabs, groups,
+    list items, tree nodes, options and fields, and `expanded` of their toggle events, are `isDisabled` and so on.
+-   Properties menu module (breaking): `required` and `acceptsVariable` of `BeyPropertyField` are `isRequired` and
+    `canAcceptVariable`, and `readonly` of the color, number, spacing and text fields is `isReadonly`.
+-   Properties menu module (breaking): `BeyPropertyTextField.multiline` is `isMultiline`,
+    `BeyPropertySelectField.searchable` is `isSearchable` and `BeyPropertyGroup.showHeader` is `isHeaderShown`.
+-   Properties menu module (breaking): `acceptsRootDrop` and `showEmptyStateAddBlock` of `BeyPropertyTreeConfig` are
+    `canAcceptRootDrop` and `isEmptyStateAddBlockShown`, and `BeyPropertiesMenuConfig.embedded` is `isEmbedded`.
+-   Properties menu module (breaking): `acceptsDrop`, `draggable` and `dropDisabled` of `BeyPropertyTreeNode` are
+    `canAcceptDrop`, `isDraggable` and `isDropDisabled`.
+-   Properties menu module (breaking): `withValue` and `withDisabled` of `BeyPropertyField` are the functions
+    `beyPropertyFieldWithValue(field, value)` and `beyPropertyFieldWithDisabled(field, isDisabled?)`.
+-   Properties menu module (breaking): `holdsVariable` and `selectedOption` of `BeyPropertyAttachmentField` and
+    `holdsVariable` of `BeyPropertySelectField` are gone; they were the field's own logic.
+-   Styles: an invalid `.form-control` or `.form-select` shows no Bootstrap validation icon and keeps its padding; the
+    red border and the error message stay, and the autocomplete, chips and file fields lose their icon.
+-   Table module (breaking): `selectable` and `selectedItemsChange` of `BeyTableConfig` are `isSelectable` and
+    `onSelectionChange`, and `translate` of `BeyTableCell` and of every cell and its parameters is `isTranslationKey`.
+-   Table module (breaking): `height` of `BeyTableConfig` has no default, `60vh` before: without it the table takes the
+    height its flex container gives it, or grows with its rows.
+-   Table module: hiding the column the table sorts by, from the columns menu or its reset, clears the sort and calls
+    `onSortChange` with `null`.
+-   Tree module (breaking): `--bey-close-hover-bg` of the tree dialog is `--bey-modal-tree-close-hover-bg`.
+-   Users, groups, roles, organizations and audit pages (breaking): `height` and `foldersHeight` have no default, so
+    the page fills; `foldersHeight` falls back to `height`.
+
+### Fixed
+
+-   Breadcrumb module: `itemMaxWidth` limits the label alone, so a detail such as the page counts no longer truncates
+    it.
+-   Form module: a radio option with `isDisabled` is disabled, through the form API as the other fields do.
+-   Page module: at the root of "Shared with me", a shared folder offers neither `move` nor drag, so moving never opens
+    the whole tree of its owner.
+-   Session service (breaking for a nested guarded route): `beyAuthGuard` checks the whole matched path,
+    `/parent/child`, not only the last segment.
+
+### Removed
+
+-   HTTP service: the texts of `attachments.unsupported-type`, which express-components answers as
+    `attachments.invalid-type` now.
+
 ## [1.5.0] - 2026-10-13
 
 ### Added

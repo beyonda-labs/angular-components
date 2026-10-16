@@ -14,14 +14,26 @@
         },
         "page": {
             "actions": {
+                "transfer": {
+                    "label": "Cambiar propietario",
+                    "tooltip": "Entrega los elementos seleccionados a otro usuario de la organización"
+                },
                 "view": {
                     "label": "Ver",
                     "tooltip": "Muestra el elemento seleccionado sin cambiarlo"
                 }
             },
             "count": {
-                "many": "({{count}} elementos)",
-                "one": "({{count}} elemento)"
+                "categories": {
+                    "one": "{{count}} carpeta",
+                    "other": "{{count}} carpetas"
+                },
+                "items": {
+                    "one": "{{count}} elemento",
+                    "other": "{{count}} elementos"
+                },
+                "items-only": "({{items}})",
+                "mixed": "({{categories}} · {{items}})"
             },
             "form": {
                 "cancel": "Cancelar",
@@ -29,20 +41,36 @@
             },
             "search": {
                 "fields": {
+                    "from": "Desde",
                     "organization-id": "Organización",
-                    "owner-id": "Propietario"
+                    "owner-id": "Propietario",
+                    "to": "Hasta"
                 }
             },
             "share": {
                 "access": {
-                    "inherited": "{{access}} (heredado de {{folder}})",
-                    "none": "Sin acceso",
                     "read": "Ver",
                     "write": "Editar"
                 },
-                "empty": "No hay nadie más en la organización con quien compartirla.",
-                "groups": {
-                    "label": "Grupos"
+                "grantee": {
+                    "group": "{{name}} (grupo)",
+                    "members": {
+                        "one": "{{name}} ({{count}} miembro)",
+                        "other": "{{name}} ({{count}} miembros)"
+                    }
+                },
+                "grantees": {
+                    "no-match": "Ningún usuario ni grupo coincide.",
+                    "read": {
+                        "empty": "Nadie añadido todavía.",
+                        "label": "Pueden ver",
+                        "placeholder": "Añade un usuario o un grupo"
+                    },
+                    "write": {
+                        "empty": "Nadie añadido todavía.",
+                        "label": "Pueden editar",
+                        "placeholder": "Añade un usuario o un grupo"
+                    }
                 },
                 "inherited": {
                     "group": "{{name}} (grupo): {{access}}, desde {{folder}}",
@@ -50,15 +78,10 @@
                     "user": "{{name}}: {{access}}, desde {{folder}}"
                 },
                 "intro": "Compartir decide dónde puede trabajar cada persona; lo que puede hacer ahí sigue dependiendo de sus permisos.",
-                "targets": {
-                    "label": "Compartir con"
-                },
-                "title": "Compartir \"{{name}}\"",
-                "users": {
-                    "label": "Usuarios"
-                }
+                "title": "Compartir \"{{name}}\""
             },
             "shared": {
+                "folder": "Carpeta compartida",
                 "label": "Compartido conmigo"
             },
             "table": {
@@ -72,7 +95,30 @@
                 }
             },
             "toast": {
-                "restored-renamed": "Restaurado con otro nombre, porque otro elemento ya tiene el anterior: {{names}}"
+                "restored-renamed": "Restaurado con otro nombre, porque otro elemento ya tiene el anterior: {{names}}",
+                "transferred": {
+                    "one": "{{count}} elemento ha cambiado de propietario",
+                    "other": "{{count}} elementos han cambiado de propietario"
+                }
+            },
+            "transfer": {
+                "main": {
+                    "owner": {
+                        "label": "Propietario actual"
+                    },
+                    "target-user-id": {
+                        "label": "Nuevo propietario",
+                        "placeholder": "Busca a una persona por nombre o correo"
+                    }
+                },
+                "no-targets": "Ningún usuario activo coincide",
+                "notice": "La persona indicada pasa a ser la propietaria de los elementos seleccionados.",
+                "several-owners": "Varios propietarios",
+                "submit": "Cambiar propietario",
+                "title": {
+                    "one": "Cambiar el propietario del elemento seleccionado",
+                    "other": "Cambiar el propietario de {{count}} elementos seleccionados"
+                }
             }
         }
     }

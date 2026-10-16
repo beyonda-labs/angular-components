@@ -1,11 +1,14 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { buttonByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryAll, queryButton, renderComponent, rowWith, settle, textsOf } from '@testing/dom';
+import { fieldsOf } from '@testing/form-fields';
+import { FakeFormHandle } from '@testing/handles/fake-form-handle';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 import { FakeToastService } from '@testing/services/fake-toast.service';
+import { pickInTreeDialog, treeDialogItems } from '@testing/tree-dialog';
 
-import { FormHandle } from '../form/models/form.model';
+import { FormListField } from '../form/models/fields/form-list-field.model';
 import { TableColumn } from '../table/models/table.model';
 import { LinkTableCell, TextTableCell } from '../table/models/table-cell.model';
 import { pageOwnerCell, pageOwnerColumn } from './functions/page-owner-column';
@@ -51,7 +54,9 @@ describe('PageComponent — sharing', () => {
     function buildConfig(): PageConfig<unknown, Contract> {
         return new PageConfig<unknown, Contract>({
             baseUrl: '/contracts',
-            headerConfig: new PageHeaderConfig({ actions: [pageStandardAction(PageStandardAction.Share)] }),
+            headerConfig: new PageHeaderConfig({
+                actions: [pageStandardAction(PageStandardAction.Share), pageStandardAction(PageStandardAction.Move)]
+            }),
             onReady: handle => (page = handle),
             prefix: 'demo',
             tableConfig: new PageTableConfig<Contract>({
@@ -106,9 +111,12 @@ describe('PageComponent — sharing', () => {
     }
 
     async function select(name: string): Promise<void> {
-        const row = queryAll(fixture, '[role="row"]').find(current => current.textContent?.includes(name));
+        await click(queryAll(rowWith(fixture, name), '[aria-label="angular-components.table.select-row"]')[0]);
+    }
 
-        await click(queryAll(row as HTMLElement, '[aria-label="angular-components.table.select-row"]')[0]);
+    async function pickFolder(name: string): Promise<void> {
+        pickInTreeDialog(name);
+        await settle(fixture);
     }
 
     beforeEach(async () => {
@@ -163,20 +171,25 @@ describe('PageComponent — sharing', () => {
         expect(breadcrumb()).not.toContain('Clients');
     });
 
-    it('shares a folder that offers it with the choice of the form, and confirms it', async () => {
+    it('shares a folder that offers it with the grantees its lists hold, found by a search, and confirms it', async () => {
         await select('Drafts');
         await click(buttonByName(fixture, 'angular-components.header.menu'));
         await click(buttonByName(fixture, 'demo.actions.share.label'));
         httpTesting.expectOne(SHARES_URL).flush({ inherited: [], shares: [] });
-        httpTesting
-            .expectOne(`${LIST_URL}/categories/drafts/share-targets`)
-            .flush({ groups: [], users: [{ id: 'u2', name: 'Grace Hopper' }] });
 
         const [form] = TestBed.inject(FakeModalFormService).forms();
-        form.onSubmit?.(
-            { users: { 'user-0': 'write' } } as PageShareFormValue,
-            { close: jest.fn() } as never as FormHandle
-        );
+        const editList = fieldsOf(form).find(field => field.key === 'write') as FormListField;
+        let suggestions: string[] = [];
+        editList.picker?.search?.('gra', []).subscribe(result => {
+            suggestions = (Array.isArray(result) ? result : result.options).map(({ value }) => value);
+        });
+        const search = httpTesting.expectOne(current => current.url === `${LIST_URL}/categories/drafts/share-targets`);
+        search.flush({ groups: [], hasMore: false, users: [{ id: 'u2', name: 'Grace Hopper' }] });
+
+        expect(search.request.params.toString()).toBe('search=gra&limit=20');
+        expect(suggestions).toEqual(['user:u2']);
+
+        form.onSubmit?.({ grantees: { read: [], write: ['user:u2'] } } as PageShareFormValue, new FakeFormHandle());
         const save = httpTesting.expectOne(SHARES_URL);
         save.flush({ inherited: [], shares: [] });
         await answer(LIST_URL, [DRAFTS]);
@@ -192,5 +205,37 @@ describe('PageComponent — sharing', () => {
         await select('Clients');
 
         expect(queryButton(fixture, 'angular-components.header.menu')).toBeNull();
+    });
+
+    it('offers no move for a folder at the root of the shared tab, and moves inside it only among its folders', async () => {
+        const movable = { actions: [PageStandardAction.Move] };
+        await click(buttonByName(fixture, SHARED_LABEL));
+        await answer(`${LIST_URL}/shared`, [{ ...CLIENTS, ...movable }]);
+        await select('Clients');
+        const menuAtRoot = queryButton(fixture, 'angular-components.header.menu');
+
+        await openFolder(
+            'Clients',
+            [HOME, CLIENTS],
+            [
+                { ...ACME, ...movable },
+                { ...OFFER, ...movable }
+            ]
+        );
+        await select('Offer');
+        await click(buttonByName(fixture, 'angular-components.header.menu'));
+        await click(buttonByName(fixture, 'demo.actions.move.label'));
+        const tree = httpTesting.expectOne(current => current.url === `${LIST_URL}/categories/tree`);
+        tree.flush([HOME, CLIENTS, ACME]);
+        const offered = textsOf(treeDialogItems());
+        await pickFolder('Acme');
+        const move = httpTesting.expectOne(`${LIST_URL}/move`);
+        move.flush(null);
+        await answer(LIST_URL, [ACME, OFFER]);
+
+        expect(menuAtRoot).toBeNull();
+        expect(tree.request.params.get('ownerId')).toBe('u2');
+        expect(offered).toEqual(['Clients', 'Acme']);
+        expect(move.request.body).toEqual({ items: [{ id: 'offer', type: PageItemType.Item }], targetId: 'acme' });
     });
 });

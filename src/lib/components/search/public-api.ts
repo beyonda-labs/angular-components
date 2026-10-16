@@ -7,6 +7,7 @@ export {
 export type {
     SearchConfigParameters as BeySearchConfigParameters,
     SearchFieldOption as BeySearchFieldOption,
+    SearchFieldOptionsResult as BeySearchFieldOptionsResult,
     SearchFieldParameters as BeySearchFieldParameters
 } from './models/search.model';
 export { searchFieldOperators as beySearchFieldOperators } from './functions/search-field-operators';

@@ -182,17 +182,18 @@ export interface UserTransferTargetsResponse {
 export class UsersConfig {
     baseUrl: string;
     contentLabels: Readonly<Record<string, string>>;
-    foldersHeight: string;
-    height: string;
     prefix: string;
     rolePrefix: string;
     storageKey: string;
 
+    foldersHeight?: string;
+    height?: string;
+
     constructor({
         baseUrl = '/users',
         contentLabels = {},
-        foldersHeight = 'calc(100vh - 255px)',
-        height = 'calc(100vh - 220px)',
+        foldersHeight,
+        height,
         prefix = 'angular-components.users',
         rolePrefix = `${prefix}.roles`,
         storageKey = 'users'

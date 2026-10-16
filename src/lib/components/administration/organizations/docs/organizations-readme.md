@@ -40,7 +40,7 @@ anyone else gets `404` from `/organizations`.
 | `prefix`        | `'angular-components.organizations'` | i18n prefix of the page, as `bey-page` reads it                                                                                                      |
 | `contentLabels` | `{}`                                 | The translation key that labels each kind of content the counts of a deletion name, by the key the server counts it under, see [Deletion](#deletion) |
 | `storageKey`    | `'organizations'`                    | Key under which the table remembers the columns the user hid                                                                                         |
-| `height`        | `'calc(100vh - 220px)'`              | Height of the table                                                                                                                                  |
+| `height`        | none                                 | Height of the table, any CSS length; without it the page fills the content area of the app layout and the table scrolls inside                       |
 
 `baseUrl` follows the path of the organizations module of express-components.
 

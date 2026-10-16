@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { FakeFormHandle } from '@testing/handles/fake-form-handle';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { config as rxjsConfig, of, Subject, throwError } from 'rxjs';
 
@@ -19,11 +20,11 @@ const VALUE = { name: 'Logo' };
 
 describe('PageActionsService — saving a row', () => {
     const afterCreate = jest.fn();
-    const close = jest.fn();
     const create = jest.fn();
     const edit = jest.fn();
     const openPageForm = jest.fn();
     const unhandled = jest.fn();
+    let handle: FakeFormHandle;
     let previousHandler: typeof rxjsConfig.onUnhandledError;
     let service: PageActionsService;
 
@@ -55,7 +56,7 @@ describe('PageActionsService — saving a row', () => {
         service.executeAction(pageStandardAction(key), context);
         const onSave = openPageForm.mock.calls[0][3] as (value: unknown, handle: FormHandle) => void;
 
-        return value => onSave(value, { close } as unknown as FormHandle);
+        return value => onSave(value, handle);
     }
 
     async function unhandledErrors(): Promise<unknown[]> {
@@ -68,6 +69,7 @@ describe('PageActionsService — saving a row', () => {
 
     beforeEach(() => {
         jest.resetAllMocks();
+        handle = new FakeFormHandle();
         openPageForm.mockReturnValue({});
         TestBed.configureTestingModule({
             providers: [
@@ -93,7 +95,7 @@ describe('PageActionsService — saving a row', () => {
 
         expect(await unhandledErrors()).toEqual([]);
         expect(afterCreate).not.toHaveBeenCalled();
-        expect(close).not.toHaveBeenCalled();
+        expect(handle.closes()).toBe(0);
         expect(context.onSaved).not.toHaveBeenCalled();
     });
 
@@ -105,7 +107,7 @@ describe('PageActionsService — saving a row', () => {
 
         expect(await unhandledErrors()).toEqual([]);
         expect(edit).toHaveBeenCalledWith('/attachments', 7, VALUE, 'testPage.toast.edit-success');
-        expect(close).not.toHaveBeenCalled();
+        expect(handle.closes()).toBe(0);
         expect(context.onSaved).not.toHaveBeenCalled();
     });
 
@@ -118,11 +120,11 @@ describe('PageActionsService — saving a row', () => {
         openForm(PageStandardAction.Create, context)(VALUE);
 
         expect(afterCreate).toHaveBeenCalledWith(CREATED);
-        expect(close).not.toHaveBeenCalled();
+        expect(handle.closes()).toBe(0);
 
         uploaded.next();
 
-        expect(close).toHaveBeenCalledTimes(1);
+        expect(handle.closes()).toBe(1);
         expect(context.onSaved).toHaveBeenCalledTimes(1);
     });
 
@@ -134,7 +136,7 @@ describe('PageActionsService — saving a row', () => {
         openForm(PageStandardAction.Create, context)(VALUE);
 
         expect(await unhandledErrors()).toEqual([]);
-        expect(close).not.toHaveBeenCalled();
+        expect(handle.closes()).toBe(0);
         expect(context.onSaved).toHaveBeenCalledTimes(1);
     });
 
@@ -153,7 +155,7 @@ describe('PageActionsService — saving a row', () => {
             ['/attachments', VALUE, 'testPage.toast.create-success']
         ]);
         expect(afterCreate.mock.calls).toEqual([[CREATED], [RECREATED]]);
-        expect(close).toHaveBeenCalledTimes(1);
+        expect(handle.closes()).toBe(1);
     });
 
     it('opens the create form for the category open in the page, and for none at the root', () => {

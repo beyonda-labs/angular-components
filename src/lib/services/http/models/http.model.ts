@@ -17,11 +17,11 @@ export interface HttpClientOptions {
 
 export interface HttpRequestOptions {
     handleError?: (error: HttpErrorResponse) => void;
+    hasCredentials?: boolean;
     headers?: Record<string, string>;
-    loading?: boolean;
+    isLoading?: boolean;
     queryParams?: Record<string, string | number | boolean | string[]>;
     successToast?: string;
-    withCredentials?: boolean;
 }
 
 export interface UploadRequestOptions extends HttpRequestOptions {

@@ -1,0 +1,14 @@
+{
+    "angular-components-style-guide": {
+        "audit": {
+            "entities": {
+                "documents": "Documents",
+                "templates": "Templates"
+            },
+            "example": "The audit page on the demo backend: the read-only list of who did what, when and from where, newest first. Search by user, row name or IP, filter by a date range from one day to another, by user, typed with suggestions from the backend, by entity and by action and, signed in as a superadmin, by organization. Export downloads as a CSV file the events the current search and filters select, and the row name or the View action opens a read-only view of every field of the event with its details. The entities and the extra verbs of the app read its labels, here documents, templates and publish, and the organization column shows only to a superadmin while the list spans several organizations.",
+            "verbs": {
+                "publish": "Publish"
+            }
+        }
+    }
+}

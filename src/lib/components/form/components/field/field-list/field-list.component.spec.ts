@@ -67,11 +67,13 @@ describe('FormListFieldComponent', () => {
         async function renderValue(
             overrides: Partial<FormListFieldParameters> = {},
             value = ['u1'],
-            options = [ADA]
+            options = [ADA],
+            excludedValues: string[] = []
         ): Promise<void> {
             control = new FormControl<string[] | null>(value);
             fixture = await renderComponent(FormListFieldComponent, {
                 control,
+                excludedValues,
                 field: new FormListField({
                     emptyKey: 'demo.group.members.empty',
                     isRemovable: true,
@@ -170,6 +172,16 @@ describe('FormListFieldComponent', () => {
 
             expect(searchPeople).toHaveBeenLastCalledWith('nora', ['u1']);
             expect(rows()).toEqual(['Ada Lovelace (ada@empresa.com)', 'Nora Lectora (nora@empresa.com)']);
+        });
+
+        it('never suggests the ids it is told to exclude, and hands them to its search with its own', async () => {
+            const searchPeople = jest.fn(() => of(PEOPLE));
+            await renderValue({ picker: { search: searchPeople } }, [], [], ['u2']);
+
+            await type('empresa');
+
+            expect(searchPeople).toHaveBeenLastCalledWith('empresa', ['u2']);
+            expect(textsOf(suggestions())).toEqual(['Ada Lovelace (ada@empresa.com)']);
         });
 
         it('shows its rows without remove buttons and without the search while disabled', async () => {

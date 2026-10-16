@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
+import { decodePageSearch } from '@testing/page-search';
 import { mock, MockProxy } from 'jest-mock-extended';
 import { of, Subject, throwError } from 'rxjs';
 
@@ -7,7 +8,6 @@ import { ModalFormConfig } from '../../form/components/modal/models/modal-form.m
 import { StringFilter } from '../../search/models/search-filter.model';
 import { TableColumn, TableSortDirection } from '../../table/models/table.model';
 import { TextTableCell } from '../../table/models/table-cell.model';
-import { pageStandardAction } from '../functions/page-standard-actions';
 import {
     PageActionsContext,
     PageBackendResponse,
@@ -16,7 +16,7 @@ import {
     PageHandle
 } from '../models/page.model';
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
-import { PageCategoriesConfig, PageItemType, PageViewMode } from '../models/page-categories.model';
+import { PageCategoriesConfig, PageViewMode } from '../models/page-categories.model';
 import { PageFormConfig } from '../models/page-form.model';
 import { PageHeaderConfig } from '../models/page-header.model';
 import { PageItem } from '../models/page-item.model';
@@ -25,8 +25,12 @@ import { PageColumnContext, PageTableConfig, PageTableSearchConfig } from '../mo
 import { PageService } from './page.service';
 import { PageActionsService } from './page-actions.service';
 import { PageHttpService } from './page-http.service';
+import { PageLinkService } from './page-link.service';
+import { PageListService } from './page-list.service';
 import { PageOrganizationsService } from './page-organizations.service';
 import { PageOwnersService } from './page-owners.service';
+import { PageSelectionService } from './page-selection.service';
+import { PageViewService } from './page-view.service';
 
 interface Team extends PageItem {
     title: string;
@@ -74,6 +78,10 @@ describe('PageService', () => {
         return pageHttpService.load.mock.calls[pageHttpService.load.mock.calls.length - 1][1];
     }
 
+    function lastSearch(): PageSearch {
+        return decodePageSearch(String(lastQuery()['search']));
+    }
+
     function breadcrumbLabels(): string[] {
         return service.categoryBreadcrumbConfig()?.items.map(item => item.label) ?? [];
     }
@@ -92,9 +100,13 @@ describe('PageService', () => {
 
         TestBed.configureTestingModule({
             providers: [
+                PageLinkService,
+                PageListService,
                 PageOrganizationsService,
                 PageOwnersService,
+                PageSelectionService,
                 PageService,
+                PageViewService,
                 provideTranslateService(),
                 { provide: PageActionsService, useValue: pageActionsService },
                 { provide: PageHttpService, useValue: pageHttpService }
@@ -213,7 +225,7 @@ describe('PageService', () => {
         );
         flush();
 
-        service.tableConfig()?.selectedItemsChange?.([ITEMS[1]], [1]);
+        service.tableConfig()?.onSelectionChange?.([ITEMS[1]], [1]);
         expect(onSelectionChange).toHaveBeenCalledWith([ITEMS[1]]);
 
         pageHttpService.load.mockReturnValue(of(buildResponse([ITEMS[1]])));
@@ -282,9 +294,7 @@ describe('PageService', () => {
         service.searchConfig()?.onFiltersChange?.([text]);
         flush();
 
-        expect(JSON.parse(atob(String(lastQuery()['search'])))).toEqual(
-            expect.objectContaining({ filters: [], text: 'ada' })
-        );
+        expect(lastSearch()).toEqual(expect.objectContaining({ filters: [], text: 'ada' }));
         expect(service.pageSearch().filters).toEqual([text]);
     });
 
@@ -546,10 +556,6 @@ describe('PageService', () => {
     describe('sort', () => {
         const ORDER = { direction: SearchSortDirection.Asc, field: 'name' };
 
-        function decodedSearch(): PageSearch {
-            return JSON.parse(atob(String(lastQuery()['search']))) as PageSearch;
-        }
-
         beforeEach(() => {
             service.setConfig(
                 buildConfig({
@@ -571,7 +577,7 @@ describe('PageService', () => {
             service.tableConfig()?.onSortChange?.({ direction: TableSortDirection.Desc, field: 'updatedAt' });
             flush();
 
-            expect(decodedSearch()).toMatchObject({
+            expect(lastSearch()).toMatchObject({
                 page: 1,
                 sort: { direction: SearchSortDirection.Desc, field: 'updatedAt' }
             });
@@ -585,7 +591,7 @@ describe('PageService', () => {
             service.tableConfig()?.onSortChange?.(null);
             flush();
 
-            expect(decodedSearch().sort).toEqual(ORDER);
+            expect(lastSearch().sort).toEqual(ORDER);
             expect(service.tableConfig()?.sort).toBeUndefined();
         });
     });
@@ -610,90 +616,6 @@ describe('PageService', () => {
             sortField: 'name',
             tooltip: 'demo.table.tooltips.name',
             width: '12rem'
-        });
-    });
-
-    describe('drag to move', () => {
-        const FOLDER = { actions: ['move'], id: 'folder', parentId: null, type: PageItemType.Category };
-        const FILE = { actions: ['move'], id: 'file', parentId: null, type: PageItemType.Item };
-
-        function buildMoveConfig(actions: PageAction[], isTrashEnabled = false): PageConfig {
-            return buildConfig({
-                headerConfig: new PageHeaderConfig({ actions }),
-                tableConfig: new PageTableConfig({
-                    categoriesConfig: new PageCategoriesConfig({}),
-                    columns: [],
-                    isTrashEnabled,
-                    loadRow: () => []
-                })
-            });
-        }
-
-        it('lets the rows that may move be dropped onto a folder, through the move of the actions', () => {
-            pageHttpService.load.mockReturnValue(of(buildResponse([FOLDER, FILE])));
-            service.setConfig(buildMoveConfig([pageStandardAction(PageStandardAction.Move)]));
-            flush();
-            service.setSelected([FILE]);
-            const table = service.tableConfig();
-
-            expect(table?.isRowDraggable?.(FILE)).toBe(true);
-            expect(table?.isDropAllowed?.(FOLDER, [FILE])).toBe(true);
-            expect(table?.isDropAllowed?.(FILE, [FOLDER])).toBe(false);
-
-            table?.onRowDrop?.(FOLDER, [FILE]);
-            const [context, items, targetId] = pageActionsService.moveItems.mock.calls[0];
-
-            expect(items).toEqual([FILE]);
-            expect(targetId).toBe('folder');
-
-            context.onMoved();
-            flush();
-            expect(service.selected()).toEqual([]);
-            expect(pageHttpService.load).toHaveBeenCalledTimes(2);
-        });
-
-        it('takes a drop only on a folder of the owner of every dragged row', () => {
-            const adaFolder = { ...FOLDER, id: 'ada-folder', ownerId: 'ada', ownerName: 'Ada' };
-            const graceFolder = { ...FOLDER, id: 'grace-folder', ownerId: 'grace', ownerName: 'Grace' };
-            const adaFile = { ...FILE, id: 'ada-file', ownerId: 'ada', ownerName: 'Ada' };
-            const graceFile = { ...FILE, id: 'grace-file', ownerId: 'grace', ownerName: 'Grace' };
-            pageHttpService.load.mockReturnValue(of(buildResponse([adaFolder, graceFolder, adaFile, graceFile])));
-            service.setConfig(buildMoveConfig([pageStandardAction(PageStandardAction.Move)]));
-            flush();
-            const table = service.tableConfig();
-
-            expect(table?.isDropAllowed?.(adaFolder, [adaFile])).toBe(true);
-            expect(table?.isDropAllowed?.(graceFolder, [adaFile])).toBe(false);
-            expect(table?.isDropAllowed?.(graceFolder, [adaFile, graceFile])).toBe(false);
-        });
-
-        it('offers no drag without the standard move action, nor in the trash', () => {
-            service.setConfig(buildMoveConfig([pageStandardAction(PageStandardAction.Delete)]));
-            flush();
-            expect(service.tableConfig()?.onRowDrop).toBeUndefined();
-
-            service.setConfig(buildMoveConfig([pageStandardAction(PageStandardAction.Move)], true));
-            service.setViewMode(PageViewMode.Trash);
-            flush();
-            expect(service.tableConfig()?.isRowDraggable).toBeUndefined();
-        });
-
-        it('lets the rows of a shared folder be dragged onto its folders, and hands the move the shared folder', () => {
-            pageHttpService.loadShared.mockReturnValue(of(buildResponse([FOLDER])));
-            pageHttpService.load.mockReturnValue(of(buildResponse([FOLDER, FILE])));
-            pageHttpService.loadCategoryPath.mockReturnValue(
-                of([{ id: 'home', name: 'Home' } as PageItem, { id: 'folder', name: 'Clients' } as PageItem])
-            );
-            service.setConfig(buildMoveConfig([pageStandardAction(PageStandardAction.Move)]));
-            service.setViewMode(PageViewMode.Shared);
-            flush();
-            service.openCategory(FOLDER);
-            flush();
-            service.tableConfig()?.onRowDrop?.(FOLDER, [FILE]);
-            const [context] = pageActionsService.moveItems.mock.calls[0];
-
-            expect(service.tableConfig()?.isRowDraggable?.(FILE)).toBe(true);
-            expect(context.getSharedRoot?.()).toEqual({ id: 'folder', label: 'Clients' });
         });
     });
 });

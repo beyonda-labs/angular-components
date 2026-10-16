@@ -26,8 +26,14 @@ function redirection(result: GuardResult): string {
     return TestBed.inject(Router).serializeUrl(result as UrlTree);
 }
 
-function runGuard(path: string): Promise<GuardResult> {
-    const route = { routeConfig: { path } } as unknown as ActivatedRouteSnapshot;
+function buildRoute(paths: string[]): ActivatedRouteSnapshot {
+    const pathFromRoot = [{ routeConfig: null }, ...paths.map(path => ({ routeConfig: { path } }))];
+
+    return { ...pathFromRoot.at(-1), pathFromRoot } as unknown as ActivatedRouteSnapshot;
+}
+
+function runGuard(...paths: string[]): Promise<GuardResult> {
+    const route = buildRoute(paths);
     const state = {} as RouterStateSnapshot;
     const result = TestBed.runInInjectionContext(() => authGuard(route, state));
 
@@ -76,6 +82,11 @@ describe('authGuard', () => {
 
         it('redirects to redirectPath when the route is not in allowedPaths', async () => {
             expect(redirection(await runGuard('admin/users'))).toBe('/dashboard');
+        });
+
+        it('checks a nested route by the whole path it matched', async () => {
+            await expect(runGuard('settings', '', 'profile')).resolves.toBe(true);
+            expect(redirection(await runGuard('admin', 'settings'))).toBe('/dashboard');
         });
     });
 

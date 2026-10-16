@@ -116,6 +116,8 @@ it shows, which that title names.
 | `initials` | no       | from the name and surname | The text of the avatar instead                             |
 | `variant`  | no       | `BeyAvatarVariant.Solid`  | `Solid`: the primary colour; `Soft`: the active background |
 
+The initials drop their accents, so "Ana Álvarez" reads "AA"; `initials` is shown as it is given.
+
 The avatar is hidden from assistive technology: the name always goes next to it, or names the element around it.
 
 ## Texts

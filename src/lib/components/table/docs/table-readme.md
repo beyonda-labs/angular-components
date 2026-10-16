@@ -22,13 +22,13 @@ readonly table = new BeyTableConfig<Person>({
         new BeyTextTableCell({ content: item.name, icon: faUser }),
         new BeyBadgeTableCell({
             badges: [new BeyBadgeConfig({ label: `myApp.team.status.${item.status}`, variant: BeyBadgeVariant.Success })],
-            translate: true
+            isTranslationKey: true
         }),
         new BeyDateTableCell({ value: item.joinedAt }),
         new BeyTagsTableCell({ tags: item.skills }),
-        new BeyLinkTableCell({ action: () => this.open(item), content: 'myApp.team.open', translate: true })
+        new BeyLinkTableCell({ action: () => this.open(item), content: 'myApp.team.open', isTranslationKey: true })
     ],
-    selectedItemsChange: (items, indexes) => this.selection.set(items),
+    onSelectionChange: (items, indexes) => this.selection.set(items),
     onSortChange: sort => this.load(sort)
 });
 ```
@@ -40,27 +40,27 @@ readonly table = new BeyTableConfig<Person>({
 The rows are drawn again whenever the language changes, keeping the selection, so a `loadRow` that translates its
 texts itself (`instant`, a label with parameters) follows the language.
 
-`BeyTableConfig<T>` is generic over the item: `loadRow`, `isRowSelected`, `selectedItemsChange` and the drag
+`BeyTableConfig<T>` is generic over the item: `loadRow`, `isRowSelected`, `onSelectionChange` and the drag
 callbacks see `T`, so a table is always built from a typed model, never from a loose record.
 
 ## BeyTableConfig
 
-| Field                 | Required | Default | Meaning                                                                               |
-| --------------------- | -------- | ------- | ------------------------------------------------------------------------------------- |
-| `prefix`              | yes      |         | i18n prefix: headers are `<prefix>.columns.<key>`, the empty message `<prefix>.empty` |
-| `columns`             | yes      |         | The columns, in order                                                                 |
-| `loadRow`             | yes      |         | Turns an item into one cell per column; the missing trailing cells are drawn empty    |
-| `items`               | no       | `[]`    | The rows                                                                              |
-| `height`              | no       | `60vh`  | Height of the scrolling area, any CSS length                                          |
-| `selectable`          | no       | `true`  | Shows the selection column                                                            |
-| `isRowSelected`       | no       |         | Marks the rows that start selected                                                    |
-| `selectedItemsChange` | no       |         | Run with the selected items and their indexes on every change                         |
-| `sort`                | no       |         | The `BeyTableSort` the headers show, `{ field, direction }`                           |
-| `onSortChange`        | no       |         | Run with the new `BeyTableSort`, or `null`, when a sortable header is clicked         |
-| `storageKey`          | no       |         | Offers the columns menu and keeps the choice of the user in `localStorage` under it   |
-| `isRowDraggable`      | no       |         | Marks the rows that can be dragged; without it none can                               |
-| `isDropAllowed`       | no       |         | Whether a row accepts the dragged rows, `(target, items)`                             |
-| `onRowDrop`           | no       |         | Run with the row dropped onto and the dragged rows, `(target, items)`                 |
+| Field               | Required | Default | Meaning                                                                               |
+| ------------------- | -------- | ------- | ------------------------------------------------------------------------------------- |
+| `prefix`            | yes      |         | i18n prefix: headers are `<prefix>.columns.<key>`, the empty message `<prefix>.empty` |
+| `columns`           | yes      |         | The columns, in order                                                                 |
+| `loadRow`           | yes      |         | Turns an item into one cell per column; the missing trailing cells are drawn empty    |
+| `items`             | no       | `[]`    | The rows                                                                              |
+| `height`            | no       | none    | Height of the scrolling area, any CSS length; see [Height](#height)                   |
+| `isSelectable`      | no       | `true`  | Shows the selection column                                                            |
+| `isRowSelected`     | no       |         | Marks the rows that start selected                                                    |
+| `onSelectionChange` | no       |         | Run with the selected items and their indexes on every change                         |
+| `sort`              | no       |         | The `BeyTableSort` the headers show, `{ field, direction }`                           |
+| `onSortChange`      | no       |         | Run with the new `BeyTableSort`, or `null`, when a sortable header is clicked         |
+| `storageKey`        | no       |         | Offers the columns menu and keeps the choice of the user in `localStorage` under it   |
+| `isRowDraggable`    | no       |         | Marks the rows that can be dragged; without it none can                               |
+| `isDropAllowed`     | no       |         | Whether a row accepts the dragged rows, `(target, items)`                             |
+| `onRowDrop`         | no       |         | Run with the row dropped onto and the dragged rows, `(target, items)`                 |
 
 ## BeyTableColumn
 
@@ -82,30 +82,37 @@ screen does not name itself, such as the owner column of `bey-page`.
 
 ## Cells
 
-| Cell                | Fields                      | Shows                                                        |
-| ------------------- | --------------------------- | ------------------------------------------------------------ |
-| `BeyTextTableCell`  | `content`, `icon`           | The text, one line, cut with an ellipsis                     |
-| `BeyLinkTableCell`  | `content`, `action`, `icon` | A link that runs `action` without selecting the row          |
-| `BeyBadgeTableCell` | `badges: BeyBadgeConfig[]`  | One `bey-badge` per entry                                    |
-| `BeyTagsTableCell`  | `tags: string[]`            | One outline `bey-badge` per tag, never translated            |
-| `BeyDateTableCell`  | `value`, `format`           | The date in the app locale, nothing when there is no `value` |
+| Cell                | Fields                                   | Shows                                                        |
+| ------------------- | ---------------------------------------- | ------------------------------------------------------------ |
+| `BeyTextTableCell`  | `content`, `icon`, `iconLabel`           | The text, one line, cut with an ellipsis                     |
+| `BeyLinkTableCell`  | `content`, `action`, `icon`, `iconLabel` | A link that runs `action` without selecting the row          |
+| `BeyBadgeTableCell` | `badges: BeyBadgeConfig[]`               | One `bey-badge` per entry                                    |
+| `BeyTagsTableCell`  | `tags: string[]`                         | One outline `bey-badge` per tag, never translated            |
+| `BeyDateTableCell`  | `value`, `format`                        | The date in the app locale, nothing when there is no `value` |
 
 Every cell takes an optional `tooltip`, which always goes through the translate pipe, and `tooltipItems`, which shows
 the tooltip as a list under the `tooltip` as its title (the templates that use a file). The text, link and badge
-cells also take `translate`, which runs the content and the badges through it too.
+cells also take `isTranslationKey`, which runs the content and the badges through it too.
 
 The text and link cells take an optional `icon`, a FontAwesome `IconDefinition` drawn before the content in the
 muted text colour and hidden from screen readers. On a link it is part of the link, so clicking it runs
-`action` too.
+`action` too. `iconLabel`, a translation key, names the icon for screen readers (`role="img"`) and as its native
+tooltip, for an icon that says something the text does not, such as `BEY_SHARED_FOLDER_ICON`.
 
 `BeyDateTableCell` takes a timestamp, an ISO string or a `Date`, and formats it with Angular's `formatDate` in
 the locale of `LOCALE_ID`. `format` is any `formatDate` format and defaults to `mediumDate` (`Sep 28, 2026`,
 `28 sept 2026`). A locale other than `en-US` needs its data registered by the app, as for the `date` pipe.
 
+## Height
+
+With `height`, the rows scroll inside an area of that height, under a header that stays in place. Without it the
+table takes the height its container gives it, as in `bey-page`, when that container is a flex column that sets the
+table's `flex` and `min-height: 0`; in any other container it grows with its rows.
+
 ## Selection
 
 Clicking a row toggles it; the header checkbox selects or clears every row and is indeterminate in between.
-The table owns that state from `isRowSelected` onwards and calls `selectedItemsChange` after each change. A
+The table owns that state from `isRowSelected` onwards and calls `onSelectionChange` after each change. A
 replaced config starts over: new rows, the selection `isRowSelected` says, and the scroll back at the top.
 
 ## Sort
@@ -115,7 +122,8 @@ state: both ways while it does not sort, up for ascending, down for descending. 
 ascending, descending and none again, and clicking another column starts it ascending; the header carries
 `aria-sort` (`none`, `ascending` or `descending`), so the state is announced too. The table calls `onSortChange`
 with `{ field, direction }`, `field` being the `sortField` of the column and `direction` a `BeyTableSortDirection`,
-or with `null` once the sort is cleared. The table does not reorder its items: the consumer answers with them in
+or with `null` once the sort is cleared. Hiding the column the table sorts by, from the columns menu or by restoring
+the defaults there, clears the sort too and calls `onSortChange` with `null`. The table does not reorder its items: the consumer answers with them in
 that order, as `bey-page` does by asking the backend. `sort` sets the state the headers start from, and a replaced
 config starts over from its own.
 

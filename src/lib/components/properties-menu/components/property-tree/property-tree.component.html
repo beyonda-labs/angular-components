@@ -4,13 +4,13 @@
             <div
                 class="bey-property-tree-row"
                 role="treeitem"
-                [attr.aria-disabled]="node.disabled || null"
-                [attr.aria-expanded]="hasVisibleChildren(node) ? node.expanded : null"
+                [attr.aria-disabled]="node.isDisabled || null"
+                [attr.aria-expanded]="hasVisibleChildren(node) ? node.isExpanded : null"
                 [attr.aria-selected]="isSelected(node)"
                 [attr.data-node-id]="node.id"
-                [attr.tabindex]="node.disabled ? -1 : 0"
-                [class.is-disabled]="node.disabled"
-                [class.is-draggable]="node.draggable"
+                [attr.tabindex]="node.isDisabled ? -1 : 0"
+                [class.is-disabled]="node.isDisabled"
+                [class.is-draggable]="node.isDraggable"
                 [class.is-dragged]="isDragged(node)"
                 [class.is-drop-after]="dropPositionFor(node) === 'after'"
                 [class.is-drop-before]="dropPositionFor(node) === 'before'"
@@ -28,12 +28,12 @@
                         tabindex="-1"
                         type="button"
                         [attr.aria-label]="toggleLabelKey(node) | translate"
-                        [disabled]="node.disabled"
+                        [disabled]="node.isDisabled"
                         (click)="onToggleClick($event, node)"
                     >
                         <fa-icon
                             class="bey-property-tree-chevron"
-                            [class.is-expanded]="node.expanded"
+                            [class.is-expanded]="node.isExpanded"
                             [icon]="chevronIcon"
                         ></fa-icon>
                     </button>
@@ -50,7 +50,7 @@
                 <span class="bey-property-tree-label">{{ labelKey(node) | translate: node.labelParameters }}</span>
             </div>
 
-            @if (node.expanded && hasVisibleChildren(node)) {
+            @if (node.isExpanded && hasVisibleChildren(node)) {
                 <ng-container
                     [ngTemplateOutlet]="renderNodes"
                     [ngTemplateOutletContext]="{ $implicit: visibleChildren(node), level: level + 1 }"

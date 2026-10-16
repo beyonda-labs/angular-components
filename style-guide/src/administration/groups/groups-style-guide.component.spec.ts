@@ -1,49 +1,46 @@
 import { HttpTestingController } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { hostOf, renderComponent, settle } from '@testing/dom';
+import { buttonByName, cellsOf, renderComponent, settle } from '@testing/dom';
+import { fieldsOf } from '@testing/form-fields';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
+import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 
+import { administrationStyleGuideInterceptor } from '../functions/administration-backend';
 import { GroupsStyleGuideComponent } from './groups-style-guide.component';
-
-const GROUPS_URL = 'https://api.test/api/style-guide/groups';
 
 describe('GroupsStyleGuideComponent', () => {
     let fixture: ComponentFixture<GroupsStyleGuideComponent>;
-    let httpTesting: HttpTestingController;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [GroupsStyleGuideComponent],
-            providers: [provideRouter([]), provideBeyTesting()]
+            providers: [provideRouter([]), provideBeyTesting({ interceptors: [administrationStyleGuideInterceptor] })]
         }).compileComponents();
 
-        httpTesting = TestBed.inject(HttpTestingController);
         fixture = await renderComponent(GroupsStyleGuideComponent);
+        await settle(fixture);
     });
 
     afterEach(() => {
-        httpTesting.verify();
+        TestBed.inject(HttpTestingController).verify();
     });
 
-    it('lists the groups of the demo backend', async () => {
-        httpTesting
-            .expectOne(request => request.url === GROUPS_URL)
-            .flush({
-                globalActions: ['create'],
-                results: [{ actions: ['edit'], createdAt: 0, id: 'g1', memberCount: 3, name: 'Sales' }]
-            });
-        await settle(fixture);
-
-        expect(hostOf(fixture).textContent).toContain('Sales');
+    it('lists the groups the demo fakes, with their members and additional roles counted', () => {
+        expect(cellsOf(fixture, 'Sales')).toEqual(expect.arrayContaining(['Sales', '2', '1']));
+        expect(cellsOf(fixture, 'Support')).toEqual(expect.arrayContaining(['Support', '1', '0']));
+        expect(cellsOf(fixture, 'Legal')).toEqual(expect.arrayContaining(['Legal', '0', '1']));
     });
 
-    it('shows an empty page when the demo backend serves no groups', async () => {
-        httpTesting
-            .expectOne(request => request.url === GROUPS_URL)
-            .flush(null, { status: 404, statusText: 'Not Found' });
+    it('opens a group from its name with the members and the additional roles the demo fakes', async () => {
+        buttonByName(fixture, 'Sales').click();
         await settle(fixture);
 
-        expect(hostOf(fixture).textContent).toContain('angular-components.groups.table.empty');
+        const fields = fieldsOf(TestBed.inject(FakeModalFormService).forms().at(-1));
+
+        expect(fields.map(({ key }) => key)).toEqual(['name', 'userIds', 'extraRoleIds']);
+        expect(TestBed.inject(FakeModalFormService).forms().at(-1)?.initialValue).toEqual({
+            main: { extraRoleIds: ['r1'], name: 'Sales', userIds: ['u1', 'u2'] }
+        });
     });
 });

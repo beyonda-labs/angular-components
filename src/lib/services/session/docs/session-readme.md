@@ -11,7 +11,8 @@ session at the next refresh of the token, within the lifetime of the access toke
 registration and OAuth, rotates on every refresh and clears on logout, so a reload opens the session again by
 asking the server for a new access token. `beyAuthGuard` lets a route through only to a signed-in user whose
 `allowedPaths` hold it or a page above it (`/templates` opens `/templates/definition/:id`, `/settings` never opens
-`/settingsarchive`), `beyLoginGuard` sends a signed-in user away from the login, and `beySessionInterceptor`
+`/settingsarchive`), and checks a nested route by the whole path it matched, the paths of its parents joined to its
+own, `beyLoginGuard` sends a signed-in user away from the login, and `beySessionInterceptor`
 adds the `Bearer` token to every request and, on a `401`, refreshes the token through the cookie while the other
 requests wait and sends the request again, or clears the session and goes to `loginRoute`. A `401` from
 `accessControlUrl/login`, `/register`, `/refresh` or `/logout` reaches the caller as it is. `provideBeyApp`

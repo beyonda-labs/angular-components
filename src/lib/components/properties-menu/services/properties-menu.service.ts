@@ -1,6 +1,7 @@
 import { Injectable, signal, untracked } from '@angular/core';
 
 import { keepPropertiesMenuState } from '../functions/properties-menu-state';
+import { propertyFieldWithValue } from '../functions/property-field-copies';
 import { toVariableExpression } from '../functions/property-variable-options';
 import { PropertiesMenuConfig } from '../models/properties-menu-config.model';
 import { PropertyField } from '../models/property-field.model';
@@ -83,7 +84,7 @@ export class PropertiesMenuService {
     removeListItem(tabId: string, groupId: string, itemId: string): void {
         const item = this.getListItem(tabId, groupId, itemId);
 
-        if (!item || item.disabled || !item.removable) {
+        if (!item || item.isDisabled || !item.isRemovable) {
             return;
         }
 
@@ -112,7 +113,7 @@ export class PropertiesMenuService {
     selectListItem(tabId: string, groupId: string, itemId: string): void {
         const item = this.getListItem(tabId, groupId, itemId);
 
-        if (!item || item.disabled) {
+        if (!item || item.isDisabled) {
             return;
         }
 
@@ -122,7 +123,7 @@ export class PropertiesMenuService {
     selectTreeNode(tabId: string, groupId: string, nodeId: string): void {
         const node = this.getTreeNode(tabId, groupId, nodeId);
 
-        if (!node || node.disabled) {
+        if (!node || node.isDisabled) {
             return;
         }
 
@@ -133,7 +134,7 @@ export class PropertiesMenuService {
     setActiveTab(tabId: string): void {
         const tab = this.config().tabs.find(current => current.id === tabId);
 
-        if (!tab || tab.disabled || this.activeTabId() === tabId) {
+        if (!tab || tab.isDisabled || this.activeTabId() === tabId) {
             return;
         }
 
@@ -167,51 +168,51 @@ export class PropertiesMenuService {
     toggleGroup(tabId: string, groupId: string): void {
         const group = this.getGroup(tabId, groupId);
 
-        if (!group || !group.showHeader) {
+        if (!group || !group.isHeaderShown) {
             return;
         }
 
-        let expanded = false;
+        let isExpanded = false;
 
         this._config.update(config =>
             this.updateGroup(config, tabId, groupId, current => {
-                expanded = !current.expanded;
+                isExpanded = !current.isExpanded;
 
-                return { ...current, expanded };
+                return { ...current, isExpanded };
             })
         );
 
-        this.config().onGroupToggle?.({ expanded, groupId, tabId });
+        this.config().onGroupToggle?.({ isExpanded, groupId, tabId });
     }
 
     toggleListItem(tabId: string, groupId: string, itemId: string): void {
         const item = this.getListItem(tabId, groupId, itemId);
 
-        if (!item || item.disabled || !item.isExpandable) {
+        if (!item || item.isDisabled || !item.isExpandable) {
             return;
         }
 
-        const expanded = !item.expanded;
+        const isExpanded = !item.isExpanded;
 
         this._config.update(config =>
-            this.updateListItem(config, tabId, groupId, itemId, current => ({ ...current, expanded }))
+            this.updateListItem(config, tabId, groupId, itemId, current => ({ ...current, isExpanded }))
         );
 
-        this.config().onListItemToggle?.({ expanded, groupId, itemId, tabId });
+        this.config().onListItemToggle?.({ isExpanded, groupId, itemId, tabId });
     }
 
     toggleTreeNode(tabId: string, groupId: string, nodeId: string): void {
-        let expanded = false;
+        let isExpanded = false;
 
         this._config.update(config =>
             this.updateTreeNode(config, tabId, groupId, nodeId, node => {
-                expanded = !node.expanded;
+                isExpanded = !node.isExpanded;
 
-                return { ...node, expanded };
+                return { ...node, isExpanded };
             })
         );
 
-        this.config().onTreeNodeToggle?.({ expanded, groupId, nodeId, tabId });
+        this.config().onTreeNodeToggle?.({ isExpanded, groupId, nodeId, tabId });
     }
 
     triggerFieldAction(fieldId: string, key: string, selectionStart: number, selectionEnd: number): void {
@@ -221,7 +222,7 @@ export class PropertiesMenuService {
     triggerListItemAction(tabId: string, groupId: string, itemId: string, key: string): void {
         const item = this.getListItem(tabId, groupId, itemId);
 
-        if (!item || item.disabled) {
+        if (!item || item.isDisabled) {
             return;
         }
 
@@ -306,7 +307,7 @@ export class PropertiesMenuService {
                             ...group,
                             content: new PropertyFieldsContent({
                                 fields: group.content.fields.map(field =>
-                                    field.id === fieldId ? field.withValue(value) : field
+                                    field.id === fieldId ? propertyFieldWithValue(field, value) : field
                                 )
                             })
                         });

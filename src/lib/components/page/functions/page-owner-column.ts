@@ -19,7 +19,7 @@ export function pageOwnerCell({
     }
 
     return ownerId
-        ? new TextTableCell({ content: UNKNOWN_USER_NAME_KEY, translate: true })
+        ? new TextTableCell({ content: UNKNOWN_USER_NAME_KEY, isTranslationKey: true })
         : new TextTableCell({ content: '' });
 }
 

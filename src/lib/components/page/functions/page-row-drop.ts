@@ -1,13 +1,35 @@
+import { TableConfigParameters } from '../../table/models/table.model';
+import { PageConfig } from '../models/page.model';
 import { PageAction, PageStandardAction } from '../models/page-action.model';
-import { PageCategoriesConfig } from '../models/page-categories.model';
+import { PageCategoriesConfig, PageViewMode } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
 import { isSameOwner } from './page-move-owner';
 import { isActionVisible, isCategoryRow, readRowField } from './page-row';
 
+export function buildRowDropOptions(
+    config: PageConfig,
+    actions: PageAction[],
+    viewMode: PageViewMode,
+    onRowDrop: (target: PageItem, items: PageItem[]) => void
+): Pick<TableConfigParameters<PageItem>, 'isDropAllowed' | 'isRowDraggable' | 'onRowDrop'> {
+    const categoriesConfig = config.tableConfig?.categoriesConfig;
+    const moveAction = findStandardMoveAction(actions);
+
+    if (!moveAction || !categoriesConfig || !config.baseUrl || viewMode === PageViewMode.Trash) {
+        return {};
+    }
+
+    return {
+        isDropAllowed: (target, items) => isMoveDropAllowed(moveAction, target, items, categoriesConfig),
+        isRowDraggable: item => isMoveDragAllowed(moveAction, item, categoriesConfig),
+        onRowDrop
+    };
+}
+
 export function findStandardMoveAction(actions: PageAction[]): PageAction | undefined {
     for (const action of actions) {
         const found =
-            action.key === PageStandardAction.Move && !action.handler
+            action.key === PageStandardAction.Move && !action.action
                 ? action
                 : findStandardMoveAction(action.subActions ?? []);
 

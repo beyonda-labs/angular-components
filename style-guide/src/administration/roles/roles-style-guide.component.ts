@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BeyRolesComponent, BeyRolesConfig } from '@beyonda-labs/angular-components';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { STYLE_GUIDE_ROLE_SETTINGS } from '../models/administration-backend.model';
+
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [BeyRolesComponent, TranslateModule],
@@ -12,6 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class RolesStyleGuideComponent {
     readonly config = new BeyRolesConfig({
+        ...STYLE_GUIDE_ROLE_SETTINGS,
         baseUrl: '/style-guide/roles',
         height: '24rem',
         storageKey: 'style-guide-roles',

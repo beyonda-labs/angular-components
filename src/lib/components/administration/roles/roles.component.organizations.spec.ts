@@ -1,18 +1,19 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { buttonByName, queryAll, queryButton, renderComponent, settle } from '@testing/dom';
+import { buttonByName, queryAll, queryButton, renderComponent, rowWith, settle } from '@testing/dom';
+import { fieldsOf } from '@testing/form-fields';
+import { FakeFormHandle } from '@testing/handles/fake-form-handle';
+import { searchOf } from '@testing/page-search';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { FakeModalService } from '@testing/services/fake-modal.service';
 import { FakeModalFormService } from '@testing/services/fake-modal-form.service';
 
 import { SessionUser } from '../../../services/session/models/session.model';
 import { ModalFormConfig } from '../../form/components/modal/models/modal-form.model';
-import { FormHandle } from '../../form/models/form.model';
 import { FormField } from '../../form/models/form-field.model';
 import { PageItemType } from '../../page/models/page-categories.model';
 import { PageOrganization } from '../../page/models/page-organization.model';
-import { PageSearch } from '../../page/models/page-search.model';
 import { OrganizationFolder } from '../models/organization-folders.model';
 import { RoleFormValue, RoleRow, RolesConfig } from './models/roles.model';
 import { RolesComponent } from './roles.component';
@@ -63,18 +64,6 @@ describe('RolesComponent — organizations and callers', () => {
             organizationName: 'Globex',
             permissions: ['templates.edit'],
             ...overrides
-        };
-    }
-
-    function buildHandle(): FormHandle<unknown> {
-        return {
-            close: jest.fn(),
-            goToStep: jest.fn(),
-            isDirty: jest.fn(() => true),
-            patchValue: jest.fn(),
-            requestClose: jest.fn(),
-            reset: jest.fn(),
-            value: jest.fn()
         };
     }
 
@@ -131,10 +120,6 @@ describe('RolesComponent — organizations and callers', () => {
         return queryAll(fixture, 'nav[aria-label="angular-components.breadcrumb.label"]')[0]?.textContent ?? '';
     }
 
-    function fieldsOf(form: ModalFormConfig | undefined): FormField[] {
-        return form?.sections.flatMap(section => section.rows.flatMap(row => row.fields)) ?? [];
-    }
-
     function filterSelects(): HTMLSelectElement[] {
         return queryAll<HTMLSelectElement>(queryAll(fixture, '[role="group"]')[0], 'select');
     }
@@ -151,16 +136,6 @@ describe('RolesComponent — organizations and callers', () => {
         return fieldsOf(lastForm()).find(field => field.key === 'organizationId');
     }
 
-    function rowWith(text: string): HTMLElement {
-        const row = queryAll(fixture, '[role="row"]').find(candidate => candidate.textContent?.includes(text));
-
-        if (!row) {
-            throw new Error(`No row with ${text}`);
-        }
-
-        return row;
-    }
-
     async function choose(select: HTMLSelectElement, value: string): Promise<void> {
         select.value = value;
         select.dispatchEvent(new Event('change'));
@@ -174,13 +149,13 @@ describe('RolesComponent — organizations and callers', () => {
 
     async function create(main: Record<string, unknown>): Promise<TestRequest> {
         await click(buttonByName(fixture, `${PREFIX}.actions.create.label`));
-        lastForm()?.onSubmit?.({ main, permissions: { permissions: ['templates.edit'] } }, buildHandle());
+        lastForm()?.onSubmit?.({ main, permissions: { permissions: ['templates.edit'] } }, new FakeFormHandle());
 
         return httpTesting.expectOne(current => current.url === ROLES_URL && current.method === 'POST');
     }
 
     async function duplicate(name: string): Promise<void> {
-        await click(rowWith(name));
+        await click(rowWith(fixture, name));
         await click(buttonByName(fixture, 'angular-components.header.menu'));
         await click(buttonByName(fixture, `${PREFIX}.actions.duplicate.label`));
     }
@@ -239,9 +214,9 @@ describe('RolesComponent — organizations and callers', () => {
             ]);
 
             expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.organization`);
-            expect(rowWith('Reviewers').textContent).toContain('Globex');
-            expect(rowWith('Auditors').textContent).toContain('Acme');
-            expect(rowWith('normaluser').textContent).toContain(`${PREFIX}.table.every-organization`);
+            expect(rowWith(fixture, 'Reviewers').textContent).toContain('Globex');
+            expect(rowWith(fixture, 'Auditors').textContent).toContain('Acme');
+            expect(rowWith(fixture, 'normaluser').textContent).toContain(`${PREFIX}.table.every-organization`);
         });
 
         it('filters the roles by the organization chosen, with equals', async () => {
@@ -249,7 +224,7 @@ describe('RolesComponent — organizations and callers', () => {
             await choose(filterSelects()[0], 'organizationId');
             await choose(filterSelects()[2], 'o1');
             await click(buttonByName(fixture, 'angular-components.search.apply'));
-            const search = JSON.parse(atob(answerList().request.params.get('search') ?? '')) as PageSearch;
+            const search = searchOf(answerList());
 
             expect(search.filters).toEqual([{ field: 'organizationId', operator: 'equals', value: 'o1' }]);
         });
@@ -281,7 +256,7 @@ describe('RolesComponent — organizations and callers', () => {
             await click(buttonByName(fixture, 'Reviewers'));
             lastForm()?.onSubmit?.(
                 { main: { name: 'Reviewers', organizationId: 'o2' }, permissions: { permissions: ['templates.edit'] } },
-                buildHandle()
+                new FakeFormHandle()
             );
             const request = httpTesting.expectOne(`${ROLES_URL}/r1`);
             request.flush(buildRole());
@@ -304,7 +279,7 @@ describe('RolesComponent — organizations and callers', () => {
             await duplicate('Auditors');
             lastForm()?.onSubmit?.(
                 { main: { name: 'Auditors (copy)', organizationId: 'o2' }, permissions: { permissions: [] } },
-                buildHandle()
+                new FakeFormHandle()
             );
             const request = httpTesting.expectOne(current => current.url === ROLES_URL && current.method === 'POST');
             request.flush(buildRole({ id: 'r3' }));
@@ -336,7 +311,7 @@ describe('RolesComponent — organizations and callers', () => {
             expect(rootRequest.request.params.get('parentId')).toBe('null');
             expect(buttonByName(fixture, 'Acme')).toBeTruthy();
             expect(buttonByName(fixture, 'Globex')).toBeTruthy();
-            expect(rowWith('normaluser').textContent).not.toContain(`${PREFIX}.table.every-organization`);
+            expect(rowWith(fixture, 'normaluser').textContent).not.toContain(`${PREFIX}.table.every-organization`);
             expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.table.columns.organization`);
             expect(breadcrumb()).toContain(`${PREFIX}.categories.root`);
         });
@@ -345,7 +320,7 @@ describe('RolesComponent — organizations and callers', () => {
             const request = await openAcme();
 
             expect(request.request.params.get('parentId')).toBe('o1');
-            expect(rowWith('Auditors').textContent).not.toContain('Acme');
+            expect(rowWith(fixture, 'Auditors').textContent).not.toContain('Acme');
             expect(fixture.nativeElement.textContent).not.toContain(`${PREFIX}.table.columns.organization`);
             expect(breadcrumb()).toContain('Acme');
         });
@@ -385,8 +360,8 @@ describe('RolesComponent — organizations and callers', () => {
             await openFilter();
 
             expect(fixture.nativeElement.textContent).toContain(`${PREFIX}.table.columns.organization`);
-            expect(rowWith('Reviewers').textContent).toContain('Globex');
-            expect(rowWith('normaluser').textContent).toContain(`${PREFIX}.table.every-organization`);
+            expect(rowWith(fixture, 'Reviewers').textContent).toContain('Globex');
+            expect(rowWith(fixture, 'normaluser').textContent).toContain(`${PREFIX}.table.every-organization`);
             expect(queryAll<HTMLOptionElement>(filterSelects()[0], 'option').map(({ value }) => value)).not.toContain(
                 'organizationId'
             );
@@ -420,7 +395,7 @@ describe('RolesComponent — organizations and callers', () => {
         await configure(buildUser(['superadmin']));
         await render([], [buildBase()], []);
 
-        expect(rowWith('normaluser')).toBeTruthy();
+        expect(rowWith(fixture, 'normaluser')).toBeTruthy();
         expect(queryButton(fixture, `${PREFIX}.actions.create.label`)).toBeNull();
     });
 
@@ -447,7 +422,7 @@ describe('RolesComponent — organizations and callers', () => {
         await render(null, [buildRole({ organizationId: undefined, organizationName: undefined })]);
 
         await click(buttonByName(fixture, 'Reviewers'));
-        lastForm()?.onSubmit?.({ main: { name: 'Reviewers' }, permissions: { permissions: [] } }, buildHandle());
+        lastForm()?.onSubmit?.({ main: { name: 'Reviewers' }, permissions: { permissions: [] } }, new FakeFormHandle());
         httpTesting
             .expectOne(`${ROLES_URL}/r1`)
             .flush({ errorCode: 'not-found', messageKey: 'roles.not-found' }, { status: 404, statusText: '' });

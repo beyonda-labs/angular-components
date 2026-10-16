@@ -1,5 +1,15 @@
 import { PageViewMode } from '../models/page-categories.model';
-import { buildPageBreadcrumbItems, fromSharedRoot } from './page-breadcrumb';
+import { PageItem } from '../models/page-item.model';
+import {
+    buildCategoryPath,
+    buildFlatViewBreadcrumbItems,
+    buildPageBreadcrumbItems,
+    fromSharedRoot
+} from './page-breadcrumb';
+
+interface Folder extends PageItem {
+    title?: string | number;
+}
 
 describe('buildPageBreadcrumbItems', () => {
     it('starts at the translated root and follows the folders opened, numbered from it', () => {
@@ -29,6 +39,30 @@ describe('buildPageBreadcrumbItems', () => {
                 item => item.label
             )
         ).toEqual(['angular-components.page.shared.label', 'Clients']);
+    });
+});
+
+describe('buildCategoryPath', () => {
+    it('names each folder of the path the backend answers by the name field', () => {
+        const path: Folder[] = [{ id: 'clients', title: 'Clients' }, { id: 2026, title: 2026 }, { id: 'untitled' }];
+
+        expect(buildCategoryPath(path, 'title')).toEqual([
+            { id: 'clients', label: 'Clients' },
+            { id: 2026, label: '2026' },
+            { id: 'untitled', label: '' }
+        ]);
+    });
+});
+
+describe('buildFlatViewBreadcrumbItems', () => {
+    it('names only the view, by its label or by the key of its tab', () => {
+        expect([
+            buildFlatViewBreadcrumbItems('demo', { key: 'reviewQueue' }),
+            buildFlatViewBreadcrumbItems('demo', { key: 'queue', label: 'demo.queue.title' })
+        ]).toEqual([
+            [expect.objectContaining({ id: 0, isTranslationKey: true, label: 'demo.tabs.review-queue.label' })],
+            [expect.objectContaining({ id: 0, isTranslationKey: true, label: 'demo.queue.title' })]
+        ]);
     });
 });
 

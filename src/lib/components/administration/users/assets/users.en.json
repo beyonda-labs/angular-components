@@ -68,6 +68,16 @@
                 "label": "Content",
                 "used-by": "{{entity}} «{{name}}»: {{users}}"
             },
+            "count": {
+                "categories": {
+                    "one": "{{count}} organization",
+                    "other": "{{count}} organizations"
+                },
+                "items": {
+                    "one": "{{count}} user",
+                    "other": "{{count}} users"
+                }
+            },
             "delete": {
                 "invitation": {
                     "one": "The invitation will stop working.",

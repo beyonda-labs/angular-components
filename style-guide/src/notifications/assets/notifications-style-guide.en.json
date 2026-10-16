@@ -1,0 +1,24 @@
+{
+    "angular-components-style-guide": {
+        "notifications": {
+            "entities": {
+                "templates": "Templates"
+            },
+            "example": "The bell of the notifications centre with sample notices: the badge counts the unread ones, and the bell opens the panel. Opening a notice marks it read; a product would also follow the link it gives. Pick a set of notices to see another case.",
+            "nouns": {
+                "templates": {
+                    "one": "the template",
+                    "other": "templates"
+                }
+            },
+            "scenarios": {
+                "empty": "No notices",
+                "mixed": "Unread and read",
+                "pages": "Several pages"
+            },
+            "types": {
+                "review-requested": "{{byName}} asks you to review “{{rowName}}”"
+            }
+        }
+    }
+}

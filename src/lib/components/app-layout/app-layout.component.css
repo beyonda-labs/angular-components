@@ -40,12 +40,13 @@
     height: 100%;
     min-height: 0;
     min-width: 0;
-    overflow: hidden auto;
+    overflow: hidden;
 }
 
 .bey-app-layout-body-content {
     min-height: 0;
     min-width: 0;
+    overflow: auto;
 }
 
 .bey-app-layout-body-content.has-padding {

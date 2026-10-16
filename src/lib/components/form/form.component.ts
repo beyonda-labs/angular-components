@@ -9,7 +9,7 @@ import {
     untracked
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
-import { AbstractControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
@@ -19,13 +19,14 @@ import { ButtonComponent } from '../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../internal/button/models/button-config.model';
 import { nextDomId } from '../../internal/dom-ids/dom-ids';
 import { FormSectionComponent } from './components/section/section.component';
+import { haveSameOptions, isFreeText, offersOwnOptions, ruleOf } from './functions/field-options';
 import { fieldStateKey } from './functions/field-state-key';
+import { noop, submitType } from './functions/form-buttons';
 import { resolveRule } from './functions/form-rule-resolution';
-import { holdsListValue } from './functions/list-value';
-import { FormAutocompleteField } from './models/fields/form-autocomplete-field.model';
-import { FormListField } from './models/fields/form-list-field.model';
+import { readState } from './functions/form-state';
+import { fieldsOf } from './functions/section-fields';
 import { FormButton, FormButtonType, FormConfig, FormHandle, FormSection } from './models/form.model';
-import { FormField, FormFieldOption, FormFieldType, FormRule, FormValue } from './models/form-field.model';
+import { FormField, FormFieldOption, FormFieldType, FormValue } from './models/form-field.model';
 import { FormFieldState, FormFieldStates } from './models/form-field-state.model';
 import { FORM_HOST } from './models/form-host.model';
 import { FormService } from './services/form.service';
@@ -42,12 +43,6 @@ const OPTION_FIELD_TYPES: ReadonlySet<FormFieldType> = new Set([
 ]);
 
 type FormValidatorErrors = ReadonlyMap<string, ValidationErrors | null>;
-
-interface FormState {
-    isDirty: boolean;
-    isValid: boolean;
-    value: FormValue;
-}
 
 interface FormSync {
     fieldStates: FormFieldStates;
@@ -228,7 +223,7 @@ export class FormComponent<TValue = unknown> {
 
     private buildButton(button: FormButton): ButtonConfig {
         const { isDirty, isValid } = this.state();
-        const { allowSubmitWithoutChanges } = this.config();
+        const { canSubmitWithoutChanges } = this.config();
         const isDescribedByNote = button.type === FormButtonType.Submit && this.footerNote() !== '';
         const base = {
             describedBy: isDescribedByNote ? this.noteId : undefined,
@@ -257,7 +252,7 @@ export class FormComponent<TValue = unknown> {
         }
 
         if (button.type === FormButtonType.Submit) {
-            const requiresChanges = !isDirty && !allowSubmitWithoutChanges;
+            const requiresChanges = !isDirty && !canSubmitWithoutChanges;
             const blockedTooltip = requiresChanges ? WITHOUT_CHANGES_TOOLTIP : INVALID_TOOLTIP;
 
             return new ButtonConfig({
@@ -340,11 +335,11 @@ export class FormComponent<TValue = unknown> {
                 const state = sync.fieldStates.get(key);
 
                 if (control && state) {
-                    syncDisabled(control, state);
-                    syncRequired(control, state.isRequired);
+                    this.formService.syncDisabled(control, state);
+                    this.formService.syncRequired(control, state.isRequired);
 
                     if (sync.validatorErrors.has(key)) {
-                        syncValidatorErrors(
+                        this.formService.syncValidatorErrors(
                             control,
                             sync.validatorErrors.get(key) ?? null,
                             previous?.validatorErrors.get(key) ?? null
@@ -354,98 +349,10 @@ export class FormComponent<TValue = unknown> {
                     if (OPTION_FIELD_TYPES.has(field.type) && !isFreeText(field)) {
                         this.dropUnlistedValue(control, field, state, previous?.fieldStates.get(key));
                     } else if (offersOwnOptions(field)) {
-                        dropUnlistedIds(control, state, previous?.fieldStates.get(key));
+                        this.formService.dropUnlistedIds(control, state, previous?.fieldStates.get(key));
                     }
                 }
             }
         }
-    }
-}
-
-function dropUnlistedIds(control: AbstractControl, state: FormFieldState, previous: FormFieldState | undefined): void {
-    const ids: unknown = control.value;
-
-    if (!previous || !Array.isArray(ids) || haveSameOptions(previous.options, state.options)) {
-        return;
-    }
-
-    const listed = ids.filter(id => state.options.some(option => option.value === id));
-
-    if (listed.length !== ids.length) {
-        control.setValue(listed);
-    }
-}
-
-function fieldsOf(section: FormSection): FormField[] {
-    return section.rows.flatMap(row => row.fields);
-}
-
-function haveSameOptions(previous: FormFieldOption[], current: FormFieldOption[]): boolean {
-    return (
-        previous.length === current.length && previous.every((option, index) => option.value === current[index].value)
-    );
-}
-
-function isFreeText(field: FormField): boolean {
-    return field.type === FormFieldType.Autocomplete && (field as FormAutocompleteField).isFreeTextAllowed;
-}
-
-function noop(): void {}
-
-function offersOwnOptions(field: FormField): boolean {
-    return holdsListValue(field) && !(field as FormListField).picker?.search;
-}
-
-function readState(formGroup: FormGroup): FormState {
-    return { isDirty: formGroup.dirty, isValid: formGroup.valid, value: formGroup.getRawValue() as FormValue };
-}
-
-function ruleOf<T>(field: FormField, key: 'excludedValues' | 'options'): FormRule<T[]> {
-    return (field as Partial<Record<typeof key, FormRule<T[]>>>)[key] ?? [];
-}
-
-function submitType({ isDanger }: FormButton): ButtonType {
-    return isDanger ? ButtonType.Danger : ButtonType.Primary;
-}
-
-function syncDisabled(control: AbstractControl, state: FormFieldState): void {
-    const shouldDisable = state.isDisabled || state.isHidden;
-
-    if (control.disabled === shouldDisable) {
-        return;
-    }
-
-    if (shouldDisable) {
-        control.disable();
-    } else {
-        control.enable();
-    }
-}
-
-function syncRequired(control: AbstractControl, isRequired: boolean): void {
-    if (control.hasValidator(Validators.required) === isRequired) {
-        return;
-    }
-
-    if (isRequired) {
-        control.addValidators(Validators.required);
-    } else {
-        control.removeValidators(Validators.required);
-    }
-
-    control.updateValueAndValidity();
-}
-
-function syncValidatorErrors(
-    control: AbstractControl,
-    errors: ValidationErrors | null,
-    previous: ValidationErrors | null
-): void {
-    const current = Object.keys(errors ?? {});
-    const cleared = Object.keys(previous ?? {}).filter(key => !current.includes(key));
-    const isApplied = current.every(key => control.hasError(key)) && cleared.every(key => !control.hasError(key));
-
-    if (control.enabled && !isApplied) {
-        control.updateValueAndValidity();
     }
 }

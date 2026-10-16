@@ -17,7 +17,9 @@
     --bey-table-drop-target-border: var(--bey-primary);
     --bey-table-menu-surface: var(--bey-bg-surface);
 
-    display: block;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
     min-width: 0;
     width: 100%;
 }
@@ -30,10 +32,22 @@
     width: 100%;
 }
 
+.bey-table--fill {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+}
+
 .bey-table-scroll {
     min-width: 0;
     overflow: hidden auto;
     width: 100%;
+}
+
+.bey-table--fill .bey-table-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
 .bey-table-header {

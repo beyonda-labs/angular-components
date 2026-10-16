@@ -4,8 +4,8 @@ export interface ListItemContext<TItem = unknown> {
 }
 
 export class ListConfig<TItem = unknown> {
-    bare: boolean;
     gap: string;
+    isBare: boolean;
     items: TItem[];
     prefix: string;
 
@@ -14,18 +14,18 @@ export class ListConfig<TItem = unknown> {
     onItemClick?: (item: TItem, index: number) => void;
 
     constructor({
-        bare = false,
         emptyLabel,
         gap = '0.75rem',
         getItemKey,
+        isBare = false,
         items,
         onItemClick,
         prefix
     }: ListConfigParameters<TItem>) {
-        this.bare = bare;
         this.emptyLabel = emptyLabel;
         this.gap = gap;
         this.getItemKey = getItemKey;
+        this.isBare = isBare;
         this.items = items;
         this.onItemClick = onItemClick;
         this.prefix = prefix;
@@ -36,9 +36,9 @@ export interface ListConfigParameters<TItem = unknown> {
     items: TItem[];
     prefix: string;
 
-    bare?: boolean;
     emptyLabel?: string;
     gap?: string;
     getItemKey?: (item: TItem, index: number) => string | number;
+    isBare?: boolean;
     onItemClick?: (item: TItem, index: number) => void;
 }

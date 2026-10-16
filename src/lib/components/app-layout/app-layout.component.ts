@@ -36,16 +36,17 @@ export class AppLayoutComponent implements OnInit {
             : new BreadcrumbConfig({
                   items,
                   onItemClick: (id: number) => this.config().onBreadcrumbClick?.(id),
-                  translate: false
+                  isTranslationKey: false
               });
     });
     readonly leftMenuConfig = computed(() => {
-        const { bottomActions, prefix, title, topActions, userInfo } = this.config();
+        const { bottomActions, notifications, prefix, title, topActions, userInfo } = this.config();
         const activeKey = this.appLayoutService.activeActionKey();
 
         return new LeftMenuConfig({
             bottomActions: this.prepareActions(bottomActions, activeKey),
-            expanded: this.appLayoutService.expanded(),
+            isExpanded: this.appLayoutService.expanded(),
+            notifications,
             onExpandedChange: expanded => this.appLayoutService.setExpanded(expanded),
             prefix,
             title,
@@ -153,7 +154,7 @@ export class AppLayoutComponent implements OnInit {
                 new LeftMenuAction({
                     ...action,
                     action: () => this.runAction(action),
-                    active: activeKey === null ? action.active : action.key === activeKey,
+                    isActive: activeKey === null ? action.isActive : action.key === activeKey,
                     subActions: this.prepareActions(action.subActions, activeKey)
                 })
         );

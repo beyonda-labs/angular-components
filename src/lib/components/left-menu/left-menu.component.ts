@@ -8,6 +8,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 import { AvatarComponent } from '../cards/avatar/avatar.component';
 import { AvatarConfig } from '../cards/avatar/models/avatar.model';
+import { NotificationsComponent } from '../notifications/notifications.component';
 import { ActionListComponent } from './components/action-list/action-list.component';
 import { LeftMenuConfig } from './models/left-menu.model';
 
@@ -18,6 +19,7 @@ import { LeftMenuConfig } from './models/left-menu.model';
         AvatarComponent,
         FontAwesomeModule,
         NgTemplateOutlet,
+        NotificationsComponent,
         RouterLink,
         RouterLinkActive,
         TooltipModule,
@@ -40,15 +42,16 @@ export class LeftMenuComponent {
     });
     readonly bottomActions = computed(() => this.config().bottomActions ?? []);
     readonly collapseIcon = faAnglesLeft;
-    readonly expanded = linkedSignal(() => this.config().expanded);
     readonly expandIcon = faAnglesRight;
+    readonly hasFooter = computed(() => Boolean(this.config().userInfo || this.config().notifications));
+    readonly isExpanded = linkedSignal(() => this.config().isExpanded);
     readonly titleText = computed(() => {
         const title = this.config().title?.title ?? 'title';
 
         return !title || title === 'title' ? `${this.config().prefix}.title` : title;
     });
     readonly toggleTooltip = computed(() =>
-        this.expanded() ? 'angular-components.left-menu.collapse' : 'angular-components.left-menu.expand'
+        this.isExpanded() ? 'angular-components.left-menu.collapse' : 'angular-components.left-menu.expand'
     );
     readonly topActions = computed(() => this.config().topActions ?? []);
     readonly userFullName = computed(() => {
@@ -59,7 +62,7 @@ export class LeftMenuComponent {
     readonly userTooltip = computed(() => this.config().userInfo?.email || this.userFullName());
 
     toggleExpanded(): void {
-        this.expanded.update(isExpanded => !isExpanded);
-        this.config().onExpandedChange?.(this.expanded());
+        this.isExpanded.update(isExpanded => !isExpanded);
+        this.config().onExpandedChange?.(this.isExpanded());
     }
 }

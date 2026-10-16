@@ -1,6 +1,7 @@
 import { HttpTestingController, TestRequest } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { buttonByName, queryAll, renderComponent, settle } from '@testing/dom';
+import { searchOf } from '@testing/page-search';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { TableColumn } from '../table/models/table.model';
@@ -8,7 +9,6 @@ import { TextTableCell } from '../table/models/table-cell.model';
 import { pageOwnerCell, pageOwnerColumn } from './functions/page-owner-column';
 import { PageConfig } from './models/page.model';
 import { PageOwnedItem } from './models/page-owner.model';
-import { PageSearch } from './models/page-search.model';
 import { PageTableConfig, PageTableSearchConfig } from './models/page-table.model';
 import { PageComponent } from './page.component';
 
@@ -52,10 +52,6 @@ describe('PageComponent — owners', () => {
         request.flush({ globalActions: [], results: CONTRACTS, search: { filters: [], page: 1, size: 25, total: 3 } });
 
         return request;
-    }
-
-    function searchOf(request: TestRequest): PageSearch {
-        return JSON.parse(atob(request.request.params.get('search') ?? '')) as PageSearch;
     }
 
     function filtersToggle(): HTMLButtonElement {

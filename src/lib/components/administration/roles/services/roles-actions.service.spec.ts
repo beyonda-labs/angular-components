@@ -69,6 +69,7 @@ describe('RolesActionsService', () => {
                     submit: submit as unknown as (value: RoleFormValue) => Observable<unknown>
                 }),
             refresh: jest.fn(),
+            search: () => ({ filters: [], page: 1, size: 10 }),
             selected: () => [],
             viewMode: () => PageViewMode.Table
         };

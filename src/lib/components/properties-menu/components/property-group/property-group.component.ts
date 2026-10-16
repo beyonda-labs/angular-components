@@ -31,13 +31,13 @@ export class PropertyGroupComponent {
         const content = this.tabsContent();
         const active = content?.tabs.find(tab => tab.id === content.activeTabId);
 
-        return active?.fields.filter(field => !field.hidden) ?? [];
+        return active?.fields.filter(field => !field.isHidden) ?? [];
     });
     readonly addIcon = faPlus;
     readonly bodyId = nextDomId('bey-property-group');
     readonly chevronIcon = faChevronDown;
     readonly content = computed(() => this.group().content);
-    readonly controlsId = computed(() => (this.group().expanded ? this.bodyId : null));
+    readonly controlsId = computed(() => (this.group().isExpanded ? this.bodyId : null));
     readonly fieldsContent = computed(() => {
         const content = this.content();
 
@@ -69,7 +69,7 @@ export class PropertyGroupComponent {
         return content.type === PropertyGroupContentType.TREE ? content : undefined;
     });
     readonly visibleFields = computed<PropertyField[]>(
-        () => this.fieldsContent()?.fields.filter(field => !field.hidden) ?? []
+        () => this.fieldsContent()?.fields.filter(field => !field.isHidden) ?? []
     );
 
     contentTabLabelKey(tab: PropertyGroupTab): string {
@@ -83,7 +83,7 @@ export class PropertyGroupComponent {
     remove(event: Event): void {
         event.stopPropagation();
 
-        if (this.group().disabled) {
+        if (this.group().isDisabled) {
             return;
         }
 
@@ -91,7 +91,7 @@ export class PropertyGroupComponent {
     }
 
     selectContentTab(contentTabId: string): void {
-        if (this.group().disabled) {
+        if (this.group().isDisabled) {
             return;
         }
 
@@ -101,7 +101,7 @@ export class PropertyGroupComponent {
     toggle(): void {
         const group = this.group();
 
-        if (group.disabled || !group.showHeader) {
+        if (group.isDisabled || !group.isHeaderShown) {
             return;
         }
 

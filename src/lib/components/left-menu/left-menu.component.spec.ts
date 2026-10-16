@@ -67,7 +67,7 @@ describe('LeftMenuComponent', () => {
         await render();
         expect(toggle().getAttribute('aria-expanded')).toBe('true');
 
-        await render(buildConfig({ expanded: false }));
+        await render(buildConfig({ isExpanded: false }));
         expect(toggle().getAttribute('aria-expanded')).toBe('false');
     });
 
@@ -124,7 +124,7 @@ describe('LeftMenuComponent', () => {
     });
 
     it('keeps the link to the route of the user while collapsed', async () => {
-        await render(buildConfig({ expanded: false, userInfo: buildUser('/account') }));
+        await render(buildConfig({ isExpanded: false, userInfo: buildUser('/account') }));
 
         expect(accountLink()?.getAttribute('href')).toBe('/account');
     });

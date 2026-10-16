@@ -27,7 +27,7 @@ const breadcrumb = new BeyBreadcrumbConfig({
 | -------------- | -------- | -------- | ----------------------------------------------------------- |
 | `items`        | yes      |          | The trail, from the root to the current page                 |
 | `prefix`       | no       | none     | i18n prefix prepended to each label                          |
-| `translate`    | no       | `true`   | Whether labels are translated at all                         |
+| `isTranslationKey` | no       | `true`   | Whether labels are translated at all                         |
 | `separator`    | no       | `/`      | Character drawn between items                                |
 | `itemMaxWidth` | no       | `12rem`  | Width at which a label is truncated with an ellipsis         |
 | `onItemClick`  | no       |          | Called with the id of a clicked item, never for the last one |
@@ -45,11 +45,30 @@ const breadcrumb = new BeyBreadcrumbConfig({
 | `detailParameters` | no       | none    | The parameters `detail` is translated with                     |
 
 Labels and details are translated as the trail renders, and again on every language change. A `detail` is always a
-full key, whatever `prefix` and `translate` say, so a page can add `({{count}} items)` to a literal folder name:
+full key, whatever `prefix` and `isTranslationKey` say, so a page can add `({{count}} items)` to a literal folder name:
 
 ```ts
 new BeyBreadcrumbItem({ id: 2, label: 'Invoices', detail: 'myPage.count', detailParameters: { count: 4 } });
 ```
+
+A parameter that is a `BeyBreadcrumbText`, `{ key, parameters? }`, is translated first and its text goes into the
+detail, so a detail can be made of texts that each take their own plural, and both follow the language:
+
+```ts
+new BeyBreadcrumbItem({
+    id: 2,
+    label: 'Invoices',
+    detail: 'myPage.count',
+    detailParameters: { folders: new BeyBreadcrumbText({ key: 'myPage.folders', parameters: { count: 2 } }) }
+});
+```
+
+## BeyBreadcrumbText
+
+| Field        | Required | Default | Meaning                                 |
+| ------------ | -------- | ------- | --------------------------------------- |
+| `key`        | yes      |         | A full key, whatever `prefix` says      |
+| `parameters` | no       | none    | The parameters `key` is translated with |
 
 ## Replacing the config
 

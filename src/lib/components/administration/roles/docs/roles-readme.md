@@ -46,19 +46,19 @@ The route must be in the `allowedPaths` of whoever holds `roles.manage`, which t
 
 ## BeyRolesConfig
 
-| Field              | Default                                  | Meaning                                                                                                                |
-| ------------------ | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `baseUrl`          | `'/roles'`                               | Path of the roles, resolved against the environment's `baseUrl` and `webApiPath`                                       |
-| `usersUrl`         | `'/users'`                               | Path of the users, where a superadmin reads the organizations from                                                     |
-| `prefix`           | `'angular-components.roles'`             | i18n prefix of the page, as `bey-page` reads it                                                                        |
-| `rolePrefix`       | `'angular-components.users.roles'`       | i18n prefix the labels of the base roles are read from, the `rolePrefix` of the users page                             |
-| `permissionPrefix` | `'angular-components.roles.permissions'` | i18n prefix the labels of the permissions are read from, see [Permissions](#permissions)                               |
-| `groupIcons`       | `{}`                                     | The icon of the section of each permission group, by group, see [Permissions](#permissions)                            |
-| `groupOrder`       | `[]`                                     | The groups whose sections come first, in this order; the others follow in the order of the server, see [Order](#order) |
-| `actionOrder`      | The default order of [Order](#order)     | The actions whose permissions come first in each section, in this order; the others follow in the order of the server  |
-| `storageKey`       | `'roles'`                                | Key under which the table remembers the columns the user hid                                                           |
-| `foldersHeight`    | `'calc(100vh - 255px)'`                  | Height of the table while it shows the folders of the superadmin, under their breadcrumb                               |
-| `height`           | `'calc(100vh - 220px)'`                  | Height of the table                                                                                                    |
+| Field              | Default                                  | Meaning                                                                                                                        |
+| ------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `baseUrl`          | `'/roles'`                               | Path of the roles, resolved against the environment's `baseUrl` and `webApiPath`                                               |
+| `usersUrl`         | `'/users'`                               | Path of the users, where a superadmin reads the organizations from                                                             |
+| `prefix`           | `'angular-components.roles'`             | i18n prefix of the page, as `bey-page` reads it                                                                                |
+| `rolePrefix`       | `'angular-components.users.roles'`       | i18n prefix the labels of the base roles are read from, the `rolePrefix` of the users page                                     |
+| `permissionPrefix` | `'angular-components.roles.permissions'` | i18n prefix the labels of the permissions are read from, see [Permissions](#permissions)                                       |
+| `groupIcons`       | `{}`                                     | The icon of the section of each permission group, by group, see [Permissions](#permissions)                                    |
+| `groupOrder`       | `[]`                                     | The groups whose sections come first, in this order; the others follow in the order of the server, see [Order](#order)         |
+| `actionOrder`      | The default order of [Order](#order)     | The actions whose permissions come first in each section, in this order; the others follow in the order of the server          |
+| `storageKey`       | `'roles'`                                | Key under which the table remembers the columns the user hid                                                                   |
+| `foldersHeight`    | none                                     | Height of the table while it shows the folders of the superadmin, `height` when not given                                      |
+| `height`           | none                                     | Height of the table, any CSS length; without it the page fills the content area of the app layout and the table scrolls inside |
 
 `baseUrl` follows the `path` of the roles module of express-components, and `usersUrl` the `path` of its users
 module, as `baseUrl` of [`bey-users`](../../users/docs/users-readme.md) does. `actionOrder`, `groupIcons`,
@@ -170,7 +170,7 @@ new BeyRolesConfig({ permissionPrefix: 'myApp.permissions' });
 ```
 
 The icon of a section is the one `groupIcons` gives its group, an `IconDefinition` such as an outline icon of
-`@fortawesome/free-regular-svg-icons`; the library's own groups have theirs (`users`, `organization`, `roles`), and any
+`@fortawesome/free-regular-svg-icons`; the library's own groups have theirs (`users`, `organization`, `roles`, `audit`), and any
 other group shows `faRectangleList`.
 
 The module ships the labels and descriptions of the library's own permissions: `users.read`, `users.invite`,
@@ -178,7 +178,8 @@ The module ships the labels and descriptions of the library's own permissions: `
 `roles.manage`, with the labels of their groups, and
 the four an extra role may give in the "Organization" section: `organization.read` ("See the organization summary"),
 `organization.read-groups` ("See their groups and members"), `organization.read-group-roles` ("See the roles and
-permissions of their groups") and `organization.read-roles` ("See their roles and permissions"). Nothing checks one of
+permissions of their groups") and `organization.read-roles` ("See their roles and permissions"), and `audit.read` ("See
+the audit") in the "Audit" section, which the [audit page](../../audit/docs/audit-readme.md) needs. Nothing checks one of
 them with another: "See the roles and permissions of their groups" alone shows nothing, since the groups page needs
 "See their groups and members".
 
@@ -189,7 +190,7 @@ the order the server answers them. `groupOrder` is empty by default, so the sect
 Inside a section the permissions follow `actionOrder`, matched on the action of each key (`templates.read` is `read`,
 `templates.category.create` is `category.create`): the ones it lists come first, in its order, and the others after
 them, in the order of the server. A permission the role holds that the answer leaves out is ordered by the same rule,
-as if the server had answered it last. The library's own groups, `users`, `organization` and `roles`, follow both
+as if the server had answered it last. The library's own groups, `users`, `organization`, `roles` and `audit`, follow both
 lists like any other. Nothing else sorts them on the way: neither the request nor the checklist. The roles module of
 express-components answers the permissions sorted by group and key, so with both lists empty they read in that order.
 
@@ -258,7 +259,8 @@ alone, before the list shows; a failed answer counts as none, with no error.
 Every text follows [the page](../../../page/docs/page-readme.md#texts) under `prefix`: `title`,
 `actions.<key>.label` and `.tooltip` (only the tooltip for `view`, whose label is the page module's),
 `table.columns.<key>`, `table.tooltips.<key>`, `table.empty`, `table.every-organization`, `categories.root` (the root
-of its breadcrumb), `table.view-permissions`, `type.base` and `.extra`, `search.fields.<key>`, `form.create.title`,
+of its breadcrumb), `count.categories.one` and `.other` and `count.items.one` and `.other` (its count),
+`table.view-permissions`, `type.base` and `.extra`, `search.fields.<key>`, `form.create.title`,
 `form.edit.title`, `form.main.<field>.label` and `.placeholder`, `form.permissions.label` (the label above the
 checklist) and `.empty` (when there is nothing to give), `duplicate.title`, `duplicate.buttons.submit` and
 `duplicate.copy-suffix`, `modal.delete.title` and `.message`, `toast.<key>-success`, and for the read-only view

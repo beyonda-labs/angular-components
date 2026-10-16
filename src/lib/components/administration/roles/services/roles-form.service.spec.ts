@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { faFileLines, faRectangleList } from '@fortawesome/free-regular-svg-icons';
+import { fieldsOf } from '@testing/form-fields';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { FormCheckboxSectionsField } from '../../../form/models/fields/form-checkbox-sections-field.model';
 import { FormInfoField } from '../../../form/models/fields/form-info-field.model';
 import { FormSection } from '../../../form/models/form.model';
-import { FormField } from '../../../form/models/form-field.model';
 import { FormFieldValidatorType } from '../../../form/models/form-field-validator.model';
 import { RolePermissionEntry } from '../../models/role-permissions.model';
 import { RoleRow, RolesDuplicateFormOptions, RolesFormOptions } from '../models/roles.model';
@@ -50,12 +50,6 @@ describe('RolesFormService', () => {
 
     function buildDuplicateOptions(overrides: Partial<RolesDuplicateFormOptions> = {}): RolesDuplicateFormOptions {
         return { ...buildOptions(), rolePrefix: 'demo.roles', ...overrides };
-    }
-
-    function fieldsOf(sections: FormSection[], key: string): FormField[] {
-        return sections
-            .filter(section => section.key === key)
-            .flatMap(section => section.rows.flatMap(row => row.fields));
     }
 
     function checklistOf(sections: FormSection[]): FormCheckboxSectionsField {
@@ -241,7 +235,7 @@ describe('RolesFormService', () => {
 
         expect(form.title).toBe('demo.roles.duplicate.title');
         expect(form.prefix).toBe('demo.roles.form');
-        expect(form.allowSubmitWithoutChanges).toBe(true);
+        expect(form.canSubmitWithoutChanges).toBe(true);
         expect(form.buttons.map(({ label }) => label)).toEqual([
             'angular-components.page.form.cancel',
             'demo.roles.duplicate.buttons.submit'

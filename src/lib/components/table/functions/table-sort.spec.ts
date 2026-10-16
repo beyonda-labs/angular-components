@@ -1,5 +1,5 @@
 import { TableColumn, TableSortDirection, TableSortState } from '../models/table.model';
-import { nextTableSort, toTableSortState } from './table-sort';
+import { isTableSortShown, nextTableSort, toTableSortState } from './table-sort';
 
 const NAME = new TableColumn({ isSortable: true, key: 'name' });
 const UPDATED = new TableColumn({ isSortable: true, key: 'updatedAt', sortField: 'updated' });
@@ -19,6 +19,17 @@ describe('nextTableSort', () => {
             direction: TableSortDirection.Asc,
             field: 'updated'
         });
+    });
+});
+
+describe('isTableSortShown', () => {
+    it('says whether a sortable column among those given sorts by the field of the sort', () => {
+        const sort = { direction: TableSortDirection.Asc, field: 'updated' };
+
+        expect(isTableSortShown(sort, [NAME, UPDATED])).toBe(true);
+        expect(isTableSortShown(sort, [NAME])).toBe(false);
+        expect(isTableSortShown(sort, [new TableColumn({ key: 'updated' })])).toBe(false);
+        expect(isTableSortShown(null, [NAME, UPDATED])).toBe(false);
     });
 });
 

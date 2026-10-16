@@ -1,4 +1,4 @@
-import { buildDisabledOrganizationField, initialOrganizationId } from './organization-fields';
+import { buildDisabledOrganizationField, initialOrganizationId, toOrganizationOptions } from './organization-fields';
 
 describe('buildDisabledOrganizationField', () => {
     it('shows the organization of a row in a disabled select that offers only that organization', () => {
@@ -50,5 +50,19 @@ describe('initialOrganizationId', () => {
 
     it('chooses nothing when the form asks for no organization', () => {
         expect(initialOrganizationId(null, { id: 'o1' })).toBeUndefined();
+    });
+});
+
+describe('toOrganizationOptions', () => {
+    it('offers each organization by its name, valued by its id', () => {
+        expect(
+            toOrganizationOptions([
+                { id: 'o1', name: 'Acme' },
+                { id: 'o2', name: 'Globex' }
+            ])
+        ).toEqual([
+            { label: 'Acme', value: 'o1' },
+            { label: 'Globex', value: 'o2' }
+        ]);
     });
 });

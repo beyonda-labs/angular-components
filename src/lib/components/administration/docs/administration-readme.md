@@ -1,7 +1,7 @@
 # Administration
 
-The management pages of an app, gathered in one module: users, groups, roles and permissions, and organizations, each
-a list on [`bey-page`](../../page/docs/page-readme.md) over the matching module of express-components, and the
+The management pages of an app, gathered in one module: users, groups, roles and permissions, organizations and the
+audit, each a list on [`bey-page`](../../page/docs/page-readme.md) over the matching module of express-components, and the
 read-only summary of the organization of a member, in cards. Each page is meant as the content of an app page inside
 `bey-app-layout` and offers only what the backend lets its caller do. The pages read alike wherever they meet: a
 person in a list or a search is "Name Surname (email)", or the email alone; a base role is labelled from a
@@ -19,6 +19,7 @@ readonly usersConfig = new BeyUsersConfig({ rolePrefix: 'myApp.roles' });
 readonly groupsConfig = new BeyGroupsConfig();
 readonly rolesConfig = new BeyRolesConfig({ permissionPrefix: 'myApp.permissions', rolePrefix: 'myApp.roles' });
 readonly organizationsConfig = new BeyOrganizationsConfig();
+readonly auditConfig = new BeyAuditConfig({ entityLabels: { templates: 'myApp.audit.entities.templates' } });
 readonly organizationSummaryConfig = new BeyOrganizationSummaryConfig();
 ```
 
@@ -34,6 +35,7 @@ readonly organizationSummaryConfig = new BeyOrganizationSummaryConfig();
 | Groups                | `bey-groups`               | `BeyGroupsConfig`              | `angular-components.groups.*`               | [groups-readme.md](../groups/docs/groups-readme.md)                                           |
 | Roles and permissions | `bey-roles`                | `BeyRolesConfig`               | `angular-components.roles.*`                | [roles-readme.md](../roles/docs/roles-readme.md)                                              |
 | Organizations         | `bey-organizations`        | `BeyOrganizationsConfig`       | `angular-components.organizations.*`        | [organizations-readme.md](../organizations/docs/organizations-readme.md)                      |
+| Audit                 | `bey-audit`                | `BeyAuditConfig`               | `angular-components.audit.*`                | [audit-readme.md](../audit/docs/audit-readme.md)                                              |
 | Organization summary  | `bey-organization-summary` | `BeyOrganizationSummaryConfig` | `angular-components.organization-summary.*` | [organization-summary-readme.md](../organization-summary/docs/organization-summary-readme.md) |
 
 The errors of the server keep their own keys, `angular-components.http.error.<page>.*` and
@@ -60,6 +62,9 @@ page sends them no `parentId`. The page knows a superadmin by the roles of the s
     the type the roles show; the rows answered to the superadmin may carry `entryType: 'item'`.
 -   **Inside a folder** the list shows the rows of that organization, under a breadcrumb "Users › Acme Legal" that
     starts at `categories.root` and counts what the folder holds.
+-   **The count** names the folders organizations and the rows by the page, "(2 organizations · 1 user)", from
+    `count.categories.one` and `.other` and `count.items.one` and `.other` under the `prefix` of each page, with
+    `{{count}}`.
 -   **The folders are fixed**: they list no action, and the header offers none of the category actions, so none is
     created, renamed, moved, shared or deleted.
 -   **A create inside a folder**, an invitation, a group or a role, comes with the organization of the folder chosen in
@@ -88,7 +93,8 @@ none held by default: `organization.read` the [summary](../organization-summary/
 `organization.read-groups` their [groups](../groups/docs/groups-readme.md#members) and their members,
 `organization.read-group-roles` the roles of those groups, and `organization.read-roles` their own
 [roles](../roles/docs/roles-readme.md#members). The groups and roles pages turn read-only by themselves when the
-answer of the server says so, and the users page is never offered to them.
+answer of the server says so, and the users page is never offered to them. The [audit](../audit/docs/audit-readme.md)
+goes with `audit.read` (`BEY_AUDIT_READ_PERMISSION`), which an app gives its admin role and may grant to an extra role.
 
 Wherever the module names a user from data that may be `null`, a user or a row deleted since, it reads "Unknown"
 (`angular-components.user-name.unknown`, "Desconocido" in Spanish), the text the owner cell, the usages and the edit lock

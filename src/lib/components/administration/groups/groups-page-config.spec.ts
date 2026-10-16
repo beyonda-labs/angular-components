@@ -137,7 +137,7 @@ describe('buildGroupsPageConfig', () => {
         expect(actions.map(action => action.key)).toEqual(['create', 'edit', 'view', 'delete']);
         expect(actions[1].zone).toBe(PageActionZone.Left);
 
-        actions[1].handler?.([group]);
+        actions[1].action?.([group]);
 
         expect(onEdit).toHaveBeenCalledWith(group);
     });
@@ -147,7 +147,7 @@ describe('buildGroupsPageConfig', () => {
         const view = (build({ onView }).headerConfig?.actions ?? [])[2];
         const group: GroupRow = { actions: ['view'], createdAt: 0, id: 'g1', memberCount: 0, name: 'Sales' };
 
-        view.handler?.([group]);
+        view.action?.([group]);
 
         expect(view.zone).toBe(PageActionZone.Left);
         expect(view.tooltip).toBe('demo.teams.actions.view.tooltip');
@@ -155,7 +155,7 @@ describe('buildGroupsPageConfig', () => {
     });
 
     it('browses the folders it is given, with no folder action, and is flat without them', () => {
-        const categoriesConfig = buildOrganizationFoldersConfig(() => []);
+        const categoriesConfig = buildOrganizationFoldersConfig(() => [], 'demo');
         const config = build({ categoriesConfig });
         const keys = config.headerConfig?.actions.map(({ key }) => key) ?? [];
 
@@ -164,16 +164,22 @@ describe('buildGroupsPageConfig', () => {
         expect(build().tableConfig?.categoriesConfig).toBeUndefined();
     });
 
-    it('gives the table the folders height with the folders and the plain height without them', () => {
-        expect(build({ categoriesConfig: buildOrganizationFoldersConfig(() => []) }).tableConfig?.height).toBe(
-            'calc(100vh - 255px)'
+    it('leaves the table to fill the page unless the config gives it the folders height or the plain one', () => {
+        const categoriesConfig = buildOrganizationFoldersConfig(() => [], 'demo');
+        const sized = new GroupsConfig({ foldersHeight: '20rem', height: '24rem' });
+
+        expect(build().tableConfig?.height).toBeUndefined();
+        expect(build({ categoriesConfig }).tableConfig?.height).toBeUndefined();
+        expect(build({ categoriesConfig, config: sized }).tableConfig?.height).toBe('20rem');
+        expect(build({ config: sized }).tableConfig?.height).toBe('24rem');
+        expect(build({ categoriesConfig, config: new GroupsConfig({ height: '24rem' }) }).tableConfig?.height).toBe(
+            '24rem'
         );
-        expect(build().tableConfig?.height).toBe('calc(100vh - 220px)');
     });
 
     it('shows the organization among the folders only in a search at the root, and always on a flat page', () => {
         const folders = build({
-            categoriesConfig: buildOrganizationFoldersConfig(() => []),
+            categoriesConfig: buildOrganizationFoldersConfig(() => [], 'demo'),
             isOrganizationShown: true
         });
         const flat = build({ isOrganizationShown: true });

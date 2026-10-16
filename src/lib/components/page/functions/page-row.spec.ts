@@ -1,7 +1,7 @@
 import { PageAction, PageActionScope, PageActionZone, PageStandardAction } from '../models/page-action.model';
 import { PageCategoriesConfig, PageItemType } from '../models/page-categories.model';
 import { PageItem } from '../models/page-item.model';
-import { isActionVisible, isCategoryRow, toHandlerItems, toTrashItems } from './page-row';
+import { isActionVisible, isCategoryRow, keepListedRows, toHandlerItems, toTrashItems } from './page-row';
 
 interface Row extends PageItem {
     type: PageItemType;
@@ -13,11 +13,17 @@ const OTHER_FOLDER: Row = { ...FOLDER, id: 'g' };
 const REPORT: Row = { actions: ['archive', 'duplicate', PageStandardAction.Edit], id: 1, type: PageItemType.Item };
 const SUMMARY: Row = { ...REPORT, id: 2 };
 
-function buildAction(key: string, scope: PageActionScope, handler?: (items: PageItem[]) => void): PageAction {
-    return new PageAction({ handler, key, scope, zone: PageActionZone.Menu });
+function buildAction(key: string, scope: PageActionScope, action?: (items: PageItem[]) => void): PageAction {
+    return new PageAction({ action, key, scope, zone: PageActionZone.Menu });
 }
 
 describe('page rows', () => {
+    it('keeps of a selection the rows the list still shows, as the list shows them', () => {
+        const renamed: Row = { ...REPORT, actions: [] };
+
+        expect(keepListedRows([REPORT, SUMMARY], [FOLDER, renamed])).toEqual([renamed]);
+    });
+
     it('shows a single-row action only while exactly one selected row lists its key', () => {
         const duplicate = buildAction('duplicate', PageActionScope.Single);
 
@@ -83,6 +89,16 @@ describe('page rows', () => {
         expect(isActionVisible(share, [], [{ ...REPORT, actions: [PageStandardAction.Share] }], CATEGORIES)).toBe(
             false
         );
+    });
+
+    it('hands a transfer handler every selected row, folders included, and shows it while every row lists it', () => {
+        const transfer = buildAction(PageStandardAction.Transfer, PageActionScope.Item, jest.fn());
+        const folder: Row = { ...FOLDER, actions: [PageStandardAction.Transfer] };
+        const report: Row = { ...REPORT, actions: [PageStandardAction.Transfer] };
+
+        expect(toHandlerItems(transfer, [folder, report], CATEGORIES)).toEqual([folder, report]);
+        expect(isActionVisible(transfer, [], [folder, report], CATEGORIES)).toBe(true);
+        expect(isActionVisible(transfer, [], [folder, REPORT], CATEGORIES)).toBe(false);
     });
 
     it('tells a category apart by the type field the categories config names', () => {

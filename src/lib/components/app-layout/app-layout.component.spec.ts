@@ -3,11 +3,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { faGear, faHome } from '@fortawesome/free-solid-svg-icons';
 import { TranslateService } from '@ngx-translate/core';
-import { buttonByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
+import { buttonByName, queryAll, queryButton, renderComponent, settle, textsOf } from '@testing/dom';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 import { config as rxjsConfig } from 'rxjs';
 
 import { LeftMenuTitle, LeftMenuUserInfo } from '../left-menu/models/left-menu.model';
+import { NotificationsConfig } from '../notifications/models/notifications.model';
 import { AppLayoutComponent } from './app-layout.component';
 import {
     AppLayoutBottomAction,
@@ -17,6 +18,8 @@ import {
     AppLayoutTopAction
 } from './models/app-layout.model';
 import { AppLayoutService } from './services/app-layout.service';
+
+const NOTIFICATIONS_BELL = 'angular-components.notifications.bell.label';
 
 @Component({ changeDetection: ChangeDetectionStrategy.OnPush, standalone: true, template: '' })
 class EmptyPageComponent {}
@@ -118,6 +121,16 @@ describe('AppLayoutComponent', () => {
         );
 
         expect(link?.getAttribute('href')).toBe('/account');
+    });
+
+    it('shows the bell of the notifications in the menu only when the config turns them on', async () => {
+        await render();
+
+        expect(queryButton(fixture, NOTIFICATIONS_BELL)).toBeNull();
+
+        await render(buildConfig({ notifications: new NotificationsConfig() }));
+
+        expect(queryButton(fixture, NOTIFICATIONS_BELL)).not.toBeNull();
     });
 
     it('keeps the footer of a config copied with a spread, with the overrides of the copy', async () => {
@@ -244,7 +257,7 @@ describe('AppLayoutComponent', () => {
             await settle(fixture);
 
             expect(action.action).toBe(run);
-            expect(action.active).toBe(false);
+            expect(action.isActive).toBe(false);
         });
     });
 
@@ -253,7 +266,7 @@ describe('AppLayoutComponent', () => {
             await render(
                 buildConfig({
                     topActions: [
-                        new AppLayoutTopAction({ active: true, icon: faHome, key: 'home' }),
+                        new AppLayoutTopAction({ isActive: true, icon: faHome, key: 'home' }),
                         new AppLayoutTopAction({ icon: faGear, key: 'other' })
                     ]
                 })

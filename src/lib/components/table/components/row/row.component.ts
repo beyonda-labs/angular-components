@@ -13,15 +13,15 @@ import { TableCellComponent } from '../cell/cell.component';
     templateUrl: './row.component.html'
 })
 export class TableRowComponent<T> {
-    readonly acceptsDrop = input(false);
+    readonly canAcceptDrop = input(false);
     readonly gridTemplateColumns = input.required<string>();
     readonly isDraggable = input(false);
     readonly isDragged = input(false);
     readonly isDropTarget = input(false);
     readonly isHeader = input(false);
+    readonly isSelectable = input.required<boolean>();
+    readonly isSelectionIndeterminate = input(false);
     readonly row = input.required<TableRow<T | null>>();
-    readonly selectable = input.required<boolean>();
-    readonly selectionIndeterminate = input(false);
     readonly selectionLabel = input('angular-components.table.select-row');
     readonly sortStates = input<(TableSortState | null)[]>([]);
 
@@ -49,7 +49,7 @@ export class TableRowComponent<T> {
     }
 
     onDragOver(event: DragEvent): void {
-        if (!this.acceptsDrop()) {
+        if (!this.canAcceptDrop()) {
             return;
         }
 
@@ -78,7 +78,7 @@ export class TableRowComponent<T> {
     }
 
     onDrop(event: DragEvent): void {
-        if (!this.acceptsDrop()) {
+        if (!this.canAcceptDrop()) {
             return;
         }
 
@@ -87,7 +87,7 @@ export class TableRowComponent<T> {
     }
 
     onRowClick(): void {
-        if (this.selectable() && !this.isHeader()) {
+        if (this.isSelectable() && !this.isHeader()) {
             this.selectionChange.emit(!this.row().isSelected);
         }
     }

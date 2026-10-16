@@ -148,6 +148,46 @@
     flex: 1.4 1 10rem;
 }
 
+.bey-search-autocomplete {
+    position: relative;
+}
+
+.bey-search-suggestions {
+    background: var(--bey-search-surface);
+    border: var(--bey-border-width) solid var(--bey-search-border);
+    border-radius: var(--bey-radius-sm);
+    box-shadow: var(--bey-shadow-md);
+    display: flex;
+    flex-direction: column;
+    left: 0;
+    max-height: 14rem;
+    overflow-y: auto;
+    padding: var(--bey-space-3xs) 0;
+    position: absolute;
+    right: 0;
+    top: calc(100% + var(--bey-space-3xs));
+    z-index: var(--bey-z-dropdown);
+}
+
+.bey-search-suggestion {
+    background: transparent;
+    border: none;
+    color: var(--bey-search-fg);
+    font-size: var(--bey-font-size-sm);
+    padding: var(--bey-space-xs) var(--bey-space-md);
+    text-align: left;
+}
+
+.bey-search-suggestion:hover {
+    background-color: var(--bey-bg-hover);
+}
+
+.bey-search-suggestions-note {
+    color: var(--bey-search-fg-muted);
+    font-size: var(--bey-font-size-xs);
+    padding: var(--bey-space-xs) var(--bey-space-md);
+}
+
 .bey-search-range {
     align-items: center;
     background: var(--bey-search-surface);

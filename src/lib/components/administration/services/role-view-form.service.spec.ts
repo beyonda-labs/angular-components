@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { faRectangleList, faUser } from '@fortawesome/free-regular-svg-icons';
+import { fieldsOf } from '@testing/form-fields';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import { FormCheckboxSectionsField } from '../../form/models/fields/form-checkbox-sections-field.model';
 import { FormInfoField } from '../../form/models/fields/form-info-field.model';
 import { FormButtonType, FormSection } from '../../form/models/form.model';
-import { FormField } from '../../form/models/form-field.model';
 import { RolePermissionEntry, RoleViewOptions, ViewedRole } from '../models/role-permissions.model';
 import { RoleViewFormService } from './role-view-form.service';
 
@@ -35,12 +35,6 @@ describe('RoleViewFormService', () => {
             rolePrefix: 'demo.roles',
             ...overrides
         };
-    }
-
-    function fieldsOf(sections: FormSection[], key: string): FormField[] {
-        return sections
-            .filter(section => section.key === key)
-            .flatMap(section => section.rows.flatMap(row => row.fields));
     }
 
     function checklistOf(sections: FormSection[]): FormCheckboxSectionsField {

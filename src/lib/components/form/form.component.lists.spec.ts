@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
-import { controlByName, renderComponent, settle } from '@testing/dom';
+import { controlByName, queryAll, renderComponent, settle, textsOf } from '@testing/dom';
 import { of } from 'rxjs';
 
 import { FormComponent } from './form.component';
@@ -85,5 +85,24 @@ describe('FormComponent with lists that hold ids', () => {
         await chooseOrganization('o2');
 
         expect(handle.value().team.roleIds).toEqual(['r1', 'r2']);
+    });
+
+    it('keeps out of the picker the ids its excludedValues rule reads from the value of the form', async () => {
+        const searchRoles = jest.fn(() => of(ACME_ROLES));
+        await render({
+            excludedValues: value => (value['team']['organizationId'] === 'o1' ? ['r2'] : []),
+            picker: { search: searchRoles }
+        });
+        handle.patchValue({ team: { organizationId: 'o1', roleIds: [] } });
+        await settle(fixture);
+
+        const input = controlByName<HTMLInputElement>(fixture, 'demo.team.role-ids.label');
+        input.dispatchEvent(new Event('focus'));
+        input.value = 'r';
+        input.dispatchEvent(new Event('input'));
+        await settle(fixture);
+
+        expect(searchRoles).toHaveBeenLastCalledWith('r', ['r2']);
+        expect(textsOf(queryAll(document.body, '[role="option"]'))).toEqual(['Reviewers']);
     });
 });

@@ -9,10 +9,10 @@ of the accordion is open; what each action does is the consumer's.
 const menu = new BeyLeftMenuConfig({
     prefix: 'myApp.menu',
     title: new BeyLeftMenuTitle({ title: 'myApp.name', icon: 'assets/logo.svg' }),
-    expanded: this.menuState.expanded,
+    isExpanded: this.menuState.expanded,
     onExpandedChange: expanded => this.menuState.setExpanded(expanded),
     topActions: [
-        new BeyLeftMenuAction({ key: 'home', icon: faHome, active: true, action: () => this.go('/home') }),
+        new BeyLeftMenuAction({ key: 'home', icon: faHome, isActive: true, action: () => this.go('/home') }),
         new BeyLeftMenuAction({
             key: 'reports',
             icon: faChartLine,
@@ -34,11 +34,12 @@ const menu = new BeyLeftMenuConfig({
 | ------------------ | -------- | ------- | ----------------------------------------------------- |
 | `prefix`           | yes      |         | i18n prefix the action texts are built from           |
 | `title`            | yes      |         | Brand shown at the top                                |
-| `expanded`         | no       | `true`  | Whether the menu starts open                          |
+| `isExpanded`       | no       | `true`  | Whether the menu starts open                          |
 | `onExpandedChange` | no       | none    | Run with the new state when the user toggles the menu |
 | `topActions`       | no       | `[]`    | Main navigation                                       |
 | `bottomActions`    | no       | `[]`    | Secondary group, pinned below                         |
 | `userInfo`         | no       | none    | Shows the signed-in user at the foot                  |
+| `notifications`    | no       | none    | Shows the bell of the notifications at the foot       |
 
 ## BeyLeftMenuAction
 
@@ -48,8 +49,8 @@ const menu = new BeyLeftMenuConfig({
 | `label`      | no       | `<key>.label`   | Resolved against `<prefix>.actions` unless it is literal |
 | `tooltip`    | no       | `<key>.tooltip` | Same resolution; shown as the label while collapsed      |
 | `icon`       | no       | none            | FontAwesome icon, the only thing visible while collapsed |
-| `active`     | no       | `false`         | Marks the current location                               |
-| `disabled`   | no       | `false`         | Neither runs nor opens                                   |
+| `isActive`   | no       | `false`         | Marks the current location                               |
+| `isDisabled` | no       | `false`         | Neither runs nor opens                                   |
 | `subActions` | no       | `[]`            | Nested actions, to any depth                             |
 | `action`     | no       |                 | Run when the action is used                              |
 
@@ -63,7 +64,7 @@ A default text uses the key as a kebab-case segment: `userSettings` reads
 | `name`     | yes      |                           | Shown with the surname while the menu is expanded            |
 | `surname`  | no       | `''`                      | Shown after the name                                         |
 | `email`    | no       | `''`                      | Shown under the name, and as the tooltip while collapsed     |
-| `initials` | no       | from the name and surname | The text of the avatar                                       |
+| `initials` | no       | from the name and surname | The text of the avatar; the initials drop their accents      |
 | `route`    | no       | none                      | Turns the user into a link to that route, such as `/account` |
 
 With a `route`, the avatar, the name and the email become one `routerLink`, reachable from the keyboard and named
@@ -71,9 +72,15 @@ With a `route`, the avatar, the name and the email become one `routerLink`, reac
 route is the current page the link carries `aria-current="page"` and the active look of the menu actions. Without a
 `route` the user is plain text.
 
+## Notifications
+
+With `notifications`, a `BeyNotificationsConfig`, the foot of the menu holds the bell of the
+[notifications centre](../../notifications/docs/notifications-readme.md): after the user while the menu is expanded,
+under it while collapsed, and alone when there is no `userInfo`. Without it the menu shows no bell and asks nothing.
+
 ## Expanding and collapsing
 
-The menu owns its own state from `expanded` onwards and reports every change through `onExpandedChange`. The
+The menu owns its own state from `isExpanded` onwards and reports every change through `onExpandedChange`. The
 config is never written to: to persist the state, store what the callback gives you and build the next config
 from it, as `bey-app-layout` does.
 

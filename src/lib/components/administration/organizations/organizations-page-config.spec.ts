@@ -74,7 +74,7 @@ describe('buildOrganizationsPageConfig', () => {
         expect(actions.map(action => action.key)).toEqual(['create', 'edit', 'delete']);
         expect(actions[1].zone).toBe(PageActionZone.Left);
 
-        actions[1].handler?.([organization]);
+        actions[1].action?.([organization]);
 
         expect(onEdit).toHaveBeenCalledWith(organization);
     });
@@ -97,7 +97,7 @@ describe('buildOrganizationsPageConfig', () => {
 
         expect(remove).toEqual(expect.objectContaining({ scope: PageActionScope.Single, zone: PageActionZone.Menu }));
 
-        remove.handler?.([organization]);
+        remove.action?.([organization]);
 
         expect(onDelete).toHaveBeenCalledWith(organization);
     });

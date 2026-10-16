@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { AuditStyleGuideComponent } from './audit/audit-style-guide.component';
 import { GroupsStyleGuideComponent } from './groups/groups-style-guide.component';
 import { OrganizationSummaryStyleGuideComponent } from './organization-summary/organization-summary-style-guide.component';
 import { OrganizationsStyleGuideComponent } from './organizations/organizations-style-guide.component';
@@ -10,6 +11,7 @@ import { UsersStyleGuideComponent } from './users/users-style-guide.component';
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
+        AuditStyleGuideComponent,
         GroupsStyleGuideComponent,
         OrganizationsStyleGuideComponent,
         OrganizationSummaryStyleGuideComponent,

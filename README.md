@@ -80,6 +80,7 @@ const form = new BeyFormConfig({
 | Component            | Selector                                                            | Status                      |
 | -------------------- | ------------------------------------------------------------------- | --------------------------- |
 | Account data         | `<bey-account-data>`                                                | Stable                      |
+| Audit                | `<bey-audit>`                                                       | Stable                      |
 | Cards                | `<bey-card>`, `<bey-card-list>`, `<bey-card-stats>`, `<bey-avatar>` | Stable                      |
 | Edit lock notice     | `<bey-edit-lock-notice>`                                            | Stable                      |
 | Form                 | `<bey-form>`                                                        | Stable                      |
@@ -87,6 +88,7 @@ const form = new BeyFormConfig({
 | Header               | `<bey-header>`                                                      | Stable                      |
 | Left Menu            | `<bey-left-menu>`                                                   | Stable                      |
 | Notice               | `<bey-notice>`                                                      | Stable                      |
+| Notifications        | `<bey-notifications>`                                               | Stable                      |
 | Organization summary | `<bey-organization-summary>`                                        | Stable                      |
 | Organizations        | `<bey-organizations>`                                               | Stable                      |
 | Password change      | `<bey-password-change>`                                             | Stable                      |
@@ -107,6 +109,11 @@ then; "Expand all" and "Collapse all" at the top open or close every one, the se
 `sessionStorage` for the session, and a hash naming a module (`#tabs`, `#administration`) opens its section and
 scrolls to it, on arrival or when a link changes it.
 
+The administration and sharing demos answer their own requests: register `beyAdministrationStyleGuideInterceptor`
+and `beyPageStyleGuideInterceptor`, from the same entry point, among the HTTP interceptors of the app that renders
+the style guide, as `provideBeyApp({ interceptors: [...] })` takes them. They answer only the
+`/style-guide/` requests they know, fixed data and writes echoed back, and pass everything else on.
+
 The specs of a consuming app take their helpers from `@beyonda-labs/angular-components/testing`, a second
 secondary entry point that only specs import: `provideBeyTesting(config?)`, the test counterpart of
 `provideBeyApp` (`HttpTestingController`, in-memory session, translations without a loader), the fakes that stand
@@ -115,7 +122,8 @@ and the DOM helpers the library's own specs use (`beyRenderComponent`, `beySettl
 sources live in `testing/src/`; see the [testing README](testing/docs/testing-readme.md).
 
 Two plain functions are public so an app builds the same texts and keys as the library: `beyFormatBytes` and
-`beyToKeySegment`.
+`beyToKeySegment`. So is the library's own icon, `BEY_SHARED_FOLDER_ICON`, a FontAwesome `IconDefinition` of a
+folder with a person cut out of it that `fa-icon` draws wherever an icon is accepted.
 
 Component documentation:
 
@@ -124,7 +132,8 @@ Component documentation:
     [Users](src/lib/components/administration/users/docs/users-readme.md),
     [Groups](src/lib/components/administration/groups/docs/groups-readme.md),
     [Roles](src/lib/components/administration/roles/docs/roles-readme.md),
-    [Organizations](src/lib/components/administration/organizations/docs/organizations-readme.md) and
+    [Organizations](src/lib/components/administration/organizations/docs/organizations-readme.md),
+    [Audit](src/lib/components/administration/audit/docs/audit-readme.md) and
     [Organization summary](src/lib/components/administration/organization-summary/docs/organization-summary-readme.md)
 -   [Cards](src/lib/components/cards/docs/cards-readme.md)
 -   [Edit lock notice](src/lib/components/edit-lock-notice/docs/edit-lock-notice-readme.md)
@@ -132,6 +141,7 @@ Component documentation:
 -   [Header](src/lib/components/header/docs/header-readme.md)
 -   [Left Menu](src/lib/components/left-menu/docs/left-menu-readme.md)
 -   [Notice](src/lib/components/notice/docs/notice-readme.md)
+-   [Notifications](src/lib/components/notifications/docs/notifications-readme.md)
 -   [Password change](src/lib/components/password-change/docs/password-change-readme.md)
 -   [Table](src/lib/components/table/docs/table-readme.md)
 

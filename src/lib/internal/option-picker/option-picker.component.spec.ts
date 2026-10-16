@@ -71,7 +71,7 @@ describe('OptionPickerComponent', () => {
     });
 
     it('hides the search box when it is not searchable', () => {
-        fixture.componentRef.setInput('searchable', false);
+        fixture.componentRef.setInput('isSearchable', false);
         fixture.detectChanges();
 
         expect(element.querySelector('[aria-label="angular-components.option-picker.search"]')).toBeNull();

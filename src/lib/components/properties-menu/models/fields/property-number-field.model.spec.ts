@@ -6,7 +6,7 @@ describe('PropertyNumberField', () => {
         const field = new PropertyNumberField({ id: 'fontSize' });
 
         expect(field.placeholder).toBe('');
-        expect(field.readonly).toBe(false);
+        expect(field.isReadonly).toBe(false);
         expect(field.max).toBeUndefined();
         expect(field.min).toBeUndefined();
         expect(field.step).toBeUndefined();

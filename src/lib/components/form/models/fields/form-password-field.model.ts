@@ -13,19 +13,19 @@ export interface PasswordRuleCheck {
 }
 
 export class FormPasswordField extends FormField {
-    showToggle: boolean;
+    isToggleShown: boolean;
 
     policy?: FormPasswordPolicy;
 
-    constructor({ policy, showToggle = true, ...base }: FormPasswordFieldParameters) {
+    constructor({ policy, isToggleShown = true, ...base }: FormPasswordFieldParameters) {
         super({ ...base, type: FormFieldType.Password });
 
+        this.isToggleShown = isToggleShown;
         this.policy = policy;
-        this.showToggle = showToggle;
     }
 }
 
 export interface FormPasswordFieldParameters extends FormFieldBaseParameters {
+    isToggleShown?: boolean;
     policy?: FormPasswordPolicy;
-    showToggle?: boolean;
 }

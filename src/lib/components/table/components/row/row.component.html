@@ -3,7 +3,7 @@
     role="row"
     [attr.draggable]="isDraggable() || null"
     [class.bey-table-row--header]="isHeader()"
-    [class.bey-table-row--selectable]="selectable() && !isHeader()"
+    [class.bey-table-row--selectable]="isSelectable() && !isHeader()"
     [class.is-dragged]="isDragged()"
     [class.is-drop-target]="isDropTarget()"
     [class.is-selected]="row().isSelected"
@@ -15,7 +15,7 @@
     (dragstart)="onDragStart($event)"
     (drop)="onDrop($event)"
 >
-    @if (selectable()) {
+    @if (isSelectable()) {
         <label class="bey-table-row-selection" (click)="$event.stopPropagation()">
             <span class="visually-hidden">{{ selectionLabel() | translate }}</span>
             <input
@@ -23,7 +23,7 @@
                 type="checkbox"
                 [attr.aria-label]="selectionLabel() | translate"
                 [checked]="row().isSelected"
-                [indeterminate]="selectionIndeterminate()"
+                [indeterminate]="isSelectionIndeterminate()"
                 (change)="onCheckboxChange($event)"
             />
         </label>

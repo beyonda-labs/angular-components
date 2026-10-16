@@ -11,6 +11,7 @@ import {
     settle,
     textsOf
 } from '@testing/dom';
+import { fieldsOf } from '@testing/form-fields';
 import { provideBeyTesting } from '@testing/providers/testing.providers';
 
 import formEn from '../../../form/assets/form.en.json';
@@ -59,7 +60,7 @@ describe('UsersFormService', () => {
     }
 
     function fieldsFor(row?: UserRow): FormField[] {
-        return form.buildSections(row).flatMap(section => section.rows.flatMap(row => row.fields));
+        return fieldsOf(form.buildSections(row));
     }
 
     beforeEach(() => {

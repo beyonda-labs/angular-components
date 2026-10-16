@@ -54,7 +54,7 @@ export function keepPropertiesMenuState(
 
 function findActiveNodeId(nodes: PropertyTreeNode[]): string | null {
     for (const node of nodes) {
-        if (node.active) {
+        if (node.isActive) {
             return node.id;
         }
 
@@ -140,7 +140,7 @@ function keepActiveTabId(
     next: PropertiesMenuConfig
 ): string | null {
     const isKept =
-        previous?.activeTabId === next.activeTabId && next.tabs.some(tab => tab.id === current && !tab.hidden);
+        previous?.activeTabId === next.activeTabId && next.tabs.some(tab => tab.id === current && !tab.isHidden);
 
     return isKept ? current : next.activeTabId || null;
 }
@@ -161,19 +161,19 @@ function keepContent(groupKey: string, content: PropertyGroupContent, sources: S
 function keepGroup(tabId: string, group: PropertyGroup, sources: StateSources): PropertyGroup {
     const groupKey = toStateKey(tabId, group.id);
     const content = keepContent(groupKey, group.content, sources);
-    const expanded = keepValue(groupKey, group.expanded, sources.previous.groups, sources.current.groups);
+    const isExpanded = keepValue(groupKey, group.isExpanded, sources.previous.groups, sources.current.groups);
 
-    return content === group.content && expanded === group.expanded
+    return content === group.content && isExpanded === group.isExpanded
         ? group
-        : new PropertyGroup({ ...group, content, expanded });
+        : new PropertyGroup({ ...group, content, isExpanded });
 }
 
 function keepListContent(groupKey: string, content: PropertyListContent, sources: StateSources): PropertyListContent {
     const list = content.list.map(item => {
         const itemKey = toStateKey(groupKey, item.id);
-        const expanded = keepValue(itemKey, item.expanded, sources.previous.listItems, sources.current.listItems);
+        const isExpanded = keepValue(itemKey, item.isExpanded, sources.previous.listItems, sources.current.listItems);
 
-        return expanded === item.expanded ? item : new PropertyListItem({ ...item, expanded });
+        return isExpanded === item.isExpanded ? item : new PropertyListItem({ ...item, isExpanded });
     });
 
     return isSameList(list, content.list) ? content : new PropertyListContent({ list });
@@ -219,13 +219,13 @@ function keepTreeNodes(groupKey: string, nodes: PropertyTreeNode[], sources: Sta
     return nodes.map(node => {
         const nodeKey = toStateKey(groupKey, node.id);
         const children = keepTreeNodes(groupKey, node.children, sources);
-        const expanded =
+        const isExpanded =
             sources.revealed.has(nodeKey) ||
-            keepValue(nodeKey, node.expanded, sources.previous.treeNodes, sources.current.treeNodes);
+            keepValue(nodeKey, node.isExpanded, sources.previous.treeNodes, sources.current.treeNodes);
 
-        return expanded === node.expanded && isSameList(children, node.children)
+        return isExpanded === node.isExpanded && isSameList(children, node.children)
             ? node
-            : new PropertyTreeNode({ ...node, children, expanded });
+            : new PropertyTreeNode({ ...node, children, isExpanded });
     });
 }
 
@@ -238,7 +238,7 @@ function keepValue<T>(key: string, next: T, previous: Map<string, T>, current: M
 function readContentState(state: OpenState, groupKey: string, content: PropertyGroupContent): void {
     switch (content.type) {
         case PropertyGroupContentType.LIST:
-            content.list.forEach(item => state.listItems.set(toStateKey(groupKey, item.id), item.expanded));
+            content.list.forEach(item => state.listItems.set(toStateKey(groupKey, item.id), item.isExpanded));
             break;
         case PropertyGroupContentType.TABS:
             state.contentTabs.set(groupKey, content.activeTabId);
@@ -258,7 +258,7 @@ function readOpenState(config: PropertiesMenuConfig | null): OpenState {
         tab.groups.forEach(group => {
             const groupKey = toStateKey(tab.id, group.id);
 
-            state.groups.set(groupKey, group.expanded);
+            state.groups.set(groupKey, group.isExpanded);
             readContentState(state, groupKey, group.content);
         })
     );
@@ -268,7 +268,7 @@ function readOpenState(config: PropertiesMenuConfig | null): OpenState {
 
 function readTreeNodes(treeNodes: Map<string, boolean>, groupKey: string, nodes: PropertyTreeNode[]): void {
     nodes.forEach(node => {
-        treeNodes.set(toStateKey(groupKey, node.id), node.expanded);
+        treeNodes.set(toStateKey(groupKey, node.id), node.isExpanded);
         readTreeNodes(treeNodes, groupKey, node.children);
     });
 }

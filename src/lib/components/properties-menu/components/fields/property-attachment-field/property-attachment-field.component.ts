@@ -16,6 +16,7 @@ import {
 } from '../../../models/fields/property-attachment-field.model';
 import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 import { PROPERTY_VARIABLE_ICON } from '../../../models/property-variable.model';
+import { isUnresolvedAttachment, isVariableReference, selectedAttachmentOption } from './functions/attachment-value';
 
 const BYTES_PER_MB = 1024 * 1024;
 const UNKNOWN_ATTACHMENT_KEY = 'angular-components.properties-menu.attachment-field.unknown';
@@ -47,18 +48,20 @@ export class PropertyAttachmentFieldComponent {
         return term ? options.filter(option => option.label.toLowerCase().includes(term)) : options;
     });
     readonly hasTypeError = signal(false);
+    readonly holdsVariable = computed(() => isVariableReference(this.field().value));
     readonly inputValue = computed(() => (this.isOpen() ? this.query() : this.selectedLabel()));
     readonly isOpen = signal(false);
     readonly pickerOpen = signal(false);
     readonly query = signal('');
     readonly selectedLabel = computed(() => {
         const field = this.field();
+        const selected = selectedAttachmentOption(field);
 
-        if (field.selectedOption) {
-            return field.selectedOption.label;
+        if (selected) {
+            return selected.label;
         }
 
-        if (!isUnresolved(field)) {
+        if (!isUnresolvedAttachment(field)) {
             return field.value ?? '';
         }
 
@@ -131,7 +134,7 @@ export class PropertyAttachmentFieldComponent {
     onOptionPicked(option: PropertyAttachmentOption, event: Event): void {
         event.preventDefault();
 
-        if (option.disabled) {
+        if (option.isDisabled) {
             return;
         }
 
@@ -168,8 +171,4 @@ function acceptedMimeTypes(accept: string | undefined): string[] {
         .split(',')
         .map(pattern => pattern.trim())
         .filter(Boolean);
-}
-
-function isUnresolved({ holdsVariable, options, value }: PropertyAttachmentField): boolean {
-    return Boolean(value?.trim()) && !holdsVariable && options.length > 0;
 }

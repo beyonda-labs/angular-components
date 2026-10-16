@@ -4,6 +4,11 @@
             "add": "Añadir filtro",
             "apply": "Aplicar filtros",
             "clear": "Limpiar todo",
+            "date-operators": {
+                "between": "Entre",
+                "greater-than-or-equals": "Desde el",
+                "less-than-or-equals": "Hasta el"
+            },
             "empty": {
                 "description": "Añade filtros para acotar los resultados.",
                 "title": "Sin filtros aplicados"
@@ -11,6 +16,8 @@
             "field-placeholder": "Selecciona un filtro",
             "filters": "Filtros",
             "from-placeholder": "Desde",
+            "more-matches": "Hay más coincidencias: escribe más para afinar.",
+            "no-matches": "No se han encontrado coincidencias",
             "operators": {
                 "between": "Entre",
                 "contains": "Contiene",
@@ -24,6 +31,7 @@
                 "not-equals": "Distinto de",
                 "starts-with": "Empieza por"
             },
+            "option-placeholder": "Escribe para buscar",
             "placeholder": "Buscar",
             "remove": "Eliminar filtro",
             "row": "Filtro",

@@ -1,6 +1,6 @@
 @let current = field();
 
-@if (current.searchable) {
+@if (current.isSearchable) {
     <div #pickerAnchor class="bey-property-field-control bey-property-select-field">
         <input
             class="bey-property-field-input"
@@ -10,10 +10,10 @@
             [attr.aria-controls]="controlsId()"
             [attr.aria-expanded]="isOpen()"
             [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
-            [disabled]="current.disabled"
+            [disabled]="current.isDisabled"
             [id]="labelling().controlId"
             [placeholder]="'angular-components.properties-menu.select-field.search' | translate"
-            [required]="current.required"
+            [required]="current.isRequired"
             [value]="inputValue()"
             (blur)="close()"
             (focus)="onFocus()"
@@ -36,7 +36,7 @@
                         type="button"
                         [attr.aria-selected]="option.value === current.value"
                         [class.is-selected]="option.value === current.value"
-                        [disabled]="option.disabled"
+                        [disabled]="option.isDisabled"
                         (mousedown)="onOptionPicked(option, $event)"
                     >
                         {{ option.label | translate }}
@@ -66,7 +66,7 @@
                 [attr.aria-expanded]="pickerOpen()"
                 [attr.aria-label]="'angular-components.properties-menu.select-field.use-variable' | translate"
                 [class.is-active]="pickerOpen()"
-                [disabled]="current.disabled"
+                [disabled]="current.isDisabled"
                 [tooltip]="'angular-components.properties-menu.select-field.use-variable' | translate"
                 (click)="toggleVariablePicker()"
             >
@@ -79,13 +79,17 @@
         <select
             class="bey-property-field-select"
             [attr.aria-label]="labelling().labelId ? null : (labelling().labelKey | translate)"
-            [disabled]="current.disabled"
+            [disabled]="current.isDisabled"
             [id]="labelling().controlId"
-            [required]="current.required"
+            [required]="current.isRequired"
             (change)="onChange($event)"
         >
             @for (option of current.options; track option.value) {
-                <option [disabled]="option.disabled" [selected]="option.value === current.value" [value]="option.value">
+                <option
+                    [disabled]="option.isDisabled"
+                    [selected]="option.value === current.value"
+                    [value]="option.value"
+                >
                     {{ option.label | translate }}
                 </option>
             }

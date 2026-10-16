@@ -15,7 +15,7 @@ export enum HeaderVariant {
 }
 
 export class HeaderAction {
-    disabled: boolean;
+    isDisabled: boolean;
     key: string;
     label: string;
     tooltip: string;
@@ -27,8 +27,8 @@ export class HeaderAction {
 
     constructor({
         action,
-        disabled = false,
         icon,
+        isDisabled = false,
         key,
         label = `${key}.label`,
         subActions,
@@ -36,8 +36,8 @@ export class HeaderAction {
         type
     }: HeaderActionParameters) {
         this.action = action;
-        this.disabled = disabled;
         this.icon = icon;
+        this.isDisabled = isDisabled;
         this.key = key;
         this.label = label;
         this.subActions = subActions;
@@ -83,8 +83,8 @@ export interface HeaderActionParameters {
     type: HeaderActionType;
 
     action?: () => void;
-    disabled?: boolean;
     icon?: IconDefinition;
+    isDisabled?: boolean;
     label?: string;
     subActions?: HeaderAction[];
     tooltip?: string;
