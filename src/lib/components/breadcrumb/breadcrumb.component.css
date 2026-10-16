@@ -58,7 +58,7 @@
 .bey-breadcrumb-item-button:focus-visible {
     border-radius: var(--bey-radius-xs);
     outline: var(--bey-border-width-thick) solid var(--bey-breadcrumb-active);
-    outline-offset: 2px;
+    outline-offset: var(--bey-space-3xs);
 }
 
 .bey-breadcrumb-item-button:disabled {

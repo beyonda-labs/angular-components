@@ -23,7 +23,7 @@ readonly config = new BeyPageConfig<UserFormValue, User>({
         actions: [
             beyPageStandardAction(BeyPageStandardAction.Create),
             beyPageStandardAction(BeyPageStandardAction.Edit),
-            new BeyPageAction({ key: 'invite', scope: BeyPageActionScope.Single, zone: BeyPageActionZone.Menu, handler: ([user]) => this.invite(user) }),
+            new BeyPageAction({ key: 'invite', scope: BeyPageActionScope.Single, zone: BeyPageActionZone.Menu, action: ([user]) => this.invite(user) }),
             beyPageStandardAction(BeyPageStandardAction.Delete)
         ]
     }),

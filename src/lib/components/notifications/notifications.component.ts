@@ -23,26 +23,18 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { map } from 'rxjs';
 
 import { nextDomId } from '../../internal/dom-ids/dom-ids';
+import { notificationBadge } from './functions/notification-badge';
+import { notificationPanelPosition } from './functions/notification-panel-position';
 import { notificationText } from './functions/notification-text';
 import { notificationTime } from './functions/notification-time';
-import { Notification, NOTIFICATIONS_BADGE_MAX, NotificationsConfig } from './models/notifications.model';
+import { Notification, NotificationPanelPosition, NotificationsConfig } from './models/notifications.model';
 import { NotificationsService } from './services/notifications.service';
-
-const PANEL_GAP_PX = 8;
-const PANEL_WIDTH_PX = 352;
 
 interface NotificationItem {
     isUnread: boolean;
     notification: Notification;
     text: string;
     time: string;
-}
-
-interface PanelPosition {
-    bottom: number | null;
-    left: number;
-    maxHeight: number;
-    top: number | null;
 }
 
 @Component({
@@ -63,7 +55,7 @@ export class NotificationsComponent {
 
     readonly config = input.required<NotificationsConfig>();
 
-    readonly badge = computed(() => badgeText(this.notificationsService.unreadCount()));
+    readonly badge = computed(() => notificationBadge(this.notificationsService.unreadCount()));
     readonly bellIcon = faBell;
     readonly bellLabel = computed(() =>
         this.hasUnread()
@@ -92,7 +84,7 @@ export class NotificationsComponent {
         );
     });
     readonly panelId = nextDomId('bey-notifications-panel');
-    readonly position = signal<PanelPosition>({ bottom: null, left: 0, maxHeight: 0, top: 0 });
+    readonly position = signal<NotificationPanelPosition>({ bottom: null, left: 0, maxHeight: 0, top: 0 });
     readonly refreshIcon = faRotateRight;
     readonly titleId = nextDomId('bey-notifications-title');
 
@@ -196,18 +188,8 @@ export class NotificationsComponent {
     }
 
     private place(): void {
-        const rect = this.trigger().nativeElement.getBoundingClientRect();
-        const { clientHeight, clientWidth } = document.documentElement;
-        const left = Math.max(
-            PANEL_GAP_PX,
-            Math.min(rect.right + PANEL_GAP_PX, clientWidth - PANEL_WIDTH_PX - PANEL_GAP_PX)
-        );
-        const isBelowMiddle = rect.top > clientHeight / 2;
-
         this.position.set(
-            isBelowMiddle
-                ? { bottom: clientHeight - rect.bottom, left, maxHeight: rect.bottom - PANEL_GAP_PX, top: null }
-                : { bottom: null, left, maxHeight: clientHeight - rect.top - PANEL_GAP_PX, top: rect.top }
+            notificationPanelPosition(this.trigger().nativeElement.getBoundingClientRect(), document.documentElement)
         );
     }
 
@@ -215,12 +197,4 @@ export class NotificationsComponent {
         window.removeEventListener('resize', this.onWindowResize);
         document.removeEventListener('scroll', this.onAncestorScroll, { capture: true });
     }
-}
-
-function badgeText(count: number): string {
-    if (count <= 0) {
-        return '';
-    }
-
-    return count > NOTIFICATIONS_BADGE_MAX ? `${NOTIFICATIONS_BADGE_MAX}+` : String(count);
 }

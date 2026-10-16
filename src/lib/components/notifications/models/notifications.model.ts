@@ -25,6 +25,13 @@ export interface NotificationNoun {
     other: string;
 }
 
+export interface NotificationPanelPosition {
+    bottom: number | null;
+    left: number;
+    maxHeight: number;
+    top: number | null;
+}
+
 export interface NotificationsMarkAllReadResponse {
     updated: number;
 }

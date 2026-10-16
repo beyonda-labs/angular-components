@@ -22,13 +22,13 @@ readonly table = new BeyTableConfig<Person>({
         new BeyTextTableCell({ content: item.name, icon: faUser }),
         new BeyBadgeTableCell({
             badges: [new BeyBadgeConfig({ label: `myApp.team.status.${item.status}`, variant: BeyBadgeVariant.Success })],
-            translate: true
+            isTranslationKey: true
         }),
         new BeyDateTableCell({ value: item.joinedAt }),
         new BeyTagsTableCell({ tags: item.skills }),
-        new BeyLinkTableCell({ action: () => this.open(item), content: 'myApp.team.open', translate: true })
+        new BeyLinkTableCell({ action: () => this.open(item), content: 'myApp.team.open', isTranslationKey: true })
     ],
-    selectedItemsChange: (items, indexes) => this.selection.set(items),
+    onSelectionChange: (items, indexes) => this.selection.set(items),
     onSortChange: sort => this.load(sort)
 });
 ```

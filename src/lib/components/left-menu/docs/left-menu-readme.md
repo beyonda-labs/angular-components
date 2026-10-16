@@ -9,10 +9,10 @@ of the accordion is open; what each action does is the consumer's.
 const menu = new BeyLeftMenuConfig({
     prefix: 'myApp.menu',
     title: new BeyLeftMenuTitle({ title: 'myApp.name', icon: 'assets/logo.svg' }),
-    expanded: this.menuState.expanded,
+    isExpanded: this.menuState.expanded,
     onExpandedChange: expanded => this.menuState.setExpanded(expanded),
     topActions: [
-        new BeyLeftMenuAction({ key: 'home', icon: faHome, active: true, action: () => this.go('/home') }),
+        new BeyLeftMenuAction({ key: 'home', icon: faHome, isActive: true, action: () => this.go('/home') }),
         new BeyLeftMenuAction({
             key: 'reports',
             icon: faChartLine,
