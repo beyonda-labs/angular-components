@@ -17,6 +17,9 @@
                 "bad-gateway": "El servidor recibió una respuesta no válida. Por favor, inténtelo de nuevo más tarde.",
                 "bad-request": "La solicitud no pudo ser procesada. Por favor, revise los datos enviados.",
                 "conflict": "Se produjo un conflicto con el estado actual del recurso.",
+                "database": {
+                    "busy": "La base de datos está ocupada con otra operación: inténtalo de nuevo en unos segundos."
+                },
                 "duplicate-field": "Ya existe un elemento con el campo \"{{fieldName}}\" con el valor \"{{value}}\".",
                 "entities": {
                     "invalid-transfer-target": "El nuevo propietario debe ser un usuario activo de la misma organización.",
@@ -67,6 +70,9 @@
                 "bad-gateway": "Error de conexión",
                 "bad-request": "Solicitud inválida",
                 "conflict": "Conflicto",
+                "database": {
+                    "busy": "Base de datos ocupada"
+                },
                 "default": "Error",
                 "duplicate-field": "Valor duplicado",
                 "entities": {

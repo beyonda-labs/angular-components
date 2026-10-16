@@ -400,6 +400,9 @@
                 "bad-gateway": "The server received an invalid response. Please try again later.",
                 "bad-request": "The request could not be processed. Please check the submitted data.",
                 "conflict": "A conflict occurred with the current state of the resource.",
+                "database": {
+                    "busy": "The database is busy with another operation: try again in a few seconds."
+                },
                 "duplicate-field": "An item with field \"{{fieldName}}\" and value \"{{value}}\" already exists.",
                 "edit-locks": {
                     "held": "{{holderName}} is editing it: nothing was changed.",
@@ -534,6 +537,9 @@
                 "bad-gateway": "Connection error",
                 "bad-request": "Invalid request",
                 "conflict": "Conflict",
+                "database": {
+                    "busy": "Database busy"
+                },
                 "default": "Error",
                 "duplicate-field": "Duplicate value",
                 "edit-locks": {
