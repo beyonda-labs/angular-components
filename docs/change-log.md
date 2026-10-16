@@ -4,6 +4,8 @@
 
 ### Added
 
+-   HTTP service: the text and title of `database.busy`, the 503 express-components answers when MySQL meets a conflict
+    between two operations.
 -   Audit page: `bey-audit` (`BeyAuditComponent`, `BeyAuditConfig`), the read-only audit trail over `/audit` on
     `bey-page`: who did what, when and from where, newest first, searched by user, row name or IP.
 -   Audit page: filters by date range, by user (typed, over `{baseUrl}/user-options`), by entity and by action, and for
