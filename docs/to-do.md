@@ -294,7 +294,7 @@ What the audit before the next release left for after it.
 -   [x] `beyAuthGuard` checks only the leaf `routeConfig.path`, so a nested guarded route is checked as `/<leaf>`
 -   [x] Moving a shared folder: `move` on a top shared folder at the Shared root opens its owner's whole tree, which is
         fine only while the backend never lists `move` there
--   [ ] `angular-components-demo` registers `beyAdministrationStyleGuideInterceptor` and `beyPageStyleGuideInterceptor`
+-   [x] `angular-components-demo` registers `beyAdministrationStyleGuideInterceptor` and `beyPageStyleGuideInterceptor`
         among its interceptors when it upgrades to 1.6.0, so the administration and sharing demos show data
 
 ## For the next minor
