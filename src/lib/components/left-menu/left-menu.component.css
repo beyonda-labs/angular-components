@@ -34,7 +34,7 @@
 .bey-left-menu-shell {
     background: var(--bey-left-menu-surface);
     border: var(--bey-border-width) solid var(--bey-left-menu-border);
-    border-width: 0 1px 0 0;
+    border-width: 0 var(--bey-border-width) 0 0;
     display: flex;
     flex-direction: column;
     gap: var(--bey-space-lg);

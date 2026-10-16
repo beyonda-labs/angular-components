@@ -12,8 +12,8 @@ import { FloatingPreferencesComponent } from './floating-preferences.component';
 describe('FloatingPreferencesComponent', () => {
     let fixture: ComponentFixture<FloatingPreferencesComponent>;
 
-    async function render(hasPill?: boolean): Promise<void> {
-        fixture = await renderComponent(FloatingPreferencesComponent, hasPill === undefined ? {} : { hasPill });
+    async function render(): Promise<void> {
+        fixture = await renderComponent(FloatingPreferencesComponent);
     }
 
     function selects(): HTMLSelectElement[] {
@@ -96,15 +96,6 @@ describe('FloatingPreferencesComponent', () => {
         fixture.detectChanges();
 
         expect(selects()[0].value).toBe('es');
-    });
-
-    it('wraps itself in the floating pill unless told not to', async () => {
-        await setup();
-        await render();
-        expect(fixture.nativeElement.querySelector('.is-pill')).toBeTruthy();
-
-        await render(false);
-        expect(fixture.nativeElement.querySelector('.is-pill')).toBeNull();
     });
 
     it('names both selectors for assistive technology', async () => {
