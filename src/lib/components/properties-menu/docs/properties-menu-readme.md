@@ -17,9 +17,9 @@ readonly config = new BeyPropertiesMenuConfig({
             groups: [
                 new BeyPropertyGroup({
                     id: 'content',
-                    expanded: true,
+                    isExpanded: true,
                     content: new BeyPropertyFieldsContent({
-                        fields: [new BeyPropertyTextField({ id: 'text', acceptsVariable: true, value: 'INVOICE' })]
+                        fields: [new BeyPropertyTextField({ id: 'text', canAcceptVariable: true, value: 'INVOICE' })]
                     })
                 })
             ]

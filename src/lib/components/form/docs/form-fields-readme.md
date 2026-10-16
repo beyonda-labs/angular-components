@@ -267,7 +267,8 @@ The checks a field brings with it (`min` and `max`, `minDate` and `maxDate`, `ma
 notice fields and a list that only shows `items` have no control, so they have nothing to validate.
 
 Every field flags itself once touched while any of them fails: `aria-invalid` on the control and the invalid
-border. The file field writes a message for its own `accept` and `maxSizeBytes` checks.
+border, with no Bootstrap validation icon and the padding the control has while valid. The file field writes a
+message for its own `accept` and `maxSizeBytes` checks.
 
 ## Error messages
 

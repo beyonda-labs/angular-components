@@ -427,7 +427,7 @@ minor and go out together, with no alias for the old name.
         `?error=organization-inactive`) instead of going back to the login in silence
 -   [x] The session keeps the access token in memory and refreshes it through the `httpOnly` cookie of
         express-components (`restore`, `logout`)
--   [ ] Audit viewer: a `bey-page` over the `audit` module, filtered by date, user and entity
+-   [x] Audit viewer: a `bey-page` over the `audit` module, filtered by date, user and entity
 -   [x] Notifications centre: the unread count in the menu and the list of notices, over the `notifications` module
 -   [ ] _(low priority)_ Logging out ends the session on the server, once sessions are revocable
 -   [ ] _(low priority)_ Two-step sign-in: set it up from the profile with a QR, and the code step in the login

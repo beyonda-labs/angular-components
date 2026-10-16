@@ -12,7 +12,7 @@ private readonly http = inject(BeyHttpService);
 
 save(contact: Contact): void {
     this.http
-        .post<Contact>('/api/contacts', contact, { loading: true, successToast: 'myApp.contacts.saved' })
+        .post<Contact>('/api/contacts', contact, { isLoading: true, successToast: 'myApp.contacts.saved' })
         .subscribe(saved => this.contacts.update(contacts => [...contacts, saved]));
 }
 ```
