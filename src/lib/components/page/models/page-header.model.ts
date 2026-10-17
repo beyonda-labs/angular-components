@@ -6,7 +6,7 @@ export class PageHeaderConfig<TItem extends PageItem = PageItem> {
 
     title?: string;
 
-    constructor({ actions = [], title }: PageHeaderConfigParameters<TItem>) {
+    constructor({ actions = [], title }: PageHeaderConfigParameters<TItem> = {}) {
         this.actions = actions;
         this.title = title;
     }

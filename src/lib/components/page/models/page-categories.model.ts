@@ -84,7 +84,7 @@ export class PageCategoriesConfig<TCategory extends PageItem = PageItem, TCatego
         parentPathField = 'parentPath',
         sharedIcon = PAGE_SHARED_CATEGORY_ICON,
         typeField = 'type'
-    }: PageCategoriesConfigParameters<TCategory, TCategoryValue>) {
+    }: PageCategoriesConfigParameters<TCategory, TCategoryValue> = {}) {
         this.countLabels = countLabels;
         this.formConfig = formConfig;
         this.itemCountLabels = itemCountLabels;

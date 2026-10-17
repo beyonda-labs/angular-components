@@ -70,13 +70,15 @@
 }
 
 .bey-pagination-icon-button {
+    --bey-pagination-icon-button-size: 2rem;
+
     align-items: center;
     background: transparent;
     border: 0;
     border-radius: var(--bey-radius-sm);
     color: var(--bey-pagination-accent);
     display: inline-flex;
-    height: 2rem;
+    height: var(--bey-pagination-icon-button-size);
     justify-content: center;
     padding: 0;
     text-decoration: none;
@@ -84,7 +86,7 @@
         background-color var(--bey-duration-fast) var(--bey-easing-standard),
         color var(--bey-duration-fast) var(--bey-easing-standard),
         opacity var(--bey-duration-fast) var(--bey-easing-standard);
-    width: 2rem;
+    width: var(--bey-pagination-icon-button-size);
 }
 
 .bey-pagination-icon-button:hover:not(:disabled) {

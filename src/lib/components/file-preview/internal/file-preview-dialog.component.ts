@@ -6,15 +6,9 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 
 import { ButtonComponent } from '../../../internal/button/button.component';
 import { ButtonConfig, ButtonType } from '../../../internal/button/models/button-config.model';
-import { PdfViewerConfig } from '../../pdf-viewer/models/pdf-viewer-config.model';
-import { PdfViewerToolbar } from '../../pdf-viewer/models/pdf-viewer-value.model';
 import { PdfViewerComponent } from '../../pdf-viewer/pdf-viewer.component';
-import {
-    FILE_PREVIEW_TITLE_ID,
-    FilePreviewConfig,
-    FilePreviewContent,
-    FilePreviewType
-} from '../models/file-preview.model';
+import { buildViewerConfig, toImageSource } from '../functions/file-preview-content';
+import { FILE_PREVIEW_TITLE_ID, FilePreviewType } from '../models/file-preview.model';
 import { FILE_PREVIEW_CONFIG } from './file-preview-dialog.token';
 
 @Component({
@@ -51,18 +45,4 @@ export class FilePreviewDialogComponent implements OnDestroy {
     close(): void {
         this.bsModalReference.hide();
     }
-}
-
-function buildViewerConfig(config: FilePreviewConfig): PdfViewerConfig {
-    return new PdfViewerConfig({
-        filenameForDownload: config.fileName,
-        isDownloadable: true,
-        isSearchable: true,
-        src: config.content,
-        toolbar: PdfViewerToolbar.Compact
-    });
-}
-
-function toImageSource(content: FilePreviewContent): string {
-    return content instanceof Blob ? URL.createObjectURL(content) : content;
 }

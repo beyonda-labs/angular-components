@@ -86,22 +86,24 @@
 }
 
 .bey-left-menu-brand-icon {
+    --bey-left-menu-brand-icon-size: 2.6rem;
+
     align-items: center;
     background: var(--bey-left-menu-surface-alt);
     border: var(--bey-border-width) solid var(--bey-left-menu-border);
     border-radius: var(--bey-radius-xl);
     display: inline-flex;
     flex: 0 0 auto;
-    height: 2.6rem;
+    height: var(--bey-left-menu-brand-icon-size);
     justify-content: center;
     overflow: hidden;
-    width: 2.6rem;
+    width: var(--bey-left-menu-brand-icon-size);
 }
 
 .bey-left-menu.is-collapsed .bey-left-menu-brand-icon {
+    --bey-left-menu-brand-icon-size: 2.25rem;
+
     border-radius: var(--bey-radius-lg);
-    height: 2.25rem;
-    width: 2.25rem;
 }
 
 .bey-left-menu-brand-icon img {
@@ -125,6 +127,8 @@
 }
 
 .bey-left-menu-toggle {
+    --bey-left-menu-toggle-size: 1.75rem;
+
     align-items: center;
     background: var(--bey-left-menu-surface);
     border: var(--bey-border-width) solid var(--bey-left-menu-border);
@@ -133,14 +137,14 @@
     display: inline-flex;
     flex: 0 0 auto;
     font-size: var(--bey-font-size-sm);
-    height: 1.75rem;
+    height: var(--bey-left-menu-toggle-size);
     justify-content: center;
     transition:
         background-color var(--bey-duration-base) var(--bey-easing-standard),
         border-color var(--bey-duration-base) var(--bey-easing-standard),
         color var(--bey-duration-base) var(--bey-easing-standard),
         transform var(--bey-duration-base) var(--bey-easing-standard);
-    width: 1.75rem;
+    width: var(--bey-left-menu-toggle-size);
 }
 
 .bey-left-menu-toggle:hover {

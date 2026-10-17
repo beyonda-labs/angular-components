@@ -1,4 +1,4 @@
-import { formatDate, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, input, LOCALE_ID, output } from '@angular/core';
 import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawesome';
 import { faArrowDown, faArrowsUpDown, faArrowUp } from '@fortawesome/free-solid-svg-icons';
@@ -18,6 +18,7 @@ import {
     TagsTableCell,
     TextTableCell
 } from '../../models/table-cell.model';
+import { toDateText } from './functions/cell-date';
 
 const BADGE_CELL_TYPES = new Set([CellType.Badge, CellType.Tags]);
 const SORT_ICONS: Record<TableSortState, IconDefinition> = {
@@ -101,8 +102,4 @@ export class TableCellComponent {
         event.stopPropagation();
         this.sortToggle.emit();
     }
-}
-
-function toDateText({ format, value }: DateTableCell, locale: string): string {
-    return value === null || value === undefined || value === '' ? '' : formatDate(value, format, locale);
 }

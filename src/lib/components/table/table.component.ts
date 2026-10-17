@@ -17,6 +17,8 @@ import { toKeySegment } from '../../utilities/key-segment';
 import { TableColumnsMenuComponent } from './components/columns-menu/columns-menu.component';
 import { TableRowComponent } from './components/row/row.component';
 import { buildColumnsMenuEntries, resolveVisibleColumns, toggleColumnChoice } from './functions/table-columns';
+import { toGridTrack } from './functions/table-grid';
+import { buildRows, withSelection } from './functions/table-rows';
 import { isTableSortShown, nextTableSort, toTableSortState } from './functions/table-sort';
 import {
     TableColumn,
@@ -26,7 +28,7 @@ import {
     TableSort,
     VisibleTableColumn
 } from './models/table.model';
-import { TableCell, TextTableCell } from './models/table-cell.model';
+import { TextTableCell } from './models/table-cell.model';
 import { TableColumnsStorageService } from './services/table-columns-storage.service';
 
 const COLUMNS_MENU_WIDTH = '2.75rem';
@@ -242,30 +244,4 @@ export class TableComponent<T> {
     private shownColumns(): TableColumn[] {
         return this.visibleColumns().map(({ column }) => column);
     }
-}
-
-function buildRows<T>(config: TableConfig<T>, columns: VisibleTableColumn[]): TableRow<T>[] {
-    return config.items.map(item => {
-        const cells = fillCells(config.loadRow(item), config.columns.length);
-
-        return new TableRow({
-            cells: columns.map(({ index }) => cells[index]),
-            content: item,
-            isSelected: config.isRowSelected?.(item) ?? false
-        });
-    });
-}
-
-function fillCells(cells: TableCell[], count: number): TableCell[] {
-    const missing = Math.max(count - cells.length, 0);
-
-    return [...cells, ...Array.from({ length: missing }, () => new TextTableCell({ content: '' }))];
-}
-
-function toGridTrack({ width }: TableColumn): string {
-    return typeof width === 'number' ? `minmax(0, ${Math.max(width, 1)}fr)` : width;
-}
-
-function withSelection<T>(row: TableRow<T>, isSelected: boolean): TableRow<T> {
-    return new TableRow({ cells: row.cells, content: row.content, isSelected });
 }

@@ -54,16 +54,18 @@
 }
 
 .bey-tree-toggle {
+    --bey-tree-toggle-size: 1.1rem;
+
     align-items: center;
     background: transparent;
     border: none;
     color: var(--bey-tree-fg-muted);
     display: inline-flex;
     flex: 0 0 auto;
-    height: 1.1rem;
+    height: var(--bey-tree-toggle-size);
     justify-content: center;
     padding: 0;
-    width: 1.1rem;
+    width: var(--bey-tree-toggle-size);
 }
 
 .bey-tree-toggle.is-hidden {

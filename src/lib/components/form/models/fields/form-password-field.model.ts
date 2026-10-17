@@ -1,4 +1,5 @@
 import { Signal } from '@angular/core';
+import { IconDefinition } from '@fortawesome/angular-fontawesome';
 
 import { PasswordPolicy } from '../../../../services/password-policy/models/password-policy.model';
 import { FormField, FormFieldBaseParameters, FormFieldType } from '../form-field.model';
@@ -10,6 +11,16 @@ export type PasswordRule = 'digit' | 'length' | 'lowercase' | 'symbol' | 'upperc
 export interface PasswordRuleCheck {
     isMet: boolean;
     rule: PasswordRule;
+}
+
+export interface PasswordRuleItem {
+    icon: IconDefinition;
+    isInvalid: boolean;
+    isMet: boolean;
+    label: string;
+    parameters: Record<string, unknown>;
+    rule: PasswordRule;
+    status: string;
 }
 
 export class FormPasswordField extends FormField {

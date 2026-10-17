@@ -16,6 +16,7 @@ import {
 } from '../../../models/fields/property-attachment-field.model';
 import { PropertyFieldLabelling } from '../../../models/property-field-labelling.model';
 import { PROPERTY_VARIABLE_ICON } from '../../../models/property-variable.model';
+import { acceptedMimeTypes } from './functions/attachment-accept';
 import { isUnresolvedAttachment, isVariableReference, selectedAttachmentOption } from './functions/attachment-value';
 
 const BYTES_PER_MB = 1024 * 1024;
@@ -164,11 +165,4 @@ export class PropertyAttachmentFieldComponent {
         this.hasTypeError.set(false);
         this.sizeErrorMaxSizeMB.set(null);
     }
-}
-
-function acceptedMimeTypes(accept: string | undefined): string[] {
-    return (accept ?? '')
-        .split(',')
-        .map(pattern => pattern.trim())
-        .filter(Boolean);
 }

@@ -55,7 +55,7 @@ export class PageComponent<
 
     readonly hasToolbar = computed(() => Boolean(this.service.viewToggleConfig() || this.service.searchConfig()));
     readonly isFilled = computed(() => !this.service.tableConfig()?.height);
-    readonly isLoading = computed(() => this.service.loading() || this.pageLinkService.isPending());
+    readonly isLoading = computed(() => this.service.isLoading() || this.pageLinkService.isPending());
 
     constructor() {
         effect(() => {

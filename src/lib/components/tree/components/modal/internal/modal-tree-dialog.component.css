@@ -65,6 +65,8 @@
 }
 
 .bey-modal-tree-body {
+    --bey-modal-tree-scrollbar-size: 0.6rem;
+
     flex: 1 1 auto;
     max-height: min(60vh, 28rem);
     min-height: 0;
@@ -74,8 +76,8 @@
 }
 
 .bey-modal-tree-body::-webkit-scrollbar {
-    height: 0.6rem;
-    width: 0.6rem;
+    height: var(--bey-modal-tree-scrollbar-size);
+    width: var(--bey-modal-tree-scrollbar-size);
 }
 
 .bey-modal-tree-body::-webkit-scrollbar-track {

@@ -10,28 +10,20 @@ import {
     BeyTableComponent,
     BeyTableConfig,
     BeyTableSort,
-    BeyTableSortDirection,
     BeyTagsTableCell,
     BeyTextTableCell
 } from '@beyonda-labs/angular-components';
 import { faEye, faFolder, faUser } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { sortPeople } from './functions/people-sort';
+import { Person } from './models/table-style-guide.model';
+
 const PREFIX = 'angular-components-style-guide.table';
 const STATUS_BADGE_VARIANTS: Record<string, BeyBadgeVariant> = {
     active: BeyBadgeVariant.Success,
     review: BeyBadgeVariant.Warning
 };
-
-interface Person {
-    id: number;
-    name: string;
-    role: string;
-    skills: string[];
-    status: string;
-
-    joinedAt?: number;
-}
 
 interface TeamRow {
     id: string;
@@ -175,17 +167,4 @@ export class TableStyleGuideComponent {
         this.teamRows.update(current => current.map(row => (moved.has(row.id) ? { ...row, team: target.name } : row)));
         this.dropped.set(`${rows.map(row => row.name).join(', ')} → ${target.name}`);
     }
-}
-
-function sortPeople(people: Person[], sort: BeyTableSort | null): Person[] {
-    if (!sort) {
-        return people;
-    }
-
-    const field = sort.field as 'joinedAt' | 'name' | 'role';
-    const factor = sort.direction === BeyTableSortDirection.Desc ? -1 : 1;
-
-    return [...people].sort(
-        (first, second) => factor * String(first[field] ?? '').localeCompare(String(second[field] ?? ''))
-    );
 }

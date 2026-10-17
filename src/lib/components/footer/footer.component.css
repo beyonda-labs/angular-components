@@ -37,10 +37,12 @@
 }
 
 .bey-footer-icon {
+    --bey-footer-icon-size: 12px;
+
     display: block;
     flex-shrink: 0;
-    height: 12px;
-    width: 12px;
+    height: var(--bey-footer-icon-size);
+    width: var(--bey-footer-icon-size);
 }
 
 .bey-footer-org {

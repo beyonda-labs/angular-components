@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NavigationCancel, NavigationEnd, NavigationError, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 
@@ -10,6 +10,8 @@ import { BreadcrumbConfig } from '../breadcrumb/models/breadcrumb.model';
 import { FooterComponent } from '../footer/footer.component';
 import { LeftMenuComponent } from '../left-menu/left-menu.component';
 import { LeftMenuAction, LeftMenuConfig } from '../left-menu/models/left-menu.model';
+import { findPathByKey, findPathByUrl, hasRoutes } from './functions/menu-action-paths';
+import { isNavigationOutcome } from './functions/navigation-outcome';
 import { AppLayoutBreadcrumbItem, AppLayoutConfig } from './models/app-layout.model';
 import { AppLayoutService } from './services/app-layout.service';
 
@@ -177,53 +179,4 @@ export class AppLayoutComponent implements OnInit {
 
         this.appLayoutService.emitMenuClick(key);
     }
-}
-
-function findPathByKey(
-    actions: LeftMenuAction[],
-    key: string,
-    parents: LeftMenuAction[] = []
-): LeftMenuAction[] | null {
-    for (const action of actions) {
-        if (action.key === key) {
-            return [...parents, action];
-        }
-
-        const nested = findPathByKey(action.subActions, key, [...parents, action]);
-
-        if (nested) {
-            return nested;
-        }
-    }
-
-    return null;
-}
-
-function findPathByUrl(
-    actions: LeftMenuAction[],
-    path: string,
-    parents: LeftMenuAction[] = []
-): LeftMenuAction[] | null {
-    let best: LeftMenuAction[] | null = null;
-
-    for (const action of actions) {
-        const current = [...parents, action];
-        const matches = Boolean(action.route) && (path === action.route || path.startsWith(`${action.route}/`));
-        const nested = findPathByUrl(action.subActions, path, current);
-        const candidate = nested ?? (matches ? current : null);
-
-        if (candidate && (!best || candidate.length > best.length)) {
-            best = candidate;
-        }
-    }
-
-    return best;
-}
-
-function hasRoutes(actions: LeftMenuAction[]): boolean {
-    return actions.some(action => Boolean(action.route) || hasRoutes(action.subActions));
-}
-
-function isNavigationOutcome(event: unknown): boolean {
-    return event instanceof NavigationCancel || event instanceof NavigationEnd || event instanceof NavigationError;
 }

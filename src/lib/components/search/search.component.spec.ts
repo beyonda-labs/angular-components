@@ -318,6 +318,32 @@ describe('SearchComponent', () => {
         expect(toggle().getAttribute('aria-expanded')).toBe('false');
     }));
 
+    it('closes the panel on Escape and gives the focus back to its toggle', () => {
+        render();
+        openPanel();
+        clickByLabel('add');
+
+        const [field] = selectsOf(rows()[0]);
+        field.focus();
+        field.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Escape' }));
+        fixture.detectChanges();
+
+        expect(toggle().getAttribute('aria-expanded')).toBe('false');
+        expect(document.activeElement).toBe(toggle());
+    });
+
+    it('keeps the focus in the quick search box when Escape closes the panel from it', () => {
+        render();
+        openPanel();
+
+        mainInput().focus();
+        mainInput().dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'Escape' }));
+        fixture.detectChanges();
+
+        expect(toggle().getAttribute('aria-expanded')).toBe('false');
+        expect(document.activeElement).toBe(mainInput());
+    });
+
     describe('date fields', () => {
         function buildDateConfig(overrides: Partial<SearchConfigParameters> = {}): SearchConfig {
             return buildConfig({

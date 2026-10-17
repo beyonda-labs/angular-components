@@ -109,11 +109,11 @@ describe('PageListService', () => {
         pageHttpService.load.mockReturnValue(answer);
 
         service.load(CONFIG, service.search()).subscribe();
-        const whileAsking = service.loading();
+        const whileAsking = service.isLoading();
         answer.next(RESPONSE);
         answer.complete();
 
-        expect([whileAsking, service.loading()]).toEqual([true, false]);
+        expect([whileAsking, service.isLoading()]).toEqual([true, false]);
     });
 
     it('goes back to the first page on new filters, a new page size or a sort, and to the order without a sort', () => {

@@ -136,8 +136,8 @@ export class PageService {
             title: config.headerConfig.title
         });
     });
+    readonly isLoading = this.pageListService.isLoading;
     readonly items = this.pageListService.items;
-    readonly loading = this.pageListService.loading;
     readonly pageSearch = this.pageListService.search;
     readonly paginationConfig = computed<PaginationConfig | null>(() => {
         const config = this._config();

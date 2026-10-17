@@ -10,6 +10,8 @@
 }
 
 .bey-search {
+    --bey-search-control-height: 2.1rem;
+
     align-items: center;
     display: flex;
     flex-wrap: wrap;
@@ -36,7 +38,7 @@
     border-radius: var(--bey-radius-sm);
     color: var(--bey-search-fg);
     font-size: var(--bey-font-size-sm);
-    min-height: 2.1rem;
+    min-height: var(--bey-search-control-height);
     padding-left: var(--bey-space-2xl);
 }
 
@@ -52,11 +54,13 @@
 .bey-search-toggle {
     font-size: var(--bey-font-size-sm);
     gap: var(--bey-space-xs);
-    min-height: 2.1rem;
+    min-height: var(--bey-search-control-height);
     padding: var(--bey-space-xs) var(--bey-space-md);
 }
 
 .bey-search-badge {
+    --bey-search-badge-size: 1.2rem;
+
     align-items: center;
     background: var(--bey-primary);
     border-radius: var(--bey-radius-md);
@@ -64,10 +68,10 @@
     display: inline-flex;
     font-size: var(--bey-font-size-2xs);
     font-weight: var(--bey-font-weight-bold);
-    height: 1.2rem;
+    height: var(--bey-search-badge-size);
     justify-content: center;
     line-height: var(--bey-line-height-none);
-    min-width: 1.2rem;
+    min-width: var(--bey-search-badge-size);
     padding: 0 var(--bey-space-2xs);
 }
 
@@ -82,11 +86,13 @@
 }
 
 .bey-search-panel {
+    --bey-search-panel-viewport-width: 92vw;
+
     background: var(--bey-search-surface);
     border: var(--bey-border-width) solid var(--bey-search-border);
     border-radius: var(--bey-radius-md);
     box-shadow: var(--bey-shadow-md);
-    min-width: min(38rem, 92vw);
+    min-width: min(38rem, var(--bey-search-panel-viewport-width));
     padding: var(--bey-space-lg);
     position: absolute;
     right: 0;
@@ -126,7 +132,7 @@
     border-radius: var(--bey-radius-sm);
     color: var(--bey-search-fg);
     font-size: var(--bey-font-size-sm);
-    min-height: 2.1rem;
+    min-height: var(--bey-search-control-height);
     padding-bottom: var(--bey-space-xs);
     padding-top: var(--bey-space-xs);
 }
@@ -221,18 +227,20 @@
 }
 
 .bey-search-remove {
+    --bey-search-remove-size: 1.9rem;
+
     align-items: center;
     border-radius: var(--bey-radius-circle);
     color: var(--bey-search-fg-muted);
     display: inline-flex;
     flex: 0 0 auto;
-    height: 1.9rem;
+    height: var(--bey-search-remove-size);
     justify-content: center;
     padding: 0;
     transition:
         background-color var(--bey-duration-base) var(--bey-easing-standard),
         color var(--bey-duration-base) var(--bey-easing-standard);
-    width: 1.9rem;
+    width: var(--bey-search-remove-size);
 }
 
 .bey-search-remove:hover {
@@ -257,7 +265,7 @@
 
 @media (max-width: 575.98px) {
     .bey-search-panel {
-        min-width: 92vw;
+        min-width: var(--bey-search-panel-viewport-width);
     }
 
     .bey-search-row {
