@@ -84,7 +84,8 @@ the panel: change its operator by hand and further typing keeps it. Emptying the
 Rows built in the panel are reported when Apply is used, and only those that are complete: a field, an
 operator and a value that fits the type. Clear empties the box, the rows and the reported filters at once.
 
-The panel closes on Apply and on a click outside of the component.
+The panel closes on Apply, on Escape and on a click outside of the component. Escape from inside the panel gives the
+focus back to the filters toggle; from the quick search box, the focus stays in the box.
 
 A new config starts again from its `filters`: the box shows the value of the one on `mainField`, the panel one row
 per filter, and nothing is reported until the user changes them. A screen that keeps the search while it rebuilds
