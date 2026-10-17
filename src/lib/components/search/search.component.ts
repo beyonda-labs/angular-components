@@ -8,7 +8,8 @@ import {
     input,
     linkedSignal,
     signal,
-    untracked
+    untracked,
+    viewChild
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -87,8 +88,10 @@ export class SearchComponent {
     readonly searchTerm = linkedSignal(() => findMainTerm(this.config()));
     readonly suggestions = signal<SearchSuggestions | null>(null);
 
+    private readonly panel = viewChild<ElementRef<HTMLElement>>('panel');
     private readonly searchTerm$ = new Subject<void>();
     private readonly suggestionRequests$ = new Subject<SearchSuggestionRequest>();
+    private readonly toggle = viewChild.required<ElementRef<HTMLButtonElement>>('toggle');
 
     constructor() {
         this.searchTerm$.pipe(debounceTime(SEARCH_DEBOUNCE_MS), takeUntilDestroyed()).subscribe(() => {
@@ -172,6 +175,21 @@ export class SearchComponent {
     onDocumentClick(event: MouseEvent): void {
         if (this.isPanelOpen() && !(this.elementRef.nativeElement as HTMLElement).contains(event.target as Node)) {
             this.isPanelOpen.set(false);
+        }
+    }
+
+    @HostListener('keydown.escape')
+    onEscape(): void {
+        if (!this.isPanelOpen()) {
+            return;
+        }
+
+        const hadFocus = this.panel()?.nativeElement.contains(document.activeElement) ?? false;
+
+        this.isPanelOpen.set(false);
+
+        if (hadFocus) {
+            this.toggle().nativeElement.focus();
         }
     }
 

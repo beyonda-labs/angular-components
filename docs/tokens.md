@@ -242,6 +242,19 @@ Aligned with the Bootstrap scale, so a library panel never lands between two of 
 
 ---
 
+## Bootstrap overrides
+
+`bs-overrides.css` is not part of the token layer: it reads the tokens to restyle what Bootstrap and ngx-bootstrap draw
+themselves, in this order: the buttons behind each button type of the library (`btn-dark` for Primary,
+`btn-outline-dark` for Secondary, `btn-danger` for Danger, `btn-link` for Tertiary and `btn-link btn-link-secondary`
+for LinkSecondary), the `text-dark` and `text-muted` utilities, the form controls, the native spinners of a number
+input, which it hides because the number field draws its own, and the datepicker.
+
+It loads after Bootstrap's stylesheet, so a rule of the same specificity wins by order and needs no `!important`. The
+text utilities are the exception: Bootstrap marks them `!important` itself, so the token can only win the same way.
+
+---
+
 ## Theming the library
 
 A consuming app applies its own theme by re-declaring semantic tokens after importing the library styles.

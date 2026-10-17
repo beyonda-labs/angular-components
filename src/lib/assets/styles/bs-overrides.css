@@ -10,7 +10,6 @@ body.dark {
     --bs-btn-focus-box-shadow: 0 0 0 0.15rem rgba(var(--bey-focus-bg), 0.5);
 }
 
-/* ─── btn-dark (Primary) ─────────────────────────────────────────────────── */
 .btn-dark {
     --bs-btn-color: var(--bey-bg-page);
     --bs-btn-bg: var(--bey-primary);
@@ -35,7 +34,6 @@ body.dark .btn-dark {
     --bs-btn-disabled-border-color: var(--bey-gray-600);
 }
 
-/* ─── btn-outline-dark (Secondary) ──────────────────────────────────────── */
 .btn-outline-dark {
     --bs-btn-color: var(--bey-primary);
     --bs-btn-border-color: var(--bey-primary);
@@ -56,7 +54,6 @@ body.dark .btn-outline-dark {
     --bs-btn-disabled-border-color: var(--bey-gray-600);
 }
 
-/* ─── btn-danger (Danger) ───────────────────────────────────────────────── */
 .btn-danger {
     --bs-btn-color: var(--bey-danger-fg);
     --bs-btn-bg: var(--bey-danger);
@@ -72,7 +69,6 @@ body.dark .btn-outline-dark {
     --bs-btn-disabled-border-color: var(--bey-danger);
 }
 
-/* ─── btn-link (Tertiary) ────────────────────────────────────────────────── */
 .btn-link {
     --bs-btn-color: var(--bey-primary);
     --bs-btn-hover-color: var(--bey-gray-700);
@@ -95,7 +91,6 @@ body.dark .btn-link {
     --bs-link-hover-color: var(--bey-gray-400);
 }
 
-/* ─── btn-link.btn-link-secondary (LinkSecondary) ───────────────────────── */
 .btn-link.btn-link-secondary {
     --bs-btn-color: var(--bey-secondary);
     --bs-btn-hover-color: var(--bey-gray-600);
@@ -111,8 +106,6 @@ body.dark .btn-link.btn-link-secondary {
     --bs-link-hover-color: var(--bey-gray-400);
 }
 
-/* ─── Texts  ─────────────────────────────────────────────────────────────── */
-
 /* stylelint-disable declaration-no-important -- Bootstrap's text utilities are !important themselves, so the token can only win the same way. */
 .text-dark {
     color: var(--bey-text-primary) !important;
@@ -123,8 +116,6 @@ body.dark .btn-link.btn-link-secondary {
 }
 /* stylelint-enable declaration-no-important */
 
-/* ─── Form controls ──────────────────────────────────────────────────────── */
-/* This sheet loads after Bootstrap's, so a rule of the same specificity wins by order and needs no !important. */
 .form-control,
 .form-select,
 .form-check-input {
@@ -203,14 +194,12 @@ body.dark input[type='checkbox'].form-check-input:checked {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23000' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
 }
 
-/* ─── Number input spinners (native hidden — custom spinners in field-number component) */
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     appearance: none;
 }
 
-/* ─── Datepicker ─────────────────────────────────────────────────────────── */
 .bs-datepicker {
     border: 1px solid var(--bey-secondary);
     border-radius: 0.25rem;

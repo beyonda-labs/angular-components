@@ -16,7 +16,7 @@ export class PaginationConfig {
         totalItems = 0,
         onPageChange,
         onPageSizeChange
-    }: PaginationConfigParameters) {
+    }: PaginationConfigParameters = {}) {
         this.onPageChange = onPageChange;
         this.onPageSizeChange = onPageSizeChange;
         this.pageSize = PAGINATION_SIZE_OPTIONS.includes(Math.trunc(pageSize))

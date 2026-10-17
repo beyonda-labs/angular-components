@@ -21,7 +21,7 @@ export class PropertyFieldsContent {
     fields: PropertyField[];
     readonly type = PropertyGroupContentType.FIELDS;
 
-    constructor({ fields = [] }: PropertyFieldsContentParameters) {
+    constructor({ fields = [] }: PropertyFieldsContentParameters = {}) {
         this.fields = fields;
     }
 }
@@ -47,7 +47,7 @@ export class PropertyListContent {
     list: PropertyListItem[];
     readonly type = PropertyGroupContentType.LIST;
 
-    constructor({ list = [] }: PropertyListContentParameters) {
+    constructor({ list = [] }: PropertyListContentParameters = {}) {
         this.list = list;
     }
 }
@@ -57,7 +57,7 @@ export class PropertyTabsContent {
     tabs: PropertyGroupTab[];
     readonly type = PropertyGroupContentType.TABS;
 
-    constructor({ activeTabId, tabs = [] }: PropertyTabsContentParameters) {
+    constructor({ activeTabId, tabs = [] }: PropertyTabsContentParameters = {}) {
         this.tabs = tabs;
         this.activeTabId = activeTabId ?? tabs[0]?.id ?? '';
     }

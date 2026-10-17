@@ -1,5 +1,22 @@
 # Change Log
 
+## [Unreleased]
+
+### Added
+
+-   Search module: Escape closes the filters panel; from inside the panel it gives the focus back to the filters
+    toggle, and from the quick search box the focus stays there.
+
+### Changed
+
+-   Left menu module: `BeyLeftMenuTitle`, whose parameters are all optional, is built with no argument too.
+-   Page module: `BeyPageCategoriesConfig` and `BeyPageHeaderConfig`, whose parameters are all optional, are built with
+    no argument too.
+-   Pagination module: `BeyPaginationConfig`, whose parameters are all optional, is built with no argument too.
+-   Properties menu module: `BeyPropertyFieldsContent`, `BeyPropertyListContent`, `BeyPropertyTabsContent` and
+    `BeyPropertyTreeConfig`, whose parameters are all optional, are built with no argument too.
+-   Table module: `BeyDateTableCell`, whose parameters are all optional, is built with no argument too.
+
 ## [1.6.0] - 2026-10-16
 
 ### Added

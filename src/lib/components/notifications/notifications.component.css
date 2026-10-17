@@ -12,6 +12,8 @@
 }
 
 .bey-notifications-bell {
+    --bey-notifications-bell-size: 2.25rem;
+
     align-items: center;
     background: var(--bey-notifications-surface);
     border: var(--bey-border-width) solid var(--bey-notifications-border);
@@ -19,13 +21,13 @@
     color: var(--bey-notifications-text-muted);
     display: inline-flex;
     font-size: var(--bey-font-size-md);
-    height: 2.25rem;
+    height: var(--bey-notifications-bell-size);
     justify-content: center;
     position: relative;
     transition:
         border-color var(--bey-duration-base) var(--bey-easing-standard),
         color var(--bey-duration-base) var(--bey-easing-standard);
-    width: 2.25rem;
+    width: var(--bey-notifications-bell-size);
 }
 
 .bey-notifications-bell:hover,
@@ -40,6 +42,8 @@
 }
 
 .bey-notifications-badge {
+    --bey-notifications-badge-offset: -0.35rem;
+
     background: var(--bey-notifications-badge-bg);
     border-radius: var(--bey-radius-pill);
     color: var(--bey-notifications-badge-fg);
@@ -49,9 +53,9 @@
     min-width: 1.1rem;
     padding: var(--bey-space-3xs) var(--bey-space-2xs);
     position: absolute;
-    right: -0.35rem;
+    right: var(--bey-notifications-badge-offset);
     text-align: center;
-    top: -0.35rem;
+    top: var(--bey-notifications-badge-offset);
 }
 
 .bey-notifications-panel {
@@ -88,6 +92,8 @@
 }
 
 .bey-notifications-refresh {
+    --bey-notifications-refresh-size: 1.75rem;
+
     align-items: center;
     background: transparent;
     border: var(--bey-border-width) solid var(--bey-notifications-border);
@@ -95,9 +101,9 @@
     color: var(--bey-notifications-text-muted);
     display: inline-flex;
     font-size: var(--bey-font-size-sm);
-    height: 1.75rem;
+    height: var(--bey-notifications-refresh-size);
     justify-content: center;
-    width: 1.75rem;
+    width: var(--bey-notifications-refresh-size);
 }
 
 .bey-notifications-refresh:hover:not(:disabled) {
@@ -168,11 +174,13 @@
 }
 
 .bey-notifications-item-mark {
+    --bey-notifications-item-mark-size: 0.5rem;
+
     border-radius: var(--bey-radius-circle);
     flex: 0 0 auto;
-    height: 0.5rem;
+    height: var(--bey-notifications-item-mark-size);
     margin-top: var(--bey-space-xs);
-    width: 0.5rem;
+    width: var(--bey-notifications-item-mark-size);
 }
 
 .bey-notifications-item.is-unread .bey-notifications-item-mark {

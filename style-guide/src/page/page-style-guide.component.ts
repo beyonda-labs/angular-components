@@ -33,6 +33,7 @@ import {
 } from '@beyonda-labs/angular-components';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { toPrice } from './functions/product-price';
 import { STYLE_GUIDE_DOCUMENTS_URL, StyleGuideDocument } from './models/page-backend.model';
 
 const PREFIX = 'angular-components-style-guide.page';
@@ -206,8 +207,4 @@ export class PageStyleGuideComponent {
             title: `${SHARING_PREFIX}.view.title`
         });
     }
-}
-
-function toPrice(price: number): string {
-    return typeof price === 'number' ? `${price.toFixed(2)} €` : '';
 }

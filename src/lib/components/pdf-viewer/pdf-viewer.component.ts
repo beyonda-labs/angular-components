@@ -21,6 +21,7 @@ import {
 import { PdfViewerSearchComponent } from './components/pdf-viewer-search/pdf-viewer-search.component';
 import { PdfViewerToolbarComponent } from './components/pdf-viewer-toolbar/pdf-viewer-toolbar.component';
 import { downloadPdf } from './functions/pdf-download';
+import { toZoomFactor } from './functions/pdf-zoom';
 import { PdfViewerConfig, PdfViewerHandle } from './models/pdf-viewer-config.model';
 import {
     NO_SEARCH_MATCHES,
@@ -214,8 +215,4 @@ export class PdfViewerComponent {
 
         this.pdfViewerService.find(this.searchQuery(), { highlightAll: true });
     }
-}
-
-function toZoomFactor(zoom: PdfViewerZoom): number {
-    return typeof zoom === 'number' ? zoom : 1;
 }

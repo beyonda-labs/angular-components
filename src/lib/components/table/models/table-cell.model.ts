@@ -41,7 +41,7 @@ export class DateTableCell extends TableCell {
 
     value?: Date | number | string | null;
 
-    constructor({ format = 'mediumDate', tooltip, tooltipItems, value }: DateTableCellParameters) {
+    constructor({ format = 'mediumDate', tooltip, tooltipItems, value }: DateTableCellParameters = {}) {
         super({ content: value, type: CellType.Date, tooltip, tooltipItems });
         this.format = format;
         this.value = value;

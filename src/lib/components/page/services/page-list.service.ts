@@ -31,8 +31,8 @@ export class PageListService {
     private readonly _columnContext = signal<PageColumnContext>({ isSearching: false });
     private readonly _counted = signal<PageLocatedCount | null>(null);
     private readonly _globalActions = signal<string[] | null>(null);
+    private readonly _isLoading = signal(false);
     private readonly _items = signal<PageItem[]>([]);
-    private readonly _loading = signal(false);
     private readonly _search = signal<PageSearch>(PAGE_INITIAL_SEARCH);
     private readonly _sentSearch = signal<PageSearch>(PAGE_INITIAL_SEARCH);
     private readonly _sort = signal<TableSort | null>(null);
@@ -45,8 +45,8 @@ export class PageListService {
         return counted?.location === this.pageViewService.location() ? counted : null;
     });
     readonly globalActions = this._globalActions.asReadonly();
+    readonly isLoading = this._isLoading.asReadonly();
     readonly items = this._items.asReadonly();
-    readonly loading = this._loading.asReadonly();
     readonly search = this._search.asReadonly();
     readonly sentSearch = this._sentSearch.asReadonly();
     readonly sort = this._sort.asReadonly();
@@ -79,7 +79,7 @@ export class PageListService {
         );
 
         this._sentSearch.set(withSearchText(sentSearch, textField));
-        this._loading.set(true);
+        this._isLoading.set(true);
 
         return this.requestList(baseUrl, queryParameters).pipe(
             tap(response => {
@@ -91,7 +91,7 @@ export class PageListService {
                 this._counted.set({ categoryTotal: response.search?.categoryTotal, location, total });
                 this._globalActions.set(response.globalActions ?? []);
             }),
-            finalize(() => this._loading.set(false))
+            finalize(() => this._isLoading.set(false))
         );
     }
 

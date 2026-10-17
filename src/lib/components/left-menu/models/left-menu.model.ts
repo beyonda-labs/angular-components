@@ -73,7 +73,7 @@ export class LeftMenuTitle {
     icon: string;
     title: string;
 
-    constructor({ icon = '', title = 'title' }: LeftMenuTitleParameters) {
+    constructor({ icon = '', title = 'title' }: LeftMenuTitleParameters = {}) {
         this.icon = icon;
         this.title = title;
     }

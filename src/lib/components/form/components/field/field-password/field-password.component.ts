@@ -1,27 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawesome';
-import { faCircle } from '@fortawesome/free-regular-svg-icons';
-import { faCircleCheck, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { nextDomId } from '../../../../../internal/dom-ids/dom-ids';
-import { PasswordPolicy } from '../../../../../services/password-policy/models/password-policy.model';
 import { checkPasswordRules, resolvePasswordPolicy } from '../../../functions/password-rules';
-import { FormPasswordField, PasswordRule, PasswordRuleCheck } from '../../../models/fields/form-password-field.model';
+import { FormPasswordField, PasswordRuleItem } from '../../../models/fields/form-password-field.model';
 import { trackControl } from '../functions/control-state';
-
-const RULE_KEY_PREFIX = 'angular-components.form.password-field.policy.';
-
-interface PasswordRuleItem {
-    icon: IconDefinition;
-    isInvalid: boolean;
-    isMet: boolean;
-    label: string;
-    parameters: Record<string, unknown>;
-    rule: PasswordRule;
-    status: string;
-}
+import { toRuleItem } from './functions/password-rule-items';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -74,20 +61,4 @@ export class FormPasswordFieldComponent {
     toggleVisibility(): void {
         this.isVisible.update(isVisible => !isVisible);
     }
-}
-
-function toRuleItem(
-    { isMet, rule }: PasswordRuleCheck,
-    { minLength }: PasswordPolicy,
-    isFlagged: boolean
-): PasswordRuleItem {
-    return {
-        icon: isMet ? faCircleCheck : faCircle,
-        isInvalid: isFlagged && !isMet,
-        isMet,
-        label: `${RULE_KEY_PREFIX}${rule}`,
-        parameters: { min: minLength },
-        rule,
-        status: `${RULE_KEY_PREFIX}${isMet ? 'met' : 'unmet'}`
-    };
 }

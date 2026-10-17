@@ -134,7 +134,7 @@ describe('PageService', () => {
         expect(service.totalItems()).toBe(2);
         expect(service.pageSearch().sort).toEqual({ direction: 'asc', field: 'name' });
         expect(onDataLoaded).toHaveBeenCalledWith(buildResponse());
-        expect(service.loading()).toBe(false);
+        expect(service.isLoading()).toBe(false);
     });
 
     it('cancels a load still out when a newer one starts, and keeps loading until the newer one answers', () => {
@@ -148,13 +148,13 @@ describe('PageService', () => {
         flush();
 
         expect(older.observed).toBe(false);
-        expect(service.loading()).toBe(true);
+        expect(service.isLoading()).toBe(true);
 
         newer.next(buildResponse([ITEMS[1]]));
         newer.complete();
 
         expect(service.items()).toEqual([ITEMS[1]]);
-        expect(service.loading()).toBe(false);
+        expect(service.isLoading()).toBe(false);
     });
 
     it('stops loading after a failed load and still loads again afterwards', () => {
@@ -162,7 +162,7 @@ describe('PageService', () => {
         service.setConfig(buildConfig());
         flush();
 
-        expect(service.loading()).toBe(false);
+        expect(service.isLoading()).toBe(false);
         expect(service.items()).toEqual([]);
 
         service.refresh();

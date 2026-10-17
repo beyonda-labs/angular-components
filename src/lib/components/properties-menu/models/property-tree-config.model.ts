@@ -12,7 +12,7 @@ export class PropertyTreeConfig {
         canAcceptRootDrop = false,
         isEmptyStateAddBlockShown = false,
         nodes = []
-    }: PropertyTreeConfigParameters) {
+    }: PropertyTreeConfigParameters = {}) {
         this.addBlockLabel = addBlockLabel;
         this.canAcceptRootDrop = canAcceptRootDrop;
         this.isEmptyStateAddBlockShown = isEmptyStateAddBlockShown;

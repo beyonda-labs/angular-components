@@ -297,6 +297,18 @@ What the audit before the next release left for after it.
 -   [x] `angular-components-demo` registers `beyAdministrationStyleGuideInterceptor` and `beyPageStyleGuideInterceptor`
         among its interceptors when it upgrades to 1.6.0, so the administration and sharing demos show data
 
+### Decisions after the 0.3.0 audit
+
+-   [x] Escape closes the search panel, and gives the focus back to its toggle from inside the panel
+-   [x] `page-link.service.ts` has a spec of its own
+-   [x] The internal `loading` signals of the page services are `isLoading`
+-   [x] No plain helpers below a component class: those of 9 library components and 5 style-guide demos moved to
+        function modules, each with its spec
+-   [x] `bs-overrides.css` is not a token layer: its group labels and its note went to `tokens.md`, and only the
+        reason of its `stylelint-disable` stays
+-   [x] A model whose parameters are all optional defaults to `= {}`
+-   [x] A size an own layout repeats is a private variable
+
 ## For the next minor
 
 Released public names the reviewed rules refuse. Renaming one breaks every consumer, so they wait for the next

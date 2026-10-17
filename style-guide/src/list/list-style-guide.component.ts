@@ -1,13 +1,9 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { BeyAvatarComponent, BeyAvatarConfig, BeyListComponent, BeyListConfig } from '@beyonda-labs/angular-components';
+import { BeyAvatarComponent, BeyListComponent, BeyListConfig } from '@beyonda-labs/angular-components';
 import { TranslateModule } from '@ngx-translate/core';
 
-interface Employee {
-    avatar: BeyAvatarConfig;
-    id: number;
-    name: string;
-    role: string;
-}
+import { buildEmployee } from './functions/list-employees';
+import { Employee } from './models/list-style-guide.model';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,8 +46,4 @@ export class ListStyleGuideComponent {
     private onEmployeeClick(employee: Employee): void {
         this.selectedEmployee.set(employee.name);
     }
-}
-
-function buildEmployee(id: number, [name, surname]: [string, string], role: string): Employee {
-    return { avatar: new BeyAvatarConfig({ name, surname }), id, name: `${name} ${surname}`, role };
 }

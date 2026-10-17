@@ -8,7 +8,6 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { nextDomId } from '../../../../internal/dom-ids/dom-ids';
 import { toKeySegment } from '../../../../utilities/key-segment';
 import { fieldErrorOf } from '../../functions/field-error';
-import { FormPasswordField } from '../../models/fields/form-password-field.model';
 import { FormField, FormFieldType } from '../../models/form-field.model';
 import { FormFieldState } from '../../models/form-field-state.model';
 import { FormFieldError } from '../../models/form-field-validator.model';
@@ -29,6 +28,7 @@ import { FormSelectFieldComponent } from './field-select/field-select.component'
 import { FormTextFieldComponent } from './field-text/field-text.component';
 import { FormTextVariableFieldComponent } from './field-text-variable/field-text-variable.component';
 import { FormTextareaFieldComponent } from './field-textarea/field-textarea.component';
+import { hasPasswordPolicy } from './functions/field-password-policy';
 
 @Component({
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -85,8 +85,4 @@ export class FormFieldComponent {
 
         return control?.touched ? fieldErrorOf(control.errors) : null;
     }
-}
-
-function hasPasswordPolicy(field: FormField): boolean {
-    return field instanceof FormPasswordField && field.policy !== undefined;
 }
